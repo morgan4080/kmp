@@ -21,6 +21,15 @@ kotlin {
         framework {
             baseName = "shared"
             isStatic = true
+
+            export("com.arkivanov.decompose:decompose:2.0.0-alpha-02")
+            export("com.arkivanov.essenty:lifecycle:1.1.0")
+
+            // Optional, only if you need state preservation on Darwin (Apple) targets
+            export("com.arkivanov.essenty:state-keeper:1.1.0")
+
+            // Optional, only if you need state preservation on Darwin (Apple) targets
+            export("com.arkivanov.parcelize.darwin:runtime:0.1.4")
         }
         extraSpecAttributes["resources"] = "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
     }
@@ -35,6 +44,8 @@ kotlin {
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
                 implementation(compose.materialIconsExtended)
+
+                implementation("com.arkivanov.decompose:decompose:2.0.0-alpha-02")
             }
         }
         val androidMain by getting {
@@ -42,6 +53,7 @@ kotlin {
                 api("androidx.activity:activity-compose:1.7.1")
                 api("androidx.appcompat:appcompat:1.6.1")
                 api("androidx.core:core-ktx:1.10.0")
+                implementation("com.arkivanov.decompose:extensions-android:2.0.0-alpha-02")
             }
         }
         val iosX64Main by getting

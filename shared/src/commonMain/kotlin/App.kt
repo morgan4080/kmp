@@ -1,4 +1,6 @@
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
@@ -21,22 +23,18 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.Savings
+import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material.icons.outlined.AttachMoney
 import androidx.compose.material.icons.outlined.CreditCard
-import androidx.compose.material.icons.outlined.FileOpen
+import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Logout
-import androidx.compose.material.icons.outlined.Money
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Savings
 import androidx.compose.material.icons.outlined.ScatterPlot
 import androidx.compose.material.icons.outlined.Wallet
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -55,16 +53,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 import theme.AppTheme
 
 
 data class QuickLinks(val labelTop: String,val labelBottom: String, val icon: ImageVector)
+data class Transactions(val label: String, val credit: Boolean, val code: String, val amount: String, val date: String, val icon: ImageVector)
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class,
     ExperimentalLayoutApi::class, ExperimentalFoundationApi::class
@@ -95,14 +97,6 @@ fun App() {
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Box(
-                                            modifier = Modifier
-                                                .padding(end = 5.dp)
-                                                .size(20.dp)
-                                                .clip(CircleShape)
-                                                .background(Color(0xFF489AAB.toInt())) // #8F8F8F
-                                        )
-
                                         Text(
                                             text = "Presta Capital",
                                             color = Color.Black,
@@ -111,12 +105,15 @@ fun App() {
                                     }
 
                                     IconButton(
+                                        modifier = Modifier
+                                            .clip(CircleShape)
+                                            .background(Color(0xFFE5F1F5.toInt())),
                                         onClick = {
 
                                         },
                                         content = {
                                             Icon(
-                                                imageVector = Icons.Filled.GridView,
+                                                imageVector = Icons.Outlined.Menu,
                                                 modifier = Modifier.size(30.dp),
                                                 contentDescription = null,
                                                 tint = MaterialTheme.colorScheme.primary
@@ -129,21 +126,22 @@ fun App() {
                         item {
                             Box(
                                 modifier = Modifier
-                                    .padding(top = 9.dp, start = 5.dp)
+                                    .padding(top = 9.dp)
                                     .fillMaxWidth()
                             ) {
                                 Text(
                                     text = "Hello Morgan",
                                     color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Medium
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontFamily = FontFamily.SansSerif
                                 )
                             }
                         }
                         item {
                             val state = rememberLazyListState()
                             LazyRow(modifier = Modifier
-                                .fillMaxWidth()
+                                .consumeWindowInsets(innerPadding)
                                 .padding(top = 15.dp),
                                 state = state,
                                 flingBehavior = rememberSnapFlingBehavior(lazyListState = state),
@@ -151,7 +149,7 @@ fun App() {
                                     items(3) {
                                         Box(
                                             modifier = Modifier
-                                                .padding(PaddingValues(start = 2.dp, end = 9.dp))
+                                                .padding(PaddingValues(start = 6.dp, end = 9.dp))
                                                 .fillParentMaxWidth(0.99f)
                                         ) {
                                             HomeCardListItem(
@@ -215,14 +213,15 @@ fun App() {
                         item {
                             Box(
                                 modifier = Modifier
-                                    .padding(top = 9.dp, start = 5.dp)
+                                    .padding(top = 12.92.dp, start = 5.dp)
                                     .fillMaxWidth()
                             ) {
                                 Text(
                                     text = "Quick Links",
                                     color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Medium
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontFamily = FontFamily.SansSerif
                                 )
                             }
                         }
@@ -231,7 +230,7 @@ fun App() {
                                 QuickLinks("Add","Savings", Icons.Outlined.Savings),
                                 QuickLinks("Apply", "Loan", Icons.Outlined.AttachMoney),
                                 QuickLinks("Pay","Loan", Icons.Outlined.CreditCard),
-                                QuickLinks("View Full","Statement", Icons.Outlined.FileOpen),
+                                QuickLinks("View Full","Statement", Icons.Outlined.Description),
                             )
                             val state = rememberLazyListState()
                             LazyRow(modifier = Modifier
@@ -252,7 +251,8 @@ fun App() {
 
                                                 IconButton(
                                                     modifier = Modifier
-                                                        .clip(shape = RoundedCornerShape(10.dp))
+                                                        .clip(shape = CircleShape)
+//                                                            RoundedCornerShape(10.dp)
                                                         .background(MaterialTheme.colorScheme.primary)
                                                         .size(57.dp),
                                                     onClick = {
@@ -261,7 +261,7 @@ fun App() {
                                                     content = {
                                                         Icon(
                                                             imageVector = link.icon,
-                                                            modifier = Modifier.size(25.dp),
+                                                            modifier = Modifier.size(30.dp),
                                                             contentDescription = null,
                                                             tint = MaterialTheme.colorScheme.inverseOnSurface
                                                         )
@@ -269,23 +269,187 @@ fun App() {
                                                 )
 
                                                 Text(
+                                                    modifier = Modifier.padding(top = 7.08.dp),
                                                     text = link.labelTop,
                                                     color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                                    fontSize = 12.sp,
-                                                    fontWeight = FontWeight.Medium
+                                                    fontSize = 14.sp,
+                                                    fontWeight = FontWeight.Light
                                                 )
 
                                                 Text(
                                                     text = link.labelBottom,
                                                     color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                                    fontSize = 12.sp,
-                                                    fontWeight = FontWeight.Medium
+                                                    fontSize = 14.sp,
+                                                    fontWeight = FontWeight.Light
                                                 )
                                             }
                                         }
                                     }
                                 }
                             )
+                        }
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .padding(top = 26.dp, start = 5.dp)
+                                    .fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = "Transactions",
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontFamily = FontFamily.SansSerif
+                                )
+                            }
+                        }
+                        item {
+                            Column(modifier = Modifier.padding(top = 16.dp)) {
+                                val transactionList = mutableListOf(
+                                    Transactions(
+                                        "Savings Deposit",
+                                        false,
+                                        "TRGHJK123LL",
+                                    "15,000",
+                                        "12 May 2020, 12:23 PM",
+                                        Icons.Filled.OpenInNew
+                                    ),
+                                    Transactions(
+                                        "Loan disbursed",
+                                        true,
+                                        "TRGHJK123LL",
+                                    "5,000",
+                                        "12 May 2020, 12:23 PM",
+                                        Icons.Filled.OpenInNew
+                                    ),
+                                    Transactions(
+                                        "Loan repayment",
+                                        false,
+                                        "TRGHJK123LL",
+                                    "5,000",
+                                        "12 May 2020, 12:23 PM",
+                                        Icons.Filled.OpenInNew
+                                    ),
+                                    Transactions(
+                                        "Loan disbursed",
+                                        true,
+                                        "TRGHJK123LL",
+                                    "5,000",
+                                        "12 May 2020, 12:23 PM",
+                                        Icons.Filled.OpenInNew
+                                    ),
+                                    Transactions(
+                                        "Loan disbursed",
+                                        true,
+                                        "TRGHJK123LL",
+                                    "5,000",
+                                        "12 May 2020, 12:23 PM",
+                                        Icons.Filled.OpenInNew
+                                    ),
+                                    Transactions(
+                                        "Loan disbursed",
+                                        true,
+                                        "TRGHJK123LL",
+                                    "5,000",
+                                        "12 May 2020, 12:23 PM",
+                                        Icons.Filled.OpenInNew
+                                    ),
+                                    Transactions(
+                                        "Loan disbursed",
+                                        true,
+                                        "TRGHJK123LL",
+                                    "5,000",
+                                        "12 May 2020, 12:23 PM",
+                                        Icons.Filled.OpenInNew
+                                    ),
+                                    Transactions(
+                                        "Loan disbursed",
+                                        true,
+                                        "TRGHJK123LL",
+                                    "5,000",
+                                        "12 May 2020, 12:23 PM",
+                                        Icons.Filled.OpenInNew
+                                    ),
+                                    Transactions(
+                                        "Loan disbursed",
+                                        true,
+                                        "TRGHJK123LL",
+                                    "5,000",
+                                        "12 May 2020, 12:23 PM",
+                                        Icons.Filled.OpenInNew
+                                    ),
+                                    Transactions(
+                                        "Loan disbursed",
+                                        true,
+                                        "TRGHJK123LL",
+                                    "5,000",
+                                        "12 May 2020, 12:23 PM",
+                                        Icons.Filled.OpenInNew
+                                    )
+                                )
+                                 transactionList.forEach { transaction ->
+                                    Row (
+                                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                    ) {
+                                        Row {
+                                            Column (
+                                                modifier = Modifier.padding(end = 12.dp),
+                                            ) {
+                                                IconButton(
+                                                    modifier = Modifier
+                                                        .clip(CircleShape)
+                                                        .background(if (transaction.credit) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer)
+                                                        .size(30.dp),
+                                                    onClick = {
+
+                                                    },
+                                                    content = {
+                                                        Icon(
+                                                            imageVector = transaction.icon,
+                                                            modifier = if (transaction.credit) Modifier.size(15.dp).rotate(180F) else Modifier.size(15.dp),
+                                                            contentDescription = null,
+                                                            tint = if (transaction.credit) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
+                                                        )
+                                                    }
+                                                )
+                                            }
+                                            Column {
+                                                Text(
+                                                    text = transaction.label,
+                                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                    fontSize = 14.sp,
+                                                    fontWeight = FontWeight.Medium
+                                                )
+
+                                                Text(
+                                                    text = transaction.code,
+                                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                    fontSize = 14.sp,
+                                                    fontWeight = FontWeight.Light
+                                                )
+                                            }
+                                        }
+
+                                        Column {
+                                            Text(
+                                                modifier = Modifier.align(Alignment.End),
+                                                text = transaction.amount,
+                                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                fontSize = 14.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                            Text(
+                                                text = transaction.date,
+                                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                fontSize = 14.sp,
+                                                fontWeight = FontWeight.Light
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 },
@@ -297,8 +461,10 @@ fun App() {
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun HomeCardListItem(name: String, onClick: (String) -> Unit) {
+    var showExpanded by remember { mutableStateOf(false) }
     ElevatedCard {
         Box (modifier = Modifier.background(Color(0xFFFFFFFF.toInt()))) {
             Column (
@@ -326,12 +492,13 @@ fun HomeCardListItem(name: String, onClick: (String) -> Unit) {
                             .background(Color(0xFFE5F1F5.toInt()))
                             .size(30.dp),
                         onClick = {
+                            showExpanded = !showExpanded
                             onClick(name)
                         },
                         content = {
                             Icon(
                                 imageVector = Icons.Filled.KeyboardArrowDown,
-                                modifier = Modifier.size(25.dp),
+                                modifier = if (showExpanded) Modifier.size(25.dp).rotate(180F) else Modifier.size(25.dp),
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary
                             )
@@ -364,10 +531,17 @@ fun HomeCardListItem(name: String, onClick: (String) -> Unit) {
                     .fillMaxWidth()
                 ) {
                     Text(
-                        text = "Kes 5,000 - 5 days ago",
+                        text = "KES 5,000 - 5 Days Ago",
                         color= MaterialTheme.colorScheme.onPrimaryContainer, // #002C56
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
+                    )
+                }
+
+                AnimatedVisibility(showExpanded) {
+                    Image(
+                        painterResource("compose-multiplatform.xml"),
+                        null
                     )
                 }
             }
@@ -380,19 +554,19 @@ fun BottomTabNavigator() {
     val screens = listOf("Home", "Loans", "Savings", "Sign")
     var selectedScreen by remember { mutableStateOf(screens.first()) }
     BottomAppBar (
-        contentPadding = PaddingValues(16.dp),
+        contentPadding = PaddingValues(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 25.dp),
         containerColor = Color.White
     ) {
         screens.forEach { screen ->
             NavigationBarItem (
-                icon = { Icon(imageVector = getIconForScreen(screen), contentDescription = null) },
+                icon = { Icon(imageVector = getIconForScreen(screen), contentDescription = null, modifier = Modifier.size(30.dp)) },
                 label = {
                     Text(
                         text = screen,
                         color= if (screen == selectedScreen) MaterialTheme.colorScheme.primary else Color(0xFF002C56.toInt()),
-                        fontSize = 12.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Light,
-                        modifier = Modifier.absoluteOffset(y = 30.dp)
+                        modifier = Modifier.absoluteOffset(y = 28.dp)
                     )
                 },
                 selected = screen == selectedScreen,
