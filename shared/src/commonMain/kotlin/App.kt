@@ -99,7 +99,7 @@ fun App() {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Text(
                                             text = "Presta Capital",
-                                            color = Color.Black,
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer,
                                             fontSize = 20.sp
                                         )
                                     }
@@ -107,7 +107,7 @@ fun App() {
                                     IconButton(
                                         modifier = Modifier
                                             .clip(CircleShape)
-                                            .background(Color(0xFFE5F1F5.toInt())),
+                                            .background(Color.Transparent),
                                         onClick = {
 
                                         },
@@ -466,7 +466,7 @@ fun App() {
 fun HomeCardListItem(name: String, onClick: (String) -> Unit) {
     var showExpanded by remember { mutableStateOf(false) }
     ElevatedCard {
-        Box (modifier = Modifier.background(Color(0xFFFFFFFF.toInt()))) {
+        Box (modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer)) {
             Column (
                 modifier = Modifier.padding(
                     top = 23.dp,
@@ -489,7 +489,7 @@ fun HomeCardListItem(name: String, onClick: (String) -> Unit) {
                     IconButton(
                         modifier = Modifier
                             .clip(CircleShape)
-                            .background(Color(0xFFE5F1F5.toInt()))
+                            .background(Color.Transparent)
                             .size(30.dp),
                         onClick = {
                             showExpanded = !showExpanded
@@ -555,15 +555,15 @@ fun BottomTabNavigator() {
     var selectedScreen by remember { mutableStateOf(screens.first()) }
     BottomAppBar (
         contentPadding = PaddingValues(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 25.dp),
-        containerColor = Color.White
+        containerColor = MaterialTheme.colorScheme.primaryContainer
     ) {
         screens.forEach { screen ->
             NavigationBarItem (
-                icon = { Icon(imageVector = getIconForScreen(screen), contentDescription = null, modifier = Modifier.size(30.dp)) },
+                icon = { Icon(imageVector = getIconForScreen(screen), contentDescription = null, modifier = Modifier.size(27.dp)) },
                 label = {
                     Text(
                         text = screen,
-                        color= if (screen == selectedScreen) MaterialTheme.colorScheme.primary else Color(0xFF002C56.toInt()),
+                        color= if (screen == selectedScreen) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Light,
                         modifier = Modifier.absoluteOffset(y = 28.dp)
@@ -573,7 +573,7 @@ fun BottomTabNavigator() {
                 onClick = {
                     selectedScreen = screen
                 },
-                colors = NavigationBarItemDefaults.colors(indicatorColor = Color.White, selectedIconColor = MaterialTheme.colorScheme.primary)
+                colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.primary)
             )
         }
     }
