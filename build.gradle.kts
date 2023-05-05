@@ -1,4 +1,12 @@
+buildscript {
+    dependencies {
+        classpath(deps.jetbrains.kotlinx.binaryCompatibilityValidator)
+        classpath(deps.parcelizeDarwin.gradlePlug)
+    }
+}
+
 plugins {
+
     // this is necessary to avoid the plugins to be loaded multiple times
     // in each subproject's classloader
     kotlin("multiplatform").apply(false)

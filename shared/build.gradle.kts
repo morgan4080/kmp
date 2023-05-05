@@ -3,6 +3,8 @@ plugins {
     kotlin("native.cocoapods")
     id("com.android.library")
     id("org.jetbrains.compose")
+    id("kotlin-parcelize")
+    id("com.arkivanov.parcelize.darwin")
 }
 
 kotlin {
@@ -21,6 +23,16 @@ kotlin {
         framework {
             baseName = "shared"
             isStatic = true
+
+            export(deps.decompose)
+
+            export(deps.essenty.lifecycle)
+
+            // Optional, only if you need state preservation on Darwin (Apple) targets
+            export(deps.essenty.stateKeeper)
+
+            // Optional, only if you need state preservation on Darwin (Apple) targets
+            export(deps.parcelizeDarwin.runtime)
         }
         extraSpecAttributes["resources"] = "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
     }
@@ -30,11 +42,17 @@ kotlin {
             dependencies {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
-//                implementation(compose.material)
                 implementation(compose.material3)
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
                 implementation(compose.materialIconsExtended)
+
+                implementation(deps.decompose)
+                implementation(deps.jetbrains.compose.composeGradlePlug)
+                implementation(deps.decompose.jetbrains)
+                api(deps.essenty.lifecycle)
+                api(deps.essenty.stateKeeper)
+                implementation(deps.reaktive.reaktive)
             }
         }
         val androidMain by getting {
@@ -42,6 +60,7 @@ kotlin {
                 api("androidx.activity:activity-compose:1.7.1")
                 api("androidx.appcompat:appcompat:1.6.1")
                 api("androidx.core:core-ktx:1.10.0")
+                implementation(deps.android.play.core)
             }
         }
         val iosX64Main by getting
@@ -52,6 +71,11 @@ kotlin {
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
+
+            dependencies {
+                api(deps.decompose)
+                implementation(deps.jetbrains.compose.composeGradlePlug)
+            }
         }
     }
 }

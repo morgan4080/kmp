@@ -1,4 +1,4 @@
-rootProject.name = "MyApplication"
+rootProject.name = "PrestaApp"
 
 include(":androidApp")
 include(":shared")
@@ -26,10 +26,17 @@ pluginManagement {
     }
 }
 
+@Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    }
+
+    versionCatalogs {
+        create("deps") {
+            from(files("deps.versions.toml"))
+        }
     }
 }
