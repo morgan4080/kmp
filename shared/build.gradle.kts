@@ -48,8 +48,8 @@ kotlin {
                 implementation(compose.materialIconsExtended)
 
                 implementation(deps.decompose)
-                implementation(deps.jetbrains.compose.composeGradlePlug)
                 implementation(deps.decompose.jetbrains)
+                implementation(deps.jetbrains.compose.composeGradlePlug)
                 api(deps.essenty.lifecycle)
                 api(deps.essenty.stateKeeper)
                 implementation(deps.reaktive.reaktive)
@@ -74,7 +74,7 @@ kotlin {
 
             dependencies {
                 api(deps.decompose)
-                implementation(deps.jetbrains.compose.composeGradlePlug)
+                api(deps.essenty.lifecycle)
             }
         }
     }
