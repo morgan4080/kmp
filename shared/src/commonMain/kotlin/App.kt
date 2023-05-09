@@ -62,6 +62,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import composables.Paginator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import theme.AppTheme
@@ -161,51 +162,7 @@ fun App() {
                         )
                     }
                     item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 15.dp)
-                        ) {
-                            LazyRow(
-                                modifier = Modifier
-                                    .align(Alignment.Center)
-                            ) {
-                                items(3) {
-                                    when (it) {
-                                        0 -> {
-                                            Box(
-                                                modifier = Modifier
-                                                    .padding(5.dp)
-                                                    .width(20.dp)
-                                                    .height(10.dp)
-                                                    .clip(RoundedCornerShape(10.dp))
-                                                    .background(Color(0xFF489AAB.toInt()))
-                                            )
-                                        }
-
-                                        1 -> {
-                                            Box(
-                                                modifier = Modifier
-                                                    .padding(5.dp)
-                                                    .size(10.dp)
-                                                    .clip(CircleShape)
-                                                    .background(Color(0xFFE5E5E5.toInt()))
-                                            )
-                                        }
-
-                                        2 -> {
-                                            Box(
-                                                modifier = Modifier
-                                                    .padding(5.dp)
-                                                    .size(10.dp)
-                                                    .clip(CircleShape)
-                                                    .background(Color(0xFFE5E5E5.toInt()))
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        Paginator(3, 0)
                     }
                     item {
                         Box(

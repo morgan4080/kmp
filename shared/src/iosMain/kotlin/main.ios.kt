@@ -1,3 +1,4 @@
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.window.ComposeUIViewController
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
@@ -12,5 +13,7 @@ fun MainViewController(): UIViewController = ComposeUIViewController {
     val root = DefaultRootComponent(
         componentContext = rootComponentContext
     )
-    AppRootUi(root)
+    MaterialTheme {
+        AppRootUi(root)
+    }
 }
