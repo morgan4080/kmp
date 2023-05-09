@@ -28,3 +28,11 @@ val Gray400 = Color(0xFF595C61)
 
 val actionButtonColor = Color(0xFF489AAB)
 
+val backArrowColor = Color(0xFF489AAB)
+
+val labelTextColor = Color(0xFF002C56)
+
+val bankContainerColor = Color(0xFFE7EAEB)
+
+val containerColor = Color(0xFFF7F7F7)
+
