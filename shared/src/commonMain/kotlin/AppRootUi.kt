@@ -4,6 +4,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
+import components.profile.ProfileScreen
 import components.root.RootComponent
 import components.welcome.WelcomeScreen
 
@@ -16,6 +17,7 @@ fun AppRootUi(component: RootComponent) {
         when (val child = it.instance) {
             is RootComponent.Child.WelcomeChild -> WelcomeScreen(child.component)
             is RootComponent.Child.CountriesChild -> CountriesScreen(child.component)
+            is RootComponent.Child.ProfileChild -> ProfileScreen(child.component)
         }
     }
 }
