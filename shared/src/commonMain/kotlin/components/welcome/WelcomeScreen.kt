@@ -1,12 +1,9 @@
 package components.welcome
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -21,13 +18,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import composables.ActionButton
 import composables.Paginator
+import helpers.LocalSafeArea
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -36,7 +33,7 @@ fun WelcomeScreen(component: WelcomeComponent) {
     val state = rememberLazyListState()
 
     LazyColumn (
-        modifier = Modifier.fillMaxHeight(1f),
+        modifier = Modifier.fillMaxHeight(1f).padding(LocalSafeArea.current),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         item {

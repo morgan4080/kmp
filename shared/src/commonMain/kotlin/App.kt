@@ -14,10 +14,8 @@ import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -31,11 +29,9 @@ import androidx.compose.material.icons.outlined.CreditCard
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Logout
-import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Savings
 import androidx.compose.material.icons.outlined.ScatterPlot
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.SettingsApplications
 import androidx.compose.material.icons.outlined.Wallet
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ElevatedCard
@@ -497,7 +493,7 @@ fun HomeCardListItem(name: String, onClick: (String) -> Unit) {
 
                 AnimatedVisibility(showExpanded) {
                     Image(
-                        painterResource("compose-multiplatform.xml"),
+                        painterResource("values/compose-multiplatform.xml"),
                         null
                     )
                 }
@@ -546,5 +542,3 @@ fun getIconForScreen(screen: String): ImageVector {
         else -> Icons.Outlined.Home
     }
 }
-
-expect fun getPlatformName(): String

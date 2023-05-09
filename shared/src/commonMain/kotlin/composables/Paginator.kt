@@ -29,28 +29,14 @@ fun Paginator(count: Int, currentIndex: Int) {
                 .align(Alignment.Center)
         ) {
             items(count) {
-                when (it) {
-                    currentIndex -> {
-                        Box(
-                            modifier = Modifier
-                                .padding(5.dp)
-                                .width(20.dp)
-                                .height(10.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(Color(0xFF489AAB.toInt()))
-                        )
-                    }
-
-                    else -> {
-                        Box(
-                            modifier = Modifier
-                                .padding(5.dp)
-                                .size(10.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFFE5E5E5.toInt()))
-                        )
-                    }
-                }
+                Box(
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .width(if (it == currentIndex) 20.dp else 10.dp)
+                    .height(10.dp)
+                    .clip(if (it == currentIndex) RoundedCornerShape(10.dp) else CircleShape)
+                    .background(Color(0xFF489AAB.toInt()))
+                )
             }
         }
     }

@@ -3,8 +3,8 @@ plugins {
     kotlin("native.cocoapods")
     id("com.android.library")
     id("org.jetbrains.compose")
-    id("kotlin-parcelize")
     id("com.arkivanov.parcelize.darwin")
+    id("kotlin-parcelize")
 }
 
 kotlin {
@@ -40,27 +40,79 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material3)
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-                implementation(compose.components.resources)
-                implementation(compose.materialIconsExtended)
+
+                with(compose) {
+                    implementation(runtime)
+                    implementation(foundation)
+                    implementation(material)
+                    implementation(material3)
+                    implementation(components.resources)
+                    implementation(materialIconsExtended)
+                }
 
                 implementation(deps.decompose)
                 implementation(deps.decompose.jetbrains)
                 implementation(deps.jetbrains.compose.composeGradlePlug)
                 api(deps.essenty.lifecycle)
                 api(deps.essenty.stateKeeper)
-                implementation(deps.reaktive.reaktive)
+
+                // Ktor
+                with(deps.ktor) {
+                    api(clientCore)
+                    api(serializationKotlinxJson)
+                    api(clientContentNegotiation)
+                    api(clientLogging)
+                }
+
+                // Logback for ktor logging
+                implementation(deps.logbackClassic)
+
+                // SqlDelight
+                with(deps.sqlDelight) {
+                    api(coroutinesExtensions)
+                    api(primitiveAdapters)
+                }
+
+                // Koin
+                with(deps.koin) {
+                    api(core)
+                    api(test)
+                }
+
+                // KotlinX Serialization Json
+                implementation(deps.jetbrains.kotlinx.kotlinxSerializationJson)
+
+                // Coroutines
+                implementation(deps.jetbrains.kotlinx.kotlinxCoroutinesCore)
+
+                // MVIKotlin
+                api(deps.mvikotlin)
+                api(deps.mviKotlin.mvikotlinMain)
+                api(deps.mviKotlin.mvikotlinExtensionsCoroutines)
+
+                // moko resources
+                api(deps.moko.resources)
+                api(deps.moko.resources.compose)
+                implementation(deps.moko.resources.test)
+
             }
         }
+
         val androidMain by getting {
             dependencies {
                 api("androidx.activity:activity-compose:1.7.1")
                 api("androidx.appcompat:appcompat:1.6.1")
                 api("androidx.core:core-ktx:1.10.0")
                 implementation(deps.android.play.core)
+                // Ktor
+                implementation(deps.ktor.clientAndroid)
+
+                // SqlDelight
+                implementation(deps.sqlDelight.androidDriver)
+
+                // Koin
+                implementation(deps.koin.android)
             }
         }
         val iosX64Main by getting
@@ -73,6 +125,12 @@ kotlin {
             iosSimulatorArm64Main.dependsOn(this)
 
             dependencies {
+                // Ktor
+                implementation(deps.ktor.clientDarwin)
+
+                // SqlDelight
+                implementation(deps.sqlDelight.nativeDriver)
+
                 api(deps.decompose)
                 api(deps.essenty.lifecycle)
             }
