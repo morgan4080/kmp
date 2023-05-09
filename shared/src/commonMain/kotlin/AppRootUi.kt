@@ -15,6 +15,7 @@ fun AppRootUi(component: RootComponent) {
     ) {
         when (val child = it.instance) {
             is RootComponent.Child.WelcomeChild -> WelcomeScreen(child.component)
+            is RootComponent.Child.CountriesChild -> CountriesScreen(child.component)
         }
     }
 }

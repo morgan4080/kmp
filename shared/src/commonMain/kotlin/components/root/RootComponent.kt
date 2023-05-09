@@ -2,6 +2,7 @@ package components.root
 
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
+import components.countries.CountriesComponent
 import components.welcome.WelcomeComponent
 
 interface RootComponent {
@@ -11,5 +12,6 @@ interface RootComponent {
     // Defines all possible child components
     sealed class Child {
         class WelcomeChild(val component: WelcomeComponent) : Child()
+        class CountriesChild(val component: CountriesComponent) : Child()
     }
 }

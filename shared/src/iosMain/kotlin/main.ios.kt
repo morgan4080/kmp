@@ -13,8 +13,6 @@ import components.root.DefaultRootComponent
 import helpers.LocalSafeArea
 import platform.UIKit.UIViewController
 
-actual fun getPlatformName(): String = "iOS"
-
 fun MainViewController(
     lifecycle: LifecycleRegistry,
     topSafeArea: Float,

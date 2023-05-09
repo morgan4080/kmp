@@ -2,7 +2,7 @@ buildscript {
     dependencies {
         classpath(deps.jetbrains.kotlinx.binaryCompatibilityValidator)
         classpath(deps.parcelizeDarwin.gradlePlug)
-        classpath(deps.moko.resources.generator)
+//        classpath(deps.moko.resources.generator)
     }
 }
 

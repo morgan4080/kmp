@@ -92,9 +92,9 @@ kotlin {
                 api(deps.mviKotlin.mvikotlinExtensionsCoroutines)
 
                 // moko resources
-                api(deps.moko.resources)
-                api(deps.moko.resources.compose)
-                implementation(deps.moko.resources.test)
+//                api(deps.moko.resources)
+//                api(deps.moko.resources.compose)
+//                implementation(deps.moko.resources.test)
 
             }
         }

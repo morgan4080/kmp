@@ -1,3 +1,5 @@
+package components.profile
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -71,7 +73,7 @@ data class Transactions(val label: String, val credit: Boolean, val code: String
     ExperimentalLayoutApi::class, ExperimentalFoundationApi::class
 )
 @Composable
-fun App() {
+fun ProfileScreen() {
     AppTheme {
         Scaffold(
             content = { innerPadding ->
