@@ -1,4 +1,4 @@
-package components.EmergencyLoans
+package components.emergencyLoanConfirmation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -13,16 +13,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import composables.ActionButton
-import composables.loanLimitContainer
+import composables.disbursementDetailsContainer
 import composables.navigateBackTopBar
-import composables.textInputContainer
 import theme.containerColor
 
 @Composable
-fun emergencyLoans(){
+fun emergencyLoansConfirmation(){
     //emergency  loans screen
     //Gets The input value  as the user input
-    val inputValue=""
+
 
     Surface(
         modifier = Modifier
@@ -36,7 +35,7 @@ fun emergencyLoans(){
             Row(modifier = Modifier.fillMaxWidth()){
 
 
-                navigateBackTopBar("Emergency Loan")
+                navigateBackTopBar("Emergency Loan Confirm")
 
             }
 
@@ -46,37 +45,23 @@ fun emergencyLoans(){
 
 
                 Text(modifier = Modifier.padding(start = 16.dp),
-                    text = "Enter Loan  Amount")
-
-                //container Card
-
-                loanLimitContainer()
-
-                //Enter the desired loan amount
-
-                Row(modifier = Modifier.padding(top = 16.dp)){
+                    text = "Confirm Loan  Details")
 
 
-                    textInputContainer("Enter the desired amount","")
 
-                }
+                //Disbursement Details
 
-
-                Row(modifier = Modifier.padding(top = 16.dp)){
-
-                    textInputContainer("Desired Period(Months)",inputValue)
-
-                }
+                disbursementDetailsContainer()
 
                 //action Button
                 Row(modifier = Modifier.padding(top = 30.dp)){
                     ActionButton("Confirm", onClickContainer = {
 
 
+
                     })
 
                 }
-
             }
 
         }

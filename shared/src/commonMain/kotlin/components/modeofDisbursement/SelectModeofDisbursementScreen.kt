@@ -1,8 +1,9 @@
-package components.EmrgencyLoanConfirmation
+package components.modeofDisbursement
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,16 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import composables.ActionButton
-import composables.disbursementDetailsContainer
 import composables.navigateBackTopBar
+import composables.productSelectionCard2
 import theme.containerColor
 
 @Composable
-fun emergencyLoansConfirmation(){
-    //emergency  loans screen
-    //Gets The input value  as the user input
-
+fun selectModeOfDisbursement(){
 
     Surface(
         modifier = Modifier
@@ -35,7 +32,7 @@ fun emergencyLoansConfirmation(){
             Row(modifier = Modifier.fillMaxWidth()){
 
 
-                navigateBackTopBar("Emergency Loan Confirm")
+                navigateBackTopBar("Disbursement Method")
 
             }
 
@@ -45,26 +42,24 @@ fun emergencyLoansConfirmation(){
 
 
                 Text(modifier = Modifier.padding(start = 16.dp),
-                    text = "Confirm Loan  Details")
+                    text = "Select Disbursement Method")
 
+                Spacer(modifier = Modifier.padding(top = 25.dp))
 
+                productSelectionCard2("Mpesa", onClickContainer = {
+                    //Business  Logic
 
-                //Disbursement Details
+                })
 
-                disbursementDetailsContainer()
+                productSelectionCard2("Bank", onClickContainer = {
+                    //Business  Logic
 
-                //action Button
-                Row(modifier = Modifier.padding(top = 30.dp)){
-                    ActionButton("Confirm", onClickContainer = {
+                })
 
-
-
-                    })
-
-                }
             }
 
         }
+
 
     }
 

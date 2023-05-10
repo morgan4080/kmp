@@ -1,4 +1,4 @@
-package components.BanKDisbursement
+package components.banKDisbursement
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

@@ -17,9 +17,6 @@ import theme.backArrowColor
 import theme.containerColor
 import theme.labelTextColor
 
-
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 
 @Composable
@@ -86,10 +83,6 @@ fun  productSelectionCard(label: String,description: String?=null, onClickContai
 
 
 }
-
-
-
-
 
 
 

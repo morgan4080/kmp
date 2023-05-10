@@ -1,4 +1,4 @@
-package components.ShortTermLoans
+package components.shortTermLoans
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
