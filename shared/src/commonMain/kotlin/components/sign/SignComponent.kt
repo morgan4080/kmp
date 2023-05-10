@@ -1,11 +1,11 @@
-package components.profile
+package components.sign
 
 import com.arkivanov.decompose.value.Value
 
-interface ProfileComponent {
+interface SignComponent {
     val model: Value<Model>
 
-    fun onProfileSelected()
+    fun onSelected(item: String)
 
     data class Model(
         val items: List<String>,

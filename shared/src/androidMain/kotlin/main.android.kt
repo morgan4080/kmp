@@ -1,8 +1,7 @@
-import android.app.Application
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import components.root.RootComponent
+import theme.AppTheme
 
-@Composable fun MainView(component: RootComponent) = MaterialTheme {
+@Composable fun MainView(component: RootComponent) = AppTheme {
     AppRootUi(component)
 }

@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import theme.backArrowColor
-import theme.containerColor
 import theme.labelTextColor
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,7 +27,7 @@ fun  productSelectionCard(label: String,description: String?=null, onClickContai
 
         ,
         modifier = Modifier.fillMaxWidth()
-            .background(color = containerColor)
+            .background(color = MaterialTheme.colorScheme.background)
             .padding(top = 10.dp)
     ) {
         Box(modifier = Modifier.background(color = Color.White)) {
@@ -83,7 +82,6 @@ fun  productSelectionCard(label: String,description: String?=null, onClickContai
 
 
 }
-
 
 
 

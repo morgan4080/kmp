@@ -6,7 +6,7 @@ import com.arkivanov.decompose.value.Value
 
 class DefaultProfileComponent(
     componentContext: ComponentContext,
-    private val onLoanClicked: () -> Unit
+    private val onProfileClicked: () -> Unit
 ) : ProfileComponent, ComponentContext by componentContext {
     override val model: Value<ProfileComponent.Model> =
         MutableValue(
@@ -15,7 +15,7 @@ class DefaultProfileComponent(
             )
         )
 
-    override fun onLoanSelected() {
-        onLoanClicked()
+    override fun onProfileSelected() {
+        onProfileClicked()
     }
 }

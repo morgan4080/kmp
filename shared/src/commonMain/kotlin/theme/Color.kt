@@ -3,6 +3,7 @@ import androidx.compose.ui.graphics.Color
 
 val Black = Color(0xFF090f0b)
 
+val Green200 = Color(0xFFbbf7d0)
 val Green300 = Color(0xFF2EB688)
 val Green400 = Color(0xFF145526)
 val Green500 = Color(0xFF046D4A)
@@ -20,15 +21,19 @@ val Yellow500 = Color(0xFFCB5C0D)
 
 val Blue400 = Color(0xFF4572E8)
 
-val LightGray400 = Color(0xFFb8b6b3)
+val LightGray400 = Color(0xFF95989A)
 
 val DarkGray400 = Color(0xFF3e4047)
 
 val Gray400 = Color(0xFF595C61)
 
-val actionButtonColor = Color(0xFF489AAB)
+val primaryColor = Color(0xFF489AAB)
 
-val backArrowColor = Color(0xFF489AAB)
+val textColorBlur = Color(0xFF95989A)
+
+val actionButtonColor = primaryColor
+
+val backArrowColor = primaryColor
 
 val labelTextColor = Color(0xFF002C56)
 
