@@ -48,7 +48,7 @@ fun  successfulTransaction(){
 
            Row(modifier = Modifier.padding(start = 25.dp, end = 25.dp)){
 
-               actionButton("Done", onClickContainer = {
+               ActionButton("Done", onClickContainer = {
 
                })
            }

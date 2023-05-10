@@ -53,7 +53,7 @@ kotlin {
 
                 implementation(deps.decompose)
                 implementation(deps.decompose.jetbrains)
-                implementation(deps.jetbrains.compose.composeGradlePlug)
+               // implementation(deps.jetbrains.compose.composeGradlePlug)
                 api(deps.essenty.lifecycle)
                 api(deps.essenty.stateKeeper)
 
