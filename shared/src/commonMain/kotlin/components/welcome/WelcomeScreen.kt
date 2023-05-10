@@ -19,6 +19,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
@@ -48,7 +50,7 @@ fun WelcomeScreen(component: WelcomeComponent) {
                         modifier = Modifier
                             .fillParentMaxWidth()
                             .fillParentMaxHeight()
-                            .padding(horizontal = 16.dp)
+                            .padding(horizontal = 16.dp, vertical = 30.dp)
                     ) {
                         Row {
                             Text(
@@ -61,12 +63,18 @@ fun WelcomeScreen(component: WelcomeComponent) {
                             Text(
                                 text = "Loan applications made easy with Presta Sign.",
                                 fontSize = 40.sp,
-                                fontWeight = FontWeight.Black
+                                fontWeight = FontWeight.Black,
+                                maxLines = 3,
+                                lineHeight = 40.sp
                             )
                         }
 
                         Row {
                             Image(imageVector = Icons.Outlined.Settings, contentDescription = item)
+                        }
+
+                        Row (modifier = Modifier.padding(top = 20.dp, bottom = 20.dp)) {
+                            Paginator(3, 0)
                         }
                     }
                 }
@@ -74,10 +82,7 @@ fun WelcomeScreen(component: WelcomeComponent) {
         }
 
         item {
-            Row (modifier = Modifier.padding(top = 20.dp, bottom = 20.dp)) {
-                Paginator(3, 0)
-            }
-            Row (modifier = Modifier.padding(16.dp)) {
+            Row (modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 30.dp)) {
                 ActionButton("Get Started", onClickContainer = {
                     component.onGetStarted()
                 })

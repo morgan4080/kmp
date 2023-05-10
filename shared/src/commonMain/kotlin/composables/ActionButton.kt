@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import theme.actionButtonColor
 
@@ -22,7 +23,8 @@ fun  ActionButton(label:String,onClickContainer: () -> Unit){
         Text(text = label,
             modifier = Modifier.align(Alignment.CenterHorizontally)
                 .padding(top = 11.dp, bottom = 11.dp),
-            color = Color.White
+            color = Color.White,
+            fontWeight = FontWeight.SemiBold
         )
     }
 }
