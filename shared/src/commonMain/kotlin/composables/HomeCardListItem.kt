@@ -1,6 +1,7 @@
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,7 +33,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -40,6 +40,7 @@ fun HomeCardListItem(name: String, onClick: (String) -> Unit) {
     var showExpanded by remember { mutableStateOf(false) }
     ElevatedCard(
         modifier = Modifier
+            .border(BorderStroke(1.dp,Color.White), shape = RoundedCornerShape(size = 12.dp))
             .clip(RoundedCornerShape(size = 12.dp))
             .absolutePadding(left = 2.dp, right = 2.dp, top = 5.dp, bottom = 5.dp)
     ) {
@@ -66,7 +67,7 @@ fun HomeCardListItem(name: String, onClick: (String) -> Unit) {
                     IconButton(
                         modifier = Modifier
                             .clip(CircleShape)
-                            .background(Color.Transparent)
+                            .background(MaterialTheme.colorScheme.secondaryContainer)
                             .size(30.dp),
                         onClick = {
                             showExpanded = !showExpanded
@@ -118,10 +119,7 @@ fun HomeCardListItem(name: String, onClick: (String) -> Unit) {
                 }
 
                 AnimatedVisibility(showExpanded) {
-                    Image(
-                        painterResource("values/compose-multiplatform.xml"),
-                        null
-                    )
+
                 }
             }
         }

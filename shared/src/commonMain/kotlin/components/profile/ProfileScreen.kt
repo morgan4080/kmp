@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material.icons.outlined.AttachMoney
@@ -124,7 +125,7 @@ fun ProfileScreen(component: ProfileComponent, innerPadding: PaddingValues) {
             val state = rememberLazyListState()
             LazyRow(modifier = Modifier
                 .consumeWindowInsets(innerPadding)
-                .padding(vertical = 10.dp),
+                .padding(vertical = 20.dp),
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
                 state = state,
                 flingBehavior = rememberSnapFlingBehavior(lazyListState = state),
@@ -189,7 +190,7 @@ fun ProfileScreen(component: ProfileComponent, innerPadding: PaddingValues) {
 
                                 IconButton(
                                     modifier = Modifier
-                                        .clip(shape = CircleShape)
+                                        .clip(shape = RoundedCornerShape(10.dp))
                                         .background(MaterialTheme.colorScheme.primary)
                                         .size(57.dp),
                                     onClick = {
