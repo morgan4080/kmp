@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.compose")
     id("com.arkivanov.parcelize.darwin")
     id("kotlin-parcelize")
+    id("dev.icerock.mobile.multiplatform-resources")
 }
 
 kotlin {
@@ -33,6 +34,10 @@ kotlin {
 
             // Optional, only if you need state preservation on Darwin (Apple) targets
             export(deps.parcelizeDarwin.runtime)
+
+            export(deps.moko.resources)
+
+            export(deps.moko.resources.graphics)
         }
         extraSpecAttributes["resources"] = "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
     }
@@ -53,7 +58,6 @@ kotlin {
 
                 implementation(deps.decompose)
                 implementation(deps.decompose.jetbrains)
-               // implementation(deps.jetbrains.compose.composeGradlePlug)
                 api(deps.essenty.lifecycle)
                 api(deps.essenty.stateKeeper)
 
@@ -92,19 +96,23 @@ kotlin {
                 api(deps.mviKotlin.mvikotlinExtensionsCoroutines)
 
                 // moko resources
-//                api(deps.moko.resources)
-//                api(deps.moko.resources.compose)
-//                implementation(deps.moko.resources.test)
+                api(deps.moko.resources)
+                api(deps.moko.resources.compose)
+                implementation(deps.moko.resources.test)
 
             }
         }
 
         val androidMain by getting {
             dependencies {
-                api("androidx.activity:activity-compose:1.7.1")
-                api("androidx.appcompat:appcompat:1.6.1")
-                api("androidx.core:core-ktx:1.10.0")
+                with(deps.androidx){
+                    api(activity.activityCompose)
+                    api(appcompat.appcompat)
+                    api(core.coreKtx)
+                }
+
                 implementation(deps.android.play.core)
+
                 // Ktor
                 implementation(deps.ktor.clientAndroid)
 
@@ -132,6 +140,7 @@ kotlin {
                 implementation(deps.sqlDelight.nativeDriver)
 
                 api(deps.decompose)
+
                 api(deps.essenty.lifecycle)
             }
         }
