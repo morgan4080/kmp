@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -18,15 +20,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import composables.ActionButton
 import composables.Paginator
+import dev.icerock.moko.resources.compose.painterResource
 import helpers.LocalSafeArea
+import prestaCustomer.shared.MR
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -55,33 +61,35 @@ fun WelcomeScreen(component: WelcomeComponent) {
                         Row {
                             Text(
                                 text = "Welcome to Presta Customer",
-                                fontSize = 14.sp,
+                                fontSize = 3.5.em,
                                 fontWeight = FontWeight.Light
                             )
                         }
                         Row {
                             Text(
                                 text = "Loan applications made easy with Presta Sign.",
-                                fontSize = 40.sp,
+                                fontSize = 10.em,
                                 fontWeight = FontWeight.Black,
-                                maxLines = 3,
-                                lineHeight = 40.sp
+                                lineHeight = 1.em
                             )
                         }
 
                         Row {
-                            Image(imageVector = Icons.Outlined.Settings, contentDescription = item)
+                            val painter: Painter = painterResource(MR.images.user_education_1)
+
+                            Image(painter = painter, contentDescription = null, modifier = Modifier.fillMaxWidth().fillMaxHeight(0.7f))
                         }
 
-                        Row (modifier = Modifier.padding(top = 20.dp, bottom = 20.dp)) {
-                            Paginator(3, 0)
-                        }
                     }
                 }
             }
         }
 
         item {
+            Row (modifier = Modifier.padding(top = 20.dp, bottom = 20.dp)) {
+                Paginator(3, 0)
+            }
+
             Row (modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 30.dp)) {
                 ActionButton("Get Started", onClickContainer = {
                     component.onGetStarted()
