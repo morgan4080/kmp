@@ -32,7 +32,7 @@ class DefaultRootComponent(
 
     private val navigation = StackNavigation<Config>()
 
-    private val authenticated = true
+    private val authenticated = false
 
     private val _stack =
         childStack(

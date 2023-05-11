@@ -1,4 +1,4 @@
-rootProject.name = "PrestaApp"
+rootProject.name = "prestaCustomer"
 
 include(":androidApp")
 include(":shared")

@@ -1,22 +1,6 @@
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.absoluteOffset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.Direction
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.StackAnimation
@@ -25,13 +9,8 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.isEn
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
-import components.applyLoan.ApplyLoanScreen
-import components.profile.ProfileScreen
 import components.root.RootComponent
-import components.savings.SavingsScreen
-import components.sign.SignScreen
 import components.welcome.WelcomeScreen
-import helpers.LocalSafeArea
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,7 +19,21 @@ fun AppRootUi(component: RootComponent) {
     val childStack by component.stack.subscribeAsState()
     val activeComponent = childStack.active.instance
 
-    Scaffold (
+    Children(
+        stack = component.stack,
+        animation = tabAnimation(),
+    ) {
+        when (val child = it.instance) {
+            is RootComponent.Child.WelcomeChild -> WelcomeScreen(child.component)
+            is RootComponent.Child.CountriesChild -> CountriesScreen(child.component)
+
+            else -> {
+
+            }
+        }
+    }
+
+    /*Scaffold (
         modifier = Modifier.padding(LocalSafeArea.current),
         bottomBar = {
             val screens = listOf("Home", "Loans", "Savings", "Sign")
@@ -115,18 +108,19 @@ fun AppRootUi(component: RootComponent) {
             Children(
                 stack = component.stack,
                 animation = tabAnimation(),
-            ) {
-                when (val child = it.instance) {
-                    is RootComponent.Child.WelcomeChild -> WelcomeScreen(child.component)
-                    is RootComponent.Child.CountriesChild -> CountriesScreen(child.component)
-                    is RootComponent.Child.ProfileChild -> ProfileScreen(child.component, innerPadding)
-                    is RootComponent.Child.ApplyLoanChild -> ApplyLoanScreen(child.component, innerPadding)
-                    is RootComponent.Child.SavingsChild -> SavingsScreen(child.component)
-                    is RootComponent.Child.SignChild -> SignScreen(child.component)
+            ) { x ->
+                when (val childX = x.instance) {
+                    is RootComponent.Child.ProfileChild -> ProfileScreen(childX.component, innerPadding)
+                    is RootComponent.Child.ApplyLoanChild -> ApplyLoanScreen(childX.component, innerPadding)
+                    is RootComponent.Child.SavingsChild -> SavingsScreen(childX.component)
+                    is RootComponent.Child.SignChild -> SignScreen(childX.component)
+                    else -> {
+
+                    }
                 }
             }
         }
-    )
+    )*/
 }
 
 @Composable
