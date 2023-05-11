@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import theme.actionButtonColor
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -24,7 +25,8 @@ fun  ActionButton(label:String,onClickContainer: () -> Unit){
             modifier = Modifier.align(Alignment.CenterHorizontally)
                 .padding(top = 11.dp, bottom = 11.dp),
             color = Color.White,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 16.sp
         )
     }
 }

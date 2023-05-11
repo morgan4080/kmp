@@ -3,6 +3,7 @@ package components.countries
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import prestaCustomer.shared.MR
 
 class DefaultCountriesComponent(
     componentContext: ComponentContext,
@@ -11,8 +12,7 @@ class DefaultCountriesComponent(
     override val model: Value<CountriesComponent.Model> =
         MutableValue(
             CountriesComponent.Model(
-            // create welcome screens here
-            items = List(120) { "Country $it" }
+                countriesJSON = MR.files.Countries
             )
         )
 

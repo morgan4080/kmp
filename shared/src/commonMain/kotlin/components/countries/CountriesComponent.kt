@@ -1,6 +1,7 @@
 package components.countries
 
 import com.arkivanov.decompose.value.Value
+import dev.icerock.moko.resources.FileResource
 
 interface CountriesComponent {
     val model: Value<Model>
@@ -8,6 +9,6 @@ interface CountriesComponent {
     fun onSelected(item: String)
 
     data class Model(
-        val items: List<String>,
+        val countriesJSON: FileResource,
     )
 }

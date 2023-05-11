@@ -5,10 +5,14 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.Direction
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.StackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.StackAnimator
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.isEnter
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
+import components.countries.CountriesScreen
 import components.root.RootComponent
 import components.welcome.WelcomeScreen
 
@@ -21,7 +25,7 @@ fun AppRootUi(component: RootComponent) {
 
     Children(
         stack = component.stack,
-        animation = tabAnimation(),
+        animation = stackAnimation(fade() + scale()),// tabAnimation()
     ) {
         when (val child = it.instance) {
             is RootComponent.Child.WelcomeChild -> WelcomeScreen(child.component)
@@ -129,10 +133,10 @@ private fun tabAnimation(): StackAnimation<Any, RootComponent.Child> =
         val index = child.instance.index
         val otherIndex = otherChild.instance.index
         val anim = slide()
-        if ((index > otherIndex) == direction.isEnter) anim else anim.flipSide()
+        if ((index > otherIndex) == direction.isEnter) anim else anim
     }
 
-private fun StackAnimator.flipSide(): StackAnimator =
+/*private fun StackAnimator.flipSide(): StackAnimator =
     StackAnimator { direction, isInitial, onFinished, content ->
         invoke(
             direction = direction.flipSide(),
@@ -140,7 +144,7 @@ private fun StackAnimator.flipSide(): StackAnimator =
             onFinished = onFinished,
             content = content,
         )
-    }
+    }*/
 
 private val RootComponent.Child.index: Int
     get() =

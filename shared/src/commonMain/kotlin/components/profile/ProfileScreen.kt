@@ -62,7 +62,7 @@ data class Transactions(val label: String, val credit: Boolean, val code: String
 @Composable
 fun ProfileScreen(component: ProfileComponent, innerPadding: PaddingValues) {
     val model by component.model.subscribeAsState()
-
+    val state = rememberLazyListState()
     LazyColumn(
         // consume insets as scaffold doesn't do it by default
         modifier = Modifier
@@ -122,7 +122,6 @@ fun ProfileScreen(component: ProfileComponent, innerPadding: PaddingValues) {
             }
         }
         item {
-            val state = rememberLazyListState()
             LazyRow(modifier = Modifier
                 .consumeWindowInsets(innerPadding)
                 .padding(vertical = 20.dp),
@@ -147,7 +146,7 @@ fun ProfileScreen(component: ProfileComponent, innerPadding: PaddingValues) {
             )
         }
         item {
-            Paginator(3, 0)
+            Paginator(3, state.firstVisibleItemIndex)
         }
         item {
             Box(
