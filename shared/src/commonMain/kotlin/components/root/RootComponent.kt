@@ -25,5 +25,8 @@ interface RootComponent {
         class SignChild(val component: SignComponent) : Child()
         class WelcomeChild(val component: WelcomeComponent) : Child()
         class CountriesChild(val component: CountriesComponent) : Child()
+
+
+
     }
 }

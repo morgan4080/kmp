@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import composables.ActionButton
-import composables.bankDetailsContainer
+import composables.optionsSelectionContainer
 import composables.navigateBackTopBar
 import composables.productSelectionCard2
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -98,7 +98,7 @@ fun bankDisbursement(){
                                                 .background(color = Color.White)
                                                 .padding(top = 10.dp, start = 16.dp, end = 16.dp)
                                         ) {
-                                            bankDetailsContainer("KCB", onClickContainer = {
+                                            optionsSelectionContainer("KCB", onClickContainer = {
 
 
                                             })
@@ -110,7 +110,7 @@ fun bankDisbursement(){
                                                 .background(color = Color.White)
                                                 .padding(top = 7.dp, start = 16.dp, end = 16.dp)
                                         ) {
-                                            bankDetailsContainer("Cooperative Bank", onClickContainer = {
+                                            optionsSelectionContainer("Cooperative Bank", onClickContainer = {
 
 
 
@@ -124,7 +124,7 @@ fun bankDisbursement(){
                                                 .background(color = Color.White)
                                                 .padding(top = 7.dp, start = 16.dp, end = 16.dp)
                                         ) {
-                                            bankDetailsContainer("KCB", onClickContainer = {
+                                            optionsSelectionContainer("KCB", onClickContainer = {
 
                                             })
 
@@ -135,7 +135,7 @@ fun bankDisbursement(){
                                                 .background(color = Color.White)
                                                 .padding(top = 7.dp, start = 16.dp, end = 16.dp)
                                         ) {
-                                            bankDetailsContainer("KCB", onClickContainer = {
+                                            optionsSelectionContainer("KCB", onClickContainer = {
 
 
 
@@ -148,7 +148,7 @@ fun bankDisbursement(){
                                                 .background(color = Color.White)
                                                 .padding(top = 7.dp, start = 16.dp, end = 16.dp)
                                         ) {
-                                            bankDetailsContainer("KCB", onClickContainer = {
+                                            optionsSelectionContainer("KCB", onClickContainer = {
 
                                             })
 
@@ -158,7 +158,7 @@ fun bankDisbursement(){
                                                 .background(color = Color.White)
                                                 .padding(top = 7.dp, start = 16.dp, end = 16.dp)
                                         ) {
-                                            bankDetailsContainer("KCB", onClickContainer = {
+                                            optionsSelectionContainer("KCB", onClickContainer = {
 
                                             })
 
@@ -168,7 +168,7 @@ fun bankDisbursement(){
                                                 .background(color = Color.White)
                                                 .padding(top = 7.dp, start = 16.dp, end = 16.dp)
                                         ) {
-                                            bankDetailsContainer("KCB", onClickContainer = {
+                                            optionsSelectionContainer("KCB", onClickContainer = {
 
                                             })
 
@@ -178,7 +178,7 @@ fun bankDisbursement(){
                                                 .background(color = Color.White)
                                                 .padding(top = 7.dp, start = 16.dp, end = 16.dp)
                                         ) {
-                                            bankDetailsContainer("KCB", onClickContainer = {
+                                            optionsSelectionContainer("KCB", onClickContainer = {
 
                                             })
 

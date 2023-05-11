@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import composables.navigateBackTopBar
@@ -45,7 +46,7 @@ fun  ApplyLoanScreen(component: ApplyLoanComponent, innerPadding: PaddingValues)
 
         item {
             Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp)
-                .background(color = MaterialTheme.colorScheme.background)
+                .blur(12.dp)
                 .fillMaxHeight()
             ){
 

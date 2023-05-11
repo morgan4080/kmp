@@ -32,7 +32,7 @@ import theme.labelTextColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun bankDetailsContainer (label: String,description: String?=null,onClickContainer: () -> Unit){
+fun optionsSelectionContainer (label: String, description: String?=null, onClickContainer: () -> Unit){
 
     var checkedState by remember { mutableStateOf(false) }
 
@@ -87,9 +87,6 @@ fun bankDetailsContainer (label: String,description: String?=null,onClickContain
                         colors = CheckboxDefaults.colors(uncheckedColor =  MaterialTheme.colorScheme.secondaryContainer)
                     )
 
-
-
-
                     Spacer(modifier = Modifier.padding(end = 15.dp))
 
 
@@ -101,6 +98,5 @@ fun bankDetailsContainer (label: String,description: String?=null,onClickContain
 
         }
     }
-
 
 }
