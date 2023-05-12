@@ -3,7 +3,7 @@ package components.countries
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
-import prestaCustomer.shared.MR
+import com.presta.customer.MR
 
 class DefaultCountriesComponent(
     componentContext: ComponentContext,

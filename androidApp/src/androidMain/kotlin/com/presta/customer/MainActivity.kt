@@ -1,4 +1,4 @@
-package com.myapplication
+package com.presta.customer
 
 import MainView
 import android.os.Bundle

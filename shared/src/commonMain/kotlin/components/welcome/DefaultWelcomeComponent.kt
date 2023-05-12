@@ -1,11 +1,9 @@
 package components.welcome
 
-import androidx.compose.ui.graphics.painter.Painter
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
-import dev.icerock.moko.resources.compose.painterResource
-import prestaCustomer.shared.MR
+import com.presta.customer.MR
 
 class DefaultWelcomeComponent (
     componentContext: ComponentContext,
@@ -18,17 +16,17 @@ class DefaultWelcomeComponent (
                 UserEducationScreens(
                     "Welcome to Presta Customer",
                     "Loan applications made easy with Presta Customer",
-                    ""// MR.images.user_education_1
+                    MR.images.user_education_1
                 ),
                 UserEducationScreens(
                     "Welcome to Presta Customer",
                     "Loan applications made easy with Presta Customer",
-                    ""// MR.images.user_education_2
+                    MR.images.user_education_2
                 ),
                 UserEducationScreens(
                     "Welcome to Presta Customer",
                     "Loan applications made easy with Presta Customer",
-                    ""// MR.images.user_education_3
+                    MR.images.user_education_3
                 )
             )
         )

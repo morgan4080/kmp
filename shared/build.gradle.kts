@@ -1,7 +1,7 @@
 plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
-    kotlin("plugin.serialization") version "1.8.10"
+    kotlin("plugin.serialization") version "1.8.20"
     id("com.android.library")
     id("org.jetbrains.compose")
     id("com.arkivanov.parcelize.darwin")
@@ -9,6 +9,7 @@ plugins {
     id("dev.icerock.mobile.multiplatform-resources")
 }
 
+@OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
 kotlin {
     android()
 
@@ -20,7 +21,7 @@ kotlin {
         version = "1.0.0"
         summary = "Some description for the Shared Module"
         homepage = "Link to the Shared Module homepage"
-        ios.deploymentTarget = "14.1"
+        ios.deploymentTarget = "15.2"
         podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "shared"
@@ -46,8 +47,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-
+                api("io.github.qdsfdhvh:image-loader:1.4.1")
                 with(compose) {
                     implementation(runtime)
                     implementation(foundation)
@@ -112,8 +112,6 @@ kotlin {
                     api(core.coreKtx)
                 }
 
-                implementation(deps.android.play.core)
-
                 // Ktor
                 implementation(deps.ktor.clientAndroid)
 
@@ -145,12 +143,17 @@ kotlin {
                 api(deps.essenty.lifecycle)
             }
         }
+
+        multiplatformResources {
+            multiplatformResourcesPackage = "com.presta.customer"
+            multiplatformResourcesSourceSet = "commonMain"
+        }
     }
 }
 
 android {
     compileSdk = (findProperty("android.compileSdk") as String).toInt()
-    namespace = "com.myapplication.common"
+    namespace = "com.presta.customer"
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
