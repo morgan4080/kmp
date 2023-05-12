@@ -28,16 +28,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import composables.ActionButton
-import composables.optionsSelectionContainer
-import composables.navigateBackTopBar
-import composables.productSelectionCard2
+import composables.OptionsSelectionContainer
+import composables.NavigateBackTopBar
+import composables.ProductSelectionCard2
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import theme.actionButtonColor
 import theme.containerColor
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun bankDisbursement(){
+fun BankDisbursementScreen(){
 
     var popupControl by remember { mutableStateOf(false) }
 
@@ -53,7 +53,7 @@ fun bankDisbursement(){
             Row(modifier = Modifier.fillMaxWidth()){
 
 
-                navigateBackTopBar("Disbursement Method")
+                NavigateBackTopBar("Disbursement Method")
 
             }
 
@@ -98,7 +98,7 @@ fun bankDisbursement(){
                                                 .background(color = Color.White)
                                                 .padding(top = 10.dp, start = 16.dp, end = 16.dp)
                                         ) {
-                                            optionsSelectionContainer("KCB", onClickContainer = {
+                                            OptionsSelectionContainer("KCB", onClickContainer = {
 
 
                                             })
@@ -110,7 +110,7 @@ fun bankDisbursement(){
                                                 .background(color = Color.White)
                                                 .padding(top = 7.dp, start = 16.dp, end = 16.dp)
                                         ) {
-                                            optionsSelectionContainer("Cooperative Bank", onClickContainer = {
+                                            OptionsSelectionContainer("Cooperative Bank", onClickContainer = {
 
 
 
@@ -124,7 +124,7 @@ fun bankDisbursement(){
                                                 .background(color = Color.White)
                                                 .padding(top = 7.dp, start = 16.dp, end = 16.dp)
                                         ) {
-                                            optionsSelectionContainer("KCB", onClickContainer = {
+                                            OptionsSelectionContainer("KCB", onClickContainer = {
 
                                             })
 
@@ -135,7 +135,7 @@ fun bankDisbursement(){
                                                 .background(color = Color.White)
                                                 .padding(top = 7.dp, start = 16.dp, end = 16.dp)
                                         ) {
-                                            optionsSelectionContainer("KCB", onClickContainer = {
+                                            OptionsSelectionContainer("KCB", onClickContainer = {
 
 
 
@@ -148,7 +148,7 @@ fun bankDisbursement(){
                                                 .background(color = Color.White)
                                                 .padding(top = 7.dp, start = 16.dp, end = 16.dp)
                                         ) {
-                                            optionsSelectionContainer("KCB", onClickContainer = {
+                                            OptionsSelectionContainer("KCB", onClickContainer = {
 
                                             })
 
@@ -158,7 +158,7 @@ fun bankDisbursement(){
                                                 .background(color = Color.White)
                                                 .padding(top = 7.dp, start = 16.dp, end = 16.dp)
                                         ) {
-                                            optionsSelectionContainer("KCB", onClickContainer = {
+                                            OptionsSelectionContainer("KCB", onClickContainer = {
 
                                             })
 
@@ -168,7 +168,7 @@ fun bankDisbursement(){
                                                 .background(color = Color.White)
                                                 .padding(top = 7.dp, start = 16.dp, end = 16.dp)
                                         ) {
-                                            optionsSelectionContainer("KCB", onClickContainer = {
+                                            OptionsSelectionContainer("KCB", onClickContainer = {
 
                                             })
 
@@ -178,7 +178,7 @@ fun bankDisbursement(){
                                                 .background(color = Color.White)
                                                 .padding(top = 7.dp, start = 16.dp, end = 16.dp)
                                         ) {
-                                            optionsSelectionContainer("KCB", onClickContainer = {
+                                            OptionsSelectionContainer("KCB", onClickContainer = {
 
                                             })
 
@@ -230,7 +230,7 @@ fun bankDisbursement(){
 
                 }
 
-                productSelectionCard2("Select Bank", onClickContainer = {
+                ProductSelectionCard2("Select Bank", onClickContainer = {
 
                     //Business  Logic
                     //banK details pop up card
@@ -240,7 +240,7 @@ fun bankDisbursement(){
                 })
 
 
-                productSelectionCard2("Account Number", onClickContainer = {
+                ProductSelectionCard2("Account Number", onClickContainer = {
                     //Business  Logic
 
 

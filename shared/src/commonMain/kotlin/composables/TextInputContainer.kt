@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
 @Composable
-fun textInputContainer(label:String,UserInput:String){
+fun TextInputContainer(label:String, UserInput:String){
 
     var userInput by remember { mutableStateOf("") }
 

@@ -13,12 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import composables.ActionButton
-import composables.disbursementDetailsContainer
-import composables.navigateBackTopBar
+import composables.DisbursementDetailsContainer
+import composables.NavigateBackTopBar
 import theme.containerColor
 
 @Composable
-fun emergencyLoansConfirmation(){
+fun EmergencyLoansConfirmation(){
     //emergency  loans screen
     //Gets The input value  as the user input
 
@@ -35,7 +35,7 @@ fun emergencyLoansConfirmation(){
             Row(modifier = Modifier.fillMaxWidth()){
 
 
-                navigateBackTopBar("Emergency Loan Confirm")
+                NavigateBackTopBar("Emergency Loan Confirm")
 
             }
 
@@ -51,7 +51,7 @@ fun emergencyLoansConfirmation(){
 
                 //Disbursement Details
 
-                disbursementDetailsContainer()
+                DisbursementDetailsContainer()
 
                 //action Button
                 Row(modifier = Modifier.padding(top = 30.dp)){

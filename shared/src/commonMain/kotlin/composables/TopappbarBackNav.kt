@@ -16,7 +16,7 @@ import theme.backArrowColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun navigateBackTopBar(label:String){
+fun NavigateBackTopBar(label:String){
     CenterAlignedTopAppBar(
         title = {
 

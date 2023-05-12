@@ -29,7 +29,7 @@ import theme.labelTextColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun productSelectionCard2(label: String,description: String?=null, onClickContainer: () -> Unit){
+fun ProductSelectionCard2(label: String, description: String?=null, onClickContainer: () -> Unit){
     //Has  single central text-use cases- Select Bank.etc -has  more  padding than  The product Selection card
 
 

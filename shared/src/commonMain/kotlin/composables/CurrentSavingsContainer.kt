@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun currentSavingsContainer(){
+fun CurrentSavingsContainer(){
 
     ElevatedCard(modifier = Modifier.padding(top = 10.dp)) {
         Box (modifier = Modifier.background(color = Color.White)

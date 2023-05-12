@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
 
 
 @Composable
-fun disbursementDetailsContainer(){
+fun DisbursementDetailsContainer(){
 
     ElevatedCard(modifier = Modifier.padding(top = 10.dp)) {
         Box (modifier = Modifier.background(color = Color.White)

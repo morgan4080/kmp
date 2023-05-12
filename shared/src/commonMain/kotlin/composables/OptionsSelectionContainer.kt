@@ -32,7 +32,7 @@ import theme.labelTextColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun optionsSelectionContainer (label: String, description: String?=null, onClickContainer: () -> Unit){
+fun OptionsSelectionContainer (label: String, description: String?=null, onClickContainer: () -> Unit){
 
     var checkedState by remember { mutableStateOf(false) }
 

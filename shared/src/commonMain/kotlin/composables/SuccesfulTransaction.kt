@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import theme.actionButtonColor
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun  successfulTransaction(){
+fun  SuccessfulTransaction(){
 
 
     Surface(

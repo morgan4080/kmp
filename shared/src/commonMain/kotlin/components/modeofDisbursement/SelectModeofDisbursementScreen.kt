@@ -13,12 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import composables.navigateBackTopBar
-import composables.productSelectionCard2
+import composables.NavigateBackTopBar
+import composables.ProductSelectionCard2
 import theme.containerColor
 
 @Composable
-fun selectModeOfDisbursement(){
+fun SelectModeOfDisbursementScreen(){
 
     Surface(
         modifier = Modifier
@@ -32,7 +32,7 @@ fun selectModeOfDisbursement(){
             Row(modifier = Modifier.fillMaxWidth()){
 
 
-                navigateBackTopBar("Disbursement Method")
+                NavigateBackTopBar("Disbursement Method")
 
             }
 
@@ -46,12 +46,12 @@ fun selectModeOfDisbursement(){
 
                 Spacer(modifier = Modifier.padding(top = 25.dp))
 
-                productSelectionCard2("Mpesa", onClickContainer = {
+                ProductSelectionCard2("Mpesa", onClickContainer = {
                     //Business  Logic
 
                 })
 
-                productSelectionCard2("Bank", onClickContainer = {
+                ProductSelectionCard2("Bank", onClickContainer = {
                     //Business  Logic
 
                 })

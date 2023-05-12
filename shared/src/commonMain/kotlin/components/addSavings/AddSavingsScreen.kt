@@ -24,16 +24,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
-import composables.navigateBackTopBar
-import composables.optionsSelectionContainer
-import composables.productSelectionCard2
-import composables.textInputContainer
+import composables.NavigateBackTopBar
+import composables.OptionsSelectionContainer
+import composables.ProductSelectionCard2
+import composables.TextInputContainer
 import theme.actionButtonColor
 import theme.labelTextColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun addSavingsScreen(){
+fun AddSavingsScreen(){
 
     var popupControl by remember { mutableStateOf(false) }
 
@@ -51,7 +51,7 @@ fun addSavingsScreen(){
             Row(modifier = Modifier.fillMaxWidth()) {
 
 
-                navigateBackTopBar("Savings")
+                NavigateBackTopBar("Savings")
 
             }
 
@@ -103,7 +103,7 @@ fun addSavingsScreen(){
 
                                     Row(modifier = Modifier.fillMaxWidth().padding(top = 18.dp)) {
 
-                                        optionsSelectionContainer(
+                                        OptionsSelectionContainer(
                                             "Current Savings",
                                             onClickContainer = {
 
@@ -114,7 +114,7 @@ fun addSavingsScreen(){
 
                                     Row(modifier = Modifier.fillMaxWidth()) {
 
-                                        optionsSelectionContainer("Shares", onClickContainer = {
+                                        OptionsSelectionContainer("Shares", onClickContainer = {
 
                                         })
 
@@ -184,7 +184,7 @@ fun addSavingsScreen(){
 
                 Row(modifier = Modifier.fillMaxWidth().padding(top = 23.dp)){
 
-                    productSelectionCard2("Select Savings", onClickContainer = {
+                    ProductSelectionCard2("Select Savings", onClickContainer = {
 
                         //pop up
                         popupControl=true
@@ -197,7 +197,7 @@ fun addSavingsScreen(){
 
                 Row(modifier = Modifier.fillMaxWidth().padding(top = 33.dp)){
 
-                    textInputContainer("Desired Amount","")
+                    TextInputContainer("Desired Amount","")
 
                 }
 

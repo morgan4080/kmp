@@ -20,7 +20,7 @@ import theme.labelTextColor
 @OptIn(ExperimentalMaterial3Api::class)
 
 @Composable
-fun  productSelectionCard(label: String,description: String?=null, onClickContainer: () -> Unit){
+fun  ProductSelectionCard(label: String, description: String?=null, onClickContainer: () -> Unit){
 
     //Product selection card  with bottom text-used in the short term loans  containers
     ElevatedCard(

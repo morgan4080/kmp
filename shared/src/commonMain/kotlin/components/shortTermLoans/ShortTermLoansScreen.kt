@@ -15,13 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import composables.navigateBackTopBar
-import composables.productSelectionCard
+import composables.NavigateBackTopBar
+import composables.ProductSelectionCard
 import theme.containerColor
 import theme.labelTextColor
 
 @Composable
-fun ShortTermLoans(){
+fun ShortTermLoansScreen(){
     //short term loans screen
 
 
@@ -39,7 +39,7 @@ fun ShortTermLoans(){
             Row(modifier = Modifier.fillMaxWidth()){
 
 
-                navigateBackTopBar("Short Term Loan")
+                NavigateBackTopBar("Short Term Loan")
 
             }
 
@@ -56,33 +56,33 @@ fun ShortTermLoans(){
                     .fillMaxHeight()){
 
 
-                    productSelectionCard("Emergency Loan ","Interest 12%", onClickContainer = {
+                    ProductSelectionCard("Emergency Loan ","Interest 12%", onClickContainer = {
 
 
 
 
                     })
-                    productSelectionCard("Mkopo Halisi Loan ","Interest 12%", onClickContainer = {
+                    ProductSelectionCard("Mkopo Halisi Loan ","Interest 12%", onClickContainer = {
 
 
 
                     })
-                    productSelectionCard("Shule Loan ","Interest 12%", onClickContainer = {
+                    ProductSelectionCard("Shule Loan ","Interest 12%", onClickContainer = {
 
                     })
-                    productSelectionCard("Mfanisi Loan ","Interest 12%", onClickContainer = {
+                    ProductSelectionCard("Mfanisi Loan ","Interest 12%", onClickContainer = {
 
                     })
-                    productSelectionCard("Normal Loan ","Interest 12%", onClickContainer = {
+                    ProductSelectionCard("Normal Loan ","Interest 12%", onClickContainer = {
 
                     })
-                    productSelectionCard("Anzia Loan ","Interest 12%", onClickContainer = {
+                    ProductSelectionCard("Anzia Loan ","Interest 12%", onClickContainer = {
 
                     })
-                    productSelectionCard("Soko Loan ","Interest 12%", onClickContainer = {
+                    ProductSelectionCard("Soko Loan ","Interest 12%", onClickContainer = {
 
                     })
-                    productSelectionCard("Tipper Loan ","Interest 12%", onClickContainer = {
+                    ProductSelectionCard("Tipper Loan ","Interest 12%", onClickContainer = {
 
                     })
 

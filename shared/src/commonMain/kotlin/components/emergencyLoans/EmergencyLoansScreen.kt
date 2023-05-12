@@ -13,13 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import composables.ActionButton
-import composables.loanLimitContainer
-import composables.navigateBackTopBar
-import composables.textInputContainer
+import composables.LoanLimitContainer
+import composables.NavigateBackTopBar
+import composables.TextInputContainer
 import theme.containerColor
 
 @Composable
-fun emergencyLoans(){
+fun EmergencyLoansScreen(){
     //emergency  loans screen
     //Gets The input value  as the user input
     val inputValue=""
@@ -36,7 +36,7 @@ fun emergencyLoans(){
             Row(modifier = Modifier.fillMaxWidth()){
 
 
-                navigateBackTopBar("Emergency Loan")
+                NavigateBackTopBar("Emergency Loan")
 
             }
 
@@ -50,21 +50,21 @@ fun emergencyLoans(){
 
                 //container Card
 
-                loanLimitContainer()
+                LoanLimitContainer()
 
                 //Enter the desired loan amount
 
                 Row(modifier = Modifier.padding(top = 16.dp)){
 
 
-                    textInputContainer("Enter the desired amount","")
+                    TextInputContainer("Enter the desired amount","")
 
                 }
 
 
                 Row(modifier = Modifier.padding(top = 16.dp)){
 
-                    textInputContainer("Desired Period(Months)",inputValue)
+                    TextInputContainer("Desired Period(Months)",inputValue)
 
                 }
 

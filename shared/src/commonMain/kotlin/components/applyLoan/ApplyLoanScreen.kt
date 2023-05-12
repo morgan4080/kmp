@@ -19,9 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
-import composables.navigateBackTopBar
-import composables.productSelectionCard2
-import theme.labelTextColor
+import composables.NavigateBackTopBar
+import composables.ProductSelectionCard2
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -39,7 +38,7 @@ fun  ApplyLoanScreen(component: ApplyLoanComponent, innerPadding: PaddingValues)
             Row(modifier = Modifier.fillMaxWidth()){
 
 
-                navigateBackTopBar("Apply Loan")
+                NavigateBackTopBar("Apply Loan")
 
             }
         }
@@ -56,12 +55,12 @@ fun  ApplyLoanScreen(component: ApplyLoanComponent, innerPadding: PaddingValues)
                     color = MaterialTheme.colorScheme.onBackground
                 )
 
-                productSelectionCard2("Short Term Loan", onClickContainer = {
+                ProductSelectionCard2("Short Term Loan", onClickContainer = {
 
 
 
                 })
-                productSelectionCard2("Long Term Loan", onClickContainer = {
+                ProductSelectionCard2("Long Term Loan", onClickContainer = {
 
 
                 })
