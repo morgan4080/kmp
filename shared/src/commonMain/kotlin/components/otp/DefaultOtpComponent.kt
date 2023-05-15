@@ -5,27 +5,24 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 
 class DefaultOtpComponent(
-    componentContext: ComponentContext
+    componentContext: ComponentContext,
+    private val onValidOTP: () -> Unit
 ): OtpComponent, ComponentContext by componentContext {
     override val model: Value<OtpComponent.Model> =
         MutableValue(
             OtpComponent.Model(
                 inputs = listOf(
                     OtpComponent.InputMethod(
-                        fieldType = OtpComponent.InputFields.OTPCHAR1,
-                        valueType = Int
+                        value = ""
                     ),
                     OtpComponent.InputMethod(
-                        fieldType = OtpComponent.InputFields.OTPCHAR2,
-                        valueType = Int
+                        value = ""
                     ),
                     OtpComponent.InputMethod(
-                        fieldType = OtpComponent.InputFields.OTPCHAR3,
-                        valueType = Int
+                        value = ""
                     ),
                     OtpComponent.InputMethod(
-                        fieldType = OtpComponent.InputFields.OTPCHAR4,
-                        valueType = Int
+                        value = ""
                     )
                 ),
                 label = "Verify you account details",
@@ -35,4 +32,8 @@ class DefaultOtpComponent(
                 tenant_id = null
             )
         )
+
+    override fun onValid() {
+        onValidOTP()
+    }
 }

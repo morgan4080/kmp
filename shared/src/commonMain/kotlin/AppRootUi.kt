@@ -7,6 +7,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
+import components.auth.AuthScreen
 import components.countries.CountriesScreen
 import components.onboarding.OnboardingScreen
 import components.otp.OtpScreen
@@ -16,9 +17,6 @@ import components.welcome.WelcomeScreen
 
 @Composable
 fun AppRootUi(component: RootComponent) {
-
-    val childStack by component.childStack.subscribeAsState()
-
     Children(
         stack = component.childStack,
         animation = stackAnimation(fade() + scale()),// tabAnimation()
@@ -28,6 +26,7 @@ fun AppRootUi(component: RootComponent) {
             is RootComponent.Child.OnboardingChild -> OnboardingScreen(child.component)
             is RootComponent.Child.CountriesChild -> CountriesScreen(child.component)
             is RootComponent.Child.OTPChild -> OtpScreen(child.component)
+            is RootComponent.Child.AuthChild -> AuthScreen(child.component)
             is RootComponent.Child.RootBottomChild -> RootBottomScreen(child.component)
         }
     }

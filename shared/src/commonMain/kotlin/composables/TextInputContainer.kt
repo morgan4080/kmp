@@ -17,10 +17,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,11 +32,29 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import theme.primaryColor
 
+enum class InputTypes {
+    STRING,
+    NUMBER,
+    PHONE,
+    URI,
+    EMAIL,
+    PASSWORD,
+    NUMBER_PASSWORD,
+    DECIMAL
+}
 @Composable
-fun TextInputContainer(label: String, inputValue: String, enabled: Boolean = true, imageUrl: String? = null, callback: () -> Unit = {}){
+fun TextInputContainer(
+    label: String,
+    inputValue: String,
+    enabled: Boolean = true,
+    inputType: InputTypes = InputTypes.STRING,
+    imageUrl: String? = null,
+    callback: () -> Unit = {}
+){
 
     var userInput by remember { mutableStateOf(inputValue) }
     val focusRequester = remember { FocusRequester() }
@@ -57,8 +75,21 @@ fun TextInputContainer(label: String, inputValue: String, enabled: Boolean = tru
             .padding(16.dp)
         ){
             BasicTextField(
+                keyboardOptions = KeyboardOptions(keyboardType =
+                    when (inputType) {
+                        InputTypes.NUMBER -> KeyboardType.Number
+                        InputTypes.STRING -> KeyboardType.Text
+                        InputTypes.PHONE -> KeyboardType.Phone
+                        InputTypes.URI -> KeyboardType.Uri
+                        InputTypes.EMAIL -> KeyboardType.Email
+                        InputTypes.PASSWORD -> KeyboardType.Password
+                        InputTypes.NUMBER_PASSWORD -> KeyboardType.NumberPassword
+                        InputTypes.DECIMAL -> KeyboardType.Decimal
+                    }
+                ),
                 modifier = Modifier
-                    .focusRequester(focusRequester).padding(top = 5.dp)
+                    .focusRequester(focusRequester)
+                    .padding(top = 5.dp)
                     .onFocusChanged {
 
                     },
@@ -116,10 +147,6 @@ fun TextInputContainer(label: String, inputValue: String, enabled: Boolean = tru
                     }
                 }
             )
-        }
-
-        LaunchedEffect(Unit) {
-
         }
     }
 }

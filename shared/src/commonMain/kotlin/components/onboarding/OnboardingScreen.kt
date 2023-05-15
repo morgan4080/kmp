@@ -19,6 +19,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.presta.customer.MR
 import components.countries.Country
 import composables.ActionButton
+import composables.InputTypes
 import composables.TextInputContainer
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import helpers.LocalSafeArea
@@ -95,7 +96,8 @@ fun OnboardingScreen(component: OnboardingComponent) {
                                 Column (modifier = Modifier.fillMaxWidth()) {
                                     TextInputContainer(
                                         label = input.inputLabel,
-                                        inputValue = ""
+                                        inputValue = "",
+                                        inputType = InputTypes.NUMBER
                                     )
                                 }
                             }
@@ -104,7 +106,7 @@ fun OnboardingScreen(component: OnboardingComponent) {
                 }
             }
             item {
-                Row {
+                Row (modifier = Modifier.padding(bottom = 350.dp)) {
                     ActionButton("Continue", onClickContainer = {
                         component.onSubmit()
                     }, loading = false)

@@ -9,6 +9,8 @@ import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
+import components.auth.AuthComponent
+import components.auth.DefaultAuthComponent
 import components.countries.CountriesComponent
 import components.countries.DefaultCountriesComponent
 import components.onboarding.DefaultOnboardingComponent
@@ -46,6 +48,7 @@ class DefaultRootComponent(
             is Config.Onboarding -> RootComponent.Child.OnboardingChild(onboardingComponent(componentContext, config))
             is Config.Countries -> RootComponent.Child.CountriesChild(countriesComponent(componentContext))
             is Config.OTP -> RootComponent.Child.OTPChild(otpComponent(componentContext))
+            is Config.Auth -> RootComponent.Child.AuthChild(authComponent(componentContext))
             is Config.RootBottom -> RootComponent.Child.RootBottomChild(rootBottomComponent(componentContext))
         }
 
@@ -76,7 +79,7 @@ class DefaultRootComponent(
         DefaultCountriesComponent(
             componentContext = componentContext,
             onSelectedCountry = { country ->
-                navigation.pop{
+                navigation.pop {
                     (childStack.value.active.instance as? OnboardingComponent)?.onCountrySelected(country = country)
                 }
             },
@@ -88,6 +91,23 @@ class DefaultRootComponent(
     private fun otpComponent(componentContext: ComponentContext): OtpComponent =
         DefaultOtpComponent(
             componentContext = componentContext,
+            onValidOTP = {
+                navigation.push(Config.Auth)
+            }
+        )
+
+    private fun authComponent(componentContext: ComponentContext): AuthComponent =
+        DefaultAuthComponent(
+            componentContext = componentContext,
+            termsAccepted = false,
+            pinCreated = false,
+            pinConfirmed = false,
+            onPinSet = {
+
+            },
+            onLogin = {
+
+            }
         )
 
     private fun rootBottomComponent(componentContext: ComponentContext): RootBottomComponent =
@@ -104,6 +124,8 @@ class DefaultRootComponent(
         object Countries : Config()
         @Parcelize
         object OTP : Config()
+        @Parcelize
+        object Auth : Config()
         @Parcelize
         object RootBottom : Config()
     }

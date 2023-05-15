@@ -2,6 +2,7 @@ package components.countries
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,10 +21,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.TextStyle
@@ -53,13 +56,20 @@ fun CountriesScreen(component: CountriesComponent) {
 
     if (countriesJson != null) {
         countriesObject = Json.decodeFromString("$countriesJson")
-        countriesObject = countriesObject.filter { country: Country -> country.name.lowercase().indexOf(searchingInput) > -1 }
+    }
+
+    LaunchedEffect(searchingInput, countriesJson) {
+        kotlin.run {
+            countriesObject = Json.decodeFromString("$countriesJson")
+            countriesObject = countriesObject.filter { country: Country -> country.name.lowercase().indexOf(searchingInput) > -1 }
+        }
     }
 
     Scaffold(
         modifier = Modifier.padding(LocalSafeArea.current),
         topBar = {
             CenterAlignedTopAppBar(
+                modifier = Modifier,
                 navigationIcon = {
                     IconButton(onClick = {
                         component.onBack()
@@ -96,14 +106,18 @@ fun CountriesScreen(component: CountriesComponent) {
                             },
                             singleLine = true,
                             decorationBox = { innerTextField ->
-                                if (searchingInput.isEmpty()) {
-                                    Text(
-                                        modifier = Modifier.alpha(.3f),
-                                        text = "Search",
-                                        style = MaterialTheme.typography.bodyMedium
-                                    )
+                                Box (
+                                    contentAlignment = Alignment.CenterStart
+                                ) {
+                                    if (searchingInput.isEmpty()) {
+                                        Text(
+                                            modifier = Modifier.alpha(.3f),
+                                            text = "Search",
+                                            style = MaterialTheme.typography.bodyMedium
+                                        )
+                                    }
+                                    innerTextField()
                                 }
-                                innerTextField()
                             }
                         )
                     } else {
@@ -121,12 +135,11 @@ fun CountriesScreen(component: CountriesComponent) {
 
             )
         }
-    ) {
+    ) { innerPadding ->
         LazyColumn (
             modifier = Modifier
-                .padding(top = 65.dp)
                 .fillMaxHeight(1f)
-                .padding(LocalSafeArea.current)
+                .padding(innerPadding)
                 .background(MaterialTheme.colorScheme.background)
         ) {
             countriesObject.groupBy { it.name[0] }.forEach { (initial, countriesForInitial) ->
