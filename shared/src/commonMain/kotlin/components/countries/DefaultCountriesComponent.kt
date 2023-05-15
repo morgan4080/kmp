@@ -7,7 +7,8 @@ import com.presta.customer.MR
 
 class DefaultCountriesComponent(
     componentContext: ComponentContext,
-    private val onSelected: (item: String) -> Unit,
+    private val onSelectedCountry: (country: String) -> Unit,
+    private val onBackClicked: () -> Unit,
 ) : CountriesComponent, ComponentContext by componentContext {
     override val model: Value<CountriesComponent.Model> =
         MutableValue(
@@ -16,7 +17,11 @@ class DefaultCountriesComponent(
             )
         )
 
-    override fun onSelected(item: String) {
-        onSelected(item)
+    override fun onSelected(country: String) {
+        onSelectedCountry(country)
+    }
+
+    override fun onBack() {
+        onBackClicked()
     }
 }

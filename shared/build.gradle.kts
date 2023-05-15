@@ -51,7 +51,6 @@ kotlin {
                 with(compose) {
                     implementation(runtime)
                     implementation(foundation)
-                    implementation(material)
                     implementation(material3)
                     implementation(components.resources)
                     implementation(materialIconsExtended)
@@ -100,6 +99,9 @@ kotlin {
                 api(deps.moko.resources)
                 api(deps.moko.resources.compose)
                 implementation(deps.moko.resources.test)
+
+                //coroutine
+                implementation(deps.reaktive.reaktive)
 
             }
         }

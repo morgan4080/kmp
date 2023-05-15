@@ -54,7 +54,8 @@ data class Transactions(val label: String, val credit: Boolean, val code: String
 @Composable
 fun ProfileScreen(component: ProfileComponent, innerPadding: PaddingValues) {
     val model by component.model.subscribeAsState()
-    val state = rememberLazyListState()
+    val stateLazyRow0 = rememberLazyListState()
+    val stateLazyRow = rememberLazyListState()
     LazyColumn(
         // consume insets as scaffold doesn't do it by default
         modifier = Modifier
@@ -118,8 +119,8 @@ fun ProfileScreen(component: ProfileComponent, innerPadding: PaddingValues) {
                 .consumeWindowInsets(innerPadding)
                 .padding(vertical = 20.dp),
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
-                state = state,
-                flingBehavior = rememberSnapFlingBehavior(lazyListState = state),
+                state = stateLazyRow0,
+                flingBehavior = rememberSnapFlingBehavior(lazyListState = stateLazyRow0),
                 content = {
                     items(3) {
                         Box(
@@ -138,7 +139,7 @@ fun ProfileScreen(component: ProfileComponent, innerPadding: PaddingValues) {
             )
         }
         item {
-            Paginator(3, state.firstVisibleItemIndex)
+            Paginator(3, stateLazyRow0.firstVisibleItemIndex)
         }
         item {
             Box(
@@ -162,14 +163,14 @@ fun ProfileScreen(component: ProfileComponent, innerPadding: PaddingValues) {
                 QuickLinks("Pay","Loan", Icons.Outlined.CreditCard),
                 QuickLinks("View Full","Statement", Icons.Outlined.Description),
             )
-            val state = rememberLazyListState()
+
             LazyRow(modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 15.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
-                state = state,
-                flingBehavior = rememberSnapFlingBehavior(lazyListState = state),
+                state = stateLazyRow,
+                flingBehavior = rememberSnapFlingBehavior(lazyListState = stateLazyRow),
                 content = {
                     quickLinks.forEach { link ->
                         item {

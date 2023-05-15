@@ -1,6 +1,8 @@
 package composables
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Image
@@ -9,8 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.ImageRequestState
 import com.seiko.imageloader.rememberAsyncImagePainter
 
@@ -24,9 +28,11 @@ fun AsyncImage(
 ) {
     val painter = rememberAsyncImagePainter(url)
 
-    Box(
-        contentAlignment = Alignment.Center,
+    Column (
         modifier = modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
             painter = painter,

@@ -26,6 +26,7 @@ androidxActivity = "1.6.1"
 androidxFragment = "1.1.0"
 androidxTestCore = "1.5.0"
 extensionJetbrains = "2.0.0-compose-experimental-alpha-02"
+reaktive = "1.2.3"
 
 
 [libraries]
@@ -63,10 +64,9 @@ koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin"
 koin-test = { group = "io.insert-koin", name = "koin-test", version.ref = "koin" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 
-
-
-
-
+reaktive-reaktive = { group = "com.badoo.reaktive", name = "reaktive", version.ref = "reaktive" }
+reaktive-reaktiveTesting = { group = "com.badoo.reaktive", name = "reaktive-testing", version.ref = "reaktive" }
+reaktive-coroutinesInterop = { group = "com.badoo.reaktive", name = "coroutines-interop", version.ref = "reaktive" }
 
 mvikotlin = { group = "com.arkivanov.mvikotlin", name = "mvikotlin", version.ref = "mviKotlin" }
 mviKotlin-mvikotlinMain = { group = "com.arkivanov.mvikotlin", name = "mvikotlin-main", version.ref = "mviKotlin" }
@@ -79,8 +79,6 @@ essenty-instanceKeeper = { group = "com.arkivanov.essenty", name = "instance-kee
 essenty-backHandler = { group = "com.arkivanov.essenty", name = "back-handler", version.ref = "essenty" }
 parcelizeDarwin-gradlePlug = { group = "com.arkivanov.parcelize.darwin", name = "gradle-plugin", version.ref = "parcelizeDarwin" }
 parcelizeDarwin-runtime = { group = "com.arkivanov.parcelize.darwin", name = "runtime", version.ref = "parcelizeDarwin" }
-
-
 
 
 kotlin-kotlinGradlePlug = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
