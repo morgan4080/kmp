@@ -1,4 +1,4 @@
-package components.onBoarding.errorHandler
+package components.onBoarding.network.errorHandler
 
 import components.onBoarding.network.errors.OnBoardingError
 import components.onBoarding.network.errors.OnBoardingException

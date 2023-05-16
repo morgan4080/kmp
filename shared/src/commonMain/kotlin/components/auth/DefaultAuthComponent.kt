@@ -18,6 +18,7 @@ class DefaultAuthComponent(
     private val models =
         MutableValue(
             AuthComponent.Model(
+                loading = true,
                 inputs = listOf(
                     AuthComponent.InputMethod(
                         value = ""

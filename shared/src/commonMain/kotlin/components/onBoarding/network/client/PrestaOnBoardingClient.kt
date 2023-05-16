@@ -1,6 +1,6 @@
 package components.onBoarding.network.client
 
-import network.errorHandler.errorHandler
+import components.onBoarding.network.errorHandler.errorHandler
 import components.onBoarding.network.model.PrestaOnBoardingResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get

@@ -16,6 +16,7 @@ class DefaultOnboardingComponent (
 ): OnBoardingComponent, ComponentContext by componentContext {
     private val models = MutableValue(
         OnBoardingComponent.Model(
+            loading = false,
             inputs = listOf(
                 OnBoardingComponent.InputMethod(
                     inputLabel = "Organisation",
@@ -47,10 +48,21 @@ class DefaultOnboardingComponent (
     override val model: Value<OnBoardingComponent.Model> = models
 
     override fun onSubmit(organisation: Organisation, phone_number: String?, email: String?) {
+        models.update {
+            it.copy(
+                loading = true
+            )
+        }
         // call submit api
         // if successful call
         // update error message if need be and ignore on submit clicked
         onSubmitClicked()
+
+        models.update {
+            it.copy(
+                loading = false
+            )
+        }
     }
 
     override fun onSelectCountry() {

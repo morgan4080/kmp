@@ -1,12 +1,13 @@
 package components.otp
 
 import com.arkivanov.decompose.value.Value
-import composables.InputTypes
 
 interface OtpComponent {
     val model: Value<Model>
     fun onValid()
+    fun sendOTP()
     data class Model(
+        val loading: Boolean,
         val inputs: List<InputMethod>,
         val label: String,
         val title: String,

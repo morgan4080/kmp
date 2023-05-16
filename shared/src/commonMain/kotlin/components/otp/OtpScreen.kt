@@ -11,22 +11,28 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -36,11 +42,17 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.presta.customer.MR
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import helpers.LocalSafeArea
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OtpScreen(component: OtpComponent) {
     val model by component.model.subscribeAsState()
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    val scope = rememberCoroutineScope()
 
     var otpInput by remember { mutableStateOf("") }
 
@@ -73,9 +85,23 @@ fun OtpScreen(component: OtpComponent) {
         }
     }
 
+    LaunchedEffect("") {
+        component.sendOTP()
+    }
+
+    /*scope.launch {
+        delay(1000L)
+        component.sendOTP()
+        delay(1000L)
+        snackbarHostState.showSnackbar(
+            "OTP Sent"
+        )
+    }*/
+
     Scaffold (modifier = Modifier
         .fillMaxHeight(1f)
-        .padding(LocalSafeArea.current)
+        .padding(LocalSafeArea.current),
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) {
         Column(
             modifier = Modifier
@@ -175,7 +201,8 @@ fun OtpScreen(component: OtpComponent) {
             Row (
                 modifier = Modifier
                     .padding(top = 35.dp)
-                    .absoluteOffset(y = -(70).dp)
+                    .absoluteOffset(y = -(70).dp).fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
             ) {
                 Text(
                     modifier = Modifier.clickable {
@@ -187,6 +214,19 @@ fun OtpScreen(component: OtpComponent) {
                     style = MaterialTheme.typography.titleSmall,
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                 )
+            }
+            Row (
+                modifier = Modifier
+                    .padding(top = 35.dp)
+                    .absoluteOffset(y = -(70).dp).fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+            ) {
+                if (model.loading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(25.dp).padding(end = 2.dp),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
             }
         }
     }

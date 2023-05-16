@@ -1,7 +1,5 @@
 package network.client
 
-import network.errorHandler.errorHandler
-import network.model.PrestaAuthResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.header
 import io.ktor.client.request.post
@@ -10,6 +8,8 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.formUrlEncode
 import network.NetworkConstants
+import network.errorHandler.authErrorHandler
+import network.model.PrestaAuthResponse
 import organisation.Organisation
 
 class PrestaAuthClient(
@@ -19,7 +19,7 @@ class PrestaAuthClient(
     suspend fun authClient(
         organisation: Organisation,
     ): PrestaAuthResponse {
-        return errorHandler {
+        return authErrorHandler {
             httpClient.post(NetworkConstants.PrestaAuthenticateClient.route) {
                 header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
                 setBody(listOf(

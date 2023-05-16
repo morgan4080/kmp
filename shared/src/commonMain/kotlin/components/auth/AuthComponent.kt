@@ -11,6 +11,7 @@ enum class Contexts {
 interface AuthComponent {
     val model: Value<Model>
     data class Model(
+        val loading: Boolean,
         val inputs: List<InputMethod>,
         val label: String,
         val title: String,

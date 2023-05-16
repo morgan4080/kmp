@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -188,6 +190,20 @@ fun AuthScreen(component: AuthComponent) {
                         innerTextField()
                     }
                 )
+            }
+
+            Row (
+                modifier = Modifier
+                    .padding(top = 35.dp)
+                    .absoluteOffset(y = -(70).dp).fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                if (model.loading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(25.dp).padding(end = 2.dp),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
             }
         }
     }

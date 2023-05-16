@@ -1,4 +1,12 @@
 package network.errors
 
-class AuthClientException {
+enum class AuthClientError {
+    ServiceUnavailable,
+    ClientError,
+    ServerError,
+    UnknownError
 }
+
+class AuthClientException(error: AuthClientError): Exception(
+    "Client Authentication Error: $error"
+)

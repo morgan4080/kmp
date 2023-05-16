@@ -119,7 +119,7 @@ fun OnBoardingScreen(component: OnBoardingComponent) {
                             phone_number = phone_number,
                             email = null
                         )
-                    }, loading = false)
+                    }, loading = model.loading)
                 }
             }
         }

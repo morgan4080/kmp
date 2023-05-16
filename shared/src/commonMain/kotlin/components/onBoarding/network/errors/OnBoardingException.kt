@@ -8,5 +8,5 @@ enum class OnBoardingError {
 }
 
 class OnBoardingException(error: OnBoardingError): Exception(
-    "Something goes wrong: $error"
+    "On-Boarding Error: $error"
 )
