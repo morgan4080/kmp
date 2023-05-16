@@ -6,6 +6,7 @@ import androidx.compose.ui.window.ComposeUIViewController
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import components.root.DefaultRootComponent
+import di.initKoin
 import helpers.LocalSafeArea
 import platform.UIKit.UIViewController
 import theme.AppTheme
@@ -15,6 +16,7 @@ fun MainViewController(
     topSafeArea: Float,
     bottomSafeArea: Float
 ): UIViewController {
+    initKoin()
     val rootComponentContext = DefaultComponentContext(lifecycle = lifecycle)
     val root = DefaultRootComponent(
         componentContext = rootComponentContext

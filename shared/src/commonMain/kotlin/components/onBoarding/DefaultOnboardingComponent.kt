@@ -3,6 +3,7 @@ package components.onBoarding
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.decompose.value.update
 import organisation.Organisation
 import organisation.OrganisationModel
 
@@ -61,7 +62,11 @@ class DefaultOnboardingComponent (
     }
 
     override fun onCountrySelected(country: String) {
-        println(country)
+        models.update {
+            it.copy(
+                country = country
+            )
+        }
     }
 
 }

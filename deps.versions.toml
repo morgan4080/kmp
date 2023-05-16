@@ -26,10 +26,11 @@ androidxActivity = "1.6.1"
 androidxFragment = "1.1.0"
 androidxTestCore = "1.5.0"
 extensionJetbrains = "2.0.0-compose-experimental-alpha-02"
-reaktive = "1.2.3"
+googlecode = "8.2.0"
 
 
 [libraries]
+googlecode-libphonenumber = {group = "com.googlecode.libphonenumber", name = "libphonenumber", version.ref = "ktor" }
 
 ktor-ClientCore = {group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-SerializationKotlinxJson = {group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
@@ -64,9 +65,7 @@ koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin"
 koin-test = { group = "io.insert-koin", name = "koin-test", version.ref = "koin" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 
-reaktive-reaktive = { group = "com.badoo.reaktive", name = "reaktive", version.ref = "reaktive" }
-reaktive-reaktiveTesting = { group = "com.badoo.reaktive", name = "reaktive-testing", version.ref = "reaktive" }
-reaktive-coroutinesInterop = { group = "com.badoo.reaktive", name = "coroutines-interop", version.ref = "reaktive" }
+
 
 mvikotlin = { group = "com.arkivanov.mvikotlin", name = "mvikotlin", version.ref = "mviKotlin" }
 mviKotlin-mvikotlinMain = { group = "com.arkivanov.mvikotlin", name = "mvikotlin-main", version.ref = "mviKotlin" }

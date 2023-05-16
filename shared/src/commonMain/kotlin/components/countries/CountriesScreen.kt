@@ -29,6 +29,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -46,6 +48,7 @@ import theme.backArrowColor
 @Composable
 fun CountriesScreen(component: CountriesComponent) {
     val model by component.model.subscribeAsState()
+    val focusRequester = remember { FocusRequester() }
     var searching by remember { mutableStateOf(false) }
     var searchingInput by remember { mutableStateOf("") }
     val countriesJson: String? by model.countriesJSON.readTextAsState()
@@ -62,6 +65,23 @@ fun CountriesScreen(component: CountriesComponent) {
         kotlin.run {
             countriesObject = Json.decodeFromString("$countriesJson")
             countriesObject = countriesObject.filter { country: Country -> country.name.lowercase().indexOf(searchingInput) > -1 }
+            println("network called")
+        }
+    }
+
+    LaunchedEffect(searching) {
+        if (searching) {
+            try {
+                focusRequester.requestFocus()
+            } catch (e: IllegalStateException) {
+                println(e)
+            }
+        } else {
+            try {
+                focusRequester.freeFocus()
+            } catch (e: IllegalStateException) {
+                println(e)
+            }
         }
     }
 
@@ -69,7 +89,7 @@ fun CountriesScreen(component: CountriesComponent) {
         modifier = Modifier.padding(LocalSafeArea.current),
         topBar = {
             CenterAlignedTopAppBar(
-                modifier = Modifier,
+                modifier = Modifier.padding(top = LocalSafeArea.current.calculateTopPadding()),
                 navigationIcon = {
                     IconButton(onClick = {
                         component.onBack()
@@ -96,10 +116,8 @@ fun CountriesScreen(component: CountriesComponent) {
                     if (searching) {
                         BasicTextField(
                             modifier = Modifier
+                                .focusRequester(focusRequester)
                                 .fillMaxWidth(),
-                            textStyle = TextStyle(
-                                color = MaterialTheme.colorScheme.onBackground
-                            ),
                             value = searchingInput,
                             onValueChange = {
                                 searchingInput = it

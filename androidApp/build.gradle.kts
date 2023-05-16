@@ -11,6 +11,9 @@ kotlin {
             dependencies {
                 implementation(project(":shared"))
                 implementation(deps.decompose)
+                with(deps.koin) {
+                    api(android)
+                }
             }
         }
     }
