@@ -1,6 +1,5 @@
-package components.onboarding
+package components.onBoarding
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -13,6 +12,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
@@ -28,9 +30,10 @@ import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OnboardingScreen(component: OnboardingComponent) {
+fun OnBoardingScreen(component: OnBoardingComponent) {
     val model by component.model.subscribeAsState()
     val country: Country = Json.decodeFromString(model.country)
+    var phone_number by remember { mutableStateOf("") }
     Scaffold (modifier = Modifier.fillMaxHeight(1f).padding(LocalSafeArea.current)) {
         LazyColumn (
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 30.dp)
@@ -58,11 +61,11 @@ fun OnboardingScreen(component: OnboardingComponent) {
                     modifier = Modifier.padding(vertical = 20.dp)
                 ) {
                     loop@ for (input in model.inputs) {
-                        if (input.fieldType == OnboardingComponent.InputFields.ORGANISATION) {
+                        if (input.fieldType == OnBoardingComponent.InputFields.ORGANISATION) {
                             Row(modifier = Modifier.padding(bottom = 20.dp)) {
                                 TextInputContainer(
                                     label = input.inputLabel,
-                                    inputValue = "",
+                                    inputValue = model.organisation.tenant_name,
                                     enabled = false,
                                     callback = {
                                         component.onSelectOrganisation()
@@ -74,11 +77,11 @@ fun OnboardingScreen(component: OnboardingComponent) {
                     }
                     Row(modifier = Modifier.padding(bottom = 20.dp).fillMaxWidth()) {
                         loop@ for (input in model.inputs) {
-                            if (input.fieldType == OnboardingComponent.InputFields.ORGANISATION) {
+                            if (input.fieldType == OnBoardingComponent.InputFields.ORGANISATION) {
                                 continue@loop
                             }
 
-                            if (input.fieldType == OnboardingComponent.InputFields.COUNTRY) {
+                            if (input.fieldType == OnBoardingComponent.InputFields.COUNTRY) {
                                 Column (modifier = Modifier.fillMaxWidth(0.36f).padding(end = 10.dp)) {
                                     TextInputContainer(
                                         label = input.inputLabel,
@@ -92,12 +95,15 @@ fun OnboardingScreen(component: OnboardingComponent) {
                                 }
                             }
 
-                            if (input.fieldType == OnboardingComponent.InputFields.PHONE_NUMBER) {
+                            if (input.fieldType == OnBoardingComponent.InputFields.PHONE_NUMBER) {
                                 Column (modifier = Modifier.fillMaxWidth()) {
                                     TextInputContainer(
                                         label = input.inputLabel,
                                         inputValue = "",
-                                        inputType = InputTypes.NUMBER
+                                        inputType = InputTypes.NUMBER,
+                                        callback = {
+                                            phone_number = it
+                                        }
                                     )
                                 }
                             }
@@ -108,7 +114,11 @@ fun OnboardingScreen(component: OnboardingComponent) {
             item {
                 Row (modifier = Modifier.padding(bottom = 350.dp)) {
                     ActionButton("Continue", onClickContainer = {
-                        component.onSubmit()
+                        component.onSubmit(
+                            organisation = model.organisation,
+                            phone_number = phone_number,
+                            email = null
+                        )
                     }, loading = false)
                 }
             }

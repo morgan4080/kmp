@@ -100,9 +100,6 @@ kotlin {
                 api(deps.moko.resources.compose)
                 implementation(deps.moko.resources.test)
 
-                //coroutine
-                implementation(deps.reaktive.reaktive)
-
             }
         }
 

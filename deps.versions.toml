@@ -37,8 +37,8 @@ ktor-ClientContentNegotiation = {group = "io.ktor", name = "ktor-client-content-
 ktor-ClientLogging = {group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 ktor-ClientAndroid = {group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
 ktor-ClientDarwin = {group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
-ktor-ClientJava = {group = "io.ktor", name = "ktor-client-java", version.ref = "ktor" }
-ktor-ClientJs = {group = "io.ktor", name = "ktor-client-js", version.ref = "ktor" }
+#ktor-ClientJava = {group = "io.ktor", name = "ktor-client-java", version.ref = "ktor" }
+#ktor-ClientJs = {group = "io.ktor", name = "ktor-client-js", version.ref = "ktor" }
 
 
 sqlDelight-gradlePlugin = {group = "app.cash.sqldelight", name = "gradle-plugin", version.ref = "sqlDelight" }

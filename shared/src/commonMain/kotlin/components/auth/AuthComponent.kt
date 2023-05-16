@@ -19,7 +19,7 @@ interface AuthComponent {
         val tenant_id: String?,
         var termsAccepted: Boolean,
         var pinConfirmed: Boolean,
-        val pinCreated: Boolean,
+        var pinCreated: Boolean,
         val context: Contexts,
     )
     data class InputMethod(val value: String)

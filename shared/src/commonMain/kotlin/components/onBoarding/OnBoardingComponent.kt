@@ -1,13 +1,17 @@
-package components.onboarding
+package components.onBoarding
 
 import com.arkivanov.decompose.value.Value
-import components.countries.Country
+import organisation.Organisation
 
 
-interface OnboardingComponent {
+interface OnBoardingComponent {
     val model: Value<Model>
 
-    fun onSubmit()
+    fun onSubmit(
+        organisation: Organisation,
+        phone_number: String?,
+        email: String?
+    )
 
     fun onSelectCountry()
 
@@ -19,7 +23,9 @@ interface OnboardingComponent {
         val inputs: List<InputMethod>,
         val label: String,
         val title: String,
-        val country: String
+        val country: String,
+        val organisation: Organisation,
+        val errorMessage: String?,
     )
 
     enum class InputFields {

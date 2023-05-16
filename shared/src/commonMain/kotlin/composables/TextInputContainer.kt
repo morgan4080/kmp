@@ -53,7 +53,7 @@ fun TextInputContainer(
     enabled: Boolean = true,
     inputType: InputTypes = InputTypes.STRING,
     imageUrl: String? = null,
-    callback: () -> Unit = {}
+    callback: (userInput: String) -> Unit = {}
 ){
 
     var userInput by remember { mutableStateOf(inputValue) }
@@ -67,7 +67,7 @@ fun TextInputContainer(
                 shape = RoundedCornerShape(10.dp)
             )
             .clickable {
-                callback()
+                callback(userInput)
             }
     ) {
 
@@ -96,6 +96,7 @@ fun TextInputContainer(
                 value = userInput,
                 onValueChange = {
                     userInput = it
+                    callback(userInput)
                 },
                 singleLine = true,
                 textStyle = TextStyle(

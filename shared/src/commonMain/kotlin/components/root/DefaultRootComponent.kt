@@ -13,8 +13,8 @@ import components.auth.AuthComponent
 import components.auth.DefaultAuthComponent
 import components.countries.CountriesComponent
 import components.countries.DefaultCountriesComponent
-import components.onboarding.DefaultOnboardingComponent
-import components.onboarding.OnboardingComponent
+import components.onBoarding.DefaultOnboardingComponent
+import components.onBoarding.OnBoardingComponent
 import components.otp.DefaultOtpComponent
 import components.otp.OtpComponent
 import components.rootBottomStack.DefaultRootBottomComponent
@@ -60,7 +60,7 @@ class DefaultRootComponent(
             },
         )
 
-    private fun onboardingComponent(componentContext: ComponentContext, config: Config.Onboarding): OnboardingComponent =
+    private fun onboardingComponent(componentContext: ComponentContext, config: Config.Onboarding): OnBoardingComponent =
         DefaultOnboardingComponent(
             componentContext = componentContext,
             country = config.country,
@@ -80,7 +80,7 @@ class DefaultRootComponent(
             componentContext = componentContext,
             onSelectedCountry = { country ->
                 navigation.pop {
-                    (childStack.value.active.instance as? OnboardingComponent)?.onCountrySelected(country = country)
+                    (childStack.value.active.instance as? OnBoardingComponent)?.onCountrySelected(country = country)
                 }
             },
             onBackClicked = {
@@ -99,14 +99,8 @@ class DefaultRootComponent(
     private fun authComponent(componentContext: ComponentContext): AuthComponent =
         DefaultAuthComponent(
             componentContext = componentContext,
-            termsAccepted = false,
-            pinCreated = false,
-            pinConfirmed = false,
-            onPinSet = {
-
-            },
             onLogin = {
-
+                // navigate to profile
             }
         )
 
