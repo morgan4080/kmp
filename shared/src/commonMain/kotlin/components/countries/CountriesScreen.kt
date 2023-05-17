@@ -65,7 +65,6 @@ fun CountriesScreen(component: CountriesComponent) {
         kotlin.run {
             countriesObject = Json.decodeFromString("$countriesJson")
             countriesObject = countriesObject.filter { country: Country -> country.name.lowercase().indexOf(searchingInput) > -1 }
-            println("network called")
         }
     }
 

@@ -65,6 +65,7 @@ class DefaultRootComponent(
     private fun onboardingComponent(componentContext: ComponentContext, config: Config.Onboarding): OnBoardingComponent =
         DefaultOnboardingComponent(
             componentContext = componentContext,
+            storeFactory = storeFactory,
             country = config.country,
             onSubmitClicked = {
                  navigation.push(Config.OTP)

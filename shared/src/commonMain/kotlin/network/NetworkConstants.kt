@@ -7,7 +7,7 @@ object NetworkConstants {
     const val baseUrlKeycloak = "https://iam.presta.co.ke/auth/realms/"
 
     object PrestaAuthenticateClient {
-        val route = baseUrlKeycloak + OrganisationModel.organisation.tenant_id + "protocol/openid-connect/token"
+        val route = baseUrlKeycloak + OrganisationModel.organisation.tenant_id + "/protocol/openid-connect/token"
     }
 
     object PrestaOnBoardingClient {

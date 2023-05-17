@@ -7,8 +7,6 @@ import network.onBoarding.data.OnBoardingRepositoryImpl
 import org.koin.dsl.module
 
 val dataModule = module {
-    module {
-        single<AuthRepository> { AuthRepositoryImpl() }
-        single<OnBoardingRepository> { OnBoardingRepositoryImpl() }
-    }
+    single<AuthRepository> { AuthRepositoryImpl() }
+    single<OnBoardingRepository> { OnBoardingRepositoryImpl() }
 }
