@@ -3,6 +3,7 @@ package composables
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -20,7 +21,8 @@ fun NavigateBackTopBar(label:String){
     CenterAlignedTopAppBar(
         title = {
 
-            Row(modifier = Modifier.background(color = MaterialTheme.colorScheme.background),
+            Row(modifier = Modifier.fillMaxWidth()
+                .background(color = MaterialTheme.colorScheme.background),
             verticalAlignment = Alignment.CenterVertically){
 
                 IconButton(onClick = { /* doSomething() */ }) {
@@ -35,7 +37,8 @@ fun NavigateBackTopBar(label:String){
                     text = label,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(start = 1.dp),
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(start = 1.dp),
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(modifier = Modifier.weight(1f))

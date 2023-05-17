@@ -32,39 +32,58 @@ fun  ApplyLoanScreen(component: ApplyLoanComponent, innerPadding: PaddingValues)
         .consumeWindowInsets(innerPadding)
         .background(color = MaterialTheme.colorScheme.background),
         contentPadding = innerPadding
+
     ){
 
         item {
-            Row(modifier = Modifier.fillMaxWidth()){
+
+            Column(modifier = Modifier.fillMaxWidth().fillMaxHeight()){
+
+                Row(modifier = Modifier.fillMaxWidth()){
+
+                    NavigateBackTopBar("Apply Loan")
+
+                }
 
 
-                NavigateBackTopBar("Apply Loan")
+                Column(modifier = Modifier.fillMaxWidth().fillMaxHeight()
+                    .padding(start = 16.dp, end = 16.dp)){
+
+
+                    Text(modifier = Modifier,
+                        text = "Select Loan Type",
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+
+                    Row(modifier = Modifier.fillMaxWidth().padding(top=16.dp)){
+                        ProductSelectionCard2("Short Term Loan", onClickContainer = {
+
+
+
+                        })
+
+                    }
+
+                    Row(modifier = Modifier.fillMaxWidth().padding(top=10.dp)){
+                        ProductSelectionCard2("Long Term Loan", onClickContainer = {
+
+
+                        })
+
+
+                    }
+
+                }
+
+
 
             }
-        }
-
-        item {
-            Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp)
-                .blur(12.dp)
-                .fillMaxHeight()
-            ){
 
 
-                Text(modifier = Modifier.padding(start = 16.dp),
-                    text = "Select Loan Type",
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-
-                ProductSelectionCard2("Short Term Loan", onClickContainer = {
-
-
-
-                })
-                ProductSelectionCard2("Long Term Loan", onClickContainer = {
-
-
-                })
             }
+
         }
+
+
     }
-}
+

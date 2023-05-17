@@ -38,10 +38,9 @@ fun ProductSelectionCard2(label: String, description: String?=null, onClickConta
 
         ,
         modifier = Modifier.fillMaxWidth()
-            .background(color = containerColor)
-            .padding(top = 10.dp)
+            //.background(color = MaterialTheme.colorScheme.background)
     ) {
-        Box(modifier = Modifier.background(color = Color.White)) {
+        Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
             Row(
                 modifier = Modifier.padding(top = 19.dp, bottom = 19.dp)
                     .fillMaxWidth(),
