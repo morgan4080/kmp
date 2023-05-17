@@ -1,4 +1,4 @@
-package components.onBoarding.network.model
+package network.onBoarding.model
 
 import kotlinx.serialization.Serializable
 

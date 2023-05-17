@@ -1,4 +1,4 @@
-package network.model
+package network.authDevice.model
 import kotlinx.serialization.Serializable
 
 @Serializable

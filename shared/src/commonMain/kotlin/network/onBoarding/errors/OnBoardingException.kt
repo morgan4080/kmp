@@ -1,4 +1,4 @@
-package components.onBoarding.network.errors
+package network.onBoarding.errors
 
 enum class OnBoardingError {
     ServiceUnavailable,

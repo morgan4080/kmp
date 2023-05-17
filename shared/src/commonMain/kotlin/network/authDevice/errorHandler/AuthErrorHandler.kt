@@ -1,11 +1,11 @@
-package network.errorHandler
+package network.authDevice.errorHandler
 
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.withContext
-import network.errors.AuthClientError
-import network.errors.AuthClientException
+import network.authDevice.errors.AuthClientError
+import network.authDevice.errors.AuthClientException
 import prestaDispatchers
 
 suspend inline fun <reified T> authErrorHandler(

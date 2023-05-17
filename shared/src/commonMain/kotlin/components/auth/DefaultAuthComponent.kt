@@ -4,9 +4,17 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
+import com.arkivanov.mvikotlin.core.instancekeeper.getStore
+import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import components.auth.store.AuthStore
+import components.auth.store.AuthStoreFactory
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.StateFlow
 
 class DefaultAuthComponent(
     componentContext: ComponentContext,
+    storeFactory: StoreFactory,
     private val onLogin: () -> Unit,
 ): AuthComponent, ComponentContext by componentContext {
 
@@ -15,10 +23,20 @@ class DefaultAuthComponent(
         // switch model context to
     }
 
+    private val authStore =
+        instanceKeeper.getStore {
+            AuthStoreFactory(
+                storeFactory = storeFactory
+            ).create()
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val state: StateFlow<AuthStore.State> = authStore.stateFlow
+
     private val models =
         MutableValue(
             AuthComponent.Model(
-                loading = true,
+                loading = false,
                 inputs = listOf(
                     AuthComponent.InputMethod(
                         value = ""

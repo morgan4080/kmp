@@ -6,6 +6,7 @@ import androidx.compose.ui.window.ComposeUIViewController
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import components.root.DefaultRootComponent
+import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import di.initKoin
 import helpers.LocalSafeArea
 import platform.UIKit.UIViewController
@@ -19,7 +20,8 @@ fun MainViewController(
     initKoin()
     val rootComponentContext = DefaultComponentContext(lifecycle = lifecycle)
     val root = DefaultRootComponent(
-        componentContext = rootComponentContext
+        componentContext = rootComponentContext,
+        storeFactory = DefaultStoreFactory(),
     )
     return ComposeUIViewController {
         val density = LocalDensity.current

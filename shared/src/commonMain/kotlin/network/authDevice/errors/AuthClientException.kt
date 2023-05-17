@@ -1,4 +1,4 @@
-package network.errors
+package network.authDevice.errors
 
 enum class AuthClientError {
     ServiceUnavailable,

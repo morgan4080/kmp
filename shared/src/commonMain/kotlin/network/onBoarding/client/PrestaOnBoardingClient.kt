@@ -1,7 +1,7 @@
-package components.onBoarding.network.client
+package network.onBoarding.client
 
-import components.onBoarding.network.errorHandler.errorHandler
-import components.onBoarding.network.model.PrestaOnBoardingResponse
+import network.onBoarding.errorHandler.errorHandler
+import network.onBoarding.model.PrestaOnBoardingResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -14,7 +14,7 @@ class PrestaOnBoardingClient(
     private val httpClient: HttpClient
 ) {
     suspend fun onBoardingUser(
-        token: Long,
+        token: String,
         memberIdentifier: String,
         identifierType: String,
     ): PrestaOnBoardingResponse {

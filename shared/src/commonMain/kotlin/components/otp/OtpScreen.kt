@@ -89,15 +89,6 @@ fun OtpScreen(component: OtpComponent) {
         component.sendOTP()
     }
 
-    /*scope.launch {
-        delay(1000L)
-        component.sendOTP()
-        delay(1000L)
-        snackbarHostState.showSnackbar(
-            "OTP Sent"
-        )
-    }*/
-
     Scaffold (modifier = Modifier
         .fillMaxHeight(1f)
         .padding(LocalSafeArea.current),
@@ -206,7 +197,12 @@ fun OtpScreen(component: OtpComponent) {
             ) {
                 Text(
                     modifier = Modifier.clickable {
-                             // resend otp
+                        scope.launch {
+                            component.sendOTP()
+                            snackbarHostState.showSnackbar(
+                                "OTP Sent"
+                            )
+                        }
                     },
                     textAlign = TextAlign.Center,
                     textDecoration = TextDecoration.Underline,

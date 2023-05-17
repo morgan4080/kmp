@@ -1,7 +1,7 @@
-package components.onBoarding.network.errorHandler
+package network.onBoarding.errorHandler
 
-import components.onBoarding.network.errors.OnBoardingError
-import components.onBoarding.network.errors.OnBoardingException
+import network.onBoarding.errors.OnBoardingError
+import network.onBoarding.errors.OnBoardingException
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.utils.io.errors.IOException

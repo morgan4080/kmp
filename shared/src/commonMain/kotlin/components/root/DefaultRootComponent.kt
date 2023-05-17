@@ -9,6 +9,7 @@ import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
+import com.arkivanov.mvikotlin.core.store.StoreFactory
 import components.auth.AuthComponent
 import components.auth.DefaultAuthComponent
 import components.countries.CountriesComponent
@@ -27,6 +28,7 @@ import kotlinx.serialization.json.Json
 
 class DefaultRootComponent(
     componentContext: ComponentContext,
+    val storeFactory: StoreFactory,
 ) : RootComponent, ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
@@ -99,8 +101,10 @@ class DefaultRootComponent(
     private fun authComponent(componentContext: ComponentContext): AuthComponent =
         DefaultAuthComponent(
             componentContext = componentContext,
+            storeFactory = storeFactory,
             onLogin = {
                 // navigate to profile
+                navigation.push(Config.RootBottom)
             }
         )
 

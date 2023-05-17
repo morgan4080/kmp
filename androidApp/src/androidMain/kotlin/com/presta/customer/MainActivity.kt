@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import components.root.DefaultRootComponent
 import com.arkivanov.decompose.defaultComponentContext
+import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.stopKoin
 import di.initKoin
@@ -22,7 +23,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         val root = DefaultRootComponent(
-            componentContext = defaultComponentContext()
+            componentContext = defaultComponentContext(),
+            storeFactory = DefaultStoreFactory(),
         )
 
         setContent {
