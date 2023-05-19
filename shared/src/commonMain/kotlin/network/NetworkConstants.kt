@@ -13,4 +13,8 @@ object NetworkConstants {
     object PrestaOnBoardingClient {
         const val route = baseUrl + "core-banking/member-details"
     }
+
+    object PrestaUpdatePinTermsClient {
+        const val route = baseUrl + "members/update-terms-pin"
+    }
 }

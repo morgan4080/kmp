@@ -6,3 +6,7 @@ import kotlinx.serialization.Serializable
 data class PrestaOnBoardingResponse (
     val phoneNumber: String
 )
+@Serializable
+data class PrestaUpdateMemberResponse (
+    val phoneNumber: String
+)

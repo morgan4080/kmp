@@ -6,7 +6,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scal
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import components.auth.AuthScreen
 import components.countries.CountriesScreen
-import components.onBoarding.OnBoardingScreen
+import components.onBoarding.ui.OnBoardingScreen
 import components.otp.OtpScreen
 import components.root.RootComponent
 import components.rootBottomStack.RootBottomScreen

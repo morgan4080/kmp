@@ -5,6 +5,9 @@ import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
+import components.auth.store.AuthStoreFactory
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import network.onBoarding.data.OnBoardingRepository
 import network.onBoarding.model.PrestaOnBoardingResponse
 import org.koin.core.component.KoinComponent
@@ -13,6 +16,7 @@ import prestaDispatchers
 
 internal class OnBoardingStoreFactory(
     private val storeFactory: StoreFactory,
+    private val country: String
 ): KoinComponent {
     private val onBoardingRepository by inject<OnBoardingRepository>()
 
@@ -27,29 +31,83 @@ internal class OnBoardingStoreFactory(
 
     private sealed class Msg {
         object OnBoardingLoading : Msg()
-        data class OnBoardingLoaded(val onBoardingResponse: PrestaOnBoardingResponse) : Msg()
+        data class OnBoardingGetMemberLoaded(val onBoardingResponse: PrestaOnBoardingResponse) : Msg()
+        data class OnBoardingDefaultCountry(val country: String) : Msg()
         data class OnBoardingFailed(val error: String?) : Msg()
     }
 
     private inner class ExecutorImpl : CoroutineExecutor<OnBoardingStore.Intent, Unit, OnBoardingStore.State, Msg, Nothing>(
         prestaDispatchers.main) {
+        // runs when component is initialized
         override fun executeAction(action: Unit, getState: () -> OnBoardingStore.State) {
-
+            dispatch(Msg.OnBoardingDefaultCountry(country))
         }
 
         override fun executeIntent(intent: OnBoardingStore.Intent, getState: () -> OnBoardingStore.State): Unit =
             when (intent) {
-                else -> {
+                is OnBoardingStore.Intent.GetMemberDetails ->
+                    getMemberDetails(token = intent.token, memberIdentifier = intent.memberIdentifier, identifierType = intent.identifierType)
+                is OnBoardingStore.Intent.UpdateMember ->
+                    updateMemberDetails(token = intent.token,memberRefId = intent.memberRefId, intent.pinConfirmation)
+            }
 
+        private var getMemberJob: Job? = null
+
+        private fun getMemberDetails(
+            token: String,
+            memberIdentifier: String,
+            identifierType: IdentifierTypes
+        ) {
+            if (getMemberJob?.isActive == true) return
+
+            getMemberJob = scope.launch {
+                dispatch(Msg.OnBoardingLoading)
+                onBoardingRepository.getOnBoardingMemberData(
+                    token,
+                    memberIdentifier,
+                    identifierType
+                ).onSuccess {response ->
+                    dispatch(Msg.OnBoardingGetMemberLoaded(response))
+                }.onFailure { e ->
+                    dispatch(Msg.OnBoardingFailed(e.message))
                 }
             }
+        }
+
+        private var updateMemberJob: Job? = null
+
+        private fun updateMemberDetails(
+            token: String,
+            memberRefId: String,
+            pinConfirmation: String
+        ) {
+            if (updateMemberJob?.isActive == true) return
+
+            updateMemberJob = scope.launch {
+                dispatch(Msg.OnBoardingLoading)
+                onBoardingRepository.updateMemberData(
+                    token,
+                    memberRefId,
+                    pinConfirmation
+                ).onSuccess {response ->
+                    println("::::::::member update success")
+                    println(response)
+                   // dispatch action to
+                }.onFailure { e ->
+                    println("::::::::member update failure")
+                    println(e.message)
+                    dispatch(Msg.OnBoardingFailed(e.message))
+                }
+            }
+        }
     }
 
     private object ReducerImpl: Reducer<OnBoardingStore.State, Msg> {
         override fun OnBoardingStore.State.reduce(msg: Msg): OnBoardingStore.State =
             when (msg) {
                 is Msg.OnBoardingLoading -> copy(isLoading = true)
-                is Msg.OnBoardingLoaded -> OnBoardingStore.State(phoneNumber = phoneNumber)
+                is Msg.OnBoardingGetMemberLoaded -> copy(phoneNumber = msg.onBoardingResponse.phoneNumber)
+                is Msg.OnBoardingDefaultCountry -> copy(country = msg.country)
                 is Msg.OnBoardingFailed -> copy(error = msg.error)
             }
     }

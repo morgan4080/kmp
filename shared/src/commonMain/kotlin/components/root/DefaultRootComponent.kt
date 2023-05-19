@@ -67,7 +67,7 @@ class DefaultRootComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
             country = config.country,
-            onSubmitClicked = {
+            onPush = {
                  navigation.push(Config.OTP)
             },
             onSelectCountryClicked = {

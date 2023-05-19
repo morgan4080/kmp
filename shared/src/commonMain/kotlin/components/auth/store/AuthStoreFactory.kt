@@ -43,9 +43,7 @@ internal class AuthStoreFactory(
         override fun executeIntent(intent: AuthStore.Intent, getState: () -> AuthStore.State): Unit =
             when (intent) {
                 is AuthStore.Intent.AuthenticateClient -> authClient(intent.client_secret)
-                else -> {
-
-                }
+                is AuthStore.Intent.LoginUser -> loginUser(intent.phoneNumber, intent.pin, intent.tenant, intent.clientSecret)
             }
 
         private var authClientJob: Job? = null
@@ -70,6 +68,35 @@ internal class AuthStoreFactory(
                     .onFailure { e ->
                         dispatch(Msg.AuthFailed(e.message))
                     }
+            }
+        }
+
+        private var loginUserJob: Job? = null
+
+        private fun loginUser(
+            phoneNumber: String,
+            pin: String,
+            tenant: String,
+            clientSecret: String
+        ) {
+            if (loginUserJob?.isActive == true) return
+
+            loginUserJob  = scope.launch {
+                dispatch(Msg.AuthLoading)
+                // loginUserJob
+                /*authRepository
+                    .postClientAuthDetails(client_secret)
+                    .onSuccess {response ->
+                        if (response.access_token.isEmpty()) {
+                            dispatch(Msg.AuthFailed("Access Token Empty"))
+                        } else {
+                            dispatch(Msg.AuthLoaded(response))
+                        }
+
+                    }
+                    .onFailure { e ->
+                        dispatch(Msg.AuthFailed(e.message))
+                    }*/
             }
         }
     }
