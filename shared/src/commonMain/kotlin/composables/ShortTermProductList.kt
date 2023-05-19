@@ -14,6 +14,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ShortTermProductList() {
 
+    //update
+
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "Select Loan Product",
