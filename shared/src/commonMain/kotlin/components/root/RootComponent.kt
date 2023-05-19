@@ -4,9 +4,11 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
 import components.auth.AuthComponent
 import components.countries.CountriesComponent
+import components.rootLoans.RootLoansComponent
 import components.onBoarding.OnBoardingComponent
 import components.otp.OtpComponent
 import components.rootBottomStack.RootBottomComponent
+import components.rootSavings.RootSavingsComponent
 import components.welcome.WelcomeComponent
 
 interface RootComponent {
@@ -19,5 +21,9 @@ interface RootComponent {
         class OTPChild(val component: OtpComponent) : Child()
         class AuthChild(val component: AuthComponent) : Child()
         class RootBottomChild(val component: RootBottomComponent) : Child()
+        class RootLoansChild(val component: RootLoansComponent) : Child()
+
+        class RootSavingsChild(val component: RootSavingsComponent) : Child()
+
     }
 }

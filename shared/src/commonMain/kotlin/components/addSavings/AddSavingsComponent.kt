@@ -1,13 +1,16 @@
-package components.profile
+package components.addSavings
 
 import com.arkivanov.decompose.value.Value
 
-interface ProfileComponent {
+interface AddSavingsComponent {
+
     val model: Value<Model>
 
-    fun onProfileSelected()
+    fun onConfirmSelected()
 
     data class Model(
         val items: List<String>,
     )
+
+
 }

@@ -56,7 +56,7 @@ fun CountryRow(country: Country, component: CountriesComponent) {
 
                 Text(
                     text = country.name,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
         }

@@ -14,12 +14,16 @@ import components.auth.AuthComponent
 import components.auth.DefaultAuthComponent
 import components.countries.CountriesComponent
 import components.countries.DefaultCountriesComponent
+import components.rootLoans.DefaultRootLoansComponent
+import components.rootLoans.RootLoansComponent
 import components.onBoarding.DefaultOnboardingComponent
 import components.onBoarding.OnBoardingComponent
 import components.otp.DefaultOtpComponent
 import components.otp.OtpComponent
 import components.rootBottomStack.DefaultRootBottomComponent
 import components.rootBottomStack.RootBottomComponent
+import components.rootSavings.DefaultRootSavingsComponent
+import components.rootSavings.RootSavingsComponent
 import components.welcome.DefaultWelcomeComponent
 import components.welcome.WelcomeComponent
 import kotlinx.serialization.encodeToString
@@ -52,6 +56,8 @@ class DefaultRootComponent(
             is Config.OTP -> RootComponent.Child.OTPChild(otpComponent(componentContext))
             is Config.Auth -> RootComponent.Child.AuthChild(authComponent(componentContext))
             is Config.RootBottom -> RootComponent.Child.RootBottomChild(rootBottomComponent(componentContext))
+            is Config.RootLoans -> RootComponent.Child.RootLoansChild(rootLoansComponent(componentContext))
+            is Config.RootSavings -> RootComponent.Child.RootSavingsChild(rootSavingsComponent(componentContext))
         }
 
     private fun welcomeComponent(componentContext: ComponentContext): WelcomeComponent =
@@ -65,7 +71,6 @@ class DefaultRootComponent(
     private fun onboardingComponent(componentContext: ComponentContext, config: Config.Onboarding): OnBoardingComponent =
         DefaultOnboardingComponent(
             componentContext = componentContext,
-            storeFactory = storeFactory,
             country = config.country,
             onSubmitClicked = {
                  navigation.push(Config.OTP)
@@ -114,6 +119,18 @@ class DefaultRootComponent(
             componentContext = componentContext,
         )
 
+    private fun rootLoansComponent(componentContext: ComponentContext): RootLoansComponent =
+        DefaultRootLoansComponent(
+            componentContext = componentContext
+        )
+
+    private fun rootSavingsComponent(componentContext: ComponentContext): RootSavingsComponent =
+        DefaultRootSavingsComponent(
+            componentContext = componentContext
+        )
+
+
+
     private sealed class Config : Parcelable {
         @Parcelize
         object Welcome : Config()
@@ -127,5 +144,10 @@ class DefaultRootComponent(
         object Auth : Config()
         @Parcelize
         object RootBottom : Config()
+        @Parcelize
+        object RootLoans: Config()
+        @Parcelize
+        object RootSavings: Config()
+
     }
 }

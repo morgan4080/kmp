@@ -1,5 +1,7 @@
-package components.shortTermLoans
+package components.longTermLoans
 
+import LongTermProductList
+import LongTermTopUpList
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,57 +27,60 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import composables.NavigateBackTopBar
-import composables.ShortTermProductList
-import composables.ShortTermTopUpList
 
 @Composable
-fun ShortTermLoansScreen(component: ShortTermLoansComponent,innerPadding:PaddingValues){
+fun LongTermLoansScreen(component: LongTermLoansComponent, innerPadding: PaddingValues){
     //short term loans screen
+
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background),
         color = Color.White
     ) {
-        Column(modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.background)
+        Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)
             .fillMaxWidth()
             .fillMaxHeight()){
-            Row(modifier = Modifier
-                .fillMaxWidth()){
-                NavigateBackTopBar("Short Term Loan")
+
+            Row(modifier = Modifier.fillMaxWidth()){
+
+                NavigateBackTopBar("Long Term Loan")
+
             }
-            Column(modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp)
+
+            Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                 .background(color = MaterialTheme.colorScheme.background)){
+
                 //Switching views container
+
                 var tabIndex by remember { mutableStateOf(0) }
+
                 val tabs = listOf("Product", "Top Up")
-                Column(modifier = Modifier
-                    .fillMaxWidth()) {
+
+                Column(modifier = Modifier.fillMaxWidth()) {
                     TabRow(selectedTabIndex = tabIndex,
                         containerColor = Color.White.copy(alpha = 0.5f),
-                        modifier = Modifier
-                            .clip(shape = RoundedCornerShape(29.dp))
-                            .background(Color.Gray.copy(alpha = 0.5f)),
+                        modifier = Modifier.clip(shape = RoundedCornerShape(29.dp)).background(Color.Gray.copy(alpha = 0.5f)),
                         indicator = {},
                         divider ={
 
                         }
                     ) {
+
+
                         tabs.forEachIndexed { index, title ->
 
-                            Row(modifier = Modifier
-                                .fillMaxWidth()
+                            Row(modifier = Modifier.fillMaxWidth()
                                 .clip(shape = RoundedCornerShape(70.dp))){
 
                                 Card(
                                     shape = RoundedCornerShape(70.dp),
                                     colors = CardDefaults.cardColors(containerColor = if (tabIndex == index) Color.White else Color.Transparent),
-                                    modifier = Modifier
-                                        .padding(1.5.dp)){
+                                    modifier = Modifier .padding(1.5.dp)){
 
                                     Tab(text = {
+
                                         Text(text = title)
+
                                     },
                                         selected = tabIndex == index,
                                         onClick = {
@@ -87,17 +92,24 @@ fun ShortTermLoansScreen(component: ShortTermLoansComponent,innerPadding:Padding
                                         selectedContentColor = Color.Black,
                                         unselectedContentColor = Color.DarkGray
                                     )
+
                                 }
+
+
                             }
+
                         }
                     }
                     when (tabIndex) {
-                        0 -> ShortTermProductList()
-                        1 -> ShortTermTopUpList()
+                        0 -> LongTermProductList(component)
+                        1 -> LongTermTopUpList(component)
 
                     }
                 }
             }
+
         }
+
     }
+
 }

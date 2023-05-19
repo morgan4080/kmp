@@ -13,33 +13,29 @@ import androidx.compose.ui.unit.dp
 import composables.TransactionHistoryContainer
 
 @Composable
-fun SavingsTransactionHistoryScreen(){
+fun SavingsTransactionHistoryScreen() {
 
-    Column(modifier = Modifier.fillMaxWidth()){
-
-        Row(modifier = Modifier.padding(top=20.dp)){
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.padding(top = 20.dp)) {
 
             Text(text = "Savings")
-
         }
 
-        LazyColumn(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)){
-
-
-            items(30){
-
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+        ) {
+            items(30) {
                 TransactionHistoryContainer()
-
             }
-
-
-
             //creates a space to view all the scrollable items Below the Bottom App bar
-
             item {
 
-                Spacer(modifier = Modifier.padding(bottom = 100.dp))
-
+                Spacer(
+                    modifier = Modifier
+                        .padding(bottom = 100.dp)
+                )
             }
 
         }

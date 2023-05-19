@@ -32,90 +32,107 @@ import theme.labelTextColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun  FailedTransaction(){
+fun FailedTransaction() {
 
     Surface(
-        modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.background),
+        modifier = Modifier.background(color = MaterialTheme.colorScheme.background),
         color = MaterialTheme.colorScheme.background
     ) {
-        Column(modifier = Modifier.fillMaxWidth()){
+        Column(modifier = Modifier.fillMaxWidth()) {
 
-            Row(modifier = Modifier.fillMaxWidth()){
+            Row(modifier = Modifier
+                .fillMaxWidth()) {
                 NavigateBackTopBar("")
 
             }
-            Column(modifier = Modifier.fillMaxWidth().padding(top=26.dp)){
+            Column(modifier = Modifier.fillMaxWidth().padding(top = 26.dp)) {
 
-                Row(modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center){
+                Row(
+                    modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
+                ) {
                     Text(text = "Phone Number")
-                    Text(text = "+254 724 482 047",
-                        modifier = Modifier.padding(start = 5.dp))
+                    Text(
+                        text = "+254 724 482 047", modifier = Modifier.padding(start = 5.dp)
+                    )
 
                 }
-                Row(modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center){
+                Row(
+                    modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
+                ) {
                     Text(text = "KSH 5000")
-                    Text(text = "FES 30",
-                        modifier = Modifier.padding(start = 5.dp))
+                    Text(
+                        text = "FES 30", modifier = Modifier.padding(start = 5.dp)
+                    )
 
                 }
 
             }
 
-            Column(modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+            Column(
+                modifier = Modifier.fillMaxWidth().fillMaxHeight(),
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally){
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
                 Column(
                     verticalArrangement = Arrangement.Center,
 
                     modifier = Modifier.fillMaxWidth().weight(0.5f),
-                    horizontalAlignment = Alignment.CenterHorizontally){
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
 
                     //check box for  successful Transaction
 
-                    Row(modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center){
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
 
                         Box(
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .size(70.dp)
-                                .background(MaterialTheme.colorScheme.error)
-                                .clip(CircleShape)
+                            modifier = Modifier.clip(CircleShape).size(70.dp)
+                                .background(MaterialTheme.colorScheme.error).clip(CircleShape)
                                 .background(MaterialTheme.colorScheme.error),
                             contentAlignment = Alignment.Center
                         ) {
 
-                            Icon(imageVector = Icons.Default.Close,
+                            Icon(
+                                imageVector = Icons.Default.Close,
                                 contentDescription = "",
                                 tint = Color.White,
-                                modifier = Modifier.size(70.dp))
+                                modifier = Modifier.size(70.dp)
+                            )
                         }
 
                     }
 
-                    Text("Your Transaction Failed",
+                    Text(
+                        "Your Transaction Failed",
                         fontSize = 4.em,
                         modifier = Modifier.padding(top = 29.dp),
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.error)
+                        color = MaterialTheme.colorScheme.error
+                    )
 
 
                 }
 
                 //Padding To align with  The Bottom App Bar
-                Column(modifier = Modifier.padding(start = 25.dp, end = 25.dp, bottom = 120.dp)
-                    .fillMaxWidth()){
+                Column(
+                    modifier = Modifier.padding(start = 25.dp, end = 25.dp, bottom = 120.dp)
+                        .fillMaxWidth()
+                ) {
 
-                    Text(text = "Wrong Pin  Please try Again",
-                        modifier = Modifier.align(alignment = Alignment.CenterHorizontally).padding(bottom = 34.dp))
+                    Text(
+                        text = "Wrong Pin  Please try Again",
+                        modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
+                            .padding(bottom = 34.dp)
+                    )
 
 
-                    Row(modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween){
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
 
                         //Retry and  close  Button
                         ElevatedCard(colors = CardDefaults.elevatedCardColors(containerColor = Color.White),
@@ -123,11 +140,12 @@ fun  FailedTransaction(){
 
                             }
 
-                        ){
+                        ) {
 
-                            Text(text = "Close",
-                                color = labelTextColor,
-                                modifier = Modifier.padding(start = 40.dp, end = 40.dp, top = 11.dp, bottom = 11.dp)
+                            Text(
+                                text = "Close", color = labelTextColor, modifier = Modifier.padding(
+                                    start = 40.dp, end = 40.dp, top = 11.dp, bottom = 11.dp
+                                )
                             )
 
                         }
@@ -135,12 +153,13 @@ fun  FailedTransaction(){
                         ElevatedCard(colors = CardDefaults.elevatedCardColors(containerColor = actionButtonColor),
                             onClick = {
 
-                            }
-                        ){
+                            }) {
 
-                            Text(text = "Retry",
-                                color = Color.White,
-                                modifier = Modifier.padding(start = 40.dp, end = 40.dp,top=11.dp, bottom = 11.dp))
+                            Text(
+                                text = "Retry", color = Color.White, modifier = Modifier.padding(
+                                    start = 40.dp, end = 40.dp, top = 11.dp, bottom = 11.dp
+                                )
+                            )
                         }
 
                     }

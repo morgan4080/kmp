@@ -11,8 +11,6 @@ import components.auth.store.AuthStore
 import components.auth.store.AuthStoreFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
-import organisation.Organisation
-import organisation.OrganisationModel
 
 class DefaultAuthComponent(
     componentContext: ComponentContext,
@@ -20,7 +18,12 @@ class DefaultAuthComponent(
     private val onLogin: () -> Unit,
 ): AuthComponent, ComponentContext by componentContext {
 
-    override val authStore =
+    init {
+        // check if termsAccepted on api
+        // switch model context to
+    }
+
+    private val authStore =
         instanceKeeper.getStore {
             AuthStoreFactory(
                 storeFactory = storeFactory
@@ -28,25 +31,9 @@ class DefaultAuthComponent(
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val state: StateFlow<AuthStore.State> = authStore.stateFlow
+    val state: StateFlow<AuthStore.State> = authStore.stateFlow
 
-    init {
-        onEvent(AuthStore.Intent.AuthenticateClient(
-           client_secret = OrganisationModel.organisation.client_secret
-        ))
-    }
-
-    // authenticate client to get token
-    // token gives access to member api, member api will have pin status and terms status
-    // token access allows verified user to set pin on an account if terms not accepted or pinStatus != SET
-
-    // EVENTS
-    // - AuthenticateClient
-    // - GetMemberDetails
-    // - UpdateMember
-    // - LoginUser
-
-    override val models =
+    private val models =
         MutableValue(
             AuthComponent.Model(
                 loading = false,
@@ -77,8 +64,31 @@ class DefaultAuthComponent(
         )
 
     override val model : Value<AuthComponent.Model> = models
-
-    override fun onEvent(event: AuthStore.Intent) {
-        authStore.accept(event)
+    override fun onPinSubmit() {
+        println("onPinSubmit")
+        models.update {
+            it.copy(
+                title = "Confirm pin code",
+                pinCreated = true,
+                context = Contexts.CONFIRM_PIN
+            )
+        }
+    }
+    override fun onConfirmation() {
+        println("onConfirmation")
+        models.update {
+            it.copy(
+                label = "Login to Presta Customer using the following pin code",
+                title = "Enter pin code",
+                pinConfirmed = true,
+                termsAccepted = true,
+                context = Contexts.LOGIN
+            )
+        }
+        onLogin()
+    }
+    override fun onLoginSubmit() {
+        println("onLoginSubmit")
+        onLogin()
     }
 }

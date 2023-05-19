@@ -5,8 +5,6 @@ import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import network.authDevice.data.AuthRepository
 import network.authDevice.model.PrestaAuthResponse
 import org.koin.core.component.KoinComponent
@@ -42,45 +40,17 @@ internal class AuthStoreFactory(
 
         override fun executeIntent(intent: AuthStore.Intent, getState: () -> AuthStore.State): Unit =
             when (intent) {
-                is AuthStore.Intent.AuthenticateClient -> authClient(intent.client_secret)
                 else -> {
 
                 }
             }
-
-        private var authClientJob: Job? = null
-
-        private fun authClient(
-            client_secret: String
-        ) {
-            if (authClientJob?.isActive == true) return
-
-            authClientJob  = scope.launch {
-                dispatch(Msg.AuthLoading)
-                authRepository
-                    .postClientAuthDetails(client_secret)
-                    .onSuccess {response ->
-                        if (response.access_token.isEmpty()) {
-                            dispatch(Msg.AuthFailed("Access Token Empty"))
-                        } else {
-                            dispatch(Msg.AuthLoaded(response))
-                        }
-
-                    }
-                    .onFailure { e ->
-                        dispatch(Msg.AuthFailed(e.message))
-                    }
-            }
-        }
     }
 
     private object ReducerImpl: Reducer<AuthStore.State, Msg> {
         override fun AuthStore.State.reduce(msg: Msg): AuthStore.State =
             when (msg) {
                 is Msg.AuthLoading -> copy(isLoading = true)
-                is Msg.AuthLoaded -> {
-                    AuthStore.State(access_token = access_token)
-                }
+                is Msg.AuthLoaded -> AuthStore.State(access_token = access_token)
                 is Msg.AuthFailed -> copy(error = msg.error)
             }
     }

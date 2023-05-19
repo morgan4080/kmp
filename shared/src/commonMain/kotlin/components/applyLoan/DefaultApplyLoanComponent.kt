@@ -4,11 +4,11 @@ import ApplyLoanComponent
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
-import components.profile.ProfileComponent
 
 class DefaultApplyLoanComponent(
     componentContext: ComponentContext,
-    private val onLoanClicked: () -> Unit
+    private val onShortTermClicked: () -> Unit,
+    private val onLongTermClicked: () -> Unit,
 ): ApplyLoanComponent , ComponentContext by componentContext {
     override val model: Value<ApplyLoanComponent.Model> =
         MutableValue(
@@ -17,7 +17,11 @@ class DefaultApplyLoanComponent(
             )
         )
 
-    override fun onLoanSelected() {
-        onLoanClicked()
+    override fun onShortTermSelected() {
+        onShortTermClicked()
+    }
+
+    override fun onLongTermSelected() {
+        onLongTermClicked()
     }
 }

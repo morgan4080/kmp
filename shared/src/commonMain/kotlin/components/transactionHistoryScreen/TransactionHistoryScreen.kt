@@ -70,15 +70,12 @@ fun  TransactionHistoryScreen(){
                 NavigateBackTopBar("Transaction History")
 
             }
-
             Column(modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(16.dp)){
 
                 Row(modifier = Modifier.fillMaxWidth().padding(bottom = 2.dp).background(
                     MaterialTheme.colorScheme.background)){
 
                     ElevatedCard(){
-
-
                         Row(modifier = Modifier.fillMaxWidth()){
 
                             TextField(
@@ -94,7 +91,6 @@ fun  TransactionHistoryScreen(){
                                         }
                                     },
                                 keyboardActions = KeyboardActions(
-
 
                                     onNext = {
                                         focusRequester.requestFocus()
@@ -118,19 +114,15 @@ fun  TransactionHistoryScreen(){
                                         contentDescription = "Search Icon",
                                         modifier = Modifier.clip(shape = CircleShape)
                                             .background(color = MaterialTheme.colorScheme.background),
-
                                         )
-
                                 },
                                 trailingIcon = {
-
                                     Icon(
 
                                         Icons.Filled.Close,
                                         contentDescription = "Cancel icon",
                                         modifier = Modifier.clip(shape = CircleShape)
                                             .background(color = MaterialTheme.colorScheme.background),
-
                                         )
 
                                 }
@@ -140,24 +132,14 @@ fun  TransactionHistoryScreen(){
 
                     }
 
-
                 }
-
                 //Navigation Tabs
-
-//                val (selected, setSelected) = remember {
-//                    mutableStateOf(0)
-//                }
-
-
                 var tabIndex by remember { mutableStateOf(0) }
 
                 val tabs = listOf("All ", "Savings","Loans")
-
                 Row(modifier = Modifier.background(MaterialTheme.colorScheme.background)
                     .fillMaxWidth().padding(top=20.dp),
                     horizontalArrangement = Arrangement.Center){
-
                     TabRow(selectedTabIndex = tabIndex,
                         containerColor = Color.Gray.copy(alpha = 0.1f),
                         modifier = Modifier.clip(shape = RoundedCornerShape(29.dp))
@@ -168,17 +150,13 @@ fun  TransactionHistoryScreen(){
 
                         }
                     ) {
-
                         tabs.forEachIndexed { index, title ->
-
                             Row(modifier = Modifier.background(color = Color.Gray.copy(alpha = 0.1f))
                                 .fillMaxWidth()
                                 .padding(top=1.dp, bottom = 1.dp)
                                 .clip(shape = RoundedCornerShape(70.dp)),
                                 horizontalArrangement = Arrangement.Center){
-
                                 Card(
-
                                     modifier = Modifier.background(color = Color.White.copy(alpha = 0.1f)).padding(1.dp)
                                         .clip(shape = RoundedCornerShape(20.dp)),
                                     colors = CardDefaults.cardColors(containerColor =if (tabIndex == index) actionButtonColor else Color.White.copy(alpha = 0.1f)),
@@ -188,8 +166,6 @@ fun  TransactionHistoryScreen(){
 
                                         Text(text = title,
                                             color =if (tabIndex == index) Color.White else Color.Black )
-
-
                                     },
                                         selected = tabIndex == index,
                                         onClick = {
@@ -207,12 +183,10 @@ fun  TransactionHistoryScreen(){
 
                                 }
 
-
                             }
 
                         }
                     }
-
 
                 }
 
@@ -223,24 +197,7 @@ fun  TransactionHistoryScreen(){
                     2 -> LoansTransactionHistoryScreen()
 
                 }
-
-
             }
-
         }
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
 }

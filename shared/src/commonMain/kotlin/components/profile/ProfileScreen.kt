@@ -56,6 +56,8 @@ fun ProfileScreen(component: ProfileComponent, innerPadding: PaddingValues) {
     val model by component.model.subscribeAsState()
     val stateLazyRow0 = rememberLazyListState()
     val stateLazyRow = rememberLazyListState()
+    var quickLinks: List<QuickLinks>
+
     LazyColumn(
         // consume insets as scaffold doesn't do it by default
         modifier = Modifier
@@ -157,7 +159,7 @@ fun ProfileScreen(component: ProfileComponent, innerPadding: PaddingValues) {
             }
         }
         item {
-            val quickLinks = listOf(
+             quickLinks = listOf(
                 QuickLinks("Add","Savings", Icons.Outlined.Savings),
                 QuickLinks("Apply", "Loan", Icons.Outlined.AttachMoney),
                 QuickLinks("Pay","Loan", Icons.Outlined.CreditCard),
@@ -170,53 +172,59 @@ fun ProfileScreen(component: ProfileComponent, innerPadding: PaddingValues) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 state = stateLazyRow,
-                flingBehavior = rememberSnapFlingBehavior(lazyListState = stateLazyRow),
-                content = {
-                    quickLinks.forEach { link ->
-                        item {
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
+                flingBehavior = rememberSnapFlingBehavior(lazyListState = stateLazyRow)
+            ) {
+                quickLinks.forEach { link ->
+                    item {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
 
-                                IconButton(
-                                    modifier = Modifier
-                                        .clip(shape = RoundedCornerShape(10.dp))
-                                        .background(MaterialTheme.colorScheme.primary)
-                                        .size(57.dp),
-                                    onClick = {
+                            IconButton(
+                                modifier = Modifier
+                                    .clip(shape = RoundedCornerShape(10.dp))
+                                    .background(MaterialTheme.colorScheme.primary)
+                                    .size(57.dp),
+                                onClick = {
+                                          //iterate through  the list of items and execute on condition
+                                          //Test Navigate to add Savings--Savings child
+                                         // component.onProfileSelected()
 
-                                    },
-                                    content = {
-                                        Icon(
-                                            imageVector = link.icon,
-                                            modifier = Modifier.size(30.dp),
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.inverseOnSurface
-                                        )
+                                    for (i in quickLinks.indices) {
+
                                     }
-                                )
 
-                                Text(
-                                    modifier = Modifier.padding(top = 7.08.dp),
-                                    text = link.labelTop,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Light
-                                )
+                                },
+                                content = {
+                                    Icon(
+                                        imageVector = link.icon,
+                                        modifier = Modifier.size(30.dp),
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.inverseOnSurface
+                                    )
+                                }
+                            )
 
-                                Text(
-                                    text = link.labelBottom,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Light
-                                )
-                            }
+                            Text(
+                                modifier = Modifier.padding(top = 7.08.dp),
+                                text = link.labelTop,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Light
+                            )
+
+                            Text(
+                                text = link.labelBottom,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Light
+                            )
                         }
                     }
                 }
-            )
+            }
         }
         item {
             Box(

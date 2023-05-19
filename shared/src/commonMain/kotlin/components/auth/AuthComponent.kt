@@ -1,9 +1,6 @@
 package components.auth
 
-import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
-import components.auth.store.AuthStore
-import kotlinx.coroutines.flow.StateFlow
 
 enum class Contexts {
     CREATE_PIN,
@@ -12,14 +9,7 @@ enum class Contexts {
 }
 
 interface AuthComponent {
-    val models: MutableValue<Model>
-
     val model: Value<Model>
-
-    val authStore:  AuthStore
-
-    val state: StateFlow<AuthStore.State>
-
     data class Model(
         val loading: Boolean,
         val inputs: List<InputMethod>,
@@ -34,5 +24,7 @@ interface AuthComponent {
         val context: Contexts,
     )
     data class InputMethod(val value: String)
-    fun onEvent(event: AuthStore.Intent)
+    fun onPinSubmit()
+    fun onLoginSubmit()
+    fun onConfirmation()
 }

@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun LoanLimitContainer(){
-
     ElevatedCard(modifier = Modifier.padding(top = 10.dp)) {
         Box (modifier = Modifier.background(color = Color.White)
         ) {
@@ -43,7 +42,6 @@ fun LoanLimitContainer(){
                         color= Color(0xFF8F8F8F.toInt()), // #002C56
                         fontSize = 16.sp
                     )
-
                 }
                 Row (modifier = Modifier
                     .padding(top = 0.dp)
@@ -56,23 +54,15 @@ fun LoanLimitContainer(){
                         fontWeight = FontWeight.Black
                     )
                 }
-
-
-
                 Row (modifier = Modifier
                     .padding(top = 11.dp)
                     .fillMaxWidth()
                 ) {
-
-
-
                     Column(){
 
                         Text(
                             text = "Interest",
                             color= Color(0xFF8F8F8F.toInt()), // #002C56
-
-
                         )
 
                         Text(
@@ -81,8 +71,6 @@ fun LoanLimitContainer(){
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                         )
-
-
 
                     }
 
@@ -95,8 +83,6 @@ fun LoanLimitContainer(){
                         Text(
                             text = "Max loan  Period",
                             color= Color(0xFF8F8F8F.toInt()), // #002C56
-
-
                         )
 
                         Text(
@@ -106,16 +92,9 @@ fun LoanLimitContainer(){
                             fontWeight = FontWeight.Bold,
                         )
 
-
                     }
-
-
                 }
-
-
             }
         }
-
     }
-
 }

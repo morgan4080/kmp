@@ -1,13 +1,17 @@
-package components.profile
+package components.loanProducts
 
 import com.arkivanov.decompose.value.Value
 
-interface ProfileComponent {
+interface ProductComponent {
+
     val model: Value<Model>
 
-    fun onProfileSelected()
+    fun onEmergencyLoanSelected()
 
     data class Model(
         val items: List<String>,
+        val refId: String
     )
+
+
 }

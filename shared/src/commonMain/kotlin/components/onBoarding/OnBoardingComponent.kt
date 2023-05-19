@@ -1,20 +1,11 @@
 package components.onBoarding
 
-import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
-import components.onBoarding.store.OnBoardingStore
-import kotlinx.coroutines.flow.StateFlow
 import organisation.Organisation
 
 
 interface OnBoardingComponent {
-    val models: MutableValue<Model>
-
     val model: Value<Model>
-
-    val onBoardingStore: OnBoardingStore
-
-    val state: StateFlow<OnBoardingStore.State>
 
     fun onSubmit(
         organisation: Organisation,

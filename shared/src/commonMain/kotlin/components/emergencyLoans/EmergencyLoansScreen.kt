@@ -2,6 +2,7 @@ package components.emergencyLoans
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,59 +20,42 @@ import composables.TextInputContainer
 import theme.containerColor
 
 @Composable
-fun EmergencyLoansScreen(){
-    //emergency  loans screen
-    //Gets The input value  as the user input
+fun EmergencyLoansScreen(component: EmergencyLoansComponent){
     val inputValue=""
 
     Surface(
         modifier = Modifier
             .background(color = containerColor),
-        color = Color.White
+        color = Color.White,
     ) {
-
-
-        Column(modifier = Modifier.background(color = containerColor)){
-
+        Column(modifier = Modifier.background(color = containerColor),){
             Row(modifier = Modifier.fillMaxWidth()){
-
-
                 NavigateBackTopBar("Emergency Loan")
-
             }
-
-            Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+            Column(modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp)
                 .background(color = containerColor)
                 .fillMaxHeight()){
-
-
                 Text(modifier = Modifier.padding(start = 16.dp),
                     text = "Enter Loan  Amount")
-
                 //container Card
-
                 LoanLimitContainer()
-
                 //Enter the desired loan amount
 
                 Row(modifier = Modifier.padding(top = 16.dp)){
-
-
                     TextInputContainer("Enter the desired amount","")
 
                 }
-
-
-                Row(modifier = Modifier.padding(top = 16.dp)){
+                Row(modifier = Modifier
+                    .padding(top = 16.dp)){
 
                     TextInputContainer("Desired Period(Months)",inputValue)
-
                 }
 
                 //action Button
-                Row(modifier = Modifier.padding(top = 30.dp)){
+                Row(modifier = Modifier
+                    .padding(top = 30.dp)){
                     ActionButton("Confirm", onClickContainer = {
-
 
                     })
 

@@ -25,38 +25,44 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TopUpSelectionContainer(){
+fun TopUpSelectionContainer() {
 
     var checkedState by remember { mutableStateOf(false) }
 
-    Row(modifier = Modifier.fillMaxWidth().padding(top = 16.dp),horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically){
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
 
-        Row(verticalAlignment = Alignment.CenterVertically){
-
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
-                checked =checkedState,
-                onCheckedChange = { checkedState = it},
+                checked = checkedState,
+                onCheckedChange = { checkedState = it },
                 modifier = Modifier.clip(shape = CircleShape)
                     .background(color = MaterialTheme.colorScheme.secondaryContainer)
                     .height(20.dp)
                     .width(20.dp),
-                colors = CheckboxDefaults.colors(uncheckedColor =  MaterialTheme.colorScheme.secondaryContainer)
+                colors = CheckboxDefaults.colors(uncheckedColor = MaterialTheme.colorScheme.secondaryContainer)
             )
 
-            Column(modifier = Modifier.padding(start = 10.dp)){
+            Column(modifier = Modifier.padding(start = 10.dp)) {
                 Text(text = "Emergency Loan")
-                Text(text = "min 10,000-max 50,000",
-                    fontSize = 10.sp)
+                Text(
+                    text = "min 10,000-max 50,000",
+                    fontSize = 10.sp
+                )
 
             }
         }
 
-        Column(){
+        Column() {
 
             Text(text = "bal Kes 5000.00")
-            Text(text = "Due- 12 May 2020",
-                fontSize = 10.sp)
+            Text(
+                text = "Due- 12 May 2020",
+                fontSize = 10.sp
+            )
 
         }
 

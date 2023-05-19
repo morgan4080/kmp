@@ -1,10 +1,10 @@
 package components.rootBottomStack
 
-import ApplyLoanComponent
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
+import components.rootLoans.RootLoansComponent
 import components.profile.ProfileComponent
-import components.savings.SavingsComponent
+import components.rootSavings.RootSavingsComponent
 import components.sign.SignComponent
 
 interface RootBottomComponent {
@@ -18,8 +18,8 @@ interface RootBottomComponent {
 
     sealed class ChildBottom {
         class ProfileChild(val component: ProfileComponent) : ChildBottom()
-        class ApplyLoanChild(val component: ApplyLoanComponent) : ChildBottom()
-        class SavingsChild(val component: SavingsComponent) : ChildBottom()
+        class RootLoansChild(val component: RootLoansComponent) : ChildBottom()
+        class RootSavingsChild(val component: RootSavingsComponent) : ChildBottom()
         class SignChild(val component: SignComponent) : ChildBottom()
     }
 }

@@ -1,13 +1,15 @@
-package components.profile
+package components.processingTransaction
 
 import com.arkivanov.decompose.value.Value
 
-interface ProfileComponent {
+interface ProcessingTransactionComponent {
+
     val model: Value<Model>
 
-    fun onProfileSelected()
+    fun onSelected(item: String)
 
     data class Model(
         val items: List<String>,
     )
+
 }

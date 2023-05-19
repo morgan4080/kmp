@@ -35,8 +35,6 @@ import theme.labelTextColor
 fun OptionsSelectionContainer (label: String, description: String?=null, onClickContainer: () -> Unit){
 
     var checkedState by remember { mutableStateOf(false) }
-
-
     ElevatedCard(
         onClick = {
             checkedState = !checkedState
@@ -69,14 +67,10 @@ fun OptionsSelectionContainer (label: String, description: String?=null, onClick
                             modifier = Modifier.padding(start = 15.dp),
                             fontSize = 12.sp,)
                     }
-
                 }
-
                 Row(){
 
                     Spacer(modifier = Modifier.weight(1f))
-
-
                     Checkbox(
                         checked =checkedState,
                         onCheckedChange = { checkedState = it},
@@ -88,15 +82,8 @@ fun OptionsSelectionContainer (label: String, description: String?=null, onClick
                     )
 
                     Spacer(modifier = Modifier.padding(end = 15.dp))
-
-
                 }
-
-
             }
-
-
         }
     }
-
 }

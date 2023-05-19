@@ -22,12 +22,15 @@ import androidx.compose.ui.unit.sp
 
 
 @Composable
-fun DisbursementDetailsContainer(){
+fun DisbursementDetailsContainer() {
 
-    ElevatedCard(modifier = Modifier.padding(top = 10.dp)) {
-        Box (modifier = Modifier.background(color = Color.White)
+    ElevatedCard(
+        modifier = Modifier.padding(top = 10.dp)
+    ) {
+        Box(
+            modifier = Modifier.background(color = Color.White)
         ) {
-            Column (
+            Column(
                 modifier = Modifier.padding(
                     top = 23.dp,
                     start = 24.dp,
@@ -35,41 +38,35 @@ fun DisbursementDetailsContainer(){
                     bottom = 24.dp,
                 )
             ) {
-                Row (modifier = Modifier
-                    .fillMaxWidth(),
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
-                        text = "Disbursement Amount ",
-                        color= Color(0xFF8F8F8F.toInt()), // #002C56
+                        text = "Disbursement Amount ", color = Color(0xFF8F8F8F.toInt()), // #002C56
                         fontSize = 16.sp
                     )
-
-
                 }
-                Row (modifier = Modifier
-                    .padding(top = 0.dp)
-                    .fillMaxWidth()
+                Row(
+                    modifier = Modifier.padding(top = 0.dp).fillMaxWidth()
                 ) {
                     Text(
                         text = "Kes 30,000",
-                        color= MaterialTheme.colorScheme.onPrimaryContainer,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Black
                     )
                 }
-
                 //data Rows
                 Spacer(modifier = Modifier.height(19.dp))
-                disbursementDetailsRow("Requested Amount","Kes 30,000")
-                disbursementDetailsRow("Requested Amount","Kes 30,000")
-                disbursementDetailsRow("Requested Amount","Kes 30,000")
-                disbursementDetailsRow("Requested Amount","Kes 30,000")
-                disbursementDetailsRow("Requested Amount","Kes 30,000")
-                disbursementDetailsRow("Requested Amount","Kes 30,000")
-                disbursementDetailsRow("Requested Amount","Kes 30,000")
-
+                disbursementDetailsRow("Requested Amount", "Kes 30,000")
+                disbursementDetailsRow("Requested Amount", "Kes 30,000")
+                disbursementDetailsRow("Requested Amount", "Kes 30,000")
+                disbursementDetailsRow("Requested Amount", "Kes 30,000")
+                disbursementDetailsRow("Requested Amount", "Kes 30,000")
+                disbursementDetailsRow("Requested Amount", "Kes 30,000")
+                disbursementDetailsRow("Requested Amount", "Kes 30,000")
 
             }
         }
@@ -79,24 +76,24 @@ fun DisbursementDetailsContainer(){
 }
 
 @Composable
-fun disbursementDetailsRow(label: String,data: String){
+fun disbursementDetailsRow(label: String, data: String) {
 
-    Row(modifier = Modifier.fillMaxWidth()
-        .padding(top = 10.dp, bottom = 10.dp),
-        horizontalArrangement = Arrangement.SpaceBetween){
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(top = 10.dp, bottom = 10.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
 
         Text(
-            text = label,
-            fontSize = 10.sp)
+            text = label, fontSize = 10.sp
+        )
 
         Text(
             text = data,
             fontSize = 12.sp,
-            color= MaterialTheme.colorScheme.onPrimaryContainer,
-            fontWeight = FontWeight.Black)
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            fontWeight = FontWeight.Black
+        )
 
     }
-
-
 }
 

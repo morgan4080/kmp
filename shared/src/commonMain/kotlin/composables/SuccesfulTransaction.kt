@@ -21,31 +21,31 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import theme.actionButtonColor
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun  SuccessfulTransaction(){
-
-
+fun SuccessfulTransaction() {
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background),
         color = MaterialTheme.colorScheme.background
     ) {
-
-        Column(modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+        Column(
+            modifier = Modifier.fillMaxWidth().fillMaxHeight(),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally){
-
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Column(
                 verticalArrangement = Arrangement.Center,
 
                 modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally){
-
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 //check box for  successful Transaction
-
-                Row(modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center){
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
 
                     Box(
                         modifier = Modifier
@@ -57,23 +57,29 @@ fun  SuccessfulTransaction(){
                         contentAlignment = Alignment.Center
                     ) {
 
-                        Icon(imageVector = Icons.Default.Check,
+                        Icon(
+                            imageVector = Icons.Default.Check,
                             contentDescription = "",
                             tint = Color.White,
-                            modifier = Modifier.size(70.dp))
+                            modifier = Modifier.size(70.dp)
+                        )
                     }
 
                 }
 
-                Text("Transaction Successful!",
+                Text(
+                    "Transaction Successful!",
                     fontSize = 4.em,
                     modifier = Modifier.padding(top = 29.dp),
-                    fontWeight = FontWeight.Bold)
+                    fontWeight = FontWeight.Bold
+                )
 
-                Row(modifier = Modifier.padding(start = 50.dp, end = 50.dp, top = 5.dp)){
+                Row(modifier = Modifier.padding(start = 50.dp, end = 50.dp, top = 5.dp)) {
 
-                    Text(text = "Loan topup of Kes 30,000 transferred to Mpesa No. 0724123456",
-                        fontSize = 2.4.em)
+                    Text(
+                        text = "Loan topup of Kes 30,000 transferred to Mpesa No. 0724123456",
+                        fontSize = 2.4.em
+                    )
 
                 }
 
@@ -81,8 +87,12 @@ fun  SuccessfulTransaction(){
 
             //share Receipt Container
 
-            Row(modifier = Modifier.fillMaxWidth().padding(top = 26.dp),
-                horizontalArrangement = Arrangement.Center){
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 26.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
 
                 ElevatedCard(onClick = {
                 }, modifier = Modifier.padding(start = 16.dp)) {
@@ -101,16 +111,12 @@ fun  SuccessfulTransaction(){
                 }
 
             }
-
-
-            Row(modifier = Modifier.padding(start = 25.dp, end = 25.dp, top = 70.dp)){
+            Row(modifier = Modifier.padding(start = 25.dp, end = 25.dp, top = 70.dp)) {
 
                 ActionButton("Done", onClickContainer = {
 
                 })
             }
-
         }
     }
-
 }

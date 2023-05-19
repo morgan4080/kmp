@@ -35,9 +35,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
-import com.arkivanov.decompose.value.update
 import com.presta.customer.MR
-import components.auth.store.AuthStore
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import helpers.LocalSafeArea
 
@@ -45,6 +43,8 @@ import helpers.LocalSafeArea
 @Composable
 fun AuthScreen(component: AuthComponent) {
     val model by component.model.subscribeAsState()
+
+    println(model.context)
 
     val focusRequester = remember { FocusRequester() }
 
@@ -67,7 +67,7 @@ fun AuthScreen(component: AuthComponent) {
     }
 
     fun clearPinCharacters () {
-        pinInput.forEachIndexed { index, _ ->
+        pinInput.forEachIndexed { index, res ->
             pinCharList[index] = ""
             pinCharList[index + 1] = ""
         }
@@ -77,34 +77,15 @@ fun AuthScreen(component: AuthComponent) {
     if (pinInput.length == maxChar) {
         when (model.context) {
             Contexts.CREATE_PIN -> {
-                component.models.update {
-                    it.copy(
-                        title = "Confirm pin code",
-                        pinCreated = true,
-                        context = Contexts.CONFIRM_PIN
-                    )
-                }
+                component.onPinSubmit()
                 clearPinCharacters()
             }
             Contexts.CONFIRM_PIN -> {
-                component.models.update {
-                    it.copy(
-                        label = "Login to Presta Customer using the following pin code",
-                        title = "Enter pin code",
-                        pinConfirmed = true,
-                        termsAccepted = true,
-                        context = Contexts.LOGIN
-                    )
-                }
+                component.onConfirmation()
                 clearPinCharacters()
             }
             Contexts.LOGIN -> {
-                /*component.onEvent(AuthStore.Intent.LoginUser(
-                    phoneNumber = "",
-                    pin = "",
-                    tenant = "",
-                    clientSecret = ""
-                ))*/
+                component.onLoginSubmit()
                 clearPinCharacters()
             }
         }

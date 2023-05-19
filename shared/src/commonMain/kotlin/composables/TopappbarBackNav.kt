@@ -17,13 +17,15 @@ import theme.backArrowColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavigateBackTopBar(label:String){
+fun NavigateBackTopBar(label: String) {
     CenterAlignedTopAppBar(
         title = {
 
-            Row(modifier = Modifier.fillMaxWidth()
-                .background(color = MaterialTheme.colorScheme.background),
-            verticalAlignment = Alignment.CenterVertically){
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .background(color = MaterialTheme.colorScheme.background),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
                 IconButton(onClick = { /* doSomething() */ }) {
                     Icon(

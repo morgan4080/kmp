@@ -4,37 +4,17 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
-import com.arkivanov.mvikotlin.core.instancekeeper.getStore
-import com.arkivanov.mvikotlin.core.store.StoreFactory
-import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
-import components.auth.store.AuthStore
-import components.onBoarding.store.OnBoardingStore
-import components.onBoarding.store.OnBoardingStoreFactory
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.StateFlow
 import organisation.Organisation
 import organisation.OrganisationModel
 
 class DefaultOnboardingComponent (
     componentContext: ComponentContext,
-    storeFactory: StoreFactory,
     country: String,
     private val onSubmitClicked: () -> Unit,
     private val onSelectCountryClicked: () -> Unit,
     private val onSelectOrganisationClicked: () -> Unit
 ): OnBoardingComponent, ComponentContext by componentContext {
-
-    override val onBoardingStore =
-        instanceKeeper.getStore {
-            OnBoardingStoreFactory(
-                storeFactory = storeFactory
-            ).create()
-        }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val state: StateFlow<OnBoardingStore.State> = onBoardingStore.stateFlow
-
-    override val models = MutableValue(
+    private val models = MutableValue(
         OnBoardingComponent.Model(
             loading = false,
             inputs = listOf(
@@ -100,4 +80,5 @@ class DefaultOnboardingComponent (
             )
         }
     }
+
 }
