@@ -20,6 +20,8 @@ import components.otp.DefaultOtpComponent
 import components.otp.OtpComponent
 import components.rootBottomStack.DefaultRootBottomComponent
 import components.rootBottomStack.RootBottomComponent
+import components.splash.DefaultSplashComponent
+import components.splash.SplashComponent
 import components.welcome.DefaultWelcomeComponent
 import components.welcome.WelcomeComponent
 import kotlinx.serialization.encodeToString
@@ -36,7 +38,7 @@ class DefaultRootComponent(
     private val _childStack =
         childStack(
             source = navigation,
-            initialConfiguration = Config.Welcome,
+            initialConfiguration = Config.Splash,
             handleBackButton = true,
             childFactory = ::createChild,
             key = "onboardingStack"
@@ -46,35 +48,54 @@ class DefaultRootComponent(
 
     private fun createChild(config: Config, componentContext: ComponentContext): RootComponent.Child =
         when (config) {
-            is Config.Welcome -> RootComponent.Child.WelcomeChild(welcomeComponent(componentContext))
-            is Config.Onboarding -> RootComponent.Child.OnboardingChild(onboardingComponent(componentContext, config))
+            is Config.Splash -> RootComponent.Child.SplashChild(splashComponent(componentContext))
+            is Config.Welcome -> RootComponent.Child.WelcomeChild(welcomeComponent(componentContext, config))
+            is Config.OnBoarding -> RootComponent.Child.OnboardingChild(onboardingComponent(componentContext, config))
             is Config.Countries -> RootComponent.Child.CountriesChild(countriesComponent(componentContext))
             is Config.OTP -> RootComponent.Child.OTPChild(otpComponent(componentContext))
             is Config.Auth -> RootComponent.Child.AuthChild(authComponent(componentContext))
             is Config.RootBottom -> RootComponent.Child.RootBottomChild(rootBottomComponent(componentContext))
         }
 
-    private fun welcomeComponent(componentContext: ComponentContext): WelcomeComponent =
-        DefaultWelcomeComponent(
+    private fun splashComponent(componentContext: ComponentContext): SplashComponent =
+        DefaultSplashComponent(
             componentContext = componentContext,
-            onGetStartedSelected = {
-                navigation.push(Config.Onboarding(country = Json.encodeToString(it)))
+            onSignUp = {
+                navigation.push(Config.Welcome(context = OnBoardingContext.REGISTRATION))
+            },
+            onSignIn = {
+                navigation.push(Config.Welcome(context = OnBoardingContext.LOGIN))
             },
         )
 
-    private fun onboardingComponent(componentContext: ComponentContext, config: Config.Onboarding): OnBoardingComponent =
+    private fun welcomeComponent(componentContext: ComponentContext, config: Config.Welcome): WelcomeComponent =
+        DefaultWelcomeComponent(
+            componentContext = componentContext,
+            onBoardingContext = config.context,
+            onGetStartedSelected = { country, onBoardingContext ->
+                navigation.push(
+                    Config.OnBoarding(
+                        country = Json.encodeToString(country),
+                        onBoardingContext = onBoardingContext
+                    )
+                )
+            },
+        )
+
+    private fun onboardingComponent(componentContext: ComponentContext, config: Config.OnBoarding): OnBoardingComponent =
         DefaultOnboardingComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
             country = config.country,
+            onBoardingContext = config.onBoardingContext,
             onPush = {
                  navigation.push(Config.OTP)
             },
             onSelectCountryClicked = {
-                navigation.push(Config.Countries)
+
             },
             onSelectOrganisationClicked = {
-                // navigation.push(Config.Organisations)
+
             }
         )
 
@@ -82,12 +103,10 @@ class DefaultRootComponent(
         DefaultCountriesComponent(
             componentContext = componentContext,
             onSelectedCountry = { country ->
-                navigation.pop {
-                    (childStack.value.active.instance as? OnBoardingComponent)?.onCountrySelected(country = country)
-                }
+
             },
             onBackClicked = {
-                navigation.pop()
+
             }
         )
 
@@ -114,11 +133,18 @@ class DefaultRootComponent(
             componentContext = componentContext,
         )
 
+    enum class OnBoardingContext {
+        LOGIN,
+        REGISTRATION
+    }
+
     private sealed class Config : Parcelable {
         @Parcelize
-        object Welcome : Config()
+        object Splash : Config()
         @Parcelize
-        data class Onboarding(val country: String) : Config()
+        data class Welcome(val context: OnBoardingContext) : Config()
+        @Parcelize
+        data class OnBoarding(val country: String, val onBoardingContext: OnBoardingContext) : Config()
         @Parcelize
         object Countries : Config()
         @Parcelize

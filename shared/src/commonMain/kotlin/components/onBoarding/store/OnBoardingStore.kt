@@ -1,8 +1,9 @@
 package components.onBoarding.store
 
 import com.arkivanov.mvikotlin.core.store.Store
-import components.auth.store.AuthStore
-import components.onBoarding.OnBoardingComponent
+import com.presta.customer.MR
+import components.root.DefaultRootComponent
+import dev.icerock.moko.resources.FileResource
 import organisation.Organisation
 import organisation.OrganisationModel
 
@@ -49,9 +50,11 @@ interface OnBoardingStore: Store<OnBoardingStore.Intent, OnBoardingStore.State, 
                 errorMessage = ""
             )
         ),
-        val label: String = "Start your digital lending journey here.",
-        val title: String = "Get your loans appraised digitally from anywhere, anytime.",
+        val label: String = "Verify phone number to",
+        val title: String = "Get Started",
+        val countriesJSON: FileResource = MR.files.Countries,
         val country: String = "",
+        val onBoardingContext: DefaultRootComponent.OnBoardingContext = DefaultRootComponent.OnBoardingContext.LOGIN,
         val organisation: Organisation = OrganisationModel.organisation
     )
 }

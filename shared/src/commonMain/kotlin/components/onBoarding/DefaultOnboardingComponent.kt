@@ -8,6 +8,7 @@ import components.auth.store.AuthStore
 import components.auth.store.AuthStoreFactory
 import components.onBoarding.store.OnBoardingStore
 import components.onBoarding.store.OnBoardingStoreFactory
+import components.root.DefaultRootComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 import organisation.Organisation
@@ -17,6 +18,7 @@ class DefaultOnboardingComponent (
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     country: String,
+    onBoardingContext: DefaultRootComponent.OnBoardingContext,
     private val onPush: () -> Unit,
     private val onSelectCountryClicked: () -> Unit,
     private val onSelectOrganisationClicked: () -> Unit
@@ -40,7 +42,8 @@ class DefaultOnboardingComponent (
         instanceKeeper.getStore {
             OnBoardingStoreFactory(
                 storeFactory = storeFactory,
-                country = country
+                country = country,
+                onBoardingContext = onBoardingContext
             ).create()
         }
 

@@ -7,12 +7,14 @@ import components.countries.CountriesComponent
 import components.onBoarding.OnBoardingComponent
 import components.otp.OtpComponent
 import components.rootBottomStack.RootBottomComponent
+import components.splash.SplashComponent
 import components.welcome.WelcomeComponent
 
 interface RootComponent {
 
     val childStack: Value<ChildStack<*, Child>>
     sealed class Child {
+        class SplashChild(val component: SplashComponent) : Child()
         class WelcomeChild(val component: WelcomeComponent) : Child()
         class OnboardingChild(val component: OnBoardingComponent) : Child()
         class CountriesChild(val component: CountriesComponent) : Child()

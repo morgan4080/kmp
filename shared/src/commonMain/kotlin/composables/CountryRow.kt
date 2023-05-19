@@ -25,13 +25,13 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @Composable
-fun CountryRow(country: Country, component: CountriesComponent) {
+fun CountryRow(country: Country) {
     val url = "https://flagcdn.com/28x21/${country.alpha2Code.lowercase()}.png"
     LazyRow (
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                component.onSelected(Json.encodeToString(country))
+
             },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,

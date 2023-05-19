@@ -10,6 +10,7 @@ import components.onBoarding.ui.OnBoardingScreen
 import components.otp.OtpScreen
 import components.root.RootComponent
 import components.rootBottomStack.RootBottomScreen
+import components.splash.SplashScreen
 import components.welcome.WelcomeScreen
 
 @Composable
@@ -19,6 +20,7 @@ fun AppRootUi(component: RootComponent) {
         animation = stackAnimation(fade() + scale()),// tabAnimation()
     ) {
         when (val child = it.instance) {
+            is RootComponent.Child.SplashChild -> SplashScreen(child.component)
             is RootComponent.Child.WelcomeChild -> WelcomeScreen(child.component)
             is RootComponent.Child.OnboardingChild -> OnBoardingScreen(child.component)
             is RootComponent.Child.CountriesChild -> CountriesScreen(child.component)

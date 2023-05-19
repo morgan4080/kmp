@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -30,10 +31,10 @@ fun Paginator(count: Int, currentIndex: Int) {
                 Box(
                     modifier = Modifier
                         .padding(5.dp)
-                        .width(if (it == currentIndex) 20.dp else 10.dp)
+                        .width(if (it == currentIndex) 16.dp else 37.dp)
                     .height(10.dp)
                     .clip(if (it == currentIndex) RoundedCornerShape(10.dp) else CircleShape)
-                    .background(MaterialTheme.colorScheme.primary)
+                    .background(if (it == currentIndex) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.inverseOnSurface)
                 )
             }
         }

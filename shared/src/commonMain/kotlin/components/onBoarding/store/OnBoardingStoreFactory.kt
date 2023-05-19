@@ -6,6 +6,7 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import components.auth.store.AuthStoreFactory
+import components.root.DefaultRootComponent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import network.onBoarding.data.OnBoardingRepository
@@ -16,7 +17,8 @@ import prestaDispatchers
 
 internal class OnBoardingStoreFactory(
     private val storeFactory: StoreFactory,
-    private val country: String
+    private val country: String,
+    private val onBoardingContext: DefaultRootComponent.OnBoardingContext,
 ): KoinComponent {
     private val onBoardingRepository by inject<OnBoardingRepository>()
 
@@ -33,6 +35,7 @@ internal class OnBoardingStoreFactory(
         object OnBoardingLoading : Msg()
         data class OnBoardingGetMemberLoaded(val onBoardingResponse: PrestaOnBoardingResponse) : Msg()
         data class OnBoardingDefaultCountry(val country: String) : Msg()
+        data class OnBoardingContext(val onBoardingContext: DefaultRootComponent.OnBoardingContext) : Msg()
         data class OnBoardingFailed(val error: String?) : Msg()
     }
 
@@ -41,6 +44,7 @@ internal class OnBoardingStoreFactory(
         // runs when component is initialized
         override fun executeAction(action: Unit, getState: () -> OnBoardingStore.State) {
             dispatch(Msg.OnBoardingDefaultCountry(country))
+            dispatch(Msg.OnBoardingContext(onBoardingContext))
         }
 
         override fun executeIntent(intent: OnBoardingStore.Intent, getState: () -> OnBoardingStore.State): Unit =
@@ -108,6 +112,7 @@ internal class OnBoardingStoreFactory(
                 is Msg.OnBoardingLoading -> copy(isLoading = true)
                 is Msg.OnBoardingGetMemberLoaded -> copy(phoneNumber = msg.onBoardingResponse.phoneNumber)
                 is Msg.OnBoardingDefaultCountry -> copy(country = msg.country)
+                is Msg.OnBoardingContext -> copy(onBoardingContext = msg.onBoardingContext)
                 is Msg.OnBoardingFailed -> copy(error = msg.error)
             }
     }

@@ -1,6 +1,5 @@
 package components.welcome
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
@@ -19,22 +18,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
+import com.presta.customer.MR
+import components.countries.Country
 import composables.ActionButton
 import composables.Paginator
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import dev.icerock.moko.resources.compose.painterResource
 import helpers.LocalSafeArea
-import com.presta.customer.MR
-import components.countries.Country
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -43,13 +39,11 @@ fun WelcomeScreen(
 ) {
     val model by component.model.subscribeAsState()
     val state = rememberLazyListState()
-    val isDark = isSystemInDarkTheme()
-
-    println(":::::isSystemInDarkTheme")
-    println(isDark)
 
     Scaffold (
-        modifier = Modifier.fillMaxHeight(1f).padding(LocalSafeArea.current)
+        modifier = Modifier
+            .fillMaxHeight(1f)
+            .padding(LocalSafeArea.current)
     ) {
         LazyColumn (
             modifier = Modifier.fillMaxHeight(),
@@ -71,23 +65,29 @@ fun WelcomeScreen(
                         ) {
                             Row {
                                 Text(
+                                    text = item.title,
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                                )
+                            }
+
+                            Row {
+                                Text(
                                     text = item.label,
                                     style = MaterialTheme.typography.titleSmall,
                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                 )
                             }
-                            Row {
-                                Text(
-                                    text = item.title,
-                                    style = MaterialTheme.typography.displaySmall,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
-                                )
-                            }
 
                             Row (modifier = Modifier.padding(top = 50.dp)) {
-                                val painter: Painter = painterResource(item.image)
+                                val painter: Painter = painterResource(
+                                    when(MaterialTheme.colorScheme.background == Color(0xFFF7F7F7)) {
+                                        true -> item.imageLight
+                                        false -> item.imageDark
+                                    }
+                                )
 
-                                Image(painter = painter, contentDescription = null, modifier = Modifier.fillMaxWidth().fillMaxHeight(0.7f))
+                                Image(painter = painter, contentDescription = null, modifier = Modifier.fillMaxWidth().fillMaxHeight(0.9f))
                             }
 
                         }
@@ -104,7 +104,10 @@ fun WelcomeScreen(
                     ActionButton("Get Started", onClickContainer = {
                         // ask for location data to set different country
                         // {"name":"Tanzania","code":"255","alpha2Code":"TZ","numericCode":"834"}
-                        component.onGetStarted(Country("Kenya", "254", "KE", "404"))
+                        component.onGetStarted (
+                            country = Country("Kenya", "254", "KE", "404"),
+                            onBoardingContext = model.onBoardingContext
+                        )
                     })
                 }
             }

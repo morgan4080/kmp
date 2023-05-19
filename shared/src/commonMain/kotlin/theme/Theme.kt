@@ -37,7 +37,7 @@ private val LightColorScheme = lightColorScheme(
     secondary = Green300,
     tertiary = Blue400,
 
-    background = Color.White,
+    background = Color(0xFFF7F7F7),
     surface = LightGray400,
     surfaceVariant = Gray400,
     onPrimary = Color.White,
@@ -46,7 +46,8 @@ private val LightColorScheme = lightColorScheme(
     onBackground = Black,
     onSurface = Black,
     onSurfaceVariant = DarkGray400,
-    outline = LightGray400
+    outline = LightGray400,
+    inverseOnSurface = Color(0xFFE7EAEB)
 )
 
 @Composable

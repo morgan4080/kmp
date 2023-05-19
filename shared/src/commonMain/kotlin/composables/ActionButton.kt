@@ -1,9 +1,6 @@
 package composables
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,9 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import theme.actionButtonColor
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
@@ -33,13 +28,6 @@ import theme.actionButtonColor
 fun  ActionButton(label: String, onClickContainer: () -> Unit, loading: Boolean = false) {
     val loadingState by remember { mutableStateOf(loading) }
 
-    val angle: Float by animateFloatAsState(
-        targetValue = (-360).toFloat(),
-        animationSpec = tween(
-            durationMillis = 1,
-            easing = LinearEasing
-        )
-    )
     ElevatedCard (onClick = onClickContainer,
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = actionButtonColor)

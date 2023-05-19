@@ -48,9 +48,11 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api("io.github.qdsfdhvh:image-loader:1.4.1")
+
                 with(compose) {
                     implementation(runtime)
                     implementation(foundation)
+                    implementation(material)
                     implementation(material3)
                     implementation(components.resources)
                     implementation(materialIconsExtended)

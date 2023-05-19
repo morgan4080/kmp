@@ -164,7 +164,7 @@ fun CountriesScreen(component: CountriesComponent) {
                     StickyHeaderContent(initial)
                 }
                 items(items = countriesForInitial) { country ->
-                    CountryRow(country, component)
+                    CountryRow(country)
                 }
             }
         }
