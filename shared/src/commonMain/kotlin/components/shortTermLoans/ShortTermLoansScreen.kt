@@ -92,7 +92,7 @@ fun ShortTermLoansScreen(component: ShortTermLoansComponent,innerPadding:Padding
                         }
                     }
                     when (tabIndex) {
-                        0 -> ShortTermProductList()
+                        0 -> ShortTermProductList(component)
                         1 -> ShortTermTopUpList()
 
                     }

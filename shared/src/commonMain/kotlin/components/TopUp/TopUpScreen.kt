@@ -35,7 +35,6 @@ import theme.labelTextColor
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun  TopUpScreen(){
-
     var popupControl by remember { mutableStateOf(false) }
 
     Surface(
@@ -205,14 +204,12 @@ fun  TopUpScreen(){
 
                 //Text input occurs  Here
 
-
                 Row(modifier = Modifier.fillMaxWidth().padding(top = 44.dp)){
 
                     ActionButton("Proceed", onClickContainer = {
-
-                        //component.onConfirmSelected()
-
                         //Navigate  Confirmation screen
+
+
 
                     })
 

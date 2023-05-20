@@ -37,7 +37,7 @@ import theme.containerColor
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun BankDisbursementScreen(){
+fun BankDisbursementScreen() {
 
     var popupControl by remember { mutableStateOf(false) }
 
@@ -48,22 +48,26 @@ fun BankDisbursementScreen(){
         color = containerColor
     ) {
 
-        Column(modifier = Modifier.background(color = containerColor)){
+        Column(modifier = Modifier.background(color = containerColor)) {
 
-            Row(modifier = Modifier.fillMaxWidth()){
+            Row(modifier = Modifier.fillMaxWidth()) {
 
 
                 NavigateBackTopBar("Disbursement Method")
 
             }
 
-            Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp)
-                .background(color = containerColor)
-                .fillMaxHeight()){
+            Column(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+                    .background(color = containerColor)
+                    .fillMaxHeight()
+            ) {
 
 
-                Text(modifier = Modifier.padding(start = 16.dp),
-                    text = "Select Disbursement Method")
+                Text(
+                    modifier = Modifier.padding(start = 16.dp),
+                    text = "Select Disbursement Method"
+                )
 
                 Spacer(modifier = Modifier.padding(top = 25.dp))
 
@@ -75,22 +79,30 @@ fun BankDisbursementScreen(){
                         // Composable to select The bank
 
 
-                        ElevatedCard(modifier = Modifier.fillMaxWidth().padding(start = 26.dp, end = 26.dp, top = 26.dp, bottom = 70.dp),
+                        ElevatedCard(
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(start = 26.dp, end = 26.dp, top = 26.dp, bottom = 70.dp),
                             colors = CardDefaults.elevatedCardColors(containerColor = Color.White)
-                        ){
+                        ) {
 
-                            Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp)){
+                            Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp)) {
 
-                                Text("Select Bank",
-                                    modifier = Modifier.padding(start = 16.dp))
-                                Text("Select Options Below",
+                                Text(
+                                    "Select Bank",
+                                    modifier = Modifier.padding(start = 16.dp)
+                                )
+                                Text(
+                                    "Select Options Below",
                                     modifier = Modifier.padding(start = 16.dp),
-                                    fontSize = 10.sp)
+                                    fontSize = 10.sp
+                                )
 
-                                Column(modifier = Modifier.height(300.dp)){
+                                Column(modifier = Modifier.height(300.dp)) {
 
-                                    Column(modifier = Modifier.verticalScroll(rememberScrollState())
-                                        .wrapContentHeight()) {
+                                    Column(
+                                        modifier = Modifier.verticalScroll(rememberScrollState())
+                                            .wrapContentHeight()
+                                    ) {
 
 
                                         Row(
@@ -110,11 +122,12 @@ fun BankDisbursementScreen(){
                                                 .background(color = Color.White)
                                                 .padding(top = 7.dp, start = 16.dp, end = 16.dp)
                                         ) {
-                                            OptionsSelectionContainer("Cooperative Bank", onClickContainer = {
+                                            OptionsSelectionContainer(
+                                                "Cooperative Bank",
+                                                onClickContainer = {
 
 
-
-                                            }
+                                                }
                                             )
 
                                         }
@@ -136,7 +149,6 @@ fun BankDisbursementScreen(){
                                                 .padding(top = 7.dp, start = 16.dp, end = 16.dp)
                                         ) {
                                             OptionsSelectionContainer("KCB", onClickContainer = {
-
 
 
                                             })
@@ -193,30 +205,51 @@ fun BankDisbursementScreen(){
 
                             //Row
 
-                            Row(modifier = Modifier.fillMaxWidth().padding(top = 10.dp, bottom = 10.dp, start = 16.dp, end = 16.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween){
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(
+                                    top = 10.dp,
+                                    bottom = 10.dp,
+                                    start = 16.dp,
+                                    end = 16.dp
+                                ),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
 
                                 ElevatedCard(onClick = {
-                                    popupControl=false
-                                }, modifier = Modifier.padding(start = 16.dp)){
+                                    popupControl = false
+                                }, modifier = Modifier.padding(start = 16.dp)) {
 
                                     Text(
                                         text = "Dismiss",
                                         fontSize = 11.sp,
-                                        modifier = Modifier.padding(top = 5.dp, bottom = 5.dp, start = 20.dp, end = 20.dp))
+                                        modifier = Modifier.padding(
+                                            top = 5.dp,
+                                            bottom = 5.dp,
+                                            start = 20.dp,
+                                            end = 20.dp
+                                        )
+                                    )
 
                                 }
 
 
-                                ElevatedCard(onClick = {
-                                    popupControl=false
-                                }, modifier = Modifier.padding(end = 16.dp),
-                                    colors = CardDefaults.elevatedCardColors(containerColor = actionButtonColor)){
+                                ElevatedCard(
+                                    onClick = {
+                                        popupControl = false
+                                    }, modifier = Modifier.padding(end = 16.dp),
+                                    colors = CardDefaults.elevatedCardColors(containerColor = actionButtonColor)
+                                ) {
 
-                                    Text(text = "Proceed",
+                                    Text(
+                                        text = "Proceed",
                                         color = Color.White,
                                         fontSize = 11.sp,
-                                        modifier = Modifier.padding(top = 5.dp, bottom = 5.dp, start = 20.dp, end = 20.dp)
+                                        modifier = Modifier.padding(
+                                            top = 5.dp,
+                                            bottom = 5.dp,
+                                            start = 20.dp,
+                                            end = 20.dp
+                                        )
                                     )
 
                                 }
@@ -234,7 +267,7 @@ fun BankDisbursementScreen(){
 
                     //Business  Logic
                     //banK details pop up card
-                    popupControl=true
+                    popupControl = true
 
 
                 })

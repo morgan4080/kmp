@@ -14,6 +14,8 @@ import components.processingTransaction.DefaultProcessingTransactionComponent
 import components.processingTransaction.ProcessingTransactionComponent
 import components.savings.DefaultSavingsComponent
 import components.savings.SavingsComponent
+import components.transactionHistoryScreen.DefaultTransactionHistoryComponent
+import components.transactionHistoryScreen.TransactionHistoryComponent
 
 class DefaultRootSavingsComponent(
     componentContext: ComponentContext,
@@ -37,6 +39,7 @@ class DefaultRootSavingsComponent(
             is ConfigSavings.SavingsHome -> RootSavingsComponent.ChildSavings.SavingsHomeChild(savingsHomeComponent(componentContext))
             is ConfigSavings.AddSavings -> RootSavingsComponent.ChildSavings.AddSavingsChild(addSavingsComponent(componentContext))
             is ConfigSavings.ProcessingTransaction->RootSavingsComponent.ChildSavings.ProcessingTransactionChild(processingTransactionComponent(componentContext))
+            is ConfigSavings.TransactionHistory->RootSavingsComponent.ChildSavings.TransactionHistoryChild(allTransactionHistoryComponent(componentContext))
 
         }
 
@@ -45,6 +48,12 @@ class DefaultRootSavingsComponent(
             componentContext = componentContext,
             onAddSavingsClicked = {
                 savingsNavigation.push(ConfigSavings.AddSavings)
+
+            },
+            onSeeAlClicked = {
+                //navigate to see All Screen
+                savingsNavigation.push(ConfigSavings.TransactionHistory)
+
 
             }
 
@@ -66,6 +75,10 @@ class DefaultRootSavingsComponent(
             componentContext = componentContext
         )
 
+    private fun allTransactionHistoryComponent(componentContext: ComponentContext): TransactionHistoryComponent =
+        DefaultTransactionHistoryComponent(
+            componentContext = componentContext
+        )
 
 
     private sealed class ConfigSavings : Parcelable {
@@ -77,6 +90,9 @@ class DefaultRootSavingsComponent(
 
         @Parcelize
         object ProcessingTransaction: ConfigSavings()
+
+        @Parcelize
+        object TransactionHistory: ConfigSavings()
 
     }
 }

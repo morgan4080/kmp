@@ -12,7 +12,9 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stac
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import components.applyLoan.ApplyLoanScreen
 import components.emergencyLoans.EmergencyLoansScreen
+import components.loanConfirmation.LoansConfirmationScreen
 import components.longTermLoans.LongTermLoansScreen
+import components.modeofDisbursement.SelectModeOfDisbursementScreen
 import components.rootLoans.RootLoansComponent
 import components.shortTermLoans.ShortTermLoansScreen
 import helpers.LocalSafeArea
@@ -33,8 +35,9 @@ fun RootLoansScreen(component: RootLoansComponent) {
                 is RootLoansComponent.ChildLoans.ApplyLoanChild -> ApplyLoanScreen(child.component, innerPadding)
                 is RootLoansComponent.ChildLoans.ShortTermLoansChild -> ShortTermLoansScreen(child.component, innerPadding)
                 is RootLoansComponent.ChildLoans.LongTermLoansChild -> LongTermLoansScreen(child.component, innerPadding)
-              //  is RootLoansComponent.ChildLoans.ProductLoansChild-> ProductScreen()
                 is RootLoansComponent.ChildLoans.EmergencyLoanChild-> EmergencyLoansScreen(child.component)
+                is RootLoansComponent.ChildLoans.ConfirmLoanChild-> LoansConfirmationScreen(child.component)
+                is RootLoansComponent.ChildLoans.DisbursementModeChild-> SelectModeOfDisbursementScreen(child.component)
 
             }
         }

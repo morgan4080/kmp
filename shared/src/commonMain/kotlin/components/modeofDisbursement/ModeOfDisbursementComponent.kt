@@ -1,15 +1,16 @@
-package components.longTermLoans
+package components.modeofDisbursement
 
 import com.arkivanov.decompose.value.Value
 
-interface LongTermLoansComponent {
-
+interface ModeOfDisbursementComponent {
     val model: Value<Model>
 
-    fun onSelected(refId: String)
+    fun onMpesaSelected()
+    fun onBankSelected()
 
     data class Model(
         val items: List<String>,
     )
+
 
 }

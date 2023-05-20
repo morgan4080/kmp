@@ -5,6 +5,7 @@ import com.arkivanov.decompose.value.Value
 import components.addSavings.AddSavingsComponent
 import components.processingTransaction.ProcessingTransactionComponent
 import components.savings.SavingsComponent
+import components.transactionHistoryScreen.TransactionHistoryComponent
 
 interface RootSavingsComponent {
     val childSavingsStack:Value<ChildStack<*, ChildSavings>>
@@ -14,6 +15,8 @@ interface RootSavingsComponent {
         class SavingsHomeChild(val component: SavingsComponent):ChildSavings()
         class AddSavingsChild(val component: AddSavingsComponent):ChildSavings()
         class ProcessingTransactionChild(val component: ProcessingTransactionComponent):ChildSavings()
+        class TransactionHistoryChild(val component: TransactionHistoryComponent):ChildSavings()
+
 
     }
 

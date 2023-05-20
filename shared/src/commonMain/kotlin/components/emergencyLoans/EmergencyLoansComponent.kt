@@ -6,7 +6,7 @@ interface EmergencyLoansComponent {
 
     val model: Value<Model>
 
-    fun onSelected(item: String)
+    fun onConfirmSelected()
 
     data class Model(
         val items: List<String>,

@@ -35,6 +35,8 @@ fun LongTermProductList(component: LongTermLoansComponent) {
                         //Navigate  to  EmergencyLoan Screen
                         //component.onEmergencyLoanSelected()
                         println("Navigate to Emergency Clicked")
+                        //Navigate to Emergency Loans
+                        component.onSelected("em")
 
 
                     })

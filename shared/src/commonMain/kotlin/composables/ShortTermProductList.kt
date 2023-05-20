@@ -10,12 +10,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import components.shortTermLoans.ShortTermLoansComponent
 
 @Composable
-fun ShortTermProductList() {
-
+fun ShortTermProductList(component: ShortTermLoansComponent) {
     //update
-
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "Select Loan Product",
@@ -39,7 +38,7 @@ fun ShortTermProductList() {
                         //component.onEmergencyLoanSelected()
                         //Todo -Configure components
                         println("Navigate to Emergency Clicked")
-
+                        component.onSelected("em")
 
                     })
                 }

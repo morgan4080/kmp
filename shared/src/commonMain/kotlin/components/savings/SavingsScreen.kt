@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -80,6 +79,7 @@ fun SavingsScreen(component: SavingsComponent) {
 
                                 println("See  al Items Clicked")
                                 //Navigate To  all navigation screen
+                                component.onSeeALlSelected()
 
                             }
 
@@ -116,8 +116,6 @@ fun SavingsScreen(component: SavingsComponent) {
                            //Navigate to Add savings Screen
                             component.onAddSavingsSelected()
                             println("Button clicked")
-
-
                         })
                     }
                 }

@@ -6,6 +6,7 @@ import com.arkivanov.decompose.value.Value
 
 class DefaultShortTernLoansComponent(
     componentContext: ComponentContext,
+    private val onProductSelected: (refId: String) -> Unit,
 ): ShortTermLoansComponent, ComponentContext by componentContext {
 
     private val models = MutableValue(
@@ -16,9 +17,8 @@ class DefaultShortTernLoansComponent(
 
     override val model: Value<ShortTermLoansComponent.Model> = models
 
-
-    override fun onSelected(item: String) {
-        TODO("Not yet implemented")
+    override fun onSelected(refId: String) {
+        onProductSelected(refId)
     }
 
 }

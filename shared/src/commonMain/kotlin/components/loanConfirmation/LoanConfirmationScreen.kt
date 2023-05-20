@@ -1,4 +1,4 @@
-package components.LoanConfirmation
+package components.loanConfirmation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -17,7 +17,7 @@ import composables.DisbursementDetailsContainer
 import composables.NavigateBackTopBar
 
 @Composable
-fun LoansConfirmation() {
+fun LoansConfirmationScreen(component: LoanConfirmationComponent) {
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background),
@@ -53,6 +53,8 @@ fun LoansConfirmation() {
                 //action Button
                 Row(modifier = Modifier.padding(top = 30.dp)) {
                     ActionButton("Confirm", onClickContainer = {
+                        //Navigate  to mode of Disbursement
+                        component.onConfirmSelected()
 
                     })
 

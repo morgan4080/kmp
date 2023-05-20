@@ -14,6 +14,7 @@ import components.addSavings.AddSavingsScreen
 import components.processingTransaction.ProcessingTransactionScreen
 import components.rootSavings.RootSavingsComponent
 import components.savings.SavingsScreen
+import components.transactionHistoryScreen.TransactionHistoryScreen
 import helpers.LocalSafeArea
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,6 +33,7 @@ fun RootSavingsScreen(component: RootSavingsComponent) {
                 is RootSavingsComponent.ChildSavings.SavingsHomeChild -> SavingsScreen(child.component)
                 is RootSavingsComponent.ChildSavings.AddSavingsChild -> AddSavingsScreen(child.component,innerPadding)
                 is RootSavingsComponent.ChildSavings.ProcessingTransactionChild-> ProcessingTransactionScreen(child.component)
+                is RootSavingsComponent.ChildSavings.TransactionHistoryChild-> TransactionHistoryScreen(child.component)
 
             }
         }

@@ -1,15 +1,14 @@
-package components.longTermLoans
+package components.loanConfirmation
 
 import com.arkivanov.decompose.value.Value
 
-interface LongTermLoansComponent {
+interface LoanConfirmationComponent {
 
     val model: Value<Model>
 
-    fun onSelected(refId: String)
+    fun onConfirmSelected()
 
     data class Model(
         val items: List<String>,
     )
-
 }

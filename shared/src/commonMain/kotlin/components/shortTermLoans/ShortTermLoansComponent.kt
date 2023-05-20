@@ -6,7 +6,7 @@ interface ShortTermLoansComponent {
 
     val model: Value<Model>
 
-    fun onSelected(item: String)
+    fun onSelected(refId: String)
 
     data class Model(
         val items: List<String>,
