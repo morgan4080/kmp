@@ -1,16 +1,15 @@
-package components.loanProducts
+package components.payLoan
 
 import com.arkivanov.decompose.value.Value
 
-interface ProductComponent {
+interface PayLoanComponent {
 
     val model: Value<Model>
 
-    fun onEmergencyLoanSelected()
+    fun onSelected(refId: String)
 
     data class Model(
         val items: List<String>,
-        val refId: String
     )
 
 

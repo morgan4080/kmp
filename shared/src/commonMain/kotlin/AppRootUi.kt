@@ -25,6 +25,8 @@ fun AppRootUi(component: RootComponent) {
             is RootComponent.Child.OTPChild -> OtpScreen(child.component)
             is RootComponent.Child.AuthChild -> AuthScreen(child.component)
             is RootComponent.Child.RootBottomChild -> RootBottomScreen(child.component)
+            is RootComponent.Child.RootLoansChild->RootLoansScreen(child.component)
+            is RootComponent.Child.RootSavingsChild->RootSavingsScreen(child.component)
         }
     }
 }

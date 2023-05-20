@@ -1,4 +1,4 @@
-package components.loansTransactionHistoryScreen
+package composables
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,29 +10,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import composables.TransactionHistoryContainer
 
 @Composable
-fun LoansTransactionHistoryScreen(){
-
-    Column(modifier = Modifier.fillMaxWidth()){
-
-        Row(modifier = Modifier.padding(top=20.dp)){
-
+fun LoansTransactionHistory() {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.padding(top = 20.dp)) {
             Text(text = "Loans")
-
         }
 
-        LazyColumn(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)){
-
-
-            items(30){
+        LazyColumn(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
+            items(30) {
 
                 TransactionHistoryContainer()
 
             }
-
-
             //creates a space to view all the scrollable items Below the Bottom App bar
 
             item {
@@ -44,5 +35,4 @@ fun LoansTransactionHistoryScreen(){
         }
 
     }
-
 }

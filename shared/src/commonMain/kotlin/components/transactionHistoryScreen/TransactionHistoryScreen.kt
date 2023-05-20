@@ -41,15 +41,15 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.unit.dp
-import components.allTransactionHistoryScreen.AllTransactionHistoryScreen
-import components.loansTransactionHistoryScreen.LoansTransactionHistoryScreen
-import components.savingsTransactionHistoryScreen.SavingsTransactionHistoryScreen
+import composables.AllTransactionHistory
+import composables.LoansTransactionHistory
 import composables.NavigateBackTopBar
+import composables.SavingsTransactionHistory
 import theme.actionButtonColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun  TransactionHistoryScreen(){
+fun TransactionHistoryScreen() {
 
     var userInput by remember { mutableStateOf("") }
 
@@ -57,26 +57,27 @@ fun  TransactionHistoryScreen(){
     val inputService = LocalTextInputService.current
     val focus = remember { mutableStateOf(false) }
 
-
-
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background),
         color = MaterialTheme.colorScheme.background
     ) {
-        Column(modifier = Modifier.fillMaxWidth().fillMaxHeight()){
+        Column(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
 
-            Row(modifier = Modifier.fillMaxWidth()){
+            Row(modifier = Modifier.fillMaxWidth()) {
                 NavigateBackTopBar("Transaction History")
 
             }
-            Column(modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(16.dp)){
+            Column(modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(16.dp)) {
 
-                Row(modifier = Modifier.fillMaxWidth().padding(bottom = 2.dp).background(
-                    MaterialTheme.colorScheme.background)){
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 2.dp).background(
+                        MaterialTheme.colorScheme.background
+                    )
+                ) {
 
-                    ElevatedCard(){
-                        Row(modifier = Modifier.fillMaxWidth()){
+                    ElevatedCard() {
+                        Row(modifier = Modifier.fillMaxWidth()) {
 
                             TextField(
                                 modifier = Modifier
@@ -104,9 +105,11 @@ fun  TransactionHistoryScreen(){
                                 },
                                 value = userInput,
                                 singleLine = true,
-                                colors = TextFieldDefaults.textFieldColors(containerColor = Color.White,
+                                colors = TextFieldDefaults.textFieldColors(
+                                    containerColor = Color.White,
                                     focusedIndicatorColor = Color.Transparent,
-                                    unfocusedIndicatorColor = Color.Transparent,),
+                                    unfocusedIndicatorColor = Color.Transparent,
+                                ),
                                 leadingIcon = {
                                     Icon(
 
@@ -114,7 +117,7 @@ fun  TransactionHistoryScreen(){
                                         contentDescription = "Search Icon",
                                         modifier = Modifier.clip(shape = CircleShape)
                                             .background(color = MaterialTheme.colorScheme.background),
-                                        )
+                                    )
                                 },
                                 trailingIcon = {
                                     Icon(
@@ -123,7 +126,7 @@ fun  TransactionHistoryScreen(){
                                         contentDescription = "Cancel icon",
                                         modifier = Modifier.clip(shape = CircleShape)
                                             .background(color = MaterialTheme.colorScheme.background),
-                                        )
+                                    )
 
                                 }
                             )
@@ -136,47 +139,71 @@ fun  TransactionHistoryScreen(){
                 //Navigation Tabs
                 var tabIndex by remember { mutableStateOf(0) }
 
-                val tabs = listOf("All ", "Savings","Loans")
-                Row(modifier = Modifier.background(MaterialTheme.colorScheme.background)
-                    .fillMaxWidth().padding(top=20.dp),
-                    horizontalArrangement = Arrangement.Center){
+                val tabs = listOf("All ", "Savings", "Loans")
+                Row(
+                    modifier = Modifier.background(MaterialTheme.colorScheme.background)
+                        .fillMaxWidth().padding(top = 20.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
                     TabRow(selectedTabIndex = tabIndex,
                         containerColor = Color.Gray.copy(alpha = 0.1f),
                         modifier = Modifier.clip(shape = RoundedCornerShape(29.dp))
                             .background(Color.Gray.copy(alpha = 0.1f))
                             .align(Alignment.CenterVertically),
                         indicator = {},
-                        divider ={
+                        divider = {
 
                         }
                     ) {
                         tabs.forEachIndexed { index, title ->
-                            Row(modifier = Modifier.background(color = Color.Gray.copy(alpha = 0.1f))
-                                .fillMaxWidth()
-                                .padding(top=1.dp, bottom = 1.dp)
-                                .clip(shape = RoundedCornerShape(70.dp)),
-                                horizontalArrangement = Arrangement.Center){
+                            Row(
+                                modifier = Modifier.background(color = Color.Gray.copy(alpha = 0.1f))
+                                    .fillMaxWidth()
+                                    .padding(top = 1.dp, bottom = 1.dp)
+                                    .clip(shape = RoundedCornerShape(70.dp)),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
                                 Card(
-                                    modifier = Modifier.background(color = Color.White.copy(alpha = 0.1f)).padding(1.dp)
+                                    modifier = Modifier.background(color = Color.White.copy(alpha = 0.1f))
+                                        .padding(1.dp)
                                         .clip(shape = RoundedCornerShape(20.dp)),
-                                    colors = CardDefaults.cardColors(containerColor =if (tabIndex == index) actionButtonColor else Color.White.copy(alpha = 0.1f)),
-                                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)){
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = if (tabIndex == index) actionButtonColor else Color.White.copy(
+                                            alpha = 0.1f
+                                        )
+                                    ),
+                                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                                ) {
 
-                                    Tab(text = {
+                                    Tab(
+                                        text = {
 
-                                        Text(text = title,
-                                            color =if (tabIndex == index) Color.White else Color.Black )
-                                    },
+                                            Text(
+                                                text = title,
+                                                color = if (tabIndex == index) Color.White else Color.Black
+                                            )
+                                        },
                                         selected = tabIndex == index,
                                         onClick = {
                                             tabIndex = index
                                         },
                                         modifier = Modifier
-                                            .clip(shape= RoundedCornerShape(topStart = 80.dp, topEnd = 80.dp, bottomStart = 80.dp, bottomEnd = 80.dp))
+                                            .clip(
+                                                shape = RoundedCornerShape(
+                                                    topStart = 80.dp,
+                                                    topEnd = 80.dp,
+                                                    bottomStart = 80.dp,
+                                                    bottomEnd = 80.dp
+                                                )
+                                            )
                                             // .padding(2.dp)
                                             .height(36.dp)
                                             .width(100.dp)
-                                            .background(color = if (tabIndex == index) actionButtonColor else Color.Gray.copy(alpha = 0.1f)),
+                                            .background(
+                                                color = if (tabIndex == index) actionButtonColor else Color.Gray.copy(
+                                                    alpha = 0.1f
+                                                )
+                                            ),
                                         //  selectedContentColor = Black,
                                         //unselectedContentColor = Color.DarkGray
                                     )
@@ -190,11 +217,10 @@ fun  TransactionHistoryScreen(){
 
                 }
 
-                when(tabIndex){
-
-                    0 -> AllTransactionHistoryScreen()
-                    1 -> SavingsTransactionHistoryScreen()
-                    2 -> LoansTransactionHistoryScreen()
+                when (tabIndex) {
+                    0 -> AllTransactionHistory()
+                    1 -> SavingsTransactionHistory()
+                    2 -> LoansTransactionHistory()
 
                 }
             }
