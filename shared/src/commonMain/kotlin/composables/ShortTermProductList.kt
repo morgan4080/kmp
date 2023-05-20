@@ -37,6 +37,7 @@ fun ShortTermProductList() {
                     ProductSelectionCard("Emergency Loan ", "Interest 12%", onClickContainer = {
                         //Navigate  to  EmergencyLoan Screen
                         //component.onEmergencyLoanSelected()
+                        //Todo -Configure components
                         println("Navigate to Emergency Clicked")
 
 
