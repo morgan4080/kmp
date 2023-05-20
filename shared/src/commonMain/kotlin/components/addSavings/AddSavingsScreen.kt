@@ -216,5 +216,4 @@ fun AddSavingsScreen(component: AddSavingsComponent,innerPadding: PaddingValues)
 
     }
 
-
 }

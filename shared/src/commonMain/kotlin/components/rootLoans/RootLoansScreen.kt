@@ -15,6 +15,7 @@ import components.emergencyLoans.EmergencyLoansScreen
 import components.loanConfirmation.LoansConfirmationScreen
 import components.longTermLoans.LongTermLoansScreen
 import components.modeofDisbursement.SelectModeOfDisbursementScreen
+import components.processingTransaction.ProcessingTransactionScreen
 import components.rootLoans.RootLoansComponent
 import components.shortTermLoans.ShortTermLoansScreen
 import helpers.LocalSafeArea
@@ -38,7 +39,7 @@ fun RootLoansScreen(component: RootLoansComponent) {
                 is RootLoansComponent.ChildLoans.EmergencyLoanChild-> EmergencyLoansScreen(child.component)
                 is RootLoansComponent.ChildLoans.ConfirmLoanChild-> LoansConfirmationScreen(child.component)
                 is RootLoansComponent.ChildLoans.DisbursementModeChild-> SelectModeOfDisbursementScreen(child.component)
-
+                is RootLoansComponent.ChildLoans.ProcessingTransactionChild-> ProcessingTransactionScreen(child.component)
             }
         }
     }

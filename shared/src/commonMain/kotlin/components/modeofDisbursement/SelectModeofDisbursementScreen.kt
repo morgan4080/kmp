@@ -48,6 +48,7 @@ fun SelectModeOfDisbursementScreen(component: ModeOfDisbursementComponent) {
                     ProductSelectionCard2("Mpesa", onClickContainer = {
                         //Business  Logic
                         //Navigate to processing Transaction
+                        component.onMpesaSelected()
 
                     })
 

@@ -18,6 +18,8 @@ import components.longTermLoans.DefaultLongTermComponent
 import components.longTermLoans.LongTermLoansComponent
 import components.modeofDisbursement.DefaultModeOfDisbursementComponent
 import components.modeofDisbursement.ModeOfDisbursementComponent
+import components.processingTransaction.DefaultProcessingTransactionComponent
+import components.processingTransaction.ProcessingTransactionComponent
 import components.shortTermLoans.DefaultShortTernLoansComponent
 import components.shortTermLoans.ShortTermLoansComponent
 
@@ -65,6 +67,10 @@ class DefaultRootLoansComponent(
 
             is ConfigLoans.DisbursementMethod -> RootLoansComponent.ChildLoans.DisbursementModeChild(
                 modeOfDisbursementComponent(componentContext)
+            )
+
+            is ConfigLoans.ProcessingTransaction->RootLoansComponent.ChildLoans.ProcessingTransactionChild(
+                processingTransactionComponent(componentContext)
             )
         }
 
@@ -132,13 +138,19 @@ class DefaultRootLoansComponent(
             onMpesaClicked = {
                 //Navigate to process payment
               // loansNavigation.push()
-
+                loansNavigation.push(ConfigLoans.ProcessingTransaction)
 
             },
             onBankClicked = {
                 //navigate to  BankDisburseMent
 
             }
+        )
+
+
+    private fun processingTransactionComponent(componentContext: ComponentContext): ProcessingTransactionComponent =
+        DefaultProcessingTransactionComponent(
+            componentContext = componentContext
         )
 
     private sealed class ConfigLoans : Parcelable {
@@ -163,7 +175,8 @@ class DefaultRootLoansComponent(
         @Parcelize
         object DisbursementMethod : ConfigLoans()
 
-
+        @Parcelize
+        object ProcessingTransaction : ConfigLoans()
 
     }
 }

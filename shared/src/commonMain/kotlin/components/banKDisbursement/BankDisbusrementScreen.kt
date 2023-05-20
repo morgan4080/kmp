@@ -38,31 +38,22 @@ import theme.containerColor
 @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun BankDisbursementScreen() {
-
     var popupControl by remember { mutableStateOf(false) }
-
-
     Surface(
         modifier = Modifier
             .background(color = containerColor),
         color = containerColor
     ) {
-
         Column(modifier = Modifier.background(color = containerColor)) {
 
             Row(modifier = Modifier.fillMaxWidth()) {
-
-
                 NavigateBackTopBar("Disbursement Method")
-
             }
-
             Column(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                     .background(color = containerColor)
                     .fillMaxHeight()
             ) {
-
 
                 Text(
                     modifier = Modifier.padding(start = 16.dp),
@@ -70,10 +61,7 @@ fun BankDisbursementScreen() {
                 )
 
                 Spacer(modifier = Modifier.padding(top = 25.dp))
-
-
                 if (popupControl) {
-
 
                     Popup() {
                         // Composable to select The bank
@@ -144,7 +132,8 @@ fun BankDisbursementScreen() {
                                         }
 
                                         Row(
-                                            modifier = Modifier.fillMaxWidth()
+                                            modifier = Modifier
+                                                .fillMaxWidth()
                                                 .background(color = Color.White)
                                                 .padding(top = 7.dp, start = 16.dp, end = 16.dp)
                                         ) {
@@ -269,21 +258,14 @@ fun BankDisbursementScreen() {
                     //banK details pop up card
                     popupControl = true
 
-
                 })
-
-
                 ProductSelectionCard2("Account Number", onClickContainer = {
                     //Business  Logic
-
-
                 })
-
                 Spacer(modifier = Modifier.padding(top = 60.dp))
 
 
                 ActionButton("Proceed", onClickContainer = {
-
 
                 })
 

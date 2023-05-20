@@ -7,6 +7,7 @@ import components.emergencyLoans.EmergencyLoansComponent
 import components.loanConfirmation.LoanConfirmationComponent
 import components.longTermLoans.LongTermLoansComponent
 import components.modeofDisbursement.ModeOfDisbursementComponent
+import components.processingTransaction.ProcessingTransactionComponent
 import components.shortTermLoans.ShortTermLoansComponent
 
 interface RootLoansComponent {
@@ -23,6 +24,8 @@ interface RootLoansComponent {
         class ConfirmLoanChild(val component: LoanConfirmationComponent):ChildLoans()
 
          class DisbursementModeChild(val component: ModeOfDisbursementComponent):ChildLoans()
+
+        class ProcessingTransactionChild(val component: ProcessingTransactionComponent):ChildLoans()
 
     }
 
