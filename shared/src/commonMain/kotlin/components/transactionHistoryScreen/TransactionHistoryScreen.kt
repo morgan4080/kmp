@@ -49,7 +49,7 @@ import theme.actionButtonColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransactionHistoryScreen() {
+fun TransactionHistoryScreen(component: TransactionHistoryComponent) {
 
     var userInput by remember { mutableStateOf("") }
 

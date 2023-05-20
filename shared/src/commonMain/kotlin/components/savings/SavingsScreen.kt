@@ -1,6 +1,7 @@
 package components.savings
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,12 +12,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import composables.ActionButton
@@ -67,16 +71,29 @@ fun SavingsScreen(component: SavingsComponent) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 28.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(text = "Transactions ")
-                        Row() {
-                            Text(text = "See All")
-                            Icon(
-                                Icons.Filled.ArrowForward,
-                                contentDescription = "Forward Arrow",
-                                tint = backArrowColor
-                            )
+                        Row(verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable {
+
+                                println("See  al Items Clicked")
+                                //Navigate To  all navigation screen
+
+                            }
+
+                        ) {
+                            Text(text = "See All",
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.align(alignment = Alignment.CenterVertically))
+
+                                Icon(
+                                    Icons.Filled.ArrowForward,
+                                    contentDescription = "Forward Arrow",
+                                    tint = backArrowColor,
+                                    modifier = Modifier.align(alignment = Alignment.CenterVertically)
+                                )
 
                         }
                     }

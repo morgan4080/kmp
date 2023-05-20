@@ -72,6 +72,7 @@ class DefaultRootBottomComponent(
             }
         )
 
+
     override fun onProfileTabClicked() {
         navigationBottomStackNavigation.bringToFront(ConfigBottom.Profile)
     }
@@ -97,5 +98,9 @@ class DefaultRootBottomComponent(
         object RootSavings : ConfigBottom()
         @Parcelize
         object Sign : ConfigBottom()
+
+
+
+
     }
 }
