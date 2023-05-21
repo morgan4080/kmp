@@ -59,7 +59,7 @@ fun SelectModeOfDisbursementScreen(component: ModeOfDisbursementComponent) {
                     ProductSelectionCard2("Bank", onClickContainer = {
                         //Business  Logic
                         //Navigate to bank disbursement
-
+                        component.onBankSelected()
                     })
 
                 }

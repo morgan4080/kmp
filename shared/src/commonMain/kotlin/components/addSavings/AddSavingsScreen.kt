@@ -197,8 +197,6 @@ fun AddSavingsScreen(component: AddSavingsComponent,innerPadding: PaddingValues)
                     TextInputContainer("Desired Amount","")
 
                 }
-
-
                 Row(modifier = Modifier.fillMaxWidth().padding(top = 44.dp)){
 
                   ActionButton("Confirm", onClickContainer = {

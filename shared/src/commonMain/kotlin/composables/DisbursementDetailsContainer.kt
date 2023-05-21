@@ -1,14 +1,18 @@
 package composables
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,21 +29,27 @@ import androidx.compose.ui.unit.sp
 fun DisbursementDetailsContainer() {
 
     ElevatedCard(
-        modifier = Modifier.padding(top = 10.dp)
+        modifier = Modifier
+            .padding(top = 10.dp)
+            .border(BorderStroke(0.5.dp, Color.White), shape = RoundedCornerShape(size = 12.dp))
     ) {
         Box(
-            modifier = Modifier.background(color = Color.White)
+            modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.background)
         ) {
             Column(
-                modifier = Modifier.padding(
+                modifier = Modifier
+                    .padding(
                     top = 23.dp,
                     start = 24.dp,
                     end = 24.dp,
                     bottom = 24.dp,
                 )
+                    .fillMaxHeight(0.5f)
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
@@ -49,7 +59,9 @@ fun DisbursementDetailsContainer() {
                     )
                 }
                 Row(
-                    modifier = Modifier.padding(top = 0.dp).fillMaxWidth()
+                    modifier = Modifier
+                        .padding(top = 0.dp)
+                        .fillMaxWidth()
                 ) {
                     Text(
                         text = "Kes 30,000",
@@ -59,7 +71,6 @@ fun DisbursementDetailsContainer() {
                     )
                 }
                 //data Rows
-                Spacer(modifier = Modifier.height(19.dp))
                 disbursementDetailsRow("Requested Amount", "Kes 30,000")
                 disbursementDetailsRow("Requested Amount", "Kes 30,000")
                 disbursementDetailsRow("Requested Amount", "Kes 30,000")
@@ -79,7 +90,9 @@ fun DisbursementDetailsContainer() {
 fun disbursementDetailsRow(label: String, data: String) {
 
     Row(
-        modifier = Modifier.fillMaxWidth().padding(top = 10.dp, bottom = 10.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
 

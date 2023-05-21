@@ -24,13 +24,16 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun CurrentSavingsContainer(){
-    ElevatedCard(modifier = Modifier.padding(top = 10.dp)
+    ElevatedCard(modifier = Modifier
+        .padding(top = 10.dp)
         .border( BorderStroke(1.dp,Color.White), shape = RoundedCornerShape(size = 12.dp))
     ) {
-        Box (modifier = Modifier.background(color = MaterialTheme.colorScheme.background)
+        Box (modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.background)
         ) {
             Column (
-                modifier = Modifier.padding(
+                modifier = Modifier
+                    .padding(
                     top = 23.dp,
                     start = 24.dp,
                     end = 19.5.dp,

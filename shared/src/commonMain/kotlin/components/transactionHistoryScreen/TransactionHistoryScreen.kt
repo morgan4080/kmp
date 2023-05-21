@@ -62,22 +62,32 @@ fun TransactionHistoryScreen(component: TransactionHistoryComponent) {
             .background(color = MaterialTheme.colorScheme.background),
         color = MaterialTheme.colorScheme.background
     ) {
-        Column(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()) {
 
-            Row(modifier = Modifier.fillMaxWidth()) {
+            Row(modifier = Modifier
+                .fillMaxWidth()) {
                 NavigateBackTopBar("Transaction History")
 
             }
-            Column(modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(16.dp)) {
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(16.dp)) {
 
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 2.dp).background(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 2.dp)
+                        .background(
                         MaterialTheme.colorScheme.background
                     )
                 ) {
 
                     ElevatedCard() {
-                        Row(modifier = Modifier.fillMaxWidth()) {
+                        Row(modifier = Modifier
+                            .fillMaxWidth()) {
 
                             TextField(
                                 modifier = Modifier
@@ -115,7 +125,8 @@ fun TransactionHistoryScreen(component: TransactionHistoryComponent) {
 
                                         Icons.Filled.Search,
                                         contentDescription = "Search Icon",
-                                        modifier = Modifier.clip(shape = CircleShape)
+                                        modifier = Modifier
+                                            .clip(shape = CircleShape)
                                             .background(color = MaterialTheme.colorScheme.background),
                                     )
                                 },
@@ -124,7 +135,8 @@ fun TransactionHistoryScreen(component: TransactionHistoryComponent) {
 
                                         Icons.Filled.Close,
                                         contentDescription = "Cancel icon",
-                                        modifier = Modifier.clip(shape = CircleShape)
+                                        modifier = Modifier
+                                            .clip(shape = CircleShape)
                                             .background(color = MaterialTheme.colorScheme.background),
                                     )
 
@@ -141,13 +153,16 @@ fun TransactionHistoryScreen(component: TransactionHistoryComponent) {
 
                 val tabs = listOf("All ", "Savings", "Loans")
                 Row(
-                    modifier = Modifier.background(MaterialTheme.colorScheme.background)
-                        .fillMaxWidth().padding(top = 20.dp),
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background)
+                        .fillMaxWidth()
+                        .padding(top = 20.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     TabRow(selectedTabIndex = tabIndex,
                         containerColor = Color.Gray.copy(alpha = 0.1f),
-                        modifier = Modifier.clip(shape = RoundedCornerShape(29.dp))
+                        modifier = Modifier
+                            .clip(shape = RoundedCornerShape(29.dp))
                             .background(Color.Gray.copy(alpha = 0.1f))
                             .align(Alignment.CenterVertically),
                         indicator = {},
@@ -157,14 +172,16 @@ fun TransactionHistoryScreen(component: TransactionHistoryComponent) {
                     ) {
                         tabs.forEachIndexed { index, title ->
                             Row(
-                                modifier = Modifier.background(color = Color.Gray.copy(alpha = 0.1f))
+                                modifier = Modifier
+                                    .background(color = Color.Gray.copy(alpha = 0.1f))
                                     .fillMaxWidth()
                                     .padding(top = 1.dp, bottom = 1.dp)
                                     .clip(shape = RoundedCornerShape(70.dp)),
                                 horizontalArrangement = Arrangement.Center
                             ) {
                                 Card(
-                                    modifier = Modifier.background(color = Color.White.copy(alpha = 0.1f))
+                                    modifier = Modifier
+                                        .background(color = Color.White.copy(alpha = 0.1f))
                                         .padding(1.dp)
                                         .clip(shape = RoundedCornerShape(20.dp)),
                                     colors = CardDefaults.cardColors(

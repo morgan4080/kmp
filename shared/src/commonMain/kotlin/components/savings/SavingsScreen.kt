@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
@@ -53,11 +54,12 @@ fun SavingsScreen(component: SavingsComponent) {
                         .fillMaxWidth()
                 ) {
                     NavigateBackTopBar("Savings")
+
                 }
                 Column(
                     modifier = Modifier
                         .padding(start = 16.dp, end = 16.dp)
-                        .background(color = MaterialTheme.colorScheme.background)
+                        .background(color = Color.Transparent)
                 ) {
                     Text(
                         modifier = Modifier,
@@ -111,6 +113,8 @@ fun SavingsScreen(component: SavingsComponent) {
 
                     //Action Button
                     Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = Color.Transparent)
                         .padding(bottom = 100.dp)) {
                         ActionButton("+ Add Savings", onClickContainer = {
                            //Navigate to Add savings Screen

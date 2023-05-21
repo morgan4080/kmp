@@ -1,4 +1,4 @@
-package composables
+package components.succesfulTransaction
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import composables.ActionButton
 import theme.actionButtonColor
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,7 +32,9 @@ fun SuccessfulTransaction() {
         color = MaterialTheme.colorScheme.background
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -70,11 +73,15 @@ fun SuccessfulTransaction() {
                 Text(
                     "Transaction Successful!",
                     fontSize = 4.em,
-                    modifier = Modifier.padding(top = 29.dp),
+                    modifier = Modifier
+                        .padding(top = 29.dp),
                     fontWeight = FontWeight.Bold
                 )
 
-                Row(modifier = Modifier.padding(start = 50.dp, end = 50.dp, top = 5.dp)) {
+                Row(modifier = Modifier
+                    .padding(start = 50.dp,
+                        end = 50.dp,
+                        top = 5.dp)) {
 
                     Text(
                         text = "Loan topup of Kes 30,000 transferred to Mpesa No. 0724123456",
@@ -95,12 +102,13 @@ fun SuccessfulTransaction() {
             ) {
 
                 ElevatedCard(onClick = {
-                }, modifier = Modifier.padding(start = 16.dp)) {
-
+                }, modifier = Modifier
+                    .padding(start = 16.dp)) {
                     Text(
                         text = "+ Share Receipt",
                         fontSize = 11.sp,
-                        modifier = Modifier.padding(
+                        modifier = Modifier
+                            .padding(
                             top = 5.dp,
                             bottom = 5.dp,
                             start = 20.dp,
@@ -111,7 +119,11 @@ fun SuccessfulTransaction() {
                 }
 
             }
-            Row(modifier = Modifier.padding(start = 25.dp, end = 25.dp, top = 70.dp)) {
+            Row(modifier = Modifier
+                .padding(
+                    start = 25.dp,
+                    end = 25.dp,
+                    top = 70.dp)) {
 
                 ActionButton("Done", onClickContainer = {
 

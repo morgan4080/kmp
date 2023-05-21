@@ -209,8 +209,6 @@ fun  TopUpScreen(){
                     ActionButton("Proceed", onClickContainer = {
                         //Navigate  Confirmation screen
 
-
-
                     })
 
                 }

@@ -11,6 +11,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scal
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import components.applyLoan.ApplyLoanScreen
+import components.banKDisbursement.BankDisbursementScreen
 import components.emergencyLoans.EmergencyLoansScreen
 import components.loanConfirmation.LoansConfirmationScreen
 import components.longTermLoans.LongTermLoansScreen
@@ -24,7 +25,6 @@ import helpers.LocalSafeArea
 @Composable
 fun RootLoansScreen(component: RootLoansComponent) {
     val childStackLoans by component.childLoansStack.subscribeAsState()
-
     Scaffold (
         modifier = Modifier.padding(LocalSafeArea.current),
     ) { innerPadding ->
@@ -40,6 +40,7 @@ fun RootLoansScreen(component: RootLoansComponent) {
                 is RootLoansComponent.ChildLoans.ConfirmLoanChild-> LoansConfirmationScreen(child.component)
                 is RootLoansComponent.ChildLoans.DisbursementModeChild-> SelectModeOfDisbursementScreen(child.component)
                 is RootLoansComponent.ChildLoans.ProcessingTransactionChild-> ProcessingTransactionScreen(child.component)
+                is RootLoansComponent.ChildLoans.BankDisbursementChild-> BankDisbursementScreen(child.component)
             }
         }
     }
