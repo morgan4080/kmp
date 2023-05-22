@@ -39,7 +39,8 @@ internal class OnBoardingStoreFactory(
     }
 
     private inner class ExecutorImpl : CoroutineExecutor<OnBoardingStore.Intent, Unit, OnBoardingStore.State, Msg, Nothing>(
-        prestaDispatchers.main) {
+        prestaDispatchers.main
+    ) {
         // runs when component is initialized
         override fun executeAction(action: Unit, getState: () -> OnBoardingStore.State) {
             dispatch(Msg.OnBoardingContext(onBoardingContext))

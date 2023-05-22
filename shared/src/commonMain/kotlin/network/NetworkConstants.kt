@@ -17,4 +17,12 @@ object NetworkConstants {
     object PrestaUpdatePinTermsClient {
         const val route = baseUrl + "members/update-terms-pin"
     }
+
+    object PrestaOtpRequestClient {
+        const val route = baseUrl + "members/send-otp"
+    }
+
+    object PrestaOtpVerifyClient {
+        const val route = baseUrl + "members/validate-otp"
+    }
 }

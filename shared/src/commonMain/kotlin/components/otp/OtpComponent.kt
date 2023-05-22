@@ -1,20 +1,25 @@
 package components.otp
 
 import com.arkivanov.decompose.value.Value
+import components.auth.store.AuthStore
+import components.onBoarding.store.OnBoardingStore
+import components.otp.store.OtpStore
+import kotlinx.coroutines.flow.StateFlow
 
 interface OtpComponent {
-    val model: Value<Model>
-    fun onValid()
-    fun sendOTP()
-    data class Model(
-        val loading: Boolean,
-        val inputs: List<InputMethod>,
-        val label: String,
-        val title: String,
-        val phone_number: String?,
-        val email: String?,
-        val tenant_id: String?,
-    )
+    val authStore: AuthStore
 
-    data class InputMethod(val value: String)
+    val onBoardingStore: OnBoardingStore
+
+    val otpStore: OtpStore
+
+    val authState: StateFlow<AuthStore.State>
+
+    val onBoardingState: StateFlow<OnBoardingStore.State>
+
+    val state: StateFlow<OtpStore.State>
+    fun onAuthEvent(event: AuthStore.Intent)
+    fun onOnBoardingEvent(event: OnBoardingStore.Intent)
+    fun onEvent(event: OtpStore.Intent)
+    fun navigate()
 }
