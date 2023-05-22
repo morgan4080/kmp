@@ -1,4 +1,4 @@
-package components.TopUp
+package components.topUp
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,8 +34,8 @@ import theme.labelTextColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun  TopUpScreen(){
-    var popupControl by remember { mutableStateOf(false) }
+fun  LoanTopUpScreen(component: LoanTopUpComponent){
+    var launchPopUp by remember { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier
@@ -48,7 +48,9 @@ fun  TopUpScreen(){
             .fillMaxWidth()
             .fillMaxHeight()) {
             Row(modifier = Modifier.fillMaxWidth()) {
-                NavigateBackTopBar("Topup")
+                NavigateBackTopBar("Topup", onClickContainer = {
+
+                })
             }
             Column(
                 modifier = Modifier
@@ -57,22 +59,23 @@ fun  TopUpScreen(){
                     .fillMaxHeight()
             ) {
                 Text(
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier,
                     text = "Enter top up details",
                     color = labelTextColor
                 )
                 //show The min  and the  max allowed
                 Text(
-                    modifier = Modifier.padding(start = 16.dp, top = 10.dp),
+                    modifier = Modifier
+                        .padding( top = 10.dp),
                     text = "Min. 10,000 - Max. 50,000",
                     fontSize = 10.sp
                 )
 
                 //select top up Pop up
                 //Added overlay  to the po up screen
-                if (popupControl){
+                if (launchPopUp){
 
-                    Popup(alignment = Alignment.Center){
+                    Popup(){
 
                         Column(modifier = Modifier
                             .fillMaxWidth()
@@ -107,9 +110,11 @@ fun  TopUpScreen(){
                                     Text(
                                         text = "Select Options Below",
                                         fontSize = 10.sp,
-                                        modifier = Modifier.padding(top = 3.dp)
+                                        modifier = Modifier
+                                            .padding(top = 3.dp)
                                     )
-                                    Row(modifier = Modifier.fillMaxWidth()
+                                    Row(modifier = Modifier
+                                        .fillMaxWidth()
                                         .padding(top = 18.dp)) {
 
                                         OptionsSelectionContainer(
@@ -118,7 +123,8 @@ fun  TopUpScreen(){
 
                                             })
                                     }
-                                    Row(modifier = Modifier.fillMaxWidth()) {
+                                    Row(modifier = Modifier
+                                        .fillMaxWidth()) {
 
                                         OptionsSelectionContainer("Emergency Loan at 10%/Month", onClickContainer = {
 
@@ -140,14 +146,15 @@ fun  TopUpScreen(){
                                 ) {
 
                                     ElevatedCard(onClick = {
-                                        popupControl = false
+                                        launchPopUp = false
                                     }, modifier = Modifier
                                         .padding(start = 16.dp)) {
 
                                         Text(
                                             text = "Dismiss",
                                             fontSize = 11.sp,
-                                            modifier = Modifier.padding(
+                                            modifier = Modifier
+                                                .padding(
                                                 top = 5.dp,
                                                 bottom = 5.dp,
                                                 start = 20.dp,
@@ -158,15 +165,17 @@ fun  TopUpScreen(){
                                     }
                                     ElevatedCard(
                                         onClick = {
-                                            popupControl = false
-                                        }, modifier = Modifier.padding(end = 16.dp),
+                                            launchPopUp = false
+                                        }, modifier = Modifier
+                                            .padding(end = 16.dp),
                                         colors = CardDefaults.elevatedCardColors(containerColor = actionButtonColor)
                                     ) {
                                         Text(
                                             text = "Proceed",
                                             color = Color.White,
                                             fontSize = 11.sp,
-                                            modifier = Modifier.padding(
+                                            modifier = Modifier
+                                                .padding(
                                                 top = 5.dp,
                                                 bottom = 5.dp,
                                                 start = 20.dp,
@@ -186,17 +195,21 @@ fun  TopUpScreen(){
 
                 }
 
-                Row(modifier = Modifier.fillMaxWidth().padding(top = 6.dp)){
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 6.dp)){
 
                     TextInputContainer("Desired Amount","")
 
                 }
 
-                Row(modifier = Modifier.fillMaxWidth().padding(top = 23.dp)){
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 23.dp)){
                     ProductSelectionCard2("Loan Term", onClickContainer = {
 
                         //pop up
-                        popupControl=true
+                        launchPopUp=true
 
                     })
 
@@ -204,10 +217,15 @@ fun  TopUpScreen(){
 
                 //Text input occurs  Here
 
-                Row(modifier = Modifier.fillMaxWidth().padding(top = 44.dp)){
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 44.dp)){
 
                     ActionButton("Proceed", onClickContainer = {
-                        //Navigate  Confirmation screen
+
+                        //Proceed To confirm the Details
+                        component.onConfirmSelected()
+
 
                     })
 

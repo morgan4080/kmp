@@ -10,9 +10,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import components.shortTermLoans.ShortTermLoansComponent
 
 @Composable
-fun  ShortTermTopUpList(){
+fun  ShortTermTopUpList(component: ShortTermLoansComponent){
     Column(modifier = Modifier
         .fillMaxWidth()){
 
@@ -40,6 +41,8 @@ fun  ShortTermTopUpList(){
             .padding(bottom = 26.dp)){
 
             ActionButton("Proceed", onClickContainer = {
+                //Navigate  to topUp Screen
+                component.onConfirmSelected("topUp")
 
             })
 

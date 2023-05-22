@@ -48,7 +48,9 @@ fun BankDisbursementScreen(component: BankDisbursementComponent) {
             .background(color = MaterialTheme.colorScheme.background)) {
             Row(modifier = Modifier
                 .fillMaxWidth()) {
-                NavigateBackTopBar("Disbursement Method")
+                NavigateBackTopBar("Disbursement Method", onClickContainer = {
+
+                })
             }
             Column(
                 modifier = Modifier
@@ -58,8 +60,7 @@ fun BankDisbursementScreen(component: BankDisbursementComponent) {
             ) {
 
                 Text(
-                    modifier = Modifier
-                        .padding(start = 16.dp),
+                    modifier = Modifier,
                     text = "Select Disbursement Method"
                 )
                 Spacer(modifier = Modifier
@@ -69,193 +70,201 @@ fun BankDisbursementScreen(component: BankDisbursementComponent) {
                 if (launchPopUp) {
                     Popup() {
                         // Composable to select The bank
-                        ElevatedCard(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 26.dp, end = 26.dp, top = 26.dp, bottom = 70.dp),
-                            colors = CardDefaults
-                                .elevatedCardColors(containerColor = MaterialTheme.colorScheme.background )
-                        ) {
+                        Column(modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                            .background(color = Color.Black.copy(alpha = 0.7f)),
+                            verticalArrangement = Arrangement.Center) {
+                            ElevatedCard(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 26.dp, end = 26.dp, top = 26.dp, bottom = 70.dp),
+                                colors = CardDefaults
+                                    .elevatedCardColors(containerColor = MaterialTheme.colorScheme.background )
+                            ) {
 
-                            Column(modifier = Modifier
-                                .padding(start = 16.dp, end = 16.dp)) {
-
-                                Text(
-                                    "Select Bank",
-                                    modifier = Modifier
-                                        .padding(start = 16.dp)
-                                )
-                                Text(
-                                    "Select Options Below",
-                                    modifier = Modifier
-                                        .padding(start = 16.dp),
-                                    fontSize = 10.sp
-                                )
                                 Column(modifier = Modifier
-                                    .height(300.dp)) {
+                                    .padding(start = 16.dp, end = 16.dp)) {
 
-                                    Column(
+                                    Text(
+                                        "Select Bank",
                                         modifier = Modifier
-                                            .verticalScroll(rememberScrollState())
-                                            .wrapContentHeight()
-                                    ) {
+                                            .padding(start = 16.dp)
+                                    )
+                                    Text(
+                                        "Select Options Below",
+                                        modifier = Modifier
+                                            .padding(start = 16.dp),
+                                        fontSize = 10.sp
+                                    )
+                                    Column(modifier = Modifier
+                                        .height(300.dp)) {
 
-                                        Row(
+                                        Column(
                                             modifier = Modifier
-                                                .fillMaxWidth()
-                                                .background(color = Color.White)
-                                                .padding(top = 10.dp, start = 16.dp, end = 16.dp)
+                                                .verticalScroll(rememberScrollState())
+                                                .wrapContentHeight()
                                         ) {
-                                            OptionsSelectionContainer("KCB", onClickContainer = {
+
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .background(color = Color.White)
+                                                    .padding(top = 10.dp, start = 16.dp, end = 16.dp)
+                                            ) {
+                                                OptionsSelectionContainer("KCB", onClickContainer = {
 
 
-                                            })
+                                                })
 
-                                        }
+                                            }
 
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .background(color = Color.White)
-                                                .padding(top = 7.dp, start = 16.dp, end = 16.dp)
-                                        ) {
-                                            OptionsSelectionContainer(
-                                                "Cooperative Bank",
-                                                onClickContainer = {
-
-
-                                                }
-                                            )
-
-                                        }
-
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .background(color = Color.White)
-                                                .padding(top = 7.dp, start = 16.dp, end = 16.dp)
-                                        ) {
-                                            OptionsSelectionContainer("KCB", onClickContainer = {
-
-                                            })
-
-                                        }
-
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .background(color = Color.White)
-                                                .padding(top = 7.dp, start = 16.dp, end = 16.dp)
-                                        ) {
-                                            OptionsSelectionContainer("KCB", onClickContainer = {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .background(color = Color.White)
+                                                    .padding(top = 7.dp, start = 16.dp, end = 16.dp)
+                                            ) {
+                                                OptionsSelectionContainer(
+                                                    "Cooperative Bank",
+                                                    onClickContainer = {
 
 
-                                            })
-                                        }
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .background(color = Color.White)
-                                                .padding(top = 7.dp, start = 16.dp, end = 16.dp)
-                                        ) {
-                                            OptionsSelectionContainer("KCB", onClickContainer = {
+                                                    }
+                                                )
 
-                                            })
+                                            }
 
-                                        }
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .background(color = Color.White)
-                                                .padding(top = 7.dp, start = 16.dp, end = 16.dp)
-                                        ) {
-                                            OptionsSelectionContainer("KCB", onClickContainer = {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .background(color = Color.White)
+                                                    .padding(top = 7.dp, start = 16.dp, end = 16.dp)
+                                            ) {
+                                                OptionsSelectionContainer("KCB", onClickContainer = {
 
-                                            })
+                                                })
 
-                                        }
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .background(color = Color.White)
-                                                .padding(top = 7.dp, start = 16.dp, end = 16.dp)
-                                        ) {
-                                            OptionsSelectionContainer("KCB", onClickContainer = {
+                                            }
 
-                                            })
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .background(color = Color.White)
+                                                    .padding(top = 7.dp, start = 16.dp, end = 16.dp)
+                                            ) {
+                                                OptionsSelectionContainer("KCB", onClickContainer = {
 
-                                        }
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .background(color = Color.White)
-                                                .padding(top = 7.dp, start = 16.dp, end = 16.dp)
-                                        ) {
-                                            OptionsSelectionContainer("KCB", onClickContainer = {
 
-                                            })
+                                                })
+                                            }
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .background(color = Color.White)
+                                                    .padding(top = 7.dp, start = 16.dp, end = 16.dp)
+                                            ) {
+                                                OptionsSelectionContainer("KCB", onClickContainer = {
+
+                                                })
+
+                                            }
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .background(color = Color.White)
+                                                    .padding(top = 7.dp, start = 16.dp, end = 16.dp)
+                                            ) {
+                                                OptionsSelectionContainer("KCB", onClickContainer = {
+
+                                                })
+
+                                            }
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .background(color = Color.White)
+                                                    .padding(top = 7.dp, start = 16.dp, end = 16.dp)
+                                            ) {
+                                                OptionsSelectionContainer("KCB", onClickContainer = {
+
+                                                })
+
+                                            }
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .background(color = Color.White)
+                                                    .padding(top = 7.dp, start = 16.dp, end = 16.dp)
+                                            ) {
+                                                OptionsSelectionContainer("KCB", onClickContainer = {
+
+                                                })
+
+                                            }
 
                                         }
 
                                     }
 
                                 }
-
-                            }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(
-                                    top = 10.dp,
-                                    bottom = 10.dp,
-                                    start = 16.dp,
-                                    end = 16.dp
-                                ),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-
-                                ElevatedCard(onClick = {
-                                    launchPopUp = false
-                                }, modifier = Modifier
-                                    .padding(start = 16.dp)) {
-
-                                    Text(
-                                        text = "Dismiss",
-                                        fontSize = 11.sp,
-                                        modifier = Modifier
-                                            .padding(
-                                            top = 5.dp,
-                                            bottom = 5.dp,
-                                            start = 20.dp,
-                                            end = 20.dp
-                                        )
-                                    )
-
-                                }
-
-                                ElevatedCard(
-                                    onClick = {
-                                        launchPopUp = false
-                                    }, modifier = Modifier
-                                        .padding(end = 16.dp),
-                                    colors = CardDefaults.elevatedCardColors(containerColor = actionButtonColor )
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(
+                                            top = 10.dp,
+                                            bottom = 10.dp,
+                                            start = 16.dp,
+                                            end = 16.dp
+                                        ),
+                                    horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
 
-                                    Text(
-                                        text = "Proceed",
-                                        color = Color.White,
-                                        fontSize = 11.sp,
-                                        modifier = Modifier
-                                            .padding(
-                                            top = 5.dp,
-                                            bottom = 5.dp,
-                                            start = 20.dp,
-                                            end = 20.dp
+                                    ElevatedCard(onClick = {
+                                        launchPopUp = false
+                                    }, modifier = Modifier
+                                        .padding(start = 16.dp)) {
+
+                                        Text(
+                                            text = "Dismiss",
+                                            fontSize = 11.sp,
+                                            modifier = Modifier
+                                                .padding(
+                                                    top = 5.dp,
+                                                    bottom = 5.dp,
+                                                    start = 20.dp,
+                                                    end = 20.dp
+                                                )
                                         )
-                                    )
+
+                                    }
+
+                                    ElevatedCard(
+                                        onClick = {
+                                            launchPopUp = false
+                                        }, modifier = Modifier
+                                            .padding(end = 16.dp),
+                                        colors = CardDefaults.elevatedCardColors(containerColor = actionButtonColor )
+                                    ) {
+
+                                        Text(
+                                            text = "Proceed",
+                                            color = Color.White,
+                                            fontSize = 11.sp,
+                                            modifier = Modifier
+                                                .padding(
+                                                    top = 5.dp,
+                                                    bottom = 5.dp,
+                                                    start = 20.dp,
+                                                    end = 20.dp
+                                                )
+                                        )
+                                    }
                                 }
                             }
+
                         }
+
                     }
                 }
 

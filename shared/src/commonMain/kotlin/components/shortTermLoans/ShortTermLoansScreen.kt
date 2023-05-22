@@ -42,7 +42,9 @@ fun ShortTermLoansScreen(component: ShortTermLoansComponent,innerPadding:Padding
             .fillMaxHeight()){
             Row(modifier = Modifier
                 .fillMaxWidth()){
-                NavigateBackTopBar("Short Term Loan")
+                NavigateBackTopBar("Short Term Loan", onClickContainer = {
+
+                })
             }
             Column(modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp)
@@ -93,7 +95,7 @@ fun ShortTermLoansScreen(component: ShortTermLoansComponent,innerPadding:Padding
                     }
                     when (tabIndex) {
                         0 -> ShortTermProductList(component)
-                        1 -> ShortTermTopUpList()
+                        1 -> ShortTermTopUpList(component)
 
                     }
                 }

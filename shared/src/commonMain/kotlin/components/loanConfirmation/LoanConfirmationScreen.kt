@@ -29,8 +29,9 @@ fun LoansConfirmationScreen(component: LoanConfirmationComponent) {
 
             Row(modifier = Modifier.fillMaxWidth()) {
 
+                NavigateBackTopBar("Emergency Loan Confirm", onClickContainer ={
 
-                NavigateBackTopBar("Emergency Loan Confirm")
+                } )
 
             }
 
@@ -42,7 +43,7 @@ fun LoansConfirmationScreen(component: LoanConfirmationComponent) {
 
 
                 Text(
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier,
                     text = "Confirm Loan  Details"
                 )
 

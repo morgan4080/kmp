@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,7 +41,10 @@ fun  ApplyLoanScreen(component: ApplyLoanComponent, innerPadding: PaddingValues)
                 .fillMaxHeight()) {
 
                 Row(modifier = Modifier.fillMaxWidth()){
-                    NavigateBackTopBar("Apply Loan")
+                    NavigateBackTopBar("Apply Loan", onClickContainer = {
+                        component.onBackNavSelected()
+                        println("Back nav clicked ")
+                    })
                 }
                 Column (modifier = Modifier
                     .fillMaxWidth()

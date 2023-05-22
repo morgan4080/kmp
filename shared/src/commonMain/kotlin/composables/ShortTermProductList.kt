@@ -47,6 +47,8 @@ fun ShortTermProductList(component: ShortTermLoansComponent) {
             item {
                 Row(modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
                     ProductSelectionCard("Mkopo Halisi Loan ", "Interest 12%", onClickContainer = {
+                        //Tests for  Loan payments-To be deleted
+                        component.onSelecte2("pay")
 
                     })
                 }

@@ -24,7 +24,9 @@ import composables.NavigateBackTopBar
 fun ProcessingTransactionScreen(component: ProcessingTransactionComponent) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.fillMaxWidth()) {
-            NavigateBackTopBar("")
+            NavigateBackTopBar("", onClickContainer ={
+
+            } )
         }
         Column(modifier = Modifier.fillMaxWidth().padding(top = 26.dp)) {
 

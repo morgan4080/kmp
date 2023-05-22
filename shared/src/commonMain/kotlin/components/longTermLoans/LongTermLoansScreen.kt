@@ -45,7 +45,9 @@ fun LongTermLoansScreen(component: LongTermLoansComponent, innerPadding: Padding
 
             Row(modifier = Modifier.fillMaxWidth()){
 
-                NavigateBackTopBar("Long Term Loan")
+                NavigateBackTopBar("Long Term Loan", onClickContainer = {
+
+                })
 
             }
 

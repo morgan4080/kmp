@@ -1,16 +1,11 @@
-package components.payLoan
-
 import com.arkivanov.decompose.value.Value
 
-interface PayLoanComponent {
-
+interface FailedTransactionComponent {
     val model: Value<Model>
 
-    fun onPaySelected(refId: String)
+    fun onRetrySelected()
 
     data class Model(
         val items: List<String>,
     )
-
-
 }

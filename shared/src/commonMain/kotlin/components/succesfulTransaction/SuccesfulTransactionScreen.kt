@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -22,10 +23,11 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import composables.ActionButton
 import theme.actionButtonColor
+import theme.transparentContainer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SuccessfulTransaction() {
+fun SuccessfulTransactionScreen(component: SuccessfulTransactionComponent) {
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background),
@@ -41,12 +43,14 @@ fun SuccessfulTransaction() {
             Column(
                 verticalArrangement = Arrangement.Center,
 
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 //check box for  successful Transaction
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
 
@@ -64,7 +68,8 @@ fun SuccessfulTransaction() {
                             imageVector = Icons.Default.Check,
                             contentDescription = "",
                             tint = Color.White,
-                            modifier = Modifier.size(70.dp)
+                            modifier = Modifier
+                                .size(70.dp)
                         )
                     }
 
@@ -79,9 +84,12 @@ fun SuccessfulTransaction() {
                 )
 
                 Row(modifier = Modifier
-                    .padding(start = 50.dp,
-                        end = 50.dp,
-                        top = 5.dp)) {
+                    .padding(
+                        top = 5.dp,
+                    start = 30.dp,
+                    end = 30.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center) {
 
                     Text(
                         text = "Loan topup of Kes 30,000 transferred to Mpesa No. 0724123456",
@@ -102,8 +110,10 @@ fun SuccessfulTransaction() {
             ) {
 
                 ElevatedCard(onClick = {
+
                 }, modifier = Modifier
-                    .padding(start = 16.dp)) {
+                    .padding(start = 16.dp),
+                colors = CardDefaults.elevatedCardColors(containerColor = transparentContainer)) {
                     Text(
                         text = "+ Share Receipt",
                         fontSize = 11.sp,

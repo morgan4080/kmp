@@ -1,16 +1,14 @@
-package components.payLoan
+package components.succesfulTransaction
 
 import com.arkivanov.decompose.value.Value
 
-interface PayLoanComponent {
+interface SuccessfulTransactionComponent {
 
     val model: Value<Model>
 
-    fun onPaySelected(refId: String)
+    fun onSelected(item: String)
 
     data class Model(
         val items: List<String>,
     )
-
-
 }

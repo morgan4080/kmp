@@ -27,7 +27,9 @@ fun SelectModeOfDisbursementScreen(component: ModeOfDisbursementComponent) {
         Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
 
             Row(modifier = Modifier.fillMaxWidth()) {
-                NavigateBackTopBar("Disbursement Method")
+                NavigateBackTopBar("Disbursement Method", onClickContainer = {
+
+                })
 
             }
 
@@ -38,7 +40,7 @@ fun SelectModeOfDisbursementScreen(component: ModeOfDisbursementComponent) {
             ) {
 
                 Text(
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier,
                     text = "Select Disbursement Method"
                 )
 

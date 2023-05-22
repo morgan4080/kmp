@@ -54,8 +54,9 @@ fun DisbursementDetailsContainer() {
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
-                        text = "Disbursement Amount ", color = Color(0xFF8F8F8F.toInt()), // #002C56
-                        fontSize = 16.sp
+                        text = "Disbursement Amount ",
+                        //color = Color(0xFF8F8F8F.toInt()), // #002C56
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize
                     )
                 }
                 Row(
@@ -66,8 +67,8 @@ fun DisbursementDetailsContainer() {
                     Text(
                         text = "Kes 30,000",
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Black
+                        fontSize = MaterialTheme.typography.headlineSmall.fontSize,
+                        fontWeight = FontWeight.Black,
                     )
                 }
                 //data Rows
@@ -97,12 +98,13 @@ fun disbursementDetailsRow(label: String, data: String) {
     ) {
 
         Text(
-            text = label, fontSize = 10.sp
+            text = label,
+            fontSize = MaterialTheme.typography.labelSmall.fontSize
         )
 
         Text(
             text = data,
-            fontSize = 12.sp,
+            fontSize = MaterialTheme.typography.labelMedium.fontSize,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
             fontWeight = FontWeight.Black
         )

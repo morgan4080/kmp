@@ -1,16 +1,15 @@
-package components.payLoan
+package components.topUp
 
 import com.arkivanov.decompose.value.Value
 
-interface PayLoanComponent {
+interface LoanTopUpComponent {
 
     val model: Value<Model>
 
-    fun onPaySelected(refId: String)
+    fun onConfirmSelected()
 
     data class Model(
         val items: List<String>,
     )
-
 
 }

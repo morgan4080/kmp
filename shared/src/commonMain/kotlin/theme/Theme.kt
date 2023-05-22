@@ -47,6 +47,7 @@ private val LightColorScheme = lightColorScheme(
     onSurface = Black,
     onSurfaceVariant = DarkGray400,
     outline = LightGray400
+
 )
 
 @Composable
@@ -166,7 +167,7 @@ fun AppTheme(
             ),
             labelSmall = TextStyle(
                 fontWeight = FontWeight.Medium,
-                fontSize = 11.sp,
+                fontSize = 10.sp,
                 lineHeight = 16.0.sp,
                 letterSpacing = 0.5.sp,
                 fontFamily = medium

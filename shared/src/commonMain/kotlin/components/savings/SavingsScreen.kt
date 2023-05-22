@@ -53,7 +53,9 @@ fun SavingsScreen(component: SavingsComponent) {
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
-                    NavigateBackTopBar("Savings")
+                    NavigateBackTopBar("Savings", onClickContainer = {
+
+                    })
 
                 }
                 Column(

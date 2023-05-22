@@ -10,15 +10,19 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
+import components.topUp.LoanTopUpScreen
 import components.applyLoan.ApplyLoanScreen
 import components.banKDisbursement.BankDisbursementScreen
 import components.emergencyLoans.EmergencyLoansScreen
+import components.failedTransaction.FailedTransactionScreen
 import components.loanConfirmation.LoansConfirmationScreen
 import components.longTermLoans.LongTermLoansScreen
 import components.modeofDisbursement.SelectModeOfDisbursementScreen
+import components.payLoan.PayLoanScreen
 import components.processingTransaction.ProcessingTransactionScreen
 import components.rootLoans.RootLoansComponent
 import components.shortTermLoans.ShortTermLoansScreen
+import components.succesfulTransaction.SuccessfulTransactionScreen
 import helpers.LocalSafeArea
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,6 +45,11 @@ fun RootLoansScreen(component: RootLoansComponent) {
                 is RootLoansComponent.ChildLoans.DisbursementModeChild-> SelectModeOfDisbursementScreen(child.component)
                 is RootLoansComponent.ChildLoans.ProcessingTransactionChild-> ProcessingTransactionScreen(child.component)
                 is RootLoansComponent.ChildLoans.BankDisbursementChild-> BankDisbursementScreen(child.component)
+                is RootLoansComponent.ChildLoans.SuccessfulTransactionChild-> SuccessfulTransactionScreen(child.component)
+                is RootLoansComponent.ChildLoans.FailedTransactionChild-> FailedTransactionScreen(child.component)
+                is RootLoansComponent.ChildLoans.LoanTopUpChild-> LoanTopUpScreen(child.component)
+                is RootLoansComponent.ChildLoans.PayLoanChild-> PayLoanScreen(child.component)
+
             }
         }
     }

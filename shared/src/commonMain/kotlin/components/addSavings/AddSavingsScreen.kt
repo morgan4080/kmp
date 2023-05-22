@@ -19,7 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -36,7 +35,7 @@ import theme.labelTextColor
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddSavingsScreen(component: AddSavingsComponent,innerPadding: PaddingValues){
-    var popupControl by remember { mutableStateOf(false) }
+    var launchPopUp by remember { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier
@@ -48,8 +47,11 @@ fun AddSavingsScreen(component: AddSavingsComponent,innerPadding: PaddingValues)
             .background(color = MaterialTheme.colorScheme.background)
             .fillMaxWidth()
             .fillMaxHeight()) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                NavigateBackTopBar("Add Savings")
+            Row(modifier = Modifier
+                .fillMaxWidth()) {
+                NavigateBackTopBar("Add Savings", onClickContainer = {
+
+                })
             }
             Column(
                 modifier = Modifier
@@ -58,15 +60,15 @@ fun AddSavingsScreen(component: AddSavingsComponent,innerPadding: PaddingValues)
                     .fillMaxHeight()
             ) {
                 Text(
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier,
                     text = "Enter Savings Details",
                     color = labelTextColor
                 )
                 //select savings Pop up
                 //Added overlay  to the po up screen
-                if (popupControl){
+                if (launchPopUp){
 
-                    Popup(alignment = Alignment.Center){
+                    Popup(){
 
                         Column(modifier = Modifier
                             .fillMaxWidth()
@@ -134,7 +136,7 @@ fun AddSavingsScreen(component: AddSavingsComponent,innerPadding: PaddingValues)
                                 ) {
 
                                     ElevatedCard(onClick = {
-                                        popupControl = false
+                                        launchPopUp = false
                                     }, modifier = Modifier
                                         .padding(start = 16.dp)) {
 
@@ -152,7 +154,7 @@ fun AddSavingsScreen(component: AddSavingsComponent,innerPadding: PaddingValues)
                                     }
                                     ElevatedCard(
                                         onClick = {
-                                            popupControl = false
+                                            launchPopUp = false
                                         }, modifier = Modifier.padding(end = 16.dp),
                                         colors = CardDefaults.elevatedCardColors(containerColor = actionButtonColor)
                                     ) {
@@ -184,7 +186,7 @@ fun AddSavingsScreen(component: AddSavingsComponent,innerPadding: PaddingValues)
                     ProductSelectionCard2("Select Savings", onClickContainer = {
 
                         //pop up
-                        popupControl=true
+                        launchPopUp=true
 
                     })
 

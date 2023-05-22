@@ -2,7 +2,6 @@ package composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -17,7 +16,7 @@ import theme.backArrowColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavigateBackTopBar(label: String) {
+fun NavigateBackTopBar(label: String,onClickContainer: () -> Unit) {
     CenterAlignedTopAppBar(
         title = {
 
@@ -27,12 +26,16 @@ fun NavigateBackTopBar(label: String) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                IconButton(onClick = { /* doSomething() */ }) {
+
+                IconButton(onClick = onClickContainer) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = "Navigates back",
-                        tint = backArrowColor
+                        tint = backArrowColor,
+                        modifier = Modifier.padding(0.dp)
                     )
+
+
                 }
 
                 Text(
@@ -43,7 +46,9 @@ fun NavigateBackTopBar(label: String) {
                         .padding(start = 1.dp),
                     color = MaterialTheme.colorScheme.onBackground
                 )
-                Spacer(modifier = Modifier.weight(1f))
+
+
+              //  Spacer(modifier = Modifier.weight(1f))
 
             }
 

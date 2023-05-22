@@ -7,7 +7,8 @@ import com.arkivanov.decompose.value.Value
 class DefaultPayLoanComponent(
 
     componentContext: ComponentContext,
-) :PayLoanComponent,ComponentContext by componentContext{
+    private val onPayClicked: () -> Unit
+) :PayLoanComponent,ComponentContext by componentContext {
 
     private val models = MutableValue(
         PayLoanComponent.Model(
@@ -15,9 +16,9 @@ class DefaultPayLoanComponent(
         )
     )
 
-    override val model: Value<PayLoanComponent.Model> =models
+    override val model: Value<PayLoanComponent.Model> = models
 
-    override fun onSelected(refId: String) {
-        TODO("Not yet implemented")
+    override fun onPaySelected(refId: String) {
+     onPayClicked()
     }
 }

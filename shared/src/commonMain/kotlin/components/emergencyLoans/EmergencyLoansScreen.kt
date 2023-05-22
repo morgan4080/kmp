@@ -27,7 +27,9 @@ fun EmergencyLoansScreen(component: EmergencyLoansComponent) {
     ) {
         Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
             Row(modifier = Modifier.fillMaxWidth()) {
-                NavigateBackTopBar("Emergency Loan")
+                NavigateBackTopBar("Emergency Loan", onClickContainer = {
+
+                })
             }
             Column(
                 modifier = Modifier
@@ -36,7 +38,7 @@ fun EmergencyLoansScreen(component: EmergencyLoansComponent) {
                     .fillMaxHeight()
             ) {
                 Text(
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier,
                     text = "Enter Loan  Amount"
                 )
                 //container Card
