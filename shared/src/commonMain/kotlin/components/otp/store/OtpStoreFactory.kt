@@ -18,6 +18,7 @@ import prestaDispatchers
 internal class OtpStoreFactory (
     private val storeFactory: StoreFactory,
     private val onBoardingContext: DefaultRootComponent.OnBoardingContext,
+    private val phoneNumber: String,
 ): KoinComponent {
     private val otpRepository by inject<OtpRepository>()
 
@@ -36,13 +37,15 @@ internal class OtpStoreFactory (
         data class OtpValidationLoaded(val otpVerificationData: OtpVerificationResponse): Msg()
         data class OtpFailed(val error: String?) : Msg()
         data class OnBoardingContext(val onBoardingContext: DefaultRootComponent.OnBoardingContext) : Msg()
+        data class OtpPhoneNumber(val phoneNumber: String) : Msg()
     }
 
     private inner class ExecutorImpl : CoroutineExecutor<OtpStore.Intent, Unit, OtpStore.State, Msg, Nothing>(
         prestaDispatchers.main
     ) {
         override fun executeAction(action: Unit, getState: () -> OtpStore.State) {
-            dispatch(Msg.OnBoardingContext(onBoardingContext))
+            dispatch(Msg.OnBoardingContext(onBoardingContext = onBoardingContext))
+            dispatch(Msg.OtpPhoneNumber(phoneNumber = phoneNumber))
         }
 
         override fun executeIntent(intent: OtpStore.Intent, getState: () -> OtpStore.State): Unit =
@@ -113,6 +116,7 @@ internal class OtpStoreFactory (
                 is Msg.OtpValidationLoaded -> copy(otpVerificationData = msg.otpVerificationData)
                 is Msg.OtpFailed -> copy(error = msg.error)
                 is Msg.OnBoardingContext -> copy(onBoardingContext = msg.onBoardingContext)
+                is Msg.OtpPhoneNumber -> copy(phone_number = msg.phoneNumber)
             }
     }
 }

@@ -17,5 +17,5 @@ interface OnBoardingComponent {
 
     fun onAuthEvent(event: AuthStore.Intent)
     fun onEvent(event: OnBoardingStore.Intent)
-    fun navigate()
+    fun navigate(phoneNumber: String)
 }

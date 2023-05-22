@@ -46,7 +46,7 @@ class DefaultRootComponent(
             is Config.Splash -> RootComponent.Child.SplashChild(splashComponent(componentContext))
             is Config.Welcome -> RootComponent.Child.WelcomeChild(welcomeComponent(componentContext, config))
             is Config.OnBoarding -> RootComponent.Child.OnboardingChild(onboardingComponent(componentContext, config))
-            is Config.OTP -> RootComponent.Child.OTPChild(otpComponent(componentContext))
+            is Config.OTP -> RootComponent.Child.OTPChild(otpComponent(componentContext, config))
             is Config.Auth -> RootComponent.Child.AuthChild(authComponent(componentContext))
             is Config.RootBottom -> RootComponent.Child.RootBottomChild(rootBottomComponent(componentContext))
         }
@@ -80,14 +80,22 @@ class DefaultRootComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
             onBoardingContext = config.onBoardingContext,
-            onPush = {
-                 navigation.push(Config.OTP)
+            onPush = { phoneNumber ->
+                 navigation.push(
+                     Config.OTP(
+                         onBoardingContext = config.onBoardingContext,
+                         phoneNumber = phoneNumber
+                    )
+                 )
             },
         )
 
-    private fun otpComponent(componentContext: ComponentContext): OtpComponent =
+    private fun otpComponent(componentContext: ComponentContext, config: Config.OTP): OtpComponent =
         DefaultOtpComponent(
             componentContext = componentContext,
+            storeFactory = storeFactory,
+            onBoardingContext = config.onBoardingContext,
+            phoneNumber = config.phoneNumber,
             onValidOTP = {
                 navigation.push(Config.Auth)
             }
@@ -117,11 +125,11 @@ class DefaultRootComponent(
         @Parcelize
         object Splash : Config()
         @Parcelize
-        data class Welcome(val context: OnBoardingContext) : Config()
+        data class Welcome (val context: OnBoardingContext) : Config()
         @Parcelize
-        data class OnBoarding(val onBoardingContext: OnBoardingContext) : Config()
+        data class OnBoarding (val onBoardingContext: OnBoardingContext) : Config()
         @Parcelize
-        object OTP : Config()
+        data class OTP (val onBoardingContext: OnBoardingContext, val phoneNumber: String) : Config()
         @Parcelize
         object Auth : Config()
         @Parcelize

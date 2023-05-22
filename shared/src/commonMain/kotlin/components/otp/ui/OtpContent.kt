@@ -1,4 +1,4 @@
-package components.otp
+package components.otp.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,35 +32,42 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
+import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import components.auth.store.AuthStore
+import components.onBoarding.store.OnBoardingStore
+import components.otp.store.OtpStore
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import helpers.LocalSafeArea
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OtpScreen(component: OtpComponent) {
-    val model by component.model.subscribeAsState()
-
+fun OtpContent(
+    state: OtpStore.State,
+    authState: AuthStore.State,
+    onBoardingState: OnBoardingStore.State,
+    onOnBoardingEvent: (OnBoardingStore.Intent) -> Unit,
+    onAuthEvent: (AuthStore.Intent) -> Unit,
+    onEvent: (OtpStore.Intent) -> Unit,
+    navigate: () -> Unit
+) {
     val snackbarHostState = remember { SnackbarHostState() }
 
     val scope = rememberCoroutineScope()
 
     var otpInput by remember { mutableStateOf("") }
 
-    val maxChar = model.inputs.size
+    val maxChar = state.inputs.size
 
     val otpCharList = remember { mutableListOf( "" ) }
 
-    model.inputs.forEach { input ->
+    state.inputs.forEach { input ->
         otpCharList.add(input.value)
     }
 
@@ -72,22 +79,21 @@ fun OtpScreen(component: OtpComponent) {
         if (e.isEmpty()) otpCharList[0] = ""
     }
 
-    LaunchedEffect(otpInput) {
-        kotlin.run {
-            if (otpInput.length == maxChar) {
-                println("Check validity of otp code")
-                println("if success")
-                println("navigate to auth screens")
-                println("if failed")
-                println("clear fields otpChar1 otpChar2 otpChar3 otpChar4 otpInput")
-                component.onValid()
+    if (authState.access_token !== null && state.phone_number !== null) {
+        LaunchedEffect(authState.access_token, onBoardingState.member) {
+            onEvent(OtpStore.Intent.RequestOTP(
+                token = authState.access_token,
+                phoneNumber = state.phone_number
+            ))
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    "OTP Sent!"
+                )
             }
         }
     }
 
-    LaunchedEffect("") {
-        component.sendOTP()
-    }
+
 
     Scaffold (modifier = Modifier
         .fillMaxHeight(1f)
@@ -103,23 +109,24 @@ fun OtpScreen(component: OtpComponent) {
         ) {
             Row {
                 Text(
-                    text = model.label,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                    text = state.title,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                    fontSize = 20.0.sp
                 )
             }
             Row {
                 Text(
-                    text = model.title,
-                    style = MaterialTheme.typography.displaySmall,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                    text = "${state.label}${if (state.phone_number != null) " to ${state.phone_number}" else ""}",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                 )
             }
             Row(
                 modifier = Modifier.padding(top = 35.dp).fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                for ((index, input) in model.inputs.withIndex()) {
+                for ((index, input) in state.inputs.withIndex()) {
                     Column (modifier = Modifier
                         .weight(0.2f),
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -197,16 +204,22 @@ fun OtpScreen(component: OtpComponent) {
             ) {
                 Text(
                     modifier = Modifier.clickable {
-                        scope.launch {
-                            component.sendOTP()
-                            snackbarHostState.showSnackbar(
-                                "OTP Sent"
-                            )
+                        if (authState.access_token !== null && state.phone_number !== null) {
+                            onEvent(OtpStore.Intent.RequestOTP(
+                                token = authState.access_token,
+                                phoneNumber = state.phone_number
+                            ))
+
+                            scope.launch {
+                                snackbarHostState.showSnackbar(
+                                    "OTP Sent!"
+                                )
+                            }
                         }
                     },
                     textAlign = TextAlign.Center,
                     textDecoration = TextDecoration.Underline,
-                    text = "Resend verification code${if (model.phone_number != null) " to ${model.phone_number}" else ""}",
+                    text = "Resend verification code",
                     style = MaterialTheme.typography.titleSmall,
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                 )
@@ -215,9 +228,9 @@ fun OtpScreen(component: OtpComponent) {
                 modifier = Modifier
                     .padding(top = 35.dp)
                     .absoluteOffset(y = -(70).dp).fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
+                horizontalArrangement = Arrangement.Center,
             ) {
-                if (model.loading) {
+                if (state.isLoading || authState.isLoading || onBoardingState.isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(25.dp).padding(end = 2.dp),
                         color = MaterialTheme.colorScheme.onSurface

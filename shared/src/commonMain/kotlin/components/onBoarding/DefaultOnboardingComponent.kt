@@ -11,14 +11,13 @@ import components.onBoarding.store.OnBoardingStoreFactory
 import components.root.DefaultRootComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
-import organisation.Organisation
 import organisation.OrganisationModel
 
 class DefaultOnboardingComponent (
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     onBoardingContext: DefaultRootComponent.OnBoardingContext,
-    private val onPush: () -> Unit,
+    private val onPush: (phoneNumber: String) -> Unit,
 ): OnBoardingComponent, ComponentContext by componentContext {
 
     // after getting member data do onPush
@@ -52,8 +51,8 @@ class DefaultOnboardingComponent (
         onBoardingStore.accept(event)
     }
 
-    override fun navigate() {
-        onPush()
+    override fun navigate(phoneNumber: String) {
+        onPush(phoneNumber)
     }
 
     init {

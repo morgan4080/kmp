@@ -16,11 +16,13 @@ import components.otp.store.OtpStoreFactory
 import components.root.DefaultRootComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
+import organisation.OrganisationModel
 
 class DefaultOtpComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     onBoardingContext: DefaultRootComponent.OnBoardingContext,
+    phoneNumber: String,
     private val onValidOTP: () -> Unit
 ): OtpComponent, ComponentContext by componentContext {
     override val authStore =
@@ -37,7 +39,7 @@ class DefaultOtpComponent(
         instanceKeeper.getStore {
             OnBoardingStoreFactory(
                 storeFactory = storeFactory,
-                onBoardingContext = onBoardingContext
+                onBoardingContext = onBoardingContext,
             ).create()
         }
 
@@ -48,7 +50,8 @@ class DefaultOtpComponent(
         instanceKeeper.getStore {
             OtpStoreFactory(
                 storeFactory = storeFactory,
-                onBoardingContext = onBoardingContext
+                onBoardingContext = onBoardingContext,
+                phoneNumber = phoneNumber
             ).create()
         }
 
@@ -68,7 +71,12 @@ class DefaultOtpComponent(
     }
 
     override fun navigate() {
-        TODO("Not yet implemented")
+        onValidOTP()
     }
 
+    init {
+        onAuthEvent(AuthStore.Intent.AuthenticateClient(
+            client_secret = OrganisationModel.organisation.client_secret
+        ))
+    }
 }

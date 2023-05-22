@@ -35,8 +35,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -65,7 +63,6 @@ fun TextInputContainer(
     callback: (userInput: String) -> Unit = {}
 ){
     var userInput by remember { mutableStateOf(TextFieldValue()) }
-    val focusRequester = remember { FocusRequester() }
 
     if (inputValue.isNotEmpty()) {
         userInput = TextFieldValue(inputValue)
@@ -87,8 +84,7 @@ fun TextInputContainer(
         ) {
             BasicTextField(
                 modifier = Modifier
-                    .absoluteOffset(y = 2.dp)
-                    .focusRequester(focusRequester),
+                    .absoluteOffset(y = 2.dp),
                 keyboardOptions = KeyboardOptions(keyboardType =
                     when (inputType) {
                         InputTypes.NUMBER -> KeyboardType.Number
@@ -104,7 +100,7 @@ fun TextInputContainer(
                 value = userInput,
                 onValueChange = {
                     userInput = it
-                    callback(userInput.text)
+                    if (enabled) callback(userInput.text)
                 },
                 singleLine = true,
                 textStyle = TextStyle(
@@ -187,7 +183,7 @@ fun TextInputContainer(
                                 modifier = Modifier.size(18.dp),
                                 onClick = {
                                     userInput = TextFieldValue()
-                                    callback(userInput.text)
+                                    if (enabled) callback(userInput.text)
                                 },
                                 content = {
                                     Icon(

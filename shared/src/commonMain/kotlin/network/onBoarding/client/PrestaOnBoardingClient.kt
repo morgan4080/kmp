@@ -10,7 +10,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import network.NetworkConstants
-import network.onBoarding.errorHandler.errorHandler
+import network.onBoarding.errorHandler.onBoardingErrorHandler
 import network.onBoarding.model.PrestaOnBoardingResponse
 import network.onBoarding.model.PrestaUpdateMemberResponse
 
@@ -27,7 +27,7 @@ class PrestaOnBoardingClient(
             IdentifierTypes.ID_NUMBER -> "ID_NUMBER"
             IdentifierTypes.EMAIL -> "EMAIL"
         }
-        return errorHandler {
+        return onBoardingErrorHandler {
             httpClient.get(NetworkConstants.PrestaOnBoardingClient.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
@@ -46,7 +46,7 @@ class PrestaOnBoardingClient(
         memberRefId: String,
         pinConfirmation: String
     ): PrestaUpdateMemberResponse {
-        return errorHandler {
+        return onBoardingErrorHandler {
             httpClient.post(NetworkConstants.PrestaUpdatePinTermsClient.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 contentType(ContentType.Application.Json)

@@ -12,7 +12,7 @@ interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
     data class State(
         val isLoading: Boolean = false,
         val error: String? = null,
-        val access_token: String = "",
-        val user_access_token: String = ""
+        val access_token: String? = null,
+        val user_access_token: String? = null
     )
 }

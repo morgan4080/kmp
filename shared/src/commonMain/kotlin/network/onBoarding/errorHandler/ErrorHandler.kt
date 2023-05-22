@@ -8,7 +8,7 @@ import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.withContext
 import prestaDispatchers
 
-suspend inline fun <reified T> errorHandler(
+suspend inline fun <reified T> onBoardingErrorHandler(
     crossinline response: suspend () -> HttpResponse
 ): T = withContext(prestaDispatchers.io) {
 

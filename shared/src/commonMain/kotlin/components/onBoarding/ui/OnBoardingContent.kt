@@ -29,9 +29,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,15 +53,20 @@ import helpers.LocalSafeArea
 import helpers.isPhoneNumber
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalComposeUiApi::class
+)
 @Composable
 fun OnBoardingContent(
     state: OnBoardingStore.State,
     authState: AuthStore.State,
     onEvent: (OnBoardingStore.Intent) -> Unit,
     onAuthEvent: (AuthStore.Intent) -> Unit,
-    navigate: () -> Unit
+    navigate: (phoneNumber: String) -> Unit
 ) {
+    val scaffoldState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden
+    )
     val listState = rememberLazyListState()
     var phoneNumber by remember {
         mutableStateOf(TextFieldValue())
@@ -67,10 +74,7 @@ fun OnBoardingContent(
     var termsAccepted by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val flagImg = "https://flagcdn.com/h24/${state.country.alpha2Code.lowercase()}.png"
-    val scaffoldState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden
-    )
-
+    val kc = LocalSoftwareKeyboardController.current
     val snackbarHostState = remember { SnackbarHostState() }
 
     authState.error?.let {
@@ -84,28 +88,25 @@ fun OnBoardingContent(
 
     if (state.member !== null) {
         LaunchedEffect(state.member) {
+            navigate(state.member.phoneNumber)
             onEvent(OnBoardingStore.Intent.ClearMember(null))
-            navigate()
         }
     }
 
-    Scaffold (
-        snackbarHost = {
-            SnackbarHost(snackbarHostState)
-        }
+    ModalBottomSheetLayout(
+        modifier = Modifier.padding(LocalSafeArea.current),
+        sheetShape = RoundedCornerShape(
+            topStart = 12.dp,
+            topEnd = 12.dp
+        ),
+        sheetContent = { CountriesSearch(state.countries, scaffoldState, onEvent) },
+        sheetState = scaffoldState
     ) {
-        ModalBottomSheetLayout(
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(LocalSafeArea.current),
-            sheetShape = RoundedCornerShape(
-                topStart = 12.dp,
-                topEnd = 12.dp
-            ),
-            sheetContent = {
-                CountriesSearch(state.countries, scope, scaffoldState, onEvent)
-            },
-            sheetState = scaffoldState
+        Scaffold (
+            modifier = Modifier.padding(LocalSafeArea.current),
+            snackbarHost = {
+                SnackbarHost(snackbarHostState)
+            }
         ) {
             LazyColumn (
                 state = listState,
@@ -176,10 +177,9 @@ fun OnBoardingContent(
                                         imageUrl = flagImg,
                                         enabled = false,
                                         callback = {
-                                            if (it == "launch") {
-                                                scope.launch {
-                                                    scaffoldState.show()
-                                                }
+                                            kc?.hide()
+                                            scope.launch {
+                                                scaffoldState.show()
                                             }
                                         }
                                     )
@@ -248,7 +248,7 @@ fun OnBoardingContent(
                             println("phoneNumber.text")
                             println(phoneNumber.text)
                             println(isPhoneNumber(phoneNumber.text))
-                            if (isPhoneNumber(phoneNumber.text)) {
+                            if (isPhoneNumber(phoneNumber.text) && authState.access_token !== null) {
                                 onEvent(OnBoardingStore.Intent.UpdateError(null))
                                 onEvent(OnBoardingStore.Intent.GetMemberDetails(
                                     token = authState.access_token,

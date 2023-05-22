@@ -7,9 +7,10 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import network.NetworkConstants
-import network.onBoarding.errorHandler.errorHandler
+import network.otp.errorHandler.otpErrorHandler
 import network.otp.model.OtpRequestResponse
 import network.otp.model.OtpVerificationResponse
+import kotlin.random.Random
 
 class PrestaOtpClient(
     private val httpClient: HttpClient
@@ -18,7 +19,7 @@ class PrestaOtpClient(
         token: String,
         phoneNumber: String
     ): OtpRequestResponse {
-        return errorHandler {
+        return otpErrorHandler {
             httpClient.post(
                 "${NetworkConstants.PrestaOtpRequestClient.route}/${phoneNumber}"
             ) {
@@ -26,7 +27,7 @@ class PrestaOtpClient(
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
                 url {
-                    parameters.append("appSignature", "KmmCustomerApp")
+                    parameters.append("appSignature", "")
                 }
             }
         }
@@ -37,7 +38,7 @@ class PrestaOtpClient(
         requestMapper: String,
         otp: String
     ): OtpVerificationResponse {
-        return errorHandler {
+        return otpErrorHandler {
             httpClient.post(
                 "${NetworkConstants.PrestaOtpVerifyClient.route}${requestMapper}/${otp}"
             ) {
