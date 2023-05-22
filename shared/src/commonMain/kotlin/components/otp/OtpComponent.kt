@@ -21,5 +21,5 @@ interface OtpComponent {
     fun onAuthEvent(event: AuthStore.Intent)
     fun onOnBoardingEvent(event: OnBoardingStore.Intent)
     fun onEvent(event: OtpStore.Intent)
-    fun navigate()
+    fun navigate(phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean)
 }

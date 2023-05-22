@@ -12,5 +12,6 @@ data class OtpRequestResponse(
 
 @Serializable
 data class OtpVerificationResponse(
-    val message: String
+    val message: String,
+    val validated: Boolean
 )

@@ -44,6 +44,7 @@ import components.onBoarding.store.OnBoardingStore
 import components.otp.store.OtpStore
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import helpers.LocalSafeArea
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,10 +53,8 @@ fun OtpContent(
     state: OtpStore.State,
     authState: AuthStore.State,
     onBoardingState: OnBoardingStore.State,
-    onOnBoardingEvent: (OnBoardingStore.Intent) -> Unit,
-    onAuthEvent: (AuthStore.Intent) -> Unit,
     onEvent: (OtpStore.Intent) -> Unit,
-    navigate: () -> Unit
+    navigate: (phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean) -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -85,9 +84,46 @@ fun OtpContent(
                 token = authState.access_token,
                 phoneNumber = state.phone_number
             ))
+        }
+    }
+
+    if (state.otpRequestData !== null) {
+        LaunchedEffect(state.otpRequestData) {
             scope.launch {
                 snackbarHostState.showSnackbar(
                     "OTP Sent!"
+                )
+            }
+        }
+    }
+
+    if (authState.access_token !== null && state.otpRequestData !== null && otpInput.length == maxChar) {
+        LaunchedEffect(otpInput) {
+            onEvent(OtpStore.Intent.VerifyOTP(
+                token = authState.access_token,
+                requestMapper = state.otpRequestData.requestMapper,
+                otp = otpInput
+            ))
+        }
+    }
+
+    if (state.otpVerificationData !== null
+        && state.phone_number !== null &&
+        state.isTermsAccepted !== null &&
+        state.isActive !== null
+    ) {
+        LaunchedEffect(state.otpVerificationData) {
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    state.otpVerificationData.message
+                )
+            }
+            delay(1000L)
+            if (state.otpVerificationData.validated) {
+                navigate(
+                    state.phone_number,
+                    state.isTermsAccepted,
+                    state.isActive,
                 )
             }
         }

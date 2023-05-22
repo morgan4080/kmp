@@ -27,7 +27,7 @@ class PrestaOtpClient(
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
                 url {
-                    parameters.append("appSignature", "")
+                    parameters.append("appSignature", "Customer App")
                 }
             }
         }
@@ -40,7 +40,7 @@ class PrestaOtpClient(
     ): OtpVerificationResponse {
         return otpErrorHandler {
             httpClient.post(
-                "${NetworkConstants.PrestaOtpVerifyClient.route}${requestMapper}/${otp}"
+                "${NetworkConstants.PrestaOtpVerifyClient.route}/${requestMapper}/${otp}"
             ) {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)

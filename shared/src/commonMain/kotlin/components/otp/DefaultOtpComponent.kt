@@ -23,7 +23,9 @@ class DefaultOtpComponent(
     storeFactory: StoreFactory,
     onBoardingContext: DefaultRootComponent.OnBoardingContext,
     phoneNumber: String,
-    private val onValidOTP: () -> Unit
+    isTermsAccepted: Boolean,
+    isActive: Boolean,
+    private val onValidOTP: (phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean) -> Unit
 ): OtpComponent, ComponentContext by componentContext {
     override val authStore =
         instanceKeeper.getStore {
@@ -51,7 +53,9 @@ class DefaultOtpComponent(
             OtpStoreFactory(
                 storeFactory = storeFactory,
                 onBoardingContext = onBoardingContext,
-                phoneNumber = phoneNumber
+                phoneNumber = phoneNumber,
+                isActive = isActive,
+                isTermsAccepted = isTermsAccepted
             ).create()
         }
 
@@ -70,8 +74,8 @@ class DefaultOtpComponent(
         otpStore.accept(event)
     }
 
-    override fun navigate() {
-        onValidOTP()
+    override fun navigate(phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean) {
+        onValidOTP(phoneNumber, isTermsAccepted, isActive)
     }
 
     init {

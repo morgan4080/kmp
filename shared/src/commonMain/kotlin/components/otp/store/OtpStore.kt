@@ -36,6 +36,8 @@ interface OtpStore: Store<OtpStore.Intent, OtpStore.State, Nothing> {
         val label: String = "Please enter the code sent to",
         val title: String = "Enter OTP Verification code",
         val phone_number: String? = null,
+        val isActive: Boolean? = null,
+        val isTermsAccepted: Boolean? = null,
         val email: String? = null,
         val tenant_id: String? = null,
         val onBoardingContext: DefaultRootComponent.OnBoardingContext = DefaultRootComponent.OnBoardingContext.LOGIN,

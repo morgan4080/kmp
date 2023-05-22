@@ -18,6 +18,8 @@ import prestaDispatchers
 internal class OtpStoreFactory (
     private val storeFactory: StoreFactory,
     private val onBoardingContext: DefaultRootComponent.OnBoardingContext,
+    private val isTermsAccepted: Boolean,
+    private val isActive: Boolean,
     private val phoneNumber: String,
 ): KoinComponent {
     private val otpRepository by inject<OtpRepository>()
@@ -37,7 +39,7 @@ internal class OtpStoreFactory (
         data class OtpValidationLoaded(val otpVerificationData: OtpVerificationResponse): Msg()
         data class OtpFailed(val error: String?) : Msg()
         data class OnBoardingContext(val onBoardingContext: DefaultRootComponent.OnBoardingContext) : Msg()
-        data class OtpPhoneNumber(val phoneNumber: String) : Msg()
+        data class OtpPrimeData(val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean) : Msg()
     }
 
     private inner class ExecutorImpl : CoroutineExecutor<OtpStore.Intent, Unit, OtpStore.State, Msg, Nothing>(
@@ -45,7 +47,11 @@ internal class OtpStoreFactory (
     ) {
         override fun executeAction(action: Unit, getState: () -> OtpStore.State) {
             dispatch(Msg.OnBoardingContext(onBoardingContext = onBoardingContext))
-            dispatch(Msg.OtpPhoneNumber(phoneNumber = phoneNumber))
+            dispatch(Msg.OtpPrimeData(
+                phoneNumber = phoneNumber,
+                isActive = isActive,
+                isTermsAccepted = isTermsAccepted
+            ))
         }
 
         override fun executeIntent(intent: OtpStore.Intent, getState: () -> OtpStore.State): Unit =
@@ -116,7 +122,11 @@ internal class OtpStoreFactory (
                 is Msg.OtpValidationLoaded -> copy(otpVerificationData = msg.otpVerificationData)
                 is Msg.OtpFailed -> copy(error = msg.error)
                 is Msg.OnBoardingContext -> copy(onBoardingContext = msg.onBoardingContext)
-                is Msg.OtpPhoneNumber -> copy(phone_number = msg.phoneNumber)
+                is Msg.OtpPrimeData -> copy(
+                    phone_number = msg.phoneNumber,
+                    isActive = msg.isActive,
+                    isTermsAccepted = msg.isTermsAccepted,
+                )
             }
     }
 }

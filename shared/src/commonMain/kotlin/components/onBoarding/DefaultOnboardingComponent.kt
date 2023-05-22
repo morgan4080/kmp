@@ -17,7 +17,7 @@ class DefaultOnboardingComponent (
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     onBoardingContext: DefaultRootComponent.OnBoardingContext,
-    private val onPush: (phoneNumber: String) -> Unit,
+    private val onPush: (phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean) -> Unit,
 ): OnBoardingComponent, ComponentContext by componentContext {
 
     // after getting member data do onPush
@@ -51,8 +51,12 @@ class DefaultOnboardingComponent (
         onBoardingStore.accept(event)
     }
 
-    override fun navigate(phoneNumber: String) {
-        onPush(phoneNumber)
+    override fun navigate(phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean) {
+        onPush(
+            phoneNumber,
+            isTermsAccepted,
+            isActive
+        )
     }
 
     init {

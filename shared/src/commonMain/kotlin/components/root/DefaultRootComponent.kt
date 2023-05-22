@@ -80,11 +80,13 @@ class DefaultRootComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
             onBoardingContext = config.onBoardingContext,
-            onPush = { phoneNumber ->
+            onPush = { phoneNumber, isActive, isTermsAccepted ->
                  navigation.push(
                      Config.OTP(
                          onBoardingContext = config.onBoardingContext,
-                         phoneNumber = phoneNumber
+                         phoneNumber = phoneNumber,
+                         isActive = isActive,
+                         isTermsAccepted = isTermsAccepted
                     )
                  )
             },
@@ -96,8 +98,14 @@ class DefaultRootComponent(
             storeFactory = storeFactory,
             onBoardingContext = config.onBoardingContext,
             phoneNumber = config.phoneNumber,
-            onValidOTP = {
-                navigation.push(Config.Auth)
+            isActive = config.isActive,
+            isTermsAccepted = config.isTermsAccepted,
+            onValidOTP = { phoneNumber, isTermsAccepted, isActive ->
+                navigation.push(Config.Auth(
+                    phoneNumber = phoneNumber,
+                    isTermsAccepted = isTermsAccepted,
+                    isActive = isActive
+                ))
             }
         )
 
@@ -129,9 +137,9 @@ class DefaultRootComponent(
         @Parcelize
         data class OnBoarding (val onBoardingContext: OnBoardingContext) : Config()
         @Parcelize
-        data class OTP (val onBoardingContext: OnBoardingContext, val phoneNumber: String) : Config()
+        data class OTP (val onBoardingContext: OnBoardingContext, val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean) : Config()
         @Parcelize
-        object Auth : Config()
+        data class Auth(val phoneNumber: String, val isTermsAccepted: Boolean, val isActive: Boolean) : Config()
         @Parcelize
         object RootBottom : Config()
     }

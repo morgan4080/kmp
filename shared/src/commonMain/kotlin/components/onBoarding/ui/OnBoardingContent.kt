@@ -62,7 +62,7 @@ fun OnBoardingContent(
     authState: AuthStore.State,
     onEvent: (OnBoardingStore.Intent) -> Unit,
     onAuthEvent: (AuthStore.Intent) -> Unit,
-    navigate: (phoneNumber: String) -> Unit
+    navigate: (phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean) -> Unit
 ) {
     val scaffoldState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden
@@ -88,7 +88,11 @@ fun OnBoardingContent(
 
     if (state.member !== null) {
         LaunchedEffect(state.member) {
-            navigate(state.member.phoneNumber)
+            navigate(
+                state.member.phoneNumber,
+                state.member.isTermsAccepted,
+                state.member.isActive,
+            )
             onEvent(OnBoardingStore.Intent.ClearMember(null))
         }
     }
