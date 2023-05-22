@@ -44,6 +44,7 @@ internal class AuthStoreFactory(
             when (intent) {
                 is AuthStore.Intent.AuthenticateClient -> authClient(intent.client_secret)
                 is AuthStore.Intent.LoginUser -> loginUser(intent.phoneNumber, intent.pin, intent.tenant, intent.clientSecret)
+                is AuthStore.Intent.UpdateError -> updateError(error = intent.error)
             }
 
         private var authClientJob: Job? = null
@@ -102,6 +103,10 @@ internal class AuthStoreFactory(
                         dispatch(Msg.AuthFailed(e.message))
                     }*/
             }
+        }
+
+        private fun updateError(error: String?) {
+            dispatch(Msg.AuthFailed(error))
         }
     }
 

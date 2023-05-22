@@ -52,6 +52,10 @@ class DefaultOnboardingComponent (
         onBoardingStore.accept(event)
     }
 
+    override fun navigate() {
+        onPush()
+    }
+
     init {
         onAuthEvent(AuthStore.Intent.AuthenticateClient(
             client_secret = OrganisationModel.organisation.client_secret

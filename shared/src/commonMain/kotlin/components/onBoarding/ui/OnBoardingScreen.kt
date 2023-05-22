@@ -16,6 +16,8 @@ internal fun OnBoardingScreen(
     OnBoardingContent(
         state = onBoardingState,
         authState = authState,
-        onEvent = component::onEvent
+        onEvent = component::onEvent,
+        onAuthEvent = component::onAuthEvent,
+        navigate = component::navigate
     )
 }

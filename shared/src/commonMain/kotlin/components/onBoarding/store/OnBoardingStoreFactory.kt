@@ -30,11 +30,12 @@ internal class OnBoardingStoreFactory(
         ) {}
 
     private sealed class Msg {
-        object OnBoardingLoading : Msg()
+        data class OnBoardingLoading(val isLoading: Boolean = true) : Msg()
         data class OnBoardingGetMemberLoaded(val onBoardingResponse: PrestaOnBoardingResponse) : Msg()
         data class OnBoardingContext(val onBoardingContext: DefaultRootComponent.OnBoardingContext) : Msg()
         data class OnSelectedCountry(val countrySelected: Country) : Msg()
         data class OnBoardingFailed(val error: String?) : Msg()
+        data class OnBoardingClearMember(val member: PrestaOnBoardingResponse?) : Msg()
     }
 
     private inner class ExecutorImpl : CoroutineExecutor<OnBoardingStore.Intent, Unit, OnBoardingStore.State, Msg, Nothing>(
@@ -54,6 +55,8 @@ internal class OnBoardingStoreFactory(
                     updateSelectedCountry(countrySelected = intent.country)
                 is OnBoardingStore.Intent.UpdateError ->
                     updateError(error = intent.error)
+                is OnBoardingStore.Intent.ClearMember ->
+                    clearMember(member = intent.member)
             }
 
         private var getMemberJob: Job? = null
@@ -65,7 +68,7 @@ internal class OnBoardingStoreFactory(
         ) {
             if (getMemberJob?.isActive == true) return
 
-            dispatch(Msg.OnBoardingLoading)
+            dispatch(Msg.OnBoardingLoading())
 
             getMemberJob = scope.launch {
                 onBoardingRepository.getOnBoardingMemberData(
@@ -77,6 +80,8 @@ internal class OnBoardingStoreFactory(
                 }.onFailure { e ->
                     dispatch(Msg.OnBoardingFailed(e.message))
                 }
+
+                dispatch(Msg.OnBoardingLoading(false))
             }
         }
 
@@ -89,7 +94,7 @@ internal class OnBoardingStoreFactory(
         ) {
             if (updateMemberJob?.isActive == true) return
 
-            dispatch(Msg.OnBoardingLoading)
+            dispatch(Msg.OnBoardingLoading())
 
             updateMemberJob = scope.launch {
                 onBoardingRepository.updateMemberData(
@@ -105,6 +110,8 @@ internal class OnBoardingStoreFactory(
                     println(e.message)
                     dispatch(Msg.OnBoardingFailed(e.message))
                 }
+
+                dispatch(Msg.OnBoardingLoading(false))
             }
         }
 
@@ -115,15 +122,20 @@ internal class OnBoardingStoreFactory(
         private fun updateError(error: String?) {
             dispatch(Msg.OnBoardingFailed(error))
         }
+
+        private fun clearMember(member: PrestaOnBoardingResponse?) {
+            dispatch(Msg.OnBoardingClearMember(member))
+        }
     }
 
     private object ReducerImpl: Reducer<OnBoardingStore.State, Msg> {
         override fun OnBoardingStore.State.reduce(msg: Msg): OnBoardingStore.State =
             when (msg) {
-                is Msg.OnBoardingLoading -> copy(isLoading = true)
+                is Msg.OnBoardingLoading -> copy(isLoading = msg.isLoading)
                 is Msg.OnBoardingGetMemberLoaded -> copy(member = msg.onBoardingResponse)
                 is Msg.OnBoardingContext -> copy(onBoardingContext = msg.onBoardingContext)
                 is Msg.OnSelectedCountry -> copy(country = msg.countrySelected)
+                is Msg.OnBoardingClearMember -> copy(member = msg.member)
                 is Msg.OnBoardingFailed -> copy(error = msg.error)
             }
     }

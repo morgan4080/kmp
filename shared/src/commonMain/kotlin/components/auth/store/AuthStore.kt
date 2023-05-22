@@ -6,6 +6,7 @@ interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
     sealed class Intent {
         data class AuthenticateClient(val client_secret: String): Intent()
         data class LoginUser(val phoneNumber: String, val pin: String, val tenant: String, val clientSecret: String): Intent()
+        data class UpdateError(val error: String?): Intent()
     }
 
     data class State(

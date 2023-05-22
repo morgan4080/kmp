@@ -32,10 +32,11 @@ data class Country (
 )
 interface OnBoardingStore: Store<OnBoardingStore.Intent, OnBoardingStore.State, Nothing> {
     sealed class Intent {
-        data class GetMemberDetails(val token: String, val memberIdentifier: String, val identifierType: IdentifierTypes): Intent()
-        data class UpdateMember(val token: String, val memberRefId: String, val pinConfirmation: String): Intent()
-        data class SelectCountry(val country: Country): Intent()
-        data class UpdateError(val error: String?): Intent()
+        data class GetMemberDetails (val token: String, val memberIdentifier: String, val identifierType: IdentifierTypes): Intent()
+        data class UpdateMember (val token: String, val memberRefId: String, val pinConfirmation: String): Intent()
+        data class ClearMember (val member: PrestaOnBoardingResponse?): Intent()
+        data class SelectCountry (val country: Country): Intent()
+        data class UpdateError (val error: String?): Intent()
     }
 
     data class State(

@@ -54,7 +54,7 @@ fun SplashScreen(component: SplashComponent) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column (modifier = Modifier
-                .fillMaxHeight(0.9f),
+                .fillMaxHeight(0.95f),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {

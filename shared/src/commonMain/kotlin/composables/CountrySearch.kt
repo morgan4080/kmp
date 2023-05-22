@@ -2,6 +2,7 @@ package composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absoluteOffset
@@ -58,94 +59,99 @@ fun CountriesSearch(
     var countries = countryData
     countries = countries.filter { country: Country -> country.name.lowercase().indexOf(searchingInput.lowercase()) > -1 }
     val kc = LocalSoftwareKeyboardController.current
-    Row (
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
-    ) {
-        IconButton(
-            onClick = {
-                scope.launch {
-                    if (scaffoldState.isVisible) {
-                        kc?.hide()
-                        scaffoldState.hide()
-                    } else {
-                        scaffoldState.show()
-                    }
-                }
-            },
-            content = {
-                Icon(
-                    modifier = Modifier.size(25.dp).alpha(0.7f),
-                    imageVector = Icons.Filled.Cancel,
-                    contentDescription = null,
-                    tint = Color.Red
-                )
-            }
-        )
-
-    }
-    Row (modifier = Modifier.fillMaxWidth()) {
-        Text(
-            modifier = Modifier.fillMaxWidth().absoluteOffset(y = (-20).dp),
-            text = "Select a country",
-            style = MaterialTheme.typography.titleMedium,
-            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
-            textAlign = TextAlign.Center
-        )
-    }
-    Row (
+    Column (
         modifier = Modifier
-            .fillMaxWidth().padding(bottom = 20.dp),
-        horizontalArrangement = Arrangement.Center
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        BasicTextField(
-            modifier = Modifier.focusRequester(focusRequester).fillMaxWidth()
-                .padding(PaddingValues(horizontal = 16.dp))
-                .background(color = MaterialTheme.colorScheme.inverseOnSurface, shape = RoundedCornerShape(10.dp)),
-            textStyle = TextStyle(
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
-                fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
-                letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
-                lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
-                fontFamily = MaterialTheme.typography.bodyLarge.fontFamily
-            ),
-            value = searchingInput,
-            onValueChange = {
-                searchingInput = it
-            },
-            singleLine = true,
-            decorationBox = { innerTextField ->
-                Row (
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            modifier = Modifier.padding(8.dp),
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.outline
-                        )
-                        innerTextField()
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            IconButton(
+                onClick = {
+                    kc?.hide()
+                    scope.launch {
+                        if (scaffoldState.isVisible) {
+                            scaffoldState.hide()
+                        } else {
+                            scaffoldState.show()
+                        }
                     }
-                    IconButton(onClick = {
-                        searchingInput = ""
-                    }, content = {
-                        Icon(
-                            modifier = Modifier.padding(8.dp),
-                            imageVector = Icons.Filled.Cancel,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.outline
-                        )
-                    })
+                },
+                content = {
+                    Icon(
+                        modifier = Modifier.size(25.dp).alpha(0.7f),
+                        imageVector = Icons.Filled.Cancel,
+                        contentDescription = null,
+                        tint = Color.Red
+                    )
                 }
-            }
-        )
+            )
+
+        }
+        Row (modifier = Modifier.fillMaxWidth()) {
+            Text(
+                modifier = Modifier.fillMaxWidth().absoluteOffset(y = (-20).dp),
+                text = "Select a country",
+                style = MaterialTheme.typography.titleMedium,
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                textAlign = TextAlign.Center
+            )
+        }
+        Row (
+            modifier = Modifier
+                .fillMaxWidth().padding(bottom = 20.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            BasicTextField(
+                modifier = Modifier.focusRequester(focusRequester).fillMaxWidth()
+                    .padding(PaddingValues(horizontal = 16.dp))
+                    .background(color = MaterialTheme.colorScheme.inverseOnSurface, shape = RoundedCornerShape(10.dp)),
+                textStyle = TextStyle(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                    fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+                    letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
+                    lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                    fontFamily = MaterialTheme.typography.bodyLarge.fontFamily
+                ),
+                value = searchingInput,
+                onValueChange = {
+                    searchingInput = it
+                },
+                singleLine = true,
+                decorationBox = { innerTextField ->
+                    Row (
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(
+                                modifier = Modifier.padding(8.dp),
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.outline
+                            )
+                            innerTextField()
+                        }
+                        IconButton(onClick = {
+                            searchingInput = ""
+                        }, content = {
+                            Icon(
+                                modifier = Modifier.padding(8.dp),
+                                imageVector = Icons.Filled.Cancel,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.outline
+                            )
+                        })
+                    }
+                }
+            )
+        }
     }
     LazyColumn (
         modifier = Modifier
@@ -155,10 +161,10 @@ fun CountriesSearch(
     ) {
         items(countries) { country ->
             CountryRow(country, callback = {
+                kc?.hide()
                 onEvent(OnBoardingStore.Intent.SelectCountry(it))
                 scope.launch {
                     if (scaffoldState.isVisible) {
-                        kc?.hide()
                         scaffoldState.hide()
                     } else {
                         scaffoldState.show()

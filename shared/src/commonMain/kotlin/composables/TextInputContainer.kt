@@ -79,7 +79,7 @@ fun TextInputContainer(
                 shape = RoundedCornerShape(10.dp)
             )
             .clickable {
-                if (!enabled) callback(userInput.text)
+                if (!enabled) callback("launch")
             }
     ) {
         Row(modifier = Modifier
@@ -187,6 +187,7 @@ fun TextInputContainer(
                                 modifier = Modifier.size(18.dp),
                                 onClick = {
                                     userInput = TextFieldValue()
+                                    callback(userInput.text)
                                 },
                                 content = {
                                     Icon(
