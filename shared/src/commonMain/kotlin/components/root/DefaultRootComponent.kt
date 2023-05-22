@@ -4,7 +4,6 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
-import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
@@ -12,8 +11,6 @@ import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import components.auth.AuthComponent
 import components.auth.DefaultAuthComponent
-import components.countries.CountriesComponent
-import components.countries.DefaultCountriesComponent
 import components.onBoarding.DefaultOnboardingComponent
 import components.onBoarding.OnBoardingComponent
 import components.otp.DefaultOtpComponent
@@ -24,8 +21,6 @@ import components.splash.DefaultSplashComponent
 import components.splash.SplashComponent
 import components.welcome.DefaultWelcomeComponent
 import components.welcome.WelcomeComponent
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 
 class DefaultRootComponent(
@@ -51,7 +46,6 @@ class DefaultRootComponent(
             is Config.Splash -> RootComponent.Child.SplashChild(splashComponent(componentContext))
             is Config.Welcome -> RootComponent.Child.WelcomeChild(welcomeComponent(componentContext, config))
             is Config.OnBoarding -> RootComponent.Child.OnboardingChild(onboardingComponent(componentContext, config))
-            is Config.Countries -> RootComponent.Child.CountriesChild(countriesComponent(componentContext))
             is Config.OTP -> RootComponent.Child.OTPChild(otpComponent(componentContext))
             is Config.Auth -> RootComponent.Child.AuthChild(authComponent(componentContext))
             is Config.RootBottom -> RootComponent.Child.RootBottomChild(rootBottomComponent(componentContext))
@@ -72,10 +66,9 @@ class DefaultRootComponent(
         DefaultWelcomeComponent(
             componentContext = componentContext,
             onBoardingContext = config.context,
-            onGetStartedSelected = { country, onBoardingContext ->
+            onGetStartedSelected = { onBoardingContext ->
                 navigation.push(
                     Config.OnBoarding(
-                        country = Json.encodeToString(country),
                         onBoardingContext = onBoardingContext
                     )
                 )
@@ -86,28 +79,10 @@ class DefaultRootComponent(
         DefaultOnboardingComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
-            country = config.country,
             onBoardingContext = config.onBoardingContext,
             onPush = {
                  navigation.push(Config.OTP)
             },
-            onSelectCountryClicked = {
-
-            },
-            onSelectOrganisationClicked = {
-
-            }
-        )
-
-    private fun countriesComponent(componentContext: ComponentContext): CountriesComponent =
-        DefaultCountriesComponent(
-            componentContext = componentContext,
-            onSelectedCountry = { country ->
-
-            },
-            onBackClicked = {
-
-            }
         )
 
     private fun otpComponent(componentContext: ComponentContext): OtpComponent =
@@ -144,9 +119,7 @@ class DefaultRootComponent(
         @Parcelize
         data class Welcome(val context: OnBoardingContext) : Config()
         @Parcelize
-        data class OnBoarding(val country: String, val onBoardingContext: OnBoardingContext) : Config()
-        @Parcelize
-        object Countries : Config()
+        data class OnBoarding(val onBoardingContext: OnBoardingContext) : Config()
         @Parcelize
         object OTP : Config()
         @Parcelize

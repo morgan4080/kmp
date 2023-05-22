@@ -17,11 +17,8 @@ import organisation.OrganisationModel
 class DefaultOnboardingComponent (
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
-    country: String,
     onBoardingContext: DefaultRootComponent.OnBoardingContext,
     private val onPush: () -> Unit,
-    private val onSelectCountryClicked: () -> Unit,
-    private val onSelectOrganisationClicked: () -> Unit
 ): OnBoardingComponent, ComponentContext by componentContext {
 
     // after getting member data do onPush
@@ -36,13 +33,10 @@ class DefaultOnboardingComponent (
     @OptIn(ExperimentalCoroutinesApi::class)
     override val authState: StateFlow<AuthStore.State> = authStore.stateFlow
 
-
-
     override val onBoardingStore =
         instanceKeeper.getStore {
             OnBoardingStoreFactory(
                 storeFactory = storeFactory,
-                country = country,
                 onBoardingContext = onBoardingContext
             ).create()
         }
@@ -56,24 +50,6 @@ class DefaultOnboardingComponent (
 
     override fun onEvent(event: OnBoardingStore.Intent) {
         onBoardingStore.accept(event)
-    }
-
-    override fun onSubmit(organisation: Organisation, phone_number: String, email: String?) {
-        /*onEvent(OnBoardingStore.Intent.GetMemberDetails(
-            phone_number = phone_number
-        ))*/
-    }
-
-    override fun onSelectCountry() {
-        onSelectCountryClicked()
-    }
-
-    override fun onSelectOrganisation() {
-        onSelectOrganisationClicked()
-    }
-
-    override fun onCountrySelected(country: String) {
-
     }
 
     init {

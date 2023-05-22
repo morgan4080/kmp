@@ -16,10 +16,9 @@ import androidx.compose.ui.unit.dp
 fun StickyHeaderContent(initial: Char) {
     LazyRow (
         modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.inverseOnSurface),
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.End,
         contentPadding = PaddingValues(vertical = 5.dp, horizontal = 16.dp)
     ) {
         item {

@@ -4,14 +4,13 @@ import com.presta.customer.MR
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
-import components.countries.Country
 import components.root.DefaultRootComponent
 import organisation.OrganisationModel
 
 class DefaultWelcomeComponent (
     componentContext: ComponentContext,
     onBoardingContext: DefaultRootComponent.OnBoardingContext,
-    private val onGetStartedSelected: (country: Country, onBoardingContext: DefaultRootComponent.OnBoardingContext) -> Unit,
+    private val onGetStartedSelected: (onBoardingContext: DefaultRootComponent.OnBoardingContext) -> Unit,
 ) : WelcomeComponent, ComponentContext by componentContext {
     override val model: Value<WelcomeComponent.Model> =
         MutableValue(WelcomeComponent.Model(
@@ -40,8 +39,8 @@ class DefaultWelcomeComponent (
         )
     )
 
-    override fun onGetStarted(country: Country, onBoardingContext: DefaultRootComponent.OnBoardingContext) {
-        onGetStartedSelected(country, onBoardingContext)
+    override fun onGetStarted(onBoardingContext: DefaultRootComponent.OnBoardingContext) {
+        onGetStartedSelected(onBoardingContext)
     }
 }
 

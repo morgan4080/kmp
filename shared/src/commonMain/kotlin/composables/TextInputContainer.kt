@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,10 +15,16 @@ import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,10 +37,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import theme.primaryColor
 
 enum class InputTypes {
@@ -53,11 +61,15 @@ fun TextInputContainer(
     enabled: Boolean = true,
     inputType: InputTypes = InputTypes.STRING,
     imageUrl: String? = null,
+    callingCode: String? = null,
     callback: (userInput: String) -> Unit = {}
 ){
-
-    var userInput by remember { mutableStateOf(inputValue) }
+    var userInput by remember { mutableStateOf(TextFieldValue()) }
     val focusRequester = remember { FocusRequester() }
+
+    if (inputValue.isNotEmpty()) {
+        userInput = TextFieldValue(inputValue)
+    }
 
     Column(
         modifier = Modifier
@@ -67,14 +79,16 @@ fun TextInputContainer(
                 shape = RoundedCornerShape(10.dp)
             )
             .clickable {
-                callback(userInput)
+                if (!enabled) callback(userInput.text)
             }
     ) {
-
         Row(modifier = Modifier
             .padding(16.dp)
-        ){
+        ) {
             BasicTextField(
+                modifier = Modifier
+                    .absoluteOffset(y = 2.dp)
+                    .focusRequester(focusRequester),
                 keyboardOptions = KeyboardOptions(keyboardType =
                     when (inputType) {
                         InputTypes.NUMBER -> KeyboardType.Number
@@ -87,64 +101,102 @@ fun TextInputContainer(
                         InputTypes.DECIMAL -> KeyboardType.Decimal
                     }
                 ),
-                modifier = Modifier
-                    .focusRequester(focusRequester)
-                    .padding(top = 5.dp)
-                    .onFocusChanged {
-
-                    },
                 value = userInput,
                 onValueChange = {
                     userInput = it
-                    callback(userInput)
+                    callback(userInput.text)
                 },
                 singleLine = true,
                 textStyle = TextStyle(
                     color = MaterialTheme.colorScheme.onBackground,
-                    fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
-                    fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                    fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
-                    letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
-                    lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
-                    fontFamily = MaterialTheme.typography.bodyLarge.fontFamily
+                    fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
+                    fontSize = 13.sp,
+                    fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
+                    letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
+                    lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                    fontFamily = MaterialTheme.typography.bodySmall.fontFamily
                 ),
                 enabled = enabled,
                 decorationBox = { innerTextField ->
-                    if (userInput.isEmpty()) {
+                    if (userInput.text.isEmpty() && callingCode == null) {
                         Text(
                             modifier = Modifier.alpha(.3f),
                             text = label,
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodySmall
                         )
                     }
                     AnimatedVisibility(
-                        visible = userInput.isNotEmpty(),
-                        modifier = Modifier.absoluteOffset(y = -(18).dp),
+                        visible = userInput.text.isNotEmpty() || callingCode !== null,
+                        modifier = Modifier.absoluteOffset(y = -(16).dp),
                         enter = fadeIn() + expandVertically(),
                         exit = fadeOut() + shrinkVertically(),
                     ) {
                         Text(
                             text = label,
                             color = primaryColor,
-                            style = MaterialTheme.typography.bodySmall,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontSize = 11.sp
                         )
                     }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        if (imageUrl !== null) {
-                            AsyncImage(
-                                imageUrl,
-                                "Country Flag",
-                                modifier = Modifier
-                                    .width(20.dp)
-                                    .height(20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(width = 5.dp))
-                        }
 
-                        innerTextField()
+
+                    Row (
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            if (imageUrl !== null) {
+                                AsyncImage(
+                                    imageUrl,
+                                    "Country Flag",
+                                    modifier = Modifier.size(22.dp)
+                                )
+                                Spacer(modifier = Modifier.width(width = 8.dp))
+                            }
+
+                            if (callingCode !== null) {
+                                Text(
+                                    modifier = Modifier.padding(end = 10.dp),
+                                    text = "+$callingCode",
+                                    style = TextStyle(
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
+                                        fontSize = 13.sp,
+                                        fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
+                                        letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
+                                        lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                                        fontFamily = MaterialTheme.typography.bodySmall.fontFamily
+                                    )
+                                )
+
+                                Divider(
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    modifier = Modifier.padding(end = 10.dp)
+                                        .height(15.dp)
+                                        .width(1.dp)
+                                )
+                            }
+
+                            innerTextField()
+                        }
+                        if (callingCode !== null) {
+                            IconButton(
+                                modifier = Modifier.size(18.dp),
+                                onClick = {
+                                    userInput = TextFieldValue()
+                                },
+                                content = {
+                                    Icon(
+                                        imageVector = Icons.Filled.Cancel,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.outline
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
             )

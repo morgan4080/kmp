@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.presta.customer.MR
-import components.countries.Country
 import composables.ActionButton
 import composables.Paginator
 import dev.icerock.moko.resources.compose.fontFamilyResource
@@ -81,7 +80,7 @@ fun WelcomeScreen(
 
                             Row (modifier = Modifier.padding(top = 50.dp)) {
                                 val painter: Painter = painterResource(
-                                    when(MaterialTheme.colorScheme.background == Color(0xFFF7F7F7)) {
+                                    when(MaterialTheme.colorScheme.background == Color.White) {
                                         true -> item.imageLight
                                         false -> item.imageDark
                                     }
@@ -102,10 +101,7 @@ fun WelcomeScreen(
 
                 Row (modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 30.dp)) {
                     ActionButton("Get Started", onClickContainer = {
-                        // ask for location data to set different country
-                        // {"name":"Tanzania","code":"255","alpha2Code":"TZ","numericCode":"834"}
                         component.onGetStarted (
-                            country = Country("Kenya", "254", "KE", "404"),
                             onBoardingContext = model.onBoardingContext
                         )
                     })

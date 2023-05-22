@@ -22,20 +22,21 @@ class PrestaOnBoardingClient(
         memberIdentifier: String,
         identifierType: IdentifierTypes,
     ): PrestaOnBoardingResponse {
-        val idTypes = when(identifierType) {
+        val identifierTypeSelected = when (identifierType) {
             IdentifierTypes.PHONE_NUMBER -> "PHONE_NUMBER"
             IdentifierTypes.ID_NUMBER -> "ID_NUMBER"
             IdentifierTypes.EMAIL -> "EMAIL"
         }
         return errorHandler {
             httpClient.get(NetworkConstants.PrestaOnBoardingClient.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
                 url {
                     parameters.append("memberIdentifier", memberIdentifier)
-                    parameters.append("identifierType", idTypes)
+                    parameters.append("identifierType", identifierTypeSelected)
                     parameters.append("force", "true")
                 }
-                header(HttpHeaders.Authorization, "Bearer $token")
-                contentType(ContentType.Application.Json)
             }
         }
     }

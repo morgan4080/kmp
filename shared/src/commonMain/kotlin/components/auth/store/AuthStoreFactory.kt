@@ -28,7 +28,7 @@ internal class AuthStoreFactory(
         ) {}
 
     private sealed class Msg {
-        object AuthLoading : Msg()
+        data class AuthLoading(val isLoading: Boolean = true) : Msg()
         data class AuthLoaded(val authResponse: PrestaAuthResponse) : Msg()
         data class AuthFailed(val error: String?) : Msg()
     }
@@ -53,8 +53,9 @@ internal class AuthStoreFactory(
         ) {
             if (authClientJob?.isActive == true) return
 
+            dispatch(Msg.AuthLoading())
+
             authClientJob  = scope.launch {
-                dispatch(Msg.AuthLoading)
                 authRepository
                     .postClientAuthDetails(client_secret)
                     .onSuccess {response ->
@@ -68,6 +69,8 @@ internal class AuthStoreFactory(
                     .onFailure { e ->
                         dispatch(Msg.AuthFailed(e.message))
                     }
+
+                dispatch(Msg.AuthLoading(false))
             }
         }
 
@@ -81,8 +84,9 @@ internal class AuthStoreFactory(
         ) {
             if (loginUserJob?.isActive == true) return
 
+            dispatch(Msg.AuthLoading())
+
             loginUserJob  = scope.launch {
-                dispatch(Msg.AuthLoading)
                 // loginUserJob
                 /*authRepository
                     .postClientAuthDetails(client_secret)
@@ -104,10 +108,8 @@ internal class AuthStoreFactory(
     private object ReducerImpl: Reducer<AuthStore.State, Msg> {
         override fun AuthStore.State.reduce(msg: Msg): AuthStore.State =
             when (msg) {
-                is Msg.AuthLoading -> copy(isLoading = true)
-                is Msg.AuthLoaded -> {
-                    AuthStore.State(access_token = access_token)
-                }
+                is Msg.AuthLoading -> copy(isLoading = msg.isLoading)
+                is Msg.AuthLoaded -> copy(access_token = msg.authResponse.access_token)
                 is Msg.AuthFailed -> copy(error = msg.error)
             }
     }

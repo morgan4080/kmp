@@ -5,7 +5,6 @@ import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
-import components.auth.store.AuthStoreFactory
 import components.root.DefaultRootComponent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -17,7 +16,6 @@ import prestaDispatchers
 
 internal class OnBoardingStoreFactory(
     private val storeFactory: StoreFactory,
-    private val country: String,
     private val onBoardingContext: DefaultRootComponent.OnBoardingContext,
 ): KoinComponent {
     private val onBoardingRepository by inject<OnBoardingRepository>()
@@ -34,8 +32,8 @@ internal class OnBoardingStoreFactory(
     private sealed class Msg {
         object OnBoardingLoading : Msg()
         data class OnBoardingGetMemberLoaded(val onBoardingResponse: PrestaOnBoardingResponse) : Msg()
-        data class OnBoardingDefaultCountry(val country: String) : Msg()
         data class OnBoardingContext(val onBoardingContext: DefaultRootComponent.OnBoardingContext) : Msg()
+        data class OnSelectedCountry(val countrySelected: Country) : Msg()
         data class OnBoardingFailed(val error: String?) : Msg()
     }
 
@@ -43,7 +41,6 @@ internal class OnBoardingStoreFactory(
         prestaDispatchers.main) {
         // runs when component is initialized
         override fun executeAction(action: Unit, getState: () -> OnBoardingStore.State) {
-            dispatch(Msg.OnBoardingDefaultCountry(country))
             dispatch(Msg.OnBoardingContext(onBoardingContext))
         }
 
@@ -53,6 +50,10 @@ internal class OnBoardingStoreFactory(
                     getMemberDetails(token = intent.token, memberIdentifier = intent.memberIdentifier, identifierType = intent.identifierType)
                 is OnBoardingStore.Intent.UpdateMember ->
                     updateMemberDetails(token = intent.token,memberRefId = intent.memberRefId, intent.pinConfirmation)
+                is OnBoardingStore.Intent.SelectCountry ->
+                    updateSelectedCountry(countrySelected = intent.country)
+                is OnBoardingStore.Intent.UpdateError ->
+                    updateError(error = intent.error)
             }
 
         private var getMemberJob: Job? = null
@@ -64,8 +65,9 @@ internal class OnBoardingStoreFactory(
         ) {
             if (getMemberJob?.isActive == true) return
 
+            dispatch(Msg.OnBoardingLoading)
+
             getMemberJob = scope.launch {
-                dispatch(Msg.OnBoardingLoading)
                 onBoardingRepository.getOnBoardingMemberData(
                     token,
                     memberIdentifier,
@@ -87,8 +89,9 @@ internal class OnBoardingStoreFactory(
         ) {
             if (updateMemberJob?.isActive == true) return
 
+            dispatch(Msg.OnBoardingLoading)
+
             updateMemberJob = scope.launch {
-                dispatch(Msg.OnBoardingLoading)
                 onBoardingRepository.updateMemberData(
                     token,
                     memberRefId,
@@ -104,15 +107,23 @@ internal class OnBoardingStoreFactory(
                 }
             }
         }
+
+        private fun updateSelectedCountry(countrySelected: Country) {
+            dispatch(Msg.OnSelectedCountry(countrySelected))
+        }
+
+        private fun updateError(error: String?) {
+            dispatch(Msg.OnBoardingFailed(error))
+        }
     }
 
     private object ReducerImpl: Reducer<OnBoardingStore.State, Msg> {
         override fun OnBoardingStore.State.reduce(msg: Msg): OnBoardingStore.State =
             when (msg) {
                 is Msg.OnBoardingLoading -> copy(isLoading = true)
-                is Msg.OnBoardingGetMemberLoaded -> copy(phoneNumber = msg.onBoardingResponse.phoneNumber)
-                is Msg.OnBoardingDefaultCountry -> copy(country = msg.country)
+                is Msg.OnBoardingGetMemberLoaded -> copy(member = msg.onBoardingResponse)
                 is Msg.OnBoardingContext -> copy(onBoardingContext = msg.onBoardingContext)
+                is Msg.OnSelectedCountry -> copy(country = msg.countrySelected)
                 is Msg.OnBoardingFailed -> copy(error = msg.error)
             }
     }

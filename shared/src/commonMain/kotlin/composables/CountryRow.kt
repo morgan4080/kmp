@@ -19,19 +19,16 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.unit.dp
-import components.countries.CountriesComponent
-import components.countries.Country
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import components.onBoarding.store.Country
 
 @Composable
-fun CountryRow(country: Country) {
-    val url = "https://flagcdn.com/28x21/${country.alpha2Code.lowercase()}.png"
+fun CountryRow(country: Country, callback: (country: Country) -> Unit) {
+    val url = "https://flagcdn.com/h40/${country.alpha2Code.lowercase()}.png"
     LazyRow (
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-
+                callback(country)
             },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,

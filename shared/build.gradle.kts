@@ -102,6 +102,7 @@ kotlin {
                 api(deps.moko.resources.compose)
                 implementation(deps.moko.resources.test)
 
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
             }
         }
 

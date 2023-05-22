@@ -5,7 +5,6 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import components.auth.AuthScreen
-import components.countries.CountriesScreen
 import components.onBoarding.ui.OnBoardingScreen
 import components.otp.OtpScreen
 import components.root.RootComponent
@@ -23,7 +22,6 @@ fun AppRootUi(component: RootComponent) {
             is RootComponent.Child.SplashChild -> SplashScreen(child.component)
             is RootComponent.Child.WelcomeChild -> WelcomeScreen(child.component)
             is RootComponent.Child.OnboardingChild -> OnBoardingScreen(child.component)
-            is RootComponent.Child.CountriesChild -> CountriesScreen(child.component)
             is RootComponent.Child.OTPChild -> OtpScreen(child.component)
             is RootComponent.Child.AuthChild -> AuthScreen(child.component)
             is RootComponent.Child.RootBottomChild -> RootBottomScreen(child.component)
