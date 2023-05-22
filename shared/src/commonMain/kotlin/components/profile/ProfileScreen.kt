@@ -192,9 +192,21 @@ fun ProfileScreen(component: ProfileComponent, innerPadding: PaddingValues) {
                                           //Test Navigate to add Savings--Savings child
                                          // component.onProfileSelected()
 
-                                    for (i in quickLinks.indices) {
+                                   //component.onProfileSelected()
 
-                                    }
+                                   for (items in quickLinks){
+                                       if (items.labelTop=="Add"){
+                                           component.onApplyLoanSelected()
+
+                                       }
+                                       else if (items.labelTop==""){
+
+                                       }
+                                   }
+
+
+
+
 
                                 },
                                 content = {
@@ -390,5 +402,4 @@ fun ProfileScreen(component: ProfileComponent, innerPadding: PaddingValues) {
             }
         }
     }
-
 }

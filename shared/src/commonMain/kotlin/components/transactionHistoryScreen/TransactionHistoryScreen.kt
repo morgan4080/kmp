@@ -162,41 +162,58 @@ fun TransactionHistoryScreen(component: TransactionHistoryComponent) {
                     horizontalArrangement = Arrangement.Center
                 ) {
 
-                    Column(modifier = Modifier
-                        .fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
                         TabRow(selectedTabIndex = tabIndex,
                             containerColor = Color.White.copy(alpha = 0.5f),
                             modifier = Modifier
                                 .clip(shape = RoundedCornerShape(29.dp))
                                 .background(Color.Gray.copy(alpha = 0.5f)),
                             indicator = {},
-                            divider ={
+                            divider = {
 
                             }
                         ) {
                             tabs.forEachIndexed { index, title ->
 
-                                Row(modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(43.dp)
-                                    .clip(shape = RoundedCornerShape(70.dp))){
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(43.dp)
+                                        .clip(shape = RoundedCornerShape(70.dp))
+                                ) {
 
                                     Card(
                                         shape = RoundedCornerShape(70.dp),
                                         colors = CardDefaults.cardColors(containerColor = if (tabIndex == index) actionButtonColor else Color.Transparent),
                                         modifier = Modifier
-                                            .padding(1.5.dp)){
+                                            .padding(1.5.dp)
+                                    ) {
 
-                                        Tab(text = {
-                                            Text(text = title)
-                                        },
+                                        Tab(
+                                            text = {
+                                                Text(text = title)
+                                            },
                                             selected = tabIndex == index,
                                             onClick = {
                                                 tabIndex = index
                                             },
                                             modifier = Modifier
-                                                .clip(shape= RoundedCornerShape(topStart = 70.dp, topEnd = 70.dp, bottomStart = 70.dp, bottomEnd = 70.dp))
-                                                .background(color = if (tabIndex == index) Color.White.copy(alpha = 0.3f) else Color.White.copy(alpha = 0.1f)),
+                                                .clip(
+                                                    shape = RoundedCornerShape(
+                                                        topStart = 70.dp,
+                                                        topEnd = 70.dp,
+                                                        bottomStart = 70.dp,
+                                                        bottomEnd = 70.dp
+                                                    )
+                                                )
+                                                .background(
+                                                    color = if (tabIndex == index) Color.White.copy(
+                                                        alpha = 0.3f
+                                                    ) else Color.White.copy(alpha = 0.1f)
+                                                ),
                                             selectedContentColor = Color.Black,
                                             unselectedContentColor = Color.DarkGray
                                         )
@@ -210,92 +227,9 @@ fun TransactionHistoryScreen(component: TransactionHistoryComponent) {
                             2 -> LoansTransactionHistory()
 
                         }
+
                     }
-
-
-
-
-//                    TabRow(selectedTabIndex = tabIndex,
-//                        containerColor = Color.Gray.copy(alpha = 0.1f),
-//                        modifier = Modifier
-//                            .clip(shape = RoundedCornerShape(29.dp))
-//                            .background(Color.Gray.copy(alpha = 0.1f))
-//                            .align(Alignment.CenterVertically),
-//                        indicator = {},
-//                        divider = {
-//
-//                        }
-//                    ) {
-//                        tabs.forEachIndexed { index, title ->
-//                            Row(
-//                                modifier = Modifier
-//                                    .background(color = Color.Gray.copy(alpha = 0.1f))
-//                                    .fillMaxWidth()
-//                                    .padding(top = 1.dp, bottom = 1.dp)
-//                                    .clip(shape = RoundedCornerShape(70.dp)),
-//                                horizontalArrangement = Arrangement.Center
-//                            ) {
-//                                Card(
-//                                    modifier = Modifier
-//                                        .background(color = Color.White.copy(alpha = 0.1f))
-//                                        .padding(1.dp)
-//                                        .clip(shape = RoundedCornerShape(20.dp)),
-//                                    colors = CardDefaults.cardColors(
-//                                        containerColor = if (tabIndex == index) actionButtonColor else Color.White.copy(
-//                                            alpha = 0.1f
-//                                        )
-//                                    ),
-//                                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-//                                ) {
-//
-//                                    Tab(
-//                                        text = {
-//
-//                                            Text(
-//                                                text = title,
-//                                                color = if (tabIndex == index) Color.White else Color.Black
-//                                            )
-//                                        },
-//                                        selected = tabIndex == index,
-//                                        onClick = {
-//                                            tabIndex = index
-//                                        },
-//                                        modifier = Modifier
-//                                            .clip(
-//                                                shape = RoundedCornerShape(
-//                                                    topStart = 80.dp,
-//                                                    topEnd = 80.dp,
-//                                                    bottomStart = 80.dp,
-//                                                    bottomEnd = 80.dp
-//                                                )
-//                                            )
-//                                            // .padding(2.dp)
-//                                            .height(36.dp)
-//                                            .width(100.dp)
-//                                            .background(
-//                                                color = if (tabIndex == index) actionButtonColor else Color.Gray.copy(
-//                                                    alpha = 0.1f
-//                                                )
-//                                            ),
-//                                        //  selectedContentColor = Black,
-//                                        //unselectedContentColor = Color.DarkGray
-//                                    )
-//
-//                                }
-//
-//                            }
-//
-//                        }
-//                    }
-
                 }
-
-//                when (tabIndex) {
-//                    0 -> AllTransactionHistory()
-//                    1 -> SavingsTransactionHistory()
-//                    2 -> LoansTransactionHistory()
-//
-//                }
             }
         }
     }

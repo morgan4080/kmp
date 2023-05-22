@@ -47,11 +47,27 @@ class DefaultRootBottomComponent(
         DefaultProfileComponent(
             componentContext = componentContext,
             onProfileClicked = {
-                //Navigate  to quick Link screens
-                //Test
+                //Navigate to  User profile
+            },
+            onApplyLoanClicked = {
+                //Navigate to loans Screen
+                navigationBottomStackNavigation.bringToFront(ConfigBottom.RootLoans)
 
+            },
+            onAddSavingsClicked = {
+            //Navigate to savings Screen
+                navigationBottomStackNavigation.bringToFront(ConfigBottom.RootSavings)
+
+            },
+            onPayLoanClicked = {
+                 //Navigate to pay Loan screen
+
+            },
+            onViewFullStatementClicked = {
+                //Navigate  to full Transaction History
 
             }
+
         )
 
     private fun rootLoansComponent(componentContext: ComponentContext): RootLoansComponent =
@@ -98,9 +114,6 @@ class DefaultRootBottomComponent(
         object RootSavings : ConfigBottom()
         @Parcelize
         object Sign : ConfigBottom()
-
-
-
 
     }
 }

@@ -58,7 +58,8 @@ fun PayLoanScreen(component: PayLoanComponent) {
     ) {
         Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
 
-            Row(modifier = Modifier.fillMaxWidth()) {
+            Row(modifier = Modifier
+                .fillMaxWidth()) {
 
                 NavigateBackTopBar("Pay Loan", onClickContainer = {
 
@@ -67,7 +68,9 @@ fun PayLoanScreen(component: PayLoanComponent) {
             }
 
             Column(
-                modifier = Modifier.fillMaxWidth().fillMaxHeight()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
                     .padding(start = 16.dp, end = 16.dp)
                     .background(color = MaterialTheme.colorScheme.background)
             ) {
@@ -97,18 +100,22 @@ fun PayLoanScreen(component: PayLoanComponent) {
                 )
 
                 //dotted indicator
-                Row(modifier = Modifier.fillMaxWidth()) {
+                Row(modifier = Modifier
+                    .fillMaxWidth()) {
                     Paginator(3, stateLazyRow0.firstVisibleItemIndex)
 
                 }
 
-                Row(modifier = Modifier.fillMaxWidth().padding(top = 30.dp)) {
+                Row(modifier = Modifier.fillMaxWidth()
+                    .padding(top = 30.dp)) {
 
                     TextInputContainer("Desired ammount", "")
 
                 }
 
-                Row(modifier = Modifier.fillMaxWidth().padding(top = 35.dp)) {
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 35.dp)) {
                     ActionButton("Pay Now", onClickContainer = {
 
                     })
@@ -124,7 +131,9 @@ fun PayLoanScreen(component: PayLoanComponent) {
 
                     },
 
-                    modifier = Modifier.fillMaxWidth().padding(top = 24.5.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.5.dp),
                     colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background)
                 ) {
 
@@ -251,7 +260,8 @@ fun PayLoanScreen(component: PayLoanComponent) {
                                         Text(
                                             text = "Dismiss",
                                             fontSize = 11.sp,
-                                            modifier = Modifier.padding(
+                                            modifier = Modifier
+                                                .padding(
                                                 top = 5.dp,
                                                 bottom = 5.dp,
                                                 start = 20.dp,
