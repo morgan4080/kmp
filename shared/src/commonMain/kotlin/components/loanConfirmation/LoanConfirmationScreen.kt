@@ -44,7 +44,8 @@ fun LoansConfirmationScreen(component: LoanConfirmationComponent) {
 
                 Text(
                     modifier = Modifier,
-                    text = "Confirm Loan  Details"
+                    text = "Confirm Loan  Details",
+                    fontSize = MaterialTheme.typography.bodyMedium.fontSize
                 )
 
                 //Disbursement Details

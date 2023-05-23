@@ -21,7 +21,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import com.presta.customer.MR
 import composables.ActionButton
+import dev.icerock.moko.resources.compose.fontFamilyResource
 import theme.actionButtonColor
 import theme.transparentContainer
 
@@ -76,11 +78,11 @@ fun SuccessfulTransactionScreen(component: SuccessfulTransactionComponent) {
                 }
 
                 Text(
-                    "Transaction Successful!",
-                    fontSize = 4.em,
+                    "TRANSACTION   SUCCESSFUL!",
+                    fontSize = 20.sp,
                     modifier = Modifier
                         .padding(top = 29.dp),
-                    fontWeight = FontWeight.Bold
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
                 )
 
                 Row(modifier = Modifier
@@ -90,10 +92,11 @@ fun SuccessfulTransactionScreen(component: SuccessfulTransactionComponent) {
                     end = 30.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center) {
-
                     Text(
                         text = "Loan topup of Kes 30,000 transferred to Mpesa No. 0724123456",
-                        fontSize = 2.4.em
+                        fontSize = 14.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+
                     )
 
                 }
@@ -116,7 +119,9 @@ fun SuccessfulTransactionScreen(component: SuccessfulTransactionComponent) {
                 colors = CardDefaults.elevatedCardColors(containerColor = transparentContainer)) {
                     Text(
                         text = "+ Share Receipt",
-                        fontSize = 11.sp,
+                        fontSize = 10.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+
                         modifier = Modifier
                             .padding(
                             top = 5.dp,

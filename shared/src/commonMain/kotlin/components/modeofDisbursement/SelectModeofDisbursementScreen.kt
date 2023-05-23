@@ -13,8 +13,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.presta.customer.MR
 import composables.NavigateBackTopBar
 import composables.ProductSelectionCard2
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
 fun SelectModeOfDisbursementScreen(component: ModeOfDisbursementComponent) {
@@ -41,7 +44,10 @@ fun SelectModeOfDisbursementScreen(component: ModeOfDisbursementComponent) {
 
                 Text(
                     modifier = Modifier,
-                    text = "Select Disbursement Method"
+                    text = "Select Disbursement Method",
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                    fontSize = 14.sp,
+
                 )
 
                 Spacer(modifier = Modifier.padding(top = 25.dp))

@@ -21,6 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.presta.customer.MR
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
 fun LoanLimitContainer(){
@@ -45,7 +47,7 @@ fun LoanLimitContainer(){
                 ) {
                     Text(
                         text = "Loan  Limit ",
-                        color= Color(0xFF8F8F8F.toInt()), // #002C56
+                       fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                         fontSize = 16.sp
                     )
                 }
@@ -57,7 +59,8 @@ fun LoanLimitContainer(){
                         text = "Min.Kes 10,000-Max 50,000",
                         color= MaterialTheme.colorScheme.onPrimaryContainer,
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Black
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+
                     )
                 }
                 Row (modifier = Modifier
@@ -68,14 +71,15 @@ fun LoanLimitContainer(){
 
                         Text(
                             text = "Interest",
-                            color= Color(0xFF8F8F8F.toInt()), // #002C56
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light), // #002C56
+                             fontSize = 10.sp
                         )
 
                         Text(
                             text = "12%",
                             color= MaterialTheme.colorScheme.onPrimaryContainer, // #002C56
                             fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
                         )
 
                     }
@@ -88,14 +92,15 @@ fun LoanLimitContainer(){
 
                         Text(
                             text = "Max loan  Period",
-                            color= Color(0xFF8F8F8F.toInt()), // #002C56
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light), // #002C56
+                            fontSize = 10.sp
                         )
 
                         Text(
                             text = "12 Months",
                             color= MaterialTheme.colorScheme.onPrimaryContainer, // #002C56
                             fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                         )
 
                     }

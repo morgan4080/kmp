@@ -3,6 +3,7 @@ package components.savings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -80,24 +81,26 @@ fun SavingsScreen(component: SavingsComponent) {
                         Text(text = "Transactions ")
                         Row(verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.clickable {
-
-                                println("See  al Items Clicked")
-                                //Navigate To  all navigation screen
                                 component.onSeeALlSelected()
 
                             }
 
                         ) {
-                            Text(text = "See All",
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.align(alignment = Alignment.CenterVertically))
+                            Box(contentAlignment = Alignment.Center){
+                                Row(){
+                                    Text(text = "See all",
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier)
 
-                                Icon(
-                                    Icons.Filled.ArrowForward,
-                                    contentDescription = "Forward Arrow",
-                                    tint = backArrowColor,
-                                    modifier = Modifier.align(alignment = Alignment.CenterVertically)
-                                )
+                                    Icon(
+                                        Icons.Filled.ArrowForward,
+                                        contentDescription = "Forward Arrow",
+                                        tint = backArrowColor,
+                                    )
+
+                                }
+
+                            }
 
                         }
                     }

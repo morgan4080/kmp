@@ -33,18 +33,18 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import components.rootLoans.RootLoansComponent
 import composables.ActionButton
 import composables.LoanStatusContainer
 import composables.NavigateBackTopBar
 import composables.Paginator
 import composables.TextInputContainer
 import composables.disbursementDetailsRow
-import theme.actionButtonColor
 import theme.labelTextColor
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun PayLoanScreen(component: PayLoanComponent) {
+fun PayLoanScreen(component: PayLoanComponent): RootLoansComponent.ChildLoans.PayLoanChild {
 
    // val state = rememberLazyListState()
     val stateLazyRow0 = rememberLazyListState()
@@ -287,6 +287,8 @@ fun PayLoanScreen(component: PayLoanComponent) {
         }
 
     }
+
+    return RootLoansComponent.ChildLoans.PayLoanChild(component)
 
 }
 

@@ -16,6 +16,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.presta.customer.MR
+import dev.icerock.moko.resources.compose.fontFamilyResource
 import theme.backArrowColor
 import theme.labelTextColor
 
@@ -40,15 +42,19 @@ fun  ProductSelectionCard(label: String, description: String?=null, onClickConta
                     Text(
                         text = label,
                         modifier = Modifier.padding(start = 15.dp),
-                        fontSize = 15.sp,
-                        color = labelTextColor)
+                        fontSize = 12.sp,
+                        color = labelTextColor,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                    )
                     //Spacer(modifier = Modifier.weight(1f))
                     if (description != null) {
                         Text(
 
                             text = description,
                             modifier = Modifier.padding(start = 15.dp),
-                            fontSize = 12.sp,)
+                            fontSize = 10.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        )
                     }
 
                 }

@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material.icons.outlined.AttachMoney
 import androidx.compose.material.icons.outlined.CreditCard
@@ -41,10 +42,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
+import composables.AllTransactionHistory
+import composables.LoansTransactionHistory
 import composables.Paginator
+import composables.SavingsTransactionHistory
+import io.ktor.websocket.Frame
+import theme.backArrowColor
 
 
 data class QuickLinks(val labelTop: String,val labelBottom: String, val icon: ImageVector)
@@ -56,7 +63,17 @@ fun ProfileScreen(component: ProfileComponent, innerPadding: PaddingValues) {
     val model by component.model.subscribeAsState()
     val stateLazyRow0 = rememberLazyListState()
     val stateLazyRow = rememberLazyListState()
-    var quickLinks: List<QuickLinks>
+    var quickLinks: List<QuickLinks> = listOf(
+        QuickLinks("Add","Savings", Icons.Outlined.Savings),
+        QuickLinks("Apply", "Loan", Icons.Outlined.AttachMoney),
+        QuickLinks("Pay","Loan", Icons.Outlined.CreditCard),
+        QuickLinks("View Full","Statement", Icons.Outlined.Description),
+
+    )
+    val item1=quickLinks[0]
+    val item2=quickLinks[1]
+    val item3=quickLinks[2]
+    val item4=quickLinks[3]
 
     LazyColumn(
         // consume insets as scaffold doesn't do it by default
@@ -159,23 +176,16 @@ fun ProfileScreen(component: ProfileComponent, innerPadding: PaddingValues) {
             }
         }
         item {
-             quickLinks = listOf(
-                QuickLinks("Add","Savings", Icons.Outlined.Savings),
-                QuickLinks("Apply", "Loan", Icons.Outlined.AttachMoney),
-                QuickLinks("Pay","Loan", Icons.Outlined.CreditCard),
-                QuickLinks("View Full","Statement", Icons.Outlined.Description),
-            )
 
             LazyRow(modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 15.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.SpaceEvenly,
                 state = stateLazyRow,
                 flingBehavior = rememberSnapFlingBehavior(lazyListState = stateLazyRow)
             ) {
-                quickLinks.forEach { link ->
                     item {
+                        //Add savings
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.Center,
@@ -188,30 +198,13 @@ fun ProfileScreen(component: ProfileComponent, innerPadding: PaddingValues) {
                                     .background(MaterialTheme.colorScheme.primary)
                                     .size(57.dp),
                                 onClick = {
-                                          //iterate through  the list of items and execute on condition
-                                          //Test Navigate to add Savings--Savings child
-                                         // component.onProfileSelected()
-
-                                   //component.onProfileSelected()
-
-                                   for (items in quickLinks){
-                                       if (items.labelTop=="Add"){
-                                           component.onApplyLoanSelected()
-
-                                       }
-                                       else if (items.labelTop==""){
-
-                                       }
-                                   }
-
-
-
+                                    component.onAddSavingsSelected()
 
 
                                 },
                                 content = {
                                     Icon(
-                                        imageVector = link.icon,
+                                        imageVector = item1.icon,
                                         modifier = Modifier.size(30.dp),
                                         contentDescription = null,
                                         tint = MaterialTheme.colorScheme.inverseOnSurface
@@ -221,21 +214,154 @@ fun ProfileScreen(component: ProfileComponent, innerPadding: PaddingValues) {
 
                             Text(
                                 modifier = Modifier.padding(top = 7.08.dp),
-                                text = link.labelTop,
+                                text = item1.labelTop,
                                 color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Light
                             )
 
                             Text(
-                                text = link.labelBottom,
+                                text = item1.labelBottom,
                                 color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Light
                             )
                         }
+                        //Apply loan
+
+                        Column(
+                            modifier = Modifier
+                                .padding(start = 29.dp)
+                                .fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+
+                            IconButton(
+                                modifier = Modifier
+                                    .clip(shape = RoundedCornerShape(10.dp))
+                                    .background(MaterialTheme.colorScheme.primary)
+                                    .size(57.dp),
+                                onClick = {
+                                          component.onApplyLoanSelected()
+
+                                },
+                                content = {
+                                    Icon(
+                                        imageVector = item2.icon,
+                                        modifier = Modifier.size(30.dp),
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.inverseOnSurface
+                                    )
+                                }
+                            )
+
+                            Text(
+                                modifier = Modifier.padding(top = 7.08.dp),
+                                text = item2.labelTop,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Light
+                            )
+
+                            Text(
+                                text = item2.labelBottom,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Light
+                            )
+                        }
+                        //Pay Loan
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(start = 29.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+
+                            IconButton(
+                                modifier = Modifier
+                                    .clip(shape = RoundedCornerShape(10.dp))
+                                    .background(MaterialTheme.colorScheme.primary)
+                                    .size(57.dp),
+                                onClick = {
+                                          component.onPayLoanSelected()
+
+
+                                },
+                                content = {
+                                    Icon(
+                                        imageVector = item3.icon,
+                                        modifier = Modifier.size(30.dp),
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.inverseOnSurface
+                                    )
+                                }
+                            )
+
+                            Text(
+                                modifier = Modifier.padding(top = 7.08.dp),
+                                text = item3.labelTop,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Light
+                            )
+
+                            Text(
+                                text = item3.labelBottom,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Light
+                            )
+                        }
+
+                        //View Full  Statement
+                        Column(
+                            modifier = Modifier
+                                .padding(start = 18.dp)
+                                .fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+
+                            IconButton(
+                                modifier = Modifier
+                                    .clip(shape = RoundedCornerShape(10.dp))
+                                    .background(MaterialTheme.colorScheme.primary)
+                                    .size(57.dp),
+                                onClick = {
+
+
+                                },
+                                content = {
+                                    Icon(
+                                        imageVector = item4.icon,
+                                        modifier = Modifier.size(30.dp),
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.inverseOnSurface
+                                    )
+                                }
+                            )
+
+                            Text(
+                                modifier = Modifier.padding(top = 7.08.dp),
+                                text = item4.labelTop,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Light
+                            )
+
+                            Text(
+                                text = item4.labelBottom,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Light
+                            )
+                        }
+
                     }
-                }
+
             }
         }
         item {
@@ -244,13 +370,35 @@ fun ProfileScreen(component: ProfileComponent, innerPadding: PaddingValues) {
                     .padding(top = 26.dp, start = 5.dp)
                     .fillMaxWidth()
             ) {
-                Text(
-                    text = "Transactions",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    fontFamily = FontFamily.SansSerif
-                )
+
+                Row(modifier = Modifier.fillParentMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically){
+                    Text(
+                        text = "Transactions",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        fontFamily = FontFamily.SansSerif
+                    )
+
+                    Box(contentAlignment = Alignment.Center){
+                        Row(){
+                            Text(text = "See all",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier)
+
+                            Icon(
+                                Icons.Filled.ArrowForward,
+                                contentDescription = "Forward Arrow",
+                                tint = backArrowColor,
+                            )
+
+                        }
+
+                    }
+                }
+
             }
         }
         item {

@@ -12,10 +12,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.presta.customer.MR
 import composables.ActionButton
 import composables.LoanLimitContainer
 import composables.NavigateBackTopBar
 import composables.TextInputContainer
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
 fun EmergencyLoansScreen(component: EmergencyLoansComponent) {
@@ -39,7 +41,8 @@ fun EmergencyLoansScreen(component: EmergencyLoansComponent) {
             ) {
                 Text(
                     modifier = Modifier,
-                    text = "Enter Loan  Amount"
+                    text = "Enter Loan  Amount",
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                 )
                 //container Card
                 LoanLimitContainer()

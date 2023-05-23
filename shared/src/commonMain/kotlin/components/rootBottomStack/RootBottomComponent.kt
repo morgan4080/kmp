@@ -21,5 +21,7 @@ interface RootBottomComponent {
         class RootLoansChild(val component: RootLoansComponent) : ChildBottom()
         class RootSavingsChild(val component: RootSavingsComponent) : ChildBottom()
         class SignChild(val component: SignComponent) : ChildBottom()
+
+
     }
 }

@@ -7,11 +7,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.presta.customer.MR
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 
 @Composable
@@ -56,7 +56,8 @@ fun DisbursementDetailsContainer() {
                     Text(
                         text = "Disbursement Amount ",
                         //color = Color(0xFF8F8F8F.toInt()), // #002C56
-                        fontSize = MaterialTheme.typography.titleMedium.fontSize
+                        fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                     )
                 }
                 Row(
@@ -68,17 +69,19 @@ fun DisbursementDetailsContainer() {
                         text = "Kes 30,000",
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontSize = MaterialTheme.typography.headlineSmall.fontSize,
-                        fontWeight = FontWeight.Black,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                     )
                 }
                 //data Rows
-                disbursementDetailsRow("Requested Amount", "Kes 30,000")
-                disbursementDetailsRow("Requested Amount", "Kes 30,000")
-                disbursementDetailsRow("Requested Amount", "Kes 30,000")
-                disbursementDetailsRow("Requested Amount", "Kes 30,000")
-                disbursementDetailsRow("Requested Amount", "Kes 30,000")
-                disbursementDetailsRow("Requested Amount", "Kes 30,000")
-                disbursementDetailsRow("Requested Amount", "Kes 30,000")
+                LazyColumn(modifier = Modifier
+                    .fillMaxWidth()){
+                    items(10){
+                        disbursementDetailsRow("Requested Amount", "Kes 30,000")
+
+                    }
+
+                }
+
 
             }
         }
@@ -99,14 +102,16 @@ fun disbursementDetailsRow(label: String, data: String) {
 
         Text(
             text = label,
-            fontSize = MaterialTheme.typography.labelSmall.fontSize
+            fontSize = MaterialTheme.typography.labelSmall.fontSize,
+            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
         )
 
         Text(
             text = data,
             fontSize = MaterialTheme.typography.labelMedium.fontSize,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
-            fontWeight = FontWeight.Black
+            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+
         )
 
     }
