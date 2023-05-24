@@ -26,11 +26,13 @@ androidxActivity = "1.6.1"
 androidxFragment = "1.1.0"
 androidxTestCore = "1.5.0"
 extensionJetbrains = "2.0.0-compose-experimental-alpha-02"
-googlecode = "8.2.0"
+russhwolf = "1.0.0"
 
 
 [libraries]
-googlecode-libphonenumber = {group = "com.googlecode.libphonenumber", name = "libphonenumber", version.ref = "ktor" }
+
+russhwolf-settings-core = {group = "com.russhwolf", name = "multiplatform-settings", version.ref = "russhwolf" }
+russhwolf-settings-serialization = {group = "com.russhwolf", name = "multiplatform-settings-serialization", version.ref = "russhwolf" }
 
 ktor-ClientCore = {group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-SerializationKotlinxJson = {group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }

@@ -7,6 +7,7 @@ plugins {
     id("com.arkivanov.parcelize.darwin")
     id("kotlin-parcelize")
     id("dev.icerock.mobile.multiplatform-resources")
+    id("app.cash.sqldelight")
 }
 
 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
@@ -103,6 +104,10 @@ kotlin {
                 implementation(deps.moko.resources.test)
 
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+
+                // settings
+                implementation(deps.russhwolf.settings.core)
+                implementation(deps.russhwolf.settings.serialization)
             }
         }
 
@@ -171,5 +176,13 @@ android {
     }
     kotlin {
         jvmToolchain(11)
+    }
+}
+
+sqldelight {
+    databases {
+        create("PrestaCustomerDatabase") {
+            packageName.set("com.presta.customer.database")
+        }
     }
 }
