@@ -52,6 +52,7 @@ kotlin {
                     implementation(runtime)
                     implementation(foundation)
                     implementation(material3)
+                    implementation(material)
                     implementation(components.resources)
                     implementation(materialIconsExtended)
                 }

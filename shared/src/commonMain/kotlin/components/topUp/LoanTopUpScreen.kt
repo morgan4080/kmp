@@ -49,6 +49,8 @@ fun  LoanTopUpScreen(component: LoanTopUpComponent){
             .fillMaxHeight()) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 NavigateBackTopBar("Topup", onClickContainer = {
+                    component.onBackNavSelected()
+
 
                 })
             }

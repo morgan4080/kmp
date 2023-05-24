@@ -23,6 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.presta.customer.MR
+import dev.icerock.moko.resources.compose.fontFamilyResource
+import theme.labelTextColor
 
 @Composable
 fun TopUpSelectionContainer() {
@@ -46,11 +49,17 @@ fun TopUpSelectionContainer() {
                 colors = CheckboxDefaults.colors(uncheckedColor = MaterialTheme.colorScheme.secondaryContainer)
             )
 
-            Column(modifier = Modifier.padding(start = 10.dp)) {
-                Text(text = "Emergency Loan")
+            Column(modifier = Modifier
+                .padding(start = 10.dp)) {
+                Text(text = "Emergency Loan",
+                fontSize = 12.sp,
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    color = labelTextColor
+                )
                 Text(
                     text = "min 10,000-max 50,000",
-                    fontSize = 10.sp
+                    fontSize = 10.sp,
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                 )
 
             }
@@ -58,10 +67,15 @@ fun TopUpSelectionContainer() {
 
         Column() {
 
-            Text(text = "bal Kes 5000.00")
+            Text(text = " Bal.Kes 5000.00",
+                fontSize = 12.sp,
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                color = labelTextColor
+            )
             Text(
                 text = "Due- 12 May 2020",
-                fontSize = 10.sp
+                fontSize = 10.sp,
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
             )
 
         }

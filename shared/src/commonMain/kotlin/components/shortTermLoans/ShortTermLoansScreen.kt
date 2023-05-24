@@ -24,9 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.presta.customer.MR
 import composables.NavigateBackTopBar
 import composables.ShortTermProductList
 import composables.ShortTermTopUpList
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
 fun ShortTermLoansScreen(component: ShortTermLoansComponent,innerPadding:PaddingValues){
@@ -43,6 +45,7 @@ fun ShortTermLoansScreen(component: ShortTermLoansComponent,innerPadding:Padding
             Row(modifier = Modifier
                 .fillMaxWidth()){
                 NavigateBackTopBar("Short Term Loan", onClickContainer = {
+                    component.onBackNav()
 
                 })
             }
@@ -77,7 +80,9 @@ fun ShortTermLoansScreen(component: ShortTermLoansComponent,innerPadding:Padding
                                         .padding(1.5.dp)){
 
                                     Tab(text = {
-                                        Text(text = title)
+                                        Text(text = title,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                                        )
                                     },
                                         selected = tabIndex == index,
                                         onClick = {

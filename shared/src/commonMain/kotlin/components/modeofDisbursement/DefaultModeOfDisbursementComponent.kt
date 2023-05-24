@@ -9,6 +9,7 @@ class DefaultModeOfDisbursementComponent(
 
     private val onMpesaClicked: () -> Unit,
     private val onBankClicked: () -> Unit,
+    private val onBackNavClicked: () -> Unit,
 
     componentContext: ComponentContext,
 
@@ -27,6 +28,10 @@ class DefaultModeOfDisbursementComponent(
 
     override fun onBankSelected() {
         onBankClicked()
+    }
+
+    override fun onBackNavSelected() {
+      onBackNavClicked()
     }
 
 }

@@ -50,7 +50,7 @@ fun AddSavingsScreen(component: AddSavingsComponent,innerPadding: PaddingValues)
             Row(modifier = Modifier
                 .fillMaxWidth()) {
                 NavigateBackTopBar("Add Savings", onClickContainer = {
-
+                    component.onBackNavSelected()
                 })
             }
             Column(

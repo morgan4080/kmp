@@ -31,6 +31,7 @@ fun SelectModeOfDisbursementScreen(component: ModeOfDisbursementComponent) {
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 NavigateBackTopBar("Disbursement Method", onClickContainer = {
+                    component.onBackNavSelected()
 
                 })
 

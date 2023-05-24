@@ -7,6 +7,7 @@ interface ModeOfDisbursementComponent {
 
     fun onMpesaSelected()
     fun onBankSelected()
+    fun onBackNavSelected()
 
     data class Model(
         val items: List<String>,

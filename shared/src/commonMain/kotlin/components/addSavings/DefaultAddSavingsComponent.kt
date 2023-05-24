@@ -8,6 +8,7 @@ class DefaultAddSavingsComponent (
 
     componentContext: ComponentContext,
     private val onConfirmClicked: () -> Unit,
+    private val onBackNavClicked: () -> Unit,
         ):AddSavingsComponent,ComponentContext by componentContext{
 
     private val models = MutableValue(
@@ -19,6 +20,10 @@ class DefaultAddSavingsComponent (
 
     override fun onConfirmSelected() {
        onConfirmClicked()
+    }
+
+    override fun onBackNavSelected() {
+        onBackNavClicked()
     }
 
 

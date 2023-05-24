@@ -10,6 +10,8 @@ interface ShortTermLoansComponent {
     fun onSelecte2(refId: String)
     fun onConfirmSelected(refId: String)
 
+    fun onBackNav()
+
 
     data class Model(
         val items: List<String>,

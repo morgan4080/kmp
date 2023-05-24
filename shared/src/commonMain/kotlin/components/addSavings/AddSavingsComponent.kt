@@ -7,6 +7,7 @@ interface AddSavingsComponent {
     val model: Value<Model>
 
     fun onConfirmSelected()
+    fun onBackNavSelected()
 
     data class Model(
         val items: List<String>,

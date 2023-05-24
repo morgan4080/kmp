@@ -28,12 +28,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import com.presta.customer.MR
 import composables.ActionButton
 import composables.NavigateBackTopBar
 import composables.OptionsSelectionContainer
 import composables.ProductSelectionCard2
+import dev.icerock.moko.resources.compose.fontFamilyResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import theme.actionButtonColor
+import theme.labelTextColor
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -49,6 +52,7 @@ fun BankDisbursementScreen(component: BankDisbursementComponent) {
             Row(modifier = Modifier
                 .fillMaxWidth()) {
                 NavigateBackTopBar("Disbursement Method", onClickContainer = {
+                    component.onBackNavSelected()
 
                 })
             }
@@ -89,13 +93,17 @@ fun BankDisbursementScreen(component: BankDisbursementComponent) {
                                     Text(
                                         "Select Bank",
                                         modifier = Modifier
-                                            .padding(start = 16.dp)
+                                            .padding(start = 16.dp),
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                        fontSize = 14.sp,
+                                        color = labelTextColor
                                     )
                                     Text(
                                         "Select Options Below",
                                         modifier = Modifier
                                             .padding(start = 16.dp),
-                                        fontSize = 10.sp
+                                        fontSize = 10.sp,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                     )
                                     Column(modifier = Modifier
                                         .height(300.dp)) {
@@ -223,22 +231,16 @@ fun BankDisbursementScreen(component: BankDisbursementComponent) {
                                     ElevatedCard(onClick = {
                                         launchPopUp = false
                                     }, modifier = Modifier
-                                        .padding(start = 16.dp)) {
+                                        .padding(start = 16.dp),
+                                    colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background)) {
 
                                         Text(
                                             text = "Dismiss",
                                             fontSize = 11.sp,
-                                            modifier = Modifier
-                                                .padding(
-                                                    top = 5.dp,
-                                                    bottom = 5.dp,
-                                                    start = 20.dp,
-                                                    end = 20.dp
-                                                )
+                                            color = labelTextColor
                                         )
 
                                     }
-
                                     ElevatedCard(
                                         onClick = {
                                             launchPopUp = false
@@ -270,7 +272,7 @@ fun BankDisbursementScreen(component: BankDisbursementComponent) {
 
                 Row(modifier = Modifier
                     .fillMaxWidth()){
-                    ProductSelectionCard2("Select Bank", onClickContainer = {
+                    ProductSelectionCard2("Select Bank",onClickContainer = {
                         //Business  Logic
                         //banK details pop up card
                         launchPopUp = true

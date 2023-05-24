@@ -76,7 +76,6 @@ fun PayLoanScreen(component: PayLoanComponent): RootLoansComponent.ChildLoans.Pa
             ) {
 
                 Text(
-                    modifier = Modifier.padding(start = 16.dp),
                     text = "My loans",
                     color = labelTextColor
                 )

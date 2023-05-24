@@ -7,6 +7,7 @@ import com.arkivanov.decompose.value.Value
 class DefaultLoanConfirmationComponent(
     componentContext: ComponentContext,
     private val onConfirmClicked: () -> Unit,
+    private val onBackNavClicked: () -> Unit,
 ) : LoanConfirmationComponent, ComponentContext by componentContext{
 
     private val models = MutableValue(
@@ -18,6 +19,10 @@ class DefaultLoanConfirmationComponent(
     override val model: Value<LoanConfirmationComponent.Model> = models
     override fun onConfirmSelected() {
         onConfirmClicked()
+    }
+
+    override fun onBackNavSelected() {
+       onBackNavClicked()
     }
 
 }

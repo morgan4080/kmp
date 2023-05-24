@@ -27,8 +27,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.presta.customer.MR
+import dev.icerock.moko.resources.compose.fontFamilyResource
 import theme.bankContainerColor
-import theme.labelTextColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,7 +58,8 @@ fun OptionsSelectionContainer (label: String, description: String?=null, onClick
                         text = label,
                         modifier = Modifier.padding(start = 15.dp),
                         fontSize = 12.sp,
-                        color = labelTextColor
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+
                     )
                     //Spacer(modifier = Modifier.weight(1f))
                     if (description != null) {
@@ -87,3 +89,4 @@ fun OptionsSelectionContainer (label: String, description: String?=null, onClick
         }
     }
 }
+

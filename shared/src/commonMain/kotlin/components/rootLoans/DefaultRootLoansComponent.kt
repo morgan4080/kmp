@@ -5,6 +5,7 @@ import FailedTransactionComponent
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
@@ -29,15 +30,19 @@ import components.payLoan.DefaultPayLoanComponent
 import components.payLoan.PayLoanComponent
 import components.processingTransaction.DefaultProcessingTransactionComponent
 import components.processingTransaction.ProcessingTransactionComponent
+import components.rootBottomStack.RootBottomComponent
 import components.shortTermLoans.DefaultShortTernLoansComponent
 import components.shortTermLoans.ShortTermLoansComponent
 import components.succesfulTransaction.DefaultSuccessfulTransactionComponent
 import components.succesfulTransaction.SuccessfulTransactionComponent
+import io.ktor.serialization.Configuration
 
 class DefaultRootLoansComponent(
     componentContext: ComponentContext,
 ) : RootLoansComponent, ComponentContext by componentContext {
     private val loansNavigation = StackNavigation<ConfigLoans>()
+    private val navigation = StackNavigation<RootBottomComponent>()
+
 
     private val _childLoansStack = childStack(
         source = loansNavigation,
@@ -101,13 +106,14 @@ class DefaultRootLoansComponent(
     }
 
     private fun applyLoanComponent(componentContext: ComponentContext): ApplyLoanComponent =
-        DefaultApplyLoanComponent(componentContext = componentContext, onShortTermClicked = {
+        DefaultApplyLoanComponent(componentContext = componentContext,
+            onShortTermClicked = {
             loansNavigation.push(ConfigLoans.ShortTermLoans)
         }, onLongTermClicked = {
             loansNavigation.push(ConfigLoans.LongTermLoans)
         },
         onBackNavClicked = {
-            loansNavigation::pop
+
         })
 
     private fun shortTermComponent(componentContext: ComponentContext): ShortTermLoansComponent =
@@ -122,7 +128,11 @@ class DefaultRootLoansComponent(
         }, onProduct2Selected = {
                 loansNavigation.push(ConfigLoans.PayLoan(refId="pay"))
 
-            })
+            },
+        onBackNavClicked = {
+            loansNavigation.pop()
+
+        })
 
     private fun longTermComponent(componentContext: ComponentContext): LongTermLoansComponent =
         DefaultLongTermComponent(componentContext = componentContext,
@@ -148,13 +158,19 @@ class DefaultRootLoansComponent(
             onConfirmClicked = {
             //Navigate to  confirm Screen- a child under loans
             loansNavigation.push(ConfigLoans.LoanConfirmation)
-        })
+        }, onBackNavClicked = {
+                loansNavigation.pop()
+
+            })
 
     private fun loanConfirmationComponent(componentContext: ComponentContext): LoanConfirmationComponent =
         DefaultLoanConfirmationComponent(componentContext = componentContext,
             onConfirmClicked = {
             //navigate to mode of Disbursement
             loansNavigation.push(ConfigLoans.DisbursementMethod)
+        },
+        onBackNavClicked = {
+            loansNavigation.pop()
         })
 
     private fun modeOfDisbursementComponent(componentContext: ComponentContext): ModeOfDisbursementComponent =
@@ -168,6 +184,9 @@ class DefaultRootLoansComponent(
             //navigate to  BankDisbursement Screen
             loansNavigation.push(ConfigLoans.BankDisbursement)
 
+        },
+        onBackNavClicked = {
+            loansNavigation.pop()
         })
 
     private fun processingTransactionComponent(componentContext: ComponentContext): ProcessingTransactionComponent =
@@ -182,6 +201,9 @@ class DefaultRootLoansComponent(
                 loansNavigation.push(ConfigLoans.SuccessfulTransaction)
                // loansNavigation.push(ConfigLoans.FailedTransaction)
 
+        },
+        onBackNavClicked = {
+            loansNavigation.pop()
         })
     private fun successfulTransactionComponent(componentContext: ComponentContext): SuccessfulTransactionComponent =
         DefaultSuccessfulTransactionComponent(
@@ -202,6 +224,9 @@ class DefaultRootLoansComponent(
                 //push  to confirm Loan Details Screen
                 loansNavigation.push(ConfigLoans.LoanConfirmation)
 
+            },
+            onBackNavClicked = {
+                loansNavigation.pop()
             }
         )
     private fun payLoanComponent(componentContext: ComponentContext): PayLoanComponent =

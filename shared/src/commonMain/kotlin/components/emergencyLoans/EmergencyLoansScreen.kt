@@ -30,6 +30,7 @@ fun EmergencyLoansScreen(component: EmergencyLoansComponent) {
         Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 NavigateBackTopBar("Emergency Loan", onClickContainer = {
+                    component.onBackNavSelected()
 
                 })
             }

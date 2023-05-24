@@ -30,6 +30,7 @@ fun LoansConfirmationScreen(component: LoanConfirmationComponent) {
             Row(modifier = Modifier.fillMaxWidth()) {
 
                 NavigateBackTopBar("Emergency Loan Confirm", onClickContainer ={
+                    component.onBackNavSelected()
 
                 } )
 

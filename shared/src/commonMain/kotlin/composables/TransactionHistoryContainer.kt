@@ -23,6 +23,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.presta.customer.MR
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
 fun TransactionHistoryContainer() {
@@ -94,9 +96,8 @@ fun TransactionHistoryContainer() {
 
                         Text(
                             text = transaction.code,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Light
+                            fontSize = 10.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                         )
                     }
                 }
@@ -111,9 +112,8 @@ fun TransactionHistoryContainer() {
                     )
                     Text(
                         text = transaction.date,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Light
+                        fontSize = 10.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                     )
                 }
             }

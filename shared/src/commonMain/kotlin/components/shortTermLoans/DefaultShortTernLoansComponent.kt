@@ -9,6 +9,7 @@ class DefaultShortTernLoansComponent(
     private val onProductSelected: (refId: String) -> Unit,
     private val onProduct2Selected: (refId: String) -> Unit,
     private val onConfirmClicked: (refId: String) -> Unit,
+    private val onBackNavClicked: () -> Unit,
 ): ShortTermLoansComponent, ComponentContext by componentContext {
 
     private val models = MutableValue(
@@ -29,6 +30,10 @@ class DefaultShortTernLoansComponent(
 
     override fun onConfirmSelected(refId: String) {
        onConfirmClicked(refId)
+    }
+
+    override fun onBackNav() {
+       onBackNavClicked()
     }
 
 }
