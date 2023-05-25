@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun AllTransactionHistory() {
+
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.padding(top = 20.dp)) {
 

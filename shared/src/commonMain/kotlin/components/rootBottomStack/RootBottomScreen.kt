@@ -28,9 +28,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
-import components.applyLoan.ApplyLoanScreen
 import components.profile.ProfileScreen
-import components.savings.SavingsScreen
 import components.sign.SignScreen
 import helpers.LocalSafeArea
 

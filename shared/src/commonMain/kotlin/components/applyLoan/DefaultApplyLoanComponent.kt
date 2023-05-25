@@ -4,7 +4,6 @@ import ApplyLoanComponent
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
-import io.ktor.utils.io.core.Output
 
 class DefaultApplyLoanComponent(
     componentContext: ComponentContext,

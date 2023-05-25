@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import composables.ActionButton
+import composables.InputTypes
 import composables.NavigateBackTopBar
 import composables.OptionsSelectionContainer
 import composables.ProductSelectionCard2
@@ -201,7 +202,7 @@ fun  LoanTopUpScreen(component: LoanTopUpComponent){
                     .fillMaxWidth()
                     .padding(top = 6.dp)){
 
-                    TextInputContainer("Desired Amount","")
+                    TextInputContainer("Desired Amount","", inputType = InputTypes.NUMBER)
 
                 }
 

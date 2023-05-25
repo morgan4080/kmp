@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.presta.customer.MR
 import composables.ActionButton
+import composables.InputTypes
 import composables.LoanLimitContainer
 import composables.NavigateBackTopBar
 import composables.TextInputContainer
@@ -48,7 +49,7 @@ fun EmergencyLoansScreen(component: EmergencyLoansComponent) {
                 //container Card
                 LoanLimitContainer()
                 Row(modifier = Modifier.padding(top = 16.dp)) {
-                    TextInputContainer("Enter the desired amount", "")
+                    TextInputContainer("Enter the desired amount", "", inputType = InputTypes.NUMBER)
 
                 }
                 Row(
@@ -56,7 +57,7 @@ fun EmergencyLoansScreen(component: EmergencyLoansComponent) {
                         .padding(top = 16.dp)
                 ) {
 
-                    TextInputContainer("Desired Period(Months)", inputValue)
+                    TextInputContainer("Desired Period(Months)", inputValue, inputType = InputTypes.NUMBER)
                 }
 
                 //action Button

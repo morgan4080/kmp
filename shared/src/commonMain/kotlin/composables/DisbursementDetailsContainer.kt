@@ -55,7 +55,6 @@ fun DisbursementDetailsContainer() {
                 ) {
                     Text(
                         text = "Disbursement Amount ",
-                        //color = Color(0xFF8F8F8F.toInt()), // #002C56
                         fontSize = MaterialTheme.typography.bodySmall.fontSize,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                     )

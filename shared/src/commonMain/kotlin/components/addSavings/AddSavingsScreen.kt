@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import composables.ActionButton
+import composables.InputTypes
 import composables.NavigateBackTopBar
 import composables.OptionsSelectionContainer
 import composables.ProductSelectionCard2
@@ -196,7 +197,7 @@ fun AddSavingsScreen(component: AddSavingsComponent,innerPadding: PaddingValues)
 
                 Row(modifier = Modifier.fillMaxWidth().padding(top = 33.dp)){
 
-                    TextInputContainer("Desired Amount","")
+                    TextInputContainer("Desired Amount","", inputType = InputTypes.NUMBER)
 
                 }
                 Row(modifier = Modifier.fillMaxWidth().padding(top = 44.dp)){

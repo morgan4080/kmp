@@ -2,6 +2,7 @@ package components.payLoan
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,15 +10,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,23 +34,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
-import components.rootLoans.RootLoansComponent
+import com.presta.customer.MR
 import composables.ActionButton
 import composables.LoanStatusContainer
 import composables.NavigateBackTopBar
 import composables.Paginator
 import composables.TextInputContainer
 import composables.disbursementDetailsRow
+import dev.icerock.moko.resources.compose.fontFamilyResource
+import theme.backArrowColor
 import theme.labelTextColor
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun PayLoanScreen(component: PayLoanComponent): RootLoansComponent.ChildLoans.PayLoanChild {
+fun PayLoanScreen(component: PayLoanComponent){
 
    // val state = rememberLazyListState()
     val stateLazyRow0 = rememberLazyListState()
@@ -175,19 +182,33 @@ fun PayLoanScreen(component: PayLoanComponent): RootLoansComponent.ChildLoans.Pa
                                             start = 16.dp,
                                             end = 16.dp)
                                 ) {
-                                    Text(
-                                        text = "Loan Details",
-                                        modifier = Modifier
-                                            .padding(
-                                                top = 14.dp)
-                                    )
+
+                                    Row(modifier = Modifier
+                                        .padding(top = 14.dp)
+                                        .fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween){
+                                        Text(text = "Loan Details",
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                            fontSize = 14.sp
+                                        )
+                                        Icon(
+                                            Icons.Filled.Cancel,
+                                            contentDescription = "Cancel  Arrow",
+                                            tint = backArrowColor,
+                                            modifier = Modifier.clickable {
+                                                launchPopUp=false
+
+                                            }
+                                        )
+                                    }
 
                                     Text(
                                         text = "Loan Balance",
-                                        fontSize = 10.sp,
                                         modifier = Modifier
-                                            .padding(top = 3.dp)
+                                            .padding(top = 7.dp),
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                     )
+
                                     Row(modifier = Modifier
                                         .fillMaxWidth(),){
 
@@ -196,9 +217,12 @@ fun PayLoanScreen(component: PayLoanComponent): RootLoansComponent.ChildLoans.Pa
                                                 text = "Kes 30,000",
                                                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                                                 fontSize = MaterialTheme.typography.headlineSmall.fontSize,
-                                                fontWeight = FontWeight.Black,
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                                             )
-                                            Text(text = "(PerForming)")
+                                            Text(text = "(PerForming)",
+                                            fontSize = 10.sp,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                                            )
 
                                         }
 
@@ -220,7 +244,11 @@ fun PayLoanScreen(component: PayLoanComponent): RootLoansComponent.ChildLoans.Pa
 
                                     Row(modifier = Modifier
                                         .fillMaxWidth()){
-                                        Text(text = "Loan schedule")
+                                        Text(text = "Loan schedule",
+                                        fontSize = 12.sp,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                                        )
 
                                     }
 
@@ -242,31 +270,19 @@ fun PayLoanScreen(component: PayLoanComponent): RootLoansComponent.ChildLoans.Pa
                                 }
                                 Row(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(
-                                            top = 10.dp,
-                                            bottom = 10.dp,
-                                            start = 16.dp,
-                                            end = 16.dp
-                                        ),
+                                        .padding(top = 21.dp)
+                                        .fillMaxWidth(),
                                     horizontalArrangement = Arrangement.Center
                                 ) {
 
-                                    ElevatedCard(onClick = {
-                                        launchPopUp = false
-                                    }, modifier = Modifier) {
+                                    OutlinedButton(modifier = Modifier.height(30.dp),
+                                        onClick = {
+                                            launchPopUp=false
 
-                                        Text(
-                                            text = "Dismiss",
-                                            fontSize = 11.sp,
-                                            modifier = Modifier
-                                                .padding(
-                                                top = 5.dp,
-                                                bottom = 5.dp,
-                                                start = 20.dp,
-                                                end = 20.dp
-                                            )
-                                        )
+                                    }){
+                                        Text(text = "Dismiss",
+                                        fontSize = 9.sp,
+                                        color = labelTextColor)
 
                                     }
 
@@ -287,8 +303,6 @@ fun PayLoanScreen(component: PayLoanComponent): RootLoansComponent.ChildLoans.Pa
 
     }
 
-    return RootLoansComponent.ChildLoans.PayLoanChild(component)
-
 }
 
 
@@ -298,18 +312,27 @@ fun LoanScheduleContainer(){
     horizontalArrangement = Arrangement.SpaceBetween,
     verticalAlignment = Alignment.CenterVertically){
         Column(){
-            Text(text = "Schedule date",
-            fontSize = MaterialTheme.typography.labelSmall.fontSize)
-            Text(text = "12 may 2020 12:20pm",
-             fontSize = MaterialTheme.typography.labelSmall.fontSize)
+            Text(text = "12 May 2023",
+            fontSize = MaterialTheme.typography.labelSmall.fontSize,
+            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                color = labelTextColor
+            )
+            Text(text = "12:20pm",
+             fontSize = MaterialTheme.typography.labelSmall.fontSize,
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular))
 
         }
 
         Column(){
             Text(text = "kes 8000.00",
-                fontSize = MaterialTheme.typography.labelSmall.fontSize)
+                fontSize = MaterialTheme.typography.labelMedium.fontSize,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold))
+
             Text(text = "Paid",
-                fontSize = MaterialTheme.typography.labelSmall.fontSize)
+                fontSize = MaterialTheme.typography.labelSmall.fontSize,
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+            )
 
         }
 

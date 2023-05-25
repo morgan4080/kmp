@@ -11,7 +11,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scal
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import components.topUp.LoanTopUpScreen
-import components.applyLoan.ApplyLoanScreen
+import components.applyLoan.ui.ApplyLoanScreen
 import components.banKDisbursement.BankDisbursementScreen
 import components.emergencyLoans.EmergencyLoansScreen
 import components.failedTransaction.FailedTransactionScreen

@@ -234,6 +234,8 @@ class DefaultRootLoansComponent(
             componentContext = componentContext,
             onPayClicked = {
                 //push  to confirm Loan Details Screen
+                //Navigate to pay Loan child  a child Of loans
+                //Show  the Pay  Loan child first
                 loansNavigation.push(ConfigLoans.LoanConfirmation)
 
             }

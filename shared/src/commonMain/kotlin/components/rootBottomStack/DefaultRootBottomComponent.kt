@@ -1,18 +1,15 @@
 package components.rootBottomStack
 
-import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
-import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import components.payLoan.DefaultPayLoanComponent
 import components.payLoan.PayLoanComponent
-import components.payLoan.PayLoanScreen
 import components.profile.DefaultProfileComponent
 import components.profile.ProfileComponent
 import components.rootLoans.DefaultRootLoansComponent
