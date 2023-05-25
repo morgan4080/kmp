@@ -1,4 +1,4 @@
-package com.presta.customer.di
+package com.presta.customer.network.di
 import com.presta.customer.network.onBoarding.client.PrestaOnBoardingClient
 import com.presta.customer.network.authDevice.client.PrestaAuthClient
 import com.presta.customer.network.createHttpClient

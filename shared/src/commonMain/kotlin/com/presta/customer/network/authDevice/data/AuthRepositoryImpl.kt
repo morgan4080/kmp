@@ -73,19 +73,15 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
         clientSecret: String
     ): Result<PrestaLogInResponse> {
         return try {
-            // if caching functionality check db dao
-
-            // if isEmpty make api request
-
             val response = prestaAuthClient.loginUser(
                 phoneNumber,
                 pin,
                 clientSecret
             )
 
-            // insert to dao
+            userAuthDao.removeAccessToken()
+
             userAuthDao.insert(response.toUserAuthEntity())
-            // respond with dao selectAll
 
             Result.success(response)
 
@@ -99,12 +95,14 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
     }
 
     override suspend fun getUserAuthToken(): Result<PrestaLogInResponse> {
-        return userAuthDao.selectUserAuthCredentials().toUserAuth()
+        return Result.success(PrestaLogInResponse(
+            access_token = userAuthDao.selectUserAuthCredentials()
+        ))
     }
 
     override suspend fun checkAuthenticatedUser(token: String): Result<PrestaCheckAuthUserResponse> {
         return try {
-            val response =prestaAuthClient.checkAuthUser(token)
+            val response = prestaAuthClient.checkAuthUser(token)
             Result.success(response)
         } catch (e: Exception) {
             e.printStackTrace()

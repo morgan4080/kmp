@@ -1,4 +1,4 @@
-package com.presta.customer.di
+package com.presta.customer.network.di
 
 import com.presta.customer.network.authDevice.data.AuthRepository
 import com.presta.customer.network.authDevice.data.AuthRepositoryImpl

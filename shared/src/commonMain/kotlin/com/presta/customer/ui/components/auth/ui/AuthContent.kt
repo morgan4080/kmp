@@ -196,6 +196,7 @@ fun AuthContent(
             snackbarHostState.showSnackbar(
                 "Login Successful!"
             )
+            navigate()
         }
     }
 

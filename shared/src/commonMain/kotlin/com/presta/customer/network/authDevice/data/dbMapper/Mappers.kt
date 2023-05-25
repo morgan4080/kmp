@@ -6,7 +6,3 @@ import comprestacustomer.UserAuthEntity
 fun PrestaLogInResponse.toUserAuthEntity() = UserAuthEntity(
     access_token = access_token,
 )
-
-fun UserAuthEntity.toUserAuth() = PrestaLogInResponse(
-    access_token = access_token
-)

@@ -66,6 +66,7 @@ internal class AuthStoreFactory(
                 is AuthStore.Intent.CheckPin -> checkPin(intent.token, intent.phoneNumber)
                 is AuthStore.Intent.CheckAuthenticatedUser -> checkAuthenticatedUser(intent.token)
                 is AuthStore.Intent.UpdateError -> updateError(error = intent.error)
+                is AuthStore.Intent.GetCachedToken -> getUserAuthToken()
                 is AuthStore.Intent.UpdateContext -> dispatch(Msg.UpdateContext(
                     context = intent.context,
                     title = intent.title,
@@ -185,7 +186,9 @@ internal class AuthStoreFactory(
             getUserAuthTokenJob = scope.launch {
                 authRepository.getUserAuthToken()
                     .onSuccess { response ->
-                        dispatch(Msg.LoginFulfilled(response))
+                        println("getUserAuthToken")
+                        println(response)
+//                        dispatch(Msg.LoginFulfilled(response))
                     }
                     .onFailure { e ->
                         dispatch(Msg.AuthFailed(e.message))

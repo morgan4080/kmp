@@ -1,5 +1,8 @@
 package com.presta.customer.ui.components.root
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
@@ -8,9 +11,13 @@ import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
+import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.ui.components.auth.AuthComponent
 import com.presta.customer.ui.components.auth.DefaultAuthComponent
+import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.onBoarding.DefaultOnboardingComponent
 import com.presta.customer.ui.components.onBoarding.OnBoardingComponent
 import com.presta.customer.ui.components.otp.DefaultOtpComponent
@@ -21,12 +28,30 @@ import com.presta.customer.ui.components.splash.DefaultSplashComponent
 import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.welcome.DefaultWelcomeComponent
 import com.presta.customer.ui.components.welcome.WelcomeComponent
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.StateFlow
 
 
 class DefaultRootComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
 ) : RootComponent, ComponentContext by componentContext {
+    override val authStore =
+        instanceKeeper.getStore {
+            AuthStoreFactory(
+                storeFactory = storeFactory,
+                phoneNumber = null,
+                isTermsAccepted = false,
+                isActive = false
+            ).create()
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val authState: StateFlow<AuthStore.State> = authStore.stateFlow
+
+    init {
+        authStore.accept(AuthStore.Intent.GetCachedToken)
+    }
 
     private val navigation = StackNavigation<Config>()
 

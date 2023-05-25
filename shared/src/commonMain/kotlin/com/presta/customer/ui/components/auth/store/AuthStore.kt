@@ -15,6 +15,7 @@ interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
     sealed class Intent {
         data class AuthenticateClient(val client_secret: String): Intent()
         data class LoginUser(val phoneNumber: String, val pin: String, val clientSecret: String): Intent()
+        object GetCachedToken: Intent()
         data class CheckPin(val token: String, val phoneNumber: String): Intent()
         data class CheckAuthenticatedUser(val token: String): Intent()
         data class UpdateError(val error: String?): Intent()
