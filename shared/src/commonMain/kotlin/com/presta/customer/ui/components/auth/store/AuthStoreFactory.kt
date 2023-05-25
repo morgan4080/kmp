@@ -186,9 +186,7 @@ internal class AuthStoreFactory(
             getUserAuthTokenJob = scope.launch {
                 authRepository.getUserAuthToken()
                     .onSuccess { response ->
-                        println("getUserAuthToken")
-                        println(response)
-//                        dispatch(Msg.LoginFulfilled(response))
+                        dispatch(Msg.LoginFulfilled(response))
                     }
                     .onFailure { e ->
                         dispatch(Msg.AuthFailed(e.message))

@@ -1,16 +1,22 @@
 package com.presta.customer.ui.components.root
 
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.backStack
+import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.navigate
 import com.arkivanov.decompose.router.stack.push
+import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.instancekeeper.InstanceKeeper
+import com.arkivanov.essenty.lifecycle.Lifecycle
+import com.arkivanov.essenty.lifecycle.LifecycleOwner
+import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
+import com.arkivanov.essenty.statekeeper.consume
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
@@ -28,37 +34,54 @@ import com.presta.customer.ui.components.splash.DefaultSplashComponent
 import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.welcome.DefaultWelcomeComponent
 import com.presta.customer.ui.components.welcome.WelcomeComponent
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
-
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 class DefaultRootComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
 ) : RootComponent, ComponentContext by componentContext {
-    override val authStore =
-        instanceKeeper.getStore {
-            AuthStoreFactory(
-                storeFactory = storeFactory,
-                phoneNumber = null,
-                isTermsAccepted = false,
-                isActive = false
-            ).create()
-        }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val authState: StateFlow<AuthStore.State> = authStore.stateFlow
+    private var state: State = stateKeeper.consume(key = "AUTH_DATA") ?: State()
+    @Parcelize
+    private class State(
+        var phoneNumber: String = "",
+        var isTermsAccepted: Boolean  = false,
+        var isActive: Boolean = false,
+        var authenticated: Boolean = false
+    ) : Parcelable
 
     init {
-        authStore.accept(AuthStore.Intent.GetCachedToken)
+        stateKeeper.register(key = "AUTH_DATA") { state }
     }
 
     private val navigation = StackNavigation<Config>()
 
+    private fun deliverInitialConfig(): Config {
+        return when (state.authenticated) {
+            true -> Config.RootBottom
+            false -> if (state.phoneNumber !== "") {
+                Config.Auth(
+                    phoneNumber = state.phoneNumber,
+                    isTermsAccepted = state.isTermsAccepted,
+                    isActive = state.isActive,
+                    onBoardingContext = OnBoardingContext.LOGIN
+                )
+            } else {
+                Config.Splash
+            }
+        }
+    }
+
     private val _childStack =
         childStack(
             source = navigation,
-            initialConfiguration = Config.Splash,
+            initialConfiguration = deliverInitialConfig(),
             handleBackButton = true,
             childFactory = ::createChild,
             key = "onboardingStack"
@@ -143,9 +166,13 @@ class DefaultRootComponent(
             isTermsAccepted = config.isTermsAccepted,
             isActive = config.isActive,
             onBoardingContext = config.onBoardingContext,
-            onLogin = {
-                // navigate to profile
-                navigation.push(Config.RootBottom)
+            onLogin = { phoneNumber, isTermsAccepted, isActive ->
+                state.authenticated = true
+                state.phoneNumber = phoneNumber
+                state.isTermsAccepted = isTermsAccepted
+                state.isActive = isActive
+
+                navigation.replaceAll(Config.RootBottom)
             }
         )
 

@@ -20,7 +20,7 @@ class DefaultAuthComponent(
     isTermsAccepted: Boolean,
     isActive: Boolean,
     onBoardingContext: DefaultRootComponent.OnBoardingContext,
-    private val onLogin: () -> Unit,
+    private val onLogin: (phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean) -> Unit,
 ): AuthComponent, ComponentContext by componentContext {
 
     override val authStore =
@@ -71,7 +71,7 @@ class DefaultAuthComponent(
         onBoardingStore.accept(event)
     }
 
-    override fun navigate() {
-        onLogin()
+    override fun navigate(phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean) {
+        onLogin(phoneNumber, isTermsAccepted, isActive)
     }
 }

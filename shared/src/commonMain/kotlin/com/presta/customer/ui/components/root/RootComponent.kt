@@ -15,10 +15,6 @@ interface RootComponent {
 
     val childStack: Value<ChildStack<*, Child>>
 
-    val authStore: AuthStore
-
-    val authState: StateFlow<AuthStore.State>
-
     sealed class Child {
         class SplashChild(val component: SplashComponent) : Child()
         class WelcomeChild(val component: WelcomeComponent) : Child()

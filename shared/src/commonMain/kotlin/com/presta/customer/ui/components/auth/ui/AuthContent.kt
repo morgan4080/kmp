@@ -45,6 +45,7 @@ import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.Contexts
 import com.presta.customer.ui.components.onBoarding.store.IdentifierTypes
 import com.presta.customer.ui.components.onBoarding.store.OnBoardingStore
+import com.presta.customer.ui.components.root.DefaultRootComponent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,7 +54,7 @@ fun AuthContent(
     onBoardingState: OnBoardingStore.State,
     onEvent: (AuthStore.Intent) -> Unit,
     onOnBoardingEvent: (OnBoardingStore.Intent) -> Unit,
-    navigate: () -> Unit
+    navigate: (phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean) -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
 
@@ -193,10 +194,19 @@ fun AuthContent(
 
     LaunchedEffect(state.loginResponse) {
         if (state.loginResponse !== null) {
+            focusRequester.freeFocus()
+
             snackbarHostState.showSnackbar(
                 "Login Successful!"
             )
-            navigate()
+
+            if (state.phoneNumber != null) {
+                navigate(
+                    state.phoneNumber,
+                    true,
+                    true
+                )
+            }
         }
     }
 
