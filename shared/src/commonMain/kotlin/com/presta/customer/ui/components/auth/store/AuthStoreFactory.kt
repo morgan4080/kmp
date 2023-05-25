@@ -176,6 +176,22 @@ internal class AuthStoreFactory(
                 dispatch(Msg.AuthLoading(false))
             }
         }
+
+        private var getUserAuthTokenJob: Job? = null
+
+        private fun getUserAuthToken() {
+            if (getUserAuthTokenJob?.isActive == true) return
+
+            getUserAuthTokenJob = scope.launch {
+                authRepository.getUserAuthToken()
+                    .onSuccess { response ->
+                        dispatch(Msg.LoginFulfilled(response))
+                    }
+                    .onFailure { e ->
+                        dispatch(Msg.AuthFailed(e.message))
+                    }
+            }
+        }
     }
 
     private object ReducerImpl: Reducer<AuthStore.State, Msg> {

@@ -1,15 +1,19 @@
 package com.presta.customer.network.authDevice.data
 
+import com.presta.customer.database.dao.UserAuthDao
 import com.presta.customer.network.authDevice.client.PrestaAuthClient
+import com.presta.customer.network.authDevice.data.dbMapper.toUserAuthEntity
 import com.presta.customer.network.authDevice.model.PrestaAuthResponse
 import com.presta.customer.network.authDevice.model.PrestaCheckAuthUserResponse
 import com.presta.customer.network.authDevice.model.PrestaCheckPinResponse
 import com.presta.customer.network.authDevice.model.PrestaLogInResponse
+import kotlinx.coroutines.flow.Flow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class AuthRepositoryImpl: AuthRepository, KoinComponent {
     private val prestaAuthClient by inject<PrestaAuthClient>()
+    private val userAuthDao by inject<UserAuthDao>()
 
     override suspend fun postClientAuthDetails(client_secret: String): Result<PrestaAuthResponse> {
         return try {
@@ -80,7 +84,7 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
             )
 
             // insert to dao
-
+            userAuthDao.insert(response.toUserAuthEntity())
             // respond with dao selectAll
 
             Result.success(response)
@@ -92,6 +96,10 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
             Result.failure(e)
 
         }
+    }
+
+    override suspend fun getUserAuthToken(): Result<PrestaLogInResponse> {
+        return userAuthDao.selectUserAuthCredentials().toUserAuth()
     }
 
     override suspend fun checkAuthenticatedUser(token: String): Result<PrestaCheckAuthUserResponse> {

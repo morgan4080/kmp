@@ -11,8 +11,8 @@ class UserAuthDao(
     // get query
     private val query get() = prestaCustomerDatabase.userAuthEntityQueries
 
-    suspend fun selectAll(page: Long) = withContext(prestaDispatchers.io) {
-        query.selectAll().executeAsList()
+    suspend fun selectUserAuthCredentials() = withContext(prestaDispatchers.io) {
+        query.getAccessToken().executeAsOne()
     }
 
     suspend fun insert(userAuthEntity: UserAuthEntity) = withContext(prestaDispatchers.io) {

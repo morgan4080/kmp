@@ -158,7 +158,6 @@ fun OnBoardingContent(
         sheetState = scaffoldState
     ) {
         Scaffold (
-            modifier = Modifier.padding(LocalSafeArea.current),
             snackbarHost = {
                 SnackbarHost(snackbarHostState)
             }
@@ -166,11 +165,8 @@ fun OnBoardingContent(
             LazyColumn (
                 state = listState,
                 modifier = Modifier
+                    .padding(horizontal = 16.dp)
                     .fillMaxHeight()
-                    .padding(
-                        horizontal = 16.dp,
-                        vertical = 30.dp
-                    )
             ) {
                 item {
                     Row (

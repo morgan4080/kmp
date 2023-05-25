@@ -2,10 +2,13 @@ CREATE TABLE IF NOT EXISTS userAuthEntity (
   access_token TEXT NOT NULL
 );
 
-selectAll:
-SELECT *
+getAccessToken:
+SELECT userAuthEntity.access_token
 FROM userAuthEntity;
 
 insert:
 INSERT OR REPLACE INTO userAuthEntity(access_token)
 VALUES ?;
+
+removeAccessToken:
+DELETE FROM userAuthEntity;

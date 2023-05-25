@@ -10,4 +10,5 @@ interface AuthRepository {
     suspend fun checkUserPin(token: String, phoneNumber: String): Result<PrestaCheckPinResponse>
     suspend fun loginUser(phoneNumber: String, pin: String, clientSecret: String): Result<PrestaLogInResponse>
     suspend fun checkAuthenticatedUser(token: String): Result<PrestaCheckAuthUserResponse>
+    suspend fun getUserAuthToken(): Result<PrestaLogInResponse>
 }
