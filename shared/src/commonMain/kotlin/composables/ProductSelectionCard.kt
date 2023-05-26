@@ -65,7 +65,7 @@ fun  ProductSelectionCard(label: String, description: String?=null, onClickConta
                         Icons.Filled.KeyboardArrowRight,
                         contentDescription = "Forward Arrow",
                         modifier = Modifier.clip(shape = CircleShape)
-                            .background(color = MaterialTheme.colorScheme.secondaryContainer),
+                            .background(color = MaterialTheme.colorScheme.inverseOnSurface),
                         tint = backArrowColor
 
                     )
