@@ -40,6 +40,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.primaryColor
 
 enum class InputTypes {
@@ -185,9 +186,10 @@ fun TextInputContainer(
                             },
                             content = {
                                 Icon(
+                                    modifier = Modifier.alpha(0.4f),
                                     imageVector = Icons.Filled.Cancel,
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.outline
+                                    tint = actionButtonColor
                                 )
                             }
                         )

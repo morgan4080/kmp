@@ -51,9 +51,9 @@ internal class OnBoardingStoreFactory(
         override fun executeIntent(intent: OnBoardingStore.Intent, getState: () -> OnBoardingStore.State): Unit =
             when (intent) {
                 is OnBoardingStore.Intent.GetMemberDetails ->
-                    getMemberDetails(token = intent.token, memberIdentifier = intent.memberIdentifier, identifierType = intent.identifierType)
+                    getMemberDetails(token = intent.token, memberIdentifier = intent.memberIdentifier, identifierType = intent.identifierType, tenantId = intent.tenantId)
                 is OnBoardingStore.Intent.UpdateMember ->
-                    updateMemberDetails(token = intent.token, memberRefId = intent.memberRefId, intent.pinConfirmation)
+                    updateMemberDetails(token = intent.token, memberRefId = intent.memberRefId, intent.pinConfirmation, tenantId = intent.tenantId)
                 is OnBoardingStore.Intent.SelectCountry ->
                     updateSelectedCountry(countrySelected = intent.country)
                 is OnBoardingStore.Intent.UpdateError ->
@@ -67,7 +67,8 @@ internal class OnBoardingStoreFactory(
         private fun getMemberDetails(
             token: String,
             memberIdentifier: String,
-            identifierType: IdentifierTypes
+            identifierType: IdentifierTypes,
+            tenantId: String
         ) {
             if (getMemberJob?.isActive == true) return
 
@@ -77,7 +78,8 @@ internal class OnBoardingStoreFactory(
                 onBoardingRepository.getOnBoardingMemberData(
                     token = token,
                     memberIdentifier = memberIdentifier,
-                    identifierType = identifierType
+                    identifierType = identifierType,
+                    tenantId = tenantId
                 ).onSuccess {response ->
                     dispatch(Msg.OnBoardingGetMemberLoaded(response))
                 }.onFailure { e ->
@@ -93,7 +95,8 @@ internal class OnBoardingStoreFactory(
         private fun updateMemberDetails(
             token: String,
             memberRefId: String,
-            pinConfirmation: String
+            pinConfirmation: String,
+            tenantId: String
         ) {
             if (updateMemberJob?.isActive == true) return
 
@@ -103,7 +106,8 @@ internal class OnBoardingStoreFactory(
                 onBoardingRepository.updateOnBoardingMemberPinAndTerms(
                     token = token,
                     memberRefId = memberRefId,
-                    pinConfirmation = pinConfirmation
+                    pinConfirmation = pinConfirmation,
+                    tenantId = tenantId
                 ).onSuccess { response ->
                     dispatch(Msg.OnBoardingUpdateMemberLoaded(response))
                 }.onFailure { e ->

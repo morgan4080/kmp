@@ -4,6 +4,6 @@ import com.presta.customer.network.otp.model.OtpRequestResponse
 import com.presta.customer.network.otp.model.OtpVerificationResponse
 
 interface OtpRepository {
-    suspend fun requestOtp(token: String, phoneNumber: String): Result<OtpRequestResponse>
-    suspend fun verifyOtp(token: String, requestMapper: String, otp: String): Result<OtpVerificationResponse>
+    suspend fun requestOtp(token: String, phoneNumber: String, tenantId: String): Result<OtpRequestResponse>
+    suspend fun verifyOtp(token: String, requestMapper: String, otp: String, tenantId: String): Result<OtpVerificationResponse>
 }

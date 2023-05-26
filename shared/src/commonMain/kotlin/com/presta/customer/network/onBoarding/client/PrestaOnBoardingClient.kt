@@ -22,6 +22,7 @@ class PrestaOnBoardingClient(
         token: String,
         memberIdentifier: String,
         identifierType: IdentifierTypes,
+        tenantId: String
     ): PrestaOnBoardingResponse {
         val identifierTypeSelected = when (identifierType) {
             IdentifierTypes.PHONE_NUMBER -> "PHONE_NUMBER"
@@ -30,13 +31,14 @@ class PrestaOnBoardingClient(
         }
         return onBoardingErrorHandler {
             httpClient.get(NetworkConstants.PrestaOnBoardingClient.route) {
-                header(HttpHeaders.Authorization, "Bearer $token")
+                if (token !== "") header(HttpHeaders.Authorization, "Bearer $token")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
                 url {
                     parameters.append("memberIdentifier", memberIdentifier)
-                    parameters.append("identifierType", identifierTypeSelected)
+                    parameters.append("identifier", identifierTypeSelected)
                     parameters.append("force", "true")
+                    parameters.append("tenantId", tenantId)
                 }
             }
         }
@@ -45,14 +47,17 @@ class PrestaOnBoardingClient(
     suspend fun updateOnBoardingMemberPinAndTerms(
         token: String,
         memberRefId: String,
-        pinConfirmation: String
+        pinConfirmation: String,
+        tenantId: String,
     ): PrestaUpdateMemberResponse {
-
         return onBoardingErrorHandler {
             httpClient.post(NetworkConstants.PrestaUpdatePinTermsClient.route) {
-                header(HttpHeaders.Authorization, "Bearer $token")
+                if (token !== "") header(HttpHeaders.Authorization, "Bearer $token")
                 contentType(ContentType.Application.Json)
                 setBody(OnBoardingMemberPinAndTermsData(memberRefId, true, pinConfirmation))
+                url {
+                    parameters.append("tenantId", tenantId)
+                }
             }
         }
     }

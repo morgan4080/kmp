@@ -5,13 +5,12 @@ import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import com.presta.customer.network.authDevice.data.AuthRepository
-import com.presta.customer.network.authDevice.model.PrestaAuthResponse
 import com.presta.customer.network.authDevice.model.PrestaCheckAuthUserResponse
 import com.presta.customer.network.authDevice.model.PrestaCheckPinResponse
 import com.presta.customer.network.authDevice.model.PrestaLogInResponse
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import prestaDispatchers
@@ -35,7 +34,6 @@ internal class AuthStoreFactory(
 
     private sealed class Msg {
         data class AuthLoading(val isLoading: Boolean = true) : Msg()
-        data class AuthLoaded(val authResponse: PrestaAuthResponse) : Msg()
         data class AuthInitData(val phoneNumber: String?, val isTermsAccepted: Boolean, val isActive: Boolean) : Msg()
         data class CheckPinLoaded(val checkPinResponse: PrestaCheckPinResponse) : Msg()
         data class UpdateContext(
@@ -61,8 +59,7 @@ internal class AuthStoreFactory(
 
         override fun executeIntent(intent: AuthStore.Intent, getState: () -> AuthStore.State): Unit =
             when (intent) {
-                is AuthStore.Intent.AuthenticateClient -> authClient(intent.client_secret)
-                is AuthStore.Intent.LoginUser -> loginUser(intent.phoneNumber, intent.pin, intent.clientSecret)
+                is AuthStore.Intent.LoginUser -> loginUser(intent.phoneNumber, intent.pin, intent.tenantId)
                 is AuthStore.Intent.CheckPin -> checkPin(intent.token, intent.phoneNumber)
                 is AuthStore.Intent.CheckAuthenticatedUser -> checkAuthenticatedUser(intent.token)
                 is AuthStore.Intent.UpdateError -> updateError(error = intent.error)
@@ -77,40 +74,12 @@ internal class AuthStoreFactory(
                 ))
             }
 
-        private var authClientJob: Job? = null
-
-        private fun authClient(
-            client_secret: String
-        ) {
-            if (authClientJob?.isActive == true) return
-
-            dispatch(Msg.AuthLoading())
-
-            authClientJob  = scope.launch {
-                authRepository
-                    .postClientAuthDetails(client_secret)
-                    .onSuccess {response ->
-                        if (response.access_token.isEmpty()) {
-                            dispatch(Msg.AuthFailed("Access Token Empty"))
-                        } else {
-                            dispatch(Msg.AuthLoaded(response))
-                        }
-
-                    }
-                    .onFailure { e ->
-                        dispatch(Msg.AuthFailed(e.message))
-                    }
-
-                dispatch(Msg.AuthLoading(false))
-            }
-        }
-
         private var loginUserJob: Job? = null
 
         private fun loginUser(
             phoneNumber: String,
             pin: String,
-            clientSecret: String
+            tenantId: String
         ) {
             if (loginUserJob?.isActive == true) return
 
@@ -118,7 +87,7 @@ internal class AuthStoreFactory(
 
             loginUserJob  = scope.launch {
                 authRepository
-                    .loginUser(phoneNumber, pin, clientSecret)
+                    .loginUser(phoneNumber, pin, tenantId)
                     .onSuccess {response ->
                         dispatch(Msg.LoginFulfilled(response))
                     }
@@ -199,7 +168,6 @@ internal class AuthStoreFactory(
         override fun AuthStore.State.reduce(msg: Msg): AuthStore.State =
             when (msg) {
                 is Msg.AuthLoading -> copy(isLoading = msg.isLoading)
-                is Msg.AuthLoaded -> copy(access_token = msg.authResponse.access_token)
                 is Msg.CheckPinLoaded -> copy(checkPinResponse = msg.checkPinResponse)
                 is Msg.CheckAuthenticatedUserLoaded -> copy(authUserResponse = msg.authUserResponse)
                 is Msg.AuthInitData -> copy(

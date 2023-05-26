@@ -3,44 +3,28 @@ package com.presta.customer.ui.components.root
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
-import com.arkivanov.decompose.router.stack.backStack
-import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
-import com.arkivanov.decompose.router.stack.navigate
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
-import com.arkivanov.essenty.instancekeeper.InstanceKeeper
-import com.arkivanov.essenty.lifecycle.Lifecycle
-import com.arkivanov.essenty.lifecycle.LifecycleOwner
-import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.essenty.statekeeper.consume
-import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
-import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.ui.components.auth.AuthComponent
 import com.presta.customer.ui.components.auth.DefaultAuthComponent
-import com.presta.customer.ui.components.auth.store.AuthStore
-import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.onBoarding.DefaultOnboardingComponent
 import com.presta.customer.ui.components.onBoarding.OnBoardingComponent
 import com.presta.customer.ui.components.otp.DefaultOtpComponent
 import com.presta.customer.ui.components.otp.OtpComponent
+import com.presta.customer.ui.components.registration.DefaultRegistrationComponent
+import com.presta.customer.ui.components.registration.RegistrationComponent
 import com.presta.customer.ui.components.rootBottomStack.DefaultRootBottomComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
 import com.presta.customer.ui.components.splash.DefaultSplashComponent
 import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.welcome.DefaultWelcomeComponent
 import com.presta.customer.ui.components.welcome.WelcomeComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
 
 class DefaultRootComponent(
     componentContext: ComponentContext,
@@ -51,6 +35,7 @@ class DefaultRootComponent(
     @Parcelize
     private class State(
         var phoneNumber: String = "",
+        var memberRefId: String = "",
         var isTermsAccepted: Boolean  = false,
         var isActive: Boolean = false,
         var authenticated: Boolean = false
@@ -70,12 +55,20 @@ class DefaultRootComponent(
                     phoneNumber = state.phoneNumber,
                     isTermsAccepted = state.isTermsAccepted,
                     isActive = state.isActive,
-                    onBoardingContext = OnBoardingContext.LOGIN
+                    onBoardingContext = OnBoardingContext.LOGIN,
+                    memberRefId = state.memberRefId
                 )
             } else {
                 Config.Splash
             }
         }
+    }
+
+    init {
+        println("::::::state.authenticated")
+        println(state.authenticated)
+        println("::::::state.phoneNumber")
+        println(state.phoneNumber)
     }
 
     private val _childStack =
@@ -95,6 +88,7 @@ class DefaultRootComponent(
             is Config.Welcome -> RootComponent.Child.WelcomeChild(welcomeComponent(componentContext, config))
             is Config.OnBoarding -> RootComponent.Child.OnboardingChild(onboardingComponent(componentContext, config))
             is Config.OTP -> RootComponent.Child.OTPChild(otpComponent(componentContext, config))
+            is Config.Register -> RootComponent.Child.RegisterChild(registerComponent(componentContext, config))
             is Config.Auth -> RootComponent.Child.AuthChild(authComponent(componentContext, config))
             is Config.RootBottom -> RootComponent.Child.RootBottomChild(rootBottomComponent(componentContext))
         }
@@ -128,10 +122,11 @@ class DefaultRootComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
             onBoardingContext = config.onBoardingContext,
-            onPush = { phoneNumber, isActive, isTermsAccepted ->
+            onPush = { memberRefId, phoneNumber, isActive, isTermsAccepted, onBoardingContext ->
                  navigation.push(
                      Config.OTP(
-                         onBoardingContext = config.onBoardingContext,
+                         memberRefId = memberRefId,
+                         onBoardingContext = onBoardingContext,
                          phoneNumber = phoneNumber,
                          isActive = isActive,
                          isTermsAccepted = isTermsAccepted
@@ -144,12 +139,44 @@ class DefaultRootComponent(
         DefaultOtpComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
+            memberRefId = config.memberRefId,
             onBoardingContext = config.onBoardingContext,
             phoneNumber = config.phoneNumber,
             isActive = config.isActive,
             isTermsAccepted = config.isTermsAccepted,
-            onValidOTP = { phoneNumber, isTermsAccepted, isActive, onBoardingContext ->
+            onValidOTP = { memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext ->
+                when(onBoardingContext) {
+                    OnBoardingContext.REGISTRATION -> navigation.push(Config.Register(
+                        phoneNumber = phoneNumber,
+                        isTermsAccepted = isTermsAccepted,
+                        isActive = isActive,
+                        onBoardingContext = onBoardingContext
+                    ))
+
+                    OnBoardingContext.LOGIN -> {
+                        if (memberRefId !== null) navigation.push(Config.Auth(
+                            memberRefId = memberRefId,
+                            phoneNumber = phoneNumber,
+                            isTermsAccepted = isTermsAccepted,
+                            isActive = isActive,
+                            onBoardingContext = onBoardingContext
+                        ))
+                    }
+                }
+            }
+        )
+
+    private fun registerComponent(componentContext: ComponentContext, config: Config.Register): RegistrationComponent =
+        DefaultRegistrationComponent(
+            componentContext = componentContext,
+            storeFactory = storeFactory,
+            phoneNumber = config.phoneNumber,
+            isTermsAccepted = config.isTermsAccepted,
+            isActive = config.isActive,
+            onBoardingContext = config.onBoardingContext,
+            onRegistered = { memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext ->
                 navigation.push(Config.Auth(
+                    memberRefId = memberRefId,
                     phoneNumber = phoneNumber,
                     isTermsAccepted = isTermsAccepted,
                     isActive = isActive,
@@ -195,9 +222,11 @@ class DefaultRootComponent(
         @Parcelize
         data class OnBoarding (val onBoardingContext: OnBoardingContext) : Config()
         @Parcelize
-        data class OTP (val onBoardingContext: OnBoardingContext, val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean) : Config()
+        data class OTP (val memberRefId: String?, val onBoardingContext: OnBoardingContext, val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean) : Config()
         @Parcelize
-        data class Auth(val phoneNumber: String, val isTermsAccepted: Boolean, val isActive: Boolean, val onBoardingContext: OnBoardingContext) : Config()
+        data class Auth(val memberRefId: String, val phoneNumber: String, val isTermsAccepted: Boolean, val isActive: Boolean, val onBoardingContext: OnBoardingContext) : Config()
+        @Parcelize
+        data class Register(val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean, val onBoardingContext: OnBoardingContext) : Config()
         @Parcelize
         object RootBottom : Config()
     }

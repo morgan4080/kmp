@@ -9,8 +9,8 @@ data class InputMethod(val value: String)
 
 interface OtpStore: Store<OtpStore.Intent, OtpStore.State, Nothing> {
     sealed class Intent {
-        data class RequestOTP(val token: String, val phoneNumber: String): Intent()
-        data class VerifyOTP(val token: String, val requestMapper: String, val otp: String): Intent()
+        data class RequestOTP(val token: String, val phoneNumber: String, val tenantId: String): Intent()
+        data class VerifyOTP(val token: String, val requestMapper: String, val otp: String, val tenantId: String): Intent()
         object ClearOtpVerificationData: Intent()
     }
 
@@ -38,6 +38,7 @@ interface OtpStore: Store<OtpStore.Intent, OtpStore.State, Nothing> {
         val phone_number: String? = null,
         val isActive: Boolean? = null,
         val isTermsAccepted: Boolean? = null,
+        val memberRefId: String? = "",
         val email: String? = null,
         val tenant_id: String? = null,
         val onBoardingContext: DefaultRootComponent.OnBoardingContext = DefaultRootComponent.OnBoardingContext.LOGIN,

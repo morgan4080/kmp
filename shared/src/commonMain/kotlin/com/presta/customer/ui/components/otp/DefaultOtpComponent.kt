@@ -18,9 +18,10 @@ class DefaultOtpComponent(
     storeFactory: StoreFactory,
     onBoardingContext: DefaultRootComponent.OnBoardingContext,
     phoneNumber: String,
+    memberRefId: String?,
     isTermsAccepted: Boolean,
     isActive: Boolean,
-    private val onValidOTP: (phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean, onBoardingContext: DefaultRootComponent.OnBoardingContext) -> Unit
+    private val onValidOTP: (memberRefId: String?, phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean, onBoardingContext: DefaultRootComponent.OnBoardingContext) -> Unit
 ): OtpComponent, ComponentContext by componentContext {
     override val authStore =
         instanceKeeper.getStore {
@@ -39,6 +40,7 @@ class DefaultOtpComponent(
         instanceKeeper.getStore {
             OtpStoreFactory(
                 storeFactory = storeFactory,
+                memberRefId = memberRefId,
                 onBoardingContext = onBoardingContext,
                 phoneNumber = phoneNumber,
                 isActive = isActive,
@@ -57,13 +59,13 @@ class DefaultOtpComponent(
         otpStore.accept(event)
     }
 
-    override fun navigate(phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean, onBoardingContext: DefaultRootComponent.OnBoardingContext) {
-        onValidOTP(phoneNumber, isTermsAccepted, isActive, onBoardingContext)
+    override fun navigate(memberRefId: String?,phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean, onBoardingContext: DefaultRootComponent.OnBoardingContext) {
+        onValidOTP(memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext)
     }
 
     init {
-        onAuthEvent(AuthStore.Intent.AuthenticateClient(
+        /*onAuthEvent(AuthStore.Intent.AuthenticateClient(
             client_secret = OrganisationModel.organisation.client_secret
-        ))
+        ))*/
     }
 }

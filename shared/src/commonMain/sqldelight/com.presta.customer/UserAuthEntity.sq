@@ -1,5 +1,10 @@
 CREATE TABLE IF NOT EXISTS userAuthEntity (
-  access_token TEXT NOT NULL
+  access_token TEXT NOT NULL,
+  expires_in TEXT NOT NULL,
+  refresh_expires_in TEXT NOT NULL,
+  refresh_token TEXT NOT NULL,
+  token_type TEXT NOT NULL,
+  scope TEXT NOT NULL
 );
 
 getAccessToken:
@@ -7,7 +12,7 @@ SELECT *
 FROM userAuthEntity;
 
 insert:
-INSERT OR REPLACE INTO userAuthEntity(access_token)
+INSERT OR REPLACE INTO userAuthEntity(access_token, expires_in, refresh_expires_in, refresh_token, token_type, scope)
 VALUES ?;
 
 removeAccessToken:
