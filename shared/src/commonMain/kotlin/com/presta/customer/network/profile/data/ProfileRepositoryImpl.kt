@@ -19,11 +19,10 @@ class ProfileRepositoryImpl : ProfileRepository,KoinComponent {
             // if isEmpty make api request
             //Get data  From The APi
 
-            val response = profileClient.getUserSavingsData(
+            val response = profileClient.getUserSavingsData (
                 token = token,
-                memberIdentifier = memberRefId
-
-                )
+                memberRefId = memberRefId
+            )
 
             Result.success(response)
 

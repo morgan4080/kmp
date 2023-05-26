@@ -232,7 +232,7 @@ fun ProfileContent(
                                     onClick = {
 
                                     },
-                                    savingsBalance = state.balances?.savingsBalance.toString(),
+                                    savingsBalance = if (state.balances !== null) state.balances.savingsBalance.toString() else "0.0",
                                 )
                             }
                         }
