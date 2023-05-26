@@ -1,5 +1,6 @@
 package com.presta.customer.ui.composables
 
+import ProductSelectionCard
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -82,5 +83,4 @@ fun ShortTermProductList(component: ShortTermLoansComponent) {
         }
     }
 }
-
 

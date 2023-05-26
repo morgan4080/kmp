@@ -59,7 +59,7 @@ class DefaultRootComponent(
                     memberRefId = state.memberRefId
                 )
             } else {
-                Config.Splash
+                Config.RootBottom
             }
         }
     }

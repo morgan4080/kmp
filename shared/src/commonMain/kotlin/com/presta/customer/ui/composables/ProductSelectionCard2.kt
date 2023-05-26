@@ -19,29 +19,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.presta.customer.MR
 import com.presta.customer.ui.theme.backArrowColor
-import com.presta.customer.ui.theme.containerColor
 import com.presta.customer.ui.theme.labelTextColor
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductSelectionCard2(label: String, description: String?=null, onClickContainer: () -> Unit){
     //Has  single central text-use cases- Select Bank.etc -has  more  padding than  The product Selection card
-
-
     ElevatedCard(
-        onClick = onClickContainer
-
-        ,
+        onClick = onClickContainer,
         modifier = Modifier.fillMaxWidth()
-            .background(color = containerColor)
-            .padding(top = 10.dp)
     ) {
-        Box(modifier = Modifier.background(color = Color.White)) {
+        Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
             Row(
                 modifier = Modifier.padding(top = 19.dp, bottom = 19.dp)
                     .fillMaxWidth(),
@@ -52,10 +46,10 @@ fun ProductSelectionCard2(label: String, description: String?=null, onClickConta
                     Text(
                         text = label,
                         modifier = Modifier.padding(start = 15.dp),
-                        fontSize = 15.sp,
-                        color = labelTextColor
+                        fontSize = 12.sp,
+                        color = labelTextColor,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                     )
-                    //Spacer(modifier = Modifier.weight(1f))
                     if (description != null) {
                         Text(
 
@@ -63,14 +57,10 @@ fun ProductSelectionCard2(label: String, description: String?=null, onClickConta
                             modifier = Modifier.padding(start = 15.dp),
                             fontSize = 12.sp,)
                     }
-
                 }
-
                 Row(){
 
                     Spacer(modifier = Modifier.weight(1f))
-
-
                     Icon(
 
                         Icons.Filled.KeyboardArrowRight,
@@ -82,15 +72,9 @@ fun ProductSelectionCard2(label: String, description: String?=null, onClickConta
                     )
                     Spacer(modifier = Modifier.padding(end = 15.dp))
 
-
                 }
-
-
             }
-
-
         }
     }
-
-
 }
+
