@@ -73,7 +73,7 @@ class DefaultRootComponent(
                     onBoardingContext = OnBoardingContext.LOGIN
                 )
             } else {
-                Config.Splash
+                Config.RootBottom
             }
         }
     }

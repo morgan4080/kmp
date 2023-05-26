@@ -1,20 +1,20 @@
 package com.presta.customer.ui.components.profile
 
-import com.arkivanov.decompose.value.Value
 import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.profile.store.ProfileStore
 import kotlinx.coroutines.flow.StateFlow
 
 interface ProfileComponent {
-    val model: Value<Model>
 
     val authStore: AuthStore
 
     val authState: StateFlow<AuthStore.State>
-    fun onProfileSelected()
+
+    val profileStore: ProfileStore
+
+    val profileState: StateFlow<ProfileStore.State>
 
     fun onAuthEvent(event: AuthStore.Intent)
+    fun onEvent(event: ProfileStore.Intent)
 
-    data class Model(
-        val items: List<String>,
-    )
 }

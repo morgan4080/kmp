@@ -34,12 +34,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.presta.customer.network.profile.model.PrestaBalancesResponse
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun HomeCardListItem(name: String, onClick: (String) -> Unit) {
+fun HomeCardListItem(name: String, onClick: (String) -> Unit,savingsBalance:String) {
     var showExpanded by remember { mutableStateOf(false) }
+
     ElevatedCard(
         modifier = Modifier
             .border(BorderStroke(1.dp,Color.White), shape = RoundedCornerShape(size = 12.dp))
@@ -90,7 +92,7 @@ fun HomeCardListItem(name: String, onClick: (String) -> Unit) {
                     .fillMaxWidth()
                 ) {
                     Text(
-                        text = "Kes 100,983.32",
+                        text = savingsBalance,
                         color= MaterialTheme.colorScheme.onBackground,
                         fontSize = 25.sp,
                         style = MaterialTheme.typography.displaySmall.copy(

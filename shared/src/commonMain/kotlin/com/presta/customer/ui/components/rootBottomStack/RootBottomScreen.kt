@@ -27,7 +27,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scal
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.presta.customer.ui.components.applyLoan.ApplyLoanScreen
-import com.presta.customer.ui.components.profile.ProfileScreen
+import com.presta.customer.ui.components.profile.ui.ProfileScreen
 import com.presta.customer.ui.components.savings.SavingsScreen
 import com.presta.customer.ui.components.sign.SignScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
