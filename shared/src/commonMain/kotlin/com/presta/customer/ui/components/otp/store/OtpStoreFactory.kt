@@ -20,6 +20,7 @@ internal class OtpStoreFactory (
     private val onBoardingContext: DefaultRootComponent.OnBoardingContext,
     private val isTermsAccepted: Boolean,
     private val isActive: Boolean,
+    private val memberRefId: String?,
     private val phoneNumber: String,
 ): KoinComponent {
     private val otpRepository by inject<OtpRepository>()
@@ -40,7 +41,7 @@ internal class OtpStoreFactory (
         data class OtpValidationLoaded(val otpVerificationData: OtpVerificationResponse): Msg()
         data class OtpFailed(val error: String?) : Msg()
         data class OnBoardingContext(val onBoardingContext: DefaultRootComponent.OnBoardingContext) : Msg()
-        data class OtpPrimeData(val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean) : Msg()
+        data class OtpPrimeData(val memberRefId: String?, val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean) : Msg()
     }
 
     private inner class ExecutorImpl : CoroutineExecutor<OtpStore.Intent, Unit, OtpStore.State, Msg, Nothing>(
@@ -51,7 +52,8 @@ internal class OtpStoreFactory (
             dispatch(Msg.OtpPrimeData(
                 phoneNumber = phoneNumber,
                 isActive = isActive,
-                isTermsAccepted = isTermsAccepted
+                isTermsAccepted = isTermsAccepted,
+                memberRefId = memberRefId
             ))
         }
 
@@ -59,12 +61,14 @@ internal class OtpStoreFactory (
             when (intent) {
                 is OtpStore.Intent.RequestOTP -> requestOtp(
                     token = intent.token,
-                    phoneNumber = intent.phoneNumber
+                    phoneNumber = intent.phoneNumber,
+                    tenantId = intent.tenantId
                 )
                 is OtpStore.Intent.VerifyOTP -> verifyOtp (
                     token = intent.token,
                     requestMapper = intent.requestMapper,
-                    otp = intent.otp
+                    otp = intent.otp,
+                    tenantId = intent.tenantId
                 )
                 is OtpStore.Intent.ClearOtpVerificationData -> dispatch(Msg.ClearOtpVerificationData)
             }
@@ -73,12 +77,13 @@ internal class OtpStoreFactory (
 
         private fun requestOtp(
             token: String,
-            phoneNumber: String
+            phoneNumber: String,
+            tenantId: String
         ) {
             if (requestOtpJob?.isActive == true) return
             dispatch(Msg.OtpLoading())
             requestOtpJob = scope.launch {
-                otpRepository.requestOtp(token, phoneNumber)
+                otpRepository.requestOtp(token, phoneNumber, tenantId)
                     .onSuccess {response ->
                         dispatch(Msg.OtpRequestLoaded(response))
                     }.onFailure { e ->
@@ -94,7 +99,8 @@ internal class OtpStoreFactory (
         private fun verifyOtp (
             token: String,
             requestMapper: String,
-            otp: String
+            otp: String,
+            tenantId: String
         ) {
             if (verifyOtpJob?.isActive == true) return
 
@@ -104,7 +110,8 @@ internal class OtpStoreFactory (
                 otpRepository.verifyOtp (
                     token,
                     requestMapper,
-                    otp
+                    otp,
+                    tenantId
                 ).onSuccess {response ->
                     dispatch(Msg.OtpValidationLoaded(response))
                 }.onFailure { e ->
@@ -128,6 +135,7 @@ internal class OtpStoreFactory (
                     phone_number = msg.phoneNumber,
                     isActive = msg.isActive,
                     isTermsAccepted = msg.isTermsAccepted,
+                    memberRefId = msg.memberRefId,
                 )
                 is Msg.ClearOtpVerificationData -> copy(
                     otpRequestData = null,

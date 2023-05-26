@@ -13,7 +13,8 @@ class OnBoardingRepositoryImpl: OnBoardingRepository, KoinComponent {
     override suspend fun getOnBoardingMemberData(
         token: String,
         memberIdentifier: String,
-        identifierType: IdentifierTypes
+        identifierType: IdentifierTypes,
+        tenantId: String,
     ): Result<PrestaOnBoardingResponse> {
         return try {
             // if caching functionality check db dao
@@ -23,7 +24,8 @@ class OnBoardingRepositoryImpl: OnBoardingRepository, KoinComponent {
             val response = onBoardingClient.getOnBoardingUserData(
                 token = token,
                 memberIdentifier = memberIdentifier,
-                identifierType = identifierType
+                identifierType = identifierType,
+                tenantId = tenantId
             )
 
             // insert to dao
@@ -41,14 +43,16 @@ class OnBoardingRepositoryImpl: OnBoardingRepository, KoinComponent {
     override suspend fun updateOnBoardingMemberPinAndTerms(
         token: String,
         memberRefId: String,
-        pinConfirmation: String
+        pinConfirmation: String,
+        tenantId: String
     ): Result<PrestaUpdateMemberResponse> {
         return try {
 
             val response = onBoardingClient.updateOnBoardingMemberPinAndTerms(
                 token = token,
                 memberRefId = memberRefId,
-                pinConfirmation = pinConfirmation
+                pinConfirmation = pinConfirmation,
+                tenantId = tenantId
             )
 
             Result.success(response)

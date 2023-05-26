@@ -15,5 +15,5 @@ interface OtpComponent {
     val state: StateFlow<OtpStore.State>
     fun onAuthEvent(event: AuthStore.Intent)
     fun onEvent(event: OtpStore.Intent)
-    fun navigate(phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean, onBoardingContext: DefaultRootComponent.OnBoardingContext)
+    fun navigate(memberRefId: String?, phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean, onBoardingContext: DefaultRootComponent.OnBoardingContext)
 }

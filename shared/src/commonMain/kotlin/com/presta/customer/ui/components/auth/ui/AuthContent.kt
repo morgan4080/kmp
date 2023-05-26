@@ -38,14 +38,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
-import dev.icerock.moko.resources.compose.fontFamilyResource
-import com.presta.customer.ui.helpers.LocalSafeArea
+import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.Contexts
 import com.presta.customer.ui.components.onBoarding.store.IdentifierTypes
 import com.presta.customer.ui.components.onBoarding.store.OnBoardingStore
-import com.presta.customer.ui.components.root.DefaultRootComponent
+import com.presta.customer.ui.helpers.LocalSafeArea
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,25 +88,10 @@ fun AuthContent(
         pinInput = ""
     }
 
-    LaunchedEffect(state.access_token) {
+    LaunchedEffect(onBoardingState.member) {
         if (
-            state.access_token !== null &&
-            state.phoneNumber !== null
-        ) {
-            onEvent(
-                AuthStore.Intent.CheckPin(
-                    token = state.access_token,
-                    phoneNumber = state.phoneNumber
-                )
-            )
-        }
-    }
-
-    LaunchedEffect(state.checkPinResponse) {
-        if (
-            state.checkPinResponse !== null &&
-            state.checkPinResponse.data.hasPin &&
-            state.checkPinResponse.data.pinStatus == "SET"
+            onBoardingState.member !== null &&
+            onBoardingState.member.authenticationInfo.pinStatus == PinStatus.SET
         ) {
             onEvent(AuthStore.Intent.UpdateContext(
                 context = Contexts.LOGIN,
@@ -120,10 +105,10 @@ fun AuthContent(
     }
 
     LaunchedEffect(pinInput.length, state.phoneNumber, state.access_token, onBoardingState.member) {
+        // TODO state.access_token != null &&
         if (
             pinInput.length == maxChar &&
             state.phoneNumber != null &&
-            state.access_token != null &&
             onBoardingState.member != null
         ) {
             when (state.context) {
@@ -143,11 +128,12 @@ fun AuthContent(
                 }
                 Contexts.CONFIRM_PIN -> {
 
-                    if (pinToConfirm == pinInput) {
+                    if (pinToConfirm == pinInput && onBoardingState.member.refId !== null) {
                         onOnBoardingEvent(OnBoardingStore.Intent.UpdateMember(
-                            token = state.access_token,
+                            token = "",
                             memberRefId = onBoardingState.member.refId,
-                            pinConfirmation = pinInput
+                            pinConfirmation = pinInput,
+                            tenantId = OrganisationModel.organisation.tenant_id
                         ))
                     } else {
                         onEvent(AuthStore.Intent.UpdateContext(
@@ -166,7 +152,7 @@ fun AuthContent(
                     onEvent(AuthStore.Intent.LoginUser(
                         phoneNumber = state.phoneNumber,
                         pin = pinInput,
-                        clientSecret = OrganisationModel.organisation.client_secret
+                        tenantId = OrganisationModel.organisation.tenant_id
                     ))
                     clearPinCharacters()
                 }
@@ -194,8 +180,6 @@ fun AuthContent(
 
     LaunchedEffect(state.loginResponse) {
         if (state.loginResponse !== null) {
-            focusRequester.freeFocus()
-
             snackbarHostState.showSnackbar(
                 "Login Successful!"
             )
@@ -210,12 +194,13 @@ fun AuthContent(
         }
     }
 
-    LaunchedEffect(state.access_token, state.phoneNumber) {
-        if (state.access_token !== null && state.phoneNumber !== null) {
+    LaunchedEffect(state.phoneNumber) {
+        if (state.phoneNumber !== null) {
             onOnBoardingEvent(OnBoardingStore.Intent.GetMemberDetails(
-                token = state.access_token,
+                token = "",
                 memberIdentifier = state.phoneNumber,
-                identifierType = IdentifierTypes.PHONE_NUMBER
+                identifierType = IdentifierTypes.PHONE_NUMBER,
+                tenantId = OrganisationModel.organisation.tenant_id
             ))
         }
     }

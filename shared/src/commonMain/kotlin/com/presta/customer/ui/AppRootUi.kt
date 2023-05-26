@@ -9,6 +9,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stac
 import com.presta.customer.ui.components.auth.ui.AuthScreen
 import com.presta.customer.ui.components.onBoarding.ui.OnBoardingScreen
 import com.presta.customer.ui.components.otp.ui.OtpScreen
+import com.presta.customer.ui.components.registration.ui.RegistrationScreen
 import com.presta.customer.ui.components.root.RootComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomScreen
 import com.presta.customer.ui.components.splash.SplashScreen
@@ -25,6 +26,7 @@ fun AppRootUi(component: RootComponent) {
             is RootComponent.Child.WelcomeChild -> WelcomeScreen(child.component)
             is RootComponent.Child.OnboardingChild -> OnBoardingScreen(child.component)
             is RootComponent.Child.OTPChild -> OtpScreen(child.component)
+            is RootComponent.Child.RegisterChild -> RegistrationScreen(child.component)
             is RootComponent.Child.AuthChild -> AuthScreen(child.component)
             is RootComponent.Child.RootBottomChild -> RootBottomScreen(child.component)
         }

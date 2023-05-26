@@ -48,9 +48,9 @@ class DefaultAuthComponent(
     override val onBoardingState: StateFlow<OnBoardingStore.State> = onBoardingStore.stateFlow
 
     init {
-        onEvent(AuthStore.Intent.AuthenticateClient(
+        /*onEvent(AuthStore.Intent.AuthenticateClient(
            client_secret = OrganisationModel.organisation.client_secret
-        ))
+        ))*/
     }
 
     // authenticate client to get token

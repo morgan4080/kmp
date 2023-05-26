@@ -39,6 +39,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.onBoarding.store.IdentifierTypes
 import com.presta.customer.ui.components.onBoarding.store.InputFields
@@ -63,7 +64,7 @@ fun OnBoardingContent(
     authState: AuthStore.State,
     onEvent: (OnBoardingStore.Intent) -> Unit,
     onAuthEvent: (AuthStore.Intent) -> Unit,
-    navigate: (phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean) -> Unit
+    navigate: (memberRefId: String?, phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean,  onBoardingContext: DefaultRootComponent.OnBoardingContext) -> Unit
 ) {
     val scaffoldState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden
@@ -93,15 +94,15 @@ fun OnBoardingContent(
             onEvent(OnBoardingStore.Intent.UpdateError("Kindly accept terms"))
             return
         }
-        println("phoneNumber.text")
-        println(phoneNumber.text)
-        println(isPhoneNumber(phoneNumber.text))
-        if (isPhoneNumber(phoneNumber.text) && authState.access_token !== null) {
+
+        // TODO IF NOT OPEN TO PUBLIC authState.access_token !== null
+        if (isPhoneNumber(phoneNumber.text)) {
             onEvent(OnBoardingStore.Intent.UpdateError(null))
             onEvent(OnBoardingStore.Intent.GetMemberDetails(
-                token = authState.access_token,
+                token = "",
                 memberIdentifier = "${state.country.code}${phoneNumber.text}",
-                identifierType = IdentifierTypes.PHONE_NUMBER
+                identifierType = IdentifierTypes.PHONE_NUMBER,
+                tenantId = OrganisationModel.organisation.tenant_id
             ))
         } else {
             onEvent(OnBoardingStore.Intent.UpdateError("Please enter a valid phone number"))
@@ -113,35 +114,56 @@ fun OnBoardingContent(
             onEvent(OnBoardingStore.Intent.UpdateError("Kindly accept terms"))
             return
         }
-        if (isPhoneNumber(phoneNumber.text) && authState.access_token !== null) {
+        // TODO authState.access_token !== null
+        if (isPhoneNumber(phoneNumber.text)) {
             onEvent(OnBoardingStore.Intent.UpdateError(null))
-            startRegistration = true
+            onEvent(OnBoardingStore.Intent.GetMemberDetails(
+                token = "",
+                memberIdentifier = "${state.country.code}${phoneNumber.text}",
+                identifierType = IdentifierTypes.PHONE_NUMBER,
+                tenantId = OrganisationModel.organisation.tenant_id
+            ))
         } else {
             onEvent(OnBoardingStore.Intent.UpdateError("Please enter a valid phone number"))
         }
     }
 
-    if (state.member !== null) {
+    if (state.member !== null && state.member.refId !== null && isPhoneNumber(phoneNumber.text)) {
         LaunchedEffect(state.member) {
             navigate(
-                state.member.phoneNumber,
-                state.member.isTermsAccepted,
-                state.member.isActive,
+                state.member.refId,
+                "${state.country.code}${phoneNumber.text}",
+                true,
+                true,
+                DefaultRootComponent.OnBoardingContext.LOGIN
             )
             onEvent(OnBoardingStore.Intent.ClearMember(null))
         }
     }
 
+    if (state.member !== null && state.member.refId == null) {
+        LaunchedEffect(state.member) {
+            snackbarHostState.showSnackbar(
+                "User not registered proceeding to registration"
+            )
+
+            startRegistration = true
+        }
+    }
+
     if (
         startRegistration &&
-        state.member == null
+        isPhoneNumber(phoneNumber.text) &&
+        state.member !== null
     ) {
         LaunchedEffect(startRegistration) {
             startRegistration = false
             navigate(
+                null,
                 "${state.country.code}${phoneNumber.text}",
                 false,
                 false,
+                DefaultRootComponent.OnBoardingContext.REGISTRATION
             )
         }
     }

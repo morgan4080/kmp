@@ -16,17 +16,20 @@ class PrestaOtpClient(
 ) {
     suspend fun requestOtp(
         token: String,
-        phoneNumber: String
+        phoneNumber: String,
+        tenantId: String,
     ): OtpRequestResponse {
         return otpErrorHandler {
             httpClient.post(
-                "${NetworkConstants.PrestaOtpRequestClient.route}/${phoneNumber}"
+                NetworkConstants.PrestaOtpRequestClient.route
             ) {
-                header(HttpHeaders.Authorization, "Bearer $token")
+                if (token !== "") header(HttpHeaders.Authorization, "Bearer $token")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
                 url {
-                    parameters.append("appSignature", "Customer App")
+                    parameters.append("phoneNumber", phoneNumber)
+                    parameters.append("appSignature", "C0S9T5M1")
+                    parameters.append("tenantId", tenantId)
                 }
             }
         }
@@ -35,15 +38,19 @@ class PrestaOtpClient(
     suspend fun verifyOtp(
         token: String,
         requestMapper: String,
-        otp: String
+        otp: String,
+        tenantId: String
     ): OtpVerificationResponse {
         return otpErrorHandler {
             httpClient.post(
                 "${NetworkConstants.PrestaOtpVerifyClient.route}/${requestMapper}/${otp}"
             ) {
-                header(HttpHeaders.Authorization, "Bearer $token")
+                if (token !== "") header(HttpHeaders.Authorization, "Bearer $token")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
+                url {
+                    parameters.append("tenantId", tenantId)
+                }
             }
         }
     }

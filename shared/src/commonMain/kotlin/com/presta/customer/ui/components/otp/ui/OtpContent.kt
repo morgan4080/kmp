@@ -41,6 +41,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.otp.store.OtpStore
 import com.presta.customer.ui.components.root.DefaultRootComponent
@@ -54,7 +55,7 @@ fun OtpContent(
     state: OtpStore.State,
     authState: AuthStore.State,
     onEvent: (OtpStore.Intent) -> Unit,
-    navigate: (phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean, onBoardingContext: DefaultRootComponent.OnBoardingContext) -> Unit
+    navigate: (memberRefId: String?,phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean, onBoardingContext: DefaultRootComponent.OnBoardingContext) -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -89,15 +90,16 @@ fun OtpContent(
     }
 
 
-    LaunchedEffect(authState.access_token) {
+    // TODO authState.access_token
+    LaunchedEffect(state.phone_number) {
         if (
-            authState.access_token !== null &&
             state.phone_number !== null
         ) {
             onEvent(
                 OtpStore.Intent.RequestOTP(
-                    token = authState.access_token,
-                    phoneNumber = state.phone_number
+                    token = "",
+                    phoneNumber = state.phone_number,
+                    tenantId = OrganisationModel.organisation.tenant_id
                 )
             )
         }
@@ -123,11 +125,13 @@ fun OtpContent(
 
 
     LaunchedEffect(otpInput) {
-        if (authState.access_token !== null && state.otpRequestData !== null && otpInput.length == maxChar) {
+        // TODO authState.access_token !== null
+        if (state.otpRequestData !== null && otpInput.length == maxChar) {
             onEvent(OtpStore.Intent.VerifyOTP(
-                token = authState.access_token,
+                token = "",
                 requestMapper = state.otpRequestData.requestMapper,
-                otp = otpInput
+                otp = otpInput,
+                tenantId = OrganisationModel.organisation.tenant_id
             ))
         }
     }
@@ -145,6 +149,7 @@ fun OtpContent(
             )
             if (state.otpVerificationData.validated) {
                 navigate(
+                    state.memberRefId,
                     state.phone_number,
                     state.isTermsAccepted,
                     state.isActive,
@@ -160,7 +165,7 @@ fun OtpContent(
 
 
     Scaffold (modifier = Modifier
-        .fillMaxHeight(1f)
+        .fillMaxHeight()
         .padding(LocalSafeArea.current),
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) {
@@ -269,10 +274,12 @@ fun OtpContent(
             ) {
                 Text(
                     modifier = Modifier.clickable {
-                        if (authState.access_token !== null && state.phone_number !== null) {
+                        // TODO authState.access_token !== null
+                        if (state.phone_number !== null) {
                             onEvent(OtpStore.Intent.RequestOTP(
-                                token = authState.access_token,
-                                phoneNumber = state.phone_number
+                                token = "",
+                                phoneNumber = state.phone_number,
+                                tenantId = OrganisationModel.organisation.tenant_id
                             ))
 
                             scope.launch {

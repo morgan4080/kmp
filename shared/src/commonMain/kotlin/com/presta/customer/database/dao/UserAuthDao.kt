@@ -1,10 +1,8 @@
 package com.presta.customer.database.dao
 
-import app.cash.sqldelight.db.SqlCursor
-import kotlinx.coroutines.withContext
 import com.presta.customer.database.PrestaCustomerDatabase
-import com.presta.customer.network.authDevice.model.PrestaLogInResponse
 import comprestacustomer.UserAuthEntity
+import kotlinx.coroutines.withContext
 import prestaDispatchers
 
 class UserAuthDao(
@@ -14,7 +12,7 @@ class UserAuthDao(
     private val query get() = prestaCustomerDatabase.userAuthEntityQueries
 
     suspend fun selectUserAuthCredentials() = withContext(prestaDispatchers.io) {
-        query.getAccessToken().executeAsOne()
+        query.getAccessToken().executeAsList()
     }
 
     suspend fun removeAccessToken() = withContext(prestaDispatchers.io) {

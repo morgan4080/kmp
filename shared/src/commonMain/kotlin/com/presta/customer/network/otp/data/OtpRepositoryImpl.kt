@@ -11,12 +11,14 @@ class OtpRepositoryImpl: OtpRepository, KoinComponent {
 
     override suspend fun requestOtp(
         token: String,
-        phoneNumber: String
+        phoneNumber: String,
+        tenantId: String
     ): Result<OtpRequestResponse> {
         return try {
             val response = otpClient.requestOtp(
                 token = token,
-                phoneNumber = phoneNumber
+                phoneNumber = phoneNumber,
+                tenantId = tenantId
             )
 
             Result.success(response)
@@ -29,13 +31,15 @@ class OtpRepositoryImpl: OtpRepository, KoinComponent {
     override suspend fun verifyOtp(
         token: String,
         requestMapper: String,
-        otp: String
+        otp: String,
+        tenantId: String
     ): Result<OtpVerificationResponse> {
         return try {
             val response = otpClient.verifyOtp(
                 token = token,
                 requestMapper = requestMapper,
-                otp = otp
+                otp = otp,
+                tenantId = tenantId
             )
 
             Result.success(response)

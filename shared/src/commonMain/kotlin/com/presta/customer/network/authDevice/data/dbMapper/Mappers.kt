@@ -5,4 +5,5 @@ import comprestacustomer.UserAuthEntity
 
 fun PrestaLogInResponse.toUserAuthEntity() = UserAuthEntity(
     access_token = access_token,
+    refresh_token = refresh_token
 )

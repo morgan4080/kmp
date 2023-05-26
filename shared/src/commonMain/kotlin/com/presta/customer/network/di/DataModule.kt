@@ -8,11 +8,14 @@ import com.presta.customer.network.otp.data.OtpRepository
 import com.presta.customer.network.otp.data.OtpRepositoryImpl
 import com.presta.customer.network.profile.data.ProfileRepository
 import com.presta.customer.network.profile.data.ProfileRepositoryImpl
+import com.presta.customer.network.registration.data.RegistrationRepository
+import com.presta.customer.network.registration.data.RegistrationRepositoryImpl
 import org.koin.dsl.module
 
 val dataModule = module {
     single<AuthRepository> { AuthRepositoryImpl() }
     single<OnBoardingRepository> { OnBoardingRepositoryImpl() }
     single<OtpRepository> { OtpRepositoryImpl() }
+    single<RegistrationRepository> { RegistrationRepositoryImpl() }
     single<ProfileRepository> { ProfileRepositoryImpl() }
 }
