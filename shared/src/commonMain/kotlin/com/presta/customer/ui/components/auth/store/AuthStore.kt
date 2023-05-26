@@ -3,6 +3,7 @@ package com.presta.customer.ui.components.auth.store
 import com.arkivanov.mvikotlin.core.store.Store
 import com.presta.customer.network.authDevice.model.PrestaCheckAuthUserResponse
 import com.presta.customer.network.authDevice.model.PrestaLogInResponse
+import com.presta.customer.network.onBoarding.model.RegistrationFeeStatus
 
 data class InputMethod(val value: String)
 enum class Contexts {
@@ -10,10 +11,17 @@ enum class Contexts {
     CONFIRM_PIN,
     LOGIN
 }
+data class CachedMemberData(
+    val accessToken: String,
+    val refreshToken: String,
+    val refId: String,
+    val registrationFees: Double,
+    val registrationFeeStatus: String,
+)
 interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
     sealed class Intent {
-        data class LoginUser(val phoneNumber: String, val pin: String, val tenantId: String): Intent()
-        object GetCachedToken: Intent()
+        data class LoginUser(val phoneNumber: String, val pin: String, val tenantId: String, val refId: String, val registrationFees: Double, val registrationFeeStatus: String): Intent()
+        object GetCachedMemberData: Intent()
         data class CheckAuthenticatedUser(val token: String): Intent()
         data class UpdateError(val error: String?): Intent()
         data class UpdateContext(val context: Contexts, val title: String, val label: String, val pinCreated: Boolean, val pinConfirmed: Boolean, val error: String?): Intent()
@@ -24,6 +32,7 @@ interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
         val isTermsAccepted: Boolean = false,
         val isActive: Boolean = false,
         val error: String? = null,
+        val cachedMemberData: CachedMemberData? = null,
         val loginResponse: PrestaLogInResponse? = null,
         val authUserResponse: PrestaCheckAuthUserResponse? = null,
         val access_token: String? = null,
