@@ -1,6 +1,5 @@
 package com.presta.customer.ui.components.rootBottomStack
 
-import ApplyLoanComponent
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
@@ -10,14 +9,14 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
-import com.presta.customer.ui.components.applyLoan.DefaultApplyLoanComponent
 import com.presta.customer.ui.components.profile.DefaultProfileComponent
 import com.presta.customer.ui.components.profile.ProfileComponent
-import com.presta.customer.ui.components.profile.coroutineScope
-import com.presta.customer.ui.components.savings.DefaultSavingsComponent
-import com.presta.customer.ui.components.savings.SavingsComponent
+import com.presta.customer.ui.components.rootLoans.DefaultRootLoansComponent
+import com.presta.customer.ui.components.rootSavings.DefaultRootSavingsComponent
+import com.presta.customer.ui.components.rootSavings.RootSavingsComponent
 import com.presta.customer.ui.components.sign.DefaultSignComponent
 import com.presta.customer.ui.components.sign.SignComponent
+import components.rootLoans.RootLoansComponent
 import prestaDispatchers
 
 
@@ -42,8 +41,8 @@ class DefaultRootBottomComponent(
     private fun createChildBottom(config: ConfigBottom, componentContext: ComponentContext): RootBottomComponent.ChildBottom =
         when (config) {
             is ConfigBottom.Profile -> RootBottomComponent.ChildBottom.ProfileChild(profileComponent(componentContext))
-            is ConfigBottom.ApplyLoan -> RootBottomComponent.ChildBottom.ApplyLoanChild(applyLoanComponent(componentContext))
-            is ConfigBottom.Savings -> RootBottomComponent.ChildBottom.SavingsChild(savingsComponent(componentContext))
+            is ConfigBottom.RootLoans -> RootBottomComponent.ChildBottom.RootLoansChild(rootLoansComponent(componentContext))
+            is ConfigBottom.RootSavings -> RootBottomComponent.ChildBottom.RootSavingsChild(rootSavingsComponent(componentContext))
             is ConfigBottom.Sign -> RootBottomComponent.ChildBottom.SignChild(signComponent(componentContext))
         }
 
@@ -57,21 +56,16 @@ class DefaultRootBottomComponent(
             }
         )
 
-    private fun applyLoanComponent(componentContext: ComponentContext): ApplyLoanComponent =
-        DefaultApplyLoanComponent(
+    private fun rootLoansComponent(componentContext: ComponentContext): RootLoansComponent =
+        DefaultRootLoansComponent(
             componentContext = componentContext,
-            onLoanClicked = {
-
-            }
         )
 
-    private fun savingsComponent(componentContext: ComponentContext): SavingsComponent =
-        DefaultSavingsComponent(
+    private fun rootSavingsComponent(componentContext: ComponentContext): RootSavingsComponent =
+        DefaultRootSavingsComponent(
             componentContext = componentContext,
-            onSelected = {
 
-            }
-        )
+            )
     private fun signComponent(componentContext: ComponentContext): SignComponent =
         DefaultSignComponent(
             componentContext = componentContext,
@@ -85,11 +79,11 @@ class DefaultRootBottomComponent(
     }
 
     override fun onLoanTabClicked() {
-        navigationBottomStackNavigation.bringToFront(ConfigBottom.ApplyLoan)
+        navigationBottomStackNavigation.bringToFront(ConfigBottom.RootLoans)
     }
 
     override fun onSavingsTabClicked() {
-        navigationBottomStackNavigation.bringToFront(ConfigBottom.Savings)
+        navigationBottomStackNavigation.bringToFront(ConfigBottom.RootSavings)
     }
 
     override fun onSignTabClicked() {
@@ -100,9 +94,9 @@ class DefaultRootBottomComponent(
         @Parcelize
         object Profile : ConfigBottom()
         @Parcelize
-        object ApplyLoan : ConfigBottom()
+        object RootLoans : ConfigBottom()
         @Parcelize
-        object Savings : ConfigBottom()
+        object RootSavings : ConfigBottom()
         @Parcelize
         object Sign : ConfigBottom()
     }

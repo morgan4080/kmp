@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TransactionHistoryContainer() {
+fun TransactionHistoryContainer2() {
 
     data class Transactions(
         val label: String,

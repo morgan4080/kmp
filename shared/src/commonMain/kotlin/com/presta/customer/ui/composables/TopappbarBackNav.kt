@@ -1,3 +1,4 @@
+
 package com.presta.customer.ui.composables
 
 import androidx.compose.foundation.background
@@ -16,7 +17,7 @@ import com.presta.customer.ui.theme.backArrowColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavigateBackTopBar(label:String){
+fun NavigateBackTopBar2(label:String){
     CenterAlignedTopAppBar(
         title = {
 

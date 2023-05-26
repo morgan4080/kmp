@@ -3,6 +3,7 @@ package com.presta.customer.ui.components.addSavings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,12 +19,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import com.presta.customer.ui.composables.ActionButton
+import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.OptionsSelectionContainer
 import com.presta.customer.ui.composables.ProductSelectionCard2
@@ -33,66 +35,70 @@ import com.presta.customer.ui.theme.labelTextColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddSavingsScreen(){
-
-    var popupControl by remember { mutableStateOf(false) }
+fun AddSavingsScreen(component: AddSavingsComponent, innerPadding: PaddingValues){
+    var launchPopUp by remember { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.background),
+            .background(color = MaterialTheme.colorScheme.background)
+            .fillMaxHeight(),
         color = MaterialTheme.colorScheme.background
     ) {
-
-
-        Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)
+        Column(modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.background)
             .fillMaxWidth()
             .fillMaxHeight()) {
-
-            Row(modifier = Modifier.fillMaxWidth()) {
-
-
-                NavigateBackTopBar("Savings")
-
+            Row(modifier = Modifier
+                .fillMaxWidth()) {
+                NavigateBackTopBar("Add Savings", onClickContainer = {
+                    component.onBackNavSelected()
+                })
             }
-
             Column(
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 16.dp)
                     .background(color = MaterialTheme.colorScheme.background)
                     .fillMaxHeight()
             ) {
-
                 Text(
-                    modifier = Modifier.padding(start = 16.dp),
-                    text = "Enter Savings Amount",
+                    modifier = Modifier,
+                    text = "Enter Savings Details",
                     color = labelTextColor
                 )
-
                 //select savings Pop up
-
                 //Added overlay  to the po up screen
+                if (launchPopUp){
 
-                if (popupControl){
+                    Popup(){
 
-                    Popup(alignment = Alignment.Center){
-
-                        Column(modifier = Modifier.fillMaxWidth().fillMaxHeight(1.5f)
+                        Column(modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight()
                             .background(color = Color.Black.copy(alpha = 0.7f)),
                             verticalArrangement = Arrangement.Center) {
 
                             ElevatedCard(
-                                modifier = Modifier.fillMaxWidth()
-                                    .padding(start = 25.dp, end = 25.dp, top = 26.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(
+                                        start = 25.dp,
+                                        end = 25.dp,
+                                        top = 26.dp),
                                 colors = CardDefaults.elevatedCardColors(containerColor = Color.White)
                             ) {
 
                                 Column(
-                                    modifier = Modifier.fillMaxWidth()
-                                        .padding(start = 16.dp, end = 16.dp)
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(
+                                            start = 16.dp,
+                                            end = 16.dp)
                                 ) {
-
                                     Text(
                                         text = "Savings Type",
-                                        modifier = Modifier.padding(top = 14.dp)
+                                        modifier = Modifier
+                                            .padding(
+                                                top = 14.dp)
                                     )
 
                                     Text(
@@ -100,18 +106,15 @@ fun AddSavingsScreen(){
                                         fontSize = 10.sp,
                                         modifier = Modifier.padding(top = 3.dp)
                                     )
-
-                                    Row(modifier = Modifier.fillMaxWidth().padding(top = 18.dp)) {
+                                    Row(modifier = Modifier.fillMaxWidth()
+                                        .padding(top = 18.dp)) {
 
                                         OptionsSelectionContainer(
                                             "Current Savings",
                                             onClickContainer = {
 
                                             })
-
-
                                     }
-
                                     Row(modifier = Modifier.fillMaxWidth()) {
 
                                         OptionsSelectionContainer("Shares", onClickContainer = {
@@ -121,10 +124,10 @@ fun AddSavingsScreen(){
                                     }
 
                                 }
-
-
                                 Row(
-                                    modifier = Modifier.fillMaxWidth().padding(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(
                                         top = 10.dp,
                                         bottom = 10.dp,
                                         start = 16.dp,
@@ -134,8 +137,9 @@ fun AddSavingsScreen(){
                                 ) {
 
                                     ElevatedCard(onClick = {
-                                        popupControl = false
-                                    }, modifier = Modifier.padding(start = 16.dp)) {
+                                        launchPopUp = false
+                                    }, modifier = Modifier
+                                        .padding(start = 16.dp)) {
 
                                         Text(
                                             text = "Dismiss",
@@ -149,15 +153,12 @@ fun AddSavingsScreen(){
                                         )
 
                                     }
-
-
                                     ElevatedCard(
                                         onClick = {
-                                            popupControl = false
+                                            launchPopUp = false
                                         }, modifier = Modifier.padding(end = 16.dp),
                                         colors = CardDefaults.elevatedCardColors(containerColor = actionButtonColor)
                                     ) {
-
                                         Text(
                                             text = "Proceed",
                                             color = Color.White,
@@ -183,11 +184,10 @@ fun AddSavingsScreen(){
                 }
 
                 Row(modifier = Modifier.fillMaxWidth().padding(top = 23.dp)){
-
                     ProductSelectionCard2("Select Savings", onClickContainer = {
 
                         //pop up
-                        popupControl=true
+                        launchPopUp=true
 
                     })
 
@@ -197,16 +197,24 @@ fun AddSavingsScreen(){
 
                 Row(modifier = Modifier.fillMaxWidth().padding(top = 33.dp)){
 
-                    TextInputContainer("Desired Amount","")
+                    TextInputContainer("Desired Amount","", inputType = InputTypes.NUMBER)
 
                 }
+                Row(modifier = Modifier.fillMaxWidth().padding(top = 44.dp)){
 
+                  ActionButton("Confirm", onClickContainer = {
+
+                      //Navigate to processing Transaction
+                      component.onConfirmSelected()
+
+                  })
+
+                }
 
             }
 
         }
 
     }
-
 
 }

@@ -4,8 +4,10 @@ import ApplyLoanComponent
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
 import com.presta.customer.ui.components.profile.ProfileComponent
+import com.presta.customer.ui.components.rootSavings.RootSavingsComponent
 import com.presta.customer.ui.components.savings.SavingsComponent
 import com.presta.customer.ui.components.sign.SignComponent
+import components.rootLoans.RootLoansComponent
 
 interface RootBottomComponent {
 
@@ -18,8 +20,8 @@ interface RootBottomComponent {
 
     sealed class ChildBottom {
         class ProfileChild(val component: ProfileComponent) : ChildBottom()
-        class ApplyLoanChild(val component: ApplyLoanComponent) : ChildBottom()
-        class SavingsChild(val component: SavingsComponent) : ChildBottom()
+        class RootLoansChild(val component: RootLoansComponent) : ChildBottom()
+        class RootSavingsChild(val component: RootSavingsComponent) : ChildBottom()
         class SignChild(val component: SignComponent) : ChildBottom()
     }
 }

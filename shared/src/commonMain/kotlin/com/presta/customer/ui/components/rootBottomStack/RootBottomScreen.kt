@@ -1,6 +1,8 @@
 package com.presta.customer.ui.components.rootBottomStack
 
 import GetIconForScreen
+import RootLoansScreen
+import RootSavingsScreen
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.padding
@@ -26,9 +28,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
-import com.presta.customer.ui.components.applyLoan.ApplyLoanScreen
 import com.presta.customer.ui.components.profile.ui.ProfileScreen
-import com.presta.customer.ui.components.savings.SavingsScreen
 import com.presta.customer.ui.components.sign.SignScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
 
@@ -66,13 +66,13 @@ fun RootBottomScreen(component: RootBottomComponent) {
                     label = {
                         Text(
                             text = screens[1],
-                            color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.ApplyLoanChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                            color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.RootLoansChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Light,
                             modifier = Modifier.absoluteOffset(y = 28.dp)
                         )
                     },
-                    selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.ApplyLoanChild,
+                    selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.RootLoansChild,
                     onClick = component::onLoanTabClicked,
                     colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.primary, indicatorColor = MaterialTheme.colorScheme.background, unselectedIconColor = MaterialTheme.colorScheme.outline)
                 )
@@ -81,13 +81,13 @@ fun RootBottomScreen(component: RootBottomComponent) {
                     label = {
                         Text(
                             text = screens[2],
-                            color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.SavingsChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                            color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.RootSavingsChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Light,
                             modifier = Modifier.absoluteOffset(y = 28.dp)
                         )
                     },
-                    selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.SavingsChild,
+                    selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.RootSavingsChild,
                     onClick = component::onSavingsTabClicked,
                     colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.primary, indicatorColor = MaterialTheme.colorScheme.background, unselectedIconColor = MaterialTheme.colorScheme.outline)
                 )
@@ -115,8 +115,8 @@ fun RootBottomScreen(component: RootBottomComponent) {
             ) {
                 when (val childX = it.instance) {
                     is RootBottomComponent.ChildBottom.ProfileChild -> ProfileScreen(childX.component, innerPadding)
-                    is RootBottomComponent.ChildBottom.ApplyLoanChild -> ApplyLoanScreen(childX.component, innerPadding)
-                    is RootBottomComponent.ChildBottom.SavingsChild -> SavingsScreen(childX.component)
+                    is RootBottomComponent.ChildBottom.RootLoansChild -> RootLoansScreen(childX.component)
+                    is RootBottomComponent.ChildBottom.RootSavingsChild-> RootSavingsScreen(childX.component)
                     is RootBottomComponent.ChildBottom.SignChild -> SignScreen(childX.component)
                 }
             }
@@ -128,8 +128,8 @@ private val RootBottomComponent.ChildBottom.index: Int
     get() =
         when (this) {
             is RootBottomComponent.ChildBottom.ProfileChild -> 0
-            is RootBottomComponent.ChildBottom.ApplyLoanChild -> 1
-            is RootBottomComponent.ChildBottom.SavingsChild  -> 2
+            is RootBottomComponent.ChildBottom.RootLoansChild -> 1
+            is RootBottomComponent.ChildBottom.RootSavingsChild  -> 2
             is RootBottomComponent.ChildBottom.SignChild -> 3
         }
 
