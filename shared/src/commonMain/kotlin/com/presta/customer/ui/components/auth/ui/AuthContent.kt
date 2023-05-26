@@ -149,11 +149,16 @@ fun AuthContent(
                     clearPinCharacters()
                 }
                 Contexts.LOGIN -> {
-                    onEvent(AuthStore.Intent.LoginUser(
-                        phoneNumber = state.phoneNumber,
-                        pin = pinInput,
-                        tenantId = OrganisationModel.organisation.tenant_id
-                    ))
+                    if (onBoardingState.member.refId !== null && onBoardingState.member.registrationFeeInfo !== null) {
+                        onEvent(AuthStore.Intent.LoginUser(
+                            phoneNumber = state.phoneNumber,
+                            pin = pinInput,
+                            tenantId = OrganisationModel.organisation.tenant_id,
+                            refId = onBoardingState.member.refId,
+                            registrationFees = onBoardingState.member.registrationFeeInfo.registrationFees,
+                            registrationFeeStatus = onBoardingState.member.registrationFeeInfo.registrationFeeStatus.toString()
+                        ))
+                    }
                     clearPinCharacters()
                 }
             }

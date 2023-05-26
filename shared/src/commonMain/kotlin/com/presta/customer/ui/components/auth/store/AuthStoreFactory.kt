@@ -46,6 +46,8 @@ internal class AuthStoreFactory(
 
         data class CheckAuthenticatedUserLoaded(val authUserResponse: PrestaCheckAuthUserResponse): Msg()
         data class AuthFailed(val error: String?) : Msg()
+
+        data class CachedMemberData(val accessToken: String, val refreshToken: String, val refId: String, val registrationFees: Double, val registrationFeeStatus: String): Msg()
     }
 
     private inner class ExecutorImpl : CoroutineExecutor<AuthStore.Intent, Unit, AuthStore.State, Msg, Nothing>(
@@ -57,10 +59,17 @@ internal class AuthStoreFactory(
 
         override fun executeIntent(intent: AuthStore.Intent, getState: () -> AuthStore.State): Unit =
             when (intent) {
-                is AuthStore.Intent.LoginUser -> loginUser(intent.phoneNumber, intent.pin, intent.tenantId)
+                is AuthStore.Intent.LoginUser -> loginUser(
+                    intent.phoneNumber,
+                    intent.pin,
+                    intent.tenantId,
+                    intent.refId,
+                    intent.registrationFees,
+                    intent.registrationFeeStatus
+                )
                 is AuthStore.Intent.CheckAuthenticatedUser -> checkAuthenticatedUser(intent.token)
                 is AuthStore.Intent.UpdateError -> updateError(error = intent.error)
-                is AuthStore.Intent.GetCachedToken -> getUserAuthToken()
+                is AuthStore.Intent.GetCachedMemberData -> getCachedMemberData()
                 is AuthStore.Intent.UpdateContext -> dispatch(Msg.UpdateContext(
                     context = intent.context,
                     title = intent.title,
@@ -76,7 +85,10 @@ internal class AuthStoreFactory(
         private fun loginUser(
             phoneNumber: String,
             pin: String,
-            tenantId: String
+            tenantId: String,
+            refId: String,
+            registrationFees: Double,
+            registrationFeeStatus: String
         ) {
             if (loginUserJob?.isActive == true) return
 
@@ -84,7 +96,7 @@ internal class AuthStoreFactory(
 
             loginUserJob  = scope.launch {
                 authRepository
-                    .loginUser(phoneNumber, pin, tenantId)
+                    .loginUser(phoneNumber, pin, tenantId, refId, registrationFees, registrationFeeStatus)
                     .onSuccess {response ->
                         dispatch(Msg.LoginFulfilled(response))
                     }
@@ -95,8 +107,6 @@ internal class AuthStoreFactory(
                 dispatch(Msg.AuthLoading(false))
             }
         }
-
-        private var checkPinJob: Job? = null
 
         private fun updateError(error: String?) {
             dispatch(Msg.AuthFailed(error))
@@ -124,17 +134,18 @@ internal class AuthStoreFactory(
 
         private var getUserAuthTokenJob: Job? = null
 
-        private fun getUserAuthToken() {
+        private fun getCachedMemberData() {
             if (getUserAuthTokenJob?.isActive == true) return
 
             getUserAuthTokenJob = scope.launch {
-                authRepository.getUserAuthToken()
-                    .onSuccess { response ->
-                        dispatch(Msg.LoginFulfilled(response))
-                    }
-                    .onFailure { e ->
-                        dispatch(Msg.AuthFailed(e.message))
-                    }
+                val response = authRepository.getCachedUserData()
+                dispatch(Msg.CachedMemberData(
+                    accessToken = response.access_token,
+                    refreshToken = response.refresh_token,
+                    refId = response.refId,
+                    registrationFees = response.registrationFees,
+                    registrationFeeStatus = response.registrationFeeStatus,
+                ))
             }
         }
     }
@@ -159,6 +170,13 @@ internal class AuthStoreFactory(
                 )
                 is Msg.LoginFulfilled -> copy(loginResponse = msg.logInResponse)
                 is Msg.AuthFailed -> copy(error = msg.error)
+                is Msg.CachedMemberData -> copy(cachedMemberData = CachedMemberData(
+                    msg.accessToken,
+                    msg.refreshToken,
+                    msg.refId,
+                    msg.registrationFees,
+                    msg.registrationFeeStatus,
+                ))
             }
     }
 }

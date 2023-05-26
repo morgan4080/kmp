@@ -1,6 +1,9 @@
 CREATE TABLE IF NOT EXISTS userAuthEntity (
+  refId TEXT NOT NULL PRIMARY KEY,
   access_token TEXT NOT NULL,
-  refresh_token TEXT NOT NULL
+  refresh_token TEXT NOT NULL,
+  registrationFees REAL NOT NULL,
+  registrationFeeStatus TEXT NOT NULL
 );
 
 getAccessToken:
@@ -8,8 +11,8 @@ SELECT *
 FROM userAuthEntity;
 
 insert:
-INSERT OR REPLACE INTO userAuthEntity(access_token, refresh_token)
-VALUES ?;
+INSERT OR REPLACE INTO userAuthEntity(refId, access_token, refresh_token, registrationFees, registrationFeeStatus)
+VALUES (?, ?, ?, ?, ?);
 
 removeAccessToken:
 DELETE FROM userAuthEntity;
