@@ -3,7 +3,6 @@ package com.presta.customer.network.authDevice.client
 import com.presta.customer.network.NetworkConstants
 import com.presta.customer.network.authDevice.errorHandler.authErrorHandler
 import com.presta.customer.network.authDevice.model.PrestaCheckAuthUserResponse
-import com.presta.customer.network.authDevice.model.PrestaCheckPinResponse
 import com.presta.customer.network.authDevice.model.PrestaLogInResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -18,18 +17,6 @@ import kotlinx.serialization.Serializable
 class PrestaAuthClient(
     private val httpClient: HttpClient
 ) {
-    suspend fun checkUserPin(
-        token: String,
-        phoneNumber: String
-    ): PrestaCheckPinResponse {
-        return authErrorHandler {
-            httpClient.get("${NetworkConstants.PrestaCheckPinClient.route}/${phoneNumber}") {
-                header(HttpHeaders.Authorization, "Bearer $token")
-                header(HttpHeaders.ContentType, ContentType.Application.Json)
-                contentType(ContentType.Application.Json)
-            }
-        }
-    }
     suspend fun loginUser(
         phoneNumber: String,
         pin: String,

@@ -1,21 +1,10 @@
 package com.presta.customer.network.authDevice.model
 import kotlinx.serialization.Serializable
 
-
-@Serializable
-data class PrestaCheckPinResponseData(val hasPin: Boolean, val pinStatus: String, val ussdPhoneNumber: String)
-@Serializable
-data class PrestaCheckPinResponse(
-    val data: PrestaCheckPinResponseData,
-)
 @Serializable
 data class PrestaLogInResponse (
     val access_token: String,
-    val expires_in: String,
-    val refresh_expires_in: String,
-    val refresh_token: String,
-    val token_type: String,
-    val scope: String
+    val refresh_token: String
 )
 @Serializable
 data class AuthUserRoles(

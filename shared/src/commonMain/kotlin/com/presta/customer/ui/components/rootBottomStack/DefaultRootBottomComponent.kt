@@ -13,10 +13,12 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.presta.customer.ui.components.applyLoan.DefaultApplyLoanComponent
 import com.presta.customer.ui.components.profile.DefaultProfileComponent
 import com.presta.customer.ui.components.profile.ProfileComponent
+import com.presta.customer.ui.components.profile.coroutineScope
 import com.presta.customer.ui.components.savings.DefaultSavingsComponent
 import com.presta.customer.ui.components.savings.SavingsComponent
 import com.presta.customer.ui.components.sign.DefaultSignComponent
 import com.presta.customer.ui.components.sign.SignComponent
+import prestaDispatchers
 
 
 class DefaultRootBottomComponent(
@@ -49,6 +51,7 @@ class DefaultRootBottomComponent(
         DefaultProfileComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
             onProfileClicked = {
 
             }

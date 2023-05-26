@@ -7,7 +7,6 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.authDevice.data.AuthRepository
 import com.presta.customer.network.authDevice.model.PrestaCheckAuthUserResponse
-import com.presta.customer.network.authDevice.model.PrestaCheckPinResponse
 import com.presta.customer.network.authDevice.model.PrestaLogInResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -35,7 +34,6 @@ internal class AuthStoreFactory(
     private sealed class Msg {
         data class AuthLoading(val isLoading: Boolean = true) : Msg()
         data class AuthInitData(val phoneNumber: String?, val isTermsAccepted: Boolean, val isActive: Boolean) : Msg()
-        data class CheckPinLoaded(val checkPinResponse: PrestaCheckPinResponse) : Msg()
         data class UpdateContext(
             val context: Contexts,
             val title: String,
@@ -60,7 +58,6 @@ internal class AuthStoreFactory(
         override fun executeIntent(intent: AuthStore.Intent, getState: () -> AuthStore.State): Unit =
             when (intent) {
                 is AuthStore.Intent.LoginUser -> loginUser(intent.phoneNumber, intent.pin, intent.tenantId)
-                is AuthStore.Intent.CheckPin -> checkPin(intent.token, intent.phoneNumber)
                 is AuthStore.Intent.CheckAuthenticatedUser -> checkAuthenticatedUser(intent.token)
                 is AuthStore.Intent.UpdateError -> updateError(error = intent.error)
                 is AuthStore.Intent.GetCachedToken -> getUserAuthToken()
@@ -100,28 +97,6 @@ internal class AuthStoreFactory(
         }
 
         private var checkPinJob: Job? = null
-
-        private fun checkPin(
-            token: String,
-            phoneNumber: String
-        ) {
-            if (checkPinJob?.isActive == true) return
-
-            dispatch(Msg.AuthLoading())
-
-            checkPinJob = scope.launch {
-                authRepository
-                    .checkUserPin(token, phoneNumber)
-                    .onSuccess { response ->
-                        println(response)
-                        dispatch(Msg.CheckPinLoaded(response))
-                    }
-                    .onFailure { e ->
-                        dispatch(Msg.AuthFailed(e.message))
-                    }
-                dispatch(Msg.AuthLoading(false))
-            }
-        }
 
         private fun updateError(error: String?) {
             dispatch(Msg.AuthFailed(error))
@@ -168,7 +143,6 @@ internal class AuthStoreFactory(
         override fun AuthStore.State.reduce(msg: Msg): AuthStore.State =
             when (msg) {
                 is Msg.AuthLoading -> copy(isLoading = msg.isLoading)
-                is Msg.CheckPinLoaded -> copy(checkPinResponse = msg.checkPinResponse)
                 is Msg.CheckAuthenticatedUserLoaded -> copy(authUserResponse = msg.authUserResponse)
                 is Msg.AuthInitData -> copy(
                     phoneNumber = msg.phoneNumber,

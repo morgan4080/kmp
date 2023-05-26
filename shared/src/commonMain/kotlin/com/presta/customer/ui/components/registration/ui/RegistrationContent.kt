@@ -132,10 +132,6 @@ fun RegistrationContent(
                 "Member Registration Successful!"
             )
 
-            println(":::::::::::::::::Navigate with ref id")
-
-            println(state.registrationResponse.refId)
-
             navigate(
                 state.registrationResponse.refId,
                 state.phoneNumber,
