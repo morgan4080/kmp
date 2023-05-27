@@ -10,7 +10,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.presta.customer.MR
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
 fun  ShortTermTopUpList(component: ShortTermLoansComponent){
@@ -22,7 +25,10 @@ fun  ShortTermTopUpList(component: ShortTermLoansComponent){
             .weight(0.2f)){
             Text(text = "Select Loan to Top Up",
                 modifier = Modifier
-                    .padding(top = 25.dp))
+                    .padding(top = 25.dp),
+                fontSize = 14.sp,
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+            )
 
             LazyColumn(modifier = Modifier
                 .fillMaxWidth()

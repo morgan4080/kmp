@@ -34,7 +34,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.presta.customer.network.profile.model.PrestaBalancesResponse
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @OptIn(ExperimentalResourceApi::class)
@@ -71,7 +70,7 @@ fun HomeCardListItem(name: String, onClick: (String) -> Unit,savingsBalance:Stri
                     IconButton(
                         modifier = Modifier
                             .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.secondaryContainer)
+                            .background(MaterialTheme.colorScheme.inverseOnSurface)
                             .size(30.dp),
                         onClick = {
                             showExpanded = !showExpanded

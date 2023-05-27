@@ -67,7 +67,9 @@ fun BankDisbursementScreen(component: BankDisbursementComponent) {
 
                 Text(
                     modifier = Modifier,
-                    text = "Select Disbursement Method"
+                    text = "Select Disbursement Method",
+                    fontSize = 14.sp,
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                 )
                 Spacer(modifier = Modifier
                     .padding(top = 25.dp))

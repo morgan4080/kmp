@@ -11,7 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.presta.customer.MR
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
 fun ShortTermProductList(component: ShortTermLoansComponent) {
@@ -19,7 +22,10 @@ fun ShortTermProductList(component: ShortTermLoansComponent) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "Select Loan Product",
-            modifier = Modifier.padding(top = 25.dp)
+            modifier = Modifier.padding(top = 25.dp),
+            fontSize = 14.sp,
+            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+
         )
 
         LazyColumn(

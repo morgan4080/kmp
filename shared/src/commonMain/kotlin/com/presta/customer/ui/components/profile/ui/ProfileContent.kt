@@ -1,5 +1,6 @@
 package com.presta.customer.ui.components.profile.ui
 
+
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -48,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -63,7 +66,18 @@ import com.presta.customer.ui.theme.backArrowColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalLayoutApi::class,
+
+data class QuickLinks(val labelTop: String, val labelBottom: String, val icon: ImageVector)
+data class Transactions(
+    val label: String,
+    val code: String,
+    val amount: String,
+    val date: String,
+    val icon: ImageVector
+)
+
+@OptIn(
+    ExperimentalMaterialApi::class, ExperimentalLayoutApi::class,
     ExperimentalFoundationApi::class
 )
 @Composable
@@ -77,16 +91,17 @@ fun ProfileContent(
     val stateLazyRow0 = rememberLazyListState()
     val stateLazyRow = rememberLazyListState()
     val quickLinks: List<QuickLinks> = listOf(
-        QuickLinks("Add","Savings", Icons.Outlined.Savings),
+        QuickLinks("Add", "Savings", Icons.Outlined.Savings),
         QuickLinks("Apply", "Loan", Icons.Outlined.AttachMoney),
-        QuickLinks("Pay","Loan", Icons.Outlined.CreditCard),
-        QuickLinks("View Full","Statement", Icons.Outlined.Description),
+        QuickLinks("Pay", "Loan", Icons.Outlined.CreditCard),
+        QuickLinks("View Full", "Statement", Icons.Outlined.Description),
 
         )
-    val item1=quickLinks[0]
-    val item2=quickLinks[1]
-    val item3=quickLinks[2]
-    val item4=quickLinks[3]
+    val item1 = quickLinks[0]
+    val item2 = quickLinks[1]
+    val item3 = quickLinks[2]
+    val item4 = quickLinks[3]
+
 
     //Modal BottomSheet
 
@@ -101,22 +116,27 @@ fun ProfileContent(
         sheetState = sheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         sheetContent = {
-            LazyColumn{
-                items(1){
-                    ListItem (
+            LazyColumn {
+                items(1) {
+                    ListItem(
                         text = {
-                            Column(modifier = Modifier
-                                .fillMaxWidth()
-                            ){
-                                Column(modifier = Modifier
-                                    .padding(start = 16.dp, end = 16.dp)
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(start = 16.dp, end = 16.dp)
                                 ) {
 
-                                    Row(modifier = Modifier
-                                        .padding(top = 17.dp)
-                                        .fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween){
-                                        Text(text = "Activate  Account",
+                                    Row(
+                                        modifier = Modifier
+                                            .padding(top = 17.dp)
+                                            .fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Text(
+                                            text = "Activate  Account",
                                             fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                                             fontSize = 14.sp
                                         )
@@ -131,18 +151,23 @@ fun ProfileContent(
                                         )
                                     }
 
-                                    Row(modifier = Modifier
-                                        .padding(top = 17.dp)
-                                        .fillMaxWidth()){
-                                        Text(text = "Welcome to Rubani Sacco to, please pay a registration fee of KSH 1,000 to activate your account",
+                                    Row(
+                                        modifier = Modifier
+                                            .padding(top = 17.dp)
+                                            .fillMaxWidth()
+                                    ) {
+                                        Text(
+                                            text = "Welcome to Rubani Sacco to, please pay a registration fee of KSH 1,000 to activate your account",
                                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                             fontSize = 12.sp
                                         )
 
                                     }
 
-                                    Row(modifier = Modifier.fillMaxWidth()
-                                        .padding(top=22.dp, bottom = 22.dp)){
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth()
+                                            .padding(top = 22.dp, bottom = 22.dp)
+                                    ) {
                                         ActionButton("Activate Now!", onClickContainer = {
 
                                         })
@@ -159,7 +184,9 @@ fun ProfileContent(
         LazyColumn(
             // consume insets as scaffold doesn't do it by default
             modifier = Modifier
-                .consumeWindowInsets(innerPadding).padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                .consumeWindowInsets(innerPadding)
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                .wrapContentHeight(),
             contentPadding = innerPadding
         ) {
             item {
@@ -232,7 +259,7 @@ fun ProfileContent(
                                     onClick = {
 
                                     },
-                                    savingsBalance = if (state.balances !== null) state.balances.savingsBalance.toString() else "0.0",
+                                    savingsBalance = if (state.balances !== null) state.balances.savingsBalance.toString() else "0.00",
                                 )
                             }
                         }
@@ -282,6 +309,9 @@ fun ProfileContent(
                                     .size(57.dp),
                                 onClick = {
                                     // component.onAddSavingsSelected()
+                                    //Test api data
+                                    println(state.transactionHistory?.transactionId)
+                                    println(state.balances?.savingsBalance)
 
 
                                 },
@@ -483,97 +513,39 @@ fun ProfileContent(
                                 )
 
                             }
-
                         }
                     }
-
                 }
             }
+//            val allData=state.transactionHistory
+//            val arrayList = ArrayList<String>()
+//            arrayList.add(allData.toString())
 
 
-            item {
+            items(3) {
                 Column(modifier = Modifier.padding(top = 16.dp)) {
+                    //add  data  from the apI and display the  list of data  as per the set data size
+                    //To Determine the color of the icon use the  state of data from the api
+                    val purposes: String = "LOANREPAYMENT"
+                    val purposeData: String = state.transactionHistory?.purpose.toString()
+                    val TransactionId: String = state.transactionHistory?.transactionId.toString()
+
                     val transactionList = mutableListOf(
                         Transactions(
                             "Savings Deposit",
-                            false,
-                            "TRGHJK123LL",
+                            TransactionId,
                             "15,000",
                             "12 May 2020, 12:23 PM",
                             Icons.Filled.OpenInNew
                         ),
                         Transactions(
                             "Loan disbursed",
-                            true,
-                            "TRGHJK123LL",
-                            "5,000",
-                            "12 May 2020, 12:23 PM",
-                            Icons.Filled.OpenInNew
-                        ),
-                        Transactions(
-                            "Loan repayment",
-                            false,
-                            "TRGHJK123LL",
-                            "5,000",
-                            "12 May 2020, 12:23 PM",
-                            Icons.Filled.OpenInNew
-                        ),
-                        Transactions(
-                            "Loan disbursed",
-                            true,
-                            "TRGHJK123LL",
-                            "5,000",
-                            "12 May 2020, 12:23 PM",
-                            Icons.Filled.OpenInNew
-                        ),
-                        Transactions(
-                            "Loan disbursed",
-                            true,
-                            "TRGHJK123LL",
-                            "5,000",
-                            "12 May 2020, 12:23 PM",
-                            Icons.Filled.OpenInNew
-                        ),
-                        Transactions(
-                            "Loan disbursed",
-                            true,
-                            "TRGHJK123LL",
-                            "5,000",
-                            "12 May 2020, 12:23 PM",
-                            Icons.Filled.OpenInNew
-                        ),
-                        Transactions(
-                            "Loan disbursed",
-                            true,
-                            "TRGHJK123LL",
-                            "5,000",
-                            "12 May 2020, 12:23 PM",
-                            Icons.Filled.OpenInNew
-                        ),
-                        Transactions(
-                            "Loan disbursed",
-                            true,
-                            "TRGHJK123LL",
-                            "5,000",
-                            "12 May 2020, 12:23 PM",
-                            Icons.Filled.OpenInNew
-                        ),
-                        Transactions(
-                            "Loan disbursed",
-                            true,
-                            "TRGHJK123LL",
-                            "5,000",
-                            "12 May 2020, 12:23 PM",
-                            Icons.Filled.OpenInNew
-                        ),
-                        Transactions(
-                            "Loan disbursed",
-                            true,
                             "TRGHJK123LL",
                             "5,000",
                             "12 May 2020, 12:23 PM",
                             Icons.Filled.OpenInNew
                         )
+
                     )
                     transactionList.forEach { transaction ->
                         Row(
@@ -588,7 +560,7 @@ fun ProfileContent(
                                     IconButton(
                                         modifier = Modifier
                                             .clip(CircleShape)
-                                            .background(if (transaction.credit) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer)
+                                            .background(if (purposeData == purposes) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer)
                                             .size(30.dp),
                                         onClick = {
 
@@ -596,10 +568,12 @@ fun ProfileContent(
                                         content = {
                                             Icon(
                                                 imageVector = transaction.icon,
-                                                modifier = if (transaction.credit) Modifier.size(15.dp)
+                                                modifier = if (purposeData == purposes) Modifier.size(
+                                                    15.dp
+                                                )
                                                     .rotate(180F) else Modifier.size(15.dp),
                                                 contentDescription = null,
-                                                tint = if (transaction.credit) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
+                                                tint = if (purposeData == purposes) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
                                             )
                                         }
                                     )

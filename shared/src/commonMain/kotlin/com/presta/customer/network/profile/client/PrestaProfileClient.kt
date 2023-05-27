@@ -3,6 +3,7 @@ package com.presta.customer.network.profile.client
 import com.presta.customer.network.NetworkConstants
 import com.presta.customer.network.profile.errorHandler.profileErrorHandler
 import com.presta.customer.network.profile.model.PrestaBalancesResponse
+import com.presta.customer.network.profile.model.PrestaTransactionHistoryResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -26,5 +27,22 @@ class PrestaProfileClient(
             }
         }
     }
+
+
+    suspend fun getUserTransactionHistoryData(
+        token: String,
+        //Transaction id
+        memberRefId: String,
+    ): PrestaTransactionHistoryResponse {
+
+        return profileErrorHandler {
+            httpClient.get("${NetworkConstants.PrestaGetTransactionsHistory.route}/${memberRefId}") {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+            }
+        }
+    }
+
 }
 

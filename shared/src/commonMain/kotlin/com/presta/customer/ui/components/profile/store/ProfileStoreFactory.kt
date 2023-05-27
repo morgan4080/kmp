@@ -7,6 +7,7 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.profile.data.ProfileRepository
 import com.presta.customer.network.profile.model.PrestaBalancesResponse
+import com.presta.customer.network.profile.model.PrestaTransactionHistoryResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -30,6 +31,9 @@ class ProfileStoreFactory(
     private sealed class Msg {
         data class ProfileLoading(val isLoading: Boolean = true): Msg()
         data class ProfileLoaded(val balances: PrestaBalancesResponse): Msg()
+        data class TransactionHistoryLoaded(val transactionHistory:PrestaTransactionHistoryResponse): Msg()
+
+
         data class ProfileFailed(val error: String?): Msg()
     }
 
@@ -43,6 +47,7 @@ class ProfileStoreFactory(
         override fun executeIntent(intent: ProfileStore.Intent, getState: () -> ProfileStore.State): Unit =
             when(intent) {
                 is ProfileStore.Intent.GetBalances -> getBalances(token = intent.token, refId = intent.refId)
+                is ProfileStore.Intent.GetTransactionHistory->getTransactionHistory(token = intent.token, refId =intent.refId )
             }
 
         private var getBalancesJob: Job? = null
@@ -66,6 +71,30 @@ class ProfileStoreFactory(
                 }
             }
         }
+        //Get Transaction History
+
+        private var getTransactionHistoryJob: Job? = null
+
+        private fun getTransactionHistory(
+            token: String,
+            refId: String
+        ) {
+            if (getTransactionHistoryJob?.isActive == true) return
+
+            dispatch(Msg.ProfileLoading())
+
+            getTransactionHistoryJob = scope.launch {
+                profileRepository.getTransactionHistoryData(
+                    token = token,
+                    memberRefId = refId
+                ).onSuccess { response ->
+                    dispatch(Msg.TransactionHistoryLoaded(response))
+                }.onFailure { e ->
+                    dispatch(Msg.ProfileFailed(e.message))
+                }
+            }
+        }
+
 
     }
 
@@ -75,6 +104,7 @@ class ProfileStoreFactory(
                 is Msg.ProfileLoading -> copy(isLoading = msg.isLoading)
                 is Msg.ProfileLoaded -> copy(balances = msg.balances)
                 is Msg.ProfileFailed -> copy(error = msg.error)
+                is Msg.TransactionHistoryLoaded->copy(transactionHistory =msg.transactionHistory )
             }
     }
 }
