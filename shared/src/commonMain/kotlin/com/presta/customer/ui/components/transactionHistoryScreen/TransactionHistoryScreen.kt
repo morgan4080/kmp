@@ -39,11 +39,14 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.presta.customer.MR
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.theme.actionButtonColor
 import composables.AllTransactionHistory
 import com.presta.customer.ui.composables.LoansTransactionHistory
 import com.presta.customer.ui.composables.SavingsTransactionHistory
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -192,7 +195,11 @@ fun TransactionHistoryScreen(component: TransactionHistoryComponent) {
 
                                         Tab(
                                             text = {
-                                                Text(text = title)
+                                                Text(text = title,
+                                                fontSize = 12.sp,
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                                    color = if (tabIndex == index) Color.White else MaterialTheme.colorScheme.onBackground
+                                                )
                                             },
                                             selected = tabIndex == index,
                                             onClick = {

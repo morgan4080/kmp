@@ -23,7 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
+import com.presta.customer.MR
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.CurrentSavingsContainer
 import com.presta.customer.ui.composables.NavigateBackTopBar
@@ -31,6 +33,7 @@ import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.theme.backArrowColor
 import com.presta.customer.ui.theme.labelTextColor
 import com.presta.customer.ui.composables.TransactionHistoryContainer
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
 fun SavingsScreen(component: SavingsComponent) {
@@ -67,7 +70,9 @@ fun SavingsScreen(component: SavingsComponent) {
                     Text(
                         modifier = Modifier,
                         text = "Enter Savings Amount",
-                        color = labelTextColor
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 14.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                     )
                     CurrentSavingsContainer()
 
@@ -78,7 +83,10 @@ fun SavingsScreen(component: SavingsComponent) {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "Transactions ")
+                        Text(text = "Transactions",
+                        fontSize = 14.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                        )
                         Row(verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.clickable {
                                 component.onSeeALlSelected()
@@ -87,16 +95,21 @@ fun SavingsScreen(component: SavingsComponent) {
 
                         ) {
                             Box(contentAlignment = Alignment.Center){
-                                Row(){
-                                    Text(text = "See all",
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier)
+                                Row(verticalAlignment = Alignment.CenterVertically){
+                                        Text(text = "See all",
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier,
+                                            fontSize = 12.sp)
+                                    Box(contentAlignment = Alignment.Center,
+                                    modifier = Modifier.align(Alignment.CenterVertically)){
+                                        Icon(
+                                            Icons.Filled.ArrowForward,
+                                            contentDescription = "Forward Arrow",
+                                            tint = backArrowColor,
 
-                                    Icon(
-                                        Icons.Filled.ArrowForward,
-                                        contentDescription = "Forward Arrow",
-                                        tint = backArrowColor,
-                                    )
+                                            )
+
+                                    }
 
                                 }
 

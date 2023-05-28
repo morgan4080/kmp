@@ -21,6 +21,7 @@ import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransact
 import com.presta.customer.ui.components.topUp.LoanTopUpScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.components.applyLoan.ui.ApplyLoanScreen
+import com.presta.customer.ui.components.payLoanPropmpt.PayLoanPromptScreen
 import components.modeofDisbursement.SelectModeOfDisbursementScreen
 import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionScreen
 import components.rootLoans.RootLoansComponent
@@ -49,6 +50,7 @@ fun RootLoansScreen(component: RootLoansComponent) {
                 is RootLoansComponent.ChildLoans.FailedTransactionChild-> FailedTransactionScreen(child.component)
                 is RootLoansComponent.ChildLoans.LoanTopUpChild-> LoanTopUpScreen(child.component)
                 is RootLoansComponent.ChildLoans.PayLoanChild-> PayLoanScreen(child.component)
+                is RootLoansComponent.ChildLoans.PayLoanPromptChild-> PayLoanPromptScreen(child.component)
 
             }
         }

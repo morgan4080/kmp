@@ -40,13 +40,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
 import com.presta.customer.ui.composables.ActionButton
+import com.presta.customer.ui.composables.LoanStatusContainer
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.Paginator
 import com.presta.customer.ui.composables.TextInputContainer
 import com.presta.customer.ui.composables.disbursementDetailsRow
 import com.presta.customer.ui.theme.backArrowColor
 import com.presta.customer.ui.theme.labelTextColor
-import com.presta.customer.ui.composables.LoanStatusContainer
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -86,10 +86,8 @@ fun PayLoanScreen(component: PayLoanComponent){
                     text = "My loans",
                     color = labelTextColor
                 )
-
-                LazyRow(modifier = Modifier
-                    .padding(vertical = 20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                LazyRow(modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                     state = stateLazyRow0,
                     flingBehavior = rememberSnapFlingBehavior(lazyListState = stateLazyRow0),
                     content = {
@@ -123,6 +121,7 @@ fun PayLoanScreen(component: PayLoanComponent){
                     .fillMaxWidth()
                     .padding(top = 35.dp)) {
                     ActionButton("Pay Now", onClickContainer = {
+                        component.onPaySelected()
 
                     })
 

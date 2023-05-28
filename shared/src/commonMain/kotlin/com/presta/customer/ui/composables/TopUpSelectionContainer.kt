@@ -43,10 +43,10 @@ fun TopUpSelectionContainer() {
                 checked = checkedState,
                 onCheckedChange = { checkedState = it },
                 modifier = Modifier.clip(shape = CircleShape)
-                    .background(color = MaterialTheme.colorScheme.secondaryContainer)
+                    .background(color = MaterialTheme.colorScheme.inverseOnSurface)
                     .height(20.dp)
                     .width(20.dp),
-                colors = CheckboxDefaults.colors(uncheckedColor = MaterialTheme.colorScheme.secondaryContainer)
+                colors = CheckboxDefaults.colors(uncheckedColor = MaterialTheme.colorScheme.inverseOnSurface)
             )
 
             Column(modifier = Modifier

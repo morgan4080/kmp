@@ -1,28 +1,39 @@
 package com.presta.customer.ui.composables
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.presta.customer.MR
+import com.presta.customer.ui.theme.labelTextColor
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
 fun LoanStatusContainer() {
-    ElevatedCard(modifier = Modifier.padding(top = 10.dp)) {
+    ElevatedCard(modifier = Modifier.fillMaxWidth()
+        .border(BorderStroke(1.dp,Color.White), shape = RoundedCornerShape(size = 12.dp))
+        .clip(RoundedCornerShape(size = 12.dp))
+        .absolutePadding(left = 2.dp, right = 2.dp, top = 10.dp, bottom = 5.dp)) {
         Box(
-            modifier = Modifier.background(color = Color.White)
+            modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.background)
         ) {
             Column(
                 modifier = Modifier.padding(
@@ -31,86 +42,109 @@ fun LoanStatusContainer() {
                     end = 19.5.dp,
                     bottom = 33.dp,
                 )
+                    .fillMaxWidth()
+
             ) {
-                Row(
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Text(
-                        text = "Emergency Loan",
-                        color = Color(0xFF8F8F8F.toInt()), // #002C56
-                        fontSize = 16.sp
-                    )
-
-                    Text(text = "1/3")
-
-                }
-                Row(
-                    modifier = Modifier
-                        .padding(top = 0.dp)
                         .fillMaxWidth()
                 ) {
-                    Text(
-                        text = "Kes, 50,000",
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Black
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .padding(top = 11.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column() {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.CenterEnd
+                    ) {
 
-                        Text(
-                            text = "Amount Due ",
-                            color = Color(0xFF8F8F8F.toInt()), // #002C56
-                        )
+                        Row(modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text(
+                                text = "Emergency Loan",
+                                fontSize = 12.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                            )
+                            Text(
+                                text = "1of 3",
+                                fontSize = 12.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                color = labelTextColor,
+                            )
 
-                        Text(
-                            text = "Kes 30,000",
-                            color = MaterialTheme.colorScheme.error, // #002C56
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                        )
+                        }
+
                     }
-                    Column() {
 
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 0.dp)
+                            .fillMaxWidth()
+                    ) {
                         Text(
-                            text = "Due",
-                            color = Color(0xFF8F8F8F.toInt()), // #002C56
-                        )
-
-                        Text(
-                            text = "12 May, 2023",
-                            color = MaterialTheme.colorScheme.onPrimaryContainer, // #002C56
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
+                            text = "Kes, 50,000",
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            fontSize = 20.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
                         )
                     }
 
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 11.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column() {
 
-                    Column() {
+                            Text(
+                                text = "Amount Due ",
+                                fontSize = 10.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                            )
 
-                        Text(
-                            text = "Status",
-                            color = Color(0xFF8F8F8F.toInt()), // #002C56
-                        )
+                            Text(
+                                text = "Kes 30,000",
+                                color = MaterialTheme.colorScheme.error, // #002C56
+                                fontSize = 12.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                            )
+                        }
+                        Column(modifier = Modifier.padding(start = 29.dp)) {
 
-                        Text(
-                            text = "Performing",
-                            color = MaterialTheme.colorScheme.onPrimaryContainer, // #002C56
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                        )
+                            Text(
+                                text = "Due ",
+                                fontSize = 10.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                            )
+
+                            Text(
+                                text = "12 May, 2023",
+                                color = MaterialTheme.colorScheme.onPrimaryContainer, // #002C56
+                                fontSize = 12.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                            )
+                        }
+
+
+                        Column(modifier = Modifier.padding(start = 29.dp)) {
+
+                            Text(
+                                text = "Status ",
+                                fontSize = 10.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                            )
+
+                            Text(
+                                text = "Performing",
+                                color = MaterialTheme.colorScheme.onPrimaryContainer, // #002C56
+                                fontSize = 12.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                            )
+                        }
                     }
                 }
             }
         }
     }
 }
+
+

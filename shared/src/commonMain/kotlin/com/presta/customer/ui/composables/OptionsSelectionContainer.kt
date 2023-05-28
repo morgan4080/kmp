@@ -1,19 +1,23 @@
 package com.presta.customer.ui.composables
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,15 +31,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.presta.customer.ui.theme.bankContainerColor
+import com.presta.customer.MR
+import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.labelTextColor
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OptionsSelectionContainer (label: String, description: String?=null, onClickContainer: () -> Unit){
+fun OptionsSelectionContainer(
+    label: String,
+    description: String? = null,
+    onClickContainer: () -> Unit
+) {
 
     var checkedState by remember { mutableStateOf(false) }
-
 
     ElevatedCard(
         onClick = {
@@ -44,22 +53,24 @@ fun OptionsSelectionContainer (label: String, description: String?=null, onClick
         },
 
         modifier = Modifier.fillMaxWidth()
-            .background(color = Color.White)
+            .background(color = MaterialTheme.colorScheme.background)
 
     ) {
-        Box(modifier = Modifier.background(color = bankContainerColor)) {
+        Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.inverseOnSurface)) {
             Row(
                 modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
                     .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically){
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
-                Column(){
+                Column() {
 
                     Text(
                         text = label,
                         modifier = Modifier.padding(start = 15.dp),
                         fontSize = 12.sp,
-                        color = labelTextColor
+                        color = labelTextColor,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                     )
                     //Spacer(modifier = Modifier.weight(1f))
                     if (description != null) {
@@ -67,36 +78,46 @@ fun OptionsSelectionContainer (label: String, description: String?=null, onClick
 
                             text = description,
                             modifier = Modifier.padding(start = 15.dp),
-                            fontSize = 12.sp,)
+                            fontSize = 12.sp,
+                        )
                     }
 
                 }
 
-                Row(){
-
+                Row() {
+                    //Created a Custom checkBox
                     Spacer(modifier = Modifier.weight(1f))
 
-
-                    Checkbox(
-                        checked =checkedState,
-                        onCheckedChange = { checkedState = it},
-                        modifier = Modifier.clip(shape = CircleShape)
-                            .background(color = MaterialTheme.colorScheme.secondaryContainer)
-                            .height(20.dp)
-                            .width(20.dp),
-                        colors = CheckboxDefaults.colors(uncheckedColor =  MaterialTheme.colorScheme.secondaryContainer)
-                    )
+                    Card(
+                        modifier = Modifier
+                            .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                            .clip(shape = CircleShape),
+                        elevation = CardDefaults.cardElevation(0.dp),
+                        border = BorderStroke(1.dp, color = if (checkedState) actionButtonColor else Color.Gray)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(19.dp)
+                                .background(if (checkedState) actionButtonColor else MaterialTheme.colorScheme.inverseOnSurface)
+                                .clickable {
+                                    checkedState = !checkedState
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (checkedState)
+                                Icon(
+                                    Icons.Default.Check,
+                                    contentDescription = "Check Box",
+                                    tint = Color.White,
+                                    modifier = Modifier.padding(1.dp)
+                                )
+                        }
+                    }
 
                     Spacer(modifier = Modifier.padding(end = 15.dp))
 
-
                 }
-
-
             }
-
-
         }
     }
-
 }

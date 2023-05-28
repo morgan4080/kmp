@@ -24,6 +24,8 @@ import com.presta.customer.ui.components.longTermLoans.LongTermLoansComponent
 import com.presta.customer.ui.components.modeofDisbursement.ModeOfDisbursementComponent
 import com.presta.customer.ui.components.payLoan.DefaultPayLoanComponent
 import com.presta.customer.ui.components.payLoan.PayLoanComponent
+import com.presta.customer.ui.components.payLoanPropmpt.DefaultPayLoanPromptComponent
+import com.presta.customer.ui.components.payLoanPropmpt.PayLoanPromptComponent
 import com.presta.customer.ui.components.processingTransaction.DefaultProcessingTransactionComponent
 import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
@@ -99,6 +101,9 @@ class DefaultRootLoansComponent(
         )
         is ConfigLoans.PayLoan -> RootLoansComponent.ChildLoans.PayLoanChild(
             payLoanComponent(componentContext)
+        )
+        is ConfigLoans.PayLoanPrompt -> RootLoansComponent.ChildLoans.PayLoanPromptChild(
+            payLoanPromptComponent(componentContext)
         )
 
 
@@ -235,10 +240,16 @@ class DefaultRootLoansComponent(
                 //push  to confirm Loan Details Screen
                 //Navigate to pay Loan child  a child Of loans
                 //Show  the Pay  Loan child first
-                loansNavigation.push(ConfigLoans.LoanConfirmation)
+                loansNavigation.push(ConfigLoans.PayLoanPrompt)
 
             }
         )
+
+    private fun payLoanPromptComponent(componentContext: ComponentContext):PayLoanPromptComponent =
+        DefaultPayLoanPromptComponent(
+            componentContext = componentContext,
+
+            )
 
     private sealed class ConfigLoans : Parcelable {
         @Parcelize
@@ -275,6 +286,8 @@ class DefaultRootLoansComponent(
         data class LoanTopUp(val refId: String) : ConfigLoans()
         @Parcelize
         data class PayLoan(val refId: String) : ConfigLoans()
+        @Parcelize
+        object PayLoanPrompt : ConfigLoans()
 
     }
 }

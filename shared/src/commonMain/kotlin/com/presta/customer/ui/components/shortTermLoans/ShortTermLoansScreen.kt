@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.ShortTermProductList
@@ -81,7 +82,8 @@ fun ShortTermLoansScreen(component: ShortTermLoansComponent, innerPadding:Paddin
 
                                     Tab(text = {
                                         Text(text = title,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                            fontSize = 12.sp
                                         )
                                     },
                                         selected = tabIndex == index,

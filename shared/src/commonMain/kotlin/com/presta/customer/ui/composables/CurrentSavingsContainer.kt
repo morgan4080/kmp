@@ -20,6 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.presta.customer.MR
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
 fun CurrentSavingsContainer(){
@@ -46,15 +48,16 @@ fun CurrentSavingsContainer(){
                 ) {
                     Text(
                         text = "Total Savings",
-                        color= Color(0xFF8F8F8F.toInt()), // #002C56
-                        fontSize = 16.sp)
+                        fontSize = 12.sp,
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                    )
                 }
                 Row (modifier = Modifier
                     .padding(top = 0.dp)
                     .fillMaxWidth()
                 ) {
                     Text(
-                        text = "Kes, 1000000,983.32",
+                        text = "Kes, 100,983.32",
                         color= MaterialTheme.colorScheme.onPrimaryContainer,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Black,

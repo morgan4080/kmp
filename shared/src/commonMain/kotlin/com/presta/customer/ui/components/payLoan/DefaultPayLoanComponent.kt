@@ -18,7 +18,7 @@ class DefaultPayLoanComponent(
 
     override val model: Value<PayLoanComponent.Model> = models
 
-    override fun onPaySelected(refId: String) {
+    override fun onPaySelected() {
      onPayClicked()
     }
 }

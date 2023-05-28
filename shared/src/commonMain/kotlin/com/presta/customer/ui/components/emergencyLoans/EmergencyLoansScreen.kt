@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.InputTypes
@@ -44,6 +45,8 @@ fun EmergencyLoansScreen(component: EmergencyLoansComponent) {
                 Text(
                     modifier = Modifier,
                     text = "Enter Loan  Amount",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 14.sp,
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                 )
                 //container Card

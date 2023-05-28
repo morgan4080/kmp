@@ -14,6 +14,7 @@ import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
 import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransactionComponent
 import com.presta.customer.ui.components.topUp.LoanTopUpComponent
 import com.presta.customer.ui.components.longTermLoans.LongTermLoansComponent
+import com.presta.customer.ui.components.payLoanPropmpt.PayLoanPromptComponent
 
 interface RootLoansComponent {
     val childLoansStack: Value<ChildStack<*, ChildLoans>>
@@ -38,6 +39,7 @@ interface RootLoansComponent {
         class FailedTransactionChild(val component: FailedTransactionComponent) : ChildLoans()
         class LoanTopUpChild(val component: LoanTopUpComponent) : ChildLoans()
         class PayLoanChild(val component: PayLoanComponent) : ChildLoans()
+        class PayLoanPromptChild(val component: PayLoanPromptComponent) : ChildLoans()
 
 
     }

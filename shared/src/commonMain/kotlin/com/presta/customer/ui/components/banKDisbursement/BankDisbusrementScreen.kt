@@ -25,8 +25,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
@@ -49,10 +51,14 @@ fun BankDisbursementScreen(component: BankDisbursementComponent) {
             .background(color = MaterialTheme.colorScheme.background),
         color = MaterialTheme.colorScheme.background
     ) {
-        Column(modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.background)) {
-            Row(modifier = Modifier
-                .fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.background)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
                 NavigateBackTopBar("Disbursement Method", onClickContainer = {
                     component.onBackNavSelected()
 
@@ -71,28 +77,40 @@ fun BankDisbursementScreen(component: BankDisbursementComponent) {
                     fontSize = 14.sp,
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                 )
-                Spacer(modifier = Modifier
-                    .padding(top = 25.dp))
+                Spacer(
+                    modifier = Modifier
+                        .padding(top = 25.dp)
+                )
 
                 //Select  banks  from the pop up
                 if (launchPopUp) {
                     Popup() {
                         // Composable to select The bank
-                        Column(modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight()
-                            .background(color = Color.Black.copy(alpha = 0.7f)),
-                            verticalArrangement = Arrangement.Center) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                                .background(color = Color.Black.copy(alpha = 0.7f)),
+                            verticalArrangement = Arrangement.Center
+                        ) {
                             ElevatedCard(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(start = 26.dp, end = 26.dp, top = 5.dp, bottom = 70.dp),
+                                    .fillMaxHeight(0.9f)
+                                    .padding(
+                                        start = 26.dp,
+                                        end = 26.dp,
+                                        top = 5.dp,
+                                        bottom = 90.dp
+                                    ),
                                 colors = CardDefaults
-                                    .elevatedCardColors(containerColor = MaterialTheme.colorScheme.background )
+                                    .elevatedCardColors(containerColor = MaterialTheme.colorScheme.background)
                             ) {
 
-                                Column(modifier = Modifier
-                                    .padding(start = 16.dp, end = 16.dp)) {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(start = 16.dp, end = 16.dp)
+                                ) {
 
                                     Text(
                                         "Select Bank",
@@ -109,44 +127,45 @@ fun BankDisbursementScreen(component: BankDisbursementComponent) {
                                         fontSize = 10.sp,
                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                     )
-                                    Column(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.7f)){
-                                        Column(modifier = Modifier
-                                            .fillMaxWidth()) {
+                                    Column(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.8f)) {
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                        ) {
 
                                             LazyColumn(
                                                 modifier = Modifier
                                                     .wrapContentHeight()
                                             ) {
 
-                                                items(7){
+                                                items(7) {
                                                     Row(
                                                         modifier = Modifier
                                                             .fillMaxWidth()
                                                             .background(color = Color.White)
-                                                            .padding(top = 10.dp, start = 16.dp, end = 16.dp)
+                                                            .padding(
+                                                                top = 10.dp,
+                                                                start = 16.dp,
+                                                                end = 16.dp
+                                                            )
                                                     ) {
-                                                        OptionsSelectionContainer("KCB", onClickContainer = {
+                                                        OptionsSelectionContainer(
+                                                            "KCB",
+                                                            onClickContainer = {
 
 
-                                                        })
-
+                                                            })
                                                     }
-
                                                 }
-
                                             }
-
                                         }
-
-
                                     }
-
                                 }
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(
-                                            top = 10.dp,
+                                            top = 20.dp,
                                             bottom = 20.dp,
                                             start = 16.dp,
                                             end = 16.dp
@@ -157,24 +176,33 @@ fun BankDisbursementScreen(component: BankDisbursementComponent) {
                                     OutlinedButton(
                                         border = BorderStroke(width = 1.dp, color = labelTextColor),
                                         onClick = {
-                                        launchPopUp = false
-                                    }, modifier = Modifier
-                                        .padding(start = 16.dp)
-                                            .height(30.dp),) {
+                                            launchPopUp = false
+                                        },
+                                        modifier = Modifier
+                                            .padding(start = 16.dp)
+                                            .height(30.dp),
+                                    ) {
 
                                         Text(
                                             text = "Dismiss",
                                             fontSize = 11.sp,
-                                            color = labelTextColor
+                                            color = labelTextColor,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.align(Alignment.CenterVertically),
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                         )
 
                                     }
                                     OutlinedButton(
                                         colors = ButtonDefaults.outlinedButtonColors(containerColor = actionButtonColor),
-                                        border = BorderStroke(width = 0.dp, color = actionButtonColor),
+                                        border = BorderStroke(
+                                            width = 0.dp,
+                                            color = actionButtonColor
+                                        ),
                                         onClick = {
                                             launchPopUp = false
-                                        }, modifier = Modifier
+                                        },
+                                        modifier = Modifier
                                             .padding(end = 16.dp)
                                             .height(30.dp),
                                     ) {
@@ -183,20 +211,23 @@ fun BankDisbursementScreen(component: BankDisbursementComponent) {
                                             text = "Proceed",
                                             color = Color.White,
                                             fontSize = 11.sp,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.align(Alignment.CenterVertically),
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
 
-                                        )
+                                            )
                                     }
                                 }
                             }
-
                         }
-
                     }
                 }
 
-                Row(modifier = Modifier
-                    .fillMaxWidth()){
-                    ProductSelectionCard2("Select Bank",onClickContainer = {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    ProductSelectionCard2("Select Bank", onClickContainer = {
                         //Business  Logic
                         //banK details pop up card
                         launchPopUp = true
@@ -204,15 +235,19 @@ fun BankDisbursementScreen(component: BankDisbursementComponent) {
                     })
 
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp)){
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp)
+                ) {
                     ProductSelectionCard2("Account Number", onClickContainer = {
                         //Business  Logic
                     })
                 }
-                Spacer(modifier = Modifier
-                    .padding(top = 60.dp))
+                Spacer(
+                    modifier = Modifier
+                        .padding(top = 60.dp)
+                )
                 ActionButton("Proceed", onClickContainer = {
                     //Navigate to process The  Transaction and show  success or  failed Transaction
                     component.onConfirmSelected()

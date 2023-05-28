@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import com.presta.customer.MR
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.NavigateBackTopBar
@@ -32,6 +33,7 @@ import com.presta.customer.ui.composables.ProductSelectionCard2
 import com.presta.customer.ui.composables.TextInputContainer
 import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.labelTextColor
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,7 +65,9 @@ fun AddSavingsScreen(component: AddSavingsComponent, innerPadding: PaddingValues
                 Text(
                     modifier = Modifier,
                     text = "Enter Savings Details",
-                    color = labelTextColor
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 14.sp,
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                 )
                 //select savings Pop up
                 //Added overlay  to the po up screen

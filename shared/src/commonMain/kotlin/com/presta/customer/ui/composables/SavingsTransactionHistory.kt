@@ -10,6 +10,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.presta.customer.MR
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
 
@@ -19,7 +22,10 @@ fun SavingsTransactionHistory() {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.padding(top = 20.dp)) {
 
-            Text(text = "Savings")
+            Text(text = "Savings",
+            fontSize = 14.sp,
+            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+            )
         }
 
         LazyColumn(

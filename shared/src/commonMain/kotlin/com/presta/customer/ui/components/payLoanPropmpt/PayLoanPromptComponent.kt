@@ -1,16 +1,14 @@
-package com.presta.customer.ui.components.payLoan
+package com.presta.customer.ui.components.payLoanPropmpt
 
 import com.arkivanov.decompose.value.Value
 
-interface PayLoanComponent {
+interface PayLoanPromptComponent {
 
     val model: Value<Model>
 
-    fun onPaySelected()
+    fun onSelected(item: String)
 
     data class Model(
         val items: List<String>,
     )
-
-
 }
