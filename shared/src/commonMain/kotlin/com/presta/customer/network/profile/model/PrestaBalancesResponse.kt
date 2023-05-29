@@ -9,5 +9,6 @@ data class  PrestaBalancesResponse(
     val sharesBalance: Double,
     val sharesCount: Int,
     val savingsTotalAmount: Double,
-    val pricePerShare: Double
+    val pricePerShare: Double,
 )
+

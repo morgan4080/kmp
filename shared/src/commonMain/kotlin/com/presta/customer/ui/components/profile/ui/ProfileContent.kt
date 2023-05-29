@@ -1,6 +1,11 @@
 package com.presta.customer.ui.components.profile.ui
 
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,6 +21,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -49,6 +56,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
@@ -57,6 +66,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.network.profile.model.PostingType
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.profile.store.ProfileStore
 import com.presta.customer.ui.composables.ActionButton
@@ -69,10 +79,6 @@ import kotlinx.coroutines.launch
 
 data class QuickLinks(val labelTop: String, val labelBottom: String, val icon: ImageVector)
 data class Transactions(
-    val label: String,
-    val code: String,
-    val amount: String,
-    val date: String,
     val icon: ImageVector
 )
 
@@ -526,26 +532,12 @@ fun ProfileContent(
                 Column(modifier = Modifier.padding(top = 16.dp)) {
                     //add  data  from the apI and display the  list of data  as per the set data size
                     //To Determine the color of the icon use the  state of data from the api
-                    val purposes: String = "LOANREPAYMENT"
-                    val purposeData: String = state.transactionHistory?.purpose.toString()
-                    val TransactionId: String = state.transactionHistory?.transactionId.toString()
 
                     val transactionList = mutableListOf(
                         Transactions(
-                            "Savings Deposit",
-                            TransactionId,
-                            "15,000",
-                            "12 May 2020, 12:23 PM",
                             Icons.Filled.OpenInNew
                         ),
-                        Transactions(
-                            "Loan disbursed",
-                            "TRGHJK123LL",
-                            "5,000",
-                            "12 May 2020, 12:23 PM",
-                            Icons.Filled.OpenInNew
-                        )
-
+                        
                     )
                     transactionList.forEach { transaction ->
                         Row(
@@ -560,7 +552,7 @@ fun ProfileContent(
                                     IconButton(
                                         modifier = Modifier
                                             .clip(CircleShape)
-                                            .background(if (purposeData == purposes) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer)
+                                            .background(if (state.transactionHistory?.postingType==PostingType.CR) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer)
                                             .size(30.dp),
                                         onClick = {
 
@@ -568,29 +560,35 @@ fun ProfileContent(
                                         content = {
                                             Icon(
                                                 imageVector = transaction.icon,
-                                                modifier = if (purposeData == purposes) Modifier.size(
+                                                modifier = if (state.transactionHistory?.postingType==PostingType.CR) Modifier.size(
                                                     15.dp
                                                 )
                                                     .rotate(180F) else Modifier.size(15.dp),
                                                 contentDescription = null,
-                                                tint = if (purposeData == purposes) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
+                                                tint = if (state.transactionHistory?.postingType==PostingType.CR) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
                                             )
                                         }
                                     )
                                 }
                                 Column {
+                                    val showShimmer = remember { mutableStateOf(true) }
                                     Text(
-                                        text = transaction.label,
+                                        text =  if (state.transactionHistory !== null) state.transactionHistory.purpose else "",
                                         color = MaterialTheme.colorScheme.onBackground,
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Medium
                                     )
+                                    // show shimmer in data loading  state
 
                                     Text(
-                                        text = transaction.code,
+                                        text = if (state.transactionHistory !== null) state.transactionHistory.transactionId else "",
                                         color = MaterialTheme.colorScheme.onBackground,
                                         fontSize = 10.sp,
-                                        fontFamily = fontFamilyResource(fontResource = MR.fonts.Poppins.regular)
+                                        fontFamily = fontFamilyResource(fontResource = MR.fonts.Poppins.regular),
+                                        modifier = Modifier
+                                            .background(shimmerBrush(targetValue = 1300f, showShimmer = showShimmer.value))
+                                            .width(100.dp)
+
                                     )
                                 }
                             }
@@ -598,13 +596,13 @@ fun ProfileContent(
                             Column {
                                 Text(
                                     modifier = Modifier.align(Alignment.End),
-                                    text = transaction.amount,
+                                    text =  if (state.transactionHistory !== null) state.transactionHistory.amount.toString() else "0.00",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
-                                    text = transaction.date,
+                                    text =if (state.transactionHistory !== null) state.transactionHistory.transactionDate else "",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 10.sp,
                                     fontFamily = fontFamilyResource(fontResource = MR.fonts.Poppins.regular)
@@ -615,5 +613,39 @@ fun ProfileContent(
                 }
             }
         }
+    }
+}
+
+
+
+//Shimmer View
+@Composable
+fun shimmerBrush(showShimmer: Boolean = true,targetValue:Float = 1000f): Brush {
+    return if (showShimmer) {
+        val shimmerColors = listOf(
+            Color.LightGray.copy(alpha = 0.6f),
+            Color.LightGray.copy(alpha = 0.2f),
+            Color.LightGray.copy(alpha = 0.6f),
+        )
+
+        val transition = rememberInfiniteTransition()
+        val translateAnimation = transition.animateFloat(
+            initialValue = 0f,
+            targetValue = targetValue,
+            animationSpec = infiniteRepeatable(
+                animation = tween(800), repeatMode = RepeatMode.Reverse
+            )
+        )
+        Brush.linearGradient(
+            colors = shimmerColors,
+            start = Offset.Zero,
+            end = Offset(x = translateAnimation.value, y = translateAnimation.value)
+        )
+    } else {
+        Brush.linearGradient(
+            colors = listOf(Color.Transparent,Color.Transparent),
+            start = Offset.Zero,
+            end = Offset.Zero
+        )
     }
 }
