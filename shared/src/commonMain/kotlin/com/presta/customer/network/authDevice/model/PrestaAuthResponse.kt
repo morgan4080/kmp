@@ -9,6 +9,10 @@ data class PrestaLogInResponse (
     val refresh_token: String
 )
 @Serializable
+data class RefreshTokenResponse (
+    val access_token: String
+)
+@Serializable
 data class AuthUserRoles(
     val realm: List<String>,
     val account: List<String>

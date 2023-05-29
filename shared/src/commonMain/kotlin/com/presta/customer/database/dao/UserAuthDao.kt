@@ -11,11 +11,18 @@ class UserAuthDao(
     private val query get() = prestaCustomerDatabase.userAuthEntityQueries
 
     suspend fun selectUserAuthCredentials() = withContext(prestaDispatchers.io) {
-        query.getAccessToken().executeAsList()
+        query.getUserAuthCredentials().executeAsList()
     }
 
-    suspend fun removeAccessToken() = withContext(prestaDispatchers.io) {
-        query.removeAccessToken()
+    suspend fun removeUserAuthCredentials() = withContext(prestaDispatchers.io) {
+        query.removeUserAuthCredentials()
+    }
+
+    suspend fun updateAccessToken(accessToken: String, refId: String) = withContext(prestaDispatchers.io) {
+        query.updateAccessToken(
+            access_token = accessToken,
+            refId = refId,
+        )
     }
 
     suspend fun insert(access_token: String, refresh_token: String, refId: String, registrationFees: Double, registrationFeeStatus: String, phoneNumber: String) = withContext(prestaDispatchers.io) {

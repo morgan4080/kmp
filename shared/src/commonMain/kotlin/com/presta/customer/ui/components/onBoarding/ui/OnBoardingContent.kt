@@ -132,7 +132,7 @@ fun OnBoardingContent(
         }
     }
 
-    if (state.member !== null && state.member.refId == null) {
+    if (state.member !== null && state.member.refId == null && !startRegistration) {
         LaunchedEffect(state.member) {
             snackbarHostState.showSnackbar(
                 "User not registered proceeding to registration"

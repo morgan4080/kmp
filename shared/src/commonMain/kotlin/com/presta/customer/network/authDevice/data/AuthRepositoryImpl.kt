@@ -4,6 +4,7 @@ import com.presta.customer.database.dao.UserAuthDao
 import com.presta.customer.network.authDevice.client.PrestaAuthClient
 import com.presta.customer.network.authDevice.model.PrestaCheckAuthUserResponse
 import com.presta.customer.network.authDevice.model.PrestaLogInResponse
+import com.presta.customer.network.authDevice.model.RefreshTokenResponse
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -26,7 +27,7 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
                 tenantId
             )
 
-            userAuthDao.removeAccessToken()
+            userAuthDao.removeUserAuthCredentials()
 
             userAuthDao.insert(
                 access_token = response.access_token,
@@ -41,7 +42,34 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
 
         } catch (e: Exception) {
 
-            println("::::::: Auth Repository exception")
+            e.printStackTrace()
+
+            Result.failure(e)
+
+        }
+    }
+
+    override suspend fun updateAuthToken(tenantId: String, refId: String): Result<RefreshTokenResponse> {
+        return try {
+
+            var refreshToken = ""
+
+            userAuthDao.selectUserAuthCredentials().map {
+                refreshToken = it.refresh_token
+            }
+
+            val response = prestaAuthClient.updateAuthToken(
+                refreshToken = refreshToken,
+                tenantId = tenantId
+            )
+
+            userAuthDao.updateAccessToken(
+                response.access_token,
+                refId
+            )
+
+            Result.success(response)
+        } catch (e: Exception) {
 
             e.printStackTrace()
 

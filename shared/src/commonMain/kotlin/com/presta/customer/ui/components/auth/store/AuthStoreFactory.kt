@@ -8,6 +8,7 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.authDevice.data.AuthRepository
 import com.presta.customer.network.authDevice.model.PrestaCheckAuthUserResponse
 import com.presta.customer.network.authDevice.model.PrestaLogInResponse
+import com.presta.customer.network.authDevice.model.RefreshTokenResponse
 import com.presta.customer.network.onBoarding.model.PinStatus
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -45,6 +46,7 @@ internal class AuthStoreFactory(
             val error: String?
         ) : Msg()
         data class LoginFulfilled(val logInResponse: PrestaLogInResponse) : Msg()
+        data class RefreshFulfilled(val refreshResponse: RefreshTokenResponse) : Msg()
 
         data class CheckAuthenticatedUserLoaded(val authUserResponse: PrestaCheckAuthUserResponse): Msg()
         data class AuthFailed(val error: String?) : Msg()
@@ -80,6 +82,7 @@ internal class AuthStoreFactory(
                     pinConfirmed = intent.pinConfirmed,
                     error = intent.error,
                 ))
+                is AuthStore.Intent.RefreshToken -> updateAuthToken(intent.tenantId,intent.refId)
             }
 
         private var loginUserJob: Job? = null
@@ -151,6 +154,24 @@ internal class AuthStoreFactory(
                 ))
             }
         }
+
+        private var updateAuthTokenJob: Job? = null
+
+        private fun updateAuthToken(tenantId: String, refId: String) {
+            if (updateAuthTokenJob?.isActive == true) return
+
+            dispatch(Msg.AuthLoading())
+
+            updateAuthTokenJob = scope.launch {
+               authRepository.updateAuthToken(tenantId, refId)
+                   .onSuccess { response ->
+                       dispatch(Msg.RefreshFulfilled(response))
+                   }
+                   .onFailure { e ->
+                       dispatch(Msg.AuthFailed(e.message))
+                   }
+            }
+        }
     }
 
     private object ReducerImpl: Reducer<AuthStore.State, Msg> {
@@ -173,6 +194,7 @@ internal class AuthStoreFactory(
                     error = msg.error
                 )
                 is Msg.LoginFulfilled -> copy(loginResponse = msg.logInResponse)
+                is Msg.RefreshFulfilled -> copy(refreshTokenResponse = msg.refreshResponse)
                 is Msg.AuthFailed -> copy(error = msg.error)
                 is Msg.CachedMemberData -> copy(cachedMemberData = CachedMemberData(
                     msg.accessToken,

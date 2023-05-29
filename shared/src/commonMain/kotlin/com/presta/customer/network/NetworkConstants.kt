@@ -18,6 +18,10 @@ object NetworkConstants {
         const val route = applicationsBaseUrl + "authentication"
     }
 
+    object PrestaRefreshToken{
+        const val route = applicationsBaseUrl + "authentication/renew-token"
+    }
+
     object PrestaCheckAuthUser {
         const val route = accountsBaseUrl + "authentication"
     }

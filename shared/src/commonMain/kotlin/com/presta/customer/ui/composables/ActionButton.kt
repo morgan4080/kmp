@@ -25,10 +25,10 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun  ActionButton(label: String, onClickContainer: () -> Unit, loading: Boolean = false) {
+fun  ActionButton(label: String, onClickContainer: () -> Unit, loading: Boolean = false, enabled: Boolean = true) {
 
-    ElevatedCard (onClick = { if (!loading) onClickContainer() },
-        modifier = Modifier.fillMaxWidth().alpha(if (!loading) 1f else 0.5f),
+    ElevatedCard (onClick = { if (!loading && enabled) onClickContainer() },
+        modifier = Modifier.fillMaxWidth().alpha(if (!loading && enabled) 1f else 0.5f),
         colors = CardDefaults.cardColors(containerColor = actionButtonColor)
     ) {
         Row (modifier = Modifier

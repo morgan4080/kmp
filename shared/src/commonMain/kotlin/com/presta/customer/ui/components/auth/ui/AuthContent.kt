@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -48,7 +49,7 @@ import com.presta.customer.ui.components.onBoarding.store.OnBoardingStore
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun AuthContent(
     state: AuthStore.State,
@@ -103,8 +104,7 @@ fun AuthContent(
         }
     }
 
-    LaunchedEffect(pinInput.length, state.phoneNumber, state.access_token, onBoardingState.member) {
-        // TODO state.access_token != null &&
+    LaunchedEffect(pinInput.length, state.phoneNumber, onBoardingState.member) {
         if (
             pinInput.length == maxChar &&
             state.phoneNumber != null &&

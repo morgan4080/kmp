@@ -40,7 +40,8 @@ class RegistrationStoreFactory(
         data class PrimeRegistration(val phoneNumber: String, val isTermsAccepted: Boolean, val isActive: Boolean, val onBoardingContext: DefaultRootComponent.OnBoardingContext, val pinStatus: PinStatus?) : Msg()
         data class RegistrationLoaded(val registrationResponse: PrestaRegistrationResponse) : Msg()
         data class RegistrationFailed(val error: String?) : Msg()
-        data class UpdateInputValue(val index: Int, val value: String) : Msg()
+        object ClearError: Msg()
+        data class UpdateInputValue(val inputField: InputFields, val value: TextFieldValue) : Msg()
     }
 
     private inner class ExecutorImpl : CoroutineExecutor<RegistrationStore.Intent, Unit, RegistrationStore.State, Msg, Nothing>(
@@ -67,10 +68,12 @@ class RegistrationStoreFactory(
                 is RegistrationStore.Intent.UpdateInputValue ->
                     dispatch(
                         Msg.UpdateInputValue(
-                            index = intent.index,
+                            inputField = intent.inputField,
                             value = intent.value
                         )
                     )
+                is RegistrationStore.Intent.ClearError ->
+                    dispatch(Msg.ClearError)
             }
 
         private var createMemberJob: Job? = null
@@ -121,12 +124,107 @@ class RegistrationStoreFactory(
                     pinStatus = msg.pinStatus
                 )
                 is Msg.RegistrationFailed -> copy(error = msg.error)
-                is Msg.UpdateInputValue -> copy(inputs = inputs.mapIndexed { index, inputMethod ->
-                    if (index == msg.index) {
-                        inputMethod.value = TextFieldValue(msg.value)
+                is Msg.UpdateInputValue -> {
+                    when(msg.inputField) {
+                        InputFields.FIRST_NAME -> {
+                            // validate first name
+                            val pattern = Regex("^([a-zA-Z]+)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && firstName.required) {
+                                errorMsg = "First name is required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "Not a valid first name."
+                                }
+                            }
+                            copy(
+                                firstName = firstName.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                )
+                            )
+                        }
+
+                        InputFields.LAST_NAME -> {
+                            // validate last name
+                            val pattern = Regex("^([a-zA-Z]+)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && lastName.required) {
+                                errorMsg = "Last name is required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "Not a valid last name."
+                                }
+                            }
+                            copy(
+                                lastName = lastName.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                )
+                            )
+                        }
+
+                        InputFields.EMAIL -> {
+                            // validate email
+                            val pattern = Regex("(?:[a-z0-9!#\$%&'*+/=?^_`{|}~\\-]+(?:\\.[a-z0-9!#\$%&'*+/=?^_`{|}~\\-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)])")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && email.required) {
+                                errorMsg = "Email is required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "Not a valid email address"
+                                }
+                            }
+                            copy(
+                                email = email.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                )
+                            )
+                        }
+
+                        InputFields.ID_NUMBER -> {
+                            // validate id number
+                            val pattern = Regex("^([0-9]+)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && idNumber.required) {
+                                errorMsg = "ID number is required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "Not a valid id number"
+                                }
+                            }
+                            copy(
+                                idNumber = idNumber.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                )
+                            )
+                        }
+
+                        InputFields.INTRODUCER -> {
+                            // validate introducer
+                            val pattern = Regex("^([0-9]+)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && introducer.required) {
+                                errorMsg = "Introducer ID number is required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "Not a valid introducer id number"
+                                }
+                            }
+                            copy(
+                                introducer = introducer.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                )
+                            )
+                        }
                     }
-                    inputMethod
-                })
+                }
+                is Msg.ClearError -> copy(
+                    error = null
+                )
                 is Msg.RegistrationLoaded -> copy(registrationResponse = msg.registrationResponse)
             }
     }

@@ -6,6 +6,7 @@ import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.registration.model.PrestaRegistrationResponse
 import com.presta.customer.ui.components.root.DefaultRootComponent
 import com.presta.customer.ui.composables.InputTypes
+import io.ktor.utils.io.core.Input
 
 
 enum class InputFields {
@@ -31,9 +32,11 @@ interface RegistrationStore: Store<RegistrationStore.Intent, RegistrationStore.S
         ): Intent()
 
         data class UpdateInputValue(
-            val index: Int,
-            val value: String
+            val inputField: InputFields,
+            val value: TextFieldValue
         ): Intent()
+
+        object ClearError: Intent()
     }
 
     data class State(
@@ -42,47 +45,45 @@ interface RegistrationStore: Store<RegistrationStore.Intent, RegistrationStore.S
         val registrationResponse: PrestaRegistrationResponse? = null,
         val label: String = "Let us know a bit more so we can help you get started.",
         val title: String = "Let's create the best experience for you",
-        val inputs: List<InputMethod> = listOf(
-            InputMethod(
-                inputLabel = "First Name*",
-                fieldType = InputFields.FIRST_NAME,
-                inputTypes = InputTypes.STRING,
-                required = true,
-                value = TextFieldValue(),
-                errorMessage = ""
-            ),
-            InputMethod(
-                inputLabel = "Last Name*",
-                fieldType = InputFields.LAST_NAME,
-                inputTypes = InputTypes.STRING,
-                required = true,
-                value = TextFieldValue(),
-                errorMessage = ""
-            ),
-            InputMethod(
-                inputLabel = "Email*",
-                fieldType = InputFields.EMAIL,
-                inputTypes = InputTypes.STRING,
-                required = true,
-                value = TextFieldValue(),
-                errorMessage = ""
-            ),
-            InputMethod(
-                inputLabel = "ID Number*",
-                fieldType = InputFields.ID_NUMBER,
-                inputTypes = InputTypes.NUMBER,
-                required = true,
-                value = TextFieldValue(),
-                errorMessage = ""
-            ),
-            InputMethod(
-                inputLabel = "Introducer",
-                fieldType = InputFields.INTRODUCER,
-                inputTypes = InputTypes.STRING,
-                required = true,
-                value = TextFieldValue(),
-                errorMessage = ""
-            ),
+        val firstName: InputMethod = InputMethod(
+            inputLabel = "First Name*",
+            fieldType = InputFields.FIRST_NAME,
+            inputTypes = InputTypes.STRING,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = ""
+        ),
+        var lastName: InputMethod = InputMethod(
+            inputLabel = "Last Name*",
+            fieldType = InputFields.LAST_NAME,
+            inputTypes = InputTypes.STRING,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = ""
+        ),
+        val email:  InputMethod = InputMethod(
+            inputLabel = "Email*",
+            fieldType = InputFields.EMAIL,
+            inputTypes = InputTypes.STRING,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = ""
+        ),
+        val idNumber: InputMethod = InputMethod(
+            inputLabel = "ID Number*",
+            fieldType = InputFields.ID_NUMBER,
+            inputTypes = InputTypes.NUMBER,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = ""
+        ),
+        val introducer: InputMethod = InputMethod(
+            inputLabel = "Introducer ID NO.",
+            fieldType = InputFields.INTRODUCER,
+            inputTypes = InputTypes.NUMBER,
+            required = false,
+            value = TextFieldValue(),
+            errorMessage = ""
         ),
         val phoneNumber: String? = null,
         val isTermsAccepted: Boolean = true,

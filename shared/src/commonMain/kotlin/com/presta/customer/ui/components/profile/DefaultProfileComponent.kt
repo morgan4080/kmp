@@ -8,6 +8,7 @@ import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.network.onBoarding.model.PinStatus
+import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import kotlinx.coroutines.CoroutineScope
@@ -71,6 +72,7 @@ class DefaultProfileComponent(
     }
 
     init {
+        // get chached member data from db includes cached auth_token
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
 
         scope.launch {
@@ -79,9 +81,15 @@ class DefaultProfileComponent(
                     onAuthEvent(AuthStore.Intent.CheckAuthenticatedUser(
                         token = state.cachedMemberData.accessToken
                     ))
+
+                    // refresh auth token on init of every component to ensure access token is ready for all calls
+
+                    onAuthEvent(AuthStore.Intent.RefreshToken(
+                        tenantId = OrganisationModel.organisation.tenant_id,
+                        refId = state.cachedMemberData.refId
+                    ))
                 }
             }
-
         }
     }
 }
