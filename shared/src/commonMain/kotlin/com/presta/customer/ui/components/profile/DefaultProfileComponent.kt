@@ -84,10 +84,10 @@ class DefaultProfileComponent(
 
                     // refresh auth token on init of every component to ensure access token is ready for all calls
 
-                    onAuthEvent(AuthStore.Intent.RefreshToken(
+                    /*onAuthEvent(AuthStore.Intent.RefreshToken(
                         tenantId = OrganisationModel.organisation.tenant_id,
                         refId = state.cachedMemberData.refId
-                    ))
+                    ))*/
                 }
             }
         }
