@@ -17,8 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.presta.customer.MR
 import com.presta.customer.ui.theme.actionButtonColor
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,17 +43,19 @@ fun  ActionButton(label: String, onClickContainer: () -> Unit, loading: Boolean 
                     color = Color.White
                 )
             }
-            Text(text = label,
+            Text(
+                text = label,
                 modifier = Modifier.padding(start = 5.dp),
                 style = TextStyle(
                     color = Color.White,
-                    fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
+                    fontWeight = MaterialTheme.typography.labelMedium.fontWeight,
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                     fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
                     letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
                     lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
                     fontFamily = MaterialTheme.typography.bodyLarge.fontFamily
-                )
+                ),
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
             )
         }
     }

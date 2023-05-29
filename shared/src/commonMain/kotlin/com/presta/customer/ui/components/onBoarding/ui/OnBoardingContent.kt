@@ -39,8 +39,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
-import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.onBoarding.store.IdentifierTypes
 import com.presta.customer.ui.components.onBoarding.store.InputFields
 import com.presta.customer.ui.components.onBoarding.store.OnBoardingStore
@@ -49,10 +49,10 @@ import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.CountriesSearch
 import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.TextInputContainer
-import dev.icerock.moko.resources.compose.fontFamilyResource
-import dev.icerock.moko.resources.compose.painterResource
 import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.helpers.isPhoneNumber
+import dev.icerock.moko.resources.compose.fontFamilyResource
+import dev.icerock.moko.resources.compose.painterResource
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class,
@@ -61,10 +61,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun OnBoardingContent(
     state: OnBoardingStore.State,
-    authState: AuthStore.State,
     onEvent: (OnBoardingStore.Intent) -> Unit,
-    onAuthEvent: (AuthStore.Intent) -> Unit,
-    navigate: (memberRefId: String?, phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean,  onBoardingContext: DefaultRootComponent.OnBoardingContext) -> Unit
+    navigate: (memberRefId: String?, phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean,  onBoardingContext: DefaultRootComponent.OnBoardingContext, pinStatus: PinStatus?) -> Unit
 ) {
     val scaffoldState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden
@@ -80,22 +78,13 @@ fun OnBoardingContent(
     val kc = LocalSoftwareKeyboardController.current
     val snackbarHostState = remember { SnackbarHostState() }
 
-    authState.error?.let {
-        LaunchedEffect(authState.error) {
-            snackbarHostState.showSnackbar(
-                it
-            )
-            onAuthEvent(AuthStore.Intent.UpdateError(null))
-        }
-    }
-
     fun startLoginJourney() {
         if (!termsAccepted) {
             onEvent(OnBoardingStore.Intent.UpdateError("Kindly accept terms"))
             return
         }
 
-        // TODO IF NOT OPEN TO PUBLIC authState.access_token !== null
+
         if (isPhoneNumber(phoneNumber.text)) {
             onEvent(OnBoardingStore.Intent.UpdateError(null))
             onEvent(OnBoardingStore.Intent.GetMemberDetails(
@@ -114,7 +103,7 @@ fun OnBoardingContent(
             onEvent(OnBoardingStore.Intent.UpdateError("Kindly accept terms"))
             return
         }
-        // TODO authState.access_token !== null
+
         if (isPhoneNumber(phoneNumber.text)) {
             onEvent(OnBoardingStore.Intent.UpdateError(null))
             onEvent(OnBoardingStore.Intent.GetMemberDetails(
@@ -135,7 +124,9 @@ fun OnBoardingContent(
                 "${state.country.code}${phoneNumber.text}",
                 true,
                 true,
-                DefaultRootComponent.OnBoardingContext.LOGIN
+                DefaultRootComponent.OnBoardingContext.LOGIN,
+                state.member.authenticationInfo.pinStatus
+            // pin status
             )
             onEvent(OnBoardingStore.Intent.ClearMember(null))
         }
@@ -163,7 +154,8 @@ fun OnBoardingContent(
                 "${state.country.code}${phoneNumber.text}",
                 false,
                 false,
-                DefaultRootComponent.OnBoardingContext.REGISTRATION
+                DefaultRootComponent.OnBoardingContext.REGISTRATION,
+                state.member.authenticationInfo.pinStatus
             )
         }
     }
@@ -192,8 +184,9 @@ fun OnBoardingContent(
             ) {
                 item {
                     Row (
-                        modifier = Modifier.padding(top = 30.dp, bottom = 50.dp),
-                        horizontalArrangement = Arrangement.Center
+                        modifier = Modifier.fillParentMaxHeight(0.3f),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         val painter: Painter = painterResource(state.organisation.logo)
 
@@ -322,7 +315,7 @@ fun OnBoardingContent(
                                 DefaultRootComponent.OnBoardingContext.REGISTRATION -> startRegistrationJourney()
                                 DefaultRootComponent.OnBoardingContext.LOGIN -> startLoginJourney()
                             }
-                        }, loading = state.isLoading || authState.isLoading)
+                        }, loading = state.isLoading)
                     }
                 }
 

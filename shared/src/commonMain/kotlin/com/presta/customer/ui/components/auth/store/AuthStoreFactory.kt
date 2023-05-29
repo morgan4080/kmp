@@ -8,6 +8,7 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.authDevice.data.AuthRepository
 import com.presta.customer.network.authDevice.model.PrestaCheckAuthUserResponse
 import com.presta.customer.network.authDevice.model.PrestaLogInResponse
+import com.presta.customer.network.onBoarding.model.PinStatus
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -17,6 +18,7 @@ import prestaDispatchers
 internal class AuthStoreFactory(
     private val storeFactory: StoreFactory,
     private val phoneNumber: String?,
+    private val pinStatus: PinStatus?,
     private val isTermsAccepted: Boolean,
     private val isActive: Boolean,
 ): KoinComponent {
@@ -33,7 +35,7 @@ internal class AuthStoreFactory(
 
     private sealed class Msg {
         data class AuthLoading(val isLoading: Boolean = true) : Msg()
-        data class AuthInitData(val phoneNumber: String?, val isTermsAccepted: Boolean, val isActive: Boolean) : Msg()
+        data class AuthInitData(val phoneNumber: String?, val isTermsAccepted: Boolean, val isActive: Boolean, val pinStatus: PinStatus?) : Msg()
         data class UpdateContext(
             val context: Contexts,
             val title: String,
@@ -47,14 +49,14 @@ internal class AuthStoreFactory(
         data class CheckAuthenticatedUserLoaded(val authUserResponse: PrestaCheckAuthUserResponse): Msg()
         data class AuthFailed(val error: String?) : Msg()
 
-        data class CachedMemberData(val accessToken: String, val refreshToken: String, val refId: String, val registrationFees: Double, val registrationFeeStatus: String): Msg()
+        data class CachedMemberData(val accessToken: String, val refreshToken: String, val refId: String, val registrationFees: Double, val registrationFeeStatus: String, val phoneNumber: String): Msg()
     }
 
     private inner class ExecutorImpl : CoroutineExecutor<AuthStore.Intent, Unit, AuthStore.State, Msg, Nothing>(
         prestaDispatchers.main
     ) {
         override fun executeAction(action: Unit, getState: () -> AuthStore.State) {
-            dispatch(Msg.AuthInitData(phoneNumber, isTermsAccepted, isActive))
+            dispatch(Msg.AuthInitData(phoneNumber, isTermsAccepted, isActive, pinStatus))
         }
 
         override fun executeIntent(intent: AuthStore.Intent, getState: () -> AuthStore.State): Unit =
@@ -145,6 +147,7 @@ internal class AuthStoreFactory(
                     refId = response.refId,
                     registrationFees = response.registrationFees,
                     registrationFeeStatus = response.registrationFeeStatus,
+                    phoneNumber = response.phoneNumber,
                 ))
             }
         }
@@ -158,7 +161,8 @@ internal class AuthStoreFactory(
                 is Msg.AuthInitData -> copy(
                     phoneNumber = msg.phoneNumber,
                     isTermsAccepted = msg.isTermsAccepted,
-                    isActive = msg.isActive
+                    isActive = msg.isActive,
+                    pinStatus =msg.pinStatus
                 )
                 is Msg.UpdateContext -> copy(
                     context = msg.context,
@@ -176,6 +180,7 @@ internal class AuthStoreFactory(
                     msg.refId,
                     msg.registrationFees,
                     msg.registrationFeeStatus,
+                    msg.phoneNumber,
                 ))
             }
     }

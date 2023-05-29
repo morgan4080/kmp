@@ -7,6 +7,6 @@ enum class AuthClientError {
     UnknownError
 }
 
-class AuthClientException(error: AuthClientError): Exception(
-    "Client Authentication Error: $error"
+class AuthClientException(error: AuthClientError, message: String?): Exception(
+    "Auth Error: ${if (message !== null) message else error}"
 )

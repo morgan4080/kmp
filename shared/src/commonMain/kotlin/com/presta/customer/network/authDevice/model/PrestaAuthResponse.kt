@@ -1,4 +1,6 @@
 package com.presta.customer.network.authDevice.model
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -12,15 +14,14 @@ data class AuthUserRoles(
     val account: List<String>
 )
 @Serializable
-data class PrestaCheckAuthUserResponse (
+data class PrestaCheckAuthUserResponse @OptIn(ExperimentalSerializationApi::class) constructor(
     val keycloakId: String,
     val username: String,
-    val email: String,
+    @EncodeDefault val email: String? = null,
     val firstName: String,
     val lastName: String,
     val tenantId: String,
     val companyName: String,
-    val roles: AuthUserRoles
+    @EncodeDefault val roles: AuthUserRoles? = null
 )
-
 

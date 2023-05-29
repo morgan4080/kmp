@@ -33,12 +33,15 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
                 refresh_token = response.refresh_token,
                 refId = refId,
                 registrationFees = registrationFees,
-                registrationFeeStatus = registrationFeeStatus
+                registrationFeeStatus = registrationFeeStatus,
+                phoneNumber = phoneNumber
             )
 
             Result.success(response)
 
         } catch (e: Exception) {
+
+            println("::::::: Auth Repository exception")
 
             e.printStackTrace()
 
@@ -52,7 +55,8 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
         var accessToken = ""
         var refreshToken = ""
         var refId = ""
-        var registrationFees = 500.0
+        var phoneNumber = ""
+        var registrationFees = 0.0
         var registrationFeeStatus = "NOT_PAID"
 
         userAuthDao.selectUserAuthCredentials().map {
@@ -61,6 +65,7 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
             refId = it.refId
             registrationFees = it.registrationFees
             registrationFeeStatus = it.registrationFeeStatus
+            phoneNumber = it.phoneNumber
         }
 
         return AuthRepository.ResponseTransform(
@@ -68,7 +73,8 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
             refresh_token = refreshToken,
             refId = refId,
             registrationFees = registrationFees,
-            registrationFeeStatus = registrationFeeStatus
+            registrationFeeStatus = registrationFeeStatus,
+            phoneNumber = phoneNumber,
         )
     }
 

@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.TextStyle
@@ -54,7 +55,7 @@ fun AuthContent(
     onBoardingState: OnBoardingStore.State,
     onEvent: (AuthStore.Intent) -> Unit,
     onOnBoardingEvent: (OnBoardingStore.Intent) -> Unit,
-    navigate: (phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean) -> Unit
+    navigate: () -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
 
@@ -63,7 +64,6 @@ fun AuthContent(
     var pinInput by remember { mutableStateOf("") }
 
     var pinToConfirm by remember { mutableStateOf("") }
-
     val maxChar = state.inputs.size
 
     val pinCharList = remember { mutableListOf( "" ) }
@@ -88,10 +88,9 @@ fun AuthContent(
         pinInput = ""
     }
 
-    LaunchedEffect(onBoardingState.member) {
+    LaunchedEffect(state.pinStatus) {
         if (
-            onBoardingState.member !== null &&
-            onBoardingState.member.authenticationInfo.pinStatus == PinStatus.SET
+            state.pinStatus == PinStatus.SET
         ) {
             onEvent(AuthStore.Intent.UpdateContext(
                 context = Contexts.LOGIN,
@@ -183,23 +182,17 @@ fun AuthContent(
     }
 
 
-    LaunchedEffect(state.loginResponse) {
+    LaunchedEffect(state.phoneNumber, state.loginResponse) {
         if (state.loginResponse !== null) {
             snackbarHostState.showSnackbar(
                 "Login Successful!"
             )
 
             if (state.phoneNumber != null) {
-                navigate(
-                    state.phoneNumber,
-                    true,
-                    true
-                )
+                navigate()
             }
         }
-    }
 
-    LaunchedEffect(state.phoneNumber) {
         if (state.phoneNumber !== null) {
             onOnBoardingEvent(OnBoardingStore.Intent.GetMemberDetails(
                 token = "",
@@ -210,26 +203,12 @@ fun AuthContent(
         }
     }
 
-    LaunchedEffect(state.error) {
-        if (state.error !== null) {
-            snackbarHostState.showSnackbar(
-                state.error
-            )
 
-            clearPinCharacters()
+    LaunchedEffect(
+        state.error,
+        onBoardingState.error
+    ) {
 
-            onEvent(AuthStore.Intent.UpdateContext(
-                context = Contexts.CREATE_PIN,
-                title = "Create pin code",
-                label = "You'll be able to login to Presta Customer using the following pin code",
-                pinCreated = state.pinCreated,
-                pinConfirmed = false,
-                error = null
-            ))
-        }
-    }
-
-    LaunchedEffect(onBoardingState.error) {
         if (onBoardingState.error !== null) {
             snackbarHostState.showSnackbar(
                 onBoardingState.error
@@ -237,6 +216,8 @@ fun AuthContent(
 
             clearPinCharacters()
 
+            onOnBoardingEvent(OnBoardingStore.Intent.UpdateError(null))
+
             onEvent(AuthStore.Intent.UpdateContext(
                 context = Contexts.CREATE_PIN,
                 title = "Create pin code",
@@ -246,7 +227,39 @@ fun AuthContent(
                 error = null
             ))
         }
+
+        if (state.error !== null) {
+            if (state.pinStatus == PinStatus.SET) {
+                snackbarHostState.showSnackbar(
+                    state.error
+                )
+            } else {
+                snackbarHostState.showSnackbar(
+                    state.error
+                )
+            }
+
+            clearPinCharacters()
+
+            onEvent(AuthStore.Intent.UpdateError(null))
+
+            if (state.pinStatus == PinStatus.SET) {
+                snackbarHostState.showSnackbar(
+                    "Please Contact admin to reset your pin"
+                )
+            } else {
+                onEvent(AuthStore.Intent.UpdateContext(
+                    context = Contexts.CREATE_PIN,
+                    title = "Create pin code",
+                    label = "You'll be able to login to Presta Customer using the following pin code",
+                    pinCreated = state.pinCreated,
+                    pinConfirmed = false,
+                    error = null
+                ))
+            }
+        }
     }
+
 
     Scaffold (modifier = Modifier
         .fillMaxHeight(1f)
@@ -286,6 +299,7 @@ fun AuthContent(
                     ) {
                         BasicTextField(
                             modifier = Modifier
+                                .shadow(1.dp, RoundedCornerShape(10.dp))
                                 .align(Alignment.CenterHorizontally)
                                 .fillMaxWidth(0.88f)
                                 .height(70.dp)

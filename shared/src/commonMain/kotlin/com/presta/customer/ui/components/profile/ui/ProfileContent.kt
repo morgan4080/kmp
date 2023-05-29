@@ -54,6 +54,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
@@ -207,7 +208,8 @@ fun ProfileContent(
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "Presta Capital",
+                                modifier = Modifier.alpha(if (authState.authUserResponse !== null) 1f else 0.2f),
+                                text = if (authState.authUserResponse !== null) authState.authUserResponse.companyName else "loading...",
                                 color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 18.sp
                             )
@@ -239,7 +241,8 @@ fun ProfileContent(
                         .fillMaxWidth()
                 ) {
                     Text(
-                        text = "Hello Morgan",
+                        modifier = Modifier.alpha(if (authState.authUserResponse !== null) 1f else 0.2f),
+                        text = if (authState.authUserResponse !== null) authState.authUserResponse.firstName else "loading...",
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold,

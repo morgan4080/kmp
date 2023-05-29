@@ -33,7 +33,15 @@ fun Paginator(count: Int, currentIndex: Int) {
                         .width(if (it == currentIndex) 16.dp else 37.dp)
                     .height(10.dp)
                     .clip(if (it == currentIndex) RoundedCornerShape(10.dp) else CircleShape)
-                    .background(if (it == currentIndex) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.inverseOnSurface)
+                    .background(
+                        if (it == currentIndex)
+                            MaterialTheme.colorScheme.primary
+                        else
+                            when(MaterialTheme.colorScheme.background == Color(0xFFF7F7F7)) {
+                                true -> Color(0xFFD0D0D0)
+                                false -> MaterialTheme.colorScheme.inverseOnSurface
+                            }
+                    )
                 )
             }
         }

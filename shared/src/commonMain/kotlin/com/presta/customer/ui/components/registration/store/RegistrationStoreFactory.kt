@@ -1,10 +1,12 @@
 package com.presta.customer.ui.components.registration.store
 
+import androidx.compose.ui.text.input.TextFieldValue
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
+import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.registration.data.RegistrationRepository
 import com.presta.customer.network.registration.model.PrestaRegistrationResponse
 import com.presta.customer.ui.components.root.DefaultRootComponent
@@ -19,6 +21,7 @@ class RegistrationStoreFactory(
     private val phoneNumber: String,
     private val isTermsAccepted: Boolean,
     private val isActive: Boolean,
+    private val pinStatus: PinStatus?,
     private val onBoardingContext: DefaultRootComponent.OnBoardingContext,
 ): KoinComponent {
     private val registrationRepository by inject<RegistrationRepository>()
@@ -34,9 +37,10 @@ class RegistrationStoreFactory(
 
     private sealed class Msg {
         data class RegistrationLoading(val isLoading: Boolean = true) : Msg()
-        data class PrimeRegistration(val phoneNumber: String, val isTermsAccepted: Boolean, val isActive: Boolean, val onBoardingContext: DefaultRootComponent.OnBoardingContext) : Msg()
+        data class PrimeRegistration(val phoneNumber: String, val isTermsAccepted: Boolean, val isActive: Boolean, val onBoardingContext: DefaultRootComponent.OnBoardingContext, val pinStatus: PinStatus?) : Msg()
         data class RegistrationLoaded(val registrationResponse: PrestaRegistrationResponse) : Msg()
         data class RegistrationFailed(val error: String?) : Msg()
+        data class UpdateInputValue(val index: Int, val value: String) : Msg()
     }
 
     private inner class ExecutorImpl : CoroutineExecutor<RegistrationStore.Intent, Unit, RegistrationStore.State, Msg, Nothing>(
@@ -44,7 +48,7 @@ class RegistrationStoreFactory(
     ) {
         override fun executeAction(action: Unit, getState: () -> RegistrationStore.State) {
            dispatch(Msg.PrimeRegistration(
-               phoneNumber,isTermsAccepted,isActive, onBoardingContext
+               phoneNumber,isTermsAccepted,isActive, onBoardingContext, pinStatus
            ))
         }
 
@@ -59,6 +63,13 @@ class RegistrationStoreFactory(
                         idNumber = intent.idNumber,
                         tocsAccepted = intent.tocsAccepted,
                         tenantId = intent.tenantId
+                    )
+                is RegistrationStore.Intent.UpdateInputValue ->
+                    dispatch(
+                        Msg.UpdateInputValue(
+                            index = intent.index,
+                            value = intent.value
+                        )
                     )
             }
 
@@ -106,9 +117,16 @@ class RegistrationStoreFactory(
                     phoneNumber = msg.phoneNumber,
                     isTermsAccepted = msg.isTermsAccepted,
                     isActive = msg.isTermsAccepted,
-                    onBoardingContext = msg.onBoardingContext
+                    onBoardingContext = msg.onBoardingContext,
+                    pinStatus = msg.pinStatus
                 )
                 is Msg.RegistrationFailed -> copy(error = msg.error)
+                is Msg.UpdateInputValue -> copy(inputs = inputs.mapIndexed { index, inputMethod ->
+                    if (index == msg.index) {
+                        inputMethod.value = TextFieldValue(msg.value)
+                    }
+                    inputMethod
+                })
                 is Msg.RegistrationLoaded -> copy(registrationResponse = msg.registrationResponse)
             }
     }

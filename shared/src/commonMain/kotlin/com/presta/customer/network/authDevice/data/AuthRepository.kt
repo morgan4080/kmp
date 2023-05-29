@@ -15,5 +15,6 @@ interface AuthRepository {
         val refresh_token: String,
         val registrationFees: Double,
         val registrationFeeStatus: String,
+        val phoneNumber: String,
     )
 }

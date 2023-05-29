@@ -22,6 +22,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -35,6 +36,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -72,6 +75,7 @@ fun TextInputContainer(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .shadow(0.5.dp, RoundedCornerShape(10.dp))
             .background(
                 color = MaterialTheme.colorScheme.inverseOnSurface,
                 shape = RoundedCornerShape(10.dp)
@@ -82,7 +86,8 @@ fun TextInputContainer(
     ) {
         BasicTextField(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 14.dp)
+                .height(65.dp)
+                .padding(top = 20.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
                 .absoluteOffset(y = 2.dp),
             keyboardOptions = KeyboardOptions(keyboardType =
             when (inputType) {
@@ -122,7 +127,7 @@ fun TextInputContainer(
                 }
                 AnimatedVisibility(
                     visible = userInput.text.isNotEmpty() || callingCode !== null,
-                    modifier = Modifier.absoluteOffset(y = -(16).dp),
+                    modifier = Modifier.absoluteOffset(y = -(14).dp),
                     enter = fadeIn() + expandVertically(),
                     exit = fadeOut() + shrinkVertically(),
                 ) {
@@ -137,7 +142,7 @@ fun TextInputContainer(
 
                 Row (
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.Bottom,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Row(
@@ -192,6 +197,14 @@ fun TextInputContainer(
                                     tint = actionButtonColor
                                 )
                             }
+                        )
+                    }
+                    if (imageUrl !== null) {
+                        Icon(
+                            modifier = Modifier.size(18.dp).alpha(0.4f).rotate(270F),
+                            imageVector = Icons.Filled.ArrowBackIosNew,
+                            contentDescription = null,
+                            tint = actionButtonColor
                         )
                     }
                 }

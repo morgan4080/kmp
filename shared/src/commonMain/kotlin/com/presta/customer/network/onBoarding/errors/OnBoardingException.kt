@@ -7,6 +7,6 @@ enum class OnBoardingError {
     UnknownError
 }
 
-class OnBoardingException(error: OnBoardingError): Exception(
-    "On-Boarding Error: $error"
+class OnBoardingException(error: OnBoardingError, message: String?): Exception(
+    "Account Config Error: ${if (message !== null) message else error}"
 )

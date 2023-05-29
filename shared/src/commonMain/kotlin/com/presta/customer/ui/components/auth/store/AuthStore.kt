@@ -3,6 +3,7 @@ package com.presta.customer.ui.components.auth.store
 import com.arkivanov.mvikotlin.core.store.Store
 import com.presta.customer.network.authDevice.model.PrestaCheckAuthUserResponse
 import com.presta.customer.network.authDevice.model.PrestaLogInResponse
+import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.onBoarding.model.RegistrationFeeStatus
 
 data class InputMethod(val value: String)
@@ -17,6 +18,7 @@ data class CachedMemberData(
     val refId: String,
     val registrationFees: Double,
     val registrationFeeStatus: String,
+    val phoneNumber: String,
 )
 interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
     sealed class Intent {
@@ -32,6 +34,7 @@ interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
         val isTermsAccepted: Boolean = false,
         val isActive: Boolean = false,
         val error: String? = null,
+        val pinStatus: PinStatus? = null,
         val cachedMemberData: CachedMemberData? = null,
         val loginResponse: PrestaLogInResponse? = null,
         val authUserResponse: PrestaCheckAuthUserResponse? = null,

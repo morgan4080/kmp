@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
@@ -47,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import com.presta.customer.MR
 import com.presta.customer.ui.components.onBoarding.store.Country
 import com.presta.customer.ui.components.onBoarding.store.OnBoardingStore
+import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.launch
 
@@ -66,6 +68,7 @@ fun CountriesSearch(
     val kc = LocalSoftwareKeyboardController.current
     Column (
         modifier = Modifier
+            .padding(LocalSafeArea.current)
             .background(MaterialTheme.colorScheme.background)
     ) {
         Row (
@@ -113,6 +116,7 @@ fun CountriesSearch(
             BasicTextField(
                 modifier = Modifier.fillMaxWidth()
                     .padding(PaddingValues(horizontal = 16.dp))
+                    .shadow(0.5.dp, RoundedCornerShape(10.dp))
                     .background(color = MaterialTheme.colorScheme.inverseOnSurface, shape = RoundedCornerShape(10.dp)),
                 textStyle = TextStyle(
                     color = MaterialTheme.colorScheme.onBackground,

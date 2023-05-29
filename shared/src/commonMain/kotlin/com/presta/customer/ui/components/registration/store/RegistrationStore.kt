@@ -1,6 +1,8 @@
 package com.presta.customer.ui.components.registration.store
 
+import androidx.compose.ui.text.input.TextFieldValue
 import com.arkivanov.mvikotlin.core.store.Store
+import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.registration.model.PrestaRegistrationResponse
 import com.presta.customer.ui.components.root.DefaultRootComponent
 import com.presta.customer.ui.composables.InputTypes
@@ -11,11 +13,10 @@ enum class InputFields {
     LAST_NAME,
     EMAIL,
     ID_NUMBER,
-    GENDER,
     INTRODUCER
 }
 
-data class InputMethod(val inputLabel: String, val fieldType: InputFields, val required: Boolean, val inputTypes: InputTypes, val errorMessage: String)
+data class InputMethod(val inputLabel: String, val fieldType: InputFields, val required: Boolean, val inputTypes: InputTypes, var value: TextFieldValue, val errorMessage: String)
 
 interface RegistrationStore: Store<RegistrationStore.Intent, RegistrationStore.State, Nothing> {
     sealed class Intent {
@@ -27,6 +28,11 @@ interface RegistrationStore: Store<RegistrationStore.Intent, RegistrationStore.S
             val idNumber: String,
             val tocsAccepted: Boolean,
             val tenantId: String
+        ): Intent()
+
+        data class UpdateInputValue(
+            val index: Int,
+            val value: String
         ): Intent()
     }
 
@@ -42,6 +48,7 @@ interface RegistrationStore: Store<RegistrationStore.Intent, RegistrationStore.S
                 fieldType = InputFields.FIRST_NAME,
                 inputTypes = InputTypes.STRING,
                 required = true,
+                value = TextFieldValue(),
                 errorMessage = ""
             ),
             InputMethod(
@@ -49,6 +56,7 @@ interface RegistrationStore: Store<RegistrationStore.Intent, RegistrationStore.S
                 fieldType = InputFields.LAST_NAME,
                 inputTypes = InputTypes.STRING,
                 required = true,
+                value = TextFieldValue(),
                 errorMessage = ""
             ),
             InputMethod(
@@ -56,6 +64,7 @@ interface RegistrationStore: Store<RegistrationStore.Intent, RegistrationStore.S
                 fieldType = InputFields.EMAIL,
                 inputTypes = InputTypes.STRING,
                 required = true,
+                value = TextFieldValue(),
                 errorMessage = ""
             ),
             InputMethod(
@@ -63,13 +72,7 @@ interface RegistrationStore: Store<RegistrationStore.Intent, RegistrationStore.S
                 fieldType = InputFields.ID_NUMBER,
                 inputTypes = InputTypes.NUMBER,
                 required = true,
-                errorMessage = ""
-            ),
-            InputMethod(
-                inputLabel = "Gender",
-                fieldType = InputFields.GENDER,
-                inputTypes = InputTypes.STRING,
-                required = true,
+                value = TextFieldValue(),
                 errorMessage = ""
             ),
             InputMethod(
@@ -77,12 +80,14 @@ interface RegistrationStore: Store<RegistrationStore.Intent, RegistrationStore.S
                 fieldType = InputFields.INTRODUCER,
                 inputTypes = InputTypes.STRING,
                 required = true,
+                value = TextFieldValue(),
                 errorMessage = ""
             ),
         ),
         val phoneNumber: String? = null,
         val isTermsAccepted: Boolean = true,
         val isActive: Boolean = true,
+        val pinStatus: PinStatus? = null,
         val onBoardingContext: DefaultRootComponent.OnBoardingContext = DefaultRootComponent.OnBoardingContext.REGISTRATION,
     )
 }

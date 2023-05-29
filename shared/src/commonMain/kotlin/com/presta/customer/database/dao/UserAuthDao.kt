@@ -1,8 +1,6 @@
 package com.presta.customer.database.dao
 
 import com.presta.customer.database.PrestaCustomerDatabase
-import com.presta.customer.network.onBoarding.model.RegistrationFeeStatus
-import comprestacustomer.UserAuthEntity
 import kotlinx.coroutines.withContext
 import prestaDispatchers
 
@@ -20,13 +18,14 @@ class UserAuthDao(
         query.removeAccessToken()
     }
 
-    suspend fun insert(access_token: String, refresh_token: String, refId: String, registrationFees: Double, registrationFeeStatus: String) = withContext(prestaDispatchers.io) {
+    suspend fun insert(access_token: String, refresh_token: String, refId: String, registrationFees: Double, registrationFeeStatus: String, phoneNumber: String) = withContext(prestaDispatchers.io) {
         query.insert(
             access_token = access_token,
             refresh_token = refresh_token,
             refId = refId,
             registrationFees = registrationFees,
-            registrationFeeStatus = registrationFeeStatus
+            registrationFeeStatus = registrationFeeStatus,
+            phoneNumber = phoneNumber,
         )
     }
 }
