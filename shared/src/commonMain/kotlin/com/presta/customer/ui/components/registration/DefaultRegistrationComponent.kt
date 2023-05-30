@@ -4,9 +4,9 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
-import com.presta.customer.ui.components.onBoarding.store.OnBoardingStore
 import com.presta.customer.ui.components.registration.store.RegistrationStore
 import com.presta.customer.ui.components.registration.store.RegistrationStoreFactory
 import com.presta.customer.ui.components.root.DefaultRootComponent
@@ -19,13 +19,15 @@ class DefaultRegistrationComponent(
     phoneNumber: String,
     isTermsAccepted: Boolean,
     isActive: Boolean,
+    pinStatus: PinStatus?,
     onBoardingContext: DefaultRootComponent.OnBoardingContext,
     private val onRegistered: (
         memberRefId: String,
         phoneNumber: String,
         isTermsAccepted: Boolean,
         isActive: Boolean,
-        onBoardingContext: DefaultRootComponent.OnBoardingContext
+        onBoardingContext: DefaultRootComponent.OnBoardingContext,
+        pinStatus: PinStatus?
     ) -> Unit
 ): RegistrationComponent, ComponentContext by componentContext {
     override val authStore =
@@ -34,7 +36,8 @@ class DefaultRegistrationComponent(
                 storeFactory = storeFactory,
                 phoneNumber = phoneNumber,
                 isTermsAccepted = isTermsAccepted,
-                isActive = isActive
+                isActive = isActive,
+                pinStatus = pinStatus
             ).create()
         }
 
@@ -45,6 +48,7 @@ class DefaultRegistrationComponent(
                 phoneNumber = phoneNumber,
                 isTermsAccepted = isTermsAccepted,
                 isActive = isActive,
+                pinStatus = pinStatus,
                 onBoardingContext = onBoardingContext
             ).create()
         }
@@ -66,14 +70,16 @@ class DefaultRegistrationComponent(
         phoneNumber: String,
         isTermsAccepted: Boolean,
         isActive: Boolean,
-        onBoardingContext: DefaultRootComponent.OnBoardingContext
+        onBoardingContext: DefaultRootComponent.OnBoardingContext,
+        pinStatus: PinStatus?
     ) {
         onRegistered(
             memberRefId,
             phoneNumber,
             isTermsAccepted,
             isActive,
-            onBoardingContext
+            onBoardingContext,
+            pinStatus
         )
     }
 }

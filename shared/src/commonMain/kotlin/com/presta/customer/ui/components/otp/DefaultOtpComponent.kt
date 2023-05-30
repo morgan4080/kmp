@@ -4,9 +4,9 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.presta.customer.network.onBoarding.model.PinStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
-import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.otp.store.OtpStore
@@ -21,7 +21,8 @@ class DefaultOtpComponent(
     memberRefId: String?,
     isTermsAccepted: Boolean,
     isActive: Boolean,
-    private val onValidOTP: (memberRefId: String?, phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean, onBoardingContext: DefaultRootComponent.OnBoardingContext) -> Unit
+    pinStatus: PinStatus?,
+    private val onValidOTP: (memberRefId: String?, phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean, onBoardingContext: DefaultRootComponent.OnBoardingContext, pinStatus: PinStatus?) -> Unit
 ): OtpComponent, ComponentContext by componentContext {
     override val authStore =
         instanceKeeper.getStore {
@@ -29,7 +30,8 @@ class DefaultOtpComponent(
                 storeFactory = storeFactory,
                 phoneNumber = null,
                 isTermsAccepted = false,
-                isActive = false
+                isActive = false,
+                pinStatus = pinStatus
             ).create()
         }
 
@@ -44,6 +46,7 @@ class DefaultOtpComponent(
                 onBoardingContext = onBoardingContext,
                 phoneNumber = phoneNumber,
                 isActive = isActive,
+                pinStatus = pinStatus,
                 isTermsAccepted = isTermsAccepted
             ).create()
         }
@@ -59,13 +62,7 @@ class DefaultOtpComponent(
         otpStore.accept(event)
     }
 
-    override fun navigate(memberRefId: String?,phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean, onBoardingContext: DefaultRootComponent.OnBoardingContext) {
-        onValidOTP(memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext)
-    }
-
-    init {
-        /*onAuthEvent(AuthStore.Intent.AuthenticateClient(
-            client_secret = OrganisationModel.organisation.client_secret
-        ))*/
+    override fun navigate(memberRefId: String?,phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean, onBoardingContext: DefaultRootComponent.OnBoardingContext, pinStatus: PinStatus?) {
+        onValidOTP(memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext, pinStatus)
     }
 }

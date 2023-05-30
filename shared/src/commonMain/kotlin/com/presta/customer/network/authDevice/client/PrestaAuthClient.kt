@@ -4,6 +4,7 @@ import com.presta.customer.network.NetworkConstants
 import com.presta.customer.network.authDevice.errorHandler.authErrorHandler
 import com.presta.customer.network.authDevice.model.PrestaCheckAuthUserResponse
 import com.presta.customer.network.authDevice.model.PrestaLogInResponse
+import com.presta.customer.network.authDevice.model.RefreshTokenResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -37,6 +38,25 @@ class PrestaAuthClient(
             }
         }
     }
+    suspend fun updateAuthToken(
+        refreshToken: String,
+        tenantId: String
+    ): RefreshTokenResponse {
+        return authErrorHandler {
+            httpClient.post(NetworkConstants.PrestaRefreshToken.route) {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    RefreshTokenData (
+                        refresh_token = refreshToken
+                    )
+                )
+                url {
+                    parameters.append("tenantId", tenantId)
+                }
+            }
+        }
+    }
+
     suspend fun checkAuthUser(token: String): PrestaCheckAuthUserResponse {
         return authErrorHandler {
             httpClient.get(NetworkConstants.PrestaCheckAuthUser.route) {
@@ -51,5 +71,10 @@ class PrestaAuthClient(
     data class LoginUserData(
         val phoneNumber: String,
         val pin: String,
+    )
+
+    @Serializable
+    data class RefreshTokenData(
+        val refresh_token: String,
     )
 }

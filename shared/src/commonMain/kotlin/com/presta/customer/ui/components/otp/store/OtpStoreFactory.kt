@@ -5,6 +5,7 @@ import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
+import com.presta.customer.network.onBoarding.model.PinStatus
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import com.presta.customer.network.otp.data.OtpRepository
@@ -21,6 +22,7 @@ internal class OtpStoreFactory (
     private val isTermsAccepted: Boolean,
     private val isActive: Boolean,
     private val memberRefId: String?,
+    private val pinStatus: PinStatus?,
     private val phoneNumber: String,
 ): KoinComponent {
     private val otpRepository by inject<OtpRepository>()
@@ -37,11 +39,12 @@ internal class OtpStoreFactory (
     private sealed class Msg {
         data class OtpLoading(val isLoading: Boolean = true): Msg()
         object ClearOtpVerificationData: Msg()
+        object ClearError: Msg()
         data class OtpRequestLoaded(val otpRequestData: OtpRequestResponse): Msg()
         data class OtpValidationLoaded(val otpVerificationData: OtpVerificationResponse): Msg()
         data class OtpFailed(val error: String?) : Msg()
         data class OnBoardingContext(val onBoardingContext: DefaultRootComponent.OnBoardingContext) : Msg()
-        data class OtpPrimeData(val memberRefId: String?, val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean) : Msg()
+        data class OtpPrimeData(val memberRefId: String?,val pinStatus: PinStatus?, val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean) : Msg()
     }
 
     private inner class ExecutorImpl : CoroutineExecutor<OtpStore.Intent, Unit, OtpStore.State, Msg, Nothing>(
@@ -53,7 +56,8 @@ internal class OtpStoreFactory (
                 phoneNumber = phoneNumber,
                 isActive = isActive,
                 isTermsAccepted = isTermsAccepted,
-                memberRefId = memberRefId
+                memberRefId = memberRefId,
+                pinStatus = pinStatus
             ))
         }
 
@@ -71,6 +75,7 @@ internal class OtpStoreFactory (
                     tenantId = intent.tenantId
                 )
                 is OtpStore.Intent.ClearOtpVerificationData -> dispatch(Msg.ClearOtpVerificationData)
+                is OtpStore.Intent.ClearError -> dispatch(Msg.ClearError)
             }
 
         private var requestOtpJob: Job? = null
@@ -136,10 +141,14 @@ internal class OtpStoreFactory (
                     isActive = msg.isActive,
                     isTermsAccepted = msg.isTermsAccepted,
                     memberRefId = msg.memberRefId,
+                    pinStatus = msg.pinStatus
                 )
                 is Msg.ClearOtpVerificationData -> copy(
                     otpRequestData = null,
                     otpVerificationData = null
+                )
+                is Msg.ClearError -> copy(
+                    error = null
                 )
             }
     }

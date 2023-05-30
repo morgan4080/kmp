@@ -3,7 +3,6 @@ package com.presta.customer.ui.components.otp.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absoluteOffset
@@ -12,11 +11,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Backspace
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -27,13 +34,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -41,13 +49,13 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.otp.store.OtpStore
 import com.presta.customer.ui.components.root.DefaultRootComponent
-import dev.icerock.moko.resources.compose.fontFamilyResource
 import com.presta.customer.ui.helpers.LocalSafeArea
-import kotlinx.coroutines.launch
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,15 +63,15 @@ fun OtpContent(
     state: OtpStore.State,
     authState: AuthStore.State,
     onEvent: (OtpStore.Intent) -> Unit,
-    navigate: (memberRefId: String?,phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean, onBoardingContext: DefaultRootComponent.OnBoardingContext) -> Unit
+    navigate: (memberRefId: String?,phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean, onBoardingContext: DefaultRootComponent.OnBoardingContext, pinStatus: PinStatus?) -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
     val focusRequester = remember { FocusRequester() }
 
-    val scope = rememberCoroutineScope()
-
     var otpInput by remember { mutableStateOf("") }
+
+    val builder = StringBuilder()
 
     val maxChar = state.inputs.size
 
@@ -90,7 +98,6 @@ fun OtpContent(
     }
 
 
-    // TODO authState.access_token
     LaunchedEffect(state.phone_number) {
         if (
             state.phone_number !== null
@@ -114,18 +121,17 @@ fun OtpContent(
         }
     }
 
-
     LaunchedEffect(state.error) {
         if (state.error !== null) {
             snackbarHostState.showSnackbar(
                 state.error
             )
+
+            onEvent(OtpStore.Intent.ClearError)
         }
     }
 
-
     LaunchedEffect(otpInput) {
-        // TODO authState.access_token !== null
         if (state.otpRequestData !== null && otpInput.length == maxChar) {
             onEvent(OtpStore.Intent.VerifyOTP(
                 token = "",
@@ -153,7 +159,8 @@ fun OtpContent(
                     state.phone_number,
                     state.isTermsAccepted,
                     state.isActive,
-                    state.onBoardingContext
+                    state.onBoardingContext,
+                    state.pinStatus
                 )
                 onEvent(OtpStore.Intent.ClearOtpVerificationData)
             } else {
@@ -171,152 +178,215 @@ fun OtpContent(
     ) {
         Column(
             modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
                 .padding(
-                    horizontal = 16.dp,
                     vertical = 30.dp
-                )
+                ),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Row {
-                Text(
-                    text = state.title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                    fontSize = 20.0.sp
-                )
-            }
-            Row {
-                Text(
-                    text = "${state.label}${if (state.phone_number != null) " to ${state.phone_number}" else ""}",
-                    style = MaterialTheme.typography.bodySmall,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                )
-            }
-            Row(
-                modifier = Modifier.padding(top = 35.dp).fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+            Column (
+                modifier = Modifier.fillMaxHeight(0.45f)
             ) {
-                for ((index, input) in state.inputs.withIndex()) {
-                    Column (modifier = Modifier
-                        .weight(0.2f),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        BasicTextField(
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .fillMaxWidth(0.88f)
-                                .height(70.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.inverseOnSurface,
-                                    shape = RoundedCornerShape(10.dp)
+                Row (modifier = Modifier.padding(horizontal = 16.dp)) {
+                    Text(
+                        text = state.title,
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                        fontSize = 20.0.sp
+                    )
+                }
+                Row (modifier = Modifier.padding(horizontal = 16.dp)) {
+                    Text(
+                        text = "${state.label}${if (state.phone_number != null) " to ${state.phone_number}" else ""}",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                    )
+                }
+                Row(
+                    modifier = Modifier.padding(top = 35.dp, start = 16.dp, end = 16.dp).fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    for ((index, input) in state.inputs.withIndex()) {
+                        Column (modifier = Modifier
+                            .weight(0.2f),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            BasicTextField (
+                                modifier = Modifier
+                                    .shadow(1.dp, RoundedCornerShape(10.dp))
+                                    .align(Alignment.CenterHorizontally)
+                                    .fillMaxWidth(0.88f)
+                                    .height(70.dp)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.inverseOnSurface,
+                                        shape = RoundedCornerShape(10.dp)
+                                    ),
+                                value = otpCharList[index],
+                                textStyle = TextStyle(
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
+                                    fontSize = MaterialTheme.typography.displaySmall.fontSize,
+                                    fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+                                    letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
+                                    lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                                    fontFamily = MaterialTheme.typography.bodyLarge.fontFamily,
+                                    textAlign = TextAlign.Center
                                 ),
-                            value = otpCharList[index],
-                            textStyle = TextStyle(
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
-                                fontSize = MaterialTheme.typography.displaySmall.fontSize,
-                                fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
-                                letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
-                                lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
-                                fontFamily = MaterialTheme.typography.bodyLarge.fontFamily,
-                                textAlign = TextAlign.Center
-                            ),
-                            onValueChange = {
-                                if (it.length <= maxChar) {
-                                    otpCharList[index] = it
+                                onValueChange = {
+                                    println("state.inputs")
+                                    println(it)
+                                },
+                                enabled = false,
+                                singleLine = true,
+                                decorationBox = { innerTextField ->
+                                    Column (
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        innerTextField()
+                                    }
                                 }
-                            },
-                            enabled = false,
-                            singleLine = true,
-                            decorationBox = { innerTextField ->
-                                Box (
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    innerTextField()
-                                }
-                            }
-                        )
+                            )
+                        }
                     }
                 }
-            }
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .absoluteOffset(y = -(70).dp),
-            ) {
-                BasicTextField(
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number
-                    ),
+                Row (
                     modifier = Modifier
-                        .focusRequester(focusRequester)
                         .fillMaxWidth()
-                        .height(70.dp)
-                        .alpha(0.0f),
-                    value = otpInput,
-                    onValueChange = {
-                        if (it.length <= maxChar) {
-                            setupOtpCharacters(it)
-                            otpInput = it
+                        .padding(horizontal = 16.dp)
+                        .absoluteOffset(y = -(70).dp),
+                ) {
+                    BasicTextField(
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        ),
+                        modifier = Modifier
+                            .focusRequester(focusRequester)
+                            .fillMaxWidth()
+                            .height(70.dp)
+                            .alpha(0.0f),
+                        value = otpInput,
+                        onValueChange = {
+                            println("value change")
+                            println(it)
+                        },
+                        enabled = false,
+                        singleLine = true,
+                        decorationBox = { innerTextField ->
+                            innerTextField()
                         }
-                    },
-                    enabled = true,
-                    singleLine = true,
-                    decorationBox = { innerTextField ->
-                        innerTextField()
-                    }
-                )
-            }
-            Row (
-                modifier = Modifier
-                    .padding(top = 35.dp)
-                    .absoluteOffset(y = -(70).dp).fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                Text(
-                    modifier = Modifier.clickable {
-                        // TODO authState.access_token !== null
-                        if (state.phone_number !== null) {
-                            onEvent(OtpStore.Intent.RequestOTP(
-                                token = "",
-                                phoneNumber = state.phone_number,
-                                tenantId = OrganisationModel.organisation.tenant_id
-                            ))
-
-                            scope.launch {
-                                snackbarHostState.showSnackbar(
-                                    "OTP Sent!"
-                                )
+                    )
+                }
+                Row (
+                    modifier = Modifier
+                        .padding(top = 35.dp, start = 16.dp, end = 16.dp)
+                        .absoluteOffset(y = -(70).dp).fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        modifier = Modifier.clickable {
+                            if (state.phone_number !== null) {
+                                onEvent(OtpStore.Intent.RequestOTP(
+                                    token = "",
+                                    phoneNumber = state.phone_number,
+                                    tenantId = OrganisationModel.organisation.tenant_id
+                                ))
                             }
-                        }
-                    },
-                    textAlign = TextAlign.Center,
-                    textDecoration = TextDecoration.Underline,
-                    text = "Resend verification code",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                )
-            }
-            Row (
-                modifier = Modifier
-                    .padding(top = 35.dp)
-                    .absoluteOffset(y = -(70).dp).fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                if (state.isLoading || authState.isLoading) {
+                        },
+                        textAlign = TextAlign.Center,
+                        textDecoration = TextDecoration.Underline,
+                        text = "Resend verification code",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                    )
+                }
+                Row (
+                    modifier = Modifier
+                        .padding(top = 35.dp, start = 16.dp, end = 16.dp)
+                        .absoluteOffset(y = -(70).dp).fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(25.dp).padding(end = 2.dp),
+                        modifier = Modifier.size(25.dp)
+                            .alpha(if (state.isLoading || authState.isLoading) 0.8f else 0.0f),
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
-        }
-    }
+            Column (
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                LazyVerticalGrid(
+                    modifier = Modifier.fillMaxHeight(),
+                    columns = GridCells.Adaptive(minSize = 128.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    items(listOf(1,2,3,4,5,6,7,8,9,10,0,12)) {
+                        Button(
+                            modifier = Modifier.padding(vertical = 5.dp, horizontal = 2.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = MaterialTheme.colorScheme.onBackground,
+                            ),
+                            onClick = {
+                                when(it) {
+                                    10 -> {
 
-    LaunchedEffect(focusRequester) {
-        try {
-            focusRequester.requestFocus()
-        } catch (e: IllegalStateException) {
-            println(e)
+                                    }
+                                    12 -> {
+                                        otpInput = otpInput.dropLast(1)
+                                        setupOtpCharacters(otpInput)
+                                        println(otpInput)
+                                    }
+                                    else -> {
+                                        if (otpInput.length <= maxChar) {
+                                            builder.append(otpInput).append(it.toString())
+                                            otpInput = builder.toString()
+                                            setupOtpCharacters(otpInput)
+                                            println(otpInput)
+                                        }
+                                    }
+                                }
+                            }
+                        ) {
+                            when(it) {
+                                10 -> {
+                                    /*Icon(
+                                        modifier = Modifier
+                                            .padding(vertical = 12.dp)
+                                            .size(30.dp)
+                                            .align(Alignment.CenterVertically),
+                                        imageVector = Icons.Filled.Fingerprint,
+                                        contentDescription = "Finger Print",
+                                        tint = MaterialTheme.colorScheme.onBackground
+                                    )*/
+                                }
+                                12 -> {
+                                    Icon(
+                                        modifier = Modifier
+                                            .padding(vertical = 12.dp)
+                                            .size(30.dp)
+                                            .align(Alignment.CenterVertically),
+                                        imageVector = Icons.Outlined.Backspace,
+                                        contentDescription = "Finger Print",
+                                        tint = MaterialTheme.colorScheme.onBackground
+                                    )
+                                }
+                                else -> {
+                                    Text(
+                                        textAlign = TextAlign.Center,
+                                        text = it.toString(),
+                                        style = MaterialTheme.typography.headlineSmall,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

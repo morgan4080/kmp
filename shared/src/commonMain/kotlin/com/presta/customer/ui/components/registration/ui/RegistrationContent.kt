@@ -6,18 +6,15 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -25,7 +22,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,29 +31,29 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
-import com.presta.customer.ui.components.registration.store.InputFields
+import com.presta.customer.ui.components.otp.store.OtpStore
 import com.presta.customer.ui.components.registration.store.RegistrationStore
 import com.presta.customer.ui.components.root.DefaultRootComponent
 import com.presta.customer.ui.composables.ActionButton
-import com.presta.customer.ui.composables.AsyncImage
 import com.presta.customer.ui.composables.InputTypes
-import com.presta.customer.ui.composables.TextInputContainer
 import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.primaryColor
@@ -70,47 +66,57 @@ fun RegistrationContent(
     state: RegistrationStore.State,
     authState: AuthStore.State,
     onEvent: (RegistrationStore.Intent) -> Unit,
-    navigate: (memberRefId: String,phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean, onBoardingContext: DefaultRootComponent.OnBoardingContext) -> Unit
+    navigate: (
+        memberRefId: String,
+        phoneNumber: String,
+        isTermsAccepted: Boolean,
+        isActive: Boolean,
+        onBoardingContext: DefaultRootComponent.OnBoardingContext,
+        pinStatus: PinStatus?
+    ) -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val scope = rememberCoroutineScope()
+    val focusRequester = remember { FocusRequester() }
 
-    var firstName by remember {
-        mutableStateOf(TextFieldValue())
-    }
-    var lastName by remember {
-        mutableStateOf(TextFieldValue())
-    }
-    var email by remember {
-        mutableStateOf(TextFieldValue())
-    }
-    var idNumber by remember {
-        mutableStateOf(TextFieldValue())
-    }
-    var gender by remember {
-        mutableStateOf(TextFieldValue())
-    }
-    var introducer by remember {
-        mutableStateOf(TextFieldValue())
-    }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(state.error) {
         if (state.error !== null) {
             snackbarHostState.showSnackbar(
                 state.error
             )
+
+            // clear error
+            onEvent(RegistrationStore.Intent.ClearError)
         }
+    }
+
+    fun checkIfValid(): Boolean {
+
+        var valid = true
+
+        listOf(
+            state.firstName,
+            state.lastName,
+            state.email,
+            state.idNumber,
+            state.introducer,
+        ).map{inputMethod ->
+            if (inputMethod.required && inputMethod.value.text.isEmpty()) valid = false
+        }
+
+        return valid
     }
 
     fun doRegistration() {
         if (state.phoneNumber !== null) {
             onEvent(RegistrationStore.Intent.CreateMember(
                 token = "",
-                firstName = firstName.text,
-                lastName = lastName.text,
+                firstName = state.firstName.value.text,
+                lastName = state.lastName.value.text,
                 phoneNumber = state.phoneNumber,
-                idNumber = idNumber.text,
+                idNumber = state.idNumber.value.text,
                 tocsAccepted = state.isTermsAccepted,
                 tenantId = OrganisationModel.organisation.tenant_id
             ))
@@ -137,7 +143,8 @@ fun RegistrationContent(
                 state.phoneNumber,
                 state.isTermsAccepted,
                 state.isActive,
-                state.onBoardingContext
+                state.onBoardingContext,
+                state.pinStatus
             )
         }
     }
@@ -151,40 +158,72 @@ fun RegistrationContent(
 
         }
     ) {
-        Column (modifier = Modifier.padding(horizontal = 16.dp)) {
-            Row (
-                modifier = Modifier.padding(top = 30.dp)
-            ) {
-                Text(
-                    text = state.title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                    fontSize = 20.0.sp
-                )
-            }
-            Row(modifier = Modifier.padding(bottom = 29.dp)) {
-                Text(
-                    text = state.label,
-                    style = MaterialTheme.typography.bodySmall,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                )
-            }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+        ) {
 
             LazyColumn {
-                state.inputs.forEach { inputMethod ->
+                item {
+                    Row(
+                        modifier = Modifier
+                            .padding(start = 16.dp, end = 16.dp, top = 30.dp)
+                    ) {
+                        Text(
+                            text = state.title,
+                            modifier = Modifier.fillMaxWidth(0.9f),
+                            style = TextStyle(
+                                lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                                color = MaterialTheme.typography.headlineSmall.color,
+                                fontSize = 20.sp,
+                                fontStyle = MaterialTheme.typography.headlineSmall.fontStyle,
+                                letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
+                                fontFamily = MaterialTheme.typography.bodySmall.fontFamily
+                            ),
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                            fontSize = 20.0.sp
+                        )
+                    }
+                }
+
+                item {
+                    Row(
+                        modifier = Modifier
+                            .padding(start = 16.dp, end = 16.dp, bottom = 15.dp)
+                    ) {
+                        Text(
+                            modifier = Modifier.alpha(0.5f).fillMaxWidth(0.9f),
+                            text = state.label,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        )
+                    }
+                }
+
+                listOf(
+                    state.firstName,
+                    state.lastName,
+                    state.email,
+                    state.idNumber,
+                    state.introducer,
+                ).map {inputMethod ->
                     item {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 12.dp)
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .shadow(0.5.dp, RoundedCornerShape(10.dp))
                                 .background(
                                     color = MaterialTheme.colorScheme.inverseOnSurface,
                                     shape = RoundedCornerShape(10.dp)
                                 ),
                         ) {
-                            BasicTextField(
+                            BasicTextField (
                                 modifier = Modifier
-                                    .padding(horizontal = 16.dp, vertical = 14.dp)
+                                    .focusRequester(focusRequester)
+                                    .height(65.dp)
+                                    .padding(top = 20.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
                                     .absoluteOffset(y = 2.dp),
                                 keyboardOptions = KeyboardOptions(keyboardType =
                                     when (inputMethod.inputTypes) {
@@ -198,23 +237,9 @@ fun RegistrationContent(
                                         InputTypes.DECIMAL -> KeyboardType.Decimal
                                     }
                                 ),
-                                value = when(inputMethod.fieldType) {
-                                        InputFields.FIRST_NAME -> firstName
-                                        InputFields.LAST_NAME -> lastName
-                                        InputFields.EMAIL -> email
-                                        InputFields.ID_NUMBER -> idNumber
-                                        InputFields.GENDER -> gender
-                                        InputFields.INTRODUCER -> introducer
-                                },
+                                value = inputMethod.value,
                                 onValueChange = {
-                                    when(inputMethod.fieldType) {
-                                        InputFields.FIRST_NAME -> firstName = it
-                                        InputFields.LAST_NAME -> lastName = it
-                                        InputFields.EMAIL -> email = it
-                                        InputFields.ID_NUMBER -> idNumber = it
-                                        InputFields.GENDER -> gender = it
-                                        InputFields.INTRODUCER -> introducer = it
-                                    }
+                                    onEvent(RegistrationStore.Intent.UpdateInputValue(inputMethod.fieldType, it))
                                 },
                                 singleLine = true,
                                 textStyle = TextStyle(
@@ -228,14 +253,8 @@ fun RegistrationContent(
                                 ),
                                 decorationBox = { innerTextField ->
 
-                                    if (when(inputMethod.fieldType) {
-                                            InputFields.FIRST_NAME -> firstName
-                                            InputFields.LAST_NAME -> lastName
-                                            InputFields.EMAIL -> email
-                                            InputFields.ID_NUMBER -> idNumber
-                                            InputFields.GENDER -> gender
-                                            InputFields.INTRODUCER -> introducer
-                                        }.text.isEmpty()) {
+                                    if (inputMethod.value.text.isEmpty()
+                                    ) {
                                         Text(
                                             modifier = Modifier.alpha(.3f),
                                             text = inputMethod.inputLabel,
@@ -244,14 +263,7 @@ fun RegistrationContent(
                                     }
 
                                     AnimatedVisibility(
-                                        visible = when(inputMethod.fieldType) {
-                                            InputFields.FIRST_NAME -> firstName.text.isNotEmpty()
-                                            InputFields.LAST_NAME -> lastName.text.isNotEmpty()
-                                            InputFields.EMAIL -> email.text.isNotEmpty()
-                                            InputFields.ID_NUMBER -> idNumber.text.isNotEmpty()
-                                            InputFields.GENDER -> gender.text.isNotEmpty()
-                                            InputFields.INTRODUCER -> introducer.text.isNotEmpty()
-                                        },
+                                        visible = inputMethod.value.text.isNotEmpty(),
                                         modifier = Modifier.absoluteOffset(y = -(16).dp),
                                         enter = fadeIn() + expandVertically(),
                                         exit = fadeOut() + shrinkVertically(),
@@ -277,40 +289,60 @@ fun RegistrationContent(
                                             innerTextField()
                                         }
 
-                                        IconButton(
-                                            modifier = Modifier.size(18.dp),
-                                            onClick = {
-                                                when(inputMethod.fieldType) {
-                                                    InputFields.FIRST_NAME -> firstName = TextFieldValue()
-                                                    InputFields.LAST_NAME -> lastName = TextFieldValue()
-                                                    InputFields.EMAIL -> email = TextFieldValue()
-                                                    InputFields.ID_NUMBER -> idNumber = TextFieldValue()
-                                                    InputFields.GENDER -> gender = TextFieldValue()
-                                                    InputFields.INTRODUCER -> introducer = TextFieldValue()
+                                        AnimatedVisibility(
+                                            visible = inputMethod.value.text.isNotEmpty(),
+                                            enter = fadeIn() + expandVertically(),
+                                            exit = fadeOut() + shrinkVertically(),
+                                        ) {
+
+                                            IconButton(
+                                                modifier = Modifier.size(18.dp),
+                                                onClick = { onEvent(RegistrationStore.Intent.UpdateInputValue(inputMethod.fieldType, TextFieldValue())) },
+                                                content = {
+                                                    Icon(
+                                                        modifier = Modifier.alpha(0.4f),
+                                                        imageVector = Icons.Filled.Cancel,
+                                                        contentDescription = null,
+                                                        tint = actionButtonColor
+                                                    )
                                                 }
-                                            },
-                                            content = {
-                                                Icon(
-                                                    modifier = Modifier.alpha(0.4f),
-                                                    imageVector = Icons.Filled.Cancel,
-                                                    contentDescription = null,
-                                                    tint = actionButtonColor
-                                                )
-                                            }
-                                        )
+                                            )
+                                        }
                                     }
                                 }
                             )
                         }
+
+                        if (inputMethod.errorMessage !== "") {
+                            Text(
+                                modifier = Modifier.padding(horizontal = 22.dp),
+                                text = inputMethod.errorMessage,
+                                fontSize = 10.sp,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                color = Color.Red
+                            )
+                        }
+                    }
+                }
+
+                item {
+                    Row (
+                        modifier = Modifier
+                            .padding(start = 16.dp, top = 30.dp, bottom = 16.dp, end = 16.dp)
+                    ) {
+                        ActionButton(
+                            "Submit",
+                            onClickContainer = {
+                                doRegistration()
+                            },
+                            loading = state.isLoading || authState.isLoading,
+                            enabled = checkIfValid()
+                        )
                     }
                 }
             }
 
-            Row (modifier = Modifier.padding(top = 50.dp)) {
-                ActionButton("Submit", onClickContainer = {
-                    doRegistration()
-                }, loading = state.isLoading || authState.isLoading)
-            }
         }
     }
 }

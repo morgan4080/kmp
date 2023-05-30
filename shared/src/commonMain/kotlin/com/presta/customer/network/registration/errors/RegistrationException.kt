@@ -7,6 +7,6 @@ enum class RegistrationError {
     UnknownError
 }
 
-class RegistrationException(error: RegistrationError): Exception(
-    "Registration Error: $error"
+class RegistrationException(error: RegistrationError, message: String?): Exception(
+    "Registration Error: ${if (message !== null) message else error}"
 )

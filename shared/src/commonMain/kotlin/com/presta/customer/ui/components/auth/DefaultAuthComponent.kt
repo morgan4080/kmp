@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.presta.customer.network.onBoarding.model.PinStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 import com.presta.customer.organisation.OrganisationModel
@@ -19,8 +20,9 @@ class DefaultAuthComponent(
     phoneNumber: String,
     isTermsAccepted: Boolean,
     isActive: Boolean,
+    pinStatus: PinStatus?,
     onBoardingContext: DefaultRootComponent.OnBoardingContext,
-    private val onLogin: (phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean) -> Unit,
+    private val onLogin: () -> Unit,
 ): AuthComponent, ComponentContext by componentContext {
 
     override val authStore =
@@ -29,7 +31,8 @@ class DefaultAuthComponent(
                 storeFactory = storeFactory,
                 phoneNumber = phoneNumber,
                 isTermsAccepted = isTermsAccepted,
-                isActive = isActive
+                isActive = isActive,
+                pinStatus = pinStatus,
             ).create()
         }
 
@@ -71,7 +74,7 @@ class DefaultAuthComponent(
         onBoardingStore.accept(event)
     }
 
-    override fun navigate(phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean) {
-        onLogin(phoneNumber, isTermsAccepted, isActive)
+    override fun navigate() {
+        onLogin()
     }
 }

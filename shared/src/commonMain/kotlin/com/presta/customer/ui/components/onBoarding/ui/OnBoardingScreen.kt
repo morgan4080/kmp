@@ -11,13 +11,9 @@ internal fun OnBoardingScreen(
 ) {
     val onBoardingState by component.state.collectAsState()
 
-    val authState by component.authState.collectAsState()
-
     OnBoardingContent(
         state = onBoardingState,
-        authState = authState,
         onEvent = component::onEvent,
-        onAuthEvent = component::onAuthEvent,
         navigate = component::navigate
     )
 }

@@ -9,8 +9,8 @@ import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
-import com.arkivanov.essenty.statekeeper.consume
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.ui.components.auth.AuthComponent
 import com.presta.customer.ui.components.auth.DefaultAuthComponent
 import com.presta.customer.ui.components.onBoarding.DefaultOnboardingComponent
@@ -25,56 +25,19 @@ import com.presta.customer.ui.components.splash.DefaultSplashComponent
 import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.welcome.DefaultWelcomeComponent
 import com.presta.customer.ui.components.welcome.WelcomeComponent
+import prestaDispatchers
 
 class DefaultRootComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
 ) : RootComponent, ComponentContext by componentContext {
 
-    private var state: State = stateKeeper.consume(key = "AUTH_DATA") ?: State()
-    @Parcelize
-    private class State(
-        var phoneNumber: String = "",
-        var memberRefId: String = "",
-        var isTermsAccepted: Boolean  = false,
-        var isActive: Boolean = false,
-        var authenticated: Boolean = false
-    ) : Parcelable
-
-    init {
-        stateKeeper.register(key = "AUTH_DATA") { state }
-    }
-
     private val navigation = StackNavigation<Config>()
-
-    private fun deliverInitialConfig(): Config {
-        return when (state.authenticated) {
-            true -> Config.RootBottom
-            false -> if (state.phoneNumber !== "") {
-                Config.Auth(
-                    phoneNumber = state.phoneNumber,
-                    isTermsAccepted = state.isTermsAccepted,
-                    isActive = state.isActive,
-                    onBoardingContext = OnBoardingContext.LOGIN,
-                    memberRefId = state.memberRefId
-                )
-            } else {
-                Config.RootBottom
-            }
-        }
-    }
-
-    init {
-        println("::::::state.authenticated")
-        println(state.authenticated)
-        println("::::::state.phoneNumber")
-        println(state.phoneNumber)
-    }
 
     private val _childStack =
         childStack(
             source = navigation,
-            initialConfiguration = deliverInitialConfig(),
+            initialConfiguration = Config.Splash,
             handleBackButton = true,
             childFactory = ::createChild,
             key = "onboardingStack"
@@ -96,12 +59,27 @@ class DefaultRootComponent(
     private fun splashComponent(componentContext: ComponentContext): SplashComponent =
         DefaultSplashComponent(
             componentContext = componentContext,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
             onSignUp = {
                 navigation.push(Config.Welcome(context = OnBoardingContext.REGISTRATION))
             },
             onSignIn = {
                 navigation.push(Config.Welcome(context = OnBoardingContext.LOGIN))
             },
+            navigateToAuth = { memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext, pinStatus ->
+                navigation.replaceAll(Config.Auth(
+                    memberRefId = memberRefId,
+                    phoneNumber = phoneNumber,
+                    isTermsAccepted = isTermsAccepted,
+                    isActive = isActive,
+                    onBoardingContext = onBoardingContext,
+                    pinStatus = pinStatus
+                ))
+            },
+            navigateToProfile = {
+                navigation.replaceAll(Config.RootBottom)
+            }
         )
 
     private fun welcomeComponent(componentContext: ComponentContext, config: Config.Welcome): WelcomeComponent =
@@ -122,14 +100,15 @@ class DefaultRootComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
             onBoardingContext = config.onBoardingContext,
-            onPush = { memberRefId, phoneNumber, isActive, isTermsAccepted, onBoardingContext ->
+            onPush = { memberRefId, phoneNumber, isActive, isTermsAccepted, onBoardingContext, pinStatus ->
                  navigation.push(
                      Config.OTP(
                          memberRefId = memberRefId,
                          onBoardingContext = onBoardingContext,
                          phoneNumber = phoneNumber,
                          isActive = isActive,
-                         isTermsAccepted = isTermsAccepted
+                         isTermsAccepted = isTermsAccepted,
+                         pinStatus = pinStatus
                     )
                  )
             },
@@ -143,28 +122,34 @@ class DefaultRootComponent(
             onBoardingContext = config.onBoardingContext,
             phoneNumber = config.phoneNumber,
             isActive = config.isActive,
-            isTermsAccepted = config.isTermsAccepted,
-            onValidOTP = { memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext ->
-                when(onBoardingContext) {
-                    OnBoardingContext.REGISTRATION -> navigation.push(Config.Register(
+            pinStatus = config.pinStatus,
+            isTermsAccepted = config.isTermsAccepted
+        ) { memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext, pinStatus ->
+            when (onBoardingContext) {
+                OnBoardingContext.REGISTRATION -> navigation.push(
+                    Config.Register(
                         phoneNumber = phoneNumber,
                         isTermsAccepted = isTermsAccepted,
                         isActive = isActive,
-                        onBoardingContext = onBoardingContext
-                    ))
+                        onBoardingContext = onBoardingContext,
+                        pinStatus = pinStatus
+                    )
+                )
 
-                    OnBoardingContext.LOGIN -> {
-                        if (memberRefId !== null) navigation.push(Config.Auth(
+                OnBoardingContext.LOGIN -> {
+                    if (memberRefId !== null) navigation.push(
+                        Config.Auth(
                             memberRefId = memberRefId,
                             phoneNumber = phoneNumber,
                             isTermsAccepted = isTermsAccepted,
                             isActive = isActive,
-                            onBoardingContext = onBoardingContext
-                        ))
-                    }
+                            onBoardingContext = onBoardingContext,
+                            pinStatus = pinStatus
+                        )
+                    )
                 }
             }
-        )
+        }
 
     private fun registerComponent(componentContext: ComponentContext, config: Config.Register): RegistrationComponent =
         DefaultRegistrationComponent(
@@ -173,14 +158,16 @@ class DefaultRootComponent(
             phoneNumber = config.phoneNumber,
             isTermsAccepted = config.isTermsAccepted,
             isActive = config.isActive,
+            pinStatus = config.pinStatus,
             onBoardingContext = config.onBoardingContext,
-            onRegistered = { memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext ->
+            onRegistered = { memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext, pinStatus ->
                 navigation.push(Config.Auth(
                     memberRefId = memberRefId,
                     phoneNumber = phoneNumber,
                     isTermsAccepted = isTermsAccepted,
                     isActive = isActive,
-                    onBoardingContext = onBoardingContext
+                    onBoardingContext = onBoardingContext,
+                    pinStatus = pinStatus
                 ))
             }
         )
@@ -192,13 +179,9 @@ class DefaultRootComponent(
             phoneNumber = config.phoneNumber,
             isTermsAccepted = config.isTermsAccepted,
             isActive = config.isActive,
+            pinStatus = config.pinStatus,
             onBoardingContext = config.onBoardingContext,
-            onLogin = { phoneNumber, isTermsAccepted, isActive ->
-                state.authenticated = true
-                state.phoneNumber = phoneNumber
-                state.isTermsAccepted = isTermsAccepted
-                state.isActive = isActive
-
+            onLogin = {
                 navigation.replaceAll(Config.RootBottom)
             }
         )
@@ -222,11 +205,11 @@ class DefaultRootComponent(
         @Parcelize
         data class OnBoarding (val onBoardingContext: OnBoardingContext) : Config()
         @Parcelize
-        data class OTP (val memberRefId: String?, val onBoardingContext: OnBoardingContext, val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean) : Config()
+        data class OTP (val memberRefId: String?, val onBoardingContext: OnBoardingContext, val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean, val pinStatus: PinStatus?) : Config()
         @Parcelize
-        data class Auth(val memberRefId: String, val phoneNumber: String, val isTermsAccepted: Boolean, val isActive: Boolean, val onBoardingContext: OnBoardingContext) : Config()
+        data class Auth(val memberRefId: String?, val phoneNumber: String, val isTermsAccepted: Boolean, val isActive: Boolean, val onBoardingContext: OnBoardingContext, val pinStatus: PinStatus?) : Config()
         @Parcelize
-        data class Register(val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean, val onBoardingContext: OnBoardingContext) : Config()
+        data class Register(val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean, val onBoardingContext: OnBoardingContext, val pinStatus: PinStatus?) : Config()
         @Parcelize
         object RootBottom : Config()
     }

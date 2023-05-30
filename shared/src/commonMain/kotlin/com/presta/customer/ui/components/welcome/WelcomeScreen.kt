@@ -80,7 +80,7 @@ fun WelcomeScreen(
 
                             Row (modifier = Modifier.padding(top = 50.dp)) {
                                 val painter: Painter = painterResource(
-                                    when(MaterialTheme.colorScheme.background == Color.White) {
+                                    when(MaterialTheme.colorScheme.background == Color(0xFFF7F7F7)) {
                                         true -> item.imageLight
                                         false -> item.imageDark
                                     }
