@@ -15,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import com.presta.customer.ui.components.profile.store.ProfileStore
 import com.presta.customer.ui.components.profile.store.ProfileStoreFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
@@ -71,25 +72,45 @@ class DefaultProfileComponent(
         profileStore.accept(event)
     }
 
-    init {
-        // get chached member data from db includes cached auth_token
-        onAuthEvent(AuthStore.Intent.GetCachedMemberData)
+    private var authUserScopeJob: Job? = null
 
-        scope.launch {
+    private fun checkAuthenticatedUser() {
+        if (authUserScopeJob?.isActive == true) return
+
+        authUserScopeJob = scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
                     onAuthEvent(AuthStore.Intent.CheckAuthenticatedUser(
                         token = state.cachedMemberData.accessToken
                     ))
-
-                    // refresh auth token on init of every component to ensure access token is ready for all calls
-
-                    /*onAuthEvent(AuthStore.Intent.RefreshToken(
-                        tenantId = OrganisationModel.organisation.tenant_id,
-                        refId = state.cachedMemberData.refId
-                    ))*/
                 }
             }
         }
+    }
+
+    private var refreshTokenScopeJob: Job? = null
+
+    private fun refreshToken() {
+        if (refreshTokenScopeJob?.isActive == true) return
+
+        refreshTokenScopeJob = scope.launch {
+            authState.collect { state ->
+                if (state.cachedMemberData !== null) {
+                    onAuthEvent(AuthStore.Intent.RefreshToken(
+                        tenantId = OrganisationModel.organisation.tenant_id,
+                        refId = state.cachedMemberData.refId
+                    ))
+                }
+                this.cancel()
+            }
+        }
+    }
+
+    init {
+        onAuthEvent(AuthStore.Intent.GetCachedMemberData)
+
+        checkAuthenticatedUser()
+
+        refreshToken()
     }
 }
