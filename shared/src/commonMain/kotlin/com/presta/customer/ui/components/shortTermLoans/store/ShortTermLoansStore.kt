@@ -11,7 +11,7 @@ interface ShortTermLoansStore: Store<ShortTermLoansStore.Intent,ShortTermLoansSt
     data class State(
         val isLoading: Boolean = false,
         val error: String? = null,
-        val prestaShortTermProductList: PrestaShortTermProductsListResponse?=null
+        val prestaShortTermProductList: List<PrestaShortTermProductsListResponse> = listOf()
 
     )
 

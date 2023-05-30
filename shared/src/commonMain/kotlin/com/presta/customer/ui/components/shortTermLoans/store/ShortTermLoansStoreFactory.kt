@@ -69,12 +69,14 @@ class ShortTermLoansStoreFactory(
                     token = token,
                     memberRefId = refId
                 ).onSuccess { response ->
+                    println(":::::::::getShortTermProductListData")
+                    println(response)
                     dispatch(Msg.ShortTermLoansProductsListLoaded(response))
-
-
                 }.onFailure { e ->
                     dispatch(Msg.ShortTermLoansFailed(e.message))
                 }
+
+                dispatch(Msg.ShortTermLoansLoading(false))
             }
         }
     }

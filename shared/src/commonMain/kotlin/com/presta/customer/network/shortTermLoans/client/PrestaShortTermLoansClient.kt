@@ -16,7 +16,7 @@ class PrestaShortTermLoansClient (
     suspend fun getShortTermProductsList(
         token: String,
         memberRefId: String,
-    ): PrestaShortTermProductsListResponse {
+    ): List<PrestaShortTermProductsListResponse> {
         return shortTermLoansErrorHandler {
             httpClient.get("${NetworkConstants.PrestaGetTShortTermProductsList.route}/${memberRefId}") {
                 header(HttpHeaders.Authorization, "Bearer $token")

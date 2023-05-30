@@ -10,6 +10,7 @@ import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.network.onBoarding.model.PinStatus
+import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.profile.coroutineScope
@@ -17,9 +18,11 @@ import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStor
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStoreFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 
@@ -41,7 +44,33 @@ class DefaultShortTernLoansComponent(
     private val onConfirmClicked: (refId: String) -> Unit,
     private val onBackNavClicked: () -> Unit,
 
-    ): ShortTermLoansComponent, ComponentContext by componentContext {
+): ShortTermLoansComponent, ComponentContext by componentContext {
+
+    private val scope = coroutineScope(mainContext + SupervisorJob())
+
+    override val authStore: AuthStore=
+        instanceKeeper.getStore {
+            AuthStoreFactory(
+                storeFactory = storeFactory,
+                phoneNumber = null,
+                isTermsAccepted = false,
+                isActive = false,
+                pinStatus = PinStatus.SET
+            ).create()
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val authState: StateFlow<AuthStore.State> =authStore.stateFlow
+
+    override val shortTermloansStore: ShortTermLoansStore=
+        instanceKeeper.getStore {
+            ShortTermLoansStoreFactory(
+                storeFactory = storeFactory
+            ).create()
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val shortTermloansState: StateFlow<ShortTermLoansStore.State> = shortTermloansStore.stateFlow
 
     private val models = MutableValue(
         ShortTermLoansComponent.Model(
@@ -67,41 +96,59 @@ class DefaultShortTernLoansComponent(
        onBackNavClicked()
     }
 
-
-
     override fun onAuthEvent(event: AuthStore.Intent) {
         authStore.accept(event)
     }
 
     override fun onEvent(event: ShortTermLoansStore.Intent) {
-
-        TODO("Not yet implemented")
+        shortTermloansStore.accept(event)
     }
 
-    private val scope = coroutineScope(mainContext + SupervisorJob())
+    private var authUserScopeJob: Job? = null
 
+    private fun checkAuthenticatedUser() {
+        if (authUserScopeJob?.isActive == true) return
 
-    override val authStore: AuthStore=
-        instanceKeeper.getStore {
-            AuthStoreFactory(
-                storeFactory = storeFactory,
-                phoneNumber = null,
-                isTermsAccepted = false,
-                isActive = false,
-                pinStatus = PinStatus.SET
-            ).create()
+        authUserScopeJob = scope.launch {
+            authState.collect { state ->
+                if (state.cachedMemberData !== null) {
+                    onAuthEvent(AuthStore.Intent.CheckAuthenticatedUser(
+                        token = state.cachedMemberData.accessToken
+                    ))
+
+                    onEvent(ShortTermLoansStore.Intent.GetPrestaShortTermProductList(
+                        token = state.cachedMemberData.accessToken,
+                        refId = state.cachedMemberData.refId
+                    ))
+                }
+            }
         }
+    }
 
-    override val authState: StateFlow<AuthStore.State> =authStore.stateFlow
+    private var refreshTokenScopeJob: Job? = null
 
-    override val shortTermloansStore: ShortTermLoansStore=
-        instanceKeeper.getStore {
-            ShortTermLoansStoreFactory(
-                storeFactory = storeFactory
-            ).create()
+    private fun refreshToken() {
+        if (refreshTokenScopeJob?.isActive == true) return
+
+        refreshTokenScopeJob = scope.launch {
+            authState.collect { state ->
+                if (state.cachedMemberData !== null) {
+                    onAuthEvent(AuthStore.Intent.RefreshToken(
+                        tenantId = OrganisationModel.organisation.tenant_id,
+                        refId = state.cachedMemberData.refId
+                    ))
+                }
+                this.cancel()
+            }
         }
+    }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val shortTermloansState: StateFlow<ShortTermLoansStore.State> = shortTermloansStore.stateFlow
+    init {
+        onAuthEvent(AuthStore.Intent.GetCachedMemberData)
+
+        checkAuthenticatedUser()
+
+        refreshToken()
+    }
 
 }

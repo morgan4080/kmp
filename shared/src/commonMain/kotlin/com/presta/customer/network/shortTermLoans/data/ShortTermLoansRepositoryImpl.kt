@@ -11,7 +11,7 @@ class ShortTermLoansRepositoryImpl : ShortTermLoansRepository,KoinComponent {
     override suspend fun getShortTermProductListData(
         memberRefId: String,
         token: String
-    ): Result<PrestaShortTermProductsListResponse> {
+    ): Result<List<PrestaShortTermProductsListResponse>> {
 
         return try {
             // if caching functionality check db dao

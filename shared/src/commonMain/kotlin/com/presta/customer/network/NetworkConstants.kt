@@ -7,10 +7,6 @@ object NetworkConstants {
     const val accountsBaseUrl = "https://staging-accounts.presta.co.ke/"
     const val baseUrlKeycloak = "https://iam.presta.co.ke/auth/realms/"
     const val accountsUrlKeycloak = "https://accounts.presta.co.ke/users-admin/api/v1/"
-    const  val savingsBaseUrl="https://staging-lending.presta.co.ke/applications/api/v2/"
-    const val transactionsHistoryBaseUrl="https://staging-lending.presta.co.ke/applications/api/v2/"
-    const val shortTermProductListBaseUrl="https://staging-lending.presta.co.ke/applications/api/v2/"
-
 
     object PrestaAuthenticateClient {
         val route = baseUrlKeycloak + OrganisationModel.organisation.tenant_id + "/protocol/openid-connect/token"
@@ -51,18 +47,15 @@ object NetworkConstants {
     object PrestaCheckPinClient {
         const val route = accountsUrlKeycloak + "auth/ussd/has-pin"
     }
-
     object PrestaGetSavingsBalance {
-        const val route = savingsBaseUrl + "balances/savings"
+        const val route = applicationsBaseUrl + "balances/savings"
     }
-
     object PrestaGetTransactionsHistory{
-        const  val route =transactionsHistoryBaseUrl +"transactions"
+        const  val route = applicationsBaseUrl + "transactions"
 
     }
     object PrestaGetTShortTermProductsList{
-        const  val route = shortTermProductListBaseUrl +"loans/products"
+        const  val route = applicationsBaseUrl + "loans/products"
 
     }
-
 }
