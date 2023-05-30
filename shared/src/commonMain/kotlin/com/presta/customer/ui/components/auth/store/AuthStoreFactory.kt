@@ -83,6 +83,7 @@ internal class AuthStoreFactory(
                     error = intent.error,
                 ))
                 is AuthStore.Intent.RefreshToken -> updateAuthToken(intent.tenantId,intent.refId)
+                is AuthStore.Intent.LogOutUser -> logOutUser()
             }
 
         private var loginUserJob: Job? = null
@@ -172,6 +173,29 @@ internal class AuthStoreFactory(
                    .onFailure { e ->
                        dispatch(Msg.AuthFailed(e.message))
                    }
+            }
+        }
+
+        private var logOutUserJob: Job? = null
+
+        private fun logOutUser() {
+            if (logOutUserJob?.isActive == true) return
+
+            dispatch(Msg.AuthLoading())
+
+            logOutUserJob = scope.launch {
+                // clear userAuthEntity DB
+                // loginResponse to null
+                // refreshTokenResponse to null
+                // authUserResponse to null
+
+               /*authRepository.logOutUser()
+                   .onSuccess { response ->
+                       dispatch(Msg.RefreshFulfilled(response))
+                   }
+                   .onFailure { e ->
+                       dispatch(Msg.AuthFailed(e.message))
+                   }*/
             }
         }
     }
