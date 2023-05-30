@@ -52,7 +52,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -78,6 +77,7 @@ import com.presta.customer.ui.composables.HomeCardListItem
 import com.presta.customer.ui.composables.Paginator
 import com.presta.customer.ui.theme.backArrowColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -111,23 +111,17 @@ fun ProfileContent(
     val item2 = quickLinks[1]
     val item3 = quickLinks[2]
     val item4 = quickLinks[3]
-
-    //show  shimmer in  every container  if the container has  no data
     val showShimmerState: Boolean = state.transactionHistory?.transactionId == null
     val showShimmer = remember { mutableStateOf(showShimmerState) }
 
-    //Modal BottomSheet
-    val skipHalfExpanded by remember { mutableStateOf(true) }
     val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        skipHalfExpanded = skipHalfExpanded
+        initialValue = ModalBottomSheetValue.Hidden
     )
 
     LaunchedEffect(authState.cachedMemberData) {
         if (authState.cachedMemberData !== null && authState.cachedMemberData.registrationFeeStatus == "NOT_PAID") {
-
-        } else {
-
+            delay(2000L)
+            sheetState.show()
         }
     }
 

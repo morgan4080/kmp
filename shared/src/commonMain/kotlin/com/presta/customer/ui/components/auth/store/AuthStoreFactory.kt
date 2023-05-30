@@ -188,13 +188,13 @@ internal class AuthStoreFactory(
             logOutUserJob = scope.launch {
                 // clear userAuthEntity DB
 
-               authRepository.logOutUser()
+                authRepository.logOutUser()
 
                 dispatch(Msg.ClearAuthDetails)
 
-                // NAVIGATE TO Splash
+                dispatch(Msg.AuthLoading(false))
 
-                dispatch(Msg.AuthLoading())
+                onLogOut()
             }
         }
     }
