@@ -10,6 +10,11 @@ interface AuthRepository {
     suspend fun updateAuthToken(tenantId: String, refId: String): Result<RefreshTokenResponse>
     suspend fun checkAuthenticatedUser(token: String): Result<PrestaCheckAuthUserResponse>
     suspend fun getCachedUserData(): ResponseTransform
+    suspend fun logOutUser(): LogOutResponse
+
+    data class LogOutResponse(
+        val loggedOut: Boolean = false
+    )
 
     data class ResponseTransform(
         val refId: String,

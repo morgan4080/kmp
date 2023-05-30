@@ -35,6 +35,7 @@ class DefaultProfileComponent(
     componentContext: ComponentContext,
     mainContext: CoroutineContext,
     storeFactory: StoreFactory,
+    private val logoutToSplash: () -> Unit,
     private val onProfileClicked: () -> Unit
 ) : ProfileComponent, ComponentContext by componentContext {
 
@@ -45,7 +46,8 @@ class DefaultProfileComponent(
                 phoneNumber = null,
                 isTermsAccepted = false,
                 isActive = false,
-                pinStatus = PinStatus.SET
+                pinStatus = PinStatus.SET,
+                onLogOut = logoutToSplash
             ).create()
         }
 

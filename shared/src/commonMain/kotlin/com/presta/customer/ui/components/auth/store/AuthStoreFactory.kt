@@ -22,6 +22,7 @@ internal class AuthStoreFactory(
     private val pinStatus: PinStatus?,
     private val isTermsAccepted: Boolean,
     private val isActive: Boolean,
+    private val onLogOut: () -> Unit = {},
 ): KoinComponent {
     private val authRepository by inject<AuthRepository>()
 
@@ -36,6 +37,7 @@ internal class AuthStoreFactory(
 
     private sealed class Msg {
         data class AuthLoading(val isLoading: Boolean = true) : Msg()
+        object ClearAuthDetails: Msg()
         data class AuthInitData(val phoneNumber: String?, val isTermsAccepted: Boolean, val isActive: Boolean, val pinStatus: PinStatus?) : Msg()
         data class UpdateContext(
             val context: Contexts,
@@ -185,17 +187,14 @@ internal class AuthStoreFactory(
 
             logOutUserJob = scope.launch {
                 // clear userAuthEntity DB
-                // loginResponse to null
-                // refreshTokenResponse to null
-                // authUserResponse to null
 
-               /*authRepository.logOutUser()
-                   .onSuccess { response ->
-                       dispatch(Msg.RefreshFulfilled(response))
-                   }
-                   .onFailure { e ->
-                       dispatch(Msg.AuthFailed(e.message))
-                   }*/
+               authRepository.logOutUser()
+
+                dispatch(Msg.ClearAuthDetails)
+
+                // NAVIGATE TO Splash
+
+                dispatch(Msg.AuthLoading())
             }
         }
     }
@@ -230,6 +229,11 @@ internal class AuthStoreFactory(
                     msg.registrationFeeStatus,
                     msg.phoneNumber,
                 ))
+                is Msg.ClearAuthDetails -> copy(
+                    loginResponse = null,
+                    refreshTokenResponse = null,
+                    authUserResponse = null
+                )
             }
     }
 }
