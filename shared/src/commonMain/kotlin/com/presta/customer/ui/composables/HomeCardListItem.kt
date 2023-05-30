@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absolutePadding
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -31,14 +33,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.presta.customer.MR
+import com.presta.customer.network.profile.model.PrestaBalancesResponse
+import com.presta.customer.ui.components.profile.ui.shimmerBrush
+import com.presta.customer.ui.theme.backArrowColor
+import dev.icerock.moko.resources.compose.fontFamilyResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
-fun HomeCardListItem(name: String, onClick: (String) -> Unit,savingsBalance:String) {
+fun HomeCardListItem(
+    name: String,
+    onClick: (String) -> Unit,
+    balance: String?,
+    lastSavingsAmount: String? = null,
+    lastSavingsDate: String? = null
+) {
     var showExpanded by remember { mutableStateOf(false) }
 
     ElevatedCard(
@@ -91,12 +105,19 @@ fun HomeCardListItem(name: String, onClick: (String) -> Unit,savingsBalance:Stri
                     .fillMaxWidth()
                 ) {
                     Text(
-                        text = savingsBalance,
+                        modifier = Modifier.background(
+                            brush = shimmerBrush(
+                                targetValue = 1300f,
+                                showShimmer = balance == null
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ).defaultMinSize(150.dp),
+                        text = if (balance !== null) balance else "",
                         color= MaterialTheme.colorScheme.onBackground,
                         fontSize = 25.sp,
                         style = MaterialTheme.typography.displaySmall.copy(
                             fontWeight = FontWeight.ExtraBold
-                        ),
+                        )
                     )
                 }
                 Row (modifier = Modifier
@@ -114,7 +135,16 @@ fun HomeCardListItem(name: String, onClick: (String) -> Unit,savingsBalance:Stri
                     .fillMaxWidth()
                 ) {
                     Text(
-                        text = "KES 5,000 - 5 Days Ago",
+                        modifier = Modifier.background(
+                            brush = shimmerBrush(
+                                targetValue = 1300f,
+                                showShimmer = lastSavingsAmount == null || lastSavingsDate == null
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ).defaultMinSize(150.dp),
+                        text = if (lastSavingsAmount !== null && lastSavingsDate !== null)
+                                "KES $lastSavingsAmount - `$lastSavingsDate Days Ago"
+                        else "",
                         color= MaterialTheme.colorScheme.onBackground, // #002C56
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
@@ -122,7 +152,59 @@ fun HomeCardListItem(name: String, onClick: (String) -> Unit,savingsBalance:Stri
                 }
 
                 AnimatedVisibility(showExpanded) {
+                    Column {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Savings Balances",
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 14.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                            )
 
+                            Box(contentAlignment = Alignment.Center) {
+                                Row() {
+                                    Text(
+                                        text = "See all",
+                                        textAlign = TextAlign.Center,
+                                        fontSize = 12.sp,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                                    )
+
+                                    Icon(
+                                        Icons.Filled.ArrowForward,
+                                        contentDescription = "Forward Arrow",
+                                        tint = backArrowColor,
+                                    )
+
+                                }
+                            }
+                        }
+
+                        Row (
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Text(
+                                text = "Current Savings",
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.End
+                            )
+
+                            Text(
+                                text = "KES 5,000.00",
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.End
+                            )
+                        }
+                    }
                 }
             }
         }

@@ -23,6 +23,7 @@ import prestaDispatchers
 class DefaultRootBottomComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
+    private val logoutToSplash: () -> Unit = {},
 ) : RootBottomComponent, ComponentContext by componentContext {
 
     private val navigationBottomStackNavigation = StackNavigation<ConfigBottom>()
@@ -53,6 +54,9 @@ class DefaultRootBottomComponent(
             mainContext = prestaDispatchers.main,
             onProfileClicked = {
 
+            },
+            logoutToSplash = {
+                logoutToSplash()
             }
         )
 

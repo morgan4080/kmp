@@ -115,4 +115,13 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
             Result.failure(e)
         }
     }
+
+    override suspend fun logOutUser(): AuthRepository.LogOutResponse {
+
+        userAuthDao.removeUserAuthCredentials()
+
+        return AuthRepository.LogOutResponse(
+            loggedOut = true
+        )
+    }
 }

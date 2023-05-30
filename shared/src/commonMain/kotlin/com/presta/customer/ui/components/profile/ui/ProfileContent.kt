@@ -14,16 +14,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -31,7 +30,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ListItem
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
@@ -41,11 +39,9 @@ import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material.icons.outlined.AttachMoney
 import androidx.compose.material.icons.outlined.CreditCard
 import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Savings
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.rememberModalBottomSheetState
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -55,7 +51,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -81,6 +77,7 @@ import com.presta.customer.ui.composables.HomeCardListItem
 import com.presta.customer.ui.composables.Paginator
 import com.presta.customer.ui.theme.backArrowColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -114,83 +111,74 @@ fun ProfileContent(
     val item2 = quickLinks[1]
     val item3 = quickLinks[2]
     val item4 = quickLinks[3]
-
-    //show  shimmer in  every container  if the container has  no data
     val showShimmerState: Boolean = state.transactionHistory?.transactionId == null
     val showShimmer = remember { mutableStateOf(showShimmerState) }
 
-    //Modal BottomSheet
-    val skipHalfExpanded by remember { mutableStateOf(true) }
     val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Expanded,
-        skipHalfExpanded = skipHalfExpanded
+        initialValue = ModalBottomSheetValue.Hidden
     )
+
+    LaunchedEffect(authState.cachedMemberData) {
+        if (authState.cachedMemberData !== null && authState.cachedMemberData.registrationFeeStatus == "NOT_PAID") {
+            delay(2000L)
+            sheetState.show()
+        }
+    }
+
     val scope = rememberCoroutineScope()
     ModalBottomSheetLayout(
         modifier = Modifier.padding(innerPadding),
         sheetState = sheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         sheetContent = {
-            LazyColumn {
-                items(1) {
-                    ListItem(
-                        text = {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .padding(start = 16.dp, end = 16.dp)
-                                ) {
+            Column(
+                modifier = Modifier.background(MaterialTheme.colorScheme.inverseOnSurface)
+            ) {
+                Column (modifier = Modifier.padding(horizontal = 16.dp, vertical = 26.dp)) {
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 17.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "Activate  Account",
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                            fontSize = 14.sp
+                        )
+                        Icon(
+                            Icons.Filled.Cancel,
+                            contentDescription = "Cancel  Arrow",
+                            tint = backArrowColor,
+                            modifier = Modifier.clickable {
+                                scope.launch { sheetState.hide() }
 
-                                    Row(
-                                        modifier = Modifier
-                                            .padding(top = 17.dp)
-                                            .fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween
-                                    ) {
-                                        Text(
-                                            text = "Activate  Account",
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
-                                            fontSize = 14.sp
-                                        )
-                                        Icon(
-                                            Icons.Filled.Cancel,
-                                            contentDescription = "Cancel  Arrow",
-                                            tint = backArrowColor,
-                                            modifier = Modifier.clickable {
-                                                scope.launch { sheetState.hide() }
-
-                                            }
-                                        )
-                                    }
-
-                                    Row(
-                                        modifier = Modifier
-                                            .padding(top = 17.dp)
-                                            .fillMaxWidth()
-                                    ) {
-                                        Text(
-                                            text = "Welcome to Rubani Sacco to, please pay a registration fee of KSH 1,000 to activate your account",
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                            fontSize = 12.sp
-                                        )
-
-                                    }
-
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth()
-                                            .padding(top = 22.dp, bottom = 22.dp)
-                                    ) {
-                                        ActionButton("Activate Now!", onClickContainer = {
-
-                                        })
-                                    }
-                                }
                             }
-                        }
-                    )
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 17.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Welcome to ${if (authState.authUserResponse !== null) authState.authUserResponse.companyName else ""}," +
+                                    " please pay a registration fee of KSH ${if (authState.cachedMemberData !== null) authState.cachedMemberData.registrationFees else ""} to activate your account",
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                            fontSize = 12.sp
+                        )
+
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(top = 22.dp, bottom = 22.dp)
+                    ) {
+                        ActionButton("Activate Now!", onClickContainer = {
+
+                        })
+                    }
                 }
             }
         }
@@ -198,59 +186,48 @@ fun ProfileContent(
         Scaffold(
             topBar = {
                 CenterAlignedTopAppBar(
-                    title = {
-                        Row(modifier = Modifier.fillMaxWidth()) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Card(
-                                            modifier = Modifier
-                                                .background(color = MaterialTheme.colorScheme.inverseOnSurface)
-                                                .clip(shape = CircleShape),
-                                            elevation = CardDefaults.cardElevation(0.dp),
-                                        ) {
-                                            Box(modifier = Modifier.height(19.dp))
-
-
-                                        }
-
-                                        Text(
-                                            text = "Presta Capital",
-                                            color = MaterialTheme.colorScheme.onBackground,
-                                            fontSize = 18.sp
-                                        )
-                                    }
-                                    IconButton(
-                                        modifier = Modifier
-                                            .clip(CircleShape)
-                                            .background(Color.Transparent),
-                                        onClick = {
-
-                                        },
-                                        content = {
-                                            Icon(
-                                                imageVector = Icons.Outlined.Settings,
-                                                modifier = Modifier.size(25.dp),
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    },
                     modifier =Modifier
                         .background(color =  MaterialTheme.colorScheme.background)
                         .padding(start = 9.dp, end = 16.dp),
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.background)
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+                    title = {
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        modifier = Modifier.background(
+                                            brush = shimmerBrush(
+                                                targetValue = 1300f,
+                                                showShimmer = authState.authUserResponse?.companyName == null
+                                            ),
+                                            shape = RoundedCornerShape(12.dp)
+                                        ).defaultMinSize(200.dp),
+                                        text = if (authState.authUserResponse !== null) authState.authUserResponse.companyName else "",
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        fontSize = 18.sp
+                                    )
+                                }
+                                IconButton(
+                                    modifier = Modifier.absoluteOffset(x = 15.dp),
+                                    onClick = {
+                                        onAuthEvent(AuthStore.Intent.LogOutUser)
+                                    },
+                                    content = {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Logout,
+                                            modifier = Modifier.size(25.dp),
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                )
+                            }
+                        }
+                    }
                 )
             },
             content = { innerPadding ->
@@ -270,7 +247,14 @@ fun ProfileContent(
                                 .fillMaxWidth()
                         ) {
                             Text(
-                                text = "Hello Morgan",
+                                modifier = Modifier.background(
+                                    brush = shimmerBrush(
+                                        targetValue = 1300f,
+                                        showShimmer = authState.authUserResponse?.firstName == null
+                                    ),
+                                    shape = RoundedCornerShape(12.dp)
+                                ).defaultMinSize(150.dp),
+                                text = if (authState.authUserResponse !== null) "Hello ${authState.authUserResponse.firstName}" else "",
                                 color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -296,7 +280,9 @@ fun ProfileContent(
                                             onClick = {
 
                                             },
-                                            savingsBalance = if (state.balances !== null) state.balances.savingsBalance.toString() else "0.00",
+                                            balance = "",
+                                            lastSavingsAmount = "",
+                                            lastSavingsDate = ""
                                         )
                                     }
                                 }
@@ -552,15 +538,9 @@ fun ProfileContent(
                             }
                         }
                     }
-//            val allData=state.transactionHistory
-//            val arrayList = ArrayList<String>()
-//            arrayList.add(allData.toString())
 
                     items(3) {
                         Column(modifier = Modifier.padding(top = 16.dp)) {
-                            //add  data  from the apI and display the  list of data  as per the set data size
-                            //To Determine the color of the icon use the  state of data from the api
-
                             val transactionList = mutableListOf(
                                 Transactions(
                                     Icons.Filled.OpenInNew
@@ -580,29 +560,33 @@ fun ProfileContent(
                                             IconButton(
                                                 modifier = Modifier
                                                     .clip(CircleShape)
-                                                    .background(if (state.transactionHistory?.postingType == PostingType.CR) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer)
-                                                    .size(30.dp),
+                                                    .background(
+                                                        if (state.transactionHistory?.postingType == PostingType.CR)
+                                                            MaterialTheme.colorScheme.secondaryContainer
+                                                        else
+                                                            MaterialTheme.colorScheme.errorContainer
+                                                    ).size(30.dp),
                                                 onClick = {
 
                                                 },
                                                 content = {
                                                     Icon(
                                                         imageVector = transaction.icon,
-                                                        modifier = if (state.transactionHistory?.postingType == PostingType.CR) Modifier.size(
-                                                            15.dp
-                                                        )
-                                                            .rotate(180F) else Modifier.size(15.dp),
+                                                        modifier = if (state.transactionHistory?.postingType == PostingType.CR)
+                                                            Modifier.size(15.dp)
+                                                            .rotate(180F)
+                                                        else
+                                                            Modifier.size(15.dp),
                                                         contentDescription = null,
-                                                        tint = if (state.transactionHistory?.postingType == PostingType.CR) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
+                                                        tint = if (state.transactionHistory?.postingType == PostingType.CR)
+                                                            MaterialTheme.colorScheme.secondary
+                                                        else
+                                                            MaterialTheme.colorScheme.error
                                                     )
                                                 }
                                             )
                                         }
                                         Column {
-                                            // show shimmer in data loading  state
-                                            //Hide shimmer if the  data  is available
-                                            //increase the size of  the container  it has no  data  to show
-                                            //equal  sized containers when data is loading
                                             Row(
                                                 modifier = Modifier
                                                     .background(MaterialTheme.colorScheme.background)
@@ -617,15 +601,16 @@ fun ProfileContent(
                                                                 targetValue = 1300f,
                                                                 showShimmer = showShimmer.value
                                                             )
-                                                        )
-                                                        .fillMaxWidth(),
-                                                    text = if (state.transactionHistory !== null) state.transactionHistory.purpose else "",
+                                                        ).fillMaxWidth(),
+                                                    text = if (state.transactionHistory !== null)
+                                                                state.transactionHistory.purpose
+                                                            else
+                                                                "",
                                                     color = MaterialTheme.colorScheme.onBackground,
                                                     fontSize = 14.sp,
                                                     fontWeight = FontWeight.Bold,
                                                     textAlign = TextAlign.End
                                                 )
-
                                             }
 
                                             Row(
@@ -654,8 +639,6 @@ fun ProfileContent(
                                         }
                                     }
                                     Column {
-                                        //Ammount
-
                                         Row(
                                             modifier = Modifier
                                                 .background(MaterialTheme.colorScheme.background)
@@ -748,32 +731,4 @@ fun shimmerBrush(showShimmer: Boolean = true, targetValue: Float = 1000f): Brush
             end = Offset.Zero
         )
     }
-}
-
-
-@Composable
-fun TextWithShimmerContainer(state: ProfileStore.State, text: String) {
-    val showShimmerState: Boolean = state.transactionHistory?.transactionId == null
-    val showShimmer = remember { mutableStateOf(showShimmerState) }
-
-    Card(
-        shape = RoundedCornerShape(15.dp),
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
-            .fillMaxWidth(0.5f),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
-    ) {
-        Text(
-            text = text,
-            color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 10.sp,
-            fontFamily = fontFamilyResource(fontResource = MR.fonts.Poppins.regular),
-            modifier = Modifier
-                .background(shimmerBrush(targetValue = 1300f, showShimmer = showShimmer.value))
-                .width(if (state.transactionHistory == null) IntrinsicSize.Max else IntrinsicSize.Max)
-                .fillMaxWidth(1f)
-        )
-
-    }
-
 }

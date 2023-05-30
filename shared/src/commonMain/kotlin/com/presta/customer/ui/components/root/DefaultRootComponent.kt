@@ -189,7 +189,10 @@ class DefaultRootComponent(
     private fun rootBottomComponent(componentContext: ComponentContext): RootBottomComponent =
         DefaultRootBottomComponent(
             componentContext = componentContext,
-            storeFactory = storeFactory
+            storeFactory = storeFactory,
+            logoutToSplash = {
+                navigation.replaceAll(Config.Splash)
+            }
         )
 
     enum class OnBoardingContext {

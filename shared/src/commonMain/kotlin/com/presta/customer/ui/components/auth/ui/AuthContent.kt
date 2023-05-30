@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -49,7 +48,7 @@ import com.presta.customer.ui.components.onBoarding.store.OnBoardingStore
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthContent(
     state: AuthStore.State,
@@ -218,14 +217,18 @@ fun AuthContent(
 
             onOnBoardingEvent(OnBoardingStore.Intent.UpdateError(null))
 
-            onEvent(AuthStore.Intent.UpdateContext(
-                context = Contexts.CREATE_PIN,
-                title = "Create pin code",
-                label = "You'll be able to login to Presta Customer using the following pin code",
-                pinCreated = state.pinCreated,
-                pinConfirmed = false,
-                error = null
-            ))
+            if (state.pinStatus !== PinStatus.SET) {
+                onEvent(
+                    AuthStore.Intent.UpdateContext(
+                        context = Contexts.CREATE_PIN,
+                        title = "Create pin code",
+                        label = "You'll be able to login to Presta Customer using the following pin code",
+                        pinCreated = state.pinCreated,
+                        pinConfirmed = false,
+                        error = null
+                    )
+                )
+            }
         }
 
         if (state.error !== null) {
