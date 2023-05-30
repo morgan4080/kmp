@@ -11,6 +11,7 @@ import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
+import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.presta.customer.ui.components.applyLoan.DefaultApplyLoanComponent
 import com.presta.customer.ui.components.banKDisbursement.BankDisbursementComponent
 import com.presta.customer.ui.components.banKDisbursement.DefaultBankDisbursementComponent
@@ -28,7 +29,6 @@ import com.presta.customer.ui.components.payLoanPropmpt.DefaultPayLoanPromptComp
 import com.presta.customer.ui.components.payLoanPropmpt.PayLoanPromptComponent
 import com.presta.customer.ui.components.processingTransaction.DefaultProcessingTransactionComponent
 import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
-import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
 import com.presta.customer.ui.components.shortTermLoans.DefaultShortTernLoansComponent
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
 import com.presta.customer.ui.components.succesfulTransaction.DefaultSuccessfulTransactionComponent
@@ -37,13 +37,13 @@ import com.presta.customer.ui.components.topUp.DefaultLoanTopUpComponent
 import com.presta.customer.ui.components.topUp.LoanTopUpComponent
 import components.modeofDisbursement.DefaultModeOfDisbursementComponent
 import components.rootLoans.RootLoansComponent
+import prestaDispatchers
 
 class DefaultRootLoansComponent(
     componentContext: ComponentContext,
+    val storeFactory: StoreFactory,
 ) : RootLoansComponent, ComponentContext by componentContext {
     private val loansNavigation = StackNavigation<ConfigLoans>()
-    private val navigation = StackNavigation<RootBottomComponent>()
-
 
     private val _childLoansStack = childStack(
         source = loansNavigation,
@@ -127,16 +127,20 @@ class DefaultRootLoansComponent(
                 loansNavigation.push(ConfigLoans.EmergencyLoan(refId = "em"))
 
             },
-        onConfirmClicked = {
-            loansNavigation.push(ConfigLoans.LoanTopUp(refId = "topUp"))
-        }, onProduct2Selected = {
+            onConfirmClicked = {
+                loansNavigation.push(ConfigLoans.LoanTopUp(refId = "topUp"))
+            },
+            onProduct2Selected = {
                 loansNavigation.push(ConfigLoans.PayLoan(refId = "pay"))
 
             },
-        onBackNavClicked = {
-            loansNavigation.pop()
+            onBackNavClicked = {
+                loansNavigation.pop()
 
-        })
+            },
+            mainContext = prestaDispatchers.main,
+            storeFactory = storeFactory
+        )
 
     private fun longTermComponent(componentContext: ComponentContext): LongTermLoansComponent =
         DefaultLongTermComponent(componentContext = componentContext,
