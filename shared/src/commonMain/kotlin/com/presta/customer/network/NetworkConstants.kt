@@ -48,16 +48,17 @@ object NetworkConstants {
     object PrestaCheckPinClient {
         const val route = accountsUrlKeycloak + "auth/ussd/has-pin"
     }
+
     object PrestaGetSavingsBalance {
         const val route = applicationsBaseUrl + "balances/savings"
     }
-    object PrestaGetTransactionsHistory{
+
+    object PrestaGetTransactionsHistory {
         const  val route = applicationsBaseUrl + "transactions"
-
     }
-    object PrestaGetTShortTermProductsList{
-        const  val route = applicationsBaseUrl + "loans/products"
 
+    object PrestaGetTShortTermProductsList {
+        const  val route = applicationsBaseUrl + "loans/products"
     }
     object  PrestaGetShortTermToUpList{
         const val  route= applicationV1BaseUrl + "query/topup-loans"

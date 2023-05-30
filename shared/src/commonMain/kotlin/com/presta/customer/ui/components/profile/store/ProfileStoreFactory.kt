@@ -31,7 +31,8 @@ class ProfileStoreFactory(
     private sealed class Msg {
         data class ProfileLoading(val isLoading: Boolean = true): Msg()
         data class ProfileLoaded(val balances: PrestaBalancesResponse): Msg()
-        data class TransactionHistoryLoaded(val transactionHistory:PrestaTransactionHistoryResponse): Msg()
+        data class TransactionHistoryLoaded(val transactionHistory: PrestaTransactionHistoryResponse): Msg()
+        data class TransactionMappingLoaded(val transactionMapping: Map<String, String>): Msg()
 
         data class ProfileFailed(val error: String?): Msg()
     }
@@ -46,7 +47,8 @@ class ProfileStoreFactory(
         override fun executeIntent(intent: ProfileStore.Intent, getState: () -> ProfileStore.State): Unit =
             when(intent) {
                 is ProfileStore.Intent.GetBalances -> getBalances(token = intent.token, refId = intent.refId)
-                is ProfileStore.Intent.GetTransactionHistory->getTransactionHistory(token = intent.token, refId =intent.refId )
+                is ProfileStore.Intent.GetTransactionHistory -> getTransactionHistory(token = intent.token, refId = intent.refId, purposeIds = intent.purposeIds)
+                is ProfileStore.Intent.GetTransactionMapping -> getTransactionMapping(token = intent.token)
             }
 
         private var getBalancesJob: Job? = null
@@ -76,7 +78,8 @@ class ProfileStoreFactory(
 
         private fun getTransactionHistory(
             token: String,
-            refId: String
+            refId: String,
+            purposeIds: List<String>,
         ) {
             if (getTransactionHistoryJob?.isActive == true) return
 
@@ -85,9 +88,33 @@ class ProfileStoreFactory(
             getTransactionHistoryJob = scope.launch {
                 profileRepository.getTransactionHistoryData(
                     token = token,
-                    memberRefId = refId
+                    memberRefId = refId,
+                    purposeIds = purposeIds
                 ).onSuccess { response ->
+                    println(":::::getTransactionHistoryData")
+                    println(response)
                     dispatch(Msg.TransactionHistoryLoaded(response))
+                }.onFailure { e ->
+                    dispatch(Msg.ProfileFailed(e.message))
+                }
+            }
+        }
+        //Get Transaction mapping
+
+        private var getTransactionMappingJob: Job? = null
+
+        private fun getTransactionMapping(
+            token: String
+        ) {
+            if (getTransactionMappingJob?.isActive == true) return
+
+            dispatch(Msg.ProfileLoading())
+
+            getTransactionMappingJob = scope.launch {
+                profileRepository.getTransactionMappingData(
+                    token = token
+                ).onSuccess { response ->
+                    dispatch(Msg.TransactionMappingLoaded(response))
                 }.onFailure { e ->
                     dispatch(Msg.ProfileFailed(e.message))
                 }
@@ -103,7 +130,8 @@ class ProfileStoreFactory(
                 is Msg.ProfileLoading -> copy(isLoading = msg.isLoading)
                 is Msg.ProfileLoaded -> copy(balances = msg.balances)
                 is Msg.ProfileFailed -> copy(error = msg.error)
-                is Msg.TransactionHistoryLoaded->copy(transactionHistory =msg.transactionHistory )
+                is Msg.TransactionHistoryLoaded->copy(transactionHistory = msg.transactionHistory)
+                is Msg.TransactionMappingLoaded->copy(transactionMapping = msg.transactionMapping)
             }
     }
 }

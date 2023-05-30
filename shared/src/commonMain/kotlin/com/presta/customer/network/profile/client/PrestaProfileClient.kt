@@ -14,7 +14,7 @@ import io.ktor.http.contentType
 class PrestaProfileClient(
     private val httpClient: HttpClient
 ) {
-    suspend fun getUserSavingsData(
+    suspend fun getUserSavingsData (
         token: String,
         memberRefId: String,
     ): PrestaBalancesResponse {
@@ -29,14 +29,30 @@ class PrestaProfileClient(
     }
 
 
-    suspend fun getUserTransactionHistoryData(
+    suspend fun getUserTransactionHistoryData (
         token: String,
-        //Transaction id
         memberRefId: String,
+        purposeIds: List<String>
     ): PrestaTransactionHistoryResponse {
 
         return profileErrorHandler {
             httpClient.get("${NetworkConstants.PrestaGetTransactionsHistory.route}/${memberRefId}") {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+                url {
+                    parameters.append("purposeIds", purposeIds.joinToString())
+                }
+            }
+        }
+    }
+
+
+    suspend fun getTransactionsMappingData (
+        token: String
+    ): Map<String, String> {
+        return profileErrorHandler {
+            httpClient.get("${NetworkConstants.PrestaGetTransactionsHistory.route}/mapping") {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 contentType(ContentType.Application.Json)

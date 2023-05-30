@@ -13,50 +13,43 @@ class ProfileRepositoryImpl : ProfileRepository,KoinComponent {
         memberRefId: String,
         token: String
     ): Result<PrestaBalancesResponse> {
-
         return try {
-            // if caching functionality check db dao
-
-            // if isEmpty make api request
-            //Get data  From The APi
-
             val response = profileClient.getUserSavingsData (
                 token = token,
                 memberRefId = memberRefId
             )
-
             Result.success(response)
-
         } catch (e: Exception) {
             e.printStackTrace()
             Result.failure(e)
         }
-
-
     }
 
     override suspend fun getTransactionHistoryData(
         memberRefId: String,
-        token: String
+        token: String,
+        purposeIds: List<String>
     ): Result<PrestaTransactionHistoryResponse> {
-
         return try {
-            // if caching functionality check db dao
-
-            // if isEmpty make api request
-            //Get data  From The APi
-
             val response = profileClient.getUserTransactionHistoryData(
                 token = token,
-                memberRefId = memberRefId
+                memberRefId = memberRefId,
+                purposeIds = purposeIds
             )
-
             Result.success(response)
-
         } catch (e: Exception) {
             e.printStackTrace()
             Result.failure(e)
         }
+    }
 
+    override suspend fun getTransactionMappingData(token: String): Result<Map<String, String>> {
+        return try {
+            val response = profileClient.getTransactionsMappingData(token = token)
+            Result.success(response)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
     }
 }

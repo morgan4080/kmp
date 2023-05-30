@@ -8,7 +8,8 @@ interface ProfileStore: Store<ProfileStore.Intent, ProfileStore.State, Nothing> 
 
     sealed class Intent{
         data class GetBalances(val token: String, val refId: String): Intent()
-        data class GetTransactionHistory(val token: String, val refId: String): Intent()
+        data class GetTransactionHistory(val token: String, val refId: String, val purposeIds: List<String>): Intent()
+        data class GetTransactionMapping(val token: String): Intent()
 
     }
 
@@ -16,7 +17,7 @@ interface ProfileStore: Store<ProfileStore.Intent, ProfileStore.State, Nothing> 
         val isLoading: Boolean = false,
         val error: String? = null,
         val balances: PrestaBalancesResponse? = null,
-        val transactionHistory:PrestaTransactionHistoryResponse?=null
-
+        val transactionHistory: PrestaTransactionHistoryResponse? = null,
+        val transactionMapping: Map<String, String>? = null
     )
 }

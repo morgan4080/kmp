@@ -74,6 +74,24 @@ class DefaultProfileComponent(
         profileStore.accept(event)
     }
 
+    private var profileStateScopeJob: Job? = null
+
+    private fun checkProfileTransactions (access_token: String, refId: String) {
+        if (profileStateScopeJob?.isActive == true) return
+
+        profileStateScopeJob = scope.launch {
+            profileState.collect { state ->
+                if (state.transactionMapping !== null) {
+                    onEvent(ProfileStore.Intent.GetTransactionHistory (
+                        token = access_token,
+                        refId = refId,
+                        purposeIds = state.transactionMapping.keys.toList()
+                    ))
+                }
+            }
+        }
+    }
+
     private var authUserScopeJob: Job? = null
 
     private fun checkAuthenticatedUser() {
@@ -89,10 +107,11 @@ class DefaultProfileComponent(
                         token = state.cachedMemberData.accessToken,
                         refId = state.cachedMemberData.refId,
                     ))
-                    onEvent(ProfileStore.Intent.GetTransactionHistory (
-                        token = state.cachedMemberData.accessToken,
-                        refId = state.cachedMemberData.refId,
+                    onEvent(ProfileStore.Intent.GetTransactionMapping (
+                        token = state.cachedMemberData.accessToken
                     ))
+
+                    checkProfileTransactions(state.cachedMemberData.accessToken, state.cachedMemberData.refId)
                 }
             }
         }

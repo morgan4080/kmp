@@ -12,7 +12,7 @@ data class PrestaTransactionHistoryResponse @OptIn(ExperimentalSerializationApi:
      val amount:Double,
      val transactionDate: String,
      @EncodeDefault val postingType: PostingType? = null,
-     )
+)
 
 @Serializable
 enum class PostingType {
