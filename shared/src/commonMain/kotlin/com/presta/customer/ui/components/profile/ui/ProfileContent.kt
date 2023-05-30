@@ -118,6 +118,7 @@ fun ProfileContent(
         initialValue = ModalBottomSheetValue.Hidden
     )
 
+
     LaunchedEffect(authState.cachedMemberData) {
         if (authState.cachedMemberData !== null && authState.cachedMemberData.registrationFeeStatus == "NOT_PAID") {
             delay(2000L)

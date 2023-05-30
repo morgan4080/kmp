@@ -30,7 +30,7 @@ class ShortTermLoansStoreFactory(
 
     private sealed class Msg {
         data class ShortTermLoansLoading(val isLoading: Boolean = true) : Msg()
-        data class ShortTermLoansProductsListLoaded(val shortTermLoansProductList: PrestaShortTermProductsListResponse) :
+        data class ShortTermLoansProductsListLoaded(val shortTermLoansProductList: List<PrestaShortTermProductsListResponse> = listOf()) :
             Msg()
 
         data class ShortTermLoansFailed(val error: String?) : Msg()

@@ -19,7 +19,6 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 fun  ShortTermTopUpList(component: ShortTermLoansComponent){
     Column(modifier = Modifier
         .fillMaxWidth()){
-
         Column(modifier = Modifier
             .fillMaxWidth()
             .weight(0.2f)){
@@ -29,19 +28,17 @@ fun  ShortTermTopUpList(component: ShortTermLoansComponent){
                 fontSize = 14.sp,
                 fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
             )
-
             LazyColumn(modifier = Modifier
                 .fillMaxWidth()
                 .padding(top=10.dp)){
 
-                items(10) {
+                items(3) {
                     TopUpSelectionContainer()
                 }
 
             }
 
         }
-
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 26.dp)){
@@ -53,7 +50,6 @@ fun  ShortTermTopUpList(component: ShortTermLoansComponent){
             })
 
         }
-
         //Action Button appears above the action Button
         Spacer(modifier = Modifier
             .padding(bottom = 80.dp))
