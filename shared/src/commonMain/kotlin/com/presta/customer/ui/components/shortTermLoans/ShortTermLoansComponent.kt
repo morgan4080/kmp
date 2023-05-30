@@ -16,6 +16,8 @@ interface ShortTermLoansComponent {
     val shortTermloansStore: ShortTermLoansStore
 
     val shortTermloansState: StateFlow<ShortTermLoansStore.State>
+    fun onAuthEvent(event: AuthStore.Intent)
+    fun onEvent(event: ShortTermLoansStore.Intent)
 
     val model: Value<Model>
 

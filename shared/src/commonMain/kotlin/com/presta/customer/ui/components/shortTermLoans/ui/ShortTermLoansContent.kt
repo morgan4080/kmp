@@ -38,11 +38,11 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 @Composable
 fun ShortTermLoansContent(
     component: ShortTermLoansComponent,
-    innerPadding: PaddingValues,
     authState: AuthStore.State,
-    state: ProfileStore.State,
+    state: ShortTermLoansStore.State,
     onEvent: (ShortTermLoansStore.Intent) -> Unit,
-    onAuthEvent: (ShortTermLoansStore.Intent) -> Unit,
+    onAuthEvent: (AuthStore.Intent) -> Unit,
+    innerPadding: PaddingValues,
    ){
 
     Surface(

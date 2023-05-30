@@ -12,9 +12,14 @@ fun ShortTermLoansScreen(
     innerPadding:PaddingValues){
     //short term loans Content
     val authState by component.authState.collectAsState()
+    val  shortTermLoansState by component.shortTermloansState.collectAsState()
 
-
-
-
-
+    ShortTermLoansContent(
+        authState = authState,
+        state = shortTermLoansState,
+        onEvent = component::onEvent,
+        onAuthEvent = component::onAuthEvent,
+        innerPadding = innerPadding,
+        component = component
+    )
 }
