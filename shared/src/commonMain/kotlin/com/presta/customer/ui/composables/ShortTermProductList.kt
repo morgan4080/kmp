@@ -14,10 +14,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
+import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
-fun ShortTermProductList(component: ShortTermLoansComponent) {
+fun ShortTermProductList(
+    component: ShortTermLoansComponent,
+    state: ShortTermLoansStore.State,
+
+    ) {
     //update
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
@@ -40,11 +45,12 @@ fun ShortTermProductList(component: ShortTermLoansComponent) {
                         .fillMaxWidth()
                         .padding(top = 10.dp)
                 ) {
-                    ProductSelectionCard("Emergency Loan ", "Interest 12%", onClickContainer = {
+                    ProductSelectionCard(state.prestaShortTermProductList?.name.toString(),
+                        state.prestaShortTermProductList?.interestPeriodCycle ,
+                        onClickContainer = {
                         //Navigate  to  EmergencyLoan Screen
                         //component.onEmergencyLoanSelected()
                         //Todo -Configure components
-                        println("Navigate to Emergency Clicked")
                         component.onSelected("em")
 
                     })

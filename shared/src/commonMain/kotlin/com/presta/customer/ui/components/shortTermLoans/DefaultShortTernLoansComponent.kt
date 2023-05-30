@@ -43,9 +43,6 @@ class DefaultShortTernLoansComponent(
 
     ): ShortTermLoansComponent, ComponentContext by componentContext {
 
-
-
-
     private val models = MutableValue(
         ShortTermLoansComponent.Model(
             items = listOf()
@@ -77,6 +74,7 @@ class DefaultShortTernLoansComponent(
     }
 
     override fun onEvent(event: ShortTermLoansStore.Intent) {
+
         TODO("Not yet implemented")
     }
 
@@ -94,11 +92,7 @@ class DefaultShortTernLoansComponent(
             ).create()
         }
 
-
-
     override val authState: StateFlow<AuthStore.State> =authStore.stateFlow
-
-
 
     override val shortTermloansStore: ShortTermLoansStore=
         instanceKeeper.getStore {
@@ -109,6 +103,5 @@ class DefaultShortTernLoansComponent(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val shortTermloansState: StateFlow<ShortTermLoansStore.State> = shortTermloansStore.stateFlow
-
 
 }

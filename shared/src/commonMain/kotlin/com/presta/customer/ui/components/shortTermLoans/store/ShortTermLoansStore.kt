@@ -7,9 +7,7 @@ interface ShortTermLoansStore: Store<ShortTermLoansStore.Intent,ShortTermLoansSt
 
     sealed class Intent{
         data class GetPrestaShortTermProductList(val token: String, val refId: String): Intent()
-
     }
-
     data class State(
         val isLoading: Boolean = false,
         val error: String? = null,

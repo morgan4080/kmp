@@ -70,6 +70,8 @@ class ShortTermLoansStoreFactory(
                     memberRefId = refId
                 ).onSuccess { response ->
                     dispatch(Msg.ShortTermLoansProductsListLoaded(response))
+
+
                 }.onFailure { e ->
                     dispatch(Msg.ShortTermLoansFailed(e.message))
                 }

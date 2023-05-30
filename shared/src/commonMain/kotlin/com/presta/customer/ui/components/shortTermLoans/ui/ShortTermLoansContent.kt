@@ -112,7 +112,7 @@ fun ShortTermLoansContent(
                         }
                     }
                     when (tabIndex) {
-                        0 -> ShortTermProductList(component)
+                        0 -> ShortTermProductList(component,state)
                         1 -> ShortTermTopUpList(component)
 
                     }
@@ -120,5 +120,4 @@ fun ShortTermLoansContent(
             }
         }
     }
-
 }

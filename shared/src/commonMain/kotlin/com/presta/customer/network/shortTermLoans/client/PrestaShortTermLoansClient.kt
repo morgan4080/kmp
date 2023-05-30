@@ -13,12 +13,10 @@ import io.ktor.http.contentType
 class PrestaShortTermLoansClient (
     private val httpClient: HttpClient
         ){
-
     suspend fun getShortTermProductsList(
         token: String,
         memberRefId: String,
     ): PrestaShortTermProductsListResponse {
-
         return shortTermLoansErrorHandler {
             httpClient.get("${NetworkConstants.PrestaGetTShortTermProductsList.route}/${memberRefId}") {
                 header(HttpHeaders.Authorization, "Bearer $token")
