@@ -14,15 +14,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -43,10 +44,16 @@ import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Savings
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -84,7 +91,7 @@ data class Transactions(
 
 @OptIn(
     ExperimentalMaterialApi::class, ExperimentalLayoutApi::class,
-    ExperimentalFoundationApi::class
+    ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class
 )
 @Composable
 fun ProfileContent(
@@ -108,9 +115,11 @@ fun ProfileContent(
     val item3 = quickLinks[2]
     val item4 = quickLinks[3]
 
+    //show  shimmer in  every container  if the container has  no data
+    val showShimmerState: Boolean = state.transactionHistory?.transactionId == null
+    val showShimmer = remember { mutableStateOf(showShimmerState) }
 
     //Modal BottomSheet
-
     val skipHalfExpanded by remember { mutableStateOf(true) }
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Expanded,
@@ -178,7 +187,6 @@ fun ProfileContent(
 
                                         })
                                     }
-
                                 }
                             }
                         }
@@ -187,440 +195,532 @@ fun ProfileContent(
             }
         }
     ) {
-        LazyColumn(
-            // consume insets as scaffold doesn't do it by default
-            modifier = Modifier
-                .consumeWindowInsets(innerPadding)
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-                .wrapContentHeight(),
-            contentPadding = innerPadding
-        ) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = "Presta Capital",
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 18.sp
-                            )
-                        }
-
-                        IconButton(
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .background(Color.Transparent),
-                            onClick = {
-
-                            },
-                            content = {
-                                Icon(
-                                    imageVector = Icons.Outlined.Settings,
-                                    modifier = Modifier.size(25.dp),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        )
-                    }
-                }
-            }
-            item {
-                Box(
-                    modifier = Modifier
-                        .padding(top = 9.dp)
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Hello Morgan",
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        fontFamily = FontFamily.SansSerif
-                    )
-                }
-            }
-            item {
-                LazyRow(modifier = Modifier
-                    .consumeWindowInsets(innerPadding)
-                    .padding(vertical = 20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(20.dp),
-                    state = stateLazyRow0,
-                    flingBehavior = rememberSnapFlingBehavior(lazyListState = stateLazyRow0),
-                    content = {
-                        items(3) {
+        Scaffold(
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Row(modifier = Modifier.fillMaxWidth()) {
                             Box(
                                 modifier = Modifier
-                                    .fillParentMaxWidth()
+                                    .fillMaxWidth()
                             ) {
-                                HomeCardListItem(
-                                    name = "$it",
-                                    onClick = {
-
-                                    },
-                                    savingsBalance = if (state.balances !== null) state.balances.savingsBalance.toString() else "0.00",
-                                )
-                            }
-                        }
-                    }
-                )
-            }
-            item {
-                Paginator(3, stateLazyRow0.firstVisibleItemIndex)
-            }
-            item {
-                Box(
-                    modifier = Modifier
-                        .padding(top = 12.92.dp, start = 5.dp)
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Quick Links",
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        fontFamily = FontFamily.SansSerif
-                    )
-                }
-            }
-            item {
-
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 15.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    state = stateLazyRow,
-                    flingBehavior = rememberSnapFlingBehavior(lazyListState = stateLazyRow)
-                ) {
-                    item {
-                        //Add savings
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-
-                            IconButton(
-                                modifier = Modifier
-                                    .clip(shape = RoundedCornerShape(10.dp))
-                                    .background(MaterialTheme.colorScheme.primary)
-                                    .size(57.dp),
-                                onClick = {
-                                    // component.onAddSavingsSelected()
-                                    //Test api data
-                                    println(state.transactionHistory?.transactionId)
-                                    println(state.balances?.savingsBalance)
-
-
-                                },
-                                content = {
-                                    Icon(
-                                        imageVector = item1.icon,
-                                        modifier = Modifier.size(30.dp),
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.inverseOnSurface
-                                    )
-                                }
-                            )
-
-                            Text(
-                                modifier = Modifier.padding(top = 7.08.dp),
-                                text = item1.labelTop,
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Light
-                            )
-
-                            Text(
-                                text = item1.labelBottom,
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Light
-                            )
-                        }
-                        //Apply loan
-
-                        Column(
-                            modifier = Modifier
-                                .padding(start = 29.dp)
-                                .fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-
-                            IconButton(
-                                modifier = Modifier
-                                    .clip(shape = RoundedCornerShape(10.dp))
-                                    .background(MaterialTheme.colorScheme.primary)
-                                    .size(57.dp),
-                                onClick = {
-                                    //component.onApplyLoanSelected()
-
-                                },
-                                content = {
-                                    Icon(
-                                        imageVector = item2.icon,
-                                        modifier = Modifier.size(30.dp),
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.inverseOnSurface
-                                    )
-                                }
-                            )
-
-                            Text(
-                                modifier = Modifier.padding(top = 7.08.dp),
-                                text = item2.labelTop,
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Light
-                            )
-
-                            Text(
-                                text = item2.labelBottom,
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Light
-                            )
-                        }
-                        //Pay Loan
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(start = 29.dp),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-
-                            IconButton(
-                                modifier = Modifier
-                                    .clip(shape = RoundedCornerShape(10.dp))
-                                    .background(MaterialTheme.colorScheme.primary)
-                                    .size(57.dp),
-                                onClick = {
-                                    //  component.onPayLoanSelected()
-
-
-                                },
-                                content = {
-                                    Icon(
-                                        imageVector = item3.icon,
-                                        modifier = Modifier.size(30.dp),
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.inverseOnSurface
-                                    )
-                                }
-                            )
-
-                            Text(
-                                modifier = Modifier.padding(top = 7.08.dp),
-                                text = item3.labelTop,
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Light
-                            )
-
-                            Text(
-                                text = item3.labelBottom,
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Light
-                            )
-                        }
-
-                        //View Full  Statement
-                        Column(
-                            modifier = Modifier
-                                .padding(start = 18.dp)
-                                .fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-
-                            IconButton(
-                                modifier = Modifier
-                                    .clip(shape = RoundedCornerShape(10.dp))
-                                    .background(MaterialTheme.colorScheme.primary)
-                                    .size(57.dp),
-                                onClick = {
-
-
-                                },
-                                content = {
-                                    Icon(
-                                        imageVector = item4.icon,
-                                        modifier = Modifier.size(30.dp),
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.inverseOnSurface
-                                    )
-                                }
-                            )
-
-                            Text(
-                                modifier = Modifier.padding(top = 7.08.dp),
-                                text = item4.labelTop,
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Light
-                            )
-
-                            Text(
-                                text = item4.labelBottom,
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Light
-                            )
-                        }
-
-                    }
-
-                }
-            }
-            item {
-
-                Box(
-                    modifier = Modifier
-                        .padding(top = 26.dp, start = 5.dp)
-                        .fillMaxWidth()
-                ) {
-
-                    Row(
-                        modifier = Modifier.fillParentMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Transactions",
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            fontFamily = FontFamily.SansSerif
-                        )
-
-                        Box(contentAlignment = Alignment.Center) {
-                            Row() {
-                                Text(
-                                    text = "See all",
-                                    textAlign = TextAlign.Center,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
-                                )
-
-                                Icon(
-                                    Icons.Filled.ArrowForward,
-                                    contentDescription = "Forward Arrow",
-                                    tint = backArrowColor,
-                                )
-
-                            }
-                        }
-                    }
-                }
-            }
-//            val allData=state.transactionHistory
-//            val arrayList = ArrayList<String>()
-//            arrayList.add(allData.toString())
-
-
-            items(3) {
-                Column(modifier = Modifier.padding(top = 16.dp)) {
-                    //add  data  from the apI and display the  list of data  as per the set data size
-                    //To Determine the color of the icon use the  state of data from the api
-
-                    val transactionList = mutableListOf(
-                        Transactions(
-                            Icons.Filled.OpenInNew
-                        ),
-                        
-                    )
-                    transactionList.forEach { transaction ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            Row {
-                                Column(
-                                    modifier = Modifier.padding(end = 12.dp),
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Card(
+                                            modifier = Modifier
+                                                .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                                                .clip(shape = CircleShape),
+                                            elevation = CardDefaults.cardElevation(0.dp),
+                                        ) {
+                                            Box(modifier = Modifier.height(19.dp))
+
+
+                                        }
+
+                                        Text(
+                                            text = "Presta Capital",
+                                            color = MaterialTheme.colorScheme.onBackground,
+                                            fontSize = 18.sp
+                                        )
+                                    }
                                     IconButton(
                                         modifier = Modifier
                                             .clip(CircleShape)
-                                            .background(if (state.transactionHistory?.postingType==PostingType.CR) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer)
-                                            .size(30.dp),
+                                            .background(Color.Transparent),
                                         onClick = {
 
                                         },
                                         content = {
                                             Icon(
-                                                imageVector = transaction.icon,
-                                                modifier = if (state.transactionHistory?.postingType==PostingType.CR) Modifier.size(
-                                                    15.dp
-                                                )
-                                                    .rotate(180F) else Modifier.size(15.dp),
+                                                imageVector = Icons.Outlined.Settings,
+                                                modifier = Modifier.size(25.dp),
                                                 contentDescription = null,
-                                                tint = if (state.transactionHistory?.postingType==PostingType.CR) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
+                                                tint = MaterialTheme.colorScheme.primary
                                             )
                                         }
                                     )
                                 }
-                                Column {
-                                    val showShimmer = remember { mutableStateOf(true) }
+                            }
+                        }
+                    },
+                    modifier =Modifier
+                        .background(color =  MaterialTheme.colorScheme.background)
+                        .padding(start = 9.dp, end = 16.dp),
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.background)
+                )
+            },
+            content = { innerPadding ->
+                LazyColumn(
+                    // consume insets as scaffold doesn't do it by default
+                    modifier = Modifier
+                        .consumeWindowInsets(innerPadding)
+                        .padding(start = 16.dp, end = 16.dp)
+                        .wrapContentHeight(),
+                    contentPadding = innerPadding
+                ) {
+
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .padding(top = 9.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Hello Morgan",
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                fontFamily = FontFamily.SansSerif
+                            )
+                        }
+                    }
+                    item {
+                        LazyRow(modifier = Modifier
+                            .consumeWindowInsets(innerPadding)
+                            .padding(vertical = 20.dp),
+                            horizontalArrangement = Arrangement.spacedBy(20.dp),
+                            state = stateLazyRow0,
+                            flingBehavior = rememberSnapFlingBehavior(lazyListState = stateLazyRow0),
+                            content = {
+                                items(3) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillParentMaxWidth()
+                                    ) {
+                                        HomeCardListItem(
+                                            name = "$it",
+                                            onClick = {
+
+                                            },
+                                            savingsBalance = if (state.balances !== null) state.balances.savingsBalance.toString() else "0.00",
+                                        )
+                                    }
+                                }
+                            }
+                        )
+                    }
+                    item {
+                        Paginator(3, stateLazyRow0.firstVisibleItemIndex)
+                    }
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .padding(top = 12.92.dp, start = 5.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Quick Links",
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                fontFamily = FontFamily.SansSerif
+                            )
+                        }
+                    }
+                    item {
+
+                        LazyRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 15.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            state = stateLazyRow,
+                            flingBehavior = rememberSnapFlingBehavior(lazyListState = stateLazyRow)
+                        ) {
+                            item {
+                                //Add savings
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+
+                                    IconButton(
+                                        modifier = Modifier
+                                            .clip(shape = RoundedCornerShape(10.dp))
+                                            .background(MaterialTheme.colorScheme.primary)
+                                            .size(57.dp),
+                                        onClick = {
+                                            // component.onAddSavingsSelected()
+                                            //Test api data
+                                            println(state.transactionHistory?.transactionId)
+                                            println(state.balances?.savingsBalance)
+
+
+                                        },
+                                        content = {
+                                            Icon(
+                                                imageVector = item1.icon,
+                                                modifier = Modifier.size(30.dp),
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.inverseOnSurface
+                                            )
+                                        }
+                                    )
+
                                     Text(
-                                        text =  if (state.transactionHistory !== null) state.transactionHistory.purpose else "",
+                                        modifier = Modifier.padding(top = 7.08.dp),
+                                        text = item1.labelTop,
                                         color = MaterialTheme.colorScheme.onBackground,
                                         fontSize = 14.sp,
-                                        fontWeight = FontWeight.Medium
+                                        fontWeight = FontWeight.Light
                                     )
-                                    // show shimmer in data loading  state
 
                                     Text(
-                                        text = if (state.transactionHistory !== null) state.transactionHistory.transactionId else "",
+                                        text = item1.labelBottom,
                                         color = MaterialTheme.colorScheme.onBackground,
-                                        fontSize = 10.sp,
-                                        fontFamily = fontFamilyResource(fontResource = MR.fonts.Poppins.regular),
-                                        modifier = Modifier
-                                            .background(shimmerBrush(targetValue = 1300f, showShimmer = showShimmer.value))
-                                            .width(100.dp)
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Light
+                                    )
+                                }
+                                //Apply loan
 
+                                Column(
+                                    modifier = Modifier
+                                        .padding(start = 29.dp)
+                                        .fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+
+                                    IconButton(
+                                        modifier = Modifier
+                                            .clip(shape = RoundedCornerShape(10.dp))
+                                            .background(MaterialTheme.colorScheme.primary)
+                                            .size(57.dp),
+                                        onClick = {
+                                            //component.onApplyLoanSelected()
+
+                                        },
+                                        content = {
+                                            Icon(
+                                                imageVector = item2.icon,
+                                                modifier = Modifier.size(30.dp),
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.inverseOnSurface
+                                            )
+                                        }
+                                    )
+
+                                    Text(
+                                        modifier = Modifier.padding(top = 7.08.dp),
+                                        text = item2.labelTop,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Light
+                                    )
+
+                                    Text(
+                                        text = item2.labelBottom,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Light
+                                    )
+                                }
+                                //Pay Loan
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(start = 29.dp),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+
+                                    IconButton(
+                                        modifier = Modifier
+                                            .clip(shape = RoundedCornerShape(10.dp))
+                                            .background(MaterialTheme.colorScheme.primary)
+                                            .size(57.dp),
+                                        onClick = {
+                                            //  component.onPayLoanSelected()
+
+
+                                        },
+                                        content = {
+                                            Icon(
+                                                imageVector = item3.icon,
+                                                modifier = Modifier.size(30.dp),
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.inverseOnSurface
+                                            )
+                                        }
+                                    )
+
+                                    Text(
+                                        modifier = Modifier.padding(top = 7.08.dp),
+                                        text = item3.labelTop,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Light
+                                    )
+
+                                    Text(
+                                        text = item3.labelBottom,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Light
+                                    )
+                                }
+
+                                //View Full  Statement
+                                Column(
+                                    modifier = Modifier
+                                        .padding(start = 18.dp)
+                                        .fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+
+                                    IconButton(
+                                        modifier = Modifier
+                                            .clip(shape = RoundedCornerShape(10.dp))
+                                            .background(MaterialTheme.colorScheme.primary)
+                                            .size(57.dp),
+                                        onClick = {
+
+
+                                        },
+                                        content = {
+                                            Icon(
+                                                imageVector = item4.icon,
+                                                modifier = Modifier.size(30.dp),
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.inverseOnSurface
+                                            )
+                                        }
+                                    )
+
+                                    Text(
+                                        modifier = Modifier.padding(top = 7.08.dp),
+                                        text = item4.labelTop,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Light
+                                    )
+
+                                    Text(
+                                        text = item4.labelBottom,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Light
                                     )
                                 }
                             }
+                        }
+                    }
+                    item {
 
-                            Column {
+                        Box(
+                            modifier = Modifier
+                                .padding(top = 26.dp, start = 5.dp)
+                                .fillMaxWidth()
+                        ) {
+
+                            Row(
+                                modifier = Modifier.fillParentMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
                                 Text(
-                                    modifier = Modifier.align(Alignment.End),
-                                    text =  if (state.transactionHistory !== null) state.transactionHistory.amount.toString() else "0.00",
+                                    text = "Transactions",
                                     color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontFamily = FontFamily.SansSerif
                                 )
-                                Text(
-                                    text =if (state.transactionHistory !== null) state.transactionHistory.transactionDate else "",
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 10.sp,
-                                    fontFamily = fontFamilyResource(fontResource = MR.fonts.Poppins.regular)
-                                )
+
+                                Box(contentAlignment = Alignment.Center) {
+                                    Row() {
+                                        Text(
+                                            text = "See all",
+                                            textAlign = TextAlign.Center,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                                        )
+
+                                        Icon(
+                                            Icons.Filled.ArrowForward,
+                                            contentDescription = "Forward Arrow",
+                                            tint = backArrowColor,
+                                        )
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+//            val allData=state.transactionHistory
+//            val arrayList = ArrayList<String>()
+//            arrayList.add(allData.toString())
+
+                    items(3) {
+                        Column(modifier = Modifier.padding(top = 16.dp)) {
+                            //add  data  from the apI and display the  list of data  as per the set data size
+                            //To Determine the color of the icon use the  state of data from the api
+
+                            val transactionList = mutableListOf(
+                                Transactions(
+                                    Icons.Filled.OpenInNew
+                                ),
+                            )
+                            transactionList.forEach { transaction ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                ) {
+                                    Row {
+                                        Column(
+                                            modifier = Modifier.padding(end = 12.dp),
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            IconButton(
+                                                modifier = Modifier
+                                                    .clip(CircleShape)
+                                                    .background(if (state.transactionHistory?.postingType == PostingType.CR) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer)
+                                                    .size(30.dp),
+                                                onClick = {
+
+                                                },
+                                                content = {
+                                                    Icon(
+                                                        imageVector = transaction.icon,
+                                                        modifier = if (state.transactionHistory?.postingType == PostingType.CR) Modifier.size(
+                                                            15.dp
+                                                        )
+                                                            .rotate(180F) else Modifier.size(15.dp),
+                                                        contentDescription = null,
+                                                        tint = if (state.transactionHistory?.postingType == PostingType.CR) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
+                                                    )
+                                                }
+                                            )
+                                        }
+                                        Column {
+                                            // show shimmer in data loading  state
+                                            //Hide shimmer if the  data  is available
+                                            //increase the size of  the container  it has no  data  to show
+                                            //equal  sized containers when data is loading
+                                            Row(
+                                                modifier = Modifier
+                                                    .background(MaterialTheme.colorScheme.background)
+                                                    .padding(top = 4.dp)
+                                                    .clip(shape = RoundedCornerShape(15.dp))
+                                                    .fillMaxWidth(0.5f)
+                                            ) {
+                                                Text(
+                                                    modifier = Modifier
+                                                        .background(
+                                                            shimmerBrush(
+                                                                targetValue = 1300f,
+                                                                showShimmer = showShimmer.value
+                                                            )
+                                                        )
+                                                        .fillMaxWidth(),
+                                                    text = if (state.transactionHistory !== null) state.transactionHistory.purpose else "",
+                                                    color = MaterialTheme.colorScheme.onBackground,
+                                                    fontSize = 14.sp,
+                                                    fontWeight = FontWeight.Bold,
+                                                    textAlign = TextAlign.End
+                                                )
+
+                                            }
+
+                                            Row(
+                                                modifier = Modifier
+                                                    .background(MaterialTheme.colorScheme.background)
+                                                    .padding(top = 4.dp)
+                                                    .clip(shape = RoundedCornerShape(15.dp))
+                                                    .fillMaxWidth(0.5f)
+                                            ) {
+                                                Text(
+                                                    modifier = Modifier
+                                                        .background(
+                                                            shimmerBrush(
+                                                                targetValue = 1300f,
+                                                                showShimmer = showShimmer.value
+                                                            )
+                                                        )
+                                                        .fillMaxWidth(),
+                                                    text = if (state.transactionHistory !== null) state.transactionHistory.transactionId else "",
+                                                    color = MaterialTheme.colorScheme.onBackground,
+                                                    fontSize = 14.sp,
+                                                    fontWeight = FontWeight.Bold,
+                                                    textAlign = TextAlign.End
+                                                )
+                                            }
+                                        }
+                                    }
+                                    Column {
+                                        //Ammount
+
+                                        Row(
+                                            modifier = Modifier
+                                                .background(MaterialTheme.colorScheme.background)
+                                                .padding(top = 4.dp)
+                                                .clip(shape = RoundedCornerShape(15.dp))
+                                                .fillMaxWidth(0.5f)
+                                        ) {
+                                            Text(
+                                                modifier = Modifier
+                                                    .background(
+                                                        shimmerBrush(
+                                                            targetValue = 1300f,
+                                                            showShimmer = showShimmer.value
+                                                        )
+                                                    )
+                                                    .fillMaxWidth(),
+                                                text = if (state.transactionHistory !== null) state.transactionHistory.amount.toString() else "",
+                                                color = MaterialTheme.colorScheme.onBackground,
+                                                fontSize = 14.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                textAlign = TextAlign.End
+                                            )
+                                        }
+
+                                        //Date
+
+                                        Row(
+                                            modifier = Modifier
+                                                .background(MaterialTheme.colorScheme.background)
+                                                .padding(top = 4.dp)
+                                                .clip(shape = RoundedCornerShape(15.dp))
+                                                .fillMaxWidth(0.5f)
+                                        ) {
+                                            Text(
+                                                modifier = Modifier
+                                                    .background(
+                                                        shimmerBrush(
+                                                            targetValue = 1300f,
+                                                            showShimmer = showShimmer.value
+                                                        )
+                                                    )
+                                                    .fillMaxWidth(),
+                                                text = if (state.transactionHistory !== null) state.transactionHistory.transactionDate else "",
+                                                color = MaterialTheme.colorScheme.onBackground,
+                                                fontSize = 14.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                textAlign = TextAlign.End
+                                            )
+
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
-        }
+        )
     }
 }
 
 
-
 //Shimmer View
 @Composable
-fun shimmerBrush(showShimmer: Boolean = true,targetValue:Float = 1000f): Brush {
+fun shimmerBrush(showShimmer: Boolean = true, targetValue: Float = 1000f): Brush {
     return if (showShimmer) {
         val shimmerColors = listOf(
             Color.LightGray.copy(alpha = 0.6f),
@@ -643,9 +743,37 @@ fun shimmerBrush(showShimmer: Boolean = true,targetValue:Float = 1000f): Brush {
         )
     } else {
         Brush.linearGradient(
-            colors = listOf(Color.Transparent,Color.Transparent),
+            colors = listOf(Color.Transparent, Color.Transparent),
             start = Offset.Zero,
             end = Offset.Zero
         )
     }
+}
+
+
+@Composable
+fun TextWithShimmerContainer(state: ProfileStore.State, text: String) {
+    val showShimmerState: Boolean = state.transactionHistory?.transactionId == null
+    val showShimmer = remember { mutableStateOf(showShimmerState) }
+
+    Card(
+        shape = RoundedCornerShape(15.dp),
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .fillMaxWidth(0.5f),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
+    ) {
+        Text(
+            text = text,
+            color = MaterialTheme.colorScheme.onBackground,
+            fontSize = 10.sp,
+            fontFamily = fontFamilyResource(fontResource = MR.fonts.Poppins.regular),
+            modifier = Modifier
+                .background(shimmerBrush(targetValue = 1300f, showShimmer = showShimmer.value))
+                .width(if (state.transactionHistory == null) IntrinsicSize.Max else IntrinsicSize.Max)
+                .fillMaxWidth(1f)
+        )
+
+    }
+
 }

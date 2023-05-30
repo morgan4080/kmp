@@ -1,4 +1,4 @@
-package com.presta.customer.ui.components.shortTermLoans
+package com.presta.customer.ui.components.shortTermLoans.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -26,14 +26,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.profile.store.ProfileStore
+import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
+import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.ShortTermProductList
 import com.presta.customer.ui.composables.ShortTermTopUpList
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
-fun ShortTermLoansScreen(component: ShortTermLoansComponent, innerPadding:PaddingValues){
-    //short term loans screen
+fun ShortTermLoansContent(
+    component: ShortTermLoansComponent,
+    innerPadding: PaddingValues,
+    authState: AuthStore.State,
+    state: ProfileStore.State,
+    onEvent: (ShortTermLoansStore.Intent) -> Unit,
+    onAuthEvent: (ShortTermLoansStore.Intent) -> Unit,
+   ){
+
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background),
@@ -82,7 +93,7 @@ fun ShortTermLoansScreen(component: ShortTermLoansComponent, innerPadding:Paddin
 
                                     Tab(text = {
                                         Text(text = title,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                                             fontSize = 12.sp
                                         )
                                     },
@@ -109,4 +120,5 @@ fun ShortTermLoansScreen(component: ShortTermLoansComponent, innerPadding:Paddin
             }
         }
     }
+
 }

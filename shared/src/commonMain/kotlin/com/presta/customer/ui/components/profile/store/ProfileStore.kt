@@ -12,7 +12,6 @@ interface ProfileStore: Store<ProfileStore.Intent, ProfileStore.State, Nothing> 
 
     }
 
-
     data class State(
         val isLoading: Boolean = false,
         val error: String? = null,

@@ -16,7 +16,7 @@ import com.presta.customer.ui.components.failedTransaction.FailedTransactionScre
 import com.presta.customer.ui.components.loanConfirmation.LoansConfirmationScreen
 import com.presta.customer.ui.components.longTermLoans.LongTermLoansScreen
 import com.presta.customer.ui.components.payLoan.PayLoanScreen
-import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansScreen
+import com.presta.customer.ui.components.shortTermLoans.ui.ShortTermLoansScreen
 import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransactionScreen
 import com.presta.customer.ui.components.topUp.LoanTopUpScreen
 import com.presta.customer.ui.helpers.LocalSafeArea

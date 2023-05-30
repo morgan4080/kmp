@@ -5,6 +5,7 @@ import com.presta.customer.network.createHttpClient
 import com.presta.customer.network.otp.client.PrestaOtpClient
 import com.presta.customer.network.profile.client.PrestaProfileClient
 import com.presta.customer.network.registration.client.PrestaRegistrationClient
+import com.presta.customer.network.shortTermLoans.client.PrestaShortTermLoansClient
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -16,5 +17,7 @@ val networkModule: (enableLogging: Boolean) -> Module get() = { enableLogging ->
         single { PrestaOtpClient(httpClient = get()) }
         single { PrestaProfileClient(httpClient = get()) }
         single { PrestaRegistrationClient(httpClient = get()) }
+        single { PrestaShortTermLoansClient(httpClient = get()) }
+
     }
 }

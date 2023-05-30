@@ -33,7 +33,6 @@ class ProfileStoreFactory(
         data class ProfileLoaded(val balances: PrestaBalancesResponse): Msg()
         data class TransactionHistoryLoaded(val transactionHistory:PrestaTransactionHistoryResponse): Msg()
 
-
         data class ProfileFailed(val error: String?): Msg()
     }
 
