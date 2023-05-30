@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -11,11 +12,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Fingerprint
+import androidx.compose.material.icons.outlined.Backspace
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -33,6 +43,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -67,6 +78,8 @@ fun AuthContent(
     val maxChar = state.inputs.size
 
     val pinCharList = remember { mutableListOf( "" ) }
+
+    val builder = StringBuilder()
 
     state.inputs.forEach { input ->
         pinCharList.add(input.value)
@@ -360,7 +373,7 @@ fun AuthContent(
                             pinInput = it
                         }
                     },
-                    enabled = true,
+                    enabled = false,
                     singleLine = true,
                     decorationBox = { innerTextField ->
                         innerTextField()
@@ -371,24 +384,98 @@ fun AuthContent(
             Row (
                 modifier = Modifier
                     .padding(top = 35.dp)
-                    .absoluteOffset(y = -(70).dp).fillMaxWidth(),
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
             ) {
-                if (state.isLoading || onBoardingState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(25.dp).padding(end = 2.dp),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                CircularProgressIndicator(
+                    modifier = Modifier.size(25.dp).padding(end = 2.dp).alpha(if (state.isLoading || onBoardingState.isLoading) 1f else 0.0f),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            LazyVerticalGrid(
+                modifier = Modifier
+                    .fillMaxHeight(),
+                columns = GridCells.Fixed(3),
+                verticalArrangement = Arrangement.Center,
+                contentPadding = PaddingValues(
+                    start = 2.dp,
+                    top = 5.dp,
+                    end = 2.dp,
+                    bottom = 5.dp
+                ),
+            ) {
+                items(listOf(1,2,3,4,5,6,7,8,9,10,0,12)) {
+                    Button(
+                        modifier = Modifier
+                            .padding(vertical = 10.dp, horizontal = 10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = MaterialTheme.colorScheme.onBackground,
+                        ),
+                        onClick = {
+                            when(it) {
+                                10 -> {
+
+                                }
+                                12 -> {
+                                    pinInput = pinInput.dropLast(1)
+                                    setupPinCharacters(pinInput)
+                                    println(pinInput)
+                                }
+                                else -> {
+                                    if (pinInput.length <= maxChar) {
+                                        builder.append(pinInput).append(it.toString())
+                                        pinInput = builder.toString()
+                                        setupPinCharacters(pinInput)
+                                        println(pinInput)
+                                    }
+                                }
+                            }
+                        }
+                    ) {
+                        when(it) {
+                            10 -> {
+                                Icon(
+                                    modifier = Modifier
+                                        .padding(vertical = 12.dp)
+                                        .size(30.dp)
+                                        .align(Alignment.CenterVertically),
+                                    imageVector = Icons.Filled.Fingerprint,
+                                    contentDescription = "Finger Print",
+                                    tint = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                            12 -> {
+                                Icon(
+                                    modifier = Modifier
+                                        .padding(vertical = 12.dp)
+                                        .size(30.dp)
+                                        .align(Alignment.CenterVertically),
+                                    imageVector = Icons.Outlined.Backspace,
+                                    contentDescription = "Finger Print",
+                                    tint = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                            else -> {
+                                Text(
+                                    textAlign = TextAlign.Center,
+                                    text = it.toString(),
+                                    style = TextStyle(
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                        fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
+                                        fontSize = MaterialTheme.typography.displaySmall.fontSize,
+                                        fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+                                        letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
+                                        lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                                        textAlign = TextAlign.Center
+                                    ),
+                                )
+                            }
+                        }
+                    }
                 }
             }
-        }
-    }
-
-    LaunchedEffect(focusRequester) {
-        try {
-            focusRequester.requestFocus()
-        } catch (e: IllegalStateException) {
-            println(e)
         }
     }
 }

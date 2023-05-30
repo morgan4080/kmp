@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,10 +45,15 @@ fun RootBottomScreen(component: RootBottomComponent) {
 
             BottomAppBar (
                 contentPadding = PaddingValues(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 25.dp),
-                containerColor = MaterialTheme.colorScheme.background
+                containerColor = when(MaterialTheme.colorScheme.background == Color(0xFFF7F7F7)) {
+                    true -> Color.White
+                    false -> MaterialTheme.colorScheme.background
+                }
             ) {
                 NavigationBarItem (
-                    icon = { Icon(imageVector = GetIconForScreen(screens[0]), contentDescription = null, modifier = Modifier.size(27.dp)) },
+                    icon = {
+                        Icon(imageVector = GetIconForScreen(screens[0]), contentDescription = null, modifier = Modifier.size(27.dp))
+                    },
                     label = {
                         Text(
                             text = screens[0],

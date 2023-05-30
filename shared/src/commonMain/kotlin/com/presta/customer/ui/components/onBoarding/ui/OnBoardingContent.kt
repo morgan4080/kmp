@@ -126,16 +126,16 @@ fun OnBoardingContent(
                 true,
                 DefaultRootComponent.OnBoardingContext.LOGIN,
                 state.member.authenticationInfo.pinStatus
-            // pin status
             )
             onEvent(OnBoardingStore.Intent.ClearMember(null))
         }
     }
 
-    if (state.member !== null && state.member.refId == null && !startRegistration) {
-        LaunchedEffect(state.member) {
+
+    LaunchedEffect(state.member) {
+        if (state.member !== null && state.member.refId == null && !startRegistration) {
             snackbarHostState.showSnackbar(
-                "User not registered proceeding to registration"
+                "User not registered"
             )
 
             startRegistration = true
@@ -145,7 +145,8 @@ fun OnBoardingContent(
     if (
         startRegistration &&
         isPhoneNumber(phoneNumber.text) &&
-        state.member !== null
+        state.member !== null &&
+        state.member.refId == null
     ) {
         LaunchedEffect(startRegistration) {
             startRegistration = false
@@ -157,6 +158,7 @@ fun OnBoardingContent(
                 DefaultRootComponent.OnBoardingContext.REGISTRATION,
                 state.member.authenticationInfo.pinStatus
             )
+            onEvent(OnBoardingStore.Intent.ClearMember(null))
         }
     }
 

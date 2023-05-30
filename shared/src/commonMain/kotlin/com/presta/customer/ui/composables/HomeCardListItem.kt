@@ -1,9 +1,8 @@
 package com.presta.customer.ui.composables
 
+import ShimmerBrush
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,22 +32,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
-import com.presta.customer.network.profile.model.PrestaBalancesResponse
-import com.presta.customer.ui.components.profile.ui.shimmerBrush
 import com.presta.customer.ui.theme.backArrowColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @Composable
 fun HomeCardListItem(
-    name: String,
-    onClick: (String) -> Unit,
+    name: Int,
+    onClick: (Int) -> Unit,
     balance: String?,
     lastSavingsAmount: String? = null,
     lastSavingsDate: String? = null
@@ -57,11 +52,13 @@ fun HomeCardListItem(
 
     ElevatedCard(
         modifier = Modifier
-            .border(BorderStroke(1.dp,Color.White), shape = RoundedCornerShape(size = 12.dp))
             .clip(RoundedCornerShape(size = 12.dp))
             .absolutePadding(left = 2.dp, right = 2.dp, top = 5.dp, bottom = 5.dp)
     ) {
-        Box (modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+        Box (
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.inverseOnSurface)
+        ) {
             Column (
                 modifier = Modifier.padding(
                     top = 23.dp,
@@ -77,14 +74,14 @@ fun HomeCardListItem(
                 ) {
                     Text(
                         text = "Total Savings",
-                        color= MaterialTheme.colorScheme.outline, // #002C56
+                        color= MaterialTheme.colorScheme.outline,
                         fontSize = 16.sp
                     )
 
                     IconButton(
                         modifier = Modifier
                             .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.inverseOnSurface)
+                            .background(Color(0xFFE5F1F5))
                             .size(30.dp),
                         onClick = {
                             showExpanded = !showExpanded
@@ -106,7 +103,7 @@ fun HomeCardListItem(
                 ) {
                     Text(
                         modifier = Modifier.background(
-                            brush = shimmerBrush(
+                            brush = ShimmerBrush(
                                 targetValue = 1300f,
                                 showShimmer = balance == null
                             ),
@@ -136,7 +133,7 @@ fun HomeCardListItem(
                 ) {
                     Text(
                         modifier = Modifier.background(
-                            brush = shimmerBrush(
+                            brush = ShimmerBrush (
                                 targetValue = 1300f,
                                 showShimmer = lastSavingsAmount == null || lastSavingsDate == null
                             ),
@@ -162,29 +159,36 @@ fun HomeCardListItem(
                                 text = "Savings Balances",
                                 color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 14.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                style = MaterialTheme.typography.headlineSmall
                             )
 
-                            Box(contentAlignment = Alignment.Center) {
-                                Row() {
-                                    Text(
-                                        text = "See all",
-                                        textAlign = TextAlign.Center,
-                                        fontSize = 12.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
-                                    )
+                            Row (
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(end = 10.dp),
+                                    text = "See all",
+                                    textAlign = TextAlign.Center,
+                                    color = backArrowColor,
+                                    fontSize = 12.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                    style = MaterialTheme.typography.headlineSmall
+                                )
 
-                                    Icon(
-                                        Icons.Filled.ArrowForward,
-                                        contentDescription = "Forward Arrow",
-                                        tint = backArrowColor,
-                                    )
+                                Icon (
+                                    Icons.Filled.ArrowForward,
+                                    contentDescription = "Forward Arrow",
+                                    tint = backArrowColor,
+                                    modifier = Modifier.size(20.dp)
+                                )
 
-                                }
                             }
                         }
 
                         Row (
+                            modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween,
                         ) {

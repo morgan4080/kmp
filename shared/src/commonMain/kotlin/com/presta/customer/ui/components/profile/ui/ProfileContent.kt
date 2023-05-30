@@ -1,11 +1,7 @@
 package com.presta.customer.ui.components.profile.ui
 
 
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
+import ShimmerBrush
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,7 +15,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -52,15 +47,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
@@ -99,7 +90,7 @@ fun ProfileContent(
     innerPadding: PaddingValues,
 ) {
     val stateLazyRow0 = rememberLazyListState()
-    val stateLazyRow = rememberLazyListState()
+    val scope = rememberCoroutineScope()
     val quickLinks: List<QuickLinks> = listOf(
         QuickLinks("Add", "Savings", Icons.Outlined.Savings),
         QuickLinks("Apply", "Loan", Icons.Outlined.AttachMoney),
@@ -107,12 +98,11 @@ fun ProfileContent(
         QuickLinks("View Full", "Statement", Icons.Outlined.Description),
 
         )
+
     val item1 = quickLinks[0]
     val item2 = quickLinks[1]
     val item3 = quickLinks[2]
     val item4 = quickLinks[3]
-    val showShimmerState: Boolean = state.transactionHistory?.transactionId == null
-    val showShimmer = remember { mutableStateOf(showShimmerState) }
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden
@@ -123,10 +113,11 @@ fun ProfileContent(
         if (authState.cachedMemberData !== null && authState.cachedMemberData.registrationFeeStatus == "NOT_PAID") {
             delay(2000L)
             sheetState.show()
+        } else {
+            sheetState.hide()
         }
     }
 
-    val scope = rememberCoroutineScope()
     ModalBottomSheetLayout(
         modifier = Modifier.padding(innerPadding),
         sheetState = sheetState,
@@ -151,9 +142,8 @@ fun ProfileContent(
                             Icons.Filled.Cancel,
                             contentDescription = "Cancel  Arrow",
                             tint = backArrowColor,
-                            modifier = Modifier.clickable {
+                            modifier = Modifier.absoluteOffset(y = -(20).dp).clickable {
                                 scope.launch { sheetState.hide() }
-
                             }
                         )
                     }
@@ -201,7 +191,7 @@ fun ProfileContent(
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text(
                                         modifier = Modifier.background(
-                                            brush = shimmerBrush(
+                                            brush = ShimmerBrush(
                                                 targetValue = 1300f,
                                                 showShimmer = authState.authUserResponse?.companyName == null
                                             ),
@@ -236,20 +226,18 @@ fun ProfileContent(
                     // consume insets as scaffold doesn't do it by default
                     modifier = Modifier
                         .consumeWindowInsets(innerPadding)
-                        .padding(start = 16.dp, end = 16.dp)
                         .wrapContentHeight(),
                     contentPadding = innerPadding
                 ) {
 
                     item {
-                        Box(
+                        Row(
                             modifier = Modifier
-                                .padding(top = 9.dp)
-                                .fillMaxWidth()
+                                .fillMaxWidth().padding(start = 16.dp, end = 16.dp)
                         ) {
                             Text(
                                 modifier = Modifier.background(
-                                    brush = shimmerBrush(
+                                    brush = ShimmerBrush(
                                         targetValue = 1300f,
                                         showShimmer = authState.authUserResponse?.firstName == null
                                     ),
@@ -257,33 +245,35 @@ fun ProfileContent(
                                 ).defaultMinSize(150.dp),
                                 text = if (authState.authUserResponse !== null) "Hello ${authState.authUserResponse.firstName}" else "",
                                 color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                fontFamily = FontFamily.SansSerif
+                                fontSize = 14.sp
                             )
                         }
                     }
                     item {
                         LazyRow(modifier = Modifier
+                            .fillMaxWidth()
                             .consumeWindowInsets(innerPadding)
-                            .padding(vertical = 20.dp),
+                            .padding(vertical = 10.dp),
                             horizontalArrangement = Arrangement.spacedBy(20.dp),
                             state = stateLazyRow0,
                             flingBehavior = rememberSnapFlingBehavior(lazyListState = stateLazyRow0),
                             content = {
+
+
+
                                 items(3) {
                                     Box(
                                         modifier = Modifier
                                             .fillParentMaxWidth()
                                     ) {
-                                        HomeCardListItem(
-                                            name = "$it",
+                                        HomeCardListItem (
+                                            name = it,
                                             onClick = {
 
                                             },
-                                            balance = "",
-                                            lastSavingsAmount = "",
-                                            lastSavingsDate = ""
+                                            balance = null,
+                                            lastSavingsAmount = null,
+                                            lastSavingsDate = null
                                         )
                                     }
                                 }
@@ -296,7 +286,8 @@ fun ProfileContent(
                     item {
                         Box(
                             modifier = Modifier
-                                .padding(top = 12.92.dp, start = 5.dp)
+                                .padding(top = 12.92.dp)
+                                .padding(start = 16.dp, end = 16.dp)
                                 .fillMaxWidth()
                         ) {
                             Text(
@@ -309,243 +300,230 @@ fun ProfileContent(
                         }
                     }
                     item {
-
-                        LazyRow(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 15.dp),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            state = stateLazyRow,
-                            flingBehavior = rememberSnapFlingBehavior(lazyListState = stateLazyRow)
+                        Row (
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(top = 16.dp)
+                                .padding(start = 16.dp, end = 16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            item {
-                                //Add savings
-                                Column(
-                                    modifier = Modifier.fillMaxSize(),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
+                            Column (
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
 
-                                    IconButton(
-                                        modifier = Modifier
-                                            .clip(shape = RoundedCornerShape(10.dp))
-                                            .background(MaterialTheme.colorScheme.primary)
-                                            .size(57.dp),
-                                        onClick = {
-                                            // component.onAddSavingsSelected()
-                                            //Test api data
-                                            println(state.transactionHistory?.transactionId)
-                                            println(state.balances?.savingsBalance)
-
-
-                                        },
-                                        content = {
-                                            Icon(
-                                                imageVector = item1.icon,
-                                                modifier = Modifier.size(30.dp),
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.inverseOnSurface
-                                            )
-                                        }
-                                    )
-
-                                    Text(
-                                        modifier = Modifier.padding(top = 7.08.dp),
-                                        text = item1.labelTop,
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Light
-                                    )
-
-                                    Text(
-                                        text = item1.labelBottom,
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Light
-                                    )
-                                }
-                                //Apply loan
-
-                                Column(
+                                IconButton(
                                     modifier = Modifier
-                                        .padding(start = 29.dp)
-                                        .fillMaxSize(),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
+                                        .clip(shape = RoundedCornerShape(10.dp))
+                                        .background(MaterialTheme.colorScheme.primary)
+                                        .size(57.dp),
+                                    onClick = {
 
-                                    IconButton(
-                                        modifier = Modifier
-                                            .clip(shape = RoundedCornerShape(10.dp))
-                                            .background(MaterialTheme.colorScheme.primary)
-                                            .size(57.dp),
-                                        onClick = {
-                                            //component.onApplyLoanSelected()
+                                    },
+                                    content = {
+                                        Icon(
+                                            imageVector = item1.icon,
+                                            modifier = Modifier.size(30.dp),
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.inverseOnSurface
+                                        )
+                                    }
+                                )
 
-                                        },
-                                        content = {
-                                            Icon(
-                                                imageVector = item2.icon,
-                                                modifier = Modifier.size(30.dp),
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.inverseOnSurface
-                                            )
-                                        }
-                                    )
+                                Text(
+                                    modifier = Modifier.padding(top = 7.08.dp),
+                                    text = item1.labelTop,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Light
+                                )
 
-                                    Text(
-                                        modifier = Modifier.padding(top = 7.08.dp),
-                                        text = item2.labelTop,
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Light
-                                    )
+                                Text(
+                                    text = item1.labelBottom,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Light
+                                )
+                            }
 
-                                    Text(
-                                        text = item2.labelBottom,
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Light
-                                    )
-                                }
-                                //Pay Loan
-                                Column(
+                            // Apply loan
+
+                            Column (
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+
+                                IconButton(
                                     modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(start = 29.dp),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
+                                        .clip(shape = RoundedCornerShape(10.dp))
+                                        .background(MaterialTheme.colorScheme.primary)
+                                        .size(57.dp),
+                                    onClick = {
+                                        //component.onApplyLoanSelected()
 
-                                    IconButton(
-                                        modifier = Modifier
-                                            .clip(shape = RoundedCornerShape(10.dp))
-                                            .background(MaterialTheme.colorScheme.primary)
-                                            .size(57.dp),
-                                        onClick = {
-                                            //  component.onPayLoanSelected()
+                                    },
+                                    content = {
+                                        Icon(
+                                            imageVector = item2.icon,
+                                            modifier = Modifier.size(30.dp),
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.inverseOnSurface
+                                        )
+                                    }
+                                )
 
+                                Text(
+                                    modifier = Modifier.padding(top = 7.08.dp),
+                                    text = item2.labelTop,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Light
+                                )
 
-                                        },
-                                        content = {
-                                            Icon(
-                                                imageVector = item3.icon,
-                                                modifier = Modifier.size(30.dp),
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.inverseOnSurface
-                                            )
-                                        }
-                                    )
+                                Text(
+                                    text = item2.labelBottom,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Light
+                                )
+                            }
 
-                                    Text(
-                                        modifier = Modifier.padding(top = 7.08.dp),
-                                        text = item3.labelTop,
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Light
-                                    )
+                            //Pay Loan
 
-                                    Text(
-                                        text = item3.labelBottom,
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Light
-                                    )
-                                }
+                            Column (
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
 
-                                //View Full  Statement
-                                Column(
+                                IconButton(
                                     modifier = Modifier
-                                        .padding(start = 18.dp)
-                                        .fillMaxSize(),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-
-                                    IconButton(
-                                        modifier = Modifier
-                                            .clip(shape = RoundedCornerShape(10.dp))
-                                            .background(MaterialTheme.colorScheme.primary)
-                                            .size(57.dp),
-                                        onClick = {
+                                        .clip(shape = RoundedCornerShape(10.dp))
+                                        .background(MaterialTheme.colorScheme.primary)
+                                        .size(57.dp),
+                                    onClick = {
+                                        //  component.onPayLoanSelected()
 
 
-                                        },
-                                        content = {
-                                            Icon(
-                                                imageVector = item4.icon,
-                                                modifier = Modifier.size(30.dp),
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.inverseOnSurface
-                                            )
-                                        }
-                                    )
+                                    },
+                                    content = {
+                                        Icon(
+                                            imageVector = item3.icon,
+                                            modifier = Modifier.size(30.dp),
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.inverseOnSurface
+                                        )
+                                    }
+                                )
 
-                                    Text(
-                                        modifier = Modifier.padding(top = 7.08.dp),
-                                        text = item4.labelTop,
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Light
-                                    )
+                                Text(
+                                    modifier = Modifier.padding(top = 7.08.dp),
+                                    text = item3.labelTop,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Light
+                                )
 
-                                    Text(
-                                        text = item4.labelBottom,
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Light
-                                    )
-                                }
+                                Text(
+                                    text = item3.labelBottom,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Light
+                                )
+                            }
+
+                            //View Full  Statement
+
+                            Column (
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.Start
+                            ) {
+
+                                IconButton(
+                                    modifier = Modifier
+                                        .clip(shape = RoundedCornerShape(10.dp))
+                                        .background(MaterialTheme.colorScheme.primary)
+                                        .size(57.dp),
+                                    onClick = {
+
+
+                                    },
+                                    content = {
+                                        Icon(
+                                            imageVector = item4.icon,
+                                            modifier = Modifier.size(30.dp),
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.inverseOnSurface
+                                        )
+                                    }
+                                )
+
+                                Text(
+                                    modifier = Modifier.padding(top = 7.08.dp),
+                                    text = item4.labelTop,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Light
+                                )
+
+                                Text(
+                                    text = item4.labelBottom,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Light
+                                )
                             }
                         }
                     }
+
                     item {
-
-                        Box(
-                            modifier = Modifier
-                                .padding(top = 26.dp, start = 5.dp)
-                                .fillMaxWidth()
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(top = 26.dp, bottom = 10.dp)
+                                .padding(start = 16.dp, end = 16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
+                            Text(
+                                text = "Transactions",
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                fontFamily = FontFamily.SansSerif
+                            )
 
-                            Row(
-                                modifier = Modifier.fillParentMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
+                            Row (
+                                horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
-                            ) {
+                            )  {
                                 Text(
-                                    text = "Transactions",
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontFamily = FontFamily.SansSerif
+                                    modifier = Modifier.padding(end = 10.dp),
+                                    text = "See all",
+                                    textAlign = TextAlign.Center,
+                                    color = backArrowColor,
+                                    fontSize = 12.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                    style = MaterialTheme.typography.headlineSmall
                                 )
 
-                                Box(contentAlignment = Alignment.Center) {
-                                    Row() {
-                                        Text(
-                                            text = "See all",
-                                            textAlign = TextAlign.Center,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
-                                        )
-
-                                        Icon(
-                                            Icons.Filled.ArrowForward,
-                                            contentDescription = "Forward Arrow",
-                                            tint = backArrowColor,
-                                        )
-
-                                    }
-                                }
+                                Icon (
+                                    Icons.Filled.ArrowForward,
+                                    contentDescription = "Forward Arrow",
+                                    tint = backArrowColor,
+                                    modifier = Modifier.size(20.dp)
+                                )
                             }
                         }
                     }
 
                     items(3) {
-                        Column(modifier = Modifier.padding(top = 16.dp)) {
+                        Column(
+                            modifier = Modifier
+                                .padding(vertical = 8.dp)
+                                .padding(start = 16.dp, end = 16.dp)
+                        ) {
                             val transactionList = mutableListOf(
                                 Transactions(
                                     Icons.Filled.OpenInNew
-                                ),
+                                )
                             )
                             transactionList.forEach { transaction ->
                                 Row(
@@ -562,28 +540,46 @@ fun ProfileContent(
                                                 modifier = Modifier
                                                     .clip(CircleShape)
                                                     .background(
-                                                        if (state.transactionHistory?.postingType == PostingType.CR)
-                                                            MaterialTheme.colorScheme.secondaryContainer
-                                                        else
-                                                            MaterialTheme.colorScheme.errorContainer
+                                                        if (state.transactionHistory !== null) {
+                                                            if (state.transactionHistory.postingType == PostingType.CR)
+                                                                MaterialTheme.colorScheme.secondaryContainer
+                                                            else
+                                                                MaterialTheme.colorScheme.errorContainer
+                                                        } else {
+                                                            Color.Transparent
+                                                        }
                                                     ).size(30.dp),
                                                 onClick = {
 
                                                 },
                                                 content = {
-                                                    Icon(
-                                                        imageVector = transaction.icon,
-                                                        modifier = if (state.transactionHistory?.postingType == PostingType.CR)
-                                                            Modifier.size(15.dp)
-                                                            .rotate(180F)
-                                                        else
-                                                            Modifier.size(15.dp),
-                                                        contentDescription = null,
-                                                        tint = if (state.transactionHistory?.postingType == PostingType.CR)
-                                                            MaterialTheme.colorScheme.secondary
-                                                        else
-                                                            MaterialTheme.colorScheme.error
-                                                    )
+                                                    if (state.transactionHistory !== null) {
+                                                        Icon(
+                                                            imageVector = transaction.icon,
+                                                            modifier = if (state.transactionHistory.postingType == PostingType.CR)
+                                                                Modifier.size(15.dp)
+                                                                    .rotate(180F)
+                                                            else
+                                                                Modifier.size(15.dp),
+                                                            contentDescription = null,
+                                                            tint = if (state.transactionHistory.postingType == PostingType.CR)
+                                                                MaterialTheme.colorScheme.secondary
+                                                            else
+                                                                MaterialTheme.colorScheme.error
+                                                        )
+                                                    } else {
+                                                        Text(
+                                                            text = "",
+                                                            modifier = Modifier
+                                                                .background(
+                                                                    brush = ShimmerBrush(
+                                                                        targetValue = 1300f,
+                                                                        showShimmer = true
+                                                                    ),
+                                                                    shape = RoundedCornerShape(12.dp))
+                                                                .defaultMinSize(minHeight = 8.dp, minWidth = 25.dp)
+                                                        )
+                                                    }
                                                 }
                                             )
                                         }
@@ -598,15 +594,15 @@ fun ProfileContent(
                                                 Text(
                                                     modifier = Modifier
                                                         .background(
-                                                            shimmerBrush(
+                                                            ShimmerBrush(
                                                                 targetValue = 1300f,
-                                                                showShimmer = showShimmer.value
+                                                                showShimmer = true
                                                             )
                                                         ).fillMaxWidth(),
                                                     text = if (state.transactionHistory !== null)
-                                                                state.transactionHistory.purpose
-                                                            else
-                                                                "",
+                                                        state.transactionHistory.purpose
+                                                    else
+                                                        "",
                                                     color = MaterialTheme.colorScheme.onBackground,
                                                     fontSize = 14.sp,
                                                     fontWeight = FontWeight.Bold,
@@ -624,9 +620,9 @@ fun ProfileContent(
                                                 Text(
                                                     modifier = Modifier
                                                         .background(
-                                                            shimmerBrush(
+                                                            ShimmerBrush(
                                                                 targetValue = 1300f,
-                                                                showShimmer = showShimmer.value
+                                                                showShimmer = true
                                                             )
                                                         )
                                                         .fillMaxWidth(),
@@ -650,9 +646,9 @@ fun ProfileContent(
                                             Text(
                                                 modifier = Modifier
                                                     .background(
-                                                        shimmerBrush(
+                                                        ShimmerBrush(
                                                             targetValue = 1300f,
-                                                            showShimmer = showShimmer.value
+                                                            showShimmer = true
                                                         )
                                                     )
                                                     .fillMaxWidth(),
@@ -676,9 +672,9 @@ fun ProfileContent(
                                             Text(
                                                 modifier = Modifier
                                                     .background(
-                                                        shimmerBrush(
+                                                        ShimmerBrush (
                                                             targetValue = 1300f,
-                                                            showShimmer = showShimmer.value
+                                                            showShimmer = true
                                                         )
                                                     )
                                                     .fillMaxWidth(),
@@ -697,39 +693,6 @@ fun ProfileContent(
                     }
                 }
             }
-        )
-    }
-}
-
-
-//Shimmer View
-@Composable
-fun shimmerBrush(showShimmer: Boolean = true, targetValue: Float = 1000f): Brush {
-    return if (showShimmer) {
-        val shimmerColors = listOf(
-            Color.LightGray.copy(alpha = 0.6f),
-            Color.LightGray.copy(alpha = 0.2f),
-            Color.LightGray.copy(alpha = 0.6f),
-        )
-
-        val transition = rememberInfiniteTransition()
-        val translateAnimation = transition.animateFloat(
-            initialValue = 0f,
-            targetValue = targetValue,
-            animationSpec = infiniteRepeatable(
-                animation = tween(800), repeatMode = RepeatMode.Reverse
-            )
-        )
-        Brush.linearGradient(
-            colors = shimmerColors,
-            start = Offset.Zero,
-            end = Offset(x = translateAnimation.value, y = translateAnimation.value)
-        )
-    } else {
-        Brush.linearGradient(
-            colors = listOf(Color.Transparent, Color.Transparent),
-            start = Offset.Zero,
-            end = Offset.Zero
         )
     }
 }

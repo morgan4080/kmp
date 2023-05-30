@@ -85,6 +85,14 @@ class DefaultProfileComponent(
                     onAuthEvent(AuthStore.Intent.CheckAuthenticatedUser(
                         token = state.cachedMemberData.accessToken
                     ))
+                    onEvent(ProfileStore.Intent.GetBalances (
+                        token = state.cachedMemberData.accessToken,
+                        refId = state.cachedMemberData.refId,
+                    ))
+                    onEvent(ProfileStore.Intent.GetTransactionHistory (
+                        token = state.cachedMemberData.accessToken,
+                        refId = state.cachedMemberData.refId,
+                    ))
                 }
             }
         }

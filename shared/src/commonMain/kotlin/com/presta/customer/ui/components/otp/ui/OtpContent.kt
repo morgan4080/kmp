@@ -1,9 +1,12 @@
 package com.presta.customer.ui.components.otp.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -186,7 +189,7 @@ fun OtpContent(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column (
-                modifier = Modifier.fillMaxHeight(0.45f)
+                modifier = Modifier.fillMaxHeight()
             ) {
                 Row (modifier = Modifier.padding(horizontal = 16.dp)) {
                     Text(
@@ -204,7 +207,9 @@ fun OtpContent(
                     )
                 }
                 Row(
-                    modifier = Modifier.padding(top = 35.dp, start = 16.dp, end = 16.dp).fillMaxWidth(),
+                    modifier = Modifier
+                        .padding(top = 35.dp, start = 16.dp, end = 16.dp)
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     for ((index, input) in state.inputs.withIndex()) {
@@ -313,19 +318,24 @@ fun OtpContent(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }
-            }
-            Column (
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
+
                 LazyVerticalGrid(
-                    modifier = Modifier.fillMaxHeight(),
-                    columns = GridCells.Adaptive(minSize = 128.dp),
-                    verticalArrangement = Arrangement.Center
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
+                    columns = GridCells.Fixed(3),
+                    verticalArrangement = Arrangement.Center,
+                    contentPadding = PaddingValues(
+                        start = 2.dp,
+                        top = 5.dp,
+                        end = 2.dp,
+                        bottom = 5.dp
+                    ),
                 ) {
                     items(listOf(1,2,3,4,5,6,7,8,9,10,0,12)) {
                         Button(
-                            modifier = Modifier.padding(vertical = 5.dp, horizontal = 2.dp),
+                            modifier = Modifier
+                                .padding(vertical = 10.dp, horizontal = 10.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.Transparent,
                                 contentColor = MaterialTheme.colorScheme.onBackground,
@@ -378,8 +388,15 @@ fun OtpContent(
                                     Text(
                                         textAlign = TextAlign.Center,
                                         text = it.toString(),
-                                        style = MaterialTheme.typography.headlineSmall,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                                        style = TextStyle(
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                            fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
+                                            fontSize = MaterialTheme.typography.displaySmall.fontSize,
+                                            fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+                                            letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
+                                            lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                                            textAlign = TextAlign.Center
+                                        ),
                                     )
                                 }
                             }
