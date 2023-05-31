@@ -41,7 +41,7 @@ class ShortTermLoansRepositoryImpl : ShortTermLoansRepository,KoinComponent {
             val response = shortTermLoansClient.getShortTermTopUpList(
                 token = token,
                 memberRefId = memberRefId,
-                session_id=session_id
+                session_id = session_id
             )
             Result.success(response)
 

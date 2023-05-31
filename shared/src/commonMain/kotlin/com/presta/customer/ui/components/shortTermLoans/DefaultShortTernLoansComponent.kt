@@ -123,7 +123,7 @@ class DefaultShortTernLoansComponent(
 
                     onEvent(ShortTermLoansStore.Intent.GetPrestaShortTermTopUpList(
                         token = state.cachedMemberData.accessToken,
-                        session_id = "",
+                        session_id =state.cachedMemberData.session_id,
                         refId = state.cachedMemberData.refId
                     ))
                 }

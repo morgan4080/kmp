@@ -223,12 +223,13 @@ internal class AuthStoreFactory(
                 is Msg.RefreshFulfilled -> copy(refreshTokenResponse = msg.refreshResponse)
                 is Msg.AuthFailed -> copy(error = msg.error)
                 is Msg.CachedMemberData -> copy(cachedMemberData = CachedMemberData(
-                    msg.accessToken,
-                    msg.refreshToken,
-                    msg.refId,
-                    msg.registrationFees,
-                    msg.registrationFeeStatus,
-                    msg.phoneNumber,
+                    accessToken = msg.accessToken,
+                    refreshToken = msg.refreshToken,
+                    session_id = msg.session_id,
+                    refId = msg.refId,
+                    registrationFees = msg.registrationFees,
+                    registrationFeeStatus = msg.registrationFeeStatus,
+                    phoneNumber = msg.phoneNumber,
                 ))
                 is Msg.ClearAuthDetails -> copy(
                     loginResponse = null,

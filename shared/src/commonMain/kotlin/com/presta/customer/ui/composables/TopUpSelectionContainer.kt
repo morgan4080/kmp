@@ -28,7 +28,14 @@ import com.presta.customer.ui.theme.labelTextColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
-fun TopUpSelectionContainer() {
+fun TopUpSelectionContainer(
+//    checked:Boolean,
+//    label:String,
+//    min:Double,
+//    max:Double,
+//    Balance:Double,
+//    Date:String
+) {
 
     var checkedState by remember { mutableStateOf(false) }
 
@@ -56,12 +63,19 @@ fun TopUpSelectionContainer() {
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
                     color = labelTextColor
                 )
-                Text(
-                    text = "min 10,000-max 50,000",
-                    fontSize = 10.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                )
+                Row(){
+                    Text(
+                        text = "min 10,000-max 50,000",
+                        fontSize = 10.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                    )
+                    Text(
+                        text = "min 10,000-max 50,000",
+                        fontSize = 10.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                    )
 
+                }
             }
         }
 

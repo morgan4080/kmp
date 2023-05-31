@@ -16,6 +16,7 @@ enum class Contexts {
 data class CachedMemberData(
     val accessToken: String,
     val refreshToken: String,
+    val session_id:String,
     val refId: String,
     val registrationFees: Double,
     val registrationFeeStatus: String,

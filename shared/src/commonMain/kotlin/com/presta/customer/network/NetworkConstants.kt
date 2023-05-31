@@ -62,7 +62,6 @@ object NetworkConstants {
     }
     object  PrestaGetShortTermToUpList{
         const val  route= applicationV1BaseUrl + "query/topup-loans"
-
     }
 
 

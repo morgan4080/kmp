@@ -30,7 +30,7 @@ fun LongTermTopUpList(component: LongTermLoansComponent) {
                 .padding(top=10.dp)){
 
                 items(10) {
-                    TopUpSelectionContainer()
+                   // TopUpSelectionContainer()
                 }
 
             }
