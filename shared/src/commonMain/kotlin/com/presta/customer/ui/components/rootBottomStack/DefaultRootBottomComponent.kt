@@ -5,6 +5,7 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
@@ -16,6 +17,8 @@ import com.presta.customer.ui.components.rootSavings.DefaultRootSavingsComponent
 import com.presta.customer.ui.components.rootSavings.RootSavingsComponent
 import com.presta.customer.ui.components.sign.DefaultSignComponent
 import com.presta.customer.ui.components.sign.SignComponent
+import com.presta.customer.ui.components.transactionHistory.DefaultTransactionHistoryComponent
+import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
 import components.rootLoans.RootLoansComponent
 import prestaDispatchers
 
@@ -23,7 +26,8 @@ import prestaDispatchers
 class DefaultRootBottomComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
-    private val logoutToSplash: () -> Unit = {},
+    private val logoutToSplash: () -> Unit,
+    private val gotoAllTransactions: () -> Unit,
 ) : RootBottomComponent, ComponentContext by componentContext {
 
     private val navigationBottomStackNavigation = StackNavigation<ConfigBottom>()
@@ -52,11 +56,23 @@ class DefaultRootBottomComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
-            onProfileClicked = {
-
+            gotoAllTransactions = {
+                gotoAllTransactions()
             },
             logoutToSplash = {
                 logoutToSplash()
+            },
+            gotoSavings = {
+                navigationBottomStackNavigation.bringToFront(ConfigBottom.RootSavings)
+            },
+            gotoLoans = {
+                navigationBottomStackNavigation.bringToFront(ConfigBottom.RootLoans)
+            },
+            gotoPayLoans = {
+                navigationBottomStackNavigation.bringToFront(ConfigBottom.RootLoans)
+            },
+            gotoStatement = {
+
             }
         )
 

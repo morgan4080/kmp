@@ -19,14 +19,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import dev.icerock.moko.resources.compose.fontFamilyResource
-
-//pass the required data in  the  method  to be added  in  the respective place
 
 @Composable
 fun TransactionHistoryContainer() {
@@ -52,14 +51,10 @@ fun TransactionHistoryContainer() {
                 "12 May 2020, 12:23 PM",
                 Icons.Filled.OpenInNew
             )
-
-
         )
 
 
         transactionList.forEach { transaction ->
-
-
             Row(
                 modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -72,7 +67,12 @@ fun TransactionHistoryContainer() {
                         IconButton(
                             modifier = Modifier
                                 .clip(CircleShape)
-                                .background(if (transaction.credit) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer)
+                                .background(
+                                    if (transaction.credit)
+                                        MaterialTheme.colorScheme.secondaryContainer
+                                    else
+                                        Color(0xFF9deeff)
+                                )
                                 .size(30.dp),
                             onClick = {
 
@@ -83,7 +83,10 @@ fun TransactionHistoryContainer() {
                                     modifier = if (transaction.credit) Modifier.size(15.dp)
                                         .rotate(180F) else Modifier.size(15.dp),
                                     contentDescription = null,
-                                    tint = if (transaction.credit) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
+                                    tint = if (transaction.credit)
+                                        MaterialTheme.colorScheme.secondary
+                                    else
+                                        Color(0XFF62a5b3)
                                 )
                             }
                         )
@@ -91,13 +94,14 @@ fun TransactionHistoryContainer() {
                     Column {
                         Text(
                             text = transaction.label,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium
                         )
 
                         Text(
                             text = transaction.code,
+                            color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 10.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                         )
@@ -108,7 +112,7 @@ fun TransactionHistoryContainer() {
                     Text(
                         modifier = Modifier.align(Alignment.End),
                         text = transaction.amount,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -119,7 +123,6 @@ fun TransactionHistoryContainer() {
                     )
                 }
             }
-
         }
 
 

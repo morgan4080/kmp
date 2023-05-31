@@ -7,6 +7,7 @@ import com.presta.customer.ui.components.profile.ProfileComponent
 import com.presta.customer.ui.components.rootSavings.RootSavingsComponent
 import com.presta.customer.ui.components.savings.SavingsComponent
 import com.presta.customer.ui.components.sign.SignComponent
+import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
 import components.rootLoans.RootLoansComponent
 
 interface RootBottomComponent {

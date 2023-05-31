@@ -11,11 +11,11 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scal
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.presta.customer.ui.components.addSavings.AddSavingsScreen
+import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionScreen
 import com.presta.customer.ui.components.rootSavings.RootSavingsComponent
 import com.presta.customer.ui.components.savings.SavingsScreen
-import com.presta.customer.ui.components.transactionHistoryScreen.TransactionHistoryScreen
+import com.presta.customer.ui.components.savingsTransactionHistory.SavingsTransactionHistoryScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
-import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,7 +33,7 @@ fun RootSavingsScreen(component: RootSavingsComponent) {
                 is RootSavingsComponent.ChildSavings.SavingsHomeChild -> SavingsScreen(child.component)
                 is RootSavingsComponent.ChildSavings.AddSavingsChild -> AddSavingsScreen(child.component,innerPadding)
                 is RootSavingsComponent.ChildSavings.ProcessingTransactionChild-> ProcessingTransactionScreen(child.component)
-                is RootSavingsComponent.ChildSavings.TransactionHistoryChild-> TransactionHistoryScreen(child.component)
+                is RootSavingsComponent.ChildSavings.TransactionHistoryChild-> SavingsTransactionHistoryScreen(child.component)
 
             }
         }

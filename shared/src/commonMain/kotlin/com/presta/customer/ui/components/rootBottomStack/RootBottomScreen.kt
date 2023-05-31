@@ -45,10 +45,9 @@ fun RootBottomScreen(component: RootBottomComponent) {
 
             BottomAppBar (
                 contentPadding = PaddingValues(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 25.dp),
-                containerColor = when(MaterialTheme.colorScheme.background == Color(0xFFF7F7F7)) {
-                    true -> Color.White
-                    false -> MaterialTheme.colorScheme.background
-                }
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = Color.Transparent,
+                tonalElevation = 0.dp
             ) {
                 NavigationBarItem (
                     icon = {

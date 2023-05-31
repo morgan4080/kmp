@@ -18,9 +18,11 @@ class UserAuthDao(
         query.removeUserAuthCredentials()
     }
 
-    suspend fun updateAccessToken(accessToken: String, refId: String) = withContext(prestaDispatchers.io) {
+    suspend fun updateAccessToken(accessToken: String, refreshToken: String, sessionId: String, refId: String) = withContext(prestaDispatchers.io) {
         query.updateAccessToken(
             access_token = accessToken,
+            refresh_token = refreshToken,
+            session_id = sessionId,
             refId = refId,
         )
     }

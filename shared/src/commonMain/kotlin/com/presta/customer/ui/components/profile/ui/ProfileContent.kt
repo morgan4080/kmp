@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
@@ -22,7 +23,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -30,7 +30,6 @@ import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material.icons.outlined.AttachMoney
 import androidx.compose.material.icons.outlined.CreditCard
 import androidx.compose.material.icons.outlined.Description
@@ -53,27 +52,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
-import com.presta.customer.network.profile.model.PostingType
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.profile.store.ProfileStore
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.HomeCardListItem
 import com.presta.customer.ui.composables.Paginator
+import com.presta.customer.ui.composables.singleTransaction
 import com.presta.customer.ui.theme.backArrowColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-data class QuickLinks(val labelTop: String, val labelBottom: String, val icon: ImageVector)
+data class QuickLinks(val labelTop: String, val labelBottom: String, val icon: ImageVector, val action: () -> Unit)
 
 @OptIn(
     ExperimentalMaterialApi::class, ExperimentalLayoutApi::class,
@@ -83,9 +81,12 @@ data class QuickLinks(val labelTop: String, val labelBottom: String, val icon: I
 fun ProfileContent(
     authState: AuthStore.State,
     state: ProfileStore.State,
-    onEvent: (ProfileStore.Intent) -> Unit,
-    onAuthEvent: (AuthStore.Intent) -> Unit,
     innerPadding: PaddingValues,
+    seeAllTransactions: () -> Unit,
+    goToSavings: () -> Unit,
+    goToLoans: () -> Unit,
+    goToPayLoans: () -> Unit,
+    goToStatement: () -> Unit
 ) {
     val stateLazyRow0 = rememberLazyListState()
 
@@ -94,10 +95,10 @@ fun ProfileContent(
     val snackbarHostState = remember { SnackbarHostState() }
 
     val quickLinks: List<QuickLinks> = listOf(
-        QuickLinks("Add", "Savings", Icons.Outlined.Savings),
-        QuickLinks("Apply", "Loan", Icons.Outlined.AttachMoney),
-        QuickLinks("Pay", "Loan", Icons.Outlined.CreditCard),
-        QuickLinks("View Full", "Statement", Icons.Outlined.Description)
+        QuickLinks("Add", "Savings", Icons.Outlined.Savings, goToSavings),
+        QuickLinks("Apply", "Loan", Icons.Outlined.AttachMoney, goToLoans),
+        QuickLinks("Pay", "Loan", Icons.Outlined.CreditCard, goToPayLoans),
+        QuickLinks("View Full", "Statement", Icons.Outlined.Description, goToStatement)
     )
 
     val sheetState = rememberModalBottomSheetState(
@@ -115,28 +116,28 @@ fun ProfileContent(
     }
 
     val balancesMap: MutableMap<String, Double?> = mutableMapOf(
-        "Savings Balance" to null,
-        "Shares Balance" to null,
-        "Shares Count" to null,
-        "Savings Total Amount" to null,
-        "Price Per Share" to null
+        "Total Savings Amount" to null,
+        "Total Loan Balance" to null
     )
 
-    if (state.balances !== null) {
-        val (savingsBalance, sharesBalance, sharesCount, savingsTotalAmount, pricePerShare) = state.balances
-        balancesMap["Savings Balance"] = savingsBalance
-        balancesMap["Shares Balance"] = sharesBalance
-        balancesMap["Shares Count"] = sharesCount.toDouble()
-        balancesMap["Savings Total Amount"] = savingsTotalAmount
-        balancesMap["Price Per Share"] = pricePerShare
+    if (state.savingsBalances !== null ) {
+        balancesMap["Total Savings Amount"] = state.savingsBalances.savingsTotalAmount
     }
+
+    if (state.loansBalances !== null) {
+        balancesMap["Total Loan Balance"] = state.loansBalances.totalBalance
+    }
+
+    println("::::::::state.savingsBalances.lastSavingsAmount")
+    println(state.savingsBalances?.lastSavingsAmount)
+    println(state.savingsBalances?.lastSavingsDate)
 
     ModalBottomSheetLayout(
         modifier = Modifier.padding(innerPadding),
         sheetState = sheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         sheetContent = {
-            Column(
+            Column (
                 modifier = Modifier.background(MaterialTheme.colorScheme.inverseOnSurface)
             ) {
                 Column (modifier = Modifier.padding(horizontal = 16.dp, vertical = 26.dp)) {
@@ -216,9 +217,9 @@ fun ProfileContent(
                                     )
                                 }
                                 IconButton(
-                                    modifier = Modifier.absoluteOffset(x = 15.dp),
+                                    modifier = Modifier.absoluteOffset(x = 15.dp).alpha(0.0f),
                                     onClick = {
-                                        onAuthEvent(AuthStore.Intent.LogOutUser)
+//                                        onAuthEvent(AuthStore.Intent.LogOutUser)
                                     },
                                     content = {
                                         Icon(
@@ -285,8 +286,12 @@ fun ProfileContent(
                                                     print(balance.value)
                                                 },
                                                 balance = balance.value,
-                                                lastSavingsAmount = null,
-                                                lastSavingsDate = null
+                                                lastAmount = if (state.savingsBalances !== null) state.savingsBalances.lastSavingsAmount else null,
+                                                lastDate =  if (state.savingsBalances !== null) state.savingsBalances.lastSavingsDate else null,
+                                                totalLoans = if (state.loansBalances !== null && balance.key == "Total Loan Balance")
+                                                    state.loansBalances.loanCount
+                                                else
+                                                    null
                                             )
                                         }
                                     }
@@ -331,7 +336,7 @@ fun ProfileContent(
                                             .background(MaterialTheme.colorScheme.primary)
                                             .size(57.dp),
                                         onClick = {
-
+                                            item1.action()
                                         },
                                         content = {
                                             Icon(
@@ -378,11 +383,12 @@ fun ProfileContent(
                             )
 
                             Row (
+                                modifier = Modifier.clickable{seeAllTransactions()},
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             )  {
                                 Text(
-                                    modifier = Modifier.padding(end = 10.dp),
+                                    modifier = Modifier.padding(end = 5.dp),
                                     text = "See all",
                                     textAlign = TextAlign.Center,
                                     color = backArrowColor,
@@ -401,293 +407,16 @@ fun ProfileContent(
                         }
                     }
 
-                    if (state.transactionHistory !== null) {
-                        state.transactionHistory.map { transaction ->
-                            item {
-                                Column(
-                                    modifier = Modifier
-                                        .padding(vertical = 8.dp)
-                                        .padding(start = 16.dp, end = 16.dp)
-                                ) {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                    ) {
-                                        Row {
-                                            Column(
-                                                modifier = Modifier.padding(end = 12.dp),
-                                                verticalArrangement = Arrangement.Center
-                                            ) {
-                                                IconButton(
-                                                    modifier = Modifier
-                                                        .clip(CircleShape)
-                                                        .background(
-                                                            if (transaction.postingType == PostingType.CR)
-                                                                MaterialTheme.colorScheme.secondaryContainer
-                                                            else
-                                                                MaterialTheme.colorScheme.errorContainer
-                                                        ).size(30.dp),
-                                                    onClick = {
+                    item {
+                        singleTransaction(state.transactionHistory)
+                    }
 
-                                                    },
-                                                    content = {
-                                                        Icon(
-                                                            imageVector = Icons.Filled.OpenInNew,
-                                                            modifier = if (transaction.postingType == PostingType.CR)
-                                                                Modifier.size(15.dp)
-                                                                    .rotate(180F)
-                                                            else
-                                                                Modifier.size(15.dp),
-                                                            contentDescription = null,
-                                                            tint = if (transaction.postingType == PostingType.CR)
-                                                                MaterialTheme.colorScheme.secondary
-                                                            else
-                                                                MaterialTheme.colorScheme.error
-                                                        )
-                                                    }
-                                                )
-                                            }
-                                            Column {
-                                                Row(
-                                                    modifier = Modifier
-                                                        .background(MaterialTheme.colorScheme.background)
-                                                        .padding(top = 4.dp)
-                                                        .clip(shape = RoundedCornerShape(15.dp))
-                                                        .fillMaxWidth(0.5f)
-                                                ) {
-                                                    Text(
-                                                        modifier = Modifier.fillMaxWidth(),
-                                                        text = transaction.purpose,
-                                                        color = MaterialTheme.colorScheme.onBackground,
-                                                        fontSize = 14.sp,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                                                        textAlign = TextAlign.End
-                                                    )
-                                                }
+                    item {
 
-                                                Row(
-                                                    modifier = Modifier
-                                                        .background(MaterialTheme.colorScheme.background)
-                                                        .padding(top = 4.dp)
-                                                        .clip(shape = RoundedCornerShape(15.dp))
-                                                        .fillMaxWidth(0.5f)
-                                                ) {
-                                                    Text(
-                                                        modifier = Modifier
-                                                            .fillMaxWidth(),
-                                                        text = transaction.transactionId,
-                                                        color = MaterialTheme.colorScheme.onBackground,
-                                                        fontSize = 14.sp,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                                                        textAlign = TextAlign.End
-                                                    )
-                                                }
-                                            }
-                                        }
-                                        Column {
-                                            Row(
-                                                modifier = Modifier
-                                                    .background(MaterialTheme.colorScheme.background)
-                                                    .padding(top = 4.dp)
-                                                    .clip(shape = RoundedCornerShape(15.dp))
-                                                    .fillMaxWidth(0.5f)
-                                            ) {
-                                                Text(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth(),
-                                                    text = transaction.amount.toString(),
-                                                    color = MaterialTheme.colorScheme.onBackground,
-                                                    fontSize = 14.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                                                    textAlign = TextAlign.End
-                                                )
-                                            }
-
-                                            //Date
-
-                                            Row(
-                                                modifier = Modifier
-                                                    .background(MaterialTheme.colorScheme.background)
-                                                    .padding(top = 4.dp)
-                                                    .clip(shape = RoundedCornerShape(15.dp))
-                                                    .fillMaxWidth(0.5f)
-                                            ) {
-                                                Text(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth(),
-                                                    text = transaction.transactionDate,
-                                                    color = MaterialTheme.colorScheme.onBackground,
-                                                    fontSize = 14.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                                                    textAlign = TextAlign.End
-                                                )
-
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        if (state.transactionHistory.isEmpty()) {
-                            item {
-                                Column(
-                                    modifier = Modifier
-                                        .padding(vertical = 8.dp)
-                                        .padding(start = 16.dp, end = 16.dp)
-                                ) {
-                                    Text(
-                                        modifier = Modifier
-                                            .fillMaxWidth(),
-                                        text = "You don't have transaction history",
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        fontSize = 14.sp,
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
-                            }
-                        }
-                    } else {
-                        items(3) {
-                            Column(
-                                modifier = Modifier
-                                    .padding(vertical = 8.dp)
-                                    .padding(start = 16.dp, end = 16.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                ) {
-                                    Row {
-                                        Column(
-                                            modifier = Modifier.padding(end = 12.dp),
-                                            verticalArrangement = Arrangement.Center
-                                        ) {
-                                            IconButton(
-                                                modifier = Modifier
-                                                    .clip(CircleShape)
-                                                    .background(Color.Transparent).size(30.dp),
-                                                onClick = {},
-                                                content = {
-                                                    Text(
-                                                        text = "",
-                                                        modifier = Modifier
-                                                            .background(
-                                                                brush = ShimmerBrush(
-                                                                    targetValue = 1300f,
-                                                                    showShimmer = true
-                                                                ),
-                                                                shape = RoundedCornerShape(12.dp))
-                                                            .defaultMinSize(minHeight = 8.dp, minWidth = 25.dp)
-                                                    )
-                                                }
-                                            )
-                                        }
-                                        Column {
-                                            Row(
-                                                modifier = Modifier
-                                                    .background(MaterialTheme.colorScheme.background)
-                                                    .padding(top = 4.dp)
-                                                    .clip(shape = RoundedCornerShape(15.dp))
-                                                    .fillMaxWidth(0.5f)
-                                            ) {
-                                                Text(
-                                                    modifier = Modifier
-                                                        .background(
-                                                            ShimmerBrush(
-                                                                targetValue = 1300f,
-                                                                showShimmer = true
-                                                            )
-                                                        ).fillMaxWidth(),
-                                                    text = "",
-                                                    color = MaterialTheme.colorScheme.onBackground,
-                                                    fontSize = 14.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                                                    textAlign = TextAlign.End
-                                                )
-                                            }
-
-                                            Row(
-                                                modifier = Modifier
-                                                    .background(MaterialTheme.colorScheme.background)
-                                                    .padding(top = 4.dp)
-                                                    .clip(shape = RoundedCornerShape(15.dp))
-                                                    .fillMaxWidth(0.5f)
-                                            ) {
-                                                Text(
-                                                    modifier = Modifier
-                                                        .background(
-                                                            ShimmerBrush(
-                                                                targetValue = 1300f,
-                                                                showShimmer = true
-                                                            )
-                                                        )
-                                                        .fillMaxWidth(),
-                                                    text = "",
-                                                    color = MaterialTheme.colorScheme.onBackground,
-                                                    fontSize = 14.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                                                    textAlign = TextAlign.End
-                                                )
-                                            }
-                                        }
-                                    }
-                                    Column {
-                                        Row(
-                                            modifier = Modifier
-                                                .background(MaterialTheme.colorScheme.background)
-                                                .padding(top = 4.dp)
-                                                .clip(shape = RoundedCornerShape(15.dp))
-                                                .fillMaxWidth(0.5f)
-                                        ) {
-                                            Text(
-                                                modifier = Modifier
-                                                    .background(
-                                                        ShimmerBrush(
-                                                            targetValue = 1300f,
-                                                            showShimmer = true
-                                                        )
-                                                    )
-                                                    .fillMaxWidth(),
-                                                text = "",
-                                                color = MaterialTheme.colorScheme.onBackground,
-                                                fontSize = 14.sp,
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                                                textAlign = TextAlign.End
-                                            )
-                                        }
-
-                                        //Date
-
-                                        Row(
-                                            modifier = Modifier
-                                                .background(MaterialTheme.colorScheme.background)
-                                                .padding(top = 4.dp)
-                                                .clip(shape = RoundedCornerShape(15.dp))
-                                                .fillMaxWidth(0.5f)
-                                        ) {
-                                            Text(
-                                                modifier = Modifier
-                                                    .background(
-                                                        ShimmerBrush (
-                                                            targetValue = 1300f,
-                                                            showShimmer = true
-                                                        )
-                                                    )
-                                                    .fillMaxWidth(),
-                                                text = "",
-                                                color = MaterialTheme.colorScheme.onBackground,
-                                                fontSize = 14.sp,
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                                                textAlign = TextAlign.End
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        Spacer(
+                            modifier = Modifier
+                                .padding(bottom = 50.dp)
+                        )
                     }
                 }
             },

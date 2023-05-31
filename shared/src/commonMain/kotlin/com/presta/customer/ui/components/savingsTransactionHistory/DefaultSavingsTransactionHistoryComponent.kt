@@ -1,22 +1,22 @@
-package com.presta.customer.ui.components.transactionHistory
+package com.presta.customer.ui.components.savingsTransactionHistory
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 
-class DefaultTransactionHistoryComponent(
+class DefaultSavingsTransactionHistoryComponent(
 
     componentContext: ComponentContext,
 
-    ) : TransactionHistoryComponent, ComponentContext by componentContext {
+) : SavingsTransactionHistoryComponent, ComponentContext by componentContext {
 
     private val models = MutableValue(
-        TransactionHistoryComponent.Model(
+        SavingsTransactionHistoryComponent.Model(
             items = listOf()
         )
     )
 
-    override val model: Value<TransactionHistoryComponent.Model> = models
+    override val model: Value<SavingsTransactionHistoryComponent.Model> = models
     override fun onSelected(item: String) {
         TODO("Not yet implemented")
     }

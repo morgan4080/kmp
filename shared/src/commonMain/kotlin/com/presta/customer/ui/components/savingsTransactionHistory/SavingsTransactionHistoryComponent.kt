@@ -1,8 +1,8 @@
-package com.presta.customer.ui.components.transactionHistory
+package com.presta.customer.ui.components.savingsTransactionHistory
 
 import com.arkivanov.decompose.value.Value
 
-interface TransactionHistoryComponent {
+interface SavingsTransactionHistoryComponent {
     val model: Value<Model>
 
     fun onSelected(item: String)

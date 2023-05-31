@@ -36,7 +36,7 @@ fun SavingsTransactionHistory() {
             items(30) {
                 TransactionHistoryContainer()
             }
-            //creates a space to view all the scrollable items Below the Bottom App bar
+
             item {
 
                 Spacer(

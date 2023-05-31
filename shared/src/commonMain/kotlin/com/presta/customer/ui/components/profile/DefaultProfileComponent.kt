@@ -36,7 +36,11 @@ class DefaultProfileComponent(
     mainContext: CoroutineContext,
     storeFactory: StoreFactory,
     private val logoutToSplash: () -> Unit,
-    private val onProfileClicked: () -> Unit
+    private val gotoAllTransactions: () -> Unit,
+    private val gotoSavings: () -> Unit,
+    private val gotoLoans: () -> Unit,
+    private val gotoPayLoans: () -> Unit,
+    private val gotoStatement: () -> Unit,
 ) : ProfileComponent, ComponentContext by componentContext {
 
     override val authStore =
@@ -74,6 +78,27 @@ class DefaultProfileComponent(
         profileStore.accept(event)
     }
 
+    override fun seeAllTransactions() {
+        println("::::::gotoAllTransactions")
+        gotoAllTransactions()
+    }
+
+    override fun goToSavings() {
+        gotoSavings()
+    }
+
+    override fun goToLoans() {
+        gotoLoans()
+    }
+
+    override fun goToPayLoans() {
+        gotoPayLoans()
+    }
+
+    override fun goToStatement() {
+        gotoStatement()
+    }
+
     private var profileStateScopeJob: Job? = null
 
     private fun checkProfileTransactions (access_token: String, refId: String) {
@@ -103,7 +128,11 @@ class DefaultProfileComponent(
                     onAuthEvent(AuthStore.Intent.CheckAuthenticatedUser(
                         token = state.cachedMemberData.accessToken
                     ))
-                    onEvent(ProfileStore.Intent.GetBalances (
+                    onEvent(ProfileStore.Intent.GetSavingsBalances (
+                        token = state.cachedMemberData.accessToken,
+                        refId = state.cachedMemberData.refId,
+                    ))
+                    onEvent(ProfileStore.Intent.GetLoanBalances (
                         token = state.cachedMemberData.accessToken,
                         refId = state.cachedMemberData.refId,
                     ))
@@ -136,10 +165,10 @@ class DefaultProfileComponent(
     }
 
     init {
+        refreshToken()
+
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
 
         checkAuthenticatedUser()
-
-        refreshToken()
     }
 }

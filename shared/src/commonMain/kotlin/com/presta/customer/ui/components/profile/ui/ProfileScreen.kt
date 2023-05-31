@@ -18,9 +18,12 @@ fun ProfileScreen(
     ProfileContent(
         authState= authState,
         state = profileState,
-        onEvent = component::onEvent,
-        onAuthEvent = component::onAuthEvent,
-        innerPadding = innerPadding
+        innerPadding = innerPadding,
+        seeAllTransactions = component::seeAllTransactions,
+        goToSavings = component::goToSavings,
+        goToLoans = component::goToLoans,
+        goToPayLoans = component::goToPayLoans,
+        goToStatement = component::goToStatement
     )
 }
 

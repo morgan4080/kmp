@@ -1,4 +1,4 @@
-package com.presta.customer.ui.components.transactionHistory
+package com.presta.customer.ui.components.savingsTransactionHistory
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -6,24 +6,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -39,18 +32,12 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.presta.customer.MR
 import com.presta.customer.ui.composables.NavigateBackTopBar
-import com.presta.customer.ui.theme.actionButtonColor
-import composables.AllTransactionHistory
-import com.presta.customer.ui.composables.LoansTransactionHistory
 import com.presta.customer.ui.composables.SavingsTransactionHistory
-import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransactionHistoryScreen(component: TransactionHistoryComponent) {
+fun SavingsTransactionHistoryScreen(component: SavingsTransactionHistoryComponent) {
 
     var userInput by remember { mutableStateOf("") }
 
@@ -69,7 +56,7 @@ fun TransactionHistoryScreen(component: TransactionHistoryComponent) {
 
             Row(modifier = Modifier
                 .fillMaxWidth()) {
-                NavigateBackTopBar("Transaction History", onClickContainer ={
+                NavigateBackTopBar("Savings Transaction History", onClickContainer = {
 
                 } )
 
@@ -87,8 +74,7 @@ fun TransactionHistoryScreen(component: TransactionHistoryComponent) {
                         MaterialTheme.colorScheme.background
                     )
                 ) {
-
-                    ElevatedCard() {
+                    ElevatedCard {
                         Row(modifier = Modifier
                             .fillMaxWidth()) {
 
@@ -110,11 +96,9 @@ fun TransactionHistoryScreen(component: TransactionHistoryComponent) {
                                         focusRequester.requestFocus()
                                     },
                                 ),
-                                // keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
 
                                 onValueChange = {
                                     userInput = it
-                                    //eventsViewModel.eventName = userInput
                                 },
                                 value = userInput,
                                 singleLine = true,
@@ -151,10 +135,7 @@ fun TransactionHistoryScreen(component: TransactionHistoryComponent) {
                     }
 
                 }
-                //Navigation Tabs
-                var tabIndex by remember { mutableStateOf(0) }
 
-                val tabs = listOf("All ", "Savings", "Loans")
                 Row(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.background)
@@ -167,72 +148,7 @@ fun TransactionHistoryScreen(component: TransactionHistoryComponent) {
                         modifier = Modifier
                             .fillMaxWidth()
                     ) {
-                        TabRow(selectedTabIndex = tabIndex,
-                            containerColor = Color.White.copy(alpha = 0.5f),
-                            modifier = Modifier
-                                .clip(shape = RoundedCornerShape(29.dp))
-                                .background(Color.Gray.copy(alpha = 0.5f)),
-                            indicator = {},
-                            divider = {
-
-                            }
-                        ) {
-                            tabs.forEachIndexed { index, title ->
-
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(43.dp)
-                                        .clip(shape = RoundedCornerShape(70.dp))
-                                ) {
-
-                                    Card(
-                                        shape = RoundedCornerShape(70.dp),
-                                        colors = CardDefaults.cardColors(containerColor = if (tabIndex == index) actionButtonColor else Color.Transparent),
-                                        modifier = Modifier
-                                            .padding(1.5.dp)
-                                    ) {
-
-                                        Tab(
-                                            text = {
-                                                Text(text = title,
-                                                fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
-                                                    color = if (tabIndex == index) Color.White else MaterialTheme.colorScheme.onBackground
-                                                )
-                                            },
-                                            selected = tabIndex == index,
-                                            onClick = {
-                                                tabIndex = index
-                                            },
-                                            modifier = Modifier
-                                                .clip(
-                                                    shape = RoundedCornerShape(
-                                                        topStart = 70.dp,
-                                                        topEnd = 70.dp,
-                                                        bottomStart = 70.dp,
-                                                        bottomEnd = 70.dp
-                                                    )
-                                                )
-                                                .background(
-                                                    color = if (tabIndex == index) Color.White.copy(
-                                                        alpha = 0.3f
-                                                    ) else Color.White.copy(alpha = 0.1f)
-                                                ),
-                                            selectedContentColor = Color.Black,
-                                            unselectedContentColor = Color.DarkGray
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        when (tabIndex) {
-                            0 -> AllTransactionHistory()
-                            1 -> SavingsTransactionHistory()
-                            2 -> LoansTransactionHistory()
-
-                        }
-
+                        SavingsTransactionHistory()
                     }
                 }
             }

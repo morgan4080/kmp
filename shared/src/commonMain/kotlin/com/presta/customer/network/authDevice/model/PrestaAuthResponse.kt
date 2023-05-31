@@ -11,7 +11,9 @@ data class PrestaLogInResponse (
 )
 @Serializable
 data class RefreshTokenResponse (
-    val access_token: String
+    val session_id: String,
+    val access_token: String,
+    val refresh_token: String,
 )
 @Serializable
 data class AuthUserRoles(

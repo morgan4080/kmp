@@ -13,11 +13,11 @@ object NetworkConstants {
         val route = baseUrlKeycloak + OrganisationModel.organisation.tenant_id + "/protocol/openid-connect/token"
     }
 
-    object PrestaAuthenticateUser{
+    object PrestaAuthenticateUser {
         const val route = applicationsBaseUrl + "authentication"
     }
 
-    object PrestaRefreshToken{
+    object PrestaRefreshToken {
         const val route = applicationsBaseUrl + "authentication/renew-token"
     }
 
@@ -51,6 +51,10 @@ object NetworkConstants {
 
     object PrestaGetSavingsBalance {
         const val route = applicationsBaseUrl + "balances/savings"
+    }
+
+    object PrestaGetLoansBalance {
+        const val route = applicationsBaseUrl + "balances/loans"
     }
 
     object PrestaGetTransactionsHistory {

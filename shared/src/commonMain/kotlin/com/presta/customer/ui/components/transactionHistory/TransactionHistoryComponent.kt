@@ -1,15 +1,23 @@
-package com.presta.customer.ui.components.transactionHistoryScreen
+package com.presta.customer.ui.components.transactionHistory
 
-import com.arkivanov.decompose.value.Value
+import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.transactionHistory.store.TransactionHistoryStore
+import kotlinx.coroutines.flow.StateFlow
 
 interface TransactionHistoryComponent {
-    val model: Value<Model>
+    val authStore: AuthStore
 
-    fun onSelected(item: String)
+    val authState: StateFlow<AuthStore.State>
 
-    data class Model(
-        val items: List<String>,
-    )
+    val transactionHistoryStore: TransactionHistoryStore
 
+    val transactionHistoryState: StateFlow<TransactionHistoryStore.State>
 
+    fun onAuthEvent(event: AuthStore.Intent)
+
+    fun onEvent(event: TransactionHistoryStore.Intent)
+
+    fun onMappingChange(mapping: List<String>)
+
+    fun onBack()
 }

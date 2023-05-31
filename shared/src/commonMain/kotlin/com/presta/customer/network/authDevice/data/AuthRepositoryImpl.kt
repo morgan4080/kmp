@@ -66,6 +66,8 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
 
             userAuthDao.updateAccessToken(
                 response.access_token,
+                response.refresh_token,
+                response.session_id,
                 refId
             )
 

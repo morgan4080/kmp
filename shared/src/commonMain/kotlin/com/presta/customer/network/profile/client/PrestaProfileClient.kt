@@ -2,7 +2,8 @@ package com.presta.customer.network.profile.client
 
 import com.presta.customer.network.NetworkConstants
 import com.presta.customer.network.profile.errorHandler.profileErrorHandler
-import com.presta.customer.network.profile.model.PrestaBalancesResponse
+import com.presta.customer.network.profile.model.PrestaLoansBalancesResponse
+import com.presta.customer.network.profile.model.PrestaSavingsBalancesResponse
 import com.presta.customer.network.profile.model.PrestaTransactionHistoryResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -18,10 +19,23 @@ class PrestaProfileClient(
     suspend fun getUserSavingsData (
         token: String,
         memberRefId: String,
-    ): PrestaBalancesResponse {
+    ): PrestaSavingsBalancesResponse {
 
         return profileErrorHandler {
             httpClient.get("${NetworkConstants.PrestaGetSavingsBalance.route}/${memberRefId}") {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+            }
+        }
+    }
+    suspend fun getUserLoansData (
+        token: String,
+        memberRefId: String,
+    ): PrestaLoansBalancesResponse {
+
+        return profileErrorHandler {
+            httpClient.get("${NetworkConstants.PrestaGetLoansBalance.route}/${memberRefId}") {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
@@ -42,6 +56,8 @@ class PrestaProfileClient(
                 contentType(ContentType.Application.Json)
                 url {
                     encodedParameters.append("purposeIds", purposeIds.joinToString(separator = ","))
+                    encodedParameters.append("start", "0")
+                    encodedParameters.append("length", "10")
                 }
             }
         }

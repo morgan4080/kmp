@@ -15,8 +15,8 @@ import com.presta.customer.ui.components.processingTransaction.DefaultProcessing
 import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
 import com.presta.customer.ui.components.savings.DefaultSavingsComponent
 import com.presta.customer.ui.components.savings.SavingsComponent
-import com.presta.customer.ui.components.transactionHistoryScreen.DefaultTransactionHistoryComponent
-import com.presta.customer.ui.components.transactionHistoryScreen.TransactionHistoryComponent
+import com.presta.customer.ui.components.savingsTransactionHistory.DefaultSavingsTransactionHistoryComponent
+import com.presta.customer.ui.components.savingsTransactionHistory.SavingsTransactionHistoryComponent
 
 class DefaultRootSavingsComponent(
     componentContext: ComponentContext,
@@ -46,8 +46,8 @@ class DefaultRootSavingsComponent(
             is ConfigSavings.ProcessingTransaction -> RootSavingsComponent.ChildSavings.ProcessingTransactionChild(
                 processingTransactionComponent(componentContext)
             )
-            is ConfigSavings.TransactionHistory -> RootSavingsComponent.ChildSavings.TransactionHistoryChild(
-                allTransactionHistoryComponent(componentContext)
+            is ConfigSavings.SavingsTransactionHistory -> RootSavingsComponent.ChildSavings.TransactionHistoryChild(
+                savingsTransactionHistoryComponent(componentContext)
             )
 
         }
@@ -60,10 +60,7 @@ class DefaultRootSavingsComponent(
 
             },
             onSeeAlClicked = {
-                //navigate to see All Screen
-                savingsNavigation.push(ConfigSavings.TransactionHistory)
-
-
+                savingsNavigation.push(ConfigSavings.SavingsTransactionHistory)
             }
 
         )
@@ -87,8 +84,8 @@ class DefaultRootSavingsComponent(
             componentContext = componentContext
         )
 
-    private fun allTransactionHistoryComponent(componentContext: ComponentContext): TransactionHistoryComponent =
-        DefaultTransactionHistoryComponent(
+    private fun savingsTransactionHistoryComponent(componentContext: ComponentContext): SavingsTransactionHistoryComponent =
+        DefaultSavingsTransactionHistoryComponent(
             componentContext = componentContext
         )
 
@@ -104,7 +101,7 @@ class DefaultRootSavingsComponent(
         object ProcessingTransaction: ConfigSavings()
 
         @Parcelize
-        object TransactionHistory: ConfigSavings()
+        object SavingsTransactionHistory: ConfigSavings()
 
     }
 }

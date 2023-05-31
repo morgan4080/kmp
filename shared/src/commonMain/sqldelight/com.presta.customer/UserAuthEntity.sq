@@ -17,7 +17,7 @@ INSERT OR REPLACE INTO userAuthEntity(refId, session_id, access_token, refresh_t
 VALUES (?, ?, ?, ?, ?, ?, ?);
 
 updateAccessToken:
-UPDATE userAuthEntity SET access_token = :access_token WHERE refId = :refId;
+UPDATE userAuthEntity SET access_token = :access_token, refresh_token = :refresh_token, session_id = :session_id  WHERE refId = :refId;
 
 removeUserAuthCredentials:
 DELETE FROM userAuthEntity;

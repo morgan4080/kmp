@@ -16,5 +16,10 @@ interface ProfileComponent {
 
     fun onAuthEvent(event: AuthStore.Intent)
     fun onEvent(event: ProfileStore.Intent)
+    fun seeAllTransactions()
 
+    fun goToSavings()
+    fun goToLoans()
+    fun goToPayLoans()
+    fun goToStatement()
 }

@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
@@ -23,6 +24,8 @@ import com.presta.customer.ui.components.rootBottomStack.DefaultRootBottomCompon
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
 import com.presta.customer.ui.components.splash.DefaultSplashComponent
 import com.presta.customer.ui.components.splash.SplashComponent
+import com.presta.customer.ui.components.transactionHistory.DefaultTransactionHistoryComponent
+import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
 import com.presta.customer.ui.components.welcome.DefaultWelcomeComponent
 import com.presta.customer.ui.components.welcome.WelcomeComponent
 import prestaDispatchers
@@ -54,6 +57,7 @@ class DefaultRootComponent(
             is Config.Register -> RootComponent.Child.RegisterChild(registerComponent(componentContext, config))
             is Config.Auth -> RootComponent.Child.AuthChild(authComponent(componentContext, config))
             is Config.RootBottom -> RootComponent.Child.RootBottomChild(rootBottomComponent(componentContext))
+            is Config.AllTransactions -> RootComponent.Child.AllTransactionsChild(allTransactionHistory(componentContext))
         }
 
     private fun splashComponent(componentContext: ComponentContext): SplashComponent =
@@ -190,9 +194,22 @@ class DefaultRootComponent(
         DefaultRootBottomComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
+            gotoAllTransactions = {
+                navigation.push(Config.AllTransactions)
+            },
             logoutToSplash = {
                 println(":::::::LOG OUT TO SPLASH SCREEN")
                 navigation.replaceAll(Config.Splash)
+            }
+        )
+
+    private fun allTransactionHistory(componentContext: ComponentContext): TransactionHistoryComponent =
+        DefaultTransactionHistoryComponent(
+            componentContext = componentContext,
+            mainContext = prestaDispatchers.main,
+            storeFactory = storeFactory,
+            onPop = {
+                navigation.pop()
             }
         )
 
@@ -214,6 +231,8 @@ class DefaultRootComponent(
         data class Auth(val memberRefId: String?, val phoneNumber: String, val isTermsAccepted: Boolean, val isActive: Boolean, val onBoardingContext: OnBoardingContext, val pinStatus: PinStatus?) : Config()
         @Parcelize
         data class Register(val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean, val onBoardingContext: OnBoardingContext, val pinStatus: PinStatus?) : Config()
+        @Parcelize
+        object AllTransactions : Config()
         @Parcelize
         object RootBottom : Config()
     }

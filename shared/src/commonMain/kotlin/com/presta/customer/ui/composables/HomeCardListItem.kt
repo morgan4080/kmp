@@ -2,7 +2,9 @@ package com.presta.customer.ui.composables
 
 import ShimmerBrush
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,8 +47,9 @@ fun HomeCardListItem(
     name: String,
     onClick: (String) -> Unit,
     balance: Double?,
-    lastSavingsAmount: String? = null,
-    lastSavingsDate: String? = null
+    lastAmount: Double? = null,
+    lastDate: String? = null,
+    totalLoans: Int? = null
 ) {
     var showExpanded by remember { mutableStateOf(false) }
 
@@ -75,7 +78,8 @@ fun HomeCardListItem(
                     Text(
                         text = name,
                         color= MaterialTheme.colorScheme.outline,
-                        fontSize = 16.sp
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        style = MaterialTheme.typography.bodyLarge
                     )
 
                     IconButton(
@@ -111,105 +115,179 @@ fun HomeCardListItem(
                         ).defaultMinSize(150.dp),
                         text = if (balance !== null) {
                             balance.toString() +
-                                    if (name == "Shares Count") " Shares" else " KES"
+                                    " KES"
                         } else "",
                         color= MaterialTheme.colorScheme.onBackground,
                         fontSize = 25.sp,
-                        style = MaterialTheme.typography.displaySmall.copy(
-                            fontWeight = FontWeight.ExtraBold
-                        )
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
                     )
                 }
                 Row (modifier = Modifier
                     .padding(top = 11.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Last Savings",
-                        color= MaterialTheme.colorScheme.outline, // #002C56
-                        fontSize = 16.sp
+                        text = if (name == "Total Savings Amount") "Last Savings" else "Last Payment",
+                        color= MaterialTheme.colorScheme.outline,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                     )
+                    if (name == "Total Loan Balance") {
+                        Text(
+                            text = "Loans",
+                            color = MaterialTheme.colorScheme.outline,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                        )
+                    }
                 }
                 Row (modifier = Modifier
                     .padding(top = 1.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        modifier = Modifier.background(
-                            brush = ShimmerBrush (
-                                targetValue = 1300f,
-                                showShimmer = lastSavingsAmount == null || lastSavingsDate == null
-                            ),
-                            shape = RoundedCornerShape(12.dp)
-                        ).defaultMinSize(150.dp),
-                        text = if (lastSavingsAmount !== null && lastSavingsDate !== null)
-                                "KES $lastSavingsAmount - `$lastSavingsDate Days Ago"
-                        else "",
-                        color= MaterialTheme.colorScheme.onBackground, // #002C56
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    if (name == "Total Savings Amount") {
+                        Text(
+                            modifier = Modifier.background(
+                                brush = ShimmerBrush(
+                                    targetValue = 1300f,
+                                    showShimmer = lastAmount == null || lastDate == null
+                                ),
+                                shape = RoundedCornerShape(12.dp)
+                            ).defaultMinSize(150.dp),
+                            text = if (lastAmount !== null && lastDate !== null)
+                                "KES $lastAmount - $lastDate"
+                            else "",
+                            color = MaterialTheme.colorScheme.onBackground, // #002C56
+                            fontSize = 14.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                        )
+                    }
+
+
+
+                    if (name == "Total Loan Balance") {
+                        Text(
+                            modifier = Modifier.background(
+                                brush = ShimmerBrush(
+                                    targetValue = 1300f,
+                                    showShimmer = true
+                                ),
+                                shape = RoundedCornerShape(12.dp)
+                            ).defaultMinSize(150.dp),
+                            text = "",
+                            color = MaterialTheme.colorScheme.onBackground, // #002C56
+                            fontSize = 14.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                        )
+
+                        Text(
+                            modifier = Modifier.background(
+                                brush = ShimmerBrush (
+                                    targetValue = 1300f,
+                                    showShimmer = totalLoans == null
+                                ),
+                                shape = RoundedCornerShape(12.dp)
+                            ).defaultMinSize(150.dp),
+                            text = if (totalLoans !== null)
+                                       "$totalLoans"
+                                   else
+                                       "",
+                            color= MaterialTheme.colorScheme.onBackground,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.End
+                        )
+                    }
                 }
 
                 AnimatedVisibility(showExpanded) {
-                    Column {
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Savings Balances",
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 14.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
-                                style = MaterialTheme.typography.headlineSmall
-                            )
+                    if (name == "Total Loan Balance") {
+                        Column {
 
-                            Row (
-                                horizontalArrangement = Arrangement.Center,
+                        }
+                    } else {
+                        Column {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(
-                                    modifier = Modifier.padding(end = 10.dp),
-                                    text = "See all",
-                                    textAlign = TextAlign.Center,
-                                    color = backArrowColor,
-                                    fontSize = 12.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
-                                    style = MaterialTheme.typography.headlineSmall
+                                Text (
+                                    text = "Savings Balances",
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 15.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                 )
 
-                                Icon (
-                                    Icons.Filled.ArrowForward,
-                                    contentDescription = "Forward Arrow",
-                                    tint = backArrowColor,
-                                    modifier = Modifier.size(20.dp)
-                                )
+                                Row (
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text (
+                                        modifier = Modifier.padding(end = 5.dp),
+                                        text = "See all",
+                                        textAlign = TextAlign.Center,
+                                        color = backArrowColor,
+                                        fontSize = 12.sp,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                        style = MaterialTheme.typography.headlineSmall
+                                    )
 
+                                    Icon (
+                                        Icons.Filled.ArrowForward,
+                                        contentDescription = "Forward Arrow",
+                                        tint = backArrowColor,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+
+                                }
                             }
-                        }
 
-                        Row (
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            Text(
-                                text = "Current Savings",
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.End
-                            )
+                            Row (
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 3.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            ) {
+                                Text (
+                                    text = "Current Savings",
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 14.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                    textAlign = TextAlign.End
+                                )
 
-                            Text(
-                                text = "KES 5,000.00",
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.End
-                            )
+                                Text (
+                                    text = "KES 5,000.00",
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 14.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                    textAlign = TextAlign.End
+                                )
+                            }
+
+                            Row (
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 3.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            ) {
+                                Text (
+                                    text = "Current Shares",
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 14.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                    textAlign = TextAlign.End
+                                )
+
+                                Text (
+                                    text = "KES 5,000.00",
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 14.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                    textAlign = TextAlign.End
+                                )
+                            }
                         }
                     }
                 }

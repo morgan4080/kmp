@@ -30,7 +30,7 @@ fun CurrentSavingsContainer(){
         .border( BorderStroke(1.dp,Color.White), shape = RoundedCornerShape(size = 12.dp))
     ) {
         Box (modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.background)
+            .background(color = MaterialTheme.colorScheme.inverseOnSurface)
         ) {
             Column (
                 modifier = Modifier
@@ -49,7 +49,7 @@ fun CurrentSavingsContainer(){
                     Text(
                         text = "Total Savings",
                         fontSize = 12.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                     )
                 }
                 Row (modifier = Modifier
@@ -57,10 +57,9 @@ fun CurrentSavingsContainer(){
                     .fillMaxWidth()
                 ) {
                     Text(
-                        text = "Kes, 100,983.32",
-                        color= MaterialTheme.colorScheme.onPrimaryContainer,
+                        text = "KES 100,983.32",
                         fontSize = 20.sp,
-                        fontWeight = FontWeight.Black,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                         modifier = Modifier
                             .fillMaxWidth())
                 }
@@ -68,28 +67,26 @@ fun CurrentSavingsContainer(){
                     .padding(top = 11.dp)
                     .fillMaxWidth()
                 ) {
-                    Column(){
+                    Column {
                         Text(
                             text = "Current Savings ",
                             color= Color(0xFF8F8F8F.toInt()), // #002C56
                             fontSize = 10.sp)
 
                         Text(
-                            text = "50,000",
-                            color= MaterialTheme.colorScheme.onPrimaryContainer, // #002C56
+                            text = "50,000",// #002C56
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,)
                     }
 
                     Spacer(modifier = Modifier.padding(start = 42.dp))
-                    Column(){
+                    Column {
                         Text(
                             text = "Current Shares",
                             color= Color(0xFF8F8F8F.toInt()), // #002C56
                             fontSize = 10.sp)
                         Text(
-                            text = "10(kes 50,000)",
-                            color= MaterialTheme.colorScheme.onPrimaryContainer, // #002C56
+                            text = "10(kes 50,000)", // #002C56
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,)
                     }

@@ -8,6 +8,7 @@ import com.presta.customer.ui.components.otp.OtpComponent
 import com.presta.customer.ui.components.registration.RegistrationComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
 import com.presta.customer.ui.components.splash.SplashComponent
+import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
 import com.presta.customer.ui.components.welcome.WelcomeComponent
 
 interface RootComponent {
@@ -21,6 +22,7 @@ interface RootComponent {
         class OTPChild(val component: OtpComponent) : Child()
         class RegisterChild(val component: RegistrationComponent) : Child()
         class AuthChild(val component: AuthComponent) : Child()
+        class AllTransactionsChild(val component: TransactionHistoryComponent) : Child()
         class RootBottomChild(val component: RootBottomComponent) : Child()
     }
 }

@@ -69,11 +69,12 @@ fun SavingsScreen(component: SavingsComponent) {
                 ) {
                     Text(
                         modifier = Modifier,
-                        text = "Enter Savings Amount",
+                        text = "Savings Overview",
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 14.sp,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                     )
+
                     CurrentSavingsContainer()
 
                     Row(
@@ -117,7 +118,7 @@ fun SavingsScreen(component: SavingsComponent) {
 
                         }
                     }
-                    //Transaction History From the Api
+
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -133,7 +134,7 @@ fun SavingsScreen(component: SavingsComponent) {
                     Row(modifier = Modifier
                         .fillMaxWidth()
                         .background(color = Color.Transparent)
-                        .padding(bottom = 100.dp)) {
+                        .padding(top = 30.dp, bottom = 90.dp)) {
                         ActionButton("+ Add Savings", onClickContainer = {
                            //Navigate to Add savings Screen
                             component.onAddSavingsSelected()

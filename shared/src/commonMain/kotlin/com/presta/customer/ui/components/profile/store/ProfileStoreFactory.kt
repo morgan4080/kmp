@@ -6,7 +6,8 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.profile.data.ProfileRepository
-import com.presta.customer.network.profile.model.PrestaBalancesResponse
+import com.presta.customer.network.profile.model.PrestaLoansBalancesResponse
+import com.presta.customer.network.profile.model.PrestaSavingsBalancesResponse
 import com.presta.customer.network.profile.model.PrestaTransactionHistoryResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -30,7 +31,8 @@ class ProfileStoreFactory(
 
     private sealed class Msg {
         data class ProfileLoading(val isLoading: Boolean = true): Msg()
-        data class ProfileLoaded(val balances: PrestaBalancesResponse): Msg()
+        data class ProfileLoansLoaded(val loanBalances: PrestaLoansBalancesResponse): Msg()
+        data class ProfileSavingsLoaded(val savingBalances: PrestaSavingsBalancesResponse): Msg()
         data class TransactionHistoryLoaded(val transactionHistory: List<PrestaTransactionHistoryResponse>): Msg()
         data class TransactionMappingLoaded(val transactionMapping: Map<String, String>): Msg()
 
@@ -46,33 +48,55 @@ class ProfileStoreFactory(
 
         override fun executeIntent(intent: ProfileStore.Intent, getState: () -> ProfileStore.State): Unit =
             when(intent) {
-                is ProfileStore.Intent.GetBalances -> getBalances(token = intent.token, refId = intent.refId)
+                is ProfileStore.Intent.GetSavingsBalances -> getSavingsBalances(token = intent.token, refId = intent.refId)
+                is ProfileStore.Intent.GetLoanBalances -> getLoanBalances(token = intent.token, refId = intent.refId)
                 is ProfileStore.Intent.GetTransactionHistory -> getTransactionHistory(token = intent.token, refId = intent.refId, purposeIds = intent.purposeIds)
                 is ProfileStore.Intent.GetTransactionMapping -> getTransactionMapping(token = intent.token)
             }
 
-        private var getBalancesJob: Job? = null
+        private var getSavingsBalancesJob: Job? = null
 
-        private fun getBalances(
+        private fun getSavingsBalances(
             token: String,
             refId: String
         ) {
-            if (getBalancesJob?.isActive == true) return
+            if (getSavingsBalancesJob?.isActive == true) return
 
             dispatch(Msg.ProfileLoading())
 
-            getBalancesJob = scope.launch {
-                profileRepository.getBalancesData(
+            getSavingsBalancesJob = scope.launch {
+                profileRepository.getUserSavingsData(
                     token = token,
                     memberRefId = refId
                 ).onSuccess { response ->
-                    dispatch(Msg.ProfileLoaded(response))
+                    dispatch(Msg.ProfileSavingsLoaded(response))
                 }.onFailure { e ->
                     dispatch(Msg.ProfileFailed(e.message))
                 }
             }
         }
-        //Get Transaction History
+
+        private var getLoanBalancesJob: Job? = null
+
+        private fun getLoanBalances(
+            token: String,
+            refId: String
+        ) {
+            if (getLoanBalancesJob?.isActive == true) return
+
+            dispatch(Msg.ProfileLoading())
+
+            getLoanBalancesJob = scope.launch {
+                profileRepository.getUserLoansData(
+                    token = token,
+                    memberRefId = refId
+                ).onSuccess { response ->
+                    dispatch(Msg.ProfileLoansLoaded(response))
+                }.onFailure { e ->
+                    dispatch(Msg.ProfileFailed(e.message))
+                }
+            }
+        }
 
         private var getTransactionHistoryJob: Job? = null
 
@@ -128,7 +152,8 @@ class ProfileStoreFactory(
         override fun ProfileStore.State.reduce(msg: Msg): ProfileStore.State =
             when (msg) {
                 is Msg.ProfileLoading -> copy(isLoading = msg.isLoading)
-                is Msg.ProfileLoaded -> copy(balances = msg.balances)
+                is Msg.ProfileLoansLoaded -> copy(loansBalances = msg.loanBalances)
+                is Msg.ProfileSavingsLoaded -> copy(savingsBalances = msg.savingBalances)
                 is Msg.ProfileFailed -> copy(error = msg.error)
                 is Msg.TransactionHistoryLoaded->copy(transactionHistory = msg.transactionHistory)
                 is Msg.TransactionMappingLoaded->copy(transactionMapping = msg.transactionMapping)
