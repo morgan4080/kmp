@@ -53,7 +53,7 @@ internal class AuthStoreFactory(
         data class CheckAuthenticatedUserLoaded(val authUserResponse: PrestaCheckAuthUserResponse): Msg()
         data class AuthFailed(val error: String?) : Msg()
 
-        data class CachedMemberData(val accessToken: String, val refreshToken: String, val refId: String, val registrationFees: Double, val registrationFeeStatus: String, val phoneNumber: String): Msg()
+        data class CachedMemberData(val accessToken: String, val refreshToken: String, val refId: String, val session_id: String, val registrationFees: Double, val registrationFeeStatus: String, val phoneNumber: String): Msg()
     }
 
     private inner class ExecutorImpl : CoroutineExecutor<AuthStore.Intent, Unit, AuthStore.State, Msg, Nothing>(
@@ -151,6 +151,7 @@ internal class AuthStoreFactory(
                     accessToken = response.access_token,
                     refreshToken = response.refresh_token,
                     refId = response.refId,
+                    session_id = response.session_id,
                     registrationFees = response.registrationFees,
                     registrationFeeStatus = response.registrationFeeStatus,
                     phoneNumber = response.phoneNumber,

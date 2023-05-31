@@ -118,6 +118,26 @@ fun ProfileContent(
         }
     }
 
+    val balancesMap: MutableMap<String, Double?> = mutableMapOf(
+        "Savings Balance" to null,
+        "Shares Balance" to null,
+        "Shares Count" to null,
+        "Savings Total Amount" to null,
+        "Price Per Share" to null
+    )
+
+    if (state.balances !== null) {
+        val (savingsBalance, sharesBalance, sharesCount, savingsTotalAmount, pricePerShare) = state.balances
+        balancesMap["Savings Balance"] = savingsBalance
+        balancesMap["Shares Balance"] = sharesBalance
+        balancesMap["Shares Count"] = sharesCount.toDouble()
+        balancesMap["Savings Total Amount"] = savingsTotalAmount
+        balancesMap["Price Per Share"] = pricePerShare
+    }
+
+    println("::::::state.transactionHistory")
+    println(state.transactionHistory)
+
     ModalBottomSheetLayout(
         modifier = Modifier.padding(innerPadding),
         sheetState = sheetState,
@@ -258,23 +278,24 @@ fun ProfileContent(
                             state = stateLazyRow0,
                             flingBehavior = rememberSnapFlingBehavior(lazyListState = stateLazyRow0),
                             content = {
-
-
-
-                                items(3) {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillParentMaxWidth()
-                                    ) {
-                                        HomeCardListItem (
-                                            name = it,
-                                            onClick = {
-
-                                            },
-                                            balance = null,
-                                            lastSavingsAmount = null,
-                                            lastSavingsDate = null
-                                        )
+                                balancesMap.map { balance ->
+                                    item {
+                                        Box(
+                                            modifier = Modifier
+                                                .padding(horizontal = 16.dp)
+                                                .fillParentMaxWidth(0.95f)
+                                        ) {
+                                            HomeCardListItem (
+                                                name = balance.key,
+                                                onClick = {
+                                                    print(it)
+                                                    print(balance.value)
+                                                },
+                                                balance = balance.value,
+                                                lastSavingsAmount = null,
+                                                lastSavingsDate = null
+                                            )
+                                        }
                                     }
                                 }
                             }

@@ -10,6 +10,7 @@ import io.ktor.client.request.header
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
+import io.ktor.http.encodedPath
 
 class PrestaProfileClient(
     private val httpClient: HttpClient
@@ -34,14 +35,14 @@ class PrestaProfileClient(
         memberRefId: String,
         purposeIds: List<String>
     ): PrestaTransactionHistoryResponse {
-
         return profileErrorHandler {
             httpClient.get("${NetworkConstants.PrestaGetTransactionsHistory.route}/${memberRefId}") {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
                 url {
-                    parameters.append("purposeIds", purposeIds.joinToString())
+                    encodedParameters
+                    parameters.append("purposeIds", purposeIds.joinToString(separator = ","))
                 }
             }
         }

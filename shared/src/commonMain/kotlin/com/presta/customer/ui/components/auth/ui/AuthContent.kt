@@ -285,11 +285,14 @@ fun AuthContent(
         Column(
             modifier = Modifier
                 .padding(
-                    horizontal = 16.dp,
                     vertical = 30.dp
                 )
         ) {
-            Row {
+            Row (
+                modifier = Modifier
+                    .padding(
+                        horizontal = 16.dp)
+            ) {
                 Text(
                     text = state.title,
                     style = MaterialTheme.typography.headlineSmall,
@@ -297,7 +300,11 @@ fun AuthContent(
                     fontSize = 20.0.sp
                 )
             }
-            Row {
+            Row (
+                modifier = Modifier
+                    .padding(
+                        horizontal = 16.dp)
+            ) {
                 Text(
                     text = state.label,
                     style = MaterialTheme.typography.bodySmall,
@@ -305,7 +312,10 @@ fun AuthContent(
                 )
             }
             Row(
-                modifier = Modifier.padding(top = 35.dp).fillMaxWidth(),
+                modifier = Modifier
+                    .padding(top = 35.dp)
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 for ((index, _) in state.inputs.withIndex()) {
@@ -354,6 +364,7 @@ fun AuthContent(
             }
             Row (
                 modifier = Modifier
+                    .padding(horizontal = 16.dp)
                     .fillMaxWidth()
                     .absoluteOffset(y = -(70).dp),
             ) {
@@ -384,6 +395,7 @@ fun AuthContent(
             Row (
                 modifier = Modifier
                     .padding(top = 35.dp)
+                    .padding(horizontal = 16.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
             ) {

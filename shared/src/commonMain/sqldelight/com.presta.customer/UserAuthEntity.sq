@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS userAuthEntity (
   refId TEXT NOT NULL PRIMARY KEY,
+  session_id TEXT NOT NULL,
   access_token TEXT NOT NULL,
   refresh_token TEXT NOT NULL,
   registrationFees REAL NOT NULL,
@@ -12,8 +13,8 @@ SELECT *
 FROM userAuthEntity;
 
 insert:
-INSERT OR REPLACE INTO userAuthEntity(refId, access_token, refresh_token, registrationFees, registrationFeeStatus, phoneNumber)
-VALUES (?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO userAuthEntity(refId, session_id, access_token, refresh_token, registrationFees, registrationFeeStatus, phoneNumber)
+VALUES (?, ?, ?, ?, ?, ?, ?);
 
 updateAccessToken:
 UPDATE userAuthEntity SET access_token = :access_token WHERE refId = :refId;

@@ -18,6 +18,7 @@ interface AuthRepository {
 
     data class ResponseTransform(
         val refId: String,
+        val session_id: String,
         val access_token: String,
         val refresh_token: String,
         val registrationFees: Double,

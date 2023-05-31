@@ -42,9 +42,9 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
 fun HomeCardListItem(
-    name: Int,
-    onClick: (Int) -> Unit,
-    balance: String?,
+    name: String,
+    onClick: (String) -> Unit,
+    balance: Double?,
     lastSavingsAmount: String? = null,
     lastSavingsDate: String? = null
 ) {
@@ -73,7 +73,7 @@ fun HomeCardListItem(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
-                        text = "Total Savings",
+                        text = name,
                         color= MaterialTheme.colorScheme.outline,
                         fontSize = 16.sp
                     )
@@ -109,7 +109,10 @@ fun HomeCardListItem(
                             ),
                             shape = RoundedCornerShape(12.dp)
                         ).defaultMinSize(150.dp),
-                        text = if (balance !== null) balance else "",
+                        text = if (balance !== null) {
+                            balance.toString() +
+                                    if (name == "Shares Count") " Shares" else " KES"
+                        } else "",
                         color= MaterialTheme.colorScheme.onBackground,
                         fontSize = 25.sp,
                         style = MaterialTheme.typography.displaySmall.copy(

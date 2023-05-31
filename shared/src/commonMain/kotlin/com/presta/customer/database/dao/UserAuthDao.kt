@@ -25,11 +25,12 @@ class UserAuthDao(
         )
     }
 
-    suspend fun insert(access_token: String, refresh_token: String, refId: String, registrationFees: Double, registrationFeeStatus: String, phoneNumber: String) = withContext(prestaDispatchers.io) {
+    suspend fun insert(access_token: String, refresh_token: String, refId: String, session_id: String, registrationFees: Double, registrationFeeStatus: String, phoneNumber: String) = withContext(prestaDispatchers.io) {
         query.insert(
             access_token = access_token,
             refresh_token = refresh_token,
             refId = refId,
+            session_id = session_id,
             registrationFees = registrationFees,
             registrationFeeStatus = registrationFeeStatus,
             phoneNumber = phoneNumber,

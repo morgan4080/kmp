@@ -33,6 +33,7 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
                 access_token = response.access_token,
                 refresh_token = response.refresh_token,
                 refId = refId,
+                session_id = response.session_id,
                 registrationFees = registrationFees,
                 registrationFeeStatus = registrationFeeStatus,
                 phoneNumber = phoneNumber
@@ -83,6 +84,7 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
         var accessToken = ""
         var refreshToken = ""
         var refId = ""
+        var session_id = ""
         var phoneNumber = ""
         var registrationFees = 0.0
         var registrationFeeStatus = "NOT_PAID"
@@ -91,6 +93,7 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
             accessToken = it.access_token
             refreshToken = it.access_token
             refId = it.refId
+            session_id = it.session_id
             registrationFees = it.registrationFees
             registrationFeeStatus = it.registrationFeeStatus
             phoneNumber = it.phoneNumber
@@ -100,6 +103,7 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
             access_token = accessToken,
             refresh_token = refreshToken,
             refId = refId,
+            session_id = session_id,
             registrationFees = registrationFees,
             registrationFeeStatus = registrationFeeStatus,
             phoneNumber = phoneNumber,

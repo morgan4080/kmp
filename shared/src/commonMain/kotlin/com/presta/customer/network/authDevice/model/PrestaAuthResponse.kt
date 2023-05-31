@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PrestaLogInResponse (
+    val session_id: String,
     val access_token: String,
     val refresh_token: String
 )
