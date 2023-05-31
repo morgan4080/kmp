@@ -29,7 +29,7 @@ class ProfileRepositoryImpl : ProfileRepository,KoinComponent {
         memberRefId: String,
         token: String,
         purposeIds: List<String>
-    ): Result<PrestaTransactionHistoryResponse> {
+    ): Result<List<PrestaTransactionHistoryResponse>> {
         return try {
             val response = profileClient.getUserTransactionHistoryData(
                 token = token,

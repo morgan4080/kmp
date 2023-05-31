@@ -5,6 +5,6 @@ import com.presta.customer.network.profile.model.PrestaTransactionHistoryRespons
 
 interface ProfileRepository {
     suspend fun getBalancesData(memberRefId: String, token:String): Result<PrestaBalancesResponse>
-    suspend fun getTransactionHistoryData(memberRefId: String, token: String, purposeIds: List<String>): Result<PrestaTransactionHistoryResponse>
+    suspend fun getTransactionHistoryData(memberRefId: String, token: String, purposeIds: List<String>): Result<List<PrestaTransactionHistoryResponse>>
     suspend fun getTransactionMappingData(token: String): Result<Map<String, String>>
 }

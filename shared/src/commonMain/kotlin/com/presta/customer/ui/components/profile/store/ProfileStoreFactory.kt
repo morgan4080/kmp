@@ -31,7 +31,7 @@ class ProfileStoreFactory(
     private sealed class Msg {
         data class ProfileLoading(val isLoading: Boolean = true): Msg()
         data class ProfileLoaded(val balances: PrestaBalancesResponse): Msg()
-        data class TransactionHistoryLoaded(val transactionHistory: PrestaTransactionHistoryResponse): Msg()
+        data class TransactionHistoryLoaded(val transactionHistory: List<PrestaTransactionHistoryResponse>): Msg()
         data class TransactionMappingLoaded(val transactionMapping: Map<String, String>): Msg()
 
         data class ProfileFailed(val error: String?): Msg()

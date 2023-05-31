@@ -34,15 +34,14 @@ class PrestaProfileClient(
         token: String,
         memberRefId: String,
         purposeIds: List<String>
-    ): PrestaTransactionHistoryResponse {
+    ): List<PrestaTransactionHistoryResponse> {
         return profileErrorHandler {
             httpClient.get("${NetworkConstants.PrestaGetTransactionsHistory.route}/${memberRefId}") {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
                 url {
-                    encodedParameters
-                    parameters.append("purposeIds", purposeIds.joinToString(separator = ","))
+                    encodedParameters.append("purposeIds", purposeIds.joinToString(separator = ","))
                 }
             }
         }
