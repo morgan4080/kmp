@@ -191,6 +191,7 @@ class DefaultRootComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
             logoutToSplash = {
+                println(":::::::LOG OUT TO SPLASH SCREEN")
                 navigation.replaceAll(Config.Splash)
             }
         )
