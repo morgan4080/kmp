@@ -5,7 +5,7 @@ import FailedTransactionComponent
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
 import com.presta.customer.ui.components.banKDisbursement.BankDisbursementComponent
-import com.presta.customer.ui.components.emergencyLoans.EmergencyLoansComponent
+import com.presta.customer.ui.components.specificLoanType.SpecificLoansComponent
 import com.presta.customer.ui.components.loanConfirmation.LoanConfirmationComponent
 import com.presta.customer.ui.components.modeofDisbursement.ModeOfDisbursementComponent
 import com.presta.customer.ui.components.payLoan.PayLoanComponent
@@ -27,7 +27,7 @@ interface RootLoansComponent {
         class LongTermLoansChild(val component: LongTermLoansComponent) : ChildLoans()
 
         // class ProductLoansChild(val component: ProductComponent):ChildLoans()
-        class EmergencyLoanChild(val component: EmergencyLoansComponent) : ChildLoans()
+        class EmergencyLoanChild(val component: SpecificLoansComponent) : ChildLoans()
 
         class ConfirmLoanChild(val component: LoanConfirmationComponent) : ChildLoans()
 

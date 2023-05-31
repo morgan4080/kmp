@@ -33,7 +33,7 @@ class ShortTermLoansStoreFactory(
         data class ShortTermLoansLoading(val isLoading: Boolean = true) : Msg()
         data class ShortTermLoansProductsListLoaded(val shortTermLoansProductList: List<PrestaShortTermProductsListResponse> = listOf()) :
             Msg()
-        data class ShortTermTopUpListLoaded(val shortTermTopUpList:List<PrestaShortTermTopUpListResponse> = listOf()) : Msg()
+        data class ShortTermTopUpListLoaded(val shortTermTopUpList: PrestaShortTermTopUpListResponse) : Msg()
 
         data class ShortTermLoansFailed(val error: String?) : Msg()
     }
@@ -111,6 +111,8 @@ class ShortTermLoansStoreFactory(
                     dispatch(Msg.ShortTermTopUpListLoaded(response))
                 }.onFailure { e ->
                     dispatch(Msg.ShortTermLoansFailed(e.message))
+                    //Test
+                    println("An error occured ")
                 }
 
                 dispatch(Msg.ShortTermLoansLoading(false))

@@ -35,12 +35,11 @@ fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineSc
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
 
-class DefaultShortTernLoansComponent(
+class DefaultShortTermLoansComponent(
     componentContext: ComponentContext,
     mainContext: CoroutineContext,
     storeFactory: StoreFactory,
-    private val onProductSelected: (refId: String) -> Unit,
-    private val onProduct2Selected: (refId: String) -> Unit,
+    private var onProductClicked: (refId: String) -> Unit,
     private val onConfirmClicked: (refId: String) -> Unit,
     private val onBackNavClicked: () -> Unit,
 
@@ -80,12 +79,9 @@ class DefaultShortTernLoansComponent(
 
     override val model: Value<ShortTermLoansComponent.Model> = models
 
-    override fun onSelected(refId: String) {
-        onProductSelected(refId)
-    }
-
-    override fun onSelecte2(refId: String) {
-       onProduct2Selected(refId)
+    override fun onProductSelected(refId: String) {
+        //get the refid
+        onProductClicked(refId)
     }
 
     override fun onConfirmSelected(refId: String) {

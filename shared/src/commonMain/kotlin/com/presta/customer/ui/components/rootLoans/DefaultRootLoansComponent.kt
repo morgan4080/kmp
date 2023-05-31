@@ -15,8 +15,8 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.presta.customer.ui.components.applyLoan.DefaultApplyLoanComponent
 import com.presta.customer.ui.components.banKDisbursement.BankDisbursementComponent
 import com.presta.customer.ui.components.banKDisbursement.DefaultBankDisbursementComponent
-import com.presta.customer.ui.components.emergencyLoans.DefaultEmergencyLoansComponent
-import com.presta.customer.ui.components.emergencyLoans.EmergencyLoansComponent
+import com.presta.customer.ui.components.specificLoanType.DefaultSpecificLoansComponent
+import com.presta.customer.ui.components.specificLoanType.SpecificLoansComponent
 import com.presta.customer.ui.components.failedTransaction.DefaultFailedTransactionComponent
 import com.presta.customer.ui.components.loanConfirmation.DefaultLoanConfirmationComponent
 import com.presta.customer.ui.components.loanConfirmation.LoanConfirmationComponent
@@ -29,7 +29,7 @@ import com.presta.customer.ui.components.payLoanPropmpt.DefaultPayLoanPromptComp
 import com.presta.customer.ui.components.payLoanPropmpt.PayLoanPromptComponent
 import com.presta.customer.ui.components.processingTransaction.DefaultProcessingTransactionComponent
 import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
-import com.presta.customer.ui.components.shortTermLoans.DefaultShortTernLoansComponent
+import com.presta.customer.ui.components.shortTermLoans.DefaultShortTermLoansComponent
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
 import com.presta.customer.ui.components.succesfulTransaction.DefaultSuccessfulTransactionComponent
 import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransactionComponent
@@ -71,8 +71,8 @@ class DefaultRootLoansComponent(
             shortTermComponent(componentContext)
         )
 
-        is ConfigLoans.EmergencyLoan -> RootLoansComponent.ChildLoans.EmergencyLoanChild(
-            emergencyLoanComponent(componentContext)
+        is ConfigLoans.SpecificLoan -> RootLoansComponent.ChildLoans.EmergencyLoanChild(
+            specificLoanComponent(componentContext, config)
         )
 
         is ConfigLoans.LoanConfirmation -> RootLoansComponent.ChildLoans.ConfirmLoanChild(
@@ -105,72 +105,60 @@ class DefaultRootLoansComponent(
         is ConfigLoans.PayLoanPrompt -> RootLoansComponent.ChildLoans.PayLoanPromptChild(
             payLoanPromptComponent(componentContext)
         )
-
-
     }
 
     private fun applyLoanComponent(componentContext: ComponentContext): ApplyLoanComponent =
-        DefaultApplyLoanComponent(componentContext = componentContext,
-            onShortTermClicked = {
-            loansNavigation.push(ConfigLoans.ShortTermLoans)
-        }, onLongTermClicked = {
-            loansNavigation.push(ConfigLoans.LongTermLoans)
-        },
-        onBackNavClicked = {
-
-        })
-
-    private fun shortTermComponent(componentContext: ComponentContext): ShortTermLoansComponent =
-        DefaultShortTernLoansComponent(
+        DefaultApplyLoanComponent(
             componentContext = componentContext,
-            onProductSelected = { refId ->
-                loansNavigation.push(ConfigLoans.EmergencyLoan(refId = "em"))
-
+            onShortTermClicked = {
+                loansNavigation.push(ConfigLoans.ShortTermLoans)
+            }, onLongTermClicked = {
+                loansNavigation.push(ConfigLoans.LongTermLoans)
             },
+            onBackNavClicked = {
+
+            }
+        )
+    //Pass the RefId
+    private fun shortTermComponent(componentContext: ComponentContext): ShortTermLoansComponent =
+        DefaultShortTermLoansComponent(
+            componentContext = componentContext,
+
             onConfirmClicked = {
-                loansNavigation.push(ConfigLoans.LoanTopUp(refId = "topUp"))
-            },
-            onProduct2Selected = {
-                loansNavigation.push(ConfigLoans.PayLoan(refId = "pay"))
-
+                //Navigation to TopUp Screen
+                loansNavigation.push(ConfigLoans.LoanTopUp(refId = ""))
             },
             onBackNavClicked = {
                 loansNavigation.pop()
 
             },
             mainContext = prestaDispatchers.main,
-            storeFactory = storeFactory
+            storeFactory = storeFactory,
+            onProductClicked = { refId ->
+                loansNavigation.push(ConfigLoans.SpecificLoan(refId))
+            }
         )
 
     private fun longTermComponent(componentContext: ComponentContext): LongTermLoansComponent =
         DefaultLongTermComponent(componentContext = componentContext,
             onProductSelected = { refId ->
             // loansNavigation.push(ConfigLoans.LoanProduct(refId = refId))
-            loansNavigation.push(ConfigLoans.EmergencyLoan(refId = "em"))
-
+                //Get data on the specif  RefId
+           // loansNavigation.push(ConfigLoans.EmergencyLoan(refId = refId))
         })
-
-//    private fun loanProductComponent(componentContext: ComponentContext, config: ConfigLoans.LoanProduct): ProductComponent =
-//        DefaultProductComponent(
-//            componentContext = componentContext,
-//            refId = config.refId,
-//            onEmergencyLoanClicked = {
-//                //Navigate to Emergency Loan Screen
-//                loansNavigation.push(ConfigLoans.EmergencyLoan)
-//
-//            }
-//        )
-
-    private fun emergencyLoanComponent(componentContext: ComponentContext): EmergencyLoansComponent =
-        DefaultEmergencyLoansComponent(componentContext = componentContext,
+    private fun specificLoanComponent(componentContext: ComponentContext, config: ConfigLoans.SpecificLoan): SpecificLoansComponent =
+        DefaultSpecificLoansComponent(
+            componentContext = componentContext,
+            refId = config.refId,
             onConfirmClicked = {
-            //Navigate to  confirm Screen- a child under loans
-            loansNavigation.push(ConfigLoans.LoanConfirmation)
-        }, onBackNavClicked = {
+                loansNavigation.push(ConfigLoans.LoanConfirmation)
+            },
+            onBackNavClicked = {
                 loansNavigation.pop()
-
-            })
-
+            },
+            mainContext = prestaDispatchers.main,
+            storeFactory = storeFactory
+        )
     private fun loanConfirmationComponent(componentContext: ComponentContext): LoanConfirmationComponent =
         DefaultLoanConfirmationComponent(componentContext = componentContext,
             onConfirmClicked = {
@@ -182,7 +170,8 @@ class DefaultRootLoansComponent(
         })
 
     private fun modeOfDisbursementComponent(componentContext: ComponentContext): ModeOfDisbursementComponent =
-        DefaultModeOfDisbursementComponent(componentContext = componentContext,
+        DefaultModeOfDisbursementComponent(
+            componentContext = componentContext,
             onMpesaClicked = {
             //Navigate to processing payment screen
             // loansNavigation.push()
@@ -203,12 +192,12 @@ class DefaultRootLoansComponent(
         )
 
     private fun bankDisbursementComponent(componentContext: ComponentContext): BankDisbursementComponent =
-        DefaultBankDisbursementComponent(componentContext = componentContext,
+        DefaultBankDisbursementComponent(
+            componentContext = componentContext,
             onConfirmClicked = {
             //Proceed  to show processing,--show failed or successful based on state
                 loansNavigation.push(ConfigLoans.SuccessfulTransaction)
                // loansNavigation.push(ConfigLoans.FailedTransaction)
-
         },
         onBackNavClicked = {
             loansNavigation.pop()
@@ -216,13 +205,11 @@ class DefaultRootLoansComponent(
     private fun successfulTransactionComponent(componentContext: ComponentContext): SuccessfulTransactionComponent =
         DefaultSuccessfulTransactionComponent(
             componentContext = componentContext,
-
            )
     private fun failedTransactionComponent(componentContext: ComponentContext): FailedTransactionComponent =
         DefaultFailedTransactionComponent(
             componentContext = componentContext,
             onRetryClicked = {
-
             }
         )
     private fun loanTopUpComponent(componentContext: ComponentContext): LoanTopUpComponent =
@@ -245,10 +232,8 @@ class DefaultRootLoansComponent(
                 //Navigate to pay Loan child  a child Of loans
                 //Show  the Pay  Loan child first
                 loansNavigation.push(ConfigLoans.PayLoanPrompt)
-
             }
         )
-
     private fun payLoanPromptComponent(componentContext: ComponentContext):PayLoanPromptComponent =
         DefaultPayLoanPromptComponent(
             componentContext = componentContext,
@@ -269,7 +254,7 @@ class DefaultRootLoansComponent(
 //        data class LoanProduct(val  refId: String): ConfigLoans()
 
         @Parcelize
-        data class EmergencyLoan(val refId: String) : ConfigLoans()
+        data class SpecificLoan(val refId: String) : ConfigLoans()
 
         @Parcelize
         object LoanConfirmation : ConfigLoans()
@@ -292,6 +277,5 @@ class DefaultRootLoansComponent(
         data class PayLoan(val refId: String) : ConfigLoans()
         @Parcelize
         object PayLoanPrompt : ConfigLoans()
-
     }
 }

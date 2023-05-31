@@ -29,9 +29,8 @@ fun  ProductSelectionCard(label: String, description: String?=null, onClickConta
         ,
         modifier = Modifier.fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.background)
-            .border(BorderStroke(1.dp, Color.White), shape = RoundedCornerShape(size = 12.dp))
     ) {
-        Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
+        Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.inverseOnSurface)) {
             Row(
                 modifier = Modifier.padding(top = 9.dp, bottom = 9.dp)
                     .fillMaxWidth(),
@@ -69,7 +68,6 @@ fun  ProductSelectionCard(label: String, description: String?=null, onClickConta
                     )
                     Spacer(modifier = Modifier.padding(end = 15.dp))
                 }
-
             }
         }
     }

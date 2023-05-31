@@ -30,12 +30,16 @@ class PrestaShortTermLoansClient (
         token: String,
         memberRefId: String,
         session_id:String
-    ): List<PrestaShortTermTopUpListResponse> {
+    ): PrestaShortTermTopUpListResponse {
         return shortTermLoansErrorHandler {
-            httpClient.get("${NetworkConstants.PrestaGetShortTermToUpList.route}/${session_id}${memberRefId}") {
+            httpClient.get(NetworkConstants.PrestaGetShortTermToUpList.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
+                url {
+                    parameters.append("sessionId", session_id)
+                    parameters.append("customerRefId", memberRefId)
+                }
             }
         }
     }

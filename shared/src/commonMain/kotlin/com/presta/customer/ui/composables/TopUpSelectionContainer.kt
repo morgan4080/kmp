@@ -31,8 +31,8 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 fun TopUpSelectionContainer(
 //    checked:Boolean,
 //    label:String,
-//    min:Double,
-//    max:Double,
+    min:Double,
+    max:Double,
 //    Balance:Double,
 //    Date:String
 ) {
@@ -58,24 +58,17 @@ fun TopUpSelectionContainer(
 
             Column(modifier = Modifier
                 .padding(start = 10.dp)) {
+
                 Text(text = "Emergency Loan",
                 fontSize = 12.sp,
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
                     color = labelTextColor
                 )
-                Row(){
                     Text(
-                        text = "min 10,000-max 50,000",
+                        text = "min and max",
                         fontSize = 10.sp,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                     )
-                    Text(
-                        text = "min 10,000-max 50,000",
-                        fontSize = 10.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                    )
-
-                }
             }
         }
 

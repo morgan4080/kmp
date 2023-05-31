@@ -1,4 +1,4 @@
-package com.presta.customer.ui.components.emergencyLoans
+package com.presta.customer.ui.components.specificLoanType
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.LoanLimitContainer
@@ -22,7 +23,9 @@ import com.presta.customer.ui.composables.TextInputContainer
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
-fun EmergencyLoansScreen(component: EmergencyLoansComponent) {
+fun SpecificLoansScreen(
+    component: SpecificLoansComponent
+) {
     val inputValue = ""
     Surface(
         modifier = Modifier

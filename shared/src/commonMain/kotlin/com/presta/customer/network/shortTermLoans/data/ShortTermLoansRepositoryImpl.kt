@@ -8,7 +8,6 @@ import org.koin.core.component.inject
 
 class ShortTermLoansRepositoryImpl : ShortTermLoansRepository,KoinComponent {
     private val shortTermLoansClient by inject<PrestaShortTermLoansClient>()
-
     override suspend fun getShortTermProductListData(
         memberRefId: String,
         token: String
@@ -35,13 +34,13 @@ class ShortTermLoansRepositoryImpl : ShortTermLoansRepository,KoinComponent {
         session_id: String,
         memberRefId: String,
         token: String
-    ): Result<List<PrestaShortTermTopUpListResponse>> {
+    ): Result<PrestaShortTermTopUpListResponse> {
 
         return try {
             val response = shortTermLoansClient.getShortTermTopUpList(
                 token = token,
                 memberRefId = memberRefId,
-                session_id = session_id
+                session_id =session_id
             )
             Result.success(response)
 

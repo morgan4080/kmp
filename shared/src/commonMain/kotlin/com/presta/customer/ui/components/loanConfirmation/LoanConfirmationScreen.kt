@@ -17,7 +17,9 @@ import com.presta.customer.ui.composables.DisbursementDetailsContainer
 import com.presta.customer.ui.composables.NavigateBackTopBar
 
 @Composable
-fun LoansConfirmationScreen(component: LoanConfirmationComponent) {
+fun LoansConfirmationScreen(
+    component: LoanConfirmationComponent
+) {
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background),
@@ -25,9 +27,11 @@ fun LoansConfirmationScreen(component: LoanConfirmationComponent) {
     ) {
 
 
+
         Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
 
             Row(modifier = Modifier.fillMaxWidth()) {
+                //set Title based on the  Data carried by the RefId
 
                 NavigateBackTopBar("Emergency Loan Confirm", onClickContainer ={
                     component.onBackNavSelected()

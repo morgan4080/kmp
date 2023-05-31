@@ -77,9 +77,7 @@ fun  LoanTopUpScreen(component: LoanTopUpComponent){
                 //select top up Pop up
                 //Added overlay  to the po up screen
                 if (launchPopUp){
-
                     Popup(){
-
                         Column(modifier = Modifier
                             .fillMaxWidth()
                             .fillMaxHeight()
