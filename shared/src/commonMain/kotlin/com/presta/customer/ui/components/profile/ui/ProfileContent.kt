@@ -43,10 +43,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,9 +76,6 @@ import kotlinx.coroutines.launch
 
 
 data class QuickLinks(val labelTop: String, val labelBottom: String, val icon: ImageVector)
-data class Transactions(
-    val icon: ImageVector
-)
 
 @OptIn(
     ExperimentalMaterialApi::class, ExperimentalLayoutApi::class,
@@ -90,19 +90,17 @@ fun ProfileContent(
     innerPadding: PaddingValues,
 ) {
     val stateLazyRow0 = rememberLazyListState()
+
     val scope = rememberCoroutineScope()
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
     val quickLinks: List<QuickLinks> = listOf(
         QuickLinks("Add", "Savings", Icons.Outlined.Savings),
         QuickLinks("Apply", "Loan", Icons.Outlined.AttachMoney),
         QuickLinks("Pay", "Loan", Icons.Outlined.CreditCard),
-        QuickLinks("View Full", "Statement", Icons.Outlined.Description),
-
-        )
-
-    val item1 = quickLinks[0]
-    val item2 = quickLinks[1]
-    val item3 = quickLinks[2]
-    val item4 = quickLinks[3]
+        QuickLinks("View Full", "Statement", Icons.Outlined.Description)
+    )
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden
@@ -134,9 +132,6 @@ fun ProfileContent(
         balancesMap["Savings Total Amount"] = savingsTotalAmount
         balancesMap["Price Per Share"] = pricePerShare
     }
-
-    println("::::::state.transactionHistory")
-    println(state.transactionHistory)
 
     ModalBottomSheetLayout(
         modifier = Modifier.padding(innerPadding),
@@ -327,170 +322,45 @@ fun ProfileContent(
                                 .padding(start = 16.dp, end = 16.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Column (
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
+                            quickLinks.map { item1 ->
+                                Column (
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
 
-                                IconButton(
-                                    modifier = Modifier
-                                        .clip(shape = RoundedCornerShape(10.dp))
-                                        .background(MaterialTheme.colorScheme.primary)
-                                        .size(57.dp),
-                                    onClick = {
+                                    IconButton(
+                                        modifier = Modifier
+                                            .clip(shape = RoundedCornerShape(10.dp))
+                                            .background(MaterialTheme.colorScheme.primary)
+                                            .size(57.dp),
+                                        onClick = {
 
-                                    },
-                                    content = {
-                                        Icon(
-                                            imageVector = item1.icon,
-                                            modifier = Modifier.size(30.dp),
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.inverseOnSurface
-                                        )
-                                    }
-                                )
+                                        },
+                                        content = {
+                                            Icon(
+                                                imageVector = item1.icon,
+                                                modifier = Modifier.size(30.dp),
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.inverseOnSurface
+                                            )
+                                        }
+                                    )
 
-                                Text(
-                                    modifier = Modifier.padding(top = 7.08.dp),
-                                    text = item1.labelTop,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Light
-                                )
+                                    Text(
+                                        modifier = Modifier.padding(top = 7.08.dp),
+                                        text = item1.labelTop,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Light
+                                    )
 
-                                Text(
-                                    text = item1.labelBottom,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Light
-                                )
-                            }
-
-                            // Apply loan
-
-                            Column (
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-
-                                IconButton(
-                                    modifier = Modifier
-                                        .clip(shape = RoundedCornerShape(10.dp))
-                                        .background(MaterialTheme.colorScheme.primary)
-                                        .size(57.dp),
-                                    onClick = {
-                                        //component.onApplyLoanSelected()
-
-                                    },
-                                    content = {
-                                        Icon(
-                                            imageVector = item2.icon,
-                                            modifier = Modifier.size(30.dp),
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.inverseOnSurface
-                                        )
-                                    }
-                                )
-
-                                Text(
-                                    modifier = Modifier.padding(top = 7.08.dp),
-                                    text = item2.labelTop,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Light
-                                )
-
-                                Text(
-                                    text = item2.labelBottom,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Light
-                                )
-                            }
-
-                            //Pay Loan
-
-                            Column (
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-
-                                IconButton(
-                                    modifier = Modifier
-                                        .clip(shape = RoundedCornerShape(10.dp))
-                                        .background(MaterialTheme.colorScheme.primary)
-                                        .size(57.dp),
-                                    onClick = {
-                                        //  component.onPayLoanSelected()
-
-
-                                    },
-                                    content = {
-                                        Icon(
-                                            imageVector = item3.icon,
-                                            modifier = Modifier.size(30.dp),
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.inverseOnSurface
-                                        )
-                                    }
-                                )
-
-                                Text(
-                                    modifier = Modifier.padding(top = 7.08.dp),
-                                    text = item3.labelTop,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Light
-                                )
-
-                                Text(
-                                    text = item3.labelBottom,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Light
-                                )
-                            }
-
-                            //View Full  Statement
-
-                            Column (
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.Start
-                            ) {
-
-                                IconButton(
-                                    modifier = Modifier
-                                        .clip(shape = RoundedCornerShape(10.dp))
-                                        .background(MaterialTheme.colorScheme.primary)
-                                        .size(57.dp),
-                                    onClick = {
-
-
-                                    },
-                                    content = {
-                                        Icon(
-                                            imageVector = item4.icon,
-                                            modifier = Modifier.size(30.dp),
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.inverseOnSurface
-                                        )
-                                    }
-                                )
-
-                                Text(
-                                    modifier = Modifier.padding(top = 7.08.dp),
-                                    text = item4.labelTop,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Light
-                                )
-
-                                Text(
-                                    text = item4.labelBottom,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Light
-                                )
+                                    Text(
+                                        text = item1.labelBottom,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Light
+                                    )
+                                }
                             }
                         }
                     }
@@ -535,18 +405,165 @@ fun ProfileContent(
                         }
                     }
 
-                    items(3) {
-                        Column(
-                            modifier = Modifier
-                                .padding(vertical = 8.dp)
-                                .padding(start = 16.dp, end = 16.dp)
-                        ) {
-                            val transactionList = mutableListOf(
-                                Transactions(
-                                    Icons.Filled.OpenInNew
-                                )
-                            )
-                            transactionList.forEach { transaction ->
+                    if (state.transactionHistory !== null) {
+                        state.transactionHistory.map { transaction ->
+                            item {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(vertical = 8.dp)
+                                        .padding(start = 16.dp, end = 16.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                    ) {
+                                        Row {
+                                            Column(
+                                                modifier = Modifier.padding(end = 12.dp),
+                                                verticalArrangement = Arrangement.Center
+                                            ) {
+                                                IconButton(
+                                                    modifier = Modifier
+                                                        .clip(CircleShape)
+                                                        .background(
+                                                            if (transaction.postingType == PostingType.CR)
+                                                                MaterialTheme.colorScheme.secondaryContainer
+                                                            else
+                                                                MaterialTheme.colorScheme.errorContainer
+                                                        ).size(30.dp),
+                                                    onClick = {
+
+                                                    },
+                                                    content = {
+                                                        Icon(
+                                                            imageVector = Icons.Filled.OpenInNew,
+                                                            modifier = if (transaction.postingType == PostingType.CR)
+                                                                Modifier.size(15.dp)
+                                                                    .rotate(180F)
+                                                            else
+                                                                Modifier.size(15.dp),
+                                                            contentDescription = null,
+                                                            tint = if (transaction.postingType == PostingType.CR)
+                                                                MaterialTheme.colorScheme.secondary
+                                                            else
+                                                                MaterialTheme.colorScheme.error
+                                                        )
+                                                    }
+                                                )
+                                            }
+                                            Column {
+                                                Row(
+                                                    modifier = Modifier
+                                                        .background(MaterialTheme.colorScheme.background)
+                                                        .padding(top = 4.dp)
+                                                        .clip(shape = RoundedCornerShape(15.dp))
+                                                        .fillMaxWidth(0.5f)
+                                                ) {
+                                                    Text(
+                                                        modifier = Modifier
+                                                            .background(
+                                                                ShimmerBrush(
+                                                                    targetValue = 1300f,
+                                                                    showShimmer = true
+                                                                )
+                                                            ).fillMaxWidth(),
+                                                        text = "",
+                                                        color = MaterialTheme.colorScheme.onBackground,
+                                                        fontSize = 14.sp,
+                                                        fontWeight = FontWeight.Bold,
+                                                        textAlign = TextAlign.End
+                                                    )
+                                                }
+
+                                                Row(
+                                                    modifier = Modifier
+                                                        .background(MaterialTheme.colorScheme.background)
+                                                        .padding(top = 4.dp)
+                                                        .clip(shape = RoundedCornerShape(15.dp))
+                                                        .fillMaxWidth(0.5f)
+                                                ) {
+                                                    Text(
+                                                        modifier = Modifier
+                                                            .background(
+                                                                ShimmerBrush(
+                                                                    targetValue = 1300f,
+                                                                    showShimmer = true
+                                                                )
+                                                            )
+                                                            .fillMaxWidth(),
+                                                        text = "",
+                                                        color = MaterialTheme.colorScheme.onBackground,
+                                                        fontSize = 14.sp,
+                                                        fontWeight = FontWeight.Bold,
+                                                        textAlign = TextAlign.End
+                                                    )
+                                                }
+                                            }
+                                        }
+                                        Column {
+                                            Row(
+                                                modifier = Modifier
+                                                    .background(MaterialTheme.colorScheme.background)
+                                                    .padding(top = 4.dp)
+                                                    .clip(shape = RoundedCornerShape(15.dp))
+                                                    .fillMaxWidth(0.5f)
+                                            ) {
+                                                Text(
+                                                    modifier = Modifier
+                                                        .background(
+                                                            ShimmerBrush(
+                                                                targetValue = 1300f,
+                                                                showShimmer = true
+                                                            )
+                                                        )
+                                                        .fillMaxWidth(),
+                                                    text = "",
+                                                    color = MaterialTheme.colorScheme.onBackground,
+                                                    fontSize = 14.sp,
+                                                    fontWeight = FontWeight.Bold,
+                                                    textAlign = TextAlign.End
+                                                )
+                                            }
+
+                                            //Date
+
+                                            Row(
+                                                modifier = Modifier
+                                                    .background(MaterialTheme.colorScheme.background)
+                                                    .padding(top = 4.dp)
+                                                    .clip(shape = RoundedCornerShape(15.dp))
+                                                    .fillMaxWidth(0.5f)
+                                            ) {
+                                                Text(
+                                                    modifier = Modifier
+                                                        .background(
+                                                            ShimmerBrush (
+                                                                targetValue = 1300f,
+                                                                showShimmer = true
+                                                            )
+                                                        )
+                                                        .fillMaxWidth(),
+                                                    text = "",
+                                                    color = MaterialTheme.colorScheme.onBackground,
+                                                    fontSize = 14.sp,
+                                                    fontWeight = FontWeight.Bold,
+                                                    textAlign = TextAlign.End
+                                                )
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        items(3) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(vertical = 8.dp)
+                                    .padding(start = 16.dp, end = 16.dp)
+                            ) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                                     verticalAlignment = Alignment.CenterVertically,
@@ -560,47 +577,20 @@ fun ProfileContent(
                                             IconButton(
                                                 modifier = Modifier
                                                     .clip(CircleShape)
-                                                    .background(
-                                                        if (state.transactionHistory !== null) {
-                                                            if (state.transactionHistory.postingType == PostingType.CR)
-                                                                MaterialTheme.colorScheme.secondaryContainer
-                                                            else
-                                                                MaterialTheme.colorScheme.errorContainer
-                                                        } else {
-                                                            Color.Transparent
-                                                        }
-                                                    ).size(30.dp),
-                                                onClick = {
-
-                                                },
+                                                    .background(Color.Transparent).size(30.dp),
+                                                onClick = {},
                                                 content = {
-                                                    if (state.transactionHistory !== null) {
-                                                        Icon(
-                                                            imageVector = transaction.icon,
-                                                            modifier = if (state.transactionHistory.postingType == PostingType.CR)
-                                                                Modifier.size(15.dp)
-                                                                    .rotate(180F)
-                                                            else
-                                                                Modifier.size(15.dp),
-                                                            contentDescription = null,
-                                                            tint = if (state.transactionHistory.postingType == PostingType.CR)
-                                                                MaterialTheme.colorScheme.secondary
-                                                            else
-                                                                MaterialTheme.colorScheme.error
-                                                        )
-                                                    } else {
-                                                        Text(
-                                                            text = "",
-                                                            modifier = Modifier
-                                                                .background(
-                                                                    brush = ShimmerBrush(
-                                                                        targetValue = 1300f,
-                                                                        showShimmer = true
-                                                                    ),
-                                                                    shape = RoundedCornerShape(12.dp))
-                                                                .defaultMinSize(minHeight = 8.dp, minWidth = 25.dp)
-                                                        )
-                                                    }
+                                                    Text(
+                                                        text = "",
+                                                        modifier = Modifier
+                                                            .background(
+                                                                brush = ShimmerBrush(
+                                                                    targetValue = 1300f,
+                                                                    showShimmer = true
+                                                                ),
+                                                                shape = RoundedCornerShape(12.dp))
+                                                            .defaultMinSize(minHeight = 8.dp, minWidth = 25.dp)
+                                                    )
                                                 }
                                             )
                                         }
@@ -620,10 +610,7 @@ fun ProfileContent(
                                                                 showShimmer = true
                                                             )
                                                         ).fillMaxWidth(),
-                                                    text = if (state.transactionHistory !== null)
-                                                        state.transactionHistory.purpose
-                                                    else
-                                                        "",
+                                                    text = "",
                                                     color = MaterialTheme.colorScheme.onBackground,
                                                     fontSize = 14.sp,
                                                     fontWeight = FontWeight.Bold,
@@ -647,7 +634,7 @@ fun ProfileContent(
                                                             )
                                                         )
                                                         .fillMaxWidth(),
-                                                    text = if (state.transactionHistory !== null) state.transactionHistory.transactionId else "",
+                                                    text = "",
                                                     color = MaterialTheme.colorScheme.onBackground,
                                                     fontSize = 14.sp,
                                                     fontWeight = FontWeight.Bold,
@@ -673,7 +660,7 @@ fun ProfileContent(
                                                         )
                                                     )
                                                     .fillMaxWidth(),
-                                                text = if (state.transactionHistory !== null) state.transactionHistory.amount.toString() else "",
+                                                text = "",
                                                 color = MaterialTheme.colorScheme.onBackground,
                                                 fontSize = 14.sp,
                                                 fontWeight = FontWeight.Bold,
@@ -699,13 +686,12 @@ fun ProfileContent(
                                                         )
                                                     )
                                                     .fillMaxWidth(),
-                                                text = if (state.transactionHistory !== null) state.transactionHistory.transactionDate else "",
+                                                text = "",
                                                 color = MaterialTheme.colorScheme.onBackground,
                                                 fontSize = 14.sp,
                                                 fontWeight = FontWeight.Bold,
                                                 textAlign = TextAlign.End
                                             )
-
                                         }
                                     }
                                 }
@@ -713,7 +699,8 @@ fun ProfileContent(
                         }
                     }
                 }
-            }
+            },
+            snackbarHost = { SnackbarHost(snackbarHostState) },
         )
     }
 }

@@ -17,7 +17,7 @@ interface ProfileStore: Store<ProfileStore.Intent, ProfileStore.State, Nothing> 
         val isLoading: Boolean = false,
         val error: String? = null,
         val balances: PrestaBalancesResponse? = null,
-        val transactionHistory: PrestaTransactionHistoryResponse? = null,
+        val transactionHistory: List<PrestaTransactionHistoryResponse>? = null,
         val transactionMapping: Map<String, String>? = null
     )
 }
