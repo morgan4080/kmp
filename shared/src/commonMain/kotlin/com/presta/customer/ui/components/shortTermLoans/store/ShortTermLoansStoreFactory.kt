@@ -7,6 +7,7 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.shortTermLoans.data.ShortTermLoansRepository
 import com.presta.customer.network.shortTermLoans.model.PrestaShortTermProductsListResponse
+import com.presta.customer.network.shortTermLoans.model.PrestaShortTermTopUpListResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -32,6 +33,7 @@ class ShortTermLoansStoreFactory(
         data class ShortTermLoansLoading(val isLoading: Boolean = true) : Msg()
         data class ShortTermLoansProductsListLoaded(val shortTermLoansProductList: List<PrestaShortTermProductsListResponse> = listOf()) :
             Msg()
+        data class ShortTermTopUpListLoaded(val shortTermTopUpList:List<PrestaShortTermTopUpListResponse> = listOf()) : Msg()
 
         data class ShortTermLoansFailed(val error: String?) : Msg()
     }
@@ -48,15 +50,21 @@ class ShortTermLoansStoreFactory(
             intent: ShortTermLoansStore.Intent, getState: () -> ShortTermLoansStore.State
         ): Unit =
             when (intent) {
-                is ShortTermLoansStore.Intent.GetPrestaShortTermProductList -> getTransactionHistory(
+                is ShortTermLoansStore.Intent.GetPrestaShortTermProductList -> getShortTermProductList(
                     token = intent.token,
                     refId = intent.refId
                 )
+                is ShortTermLoansStore.Intent.GetPrestaShortTermTopUpList -> getShortTermTopUpList(
+                    token = intent.token,
+                    session_id = intent.session_id,
+                    refId = intent.refId
+                )
+
             }
         //Get ShortTermLoansProducts
         private var getShortTermProductListJob: Job? = null
 
-        private fun getTransactionHistory(
+        private fun getShortTermProductList(
             token: String,
             refId: String
         ) {
@@ -79,6 +87,35 @@ class ShortTermLoansStoreFactory(
                 dispatch(Msg.ShortTermLoansLoading(false))
             }
         }
+        //Get Short  termTop Up list
+
+        private var getShortTermTopUpListJob: Job? = null
+        private fun getShortTermTopUpList(
+            token: String,
+            session_id:String,
+            refId: String
+
+        ) {
+            if (getShortTermTopUpListJob?.isActive == true) return
+
+            dispatch(Msg.ShortTermLoansLoading())
+
+            getShortTermTopUpListJob = scope.launch {
+                shortTermLoansRepository.getShortTermTopUpListData(
+                    token = token,
+                    session_id = session_id,
+                    memberRefId = refId
+                ).onSuccess { response ->
+                    println(":::::::::getShortTermToPUpListData")
+                    println(response)
+                    dispatch(Msg.ShortTermTopUpListLoaded(response))
+                }.onFailure { e ->
+                    dispatch(Msg.ShortTermLoansFailed(e.message))
+                }
+
+                dispatch(Msg.ShortTermLoansLoading(false))
+            }
+        }
     }
 
     private object ReducerImpl : Reducer<ShortTermLoansStore.State, Msg> {
@@ -87,6 +124,7 @@ class ShortTermLoansStoreFactory(
                 is Msg.ShortTermLoansLoading -> copy(isLoading = msg.isLoading)
                 is Msg.ShortTermLoansFailed -> copy(error = msg.error)
                 is Msg.ShortTermLoansProductsListLoaded -> copy(prestaShortTermProductList = msg.shortTermLoansProductList)
+                is Msg.ShortTermTopUpListLoaded->copy(prestaShortTermTopUpList=msg.shortTermTopUpList)
             }
     }
 }

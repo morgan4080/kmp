@@ -120,6 +120,12 @@ class DefaultShortTernLoansComponent(
                         token = state.cachedMemberData.accessToken,
                         refId = state.cachedMemberData.refId
                     ))
+
+                    onEvent(ShortTermLoansStore.Intent.GetPrestaShortTermTopUpList(
+                        token = state.cachedMemberData.accessToken,
+                        session_id = "",
+                        refId = state.cachedMemberData.refId
+                    ))
                 }
             }
         }

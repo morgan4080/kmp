@@ -7,6 +7,7 @@ object NetworkConstants {
     const val accountsBaseUrl = "https://staging-accounts.presta.co.ke/"
     const val baseUrlKeycloak = "https://iam.presta.co.ke/auth/realms/"
     const val accountsUrlKeycloak = "https://accounts.presta.co.ke/users-admin/api/v1/"
+    const val applicationV1BaseUrl="https://staging-lending.presta.co.ke/applications/api/v1/"
 
     object PrestaAuthenticateClient {
         val route = baseUrlKeycloak + OrganisationModel.organisation.tenant_id + "/protocol/openid-connect/token"
@@ -58,4 +59,10 @@ object NetworkConstants {
         const  val route = applicationsBaseUrl + "loans/products"
 
     }
+    object  PrestaGetShortTermToUpList{
+        const val  route= applicationV1BaseUrl + "query/topup-loans"
+
+    }
+
+
 }

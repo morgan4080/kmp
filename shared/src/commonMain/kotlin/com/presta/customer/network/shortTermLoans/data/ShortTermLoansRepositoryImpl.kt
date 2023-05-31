@@ -2,6 +2,7 @@ package com.presta.customer.network.shortTermLoans.data
 
 import com.presta.customer.network.shortTermLoans.client.PrestaShortTermLoansClient
 import com.presta.customer.network.shortTermLoans.model.PrestaShortTermProductsListResponse
+import com.presta.customer.network.shortTermLoans.model.PrestaShortTermTopUpListResponse
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -28,6 +29,26 @@ class ShortTermLoansRepositoryImpl : ShortTermLoansRepository,KoinComponent {
             e.printStackTrace()
             Result.failure(e)
         }
-
     }
+
+    override suspend fun getShortTermTopUpListData(
+        session_id: String,
+        memberRefId: String,
+        token: String
+    ): Result<List<PrestaShortTermTopUpListResponse>> {
+
+        return try {
+            val response = shortTermLoansClient.getShortTermTopUpList(
+                token = token,
+                memberRefId = memberRefId,
+                session_id=session_id
+            )
+            Result.success(response)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
 }
