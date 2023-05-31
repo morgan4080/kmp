@@ -47,7 +47,7 @@ class DefaultProfileComponent(
                 isTermsAccepted = false,
                 isActive = false,
                 pinStatus = PinStatus.SET,
-                onLogOut = logoutToSplash
+                onLogOut = { logoutToSplash() }
             ).create()
         }
 

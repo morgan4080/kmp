@@ -1,4 +1,4 @@
-package com.presta.customer.ui.components.transactionHistoryScreen
+package com.presta.customer.ui.components.transactionHistory
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -69,9 +69,9 @@ fun TransactionHistoryScreen(component: TransactionHistoryComponent) {
 
             Row(modifier = Modifier
                 .fillMaxWidth()) {
-                NavigateBackTopBar("Transaction History", onClickContainer ={
+                NavigateBackTopBar("Transaction History", onClickContainer = {
 
-                } )
+                })
 
             }
             Column(modifier = Modifier

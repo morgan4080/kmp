@@ -336,12 +336,12 @@ fun AuthContent(
                             value = pinCharList[index],
                             textStyle = TextStyle(
                                 color = MaterialTheme.colorScheme.onBackground,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
                                 fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
-                                fontSize = MaterialTheme.typography.displaySmall.fontSize,
+                                fontSize = MaterialTheme.typography.headlineLarge.fontSize,
                                 fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
                                 letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
                                 lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
-                                fontFamily = MaterialTheme.typography.bodyLarge.fontFamily,
                                 textAlign = TextAlign.Center
                             ),
                             onValueChange = {
@@ -394,8 +394,9 @@ fun AuthContent(
 
             Row (
                 modifier = Modifier
-                    .padding(top = 35.dp)
+                    .padding(top = 25.dp)
                     .padding(horizontal = 16.dp)
+                    .absoluteOffset(y = -(70).dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
             ) {
@@ -407,7 +408,9 @@ fun AuthContent(
 
             LazyVerticalGrid(
                 modifier = Modifier
-                    .fillMaxHeight(),
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .absoluteOffset(y = -(50).dp),
                 columns = GridCells.Fixed(3),
                 verticalArrangement = Arrangement.Center,
                 contentPadding = PaddingValues(
@@ -476,7 +479,7 @@ fun AuthContent(
                                     style = TextStyle(
                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
                                         fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
-                                        fontSize = MaterialTheme.typography.displaySmall.fontSize,
+                                        fontSize = MaterialTheme.typography.headlineLarge.fontSize,
                                         fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
                                         letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
                                         lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,

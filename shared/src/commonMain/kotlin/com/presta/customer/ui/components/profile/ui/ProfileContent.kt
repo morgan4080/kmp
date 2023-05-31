@@ -57,8 +57,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -277,7 +275,7 @@ fun ProfileContent(
                                     item {
                                         Box(
                                             modifier = Modifier
-                                                .padding(horizontal = 16.dp)
+                                                .padding(horizontal = 14.dp)
                                                 .fillParentMaxWidth(0.95f)
                                         ) {
                                             HomeCardListItem (
@@ -297,7 +295,7 @@ fun ProfileContent(
                         )
                     }
                     item {
-                        Paginator(3, stateLazyRow0.firstVisibleItemIndex)
+                        Paginator(balancesMap.size, stateLazyRow0.firstVisibleItemIndex)
                     }
                     item {
                         Box(
@@ -310,8 +308,7 @@ fun ProfileContent(
                                 text = "Quick Links",
                                 color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                fontFamily = FontFamily.SansSerif
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                             )
                         }
                     }
@@ -351,14 +348,14 @@ fun ProfileContent(
                                         text = item1.labelTop,
                                         color = MaterialTheme.colorScheme.onBackground,
                                         fontSize = 12.sp,
-                                        fontWeight = FontWeight.Light
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                     )
 
                                     Text(
                                         text = item1.labelBottom,
                                         color = MaterialTheme.colorScheme.onBackground,
                                         fontSize = 12.sp,
-                                        fontWeight = FontWeight.Light
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                     )
                                 }
                             }
@@ -377,8 +374,7 @@ fun ProfileContent(
                                 text = "Transactions",
                                 color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                fontFamily = FontFamily.SansSerif
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                             )
 
                             Row (
@@ -461,17 +457,11 @@ fun ProfileContent(
                                                         .fillMaxWidth(0.5f)
                                                 ) {
                                                     Text(
-                                                        modifier = Modifier
-                                                            .background(
-                                                                ShimmerBrush(
-                                                                    targetValue = 1300f,
-                                                                    showShimmer = true
-                                                                )
-                                                            ).fillMaxWidth(),
-                                                        text = "",
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                        text = transaction.purpose,
                                                         color = MaterialTheme.colorScheme.onBackground,
                                                         fontSize = 14.sp,
-                                                        fontWeight = FontWeight.Bold,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                                                         textAlign = TextAlign.End
                                                     )
                                                 }
@@ -485,17 +475,11 @@ fun ProfileContent(
                                                 ) {
                                                     Text(
                                                         modifier = Modifier
-                                                            .background(
-                                                                ShimmerBrush(
-                                                                    targetValue = 1300f,
-                                                                    showShimmer = true
-                                                                )
-                                                            )
                                                             .fillMaxWidth(),
-                                                        text = "",
+                                                        text = transaction.transactionId,
                                                         color = MaterialTheme.colorScheme.onBackground,
                                                         fontSize = 14.sp,
-                                                        fontWeight = FontWeight.Bold,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                                                         textAlign = TextAlign.End
                                                     )
                                                 }
@@ -511,17 +495,11 @@ fun ProfileContent(
                                             ) {
                                                 Text(
                                                     modifier = Modifier
-                                                        .background(
-                                                            ShimmerBrush(
-                                                                targetValue = 1300f,
-                                                                showShimmer = true
-                                                            )
-                                                        )
                                                         .fillMaxWidth(),
-                                                    text = "",
+                                                    text = transaction.amount.toString(),
                                                     color = MaterialTheme.colorScheme.onBackground,
                                                     fontSize = 14.sp,
-                                                    fontWeight = FontWeight.Bold,
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                                                     textAlign = TextAlign.End
                                                 )
                                             }
@@ -537,23 +515,36 @@ fun ProfileContent(
                                             ) {
                                                 Text(
                                                     modifier = Modifier
-                                                        .background(
-                                                            ShimmerBrush (
-                                                                targetValue = 1300f,
-                                                                showShimmer = true
-                                                            )
-                                                        )
                                                         .fillMaxWidth(),
-                                                    text = "",
+                                                    text = transaction.transactionDate,
                                                     color = MaterialTheme.colorScheme.onBackground,
                                                     fontSize = 14.sp,
-                                                    fontWeight = FontWeight.Bold,
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                                                     textAlign = TextAlign.End
                                                 )
 
                                             }
                                         }
                                     }
+                                }
+                            }
+                        }
+
+                        if (state.transactionHistory.isEmpty()) {
+                            item {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(vertical = 8.dp)
+                                        .padding(start = 16.dp, end = 16.dp)
+                                ) {
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        text = "You don't have transaction history",
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        fontSize = 14.sp,
+                                        textAlign = TextAlign.Center
+                                    )
                                 }
                             }
                         }
@@ -613,7 +604,7 @@ fun ProfileContent(
                                                     text = "",
                                                     color = MaterialTheme.colorScheme.onBackground,
                                                     fontSize = 14.sp,
-                                                    fontWeight = FontWeight.Bold,
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                                                     textAlign = TextAlign.End
                                                 )
                                             }
@@ -637,7 +628,7 @@ fun ProfileContent(
                                                     text = "",
                                                     color = MaterialTheme.colorScheme.onBackground,
                                                     fontSize = 14.sp,
-                                                    fontWeight = FontWeight.Bold,
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                                                     textAlign = TextAlign.End
                                                 )
                                             }
@@ -663,7 +654,7 @@ fun ProfileContent(
                                                 text = "",
                                                 color = MaterialTheme.colorScheme.onBackground,
                                                 fontSize = 14.sp,
-                                                fontWeight = FontWeight.Bold,
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                                                 textAlign = TextAlign.End
                                             )
                                         }
@@ -689,7 +680,7 @@ fun ProfileContent(
                                                 text = "",
                                                 color = MaterialTheme.colorScheme.onBackground,
                                                 fontSize = 14.sp,
-                                                fontWeight = FontWeight.Bold,
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                                                 textAlign = TextAlign.End
                                             )
                                         }
