@@ -47,7 +47,8 @@ class PrestaProfileClient(
     suspend fun getUserTransactionHistoryData (
         token: String,
         memberRefId: String,
-        purposeIds: List<String>
+        purposeIds: List<String>,
+        searchTerm: String?
     ): List<PrestaTransactionHistoryResponse> {
         return profileErrorHandler {
             httpClient.get("${NetworkConstants.PrestaGetTransactionsHistory.route}/${memberRefId}") {
@@ -57,7 +58,8 @@ class PrestaProfileClient(
                 url {
                     encodedParameters.append("purposeIds", purposeIds.joinToString(separator = ","))
                     encodedParameters.append("start", "0")
-                    encodedParameters.append("length", "10")
+                    encodedParameters.append("length", "20")
+                    if (searchTerm !== null) parameters.append("searchTerm", searchTerm)
                 }
             }
         }

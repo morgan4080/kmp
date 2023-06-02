@@ -26,7 +26,10 @@ suspend inline fun <reified T> onBoardingErrorHandler(
             val data: ConfigResponse = result.body()
             throw OnBoardingException(OnBoardingError.ClientError, data.message)
         }
-        500 -> throw OnBoardingException(OnBoardingError.ServerError, null)
+        500 -> {
+            val data: ConfigResponse = result.body()
+            throw OnBoardingException(OnBoardingError.ServerError, data.message)
+        }
         else -> throw OnBoardingException(OnBoardingError.UnknownError, null)
     }
 

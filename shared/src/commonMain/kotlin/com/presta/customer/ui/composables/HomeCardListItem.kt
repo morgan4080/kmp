@@ -2,9 +2,8 @@ package com.presta.customer.ui.composables
 
 import ShimmerBrush
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,17 +38,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.network.profile.model.LoanBreakDown
 import com.presta.customer.ui.theme.backArrowColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
 fun HomeCardListItem(
     name: String,
-    onClick: (String) -> Unit,
     balance: Double?,
+    savingsBalance: Double?,
+    sharesBalance: Double?,
     lastAmount: Double? = null,
     lastDate: String? = null,
-    totalLoans: Int? = null
+    loanStatus: String? = null,
+    totalLoans: Int? = null,
+    goToSavings: () -> Unit = {},
+    goToLoans: () -> Unit = {},
+    loanBreakDown: List<LoanBreakDown>? = null
 ) {
     var showExpanded by remember { mutableStateOf(false) }
 
@@ -79,7 +84,7 @@ fun HomeCardListItem(
                         text = name,
                         color= MaterialTheme.colorScheme.outline,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyMedium
                     )
 
                     IconButton(
@@ -89,7 +94,6 @@ fun HomeCardListItem(
                             .size(30.dp),
                         onClick = {
                             showExpanded = !showExpanded
-                            onClick(name)
                         },
                         content = {
                             Icon(
@@ -101,9 +105,8 @@ fun HomeCardListItem(
                         }
                     )
                 }
-                Row (modifier = Modifier
-                    .padding(top = 0.dp)
-                    .fillMaxWidth()
+                Row (
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
                         modifier = Modifier.background(
@@ -118,33 +121,31 @@ fun HomeCardListItem(
                                     " KES"
                         } else "",
                         color= MaterialTheme.colorScheme.onBackground,
-                        fontSize = 25.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                        style = MaterialTheme.typography.titleLarge
                     )
                 }
-                Row (modifier = Modifier
-                    .padding(top = 11.dp)
-                    .fillMaxWidth(),
+                Row (
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = if (name == "Total Savings Amount") "Last Savings" else "Last Payment",
-                        color= MaterialTheme.colorScheme.outline,
-                        style = MaterialTheme.typography.bodyMedium,
+                        text = if (name == "Total Savings Amount") "Last Savings" else "Status",
+                        color = MaterialTheme.colorScheme.outline,
+                        style = MaterialTheme.typography.bodySmall,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                     )
                     if (name == "Total Loan Balance") {
                         Text(
                             text = "Loans",
                             color = MaterialTheme.colorScheme.outline,
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.bodySmall,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                         )
                     }
                 }
-                Row (modifier = Modifier
-                    .padding(top = 1.dp)
-                    .fillMaxWidth(),
+                Row (
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     if (name == "Total Savings Amount") {
@@ -159,8 +160,8 @@ fun HomeCardListItem(
                             text = if (lastAmount !== null && lastDate !== null)
                                 "KES $lastAmount - $lastDate"
                             else "",
-                            color = MaterialTheme.colorScheme.onBackground, // #002C56
-                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.labelLarge,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                         )
                     }
@@ -172,13 +173,13 @@ fun HomeCardListItem(
                             modifier = Modifier.background(
                                 brush = ShimmerBrush(
                                     targetValue = 1300f,
-                                    showShimmer = true
+                                    showShimmer = loanStatus == null
                                 ),
                                 shape = RoundedCornerShape(12.dp)
                             ).defaultMinSize(150.dp),
-                            text = "",
-                            color = MaterialTheme.colorScheme.onBackground, // #002C56
-                            fontSize = 14.sp,
+                            text = if (loanStatus !== null) loanStatus else "",
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.labelLarge,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                         )
 
@@ -195,8 +196,8 @@ fun HomeCardListItem(
                                    else
                                        "",
                             color= MaterialTheme.colorScheme.onBackground,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.labelLarge,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
                             textAlign = TextAlign.End
                         )
                     }
@@ -205,7 +206,68 @@ fun HomeCardListItem(
                 AnimatedVisibility(showExpanded) {
                     if (name == "Total Loan Balance") {
                         Column {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text (
+                                    text = "Loan Balances",
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 15.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                                )
 
+                                Row (
+                                    modifier = Modifier.clickable {
+                                        goToLoans()
+                                    },
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text (
+                                        modifier = Modifier.padding(end = 5.dp),
+                                        text = "See all",
+                                        textAlign = TextAlign.Center,
+                                        color = backArrowColor,
+                                        fontSize = 12.sp,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                        style = MaterialTheme.typography.headlineSmall
+                                    )
+
+                                    Icon (
+                                        Icons.Filled.ArrowForward,
+                                        contentDescription = "Forward Arrow",
+                                        tint = backArrowColor,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+
+                                }
+                            }
+
+                            loanBreakDown?.map { breakdown ->
+                                Row (
+                                    modifier = Modifier.fillMaxWidth().padding(vertical = 3.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                ) {
+                                    Text (
+                                        text = breakdown.loanType,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        fontSize = 14.sp,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                        textAlign = TextAlign.End
+                                    )
+
+                                    Text (
+                                        text = breakdown.totalBalance.toString(),
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        fontSize = 14.sp,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                        textAlign = TextAlign.End
+                                    )
+                                }
+                            }
                         }
                     } else {
                         Column {
@@ -222,6 +284,9 @@ fun HomeCardListItem(
                                 )
 
                                 Row (
+                                    modifier = Modifier.clickable {
+                                        goToSavings()
+                                    },
                                     horizontalArrangement = Arrangement.Center,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
@@ -259,7 +324,14 @@ fun HomeCardListItem(
                                 )
 
                                 Text (
-                                    text = "KES 5,000.00",
+                                    modifier = Modifier.background(
+                                        brush = ShimmerBrush(
+                                            targetValue = 1300f,
+                                            showShimmer = savingsBalance == null
+                                        ),
+                                        shape = RoundedCornerShape(12.dp)
+                                    ).defaultMinSize(150.dp),
+                                    text = if (savingsBalance !== null) savingsBalance.toString() else "",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 14.sp,
                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
@@ -281,7 +353,14 @@ fun HomeCardListItem(
                                 )
 
                                 Text (
-                                    text = "KES 5,000.00",
+                                    modifier = Modifier.background(
+                                        brush = ShimmerBrush(
+                                            targetValue = 1300f,
+                                            showShimmer = sharesBalance == null
+                                        ),
+                                        shape = RoundedCornerShape(12.dp)
+                                    ).defaultMinSize(150.dp),
+                                    text = if (sharesBalance !== null) sharesBalance.toString() else "",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 14.sp,
                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),

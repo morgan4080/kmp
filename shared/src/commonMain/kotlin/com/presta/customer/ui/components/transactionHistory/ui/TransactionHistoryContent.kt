@@ -1,6 +1,7 @@
 package com.presta.customer.ui.components.transactionHistory.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -38,20 +40,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalTextInputService
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.onBoarding.store.OnBoardingStore
 import com.presta.customer.ui.components.transactionHistory.store.TransactionHistoryStore
+import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.NavigateBackTopBar
+import com.presta.customer.ui.composables.TextInputContainer
 import com.presta.customer.ui.composables.singleTransaction
 import com.presta.customer.ui.helpers.LocalSafeArea
+import com.presta.customer.ui.helpers.isPhoneNumber
 import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
@@ -64,12 +72,9 @@ fun TransactionHistoryContent(
     onBack: () -> Unit,
     onMappingChange: (mapping: List<String>) -> Unit
 ) {
-    var userInput by remember { mutableStateOf("") }
-
-    val focusRequester = remember { FocusRequester() }
-    val inputService = LocalTextInputService.current
-    val focus = remember { mutableStateOf(false) }
-
+    var transactionReference by remember {
+        mutableStateOf(TextFieldValue())
+    }
 
     var tabIndex by remember { mutableStateOf(0) }
 
@@ -82,7 +87,6 @@ fun TransactionHistoryContent(
             }
         }
     }
-
 
     Surface(
         modifier = Modifier
@@ -115,71 +119,34 @@ fun TransactionHistoryContent(
                         .fillMaxWidth()
                         .padding(bottom = 2.dp)
                         .padding(horizontal = 16.dp)
-                        .background(
-                            MaterialTheme.colorScheme.background
-                        )
                 ) {
 
-                    ElevatedCard {
-                        Row(
-                            modifier = Modifier
-                            .fillMaxWidth()
-                        ) {
-
-                            TextField(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .focusRequester(focusRequester)
-                                    .onFocusChanged {
-                                        if (focus.value != it.isFocused) {
-                                            focus.value = it.isFocused
-                                            if (!it.isFocused) {
-                                                inputService?.hideSoftwareKeyboard()
-                                            }
-                                        }
-                                    },
-                                keyboardActions = KeyboardActions(
-
-                                    onNext = {
-                                        focusRequester.requestFocus()
-                                    },
-                                ),
-                                onValueChange = {
-                                    userInput = it
-                                },
-                                value = userInput,
-                                singleLine = true,
-                                colors = TextFieldDefaults.textFieldColors(
-                                    containerColor = Color.White,
-                                    focusedIndicatorColor = Color.Transparent,
-                                    unfocusedIndicatorColor = Color.Transparent,
-                                ),
-                                leadingIcon = {
-                                    Icon(
-
-                                        Icons.Filled.Search,
-                                        contentDescription = "Search Icon",
-                                        modifier = Modifier
-                                            .clip(shape = CircleShape)
-                                            .background(color = MaterialTheme.colorScheme.background),
-                                    )
-                                },
-                                trailingIcon = {
-                                    Icon(
-
-                                        Icons.Filled.Close,
-                                        contentDescription = "Cancel icon",
-                                        modifier = Modifier
-                                            .clip(shape = CircleShape)
-                                            .background(color = MaterialTheme.colorScheme.background),
-                                    )
-
+                    TextInputContainer(
+                        label = "Transaction Reference",
+                        inputValue = "",
+                        icon = Icons.Outlined.Search,
+                        inputType = InputTypes.STRING,
+                        callback = {
+                            transactionReference = TextFieldValue(it)
+                            if (authState.cachedMemberData !== null && state.transactionMapping !== null) {
+                                if (tabIndex == 0) {
+                                    onEvent(TransactionHistoryStore.Intent.GetTransactionHistory(
+                                        token = authState.cachedMemberData.accessToken,
+                                        refId = authState.cachedMemberData.refId,
+                                        purposeIds = state.transactionMapping.keys.toList(),
+                                        searchTerm = it
+                                    ))
+                                } else {
+                                    onEvent(TransactionHistoryStore.Intent.GetTransactionHistory(
+                                        token = authState.cachedMemberData.accessToken,
+                                        refId = authState.cachedMemberData.refId,
+                                        purposeIds = listOf(tabIndex.toString()),
+                                        searchTerm = it
+                                    ))
                                 }
-                            )
-
+                            }
                         }
-
-                    }
+                    )
 
                 }
 
@@ -222,7 +189,6 @@ fun TransactionHistoryContent(
                                         onClick = {
                                             tabIndex = it.key.toInt()
                                             if (state.transactionMapping !== null) {
-                                                println("::::::changing")
                                                 if (it.key == "0") {
                                                     onMappingChange(state.transactionMapping.keys.toList())
                                                 } else {

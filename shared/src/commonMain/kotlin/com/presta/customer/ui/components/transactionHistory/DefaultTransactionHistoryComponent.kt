@@ -12,7 +12,6 @@ import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.profile.coroutineScope
-import com.presta.customer.ui.components.profile.store.ProfileStore
 import com.presta.customer.ui.components.transactionHistory.store.TransactionHistoryStore
 import com.presta.customer.ui.components.transactionHistory.store.TransactionHistoryStoreFactory
 import kotlinx.coroutines.CoroutineScope
@@ -109,7 +108,8 @@ class DefaultTransactionHistoryComponent(
                     onEvent(TransactionHistoryStore.Intent.GetTransactionHistory (
                         token = access_token,
                         refId = refId,
-                        purposeIds = state.transactionMapping.keys.toList()
+                        purposeIds = state.transactionMapping.keys.toList(),
+                        searchTerm = null
                     ))
                 }
             }
@@ -157,7 +157,8 @@ class DefaultTransactionHistoryComponent(
                         TransactionHistoryStore.Intent.GetTransactionHistory(
                             token = state.cachedMemberData.accessToken,
                             refId = state.cachedMemberData.refId,
-                            purposeIds = mapping
+                            purposeIds = mapping,
+                            searchTerm = null
                         )
                     )
                 }

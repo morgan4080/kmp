@@ -30,7 +30,7 @@ fun PayLoanPromptScreen(component: PayLoanPromptComponent){
         Row(modifier = Modifier.fillMaxWidth()) {
             NavigateBackTopBar("Pay Loan", onClickContainer ={
 
-            } )
+            })
         }
 
         Column(

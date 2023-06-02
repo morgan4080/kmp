@@ -45,13 +45,15 @@ class ProfileRepositoryImpl : ProfileRepository,KoinComponent {
     override suspend fun getTransactionHistoryData(
         memberRefId: String,
         token: String,
-        purposeIds: List<String>
+        purposeIds: List<String>,
+        searchTerm: String?
     ): Result<List<PrestaTransactionHistoryResponse>> {
         return try {
             val response = profileClient.getUserTransactionHistoryData(
                 token = token,
                 memberRefId = memberRefId,
-                purposeIds = purposeIds
+                purposeIds = purposeIds,
+                searchTerm = searchTerm
             )
             Result.success(response)
         } catch (e: Exception) {

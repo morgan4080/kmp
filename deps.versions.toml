@@ -27,9 +27,13 @@ androidxFragment = "1.1.0"
 androidxTestCore = "1.5.0"
 extensionJetbrains = "2.0.0-compose-experimental-alpha-02"
 russhwolf = "1.0.0"
+gms = "4.3.15"
 
+# com.google.gms:google-services:4.3.15
 
 [libraries]
+
+gms-google-services = {group = "com.google.gms", name = "google-services", version.ref = "gms"}
 
 russhwolf-settings-core = {group = "com.russhwolf", name = "multiplatform-settings", version.ref = "russhwolf" }
 russhwolf-settings-serialization = {group = "com.russhwolf", name = "multiplatform-settings-serialization", version.ref = "russhwolf" }

@@ -9,6 +9,7 @@ import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
+import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.presta.customer.ui.components.addSavings.AddSavingsComponent
 import com.presta.customer.ui.components.addSavings.DefaultAddSavingsComponent
 import com.presta.customer.ui.components.processingTransaction.DefaultProcessingTransactionComponent
@@ -17,11 +18,13 @@ import com.presta.customer.ui.components.savings.DefaultSavingsComponent
 import com.presta.customer.ui.components.savings.SavingsComponent
 import com.presta.customer.ui.components.savingsTransactionHistory.DefaultSavingsTransactionHistoryComponent
 import com.presta.customer.ui.components.savingsTransactionHistory.SavingsTransactionHistoryComponent
+import prestaDispatchers
 
 class DefaultRootSavingsComponent(
     componentContext: ComponentContext,
-
-    ): RootSavingsComponent, ComponentContext by componentContext {
+    val storeFactory: StoreFactory,
+    val pop: () -> Unit = {},
+): RootSavingsComponent, ComponentContext by componentContext {
     private val savingsNavigation = StackNavigation<ConfigSavings>()
 
     private val _childSavingsStack =
@@ -55,6 +58,11 @@ class DefaultRootSavingsComponent(
     private fun savingsHomeComponent(componentContext: ComponentContext): SavingsComponent =
         DefaultSavingsComponent(
             componentContext = componentContext,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            onPop = {
+                pop()
+            },
             onAddSavingsClicked = {
                 savingsNavigation.push(ConfigSavings.AddSavings)
 
