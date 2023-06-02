@@ -76,7 +76,7 @@ class DefaultRootLoansComponent(
         )
 
         is ConfigLoans.LoanConfirmation -> RootLoansComponent.ChildLoans.ConfirmLoanChild(
-            loanConfirmationComponent(componentContext)
+            loanConfirmationComponent(componentContext,config)
         )
 
         is ConfigLoans.DisbursementMethod -> RootLoansComponent.ChildLoans.DisbursementModeChild(
@@ -150,8 +150,8 @@ class DefaultRootLoansComponent(
         DefaultSpecificLoansComponent(
             componentContext = componentContext,
             refId = config.refId,
-            onConfirmClicked = {
-                loansNavigation.push(ConfigLoans.LoanConfirmation)
+            onConfirmClicked = {refId->
+                loansNavigation.push(ConfigLoans.LoanConfirmation(refId = refId))
             },
             onBackNavClicked = {
                 loansNavigation.pop()
@@ -159,15 +159,19 @@ class DefaultRootLoansComponent(
             mainContext = prestaDispatchers.main,
             storeFactory = storeFactory
         )
-    private fun loanConfirmationComponent(componentContext: ComponentContext): LoanConfirmationComponent =
-        DefaultLoanConfirmationComponent(componentContext = componentContext,
+    private fun loanConfirmationComponent(componentContext: ComponentContext, config:ConfigLoans.LoanConfirmation): LoanConfirmationComponent =
+        DefaultLoanConfirmationComponent(
+            componentContext = componentContext,
+            refId = config.refId,
             onConfirmClicked = {
             //navigate to mode of Disbursement
             loansNavigation.push(ConfigLoans.DisbursementMethod)
         },
         onBackNavClicked = {
             loansNavigation.pop()
-        })
+        },
+            mainContext = prestaDispatchers.main,
+            storeFactory = storeFactory)
 
     private fun modeOfDisbursementComponent(componentContext: ComponentContext): ModeOfDisbursementComponent =
         DefaultModeOfDisbursementComponent(
@@ -221,7 +225,7 @@ class DefaultRootLoansComponent(
             componentContext = componentContext,
             onConfirmClicked = {
                 //push  to confirm Loan Details Screen
-                loansNavigation.push(ConfigLoans.LoanConfirmation)
+                loansNavigation.push(ConfigLoans.LoanConfirmation(refId = ""))
 
             },
             onBackNavClicked = {
@@ -261,7 +265,10 @@ class DefaultRootLoansComponent(
         data class SpecificLoan(val refId: String) : ConfigLoans()
 
         @Parcelize
-        object LoanConfirmation : ConfigLoans()
+        data class LoanConfirmation(val refId: String) : ConfigLoans()
+
+//        @Parcelize
+//        object LoanConfirmation : ConfigLoans()
 
         @Parcelize
         object DisbursementMethod : ConfigLoans()

@@ -24,8 +24,6 @@ import com.presta.customer.ui.composables.LoanLimitContainer
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.TextInputContainer
 import dev.icerock.moko.resources.compose.fontFamilyResource
-
-
 @Composable
 fun  SpecificLoaContent(
     component: SpecificLoansComponent,
@@ -43,9 +41,10 @@ fun  SpecificLoaContent(
     ) {
         Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
             Row(modifier = Modifier.fillMaxWidth()) {
-                NavigateBackTopBar(state.prestaShortTermLoanProductById?.name.toString(), onClickContainer = {
-                    component.onBackNavSelected()
-                })
+                NavigateBackTopBar( if (state.prestaShortTermLoanProductById?.name!=null) state.prestaShortTermLoanProductById.name.toString() else "",
+                        onClickContainer = {
+                            component.onBackNavSelected()
+                        })
             }
             Column(
                 modifier = Modifier
@@ -61,7 +60,7 @@ fun  SpecificLoaContent(
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                 )
                 //container Card
-                LoanLimitContainer()
+                LoanLimitContainer(state)
                 Row(modifier = Modifier.padding(top = 16.dp)) {
                     TextInputContainer("Enter the desired amount", "", inputType = InputTypes.NUMBER)
 
@@ -81,7 +80,7 @@ fun  SpecificLoaContent(
                 ) {
                     ActionButton("Confirm", onClickContainer = {
                         //Navigate  to confirm Screen
-                        component.onConfirmSelected()
+                        component.onConfirmSelected(state.prestaShortTermLoanProductById?.refId.toString())
                         //Test
                         println("Test  data ")
                         print(state.prestaShortTermLoanProductById?.name.toString())

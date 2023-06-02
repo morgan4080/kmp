@@ -12,7 +12,6 @@ interface ShortTermLoansStore: Store<ShortTermLoansStore.Intent,ShortTermLoansSt
         //Get The  filtered data
         data  class  GetPrestaShortTermProductById(val token: String, val loanId: String): Intent()
 
-
     }
     data class State(
         val isLoading: Boolean = false,

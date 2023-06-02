@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,11 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.presta.customer.MR
+import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 
 @Composable
-fun DisbursementDetailsContainer() {
+fun DisbursementDetailsContainer(
+    state: ShortTermLoansStore.State) {
 
     ElevatedCard(
         modifier = Modifier
@@ -71,15 +75,27 @@ fun DisbursementDetailsContainer() {
                     )
                 }
                 //data Rows
-                LazyColumn(modifier = Modifier
-                    .fillMaxWidth()){
-                    items(10){
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())){
+                    //Amount
                         disbursementDetailsRow("Requested Amount", "Kes 30,000")
+                    //Interest
+                    disbursementDetailsRow("Interest", state.prestaShortTermLoanProductById?.interestRate.toString()+" %")
 
-                    }
+                    //Fee  Charges
+
+                    //Loan  Period
+                    disbursementDetailsRow("Interest",
+                        state.prestaShortTermLoanProductById?.maxTerm.toString()+ " "+
+                    state.prestaShortTermLoanProductById?.loanPeriodUnit)
+                    // Due date
+
+                    //Balance Brought Forward
+
+                    //Repayment  amount
 
                 }
-
 
             }
         }

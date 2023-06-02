@@ -32,7 +32,7 @@ fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
 class DefaultSpecificLoansComponent (
     componentContext: ComponentContext,
-    private val onConfirmClicked: () -> Unit,
+    private val onConfirmClicked: (refid:String) -> Unit,
     private val onBackNavClicked: () -> Unit,
     refId: String,
     storeFactory: StoreFactory,
@@ -40,8 +40,8 @@ class DefaultSpecificLoansComponent (
 
 ): SpecificLoansComponent, ComponentContext by componentContext {
     var specificId:String=refId
-    override fun onConfirmSelected() {
-        onConfirmClicked()
+    override fun onConfirmSelected(refId: String) {
+        onConfirmClicked(refId)
     }
     override fun onBackNavSelected() {
        onBackNavClicked()
@@ -77,7 +77,6 @@ private val scope = coroutineScope(mainContext + SupervisorJob())
     override fun onEvent(event: ShortTermLoansStore.Intent) {
         shortTermloansStore.accept(event)
     }
-    private var shortTermProductListScopeJob: Job? = null
     private var authUserScopeJob: Job? = null
     private fun checkAuthenticatedUser() {
         if (authUserScopeJob?.isActive == true) return

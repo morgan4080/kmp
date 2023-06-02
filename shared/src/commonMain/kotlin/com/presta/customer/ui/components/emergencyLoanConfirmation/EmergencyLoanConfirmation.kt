@@ -50,7 +50,7 @@ fun EmergencyLoansConfirmation(){
 
                 //Disbursement Details
 
-                DisbursementDetailsContainer()
+               // DisbursementDetailsContainer(state)
 
                 //action Button
                 Row(modifier = Modifier.padding(top = 30.dp)){

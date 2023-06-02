@@ -1,5 +1,6 @@
 package com.presta.customer.ui.composables
 
+import ShimmerBrush
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,10 +22,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
-fun LoanLimitContainer(){
+fun LoanLimitContainer(state: ShortTermLoansStore.State){
+    val  showShimmer:Boolean=state.isLoading
     ElevatedCard(modifier = Modifier
         .padding(top = 10.dp)
         .border(BorderStroke(0.5.dp, Color.White), shape = RoundedCornerShape(size = 12.dp))) {
@@ -55,10 +58,12 @@ fun LoanLimitContainer(){
                     .fillMaxWidth()
                 ) {
                     Text(
-                        text = "Min.Kes 10,000-Max 50,000",
-                        color= MaterialTheme.colorScheme.onPrimaryContainer,
+                        text ="Min. Kes" + state.prestaShortTermLoanProductById?.minAmount.toString() +
+                              "- Max " +   state.prestaShortTermLoanProductById?.maxAmount.toString(),
+                        color= MaterialTheme.colorScheme.onBackground,
                         fontSize = 16.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                        modifier = Modifier.background(brush = ShimmerBrush(showShimmer,800f))
 
                     )
                 }
@@ -67,41 +72,35 @@ fun LoanLimitContainer(){
                     .fillMaxWidth()
                 ) {
                     Column(){
-
                         Text(
                             text = "Interest",
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light), // #002C56
                             fontSize = 10.sp
                         )
-
                         Text(
-                            text = "12%",
-                            color= MaterialTheme.colorScheme.onPrimaryContainer, // #002C56
+                            text = state.prestaShortTermLoanProductById?.interestRate.toString()+"%",
+                            color= MaterialTheme.colorScheme.onBackground, // #002C56
                             fontSize = 12.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                            modifier = Modifier.background(brush = ShimmerBrush(showShimmer,800f))
                         )
 
                     }
-
                     Spacer(modifier = Modifier.padding(start = 42.dp))
-
-
-
                     Column(){
-
                         Text(
                             text = "Max loan  Period",
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light), // #002C56
                             fontSize = 10.sp
                         )
-
                         Text(
-                            text = "12 Months",
-                            color= MaterialTheme.colorScheme.onPrimaryContainer, // #002C56
+                            text = state.prestaShortTermLoanProductById?.maxTerm.toString() + " "+
+                            state.prestaShortTermLoanProductById?.loanPeriodUnit,
+                            color= MaterialTheme.colorScheme.onBackground, // #002C56
                             fontSize = 12.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                            modifier = Modifier.background(brush = ShimmerBrush(showShimmer,800f))
                         )
-
                     }
                 }
             }

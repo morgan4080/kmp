@@ -1,13 +1,12 @@
 package com.presta.customer.ui.components.specificLoanType
 
-import com.arkivanov.decompose.value.Value
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import kotlinx.coroutines.flow.StateFlow
 
 interface SpecificLoansComponent {
 
-    fun onConfirmSelected()
+    fun onConfirmSelected(refid:String)
     fun onBackNavSelected()
 
     val authStore: AuthStore
