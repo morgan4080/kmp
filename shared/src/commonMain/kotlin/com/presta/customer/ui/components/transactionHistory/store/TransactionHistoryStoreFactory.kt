@@ -44,7 +44,7 @@ class TransactionHistoryStoreFactory(
 
         override fun executeIntent(intent: TransactionHistoryStore.Intent, getState: () -> TransactionHistoryStore.State): Unit =
             when(intent) {
-                is TransactionHistoryStore.Intent.GetTransactionHistory -> getTransactionHistory(token = intent.token, refId = intent.refId, purposeIds = intent.purposeIds)
+                is TransactionHistoryStore.Intent.GetTransactionHistory -> getTransactionHistory(token = intent.token, refId = intent.refId, purposeIds = intent.purposeIds, searchTerm = intent.searchTerm)
                 is TransactionHistoryStore.Intent.GetTransactionMapping -> getTransactionMapping(token = intent.token)
             }
 
@@ -55,6 +55,7 @@ class TransactionHistoryStoreFactory(
             token: String,
             refId: String,
             purposeIds: List<String>,
+            searchTerm: String?
         ) {
             if (getTransactionHistoryJob?.isActive == true) return
 
@@ -64,7 +65,8 @@ class TransactionHistoryStoreFactory(
                 profileRepository.getTransactionHistoryData(
                     token = token,
                     memberRefId = refId,
-                    purposeIds = purposeIds
+                    purposeIds = purposeIds,
+                    searchTerm = searchTerm
                 ).onSuccess { response ->
                     dispatch(Msg.TransactionHistoryLoaded(response))
                 }.onFailure { e ->

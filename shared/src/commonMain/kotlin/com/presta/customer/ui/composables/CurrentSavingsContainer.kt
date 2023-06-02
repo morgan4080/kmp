@@ -1,4 +1,5 @@
 package com.presta.customer.ui.composables
+import ShimmerBrush
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,14 +19,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.network.profile.model.PrestaSavingsBalancesResponse
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
-fun CurrentSavingsContainer(){
+fun CurrentSavingsContainer (
+    savingsBalances: PrestaSavingsBalancesResponse?,
+) {
+
+    var savingsTotalAmount: Double? = null
+    var savingsBalance: Double? = null
+    var sharesBalance: Double? = null
+    var sharePrice: String? = null
+
+    if (savingsBalances !== null) {
+        savingsTotalAmount = savingsBalances.savingsTotalAmount
+        savingsBalance = savingsBalances.savingsBalance
+        sharesBalance = savingsBalances.sharesBalance
+        sharePrice = savingsBalances.pricePerShare
+    }
+
     ElevatedCard(modifier = Modifier
         .padding(top = 10.dp)
         .border( BorderStroke(1.dp,Color.White), shape = RoundedCornerShape(size = 12.dp))
@@ -48,47 +64,80 @@ fun CurrentSavingsContainer(){
                 ) {
                     Text(
                         text = "Total Savings",
-                        fontSize = 12.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        color = MaterialTheme.colorScheme.outline,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
-                Row (modifier = Modifier
-                    .padding(top = 0.dp)
-                    .fillMaxWidth()
+                Row (
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "KES 100,983.32",
-                        fontSize = 20.sp,
+                        modifier = Modifier.background(
+                            brush = ShimmerBrush(
+                                targetValue = 1300f,
+                                showShimmer = savingsTotalAmount == null
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ).defaultMinSize(150.dp),
+                        text = if (savingsTotalAmount !== null) {
+                            savingsTotalAmount.toString() +
+                                    " KES"
+                        } else "",
+                        color= MaterialTheme.colorScheme.onBackground,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                        modifier = Modifier
-                            .fillMaxWidth())
+                        style = MaterialTheme.typography.titleLarge
+                    )
                 }
-                Row (modifier = Modifier
-                    .padding(top = 11.dp)
-                    .fillMaxWidth()
+                Row (
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Column {
                         Text(
                             text = "Current Savings ",
-                            color= Color(0xFF8F8F8F.toInt()), // #002C56
-                            fontSize = 10.sp)
+                            color = MaterialTheme.colorScheme.outline,
+                            style = MaterialTheme.typography.bodySmall,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                        )
 
                         Text(
-                            text = "50,000",// #002C56
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,)
+                            modifier = Modifier.background(
+                                brush = ShimmerBrush(
+                                    targetValue = 1300f,
+                                    showShimmer = savingsBalance == null
+                                ),
+                                shape = RoundedCornerShape(12.dp)
+                            ).defaultMinSize(150.dp),
+                            text = if (savingsBalance !== null) savingsBalance.toString() else "",
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.labelLarge,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                        )
                     }
 
-                    Spacer(modifier = Modifier.padding(start = 42.dp))
+                    Spacer(modifier = Modifier.padding(start = 30.dp))
+
                     Column {
                         Text(
                             text = "Current Shares",
-                            color= Color(0xFF8F8F8F.toInt()), // #002C56
-                            fontSize = 10.sp)
+                            color = MaterialTheme.colorScheme.outline,
+                            style = MaterialTheme.typography.bodySmall,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                        )
+
                         Text(
-                            text = "10(kes 50,000)", // #002C56
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,)
+                            modifier = Modifier.background (
+                                brush = ShimmerBrush (
+                                    targetValue = 1300f,
+                                    showShimmer = sharesBalance == null || sharePrice == null
+                                ),
+                                shape = RoundedCornerShape(12.dp)
+                            ).defaultMinSize(150.dp),
+                            text = if (sharesBalance !== null && sharePrice !== null) "$sharePrice (${sharesBalance})" else "",
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.labelLarge,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                        )
                     }
                 }
             }

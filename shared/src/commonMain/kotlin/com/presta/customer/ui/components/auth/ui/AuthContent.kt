@@ -396,7 +396,6 @@ fun AuthContent(
                 modifier = Modifier
                     .padding(top = 25.dp)
                     .padding(horizontal = 16.dp)
-                    .absoluteOffset(y = -(70).dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
             ) {
@@ -409,8 +408,7 @@ fun AuthContent(
             LazyVerticalGrid(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight()
-                    .absoluteOffset(y = -(50).dp),
+                    .fillMaxHeight(),
                 columns = GridCells.Fixed(3),
                 verticalArrangement = Arrangement.Center,
                 contentPadding = PaddingValues(

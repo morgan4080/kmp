@@ -113,7 +113,8 @@ class ProfileStoreFactory(
                 profileRepository.getTransactionHistoryData(
                     token = token,
                     memberRefId = refId,
-                    purposeIds = purposeIds
+                    purposeIds = purposeIds,
+                    searchTerm = null
                 ).onSuccess { response ->
                     println(":::::getTransactionHistoryData")
                     println(response)

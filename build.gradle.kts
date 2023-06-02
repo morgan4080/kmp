@@ -1,5 +1,6 @@
 buildscript {
     dependencies {
+        classpath(deps.gms.google.services)
         classpath(deps.jetbrains.kotlinx.binaryCompatibilityValidator)
         classpath(deps.parcelizeDarwin.gradlePlug)
         classpath(deps.moko.resources.generator)

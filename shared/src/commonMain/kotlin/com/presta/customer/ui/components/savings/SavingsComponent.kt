@@ -1,13 +1,17 @@
 package com.presta.customer.ui.components.savings
 
-import com.arkivanov.decompose.value.Value
+import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.savings.store.SavingsStore
+import kotlinx.coroutines.flow.StateFlow
 
 interface SavingsComponent {
-    val model: Value<Model>
+    val authStore: AuthStore
+    val authState: StateFlow<AuthStore.State>
+    val savingsStore: SavingsStore
+    val savingsState: StateFlow<SavingsStore.State>
+    fun onAuthEvent(event: AuthStore.Intent)
+    fun onEvent(event: SavingsStore.Intent)
     fun onAddSavingsSelected()
     fun onSeeALlSelected()
-
-    data class Model(
-        val items: List<String>,
-    )
+    fun onBack()
 }

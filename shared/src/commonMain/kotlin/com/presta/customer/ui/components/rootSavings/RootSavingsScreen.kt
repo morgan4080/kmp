@@ -13,7 +13,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.presta.customer.ui.components.addSavings.AddSavingsScreen
 import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionScreen
 import com.presta.customer.ui.components.rootSavings.RootSavingsComponent
-import com.presta.customer.ui.components.savings.SavingsScreen
+import com.presta.customer.ui.components.savings.ui.SavingsScreen
 import com.presta.customer.ui.components.savingsTransactionHistory.SavingsTransactionHistoryScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
 

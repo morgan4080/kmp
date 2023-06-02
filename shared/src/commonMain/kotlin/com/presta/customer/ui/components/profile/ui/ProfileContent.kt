@@ -129,8 +129,7 @@ fun ProfileContent(
     }
 
     println("::::::::state.savingsBalances.lastSavingsAmount")
-    println(state.savingsBalances?.lastSavingsAmount)
-    println(state.savingsBalances?.lastSavingsDate)
+    println(state.savingsBalances)
 
     ModalBottomSheetLayout(
         modifier = Modifier.padding(innerPadding),
@@ -281,17 +280,16 @@ fun ProfileContent(
                                         ) {
                                             HomeCardListItem (
                                                 name = balance.key,
-                                                onClick = {
-                                                    print(it)
-                                                    print(balance.value)
-                                                },
                                                 balance = balance.value,
                                                 lastAmount = if (state.savingsBalances !== null) state.savingsBalances.lastSavingsAmount else null,
                                                 lastDate =  if (state.savingsBalances !== null) state.savingsBalances.lastSavingsDate else null,
-                                                totalLoans = if (state.loansBalances !== null && balance.key == "Total Loan Balance")
-                                                    state.loansBalances.loanCount
-                                                else
-                                                    null
+                                                loanStatus =  if (state.loansBalances !== null && balance.key == "Total Loan Balance") state.loansBalances.loanStatus else null,
+                                                totalLoans = if (state.loansBalances !== null && balance.key == "Total Loan Balance") state.loansBalances.loanCount else null,
+                                                savingsBalance = if (state.savingsBalances !== null) state.savingsBalances.savingsBalance else null,
+                                                sharesBalance = if (state.savingsBalances !== null) state.savingsBalances.sharesBalance else null,
+                                                goToLoans = goToLoans,
+                                                goToSavings = goToSavings,
+                                                loanBreakDown = if (state.loansBalances !== null) state.loansBalances.loanBreakDown else null
                                             )
                                         }
                                     }

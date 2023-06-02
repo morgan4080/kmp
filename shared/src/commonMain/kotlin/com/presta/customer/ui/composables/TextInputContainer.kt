@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -63,9 +64,10 @@ fun TextInputContainer(
     enabled: Boolean = true,
     inputType: InputTypes = InputTypes.STRING,
     imageUrl: String? = null,
+    icon:  ImageVector? = null,
     callingCode: String? = null,
     callback: (userInput: String) -> Unit = {}
-){
+) {
     var userInput by remember { mutableStateOf(TextFieldValue()) }
 
     if (inputValue.isNotEmpty()) {
@@ -120,7 +122,7 @@ fun TextInputContainer(
             decorationBox = { innerTextField ->
                 if (userInput.text.isEmpty() && callingCode == null) {
                     Text(
-                        modifier = Modifier.alpha(.3f),
+                        modifier = Modifier.alpha(.3f).padding(start = if (icon !== null) 50.dp else 0.dp, top = if (icon !== null) 5.dp else 0.dp),
                         text = label,
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -131,7 +133,7 @@ fun TextInputContainer(
                     enter = fadeIn() + expandVertically(),
                     exit = fadeOut() + shrinkVertically(),
                 ) {
-                    Text(
+                    Text (
                         text = label,
                         color = primaryColor,
                         style = MaterialTheme.typography.labelSmall,
@@ -180,9 +182,20 @@ fun TextInputContainer(
                             )
                         }
 
+                        if (icon !== null) {
+                            Icon(
+                                modifier = Modifier.size(40.dp).padding(end = 10.dp),
+                                imageVector = icon,
+                                contentDescription = null,
+                                tint = actionButtonColor
+                            )
+
+                            Spacer(modifier = Modifier.width(width = 8.dp))
+                        }
+
                         innerTextField()
                     }
-                    if (callingCode !== null) {
+                    if (callingCode !== null || icon !== null) {
                         IconButton(
                             modifier = Modifier.size(18.dp),
                             onClick = {

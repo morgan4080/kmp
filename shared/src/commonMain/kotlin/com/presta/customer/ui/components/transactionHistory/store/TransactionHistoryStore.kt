@@ -5,7 +5,7 @@ import com.presta.customer.network.profile.model.PrestaTransactionHistoryRespons
 
 interface TransactionHistoryStore: Store<TransactionHistoryStore.Intent, TransactionHistoryStore.State, Nothing> {
     sealed class Intent {
-        data class GetTransactionHistory(val token: String, val refId: String, val purposeIds: List<String>): Intent()
+        data class GetTransactionHistory(val token: String, val refId: String, val purposeIds: List<String>, val searchTerm: String?): Intent()
         data class GetTransactionMapping(val token: String): Intent()
     }
 
