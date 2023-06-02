@@ -150,11 +150,12 @@ fun BankDisbursementScreen(component: BankDisbursementComponent) {
                                                             )
                                                     ) {
                                                         OptionsSelectionContainer(
-                                                            "KCB",
+                                                            label = "KCB",
                                                             onClickContainer = {
 
 
-                                                            })
+                                                            }
+                                                        )
                                                     }
                                                 }
                                             }

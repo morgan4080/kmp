@@ -48,7 +48,6 @@ fun ProductSelectionCard2(label: String, description: String?=null, onClickConta
                         text = label,
                         modifier = Modifier.padding(start = 15.dp),
                         fontSize = 12.sp,
-                        color = labelTextColor,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                     )
                     if (description != null) {

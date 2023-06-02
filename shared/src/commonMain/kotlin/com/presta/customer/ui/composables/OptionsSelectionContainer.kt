@@ -21,6 +21,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,30 +35,29 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.ui.components.addSavings.SavingsModes
 import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.activeCard
-import com.presta.customer.ui.theme.labelTextColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OptionsSelectionContainer(
+    mode: SavingsModes? = null,
     label: String,
     description: String? = null,
-    onClickContainer: () -> Unit
+    onClickContainer: (mode: SavingsModes?) -> Unit
 ) {
     var checkedState by remember { mutableStateOf(false) }
 
-    //Change  the  color of the  card by interaction
-    //Todo
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val color = if (isPressed) activeCard else MaterialTheme.colorScheme.background
 
     ElevatedCard(
         onClick = {
+            onClickContainer(mode)
             checkedState = !checkedState
-            onClickContainer()
         },
 
         modifier = Modifier.fillMaxWidth()
@@ -72,13 +72,12 @@ fun OptionsSelectionContainer(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Column() {
+                Column {
 
                     Text(
                         text = label,
                         modifier = Modifier.padding(start = 15.dp),
                         fontSize = 12.sp,
-                        color = labelTextColor,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                     )
                     //Spacer(modifier = Modifier.weight(1f))
@@ -92,7 +91,8 @@ fun OptionsSelectionContainer(
                     }
                 }
 
-                Row() {
+
+                Row {
                     //Created a Custom checkBox
                     Spacer(modifier = Modifier.weight(1f))
 
@@ -108,6 +108,7 @@ fun OptionsSelectionContainer(
                                 .size(19.dp)
                                 .background(if (checkedState) actionButtonColor else MaterialTheme.colorScheme.background)
                                 .clickable {
+                                    onClickContainer(mode)
                                     checkedState = !checkedState
                                 },
                             contentAlignment = Alignment.Center

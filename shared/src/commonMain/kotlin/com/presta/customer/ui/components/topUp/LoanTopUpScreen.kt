@@ -119,7 +119,7 @@ fun  LoanTopUpScreen(component: LoanTopUpComponent){
                                         .padding(top = 18.dp)) {
 
                                         OptionsSelectionContainer(
-                                            "Current term",
+                                            label = "Current term",
                                             onClickContainer = {
 
                                             })
@@ -127,7 +127,7 @@ fun  LoanTopUpScreen(component: LoanTopUpComponent){
                                     Row(modifier = Modifier
                                         .fillMaxWidth()) {
 
-                                        OptionsSelectionContainer("Emergency Loan at 10%/Month", onClickContainer = {
+                                        OptionsSelectionContainer(label = "Emergency Loan at 10%/Month", onClickContainer = {
 
                                         })
 
