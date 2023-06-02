@@ -58,13 +58,11 @@ fun  ProductSelectionCard(label: String, description: String?=null, onClickConta
                 Row(){
                     Spacer(modifier = Modifier.weight(1f))
                     Icon(
-
                         Icons.Filled.KeyboardArrowRight,
                         contentDescription = "Forward Arrow",
                         modifier = Modifier.clip(shape = CircleShape)
-                            .background(color = MaterialTheme.colorScheme.inverseOnSurface),
+                            .background(color = Color(0xFFE5F1F5)),
                         tint = backArrowColor
-
                     )
                     Spacer(modifier = Modifier.padding(end = 15.dp))
                 }

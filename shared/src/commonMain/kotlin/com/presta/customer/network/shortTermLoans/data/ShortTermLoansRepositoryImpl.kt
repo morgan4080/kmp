@@ -30,6 +30,24 @@ class ShortTermLoansRepositoryImpl : ShortTermLoansRepository,KoinComponent {
         }
     }
 
+    override suspend fun getShortTermProductLoanById(
+        loanId: String,
+        token: String
+    ): Result<PrestaShortTermProductsListResponse> {
+        return try {
+
+            val response = shortTermLoansClient.getShortTermProductLoanById(
+                token = token,
+                loanId=loanId
+            )
+            Result.success(response)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
     override suspend fun getShortTermTopUpListData(
         session_id: String,
         memberRefId: String,

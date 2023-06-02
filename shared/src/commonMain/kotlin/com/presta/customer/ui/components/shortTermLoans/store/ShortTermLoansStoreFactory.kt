@@ -31,8 +31,8 @@ class ShortTermLoansStoreFactory(
 
     private sealed class Msg {
         data class ShortTermLoansLoading(val isLoading: Boolean = true) : Msg()
-        data class ShortTermLoansProductsListLoaded(val shortTermLoansProductList: List<PrestaShortTermProductsListResponse> = listOf()) :
-            Msg()
+        data class ShortTermLoansProductsListLoaded(val shortTermLoansProductList: List<PrestaShortTermProductsListResponse> = listOf()) : Msg()
+        data class ShortTermLoanProductsByIdLoaded(val shortTermLoansProductById : PrestaShortTermProductsListResponse): Msg()
         data class ShortTermTopUpListLoaded(val shortTermTopUpList: PrestaShortTermTopUpListResponse) : Msg()
 
         data class ShortTermLoansFailed(val error: String?) : Msg()
@@ -58,6 +58,11 @@ class ShortTermLoansStoreFactory(
                     token = intent.token,
                     session_id = intent.session_id,
                     refId = intent.refId
+                )
+
+                is ShortTermLoansStore.Intent.GetPrestaShortTermProductById -> getShortTermLoanProductsById(
+                    token = intent.token,
+                    loanId = intent.loanId
                 )
 
             }
@@ -87,6 +92,35 @@ class ShortTermLoansStoreFactory(
                 dispatch(Msg.ShortTermLoansLoading(false))
             }
         }
+
+        //GetShortTermLoansProductById
+
+        private var getShortTermLoanProductBYIdJob: Job? = null
+
+        private fun getShortTermLoanProductsById(
+            token: String,
+            loanId:String
+        ) {
+            if (getShortTermLoanProductBYIdJob?.isActive == true) return
+
+            dispatch(Msg.ShortTermLoansLoading())
+
+            getShortTermLoanProductBYIdJob= scope.launch {
+                shortTermLoansRepository.getShortTermProductLoanById(
+                    token = token,
+                    loanId = loanId
+                ).onSuccess { response ->
+                    println(":::::::::getShortTermProductListByIdData")
+                    println(response)
+                    dispatch(Msg.ShortTermLoanProductsByIdLoaded(response))
+                }.onFailure { e ->
+                    dispatch(Msg.ShortTermLoansFailed(e.message))
+                }
+
+                dispatch(Msg.ShortTermLoansLoading(false))
+            }
+        }
+
         //Get Short  termTop Up list
 
         private var getShortTermTopUpListJob: Job? = null
@@ -119,7 +153,6 @@ class ShortTermLoansStoreFactory(
             }
         }
     }
-
     private object ReducerImpl : Reducer<ShortTermLoansStore.State, Msg> {
         override fun ShortTermLoansStore.State.reduce(msg: Msg): ShortTermLoansStore.State =
             when (msg) {
@@ -127,6 +160,7 @@ class ShortTermLoansStoreFactory(
                 is Msg.ShortTermLoansFailed -> copy(error = msg.error)
                 is Msg.ShortTermLoansProductsListLoaded -> copy(prestaShortTermProductList = msg.shortTermLoansProductList)
                 is Msg.ShortTermTopUpListLoaded->copy(prestaShortTermTopUpList=msg.shortTermTopUpList)
+                is Msg.ShortTermLoanProductsByIdLoaded->copy(prestaShortTermLoanProductById=msg.shortTermLoansProductById)
             }
     }
 }

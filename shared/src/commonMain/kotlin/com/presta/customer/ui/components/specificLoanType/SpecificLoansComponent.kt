@@ -20,5 +20,4 @@ interface SpecificLoansComponent {
     fun onAuthEvent(event: AuthStore.Intent)
     fun onEvent(event: ShortTermLoansStore.Intent)
 
-
 }

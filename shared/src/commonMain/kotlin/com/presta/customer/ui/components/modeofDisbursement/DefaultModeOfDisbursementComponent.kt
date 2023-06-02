@@ -10,6 +10,7 @@ class DefaultModeOfDisbursementComponent(
     private val onMpesaClicked: () -> Unit,
     private val onBankClicked: () -> Unit,
     private val onBackNavClicked: () -> Unit,
+    private  val TransactionSuccessful: () -> Unit,
 
     componentContext: ComponentContext,
 
@@ -20,10 +21,19 @@ class DefaultModeOfDisbursementComponent(
             items = listOf()
         )
     )
+    //Test --Add  state to Determine which screen is called
+    // Add a navigate  method controlled By the  state of the  Transaction
+    val Transact: Boolean=false
 
     override val model: Value<ModeOfDisbursementComponent.Model> = models
     override fun onMpesaSelected() {
-        onMpesaClicked()
+        if (Transact){
+            onMpesaClicked()
+
+        }else{
+            TransactionSuccessful()
+        }
+
     }
 
     override fun onBankSelected() {
@@ -32,6 +42,10 @@ class DefaultModeOfDisbursementComponent(
 
     override fun onBackNavSelected() {
       onBackNavClicked()
+    }
+
+    override fun successFulTransaction() {
+     TransactionSuccessful
     }
 
 }

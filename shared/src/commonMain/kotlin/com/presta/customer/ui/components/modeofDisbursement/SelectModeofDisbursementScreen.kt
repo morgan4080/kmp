@@ -58,7 +58,10 @@ fun SelectModeOfDisbursementScreen(component: ModeOfDisbursementComponent) {
                     ProductSelectionCard2("Mpesa", onClickContainer = {
                         //Business  Logic
                         //Navigate to processing Transaction
+                        //show failed or success based on the  state
                         component.onMpesaSelected()
+
+
 
                     })
 

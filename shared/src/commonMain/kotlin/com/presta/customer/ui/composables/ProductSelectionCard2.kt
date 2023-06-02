@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
@@ -66,12 +67,10 @@ fun ProductSelectionCard2(label: String, description: String?=null, onClickConta
                         Icons.Filled.KeyboardArrowRight,
                         contentDescription = "Forward Arrow",
                         modifier = Modifier.clip(shape = CircleShape)
-                            .background(color = MaterialTheme.colorScheme.inverseOnSurface),
+                            .background(Color(0xFFE5F1F5)),
                         tint = backArrowColor
-
                     )
                     Spacer(modifier = Modifier.padding(end = 15.dp))
-
                 }
             }
         }

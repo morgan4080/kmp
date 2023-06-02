@@ -62,7 +62,7 @@ object NetworkConstants {
     }
 
     object PrestaGetTShortTermProductsList {
-        const  val route = applicationsBaseUrl + "loans/products"
+        const  val route = applicationsBaseUrl + "loanproduct"
     }
     object  PrestaGetShortTermToUpList{
         const val  route= applicationV1BaseUrl + "query/topup-loans"

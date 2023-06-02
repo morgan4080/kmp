@@ -42,6 +42,6 @@ val bankContainerColor = Color(0xFFE7EAEB)
 val containerColor = Color(0xFFF7F7F7)
 
 val transparentContainer = Color(0xFFE5F1F5)
-
+val activeCard = Color(0xFFDCF1FF)
 
 

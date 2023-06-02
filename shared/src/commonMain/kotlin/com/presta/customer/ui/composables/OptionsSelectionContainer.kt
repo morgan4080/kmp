@@ -3,6 +3,8 @@ package com.presta.customer.ui.composables
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.ui.theme.actionButtonColor
+import com.presta.customer.ui.theme.activeCard
 import com.presta.customer.ui.theme.labelTextColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
@@ -43,8 +46,13 @@ fun OptionsSelectionContainer(
     description: String? = null,
     onClickContainer: () -> Unit
 ) {
-
     var checkedState by remember { mutableStateOf(false) }
+
+    //Change  the  color of the  card by interaction
+    //Todo
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val color = if (isPressed) activeCard else MaterialTheme.colorScheme.background
 
     ElevatedCard(
         onClick = {
@@ -53,10 +61,11 @@ fun OptionsSelectionContainer(
         },
 
         modifier = Modifier.fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.background)
+            .background(color = MaterialTheme.colorScheme.inverseOnSurface)
 
     ) {
-        Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.inverseOnSurface)) {
+        Box(modifier = Modifier
+            .background(color = color)) {
             Row(
                 modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
                     .fillMaxWidth(),
@@ -81,7 +90,6 @@ fun OptionsSelectionContainer(
                             fontSize = 12.sp,
                         )
                     }
-
                 }
 
                 Row() {
@@ -90,7 +98,7 @@ fun OptionsSelectionContainer(
 
                     Card(
                         modifier = Modifier
-                            .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                            .background(color = MaterialTheme.colorScheme.background)
                             .clip(shape = CircleShape),
                         elevation = CardDefaults.cardElevation(0.dp),
                         border = BorderStroke(1.dp, color = if (checkedState) actionButtonColor else Color.Gray)
@@ -98,7 +106,7 @@ fun OptionsSelectionContainer(
                         Box(
                             modifier = Modifier
                                 .size(19.dp)
-                                .background(if (checkedState) actionButtonColor else MaterialTheme.colorScheme.inverseOnSurface)
+                                .background(if (checkedState) actionButtonColor else MaterialTheme.colorScheme.background)
                                 .clickable {
                                     checkedState = !checkedState
                                 },

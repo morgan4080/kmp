@@ -29,7 +29,7 @@ fun LoanLimitContainer(){
         .padding(top = 10.dp)
         .border(BorderStroke(0.5.dp, Color.White), shape = RoundedCornerShape(size = 12.dp))) {
         Box (modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.background)
+            .background(color = MaterialTheme.colorScheme.inverseOnSurface)
         ) {
             Column (
                 modifier = Modifier.padding(

@@ -80,7 +80,6 @@ class DefaultShortTermLoansComponent(
     override val model: Value<ShortTermLoansComponent.Model> = models
 
     override fun onProductSelected(refId: String) {
-        //get the refid
         onProductClicked(refId)
     }
 

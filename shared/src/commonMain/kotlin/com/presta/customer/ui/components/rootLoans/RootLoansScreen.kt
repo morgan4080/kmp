@@ -11,7 +11,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scal
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.presta.customer.ui.components.banKDisbursement.BankDisbursementScreen
-import com.presta.customer.ui.components.specificLoanType.SpecificLoansScreen
+import com.presta.customer.ui.components.specificLoanType.ui.SpecificLoansScreen
 import com.presta.customer.ui.components.failedTransaction.FailedTransactionScreen
 import com.presta.customer.ui.components.loanConfirmation.LoansConfirmationScreen
 import com.presta.customer.ui.components.longTermLoans.LongTermLoansScreen
@@ -41,7 +41,7 @@ fun RootLoansScreen(component: RootLoansComponent) {
                 is RootLoansComponent.ChildLoans.ApplyLoanChild -> ApplyLoanScreen(child.component, innerPadding)
                 is RootLoansComponent.ChildLoans.ShortTermLoansChild -> ShortTermLoansScreen(child.component, innerPadding)
                 is RootLoansComponent.ChildLoans.LongTermLoansChild -> LongTermLoansScreen(child.component, innerPadding)
-                is RootLoansComponent.ChildLoans.EmergencyLoanChild-> SpecificLoansScreen(child.component)
+                is RootLoansComponent.ChildLoans.EmergencyLoanChild-> SpecificLoansScreen(child.component,innerPadding)
                 is RootLoansComponent.ChildLoans.ConfirmLoanChild-> LoansConfirmationScreen(child.component)
                 is RootLoansComponent.ChildLoans.DisbursementModeChild-> SelectModeOfDisbursementScreen(child.component)
                 is RootLoansComponent.ChildLoans.ProcessingTransactionChild-> ProcessingTransactionScreen(child.component)

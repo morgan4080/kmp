@@ -1,7 +1,8 @@
-package com.presta.customer.ui.components.specificLoanType
+package com.presta.customer.ui.components.specificLoanType.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
+import com.presta.customer.ui.components.specificLoanType.SpecificLoansComponent
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.LoanLimitContainer
@@ -22,10 +25,16 @@ import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.TextInputContainer
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
+
 @Composable
-fun SpecificLoansScreen(
-    component: SpecificLoansComponent
-) {
+fun  SpecificLoaContent(
+    component: SpecificLoansComponent,
+    authState: AuthStore.State,
+    state: ShortTermLoansStore.State,
+    onEvent: (ShortTermLoansStore.Intent) -> Unit,
+    onAuthEvent: (AuthStore.Intent) -> Unit,
+    innerPadding: PaddingValues,
+    ){
     val inputValue = ""
     Surface(
         modifier = Modifier
@@ -34,9 +43,8 @@ fun SpecificLoansScreen(
     ) {
         Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
             Row(modifier = Modifier.fillMaxWidth()) {
-                NavigateBackTopBar("Emergency Loan", onClickContainer = {
+                NavigateBackTopBar(state.prestaShortTermLoanProductById?.name.toString(), onClickContainer = {
                     component.onBackNavSelected()
-
                 })
             }
             Column(
@@ -74,15 +82,13 @@ fun SpecificLoansScreen(
                     ActionButton("Confirm", onClickContainer = {
                         //Navigate  to confirm Screen
                         component.onConfirmSelected()
+                        //Test
+                        println("Test  data ")
+                        print(state.prestaShortTermLoanProductById?.name.toString())
 
                     })
-
                 }
-
             }
-
         }
-
     }
-
 }

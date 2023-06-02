@@ -23,17 +23,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-
 fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineScope {
     val scope = CoroutineScope(context)
     lifecycle.doOnDestroy(scope::cancel)
     return scope
 }
-
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
-
-
 class DefaultSpecificLoansComponent (
     componentContext: ComponentContext,
     private val onConfirmClicked: () -> Unit,
@@ -43,13 +39,13 @@ class DefaultSpecificLoansComponent (
     mainContext: CoroutineContext,
 
 ): SpecificLoansComponent, ComponentContext by componentContext {
+    var specificId:String=refId
     override fun onConfirmSelected() {
         onConfirmClicked()
     }
     override fun onBackNavSelected() {
        onBackNavClicked()
     }
-//Use the maped RefId to  get  Data
 private val scope = coroutineScope(mainContext + SupervisorJob())
 
     override val authStore: AuthStore =
@@ -72,23 +68,19 @@ private val scope = coroutineScope(mainContext + SupervisorJob())
                 storeFactory = storeFactory
             ).create()
         }
-
     @OptIn(ExperimentalCoroutinesApi::class)
     override val shortTermloansState: StateFlow<ShortTermLoansStore.State> = shortTermloansStore.stateFlow
 
     override fun onAuthEvent(event: AuthStore.Intent) {
         authStore.accept(event)
     }
-
     override fun onEvent(event: ShortTermLoansStore.Intent) {
         shortTermloansStore.accept(event)
     }
-
+    private var shortTermProductListScopeJob: Job? = null
     private var authUserScopeJob: Job? = null
-
     private fun checkAuthenticatedUser() {
         if (authUserScopeJob?.isActive == true) return
-
         authUserScopeJob = scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
@@ -96,23 +88,25 @@ private val scope = coroutineScope(mainContext + SupervisorJob())
                         AuthStore.Intent.CheckAuthenticatedUser(
                         token = state.cachedMemberData.accessToken
                     ))
-
                     onEvent(
                         ShortTermLoansStore.Intent.GetPrestaShortTermProductList(
                         token = state.cachedMemberData.accessToken,
                         refId = state.cachedMemberData.refId
-                    ))
+                    )
+                    )
 
+                    onEvent(ShortTermLoansStore.Intent.GetPrestaShortTermProductById(
+                        token = state.cachedMemberData.accessToken,
+                        loanId = specificId
+                    ))
                 }
             }
         }
     }
-
     private var refreshTokenScopeJob: Job? = null
 
     private fun refreshToken() {
         if (refreshTokenScopeJob?.isActive == true) return
-
         refreshTokenScopeJob = scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
@@ -133,6 +127,6 @@ private val scope = coroutineScope(mainContext + SupervisorJob())
         checkAuthenticatedUser()
 
         refreshToken()
-    }
 
+    }
 }

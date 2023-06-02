@@ -45,7 +45,6 @@ fun ShortTermLoansContent(
     onAuthEvent: (AuthStore.Intent) -> Unit,
     innerPadding: PaddingValues,
    ){
-
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background),

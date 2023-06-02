@@ -104,7 +104,7 @@ fun BankDisbursementScreen(component: BankDisbursementComponent) {
                                         bottom = 90.dp
                                     ),
                                 colors = CardDefaults
-                                    .elevatedCardColors(containerColor = MaterialTheme.colorScheme.background)
+                                    .elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                             ) {
 
                                 Column(

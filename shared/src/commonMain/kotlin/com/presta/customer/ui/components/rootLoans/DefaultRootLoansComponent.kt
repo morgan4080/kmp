@@ -184,6 +184,10 @@ class DefaultRootLoansComponent(
         },
         onBackNavClicked = {
             loansNavigation.pop()
+        },
+        TransactionSuccessful = {
+            loansNavigation.push(ConfigLoans.SuccessfulTransaction)
+
         })
 
     private fun processingTransactionComponent(componentContext: ComponentContext): ProcessingTransactionComponent =
