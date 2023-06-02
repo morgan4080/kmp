@@ -92,7 +92,9 @@ fun SavingsContent(
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                     )
 
-                    Row (
+                    // after mvp already can be reached from else where
+
+                    /*Row (
                         modifier = Modifier.clickable{onSeeALlSelected()},
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
@@ -113,7 +115,7 @@ fun SavingsContent(
                             tint = backArrowColor,
                             modifier = Modifier.size(20.dp)
                         )
-                    }
+                    }*/
                 }
 
                 LazyColumn(
