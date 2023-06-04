@@ -41,7 +41,6 @@ interface RootLoansComponent {
         class PayLoanChild(val component: PayLoanComponent) : ChildLoans()
         class PayLoanPromptChild(val component: PayLoanPromptComponent) : ChildLoans()
 
-
     }
 
 }

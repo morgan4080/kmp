@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -30,7 +29,6 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 @Composable
 fun DisbursementDetailsContainer(
     state: ShortTermLoansStore.State) {
-
     ElevatedCard(
         modifier = Modifier
             .padding(top = 10.dp)
@@ -38,7 +36,7 @@ fun DisbursementDetailsContainer(
     ) {
         Box(
             modifier = Modifier
-                .background(color = MaterialTheme.colorScheme.background)
+                .background(color = MaterialTheme.colorScheme.inverseOnSurface)
         ) {
             Column(
                 modifier = Modifier
@@ -69,7 +67,7 @@ fun DisbursementDetailsContainer(
                 ) {
                     Text(
                         text = "Kes 30,000",
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = MaterialTheme.typography.headlineSmall.fontSize,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                     )
@@ -86,7 +84,7 @@ fun DisbursementDetailsContainer(
                     //Fee  Charges
 
                     //Loan  Period
-                    disbursementDetailsRow("Interest",
+                    disbursementDetailsRow("Loan  Period",
                         state.prestaShortTermLoanProductById?.maxTerm.toString()+ " "+
                     state.prestaShortTermLoanProductById?.loanPeriodUnit)
                     // Due date
@@ -96,12 +94,9 @@ fun DisbursementDetailsContainer(
                     //Repayment  amount
 
                 }
-
             }
         }
-
     }
-
 }
 
 @Composable
@@ -123,10 +118,9 @@ fun disbursementDetailsRow(label: String, data: String) {
         Text(
             text = data,
             fontSize = MaterialTheme.typography.labelMedium.fontSize,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            color = MaterialTheme.colorScheme.onBackground,
             fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
 
         )
-
     }
 }
