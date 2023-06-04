@@ -59,7 +59,7 @@ fun AppTheme(
     val colors = if (!useDarkTheme) {
         LightColorScheme
     } else {
-        LightColorScheme
+        DarkColorScheme
     }
 
     val medium: FontFamily = fontFamilyResource(MR.fonts.Poppins.medium)

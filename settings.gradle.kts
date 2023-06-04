@@ -2,6 +2,7 @@ rootProject.name = "prestaCustomer"
 
 include(":androidApp")
 include(":shared")
+//include(":firebase")
 
 pluginManagement {
     repositories {

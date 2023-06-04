@@ -100,6 +100,8 @@ class SavingsStoreFactory (
                 }.onFailure { e ->
                     dispatch(Msg.SavingsTransactionsFailed(e.message))
                 }
+
+                dispatch(Msg.SavingsTransactionsLoading(false))
             }
         }
         //Get Transaction mapping
@@ -121,6 +123,8 @@ class SavingsStoreFactory (
                 }.onFailure { e ->
                     dispatch(Msg.SavingsTransactionsFailed(e.message))
                 }
+
+                dispatch(Msg.SavingsTransactionsLoading(false))
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.presta.customer.ui.components.addSavings
+package com.presta.customer.ui.components.addSavings.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,9 +12,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
+import com.presta.customer.network.payments.data.PaymentTypes
+import com.presta.customer.ui.components.addSavings.store.AddSavingsStore
+import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.NavigateBackTopBar
@@ -35,37 +41,71 @@ import com.presta.customer.ui.composables.TextInputContainer
 import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
-
-enum class SavingsModes {
-    SAVINGS,
-    SHARES
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddSavingsScreen(component: AddSavingsComponent, innerPadding: PaddingValues){
+fun AddSavingsContent (
+    onConfirmSelected: (mode: PaymentTypes, amount: Double) -> Unit,
+    onBackNavSelected: () -> Unit,
+    onAuthEvent: (AuthStore.Intent) -> Unit,
+    onAddSavingsEvent: (AddSavingsStore.Intent) -> Unit,
+    authState: AuthStore.State,
+    state: AddSavingsStore.State,
+    innerPadding: PaddingValues
+) {
     var launchPopUp by remember { mutableStateOf(false) }
 
-    var savingsMode: SavingsModes? by remember { mutableStateOf(null) }
+    var paymentMode: PaymentTypes? by remember { mutableStateOf(null) }
+
+    val snackBarHostState = remember { SnackbarHostState() }
 
     var amount by remember {
         mutableStateOf(TextFieldValue())
     }
 
-    Surface(
+    LaunchedEffect(
+        state.error,
+        authState.error
+    ) {
+        if (state.error !== null) {
+            println("::::::state.error")
+            println(state.error)
+            snackBarHostState.showSnackbar(
+                state.error
+            )
+
+            onAddSavingsEvent(AddSavingsStore.Intent.UpdateError(null))
+        }
+
+        if (authState.error !== null) {
+            snackBarHostState.showSnackbar(
+                authState.error
+            )
+
+            onAuthEvent(AuthStore.Intent.UpdateError(null))
+        }
+    }
+
+    Scaffold (
         modifier = Modifier
+            .padding(innerPadding)
             .background(color = MaterialTheme.colorScheme.background)
             .fillMaxHeight(),
-        color = MaterialTheme.colorScheme.background
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackBarHostState,
+                modifier = Modifier.padding(bottom = 80.dp)
+            )
+        }
     ) {
         Column(modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background)
             .fillMaxWidth()
-            .fillMaxHeight()) {
+            .fillMaxHeight()
+        ) {
             Row(modifier = Modifier
                 .fillMaxWidth()) {
                 NavigateBackTopBar("Add Savings", onClickContainer = {
-                    component.onBackNavSelected()
+                    onBackNavSelected()
                 })
             }
             Column(
@@ -81,26 +121,27 @@ fun AddSavingsScreen(component: AddSavingsComponent, innerPadding: PaddingValues
                     fontSize = 14.sp,
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                 )
-                //select savings Pop up
-                //Added overlay  to the po up screen
-                if (launchPopUp){
+
+                if (launchPopUp) {
 
                     Popup {
 
-                        Column(modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight()
-                            .background(color = Color.Black.copy(alpha = 0.7f)),
-                            verticalArrangement = Arrangement.Center) {
+                        Column (
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                                .background(color = Color.Black.copy(alpha = 0.7f)),
+                            verticalArrangement = Arrangement.Center
+                        ) {
 
-                            ElevatedCard(
+                            ElevatedCard (
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(
                                         start = 25.dp,
                                         end = 25.dp,
                                         top = 26.dp),
-                                colors = CardDefaults.elevatedCardColors(containerColor = Color.White)
+                                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                             ) {
 
                                 Column(
@@ -110,7 +151,7 @@ fun AddSavingsScreen(component: AddSavingsComponent, innerPadding: PaddingValues
                                             start = 16.dp,
                                             end = 16.dp)
                                 ) {
-                                    Text(
+                                    Text (
                                         text = "Savings Type",
                                         modifier = Modifier
                                             .padding(
@@ -126,40 +167,40 @@ fun AddSavingsScreen(component: AddSavingsComponent, innerPadding: PaddingValues
 
                                     Row(
                                         modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 18.dp)
+                                            .fillMaxWidth()
+                                            .padding(top = 18.dp)
                                     ) {
-                                        OptionsSelectionContainer(SavingsModes.SAVINGS, "Current Savings", onClickContainer = {
-                                            savingsMode = it
+                                        OptionsSelectionContainer(PaymentTypes.SAVINGS, "Current Savings", onClickContainer = {
+                                            paymentMode = it
                                         })
                                     }
 
                                     Row(modifier = Modifier.fillMaxWidth()) {
-                                        OptionsSelectionContainer(SavingsModes.SHARES, "Shares", onClickContainer = {
-                                            savingsMode = it
+                                        OptionsSelectionContainer(PaymentTypes.SHARES, "Shares", onClickContainer = {
+                                            paymentMode = it
                                         })
                                     }
 
                                 }
-                                Row(
+                                Row (
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(
-                                        top = 10.dp,
-                                        bottom = 10.dp,
-                                        start = 16.dp,
-                                        end = 16.dp
-                                    ),
+                                            top = 10.dp,
+                                            bottom = 10.dp,
+                                            start = 16.dp,
+                                            end = 16.dp
+                                        ),
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
 
-                                    ElevatedCard(onClick = {
+                                    ElevatedCard (onClick = {
                                         launchPopUp = false
-                                        savingsMode = null
+                                        paymentMode = null
                                     }, modifier = Modifier
                                         .padding(start = 16.dp)) {
 
-                                        Text(
+                                        Text (
                                             text = "Dismiss",
                                             fontSize = 11.sp,
                                             modifier = Modifier.padding(
@@ -171,14 +212,14 @@ fun AddSavingsScreen(component: AddSavingsComponent, innerPadding: PaddingValues
                                         )
 
                                     }
-                                    ElevatedCard(
+                                    ElevatedCard (
                                         onClick = {
                                             launchPopUp = false
                                         },
                                         modifier = Modifier.padding(end = 16.dp),
                                         colors = CardDefaults.elevatedCardColors(containerColor = actionButtonColor)
                                     ) {
-                                        Text(
+                                        Text (
                                             text = "Proceed",
                                             color = Color.White,
                                             fontSize = 11.sp,
@@ -196,8 +237,8 @@ fun AddSavingsScreen(component: AddSavingsComponent, innerPadding: PaddingValues
                     }
                 }
 
-                Row(modifier = Modifier.fillMaxWidth().padding(top = 23.dp)){
-                    ProductSelectionCard2(if (savingsMode == null) "Select Savings" else savingsMode.toString(), onClickContainer = {
+                Row (modifier = Modifier.fillMaxWidth().padding(top = 23.dp)){
+                    ProductSelectionCard2(if (paymentMode == null) "Select Savings" else paymentMode.toString(), onClickContainer = {
                         launchPopUp = true
                     })
 
@@ -205,27 +246,24 @@ fun AddSavingsScreen(component: AddSavingsComponent, innerPadding: PaddingValues
 
                 //Text input occurs  Here
 
-                Row(
+                Row (
                     modifier = Modifier.fillMaxWidth().padding(top = 33.dp)
-                ){
+                ) {
                     TextInputContainer("Desired Amount","", inputType = InputTypes.NUMBER, callback = {
                         amount = TextFieldValue(it)
                     })
                 }
-                Row(modifier = Modifier.fillMaxWidth().padding(top = 44.dp)){
-                  ActionButton("Confirm", onClickContainer = {
-                      if (savingsMode !== null && amount.text !== "") {
-                          component.onConfirmSelected(
-                              savingsMode!!,
-                              amount.text.toDouble()
-                          )
-                      }
-                  }, enabled = savingsMode !== null && amount.text !== "")
+                Row (modifier = Modifier.fillMaxWidth().padding(top = 44.dp)) {
+                    ActionButton("Confirm", onClickContainer = {
+                        if (paymentMode !== null && amount.text !== "") {
+                            onConfirmSelected(
+                                paymentMode!!,
+                                amount.text.toDouble()
+                            )
+                        }
+                    }, enabled = paymentMode !== null && amount.text !== "", loading = state.isLoading)
                 }
             }
-
         }
-
     }
-
 }

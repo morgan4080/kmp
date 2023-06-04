@@ -7,7 +7,7 @@ import com.presta.customer.network.profile.model.PrestaTransactionHistoryRespons
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class ProfileRepositoryImpl : ProfileRepository,KoinComponent {
+class ProfileRepositoryImpl : ProfileRepository, KoinComponent {
     private val profileClient by inject<PrestaProfileClient>()
 
     override suspend fun getUserSavingsData(

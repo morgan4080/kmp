@@ -165,10 +165,8 @@ class DefaultProfileComponent(
     }
 
     init {
-        refreshToken()
-
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
-
+        refreshToken()
         checkAuthenticatedUser()
     }
 }

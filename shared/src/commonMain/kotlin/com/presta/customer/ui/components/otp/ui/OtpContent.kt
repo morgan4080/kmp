@@ -190,7 +190,9 @@ fun OtpContent(
                 modifier = Modifier.fillMaxHeight()
             ) {
                 Column {
-                    Row (modifier = Modifier.padding(horizontal = 16.dp)) {
+                    Row (
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    ) {
                         Text(
                             text = state.title,
                             style = MaterialTheme.typography.headlineSmall,
@@ -198,7 +200,9 @@ fun OtpContent(
                             fontSize = 20.0.sp
                         )
                     }
-                    Row (modifier = Modifier.padding(horizontal = 16.dp)) {
+                    Row (
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    ) {
                         Text(
                             text = "${state.label}${if (state.phone_number != null) " to ${state.phone_number}" else ""}",
                             style = MaterialTheme.typography.bodySmall,
