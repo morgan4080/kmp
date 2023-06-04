@@ -169,8 +169,6 @@ internal class AuthStoreFactory(
             updateAuthTokenJob = scope.launch {
                authRepository.updateAuthToken(tenantId, refId)
                    .onSuccess { response ->
-                       println("::::::Refresh Response")
-                       println(response)
                        dispatch(Msg.RefreshFulfilled(response))
                    }
                    .onFailure { e ->

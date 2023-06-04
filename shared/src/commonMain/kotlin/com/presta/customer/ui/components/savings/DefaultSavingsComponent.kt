@@ -162,8 +162,8 @@ class DefaultSavingsComponent (
     }
 
     init {
-        refreshToken()
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
+        refreshToken()
         loadEssentials()
     }
 }

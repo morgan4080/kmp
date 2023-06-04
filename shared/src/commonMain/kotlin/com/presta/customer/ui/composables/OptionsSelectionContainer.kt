@@ -21,7 +21,6 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,7 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
-import com.presta.customer.ui.components.addSavings.SavingsModes
+import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.activeCard
 import dev.icerock.moko.resources.compose.fontFamilyResource
@@ -43,10 +42,10 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OptionsSelectionContainer(
-    mode: SavingsModes? = null,
+    mode: PaymentTypes? = null,
     label: String,
     description: String? = null,
-    onClickContainer: (mode: SavingsModes?) -> Unit
+    onClickContainer: (mode: PaymentTypes?) -> Unit
 ) {
     var checkedState by remember { mutableStateOf(false) }
 
@@ -80,7 +79,7 @@ fun OptionsSelectionContainer(
                         fontSize = 12.sp,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                     )
-                    //Spacer(modifier = Modifier.weight(1f))
+
                     if (description != null) {
                         Text(
 

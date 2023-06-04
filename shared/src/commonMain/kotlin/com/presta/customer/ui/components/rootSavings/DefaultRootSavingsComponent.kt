@@ -76,6 +76,8 @@ class DefaultRootSavingsComponent(
     private fun addSavingsComponent(componentContext: ComponentContext): AddSavingsComponent =
         DefaultAddSavingsComponent(
            componentContext = componentContext,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
             onConfirmClicked = {
                 //Navigate to processing Transaction
                 savingsNavigation.push(ConfigSavings.ProcessingTransaction)

@@ -139,11 +139,11 @@ class DefaultTransactionHistoryComponent(
     }
 
     init {
-        refreshToken()
-
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
 
         checkAuthenticatedUser()
+
+        refreshToken()
     }
 
     private var fetchMappingJob: Job? = null

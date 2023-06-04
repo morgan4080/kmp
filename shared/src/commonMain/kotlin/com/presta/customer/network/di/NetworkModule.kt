@@ -3,6 +3,7 @@ import com.presta.customer.network.onBoarding.client.PrestaOnBoardingClient
 import com.presta.customer.network.authDevice.client.PrestaAuthClient
 import com.presta.customer.network.createHttpClient
 import com.presta.customer.network.otp.client.PrestaOtpClient
+import com.presta.customer.network.payments.client.PrestaPaymentsClient
 import com.presta.customer.network.profile.client.PrestaProfileClient
 import com.presta.customer.network.registration.client.PrestaRegistrationClient
 import com.presta.customer.network.shortTermLoans.client.PrestaShortTermLoansClient
@@ -18,6 +19,7 @@ val networkModule: (enableLogging: Boolean) -> Module get() = { enableLogging ->
         single { PrestaProfileClient(httpClient = get()) }
         single { PrestaRegistrationClient(httpClient = get()) }
         single { PrestaShortTermLoansClient(httpClient = get()) }
+        single { PrestaPaymentsClient(httpClient = get()) }
 
     }
 }

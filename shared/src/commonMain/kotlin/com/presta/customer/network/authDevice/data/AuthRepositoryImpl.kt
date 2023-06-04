@@ -64,6 +64,9 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
                 tenantId = tenantId
             )
 
+            println("::::::update Access Token with Response")
+            println(response)
+
             userAuthDao.updateAccessToken(
                 response.access_token,
                 response.refresh_token,
