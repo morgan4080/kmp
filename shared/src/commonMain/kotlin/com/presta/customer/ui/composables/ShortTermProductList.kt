@@ -53,7 +53,7 @@ fun ShortTermProductList(
                             .padding(top = 10.dp)
                     ) {
                         ProductSelectionCard(shortTermProduct.name!!,
-                            if (shortTermProduct.interestRate != null) shortTermProduct.interestRate.toString() else "",
+                            if (shortTermProduct.interestRate != null) "Interest " + shortTermProduct.interestRate.toString() +"%" else "",
                             onClickContainer = {
                                 //Navigate  to  EmergencyLoan Screen
                                 //Transfer data to the second screen

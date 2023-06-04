@@ -54,7 +54,7 @@ fun  ApplyLoanScreen(component: ApplyLoanComponent, innerPadding: PaddingValues)
 
                     Row(modifier = Modifier.fillMaxWidth()){
                         NavigateBackTopBar("Apply Loan", onClickContainer = {
-                            component.onBackNavSelected()
+                            component.onBack()
                         })
                     }
                     Column (modifier = Modifier

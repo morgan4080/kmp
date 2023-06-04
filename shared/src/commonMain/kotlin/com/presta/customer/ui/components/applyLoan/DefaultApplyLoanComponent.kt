@@ -10,6 +10,7 @@ class DefaultApplyLoanComponent(
     private val onShortTermClicked: () -> Unit,
     private val onLongTermClicked: () -> Unit,
     private val onBackNavClicked: () -> Unit,
+    private val onPop: () -> Unit
 ): ApplyLoanComponent , ComponentContext by componentContext {
     override val model: Value<ApplyLoanComponent.Model> =
         MutableValue(
@@ -28,6 +29,10 @@ class DefaultApplyLoanComponent(
 
     override fun onBackNavSelected() {
      onBackNavClicked()
+    }
+
+    override fun onBack() {
+       onPop()
     }
 
 

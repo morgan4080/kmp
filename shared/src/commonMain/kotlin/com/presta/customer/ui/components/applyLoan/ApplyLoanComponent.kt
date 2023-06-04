@@ -6,6 +6,7 @@ interface ApplyLoanComponent {
     fun onShortTermSelected()
     fun onLongTermSelected()
     fun onBackNavSelected()
+    fun onBack()
 
     data class Model(
         val items: List<String>,

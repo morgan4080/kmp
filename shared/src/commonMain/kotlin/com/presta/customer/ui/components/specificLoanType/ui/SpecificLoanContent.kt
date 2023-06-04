@@ -7,15 +7,21 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,8 +35,8 @@ import com.presta.customer.ui.composables.LoanLimitContainer
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.TextInputContainer
 import dev.icerock.moko.resources.compose.fontFamilyResource
-import org.koin.core.KoinApplication.Companion.init
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun  SpecificLoaContent(
     component: SpecificLoansComponent,
@@ -46,11 +52,12 @@ fun  SpecificLoaContent(
     var desiredPeriod by remember {
         mutableStateOf(TextFieldValue())
     }
+    var isError by remember { mutableStateOf(false) }
 
     // Throw error if  user  enters wrong value on   TextField
 
-    val allowedMaxAmount: Double? =state.prestaShortTermLoanProductById?.maxAmount
-    val  allowedMinAmount: Double? = state.prestaShortTermLoanProductById?.minAmount
+    val allowedMaxAmount =state.prestaShortTermLoanProductById?.maxAmount
+    val  allowedMinAmount = state.prestaShortTermLoanProductById?.minAmount
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background),
@@ -80,17 +87,31 @@ fun  SpecificLoaContent(
                 LoanLimitContainer(state)
 
                 Row(modifier = Modifier.padding(top = 16.dp)) {
-                    TextInputContainer("Enter the desired amount", "", inputType = InputTypes.NUMBER, callback = {
-                        if (allowedMaxAmount !== null && allowedMinAmount !== null  && TextFieldValue(it).text !== "") {
-//                            when {
-//                                TextFieldValue(it).text.toDouble() <= allowedMaxAmount
-//                                && TextFieldValue(it).text.toDouble() >= allowedMinAmount -> {
-//                                    amount= TextFieldValue(it)
-//                                }
-//
-//                            }
+                    TextInputContainer("Enter the desired amount", "", inputType = InputTypes.NUMBER) {
+
+                        val inputValue: Double? = TextFieldValue(it).text.toDoubleOrNull()
+
+                        if (inputValue != null) {
+                            if ((inputValue >= allowedMinAmount!!.toDouble()  && TextFieldValue(it).text.toDouble() <= allowedMaxAmount!!.toDouble() )   && (TextFieldValue(it).text !== "")) {
+                                amount = TextFieldValue(it)
+                                isError = false
+
+                            } else {
+                                isError = true
+                            }
                         }
-                    })
+                    }
+                }
+
+                if (isError){
+
+                    Text(
+                        modifier = Modifier.padding(top = 10.dp, start = 5.dp),
+                        text = "out of range",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        color = Color.Red
+                    )
 
                 }
 
@@ -110,12 +131,12 @@ fun  SpecificLoaContent(
                 ) {
                     ActionButton("Confirm", onClickContainer = {
                         //Navigate  to confirm Screen
-                        if (amount.text!== "" && desiredPeriod.text!== ""){
+                        if (amount.text !== "" && desiredPeriod.text!== ""){
                             //pass  amount  and the desired period
                             component.onConfirmSelected(state.prestaShortTermLoanProductById?.refId.toString())
                         }
 
-                    }, enabled =amount.text!== "" && desiredPeriod.text!== "" )
+                    }, enabled = amount.text!="" && desiredPeriod.text!== "" && !isError)
                 }
             }
         }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -83,12 +84,12 @@ fun ShortTermTopUpList(
                                     Text(text = if(topUpList.name!=null)  topUpList.name.toString() else "" ,
                                         fontSize = 12.sp,
                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
-                                        color = labelTextColor
+                                        color = MaterialTheme.colorScheme.onBackground
                                     )
                                     Text(
                                         text = "min. "+topUpList.minAmount+"-max. "+topUpList.maxAmount,
                                         fontSize = 10.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                     )
                                 }
                             }
@@ -97,7 +98,7 @@ fun ShortTermTopUpList(
                                 Text(text ="Bal.Kes"+ topUpList.loanBalance.toString(),
                                     fontSize = 12.sp,
                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                                    color = labelTextColor
+                                    color = MaterialTheme.colorScheme.onBackground
                                 )
                                 Text(
                                     text = topUpList.daysAvailable.toString(),

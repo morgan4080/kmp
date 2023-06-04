@@ -80,3 +80,5 @@ fun  LoanConfirmationContent(
 
     }
 }
+
+

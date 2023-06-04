@@ -1,9 +1,6 @@
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.*
@@ -16,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.ui.theme.backArrowColor
-import com.presta.customer.ui.theme.labelTextColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,18 +35,17 @@ fun  ProductSelectionCard(label: String, description: String?=null, onClickConta
                     Text(
                         text = label,
                         modifier = Modifier.padding(start = 15.dp),
-                        fontSize = 12.sp,
-                        color = labelTextColor,
+                        fontSize = 14.sp,
+                        color= MaterialTheme.colorScheme.onBackground,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                     )
                     //Spacer(modifier = Modifier.weight(1f))
                     if (description != null) {
                         Text(
-
                             text = description,
                             modifier = Modifier.padding(start = 15.dp),
                             fontSize = 10.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                         )
                     }
 

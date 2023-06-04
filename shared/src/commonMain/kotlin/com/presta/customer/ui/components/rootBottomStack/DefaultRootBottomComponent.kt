@@ -80,7 +80,11 @@ class DefaultRootBottomComponent(
     private fun rootLoansComponent(componentContext: ComponentContext): RootLoansComponent =
         DefaultRootLoansComponent(
             componentContext = componentContext,
-            storeFactory = storeFactory
+            storeFactory = storeFactory,
+            pop = {
+                navigationBottomStackNavigation.pop()
+            }
+
         )
 
     private fun rootSavingsComponent(componentContext: ComponentContext): RootSavingsComponent =
