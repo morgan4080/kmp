@@ -1,6 +1,5 @@
 package com.presta.customer.network.payments.data
 
-import com.presta.customer.network.payments.model.PaymentsResponse
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,7 +15,7 @@ interface PaymentsRepository {
     suspend fun pollPaymentStatus(
         token: String,
         correlationId: String
-    ): Result<PaymentsResponse>
+    ): Result<String>
     suspend fun makePayment(
         token: String,
         phoneNumber: String,
@@ -24,5 +23,5 @@ interface PaymentsRepository {
         beneficiaryPhoneNumber: String?,
         amount: Int,
         paymentType: PaymentTypes
-    ): Result<PaymentsResponse>
+    ): Result<String>
 }
