@@ -24,6 +24,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,17 +37,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
 import com.presta.customer.ui.composables.ActionButton
+import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.LoanStatusContainer
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.Paginator
 import com.presta.customer.ui.composables.TextInputContainer
 import com.presta.customer.ui.composables.disbursementDetailsRow
+import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.theme.backArrowColor
 import com.presta.customer.ui.theme.labelTextColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
@@ -52,26 +58,35 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PayLoanScreen(component: PayLoanComponent){
-
-   // val state = rememberLazyListState()
     val stateLazyRow0 = rememberLazyListState()
-   // val stateLazyRow = rememberLazyListState()
+    var amount by remember {
+        mutableStateOf(TextFieldValue())
+    }
     var launchPopUp by remember { mutableStateOf(false) }
 
-    Surface(
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    Scaffold (
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.background),
-        color = Color.White
+            .padding(LocalSafeArea.current)
+            .background(color = MaterialTheme.colorScheme.background)
+            .fillMaxHeight(),
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackBarHostState,
+                modifier = Modifier.padding(bottom = 80.dp)
+            )
+        }
     ) {
         Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
 
-            Row(modifier = Modifier
-                .fillMaxWidth()) {
-
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
                 NavigateBackTopBar("Pay Loan", onClickContainer = {
 
                 })
-
             }
 
             Column(
@@ -83,9 +98,13 @@ fun PayLoanScreen(component: PayLoanComponent){
             ) {
 
                 Text(
-                    text = "My loans",
-                    color = labelTextColor
+                    modifier = Modifier,
+                    text = "My Loans",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 14.sp,
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                 )
+
                 LazyRow(modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     state = stateLazyRow0,
@@ -93,9 +112,7 @@ fun PayLoanScreen(component: PayLoanComponent){
                     content = {
                         items(3) {
                             Box(
-                                modifier = Modifier
-                                    .fillParentMaxWidth()
-
+                                modifier = Modifier.fillParentMaxWidth()
                             ) {
                                 LoanStatusContainer()
                             }
@@ -103,23 +120,30 @@ fun PayLoanScreen(component: PayLoanComponent){
                     }
                 )
 
-                //dotted indicator
-                Row(modifier = Modifier
-                    .fillMaxWidth()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Paginator(3, stateLazyRow0.firstVisibleItemIndex)
 
                 }
 
-                Row(modifier = Modifier.fillMaxWidth()
-                    .padding(top = 30.dp)) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 30.dp)
+                ) {
 
-                    TextInputContainer("Desired ammount", "")
+                    TextInputContainer("Desired Amount","", inputType = InputTypes.NUMBER, callback = {
+                        amount = TextFieldValue(it)
+                    })
 
                 }
 
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 35.dp)) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 35.dp)
+                ) {
                     ActionButton("Pay Now", onClickContainer = {
                         component.onPaySelected()
 
@@ -129,34 +153,25 @@ fun PayLoanScreen(component: PayLoanComponent){
 
                 Card(
                     onClick = {
-
-                        //Navigate to view More Details
-                              //launch view More details PoP up
-                              launchPopUp=true
-
+                        launchPopUp = !launchPopUp
                     },
-
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 24.5.dp),
                     colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background)
                 ) {
-
                     Text(
                         "View More Details",
                         fontSize = 12.sp,
                         textDecoration = TextDecoration.Underline,
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
-
                 }
 
                 //View More details popup
                 //Added overlay  to the po up screen
-                if (launchPopUp){
-
-                    Popup(){
-
+                if (launchPopUp) {
+                    Popup {
                         Column(modifier = Modifier
                             .fillMaxWidth()
                             .fillMaxHeight()
@@ -219,8 +234,8 @@ fun PayLoanScreen(component: PayLoanComponent){
                                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                                             )
                                             Text(text = "(PerForming)",
-                                            fontSize = 10.sp,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                                                fontSize = 10.sp,
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                                             )
 
                                         }
@@ -244,8 +259,8 @@ fun PayLoanScreen(component: PayLoanComponent){
                                     Row(modifier = Modifier
                                         .fillMaxWidth()){
                                         Text(text = "Loan schedule",
-                                        fontSize = 12.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                            fontSize = 12.sp,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
                                             color = MaterialTheme.colorScheme.onPrimaryContainer
                                         )
 
@@ -278,10 +293,10 @@ fun PayLoanScreen(component: PayLoanComponent){
                                         onClick = {
                                             launchPopUp=false
 
-                                    }){
+                                        }){
                                         Text(text = "Dismiss",
-                                        fontSize = 9.sp,
-                                        color = labelTextColor)
+                                            fontSize = 9.sp,
+                                            color = labelTextColor)
 
                                     }
 
@@ -299,9 +314,7 @@ fun PayLoanScreen(component: PayLoanComponent){
             }
 
         }
-
     }
-
 }
 
 

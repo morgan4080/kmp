@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.network.profile.model.PostingType
 import com.presta.customer.network.profile.model.PrestaTransactionHistoryResponse
+import com.presta.customer.ui.helpers.formatDate
+import com.presta.customer.ui.helpers.formatMoney
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
@@ -92,13 +94,13 @@ fun singleTransaction(transactionHistory:  List<PrestaTransactionHistoryResponse
                 Column {
                     Text(
                         modifier = Modifier.align(Alignment.End),
-                        text = transaction.amount.toString(),
+                        text = formatMoney(transaction.amount),
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 14.sp,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
                     )
                     Text(
-                        text = transaction.created,
+                        text = formatDate(transaction.created),
                         fontSize = 10.sp,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                     )

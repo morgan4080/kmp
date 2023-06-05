@@ -28,12 +28,11 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 @Composable
 fun LoanStatusContainer() {
     ElevatedCard(modifier = Modifier.fillMaxWidth()
-        .border(BorderStroke(1.dp,Color.White), shape = RoundedCornerShape(size = 12.dp))
         .clip(RoundedCornerShape(size = 12.dp))
         .absolutePadding(left = 2.dp, right = 2.dp, top = 10.dp, bottom = 5.dp)) {
         Box(
             modifier = Modifier
-                .background(color = MaterialTheme.colorScheme.background)
+                .background(color = MaterialTheme.colorScheme.inverseOnSurface)
         ) {
             Column(
                 modifier = Modifier.padding(
