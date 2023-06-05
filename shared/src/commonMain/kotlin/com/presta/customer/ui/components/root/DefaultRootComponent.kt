@@ -3,6 +3,7 @@ package com.presta.customer.ui.components.root
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
@@ -204,8 +205,10 @@ class DefaultRootComponent(
                 navigation.push(Config.AllTransactions)
             },
             logoutToSplash = {
-                println(":::::::LOG OUT TO SPLASH SCREEN")
                 navigation.replaceAll(Config.Splash)
+            },
+            gotoPayLoans = {
+                navigation.bringToFront(Config.PayLoan)
             }
         )
 
@@ -260,7 +263,7 @@ class DefaultRootComponent(
         @Parcelize
         object RootBottom : Config()
         @Parcelize
-        data class PayLoan (val refId: String) :Config()
+        object PayLoan :Config()
         @Parcelize
         object PayLoanPrompt :Config()
 

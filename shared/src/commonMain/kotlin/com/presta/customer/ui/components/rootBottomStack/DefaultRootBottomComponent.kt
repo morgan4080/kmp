@@ -26,6 +26,7 @@ class DefaultRootBottomComponent(
     val storeFactory: StoreFactory,
     private val logoutToSplash: () -> Unit,
     private val gotoAllTransactions: () -> Unit,
+    private val gotoPayLoans: () -> Unit,
 ) : RootBottomComponent, ComponentContext by componentContext {
 
     private val navigationBottomStackNavigation = StackNavigation<ConfigBottom>()
@@ -67,7 +68,7 @@ class DefaultRootBottomComponent(
                 navigationBottomStackNavigation.bringToFront(ConfigBottom.RootLoans)
             },
             gotoPayLoans = {
-                navigationBottomStackNavigation.bringToFront(ConfigBottom.RootLoans)
+                gotoPayLoans()
             },
             gotoStatement = {
 

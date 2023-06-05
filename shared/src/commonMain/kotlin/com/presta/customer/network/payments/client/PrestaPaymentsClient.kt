@@ -7,6 +7,7 @@ import com.presta.customer.network.payments.model.PaymentsResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.header
 import io.ktor.client.request.post
+import io.ktor.client.request.get
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -16,6 +17,22 @@ import kotlinx.serialization.Serializable
 class PrestaPaymentsClient(
     private val httpClient: HttpClient
 ) {
+
+    suspend fun pollPaymentStatus(
+        token: String,
+        correlationId: String
+    ): PaymentsResponse {
+        return paymentsErrorHandler {
+            httpClient.get(NetworkConstants.PrestaPollPaymentStatus.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                contentType(ContentType.Application.Json)
+
+                url {
+                    parameters.append("correlationId", correlationId)
+                }
+            }
+        }
+    }
     suspend fun makeC2BPayment(
         token: String,
         phoneNumber: String,

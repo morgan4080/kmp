@@ -7,6 +7,19 @@ import org.koin.core.component.inject
 
 class PaymentsRepositoryImpl : PaymentsRepository, KoinComponent {
     private val paymentsClient by inject<PrestaPaymentsClient>()
+    override suspend fun pollPaymentStatus(
+        token: String,
+        correlationId: String
+    ): Result<PaymentsResponse> {
+        return try {
+            val response = paymentsClient.pollPaymentStatus(token, correlationId)
+            Result.success(response)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
     override suspend fun makePayment(
         token: String,
         phoneNumber: String,

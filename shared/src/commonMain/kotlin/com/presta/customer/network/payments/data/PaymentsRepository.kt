@@ -13,6 +13,10 @@ enum class PaymentTypes {
     MEMBERSHIPFEES
 }
 interface PaymentsRepository {
+    suspend fun pollPaymentStatus(
+        token: String,
+        correlationId: String
+    ): Result<PaymentsResponse>
     suspend fun makePayment(
         token: String,
         phoneNumber: String,

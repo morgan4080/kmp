@@ -1,7 +1,5 @@
 package com.presta.customer.network
 
-import com.presta.customer.organisation.OrganisationModel
-
 object NetworkConstants {
     const val applicationsBaseUrl = "https://staging-lending.presta.co.ke/applications/api/v2/"
     const val applicationsBaseUrlV1 = "https://staging-lending.presta.co.ke/applications/api/v1/"
@@ -50,7 +48,11 @@ object NetworkConstants {
     }
 
     object PrestaMakePayment {
-        const val route = applicationsBaseUrlV1 + "payments"
+        const val route = applicationsBaseUrl + "app-payments"
+    }
+
+    object PrestaPollPaymentStatus {
+        const val route = applicationsBaseUrl + "app-payments/poll-status"
     }
 
     object PrestaGetTransactionsHistory {
@@ -63,6 +65,4 @@ object NetworkConstants {
     object  PrestaGetShortTermToUpList{
         const val  route= applicationV1BaseUrl + "query/topup-loans"
     }
-
-
 }
