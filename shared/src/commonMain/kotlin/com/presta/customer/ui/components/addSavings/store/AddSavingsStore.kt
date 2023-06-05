@@ -13,7 +13,7 @@ interface AddSavingsStore: Store<AddSavingsStore.Intent, AddSavingsStore.State, 
             val amount: Int,
             val paymentType: PaymentTypes
         ): Intent()
-        data class PollPayment(val token: String, val correlationId: String?): Intent()
+        data class PollPayment(val token: String, val correlationId: String): Intent()
         data class UpdateError(val error: String?): Intent()
     }
 
