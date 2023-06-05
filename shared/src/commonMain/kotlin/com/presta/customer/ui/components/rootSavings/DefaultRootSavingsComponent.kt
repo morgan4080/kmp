@@ -95,6 +95,7 @@ class DefaultRootSavingsComponent(
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
             correlationId = config.correlationId,
+            amount = config.amount,
             onPop = {
                 savingsNavigation.pop()
             },
@@ -103,7 +104,10 @@ class DefaultRootSavingsComponent(
                     println("Show COMPLETED")
                 }
 
-                if (paymentStatus == PaymentStatuses.FAILURE) {
+                if (
+                    paymentStatus == PaymentStatuses.FAILURE
+                    || paymentStatus == PaymentStatuses.CANCELLED
+                ) {
                     println("Show FAILURE")
                 }
             }

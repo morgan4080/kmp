@@ -13,6 +13,8 @@ interface ProcessingTransactionComponent {
     val processingTransactionStore: ProcessingTransactionStore
     val processingTransactionState: StateFlow<ProcessingTransactionStore.State>
 
+    val amount: Double
+
     fun onBackNavSelected()
     fun onAuthEvent(event: AuthStore.Intent)
 

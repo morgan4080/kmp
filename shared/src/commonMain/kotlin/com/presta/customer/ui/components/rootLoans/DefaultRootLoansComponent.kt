@@ -24,7 +24,6 @@ import com.presta.customer.ui.components.longTermLoans.LongTermLoansComponent
 import com.presta.customer.ui.components.modeofDisbursement.ModeOfDisbursementComponent
 import com.presta.customer.ui.components.processingTransaction.DefaultProcessingTransactionComponent
 import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
-import com.presta.customer.ui.components.rootSavings.DefaultRootSavingsComponent
 import com.presta.customer.ui.components.shortTermLoans.DefaultShortTermLoansComponent
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
 import com.presta.customer.ui.components.specificLoanType.DefaultSpecificLoansComponent
@@ -176,7 +175,7 @@ class DefaultRootLoansComponent(
         DefaultModeOfDisbursementComponent(
             componentContext = componentContext,
             onMpesaClicked = {
-                loansNavigation.push(ConfigLoans.ProcessingTransaction(it))
+                loansNavigation.push(ConfigLoans.ProcessingTransaction(it, 0.00))
             },
             onBankClicked = {
                 loansNavigation.push(ConfigLoans.BankDisbursement)
@@ -194,6 +193,7 @@ class DefaultRootLoansComponent(
             storeFactory = storeFactory,
             componentContext = componentContext,
             correlationId = config.correlationId,
+            amount = config.amount,
             mainContext = prestaDispatchers.main,
             onPop = {
                 loansNavigation.pop()
@@ -203,7 +203,8 @@ class DefaultRootLoansComponent(
                     loansNavigation.push(ConfigLoans.SuccessfulTransaction)
                 }
 
-                if (paymentStatus == PaymentStatuses.FAILURE) {
+                if (paymentStatus == PaymentStatuses.FAILURE
+                    || paymentStatus == PaymentStatuses.CANCELLED) {
                     loansNavigation.push(ConfigLoans.FailedTransaction)
                 }
             }
@@ -268,7 +269,7 @@ class DefaultRootLoansComponent(
         object DisbursementMethod : ConfigLoans()
 
         @Parcelize
-        data class ProcessingTransaction(val correlationId: String) : ConfigLoans()
+        data class ProcessingTransaction(val correlationId: String, val amount: Double) : ConfigLoans()
 
         @Parcelize
         object BankDisbursement : ConfigLoans()

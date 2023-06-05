@@ -45,6 +45,7 @@ class DefaultProcessingTransactionComponent(
     val onPop: () -> Unit,
     val navigateToCompleteFailure: (paymentStatus: PaymentStatuses) -> Unit,
     override val correlationId: String,
+    override val amount: Double,
 ): ProcessingTransactionComponent, ComponentContext by componentContext, KoinComponent {
 
     private val paymentsRepository by inject<PaymentsRepository>()
@@ -91,36 +92,33 @@ class DefaultProcessingTransactionComponent(
 
     private val poller = CoroutinePoller(paymentsRepository, mainContext)
 
-    private var refreshTokenJob: Job? = null
     private fun refreshToken() {
-        if (refreshTokenJob?.isActive == true) return
-
-        refreshTokenJob = scope.launch {
+        scope.launch {
             authState.collect { state ->
+                println("::::state.cachedMemberData")
+
                 println(state.cachedMemberData)
+
                 if (state.cachedMemberData !== null) {
                     onAuthEvent(AuthStore.Intent.RefreshToken(
                         tenantId = OrganisationModel.organisation.tenant_id,
                         refId = state.cachedMemberData.refId
                     ))
 
-                    val flow = poller.poll(1_000, state.cachedMemberData.accessToken, correlationId)
+                    val flow = poller.poll(2_000L, state.cachedMemberData.accessToken, correlationId)
 
                     flow.collect {
                         it.onSuccess { response ->
-                            println("Poller Response")
-                            println(response)
                             onProcessingTransactionEvent(ProcessingTransactionStore.Intent.UpdatePaymentStatus(response))
                         }.onFailure { error ->
-                            println("Poller error")
-                            println(error)
                             onProcessingTransactionEvent(ProcessingTransactionStore.Intent.UpdateError(error.message))
                         }
                     }
 
                     poller.close()
+                } else {
+                    onAuthEvent(AuthStore.Intent.GetCachedMemberData)
                 }
-                this.cancel()
             }
         }
     }
@@ -130,8 +128,11 @@ class DefaultProcessingTransactionComponent(
         processingTransactionStateScopeJob = scope.launch {
             processingTransactionState.collect {  state ->
                 if (state.paymentStatus !== null) {
-                    if (state.paymentStatus == PaymentStatuses.COMPLETED || state.paymentStatus == PaymentStatuses.FAILURE) {
-                        navigateToCompleteFailure(state.paymentStatus)
+                    if (state.paymentStatus.status == PaymentStatuses.COMPLETED || state.paymentStatus.status == PaymentStatuses.FAILURE || state.paymentStatus.status == PaymentStatuses.CANCELLED) {
+                        onProcessingTransactionEvent(ProcessingTransactionStore.Intent.UpdateLoading(false))
+                        if (!state.isLoading) {
+                            navigateToCompleteFailure(state.paymentStatus.status)
+                        }
                     }
                 }
             }
@@ -139,8 +140,8 @@ class DefaultProcessingTransactionComponent(
     }
 
     init {
-        onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         refreshToken()
         processTransactionState()
+        onProcessingTransactionEvent(ProcessingTransactionStore.Intent.UpdateLoading(true))
     }
 }

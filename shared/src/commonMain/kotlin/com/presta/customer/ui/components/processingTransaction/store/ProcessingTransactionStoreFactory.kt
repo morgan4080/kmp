@@ -5,19 +5,12 @@ import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
-import com.presta.customer.network.payments.data.PaymentsRepository
-import com.presta.customer.network.payments.model.PaymentStatuses
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
+import com.presta.customer.network.payments.model.PrestaPollingResponse
 import prestaDispatchers
 
 class ProcessingTransactionStoreFactory(
     private val storeFactory: StoreFactory
-): KoinComponent {
-    private val paymentsRepository by inject<PaymentsRepository>()
-
+) {
     fun create(): ProcessingTransactionStore =
         object: ProcessingTransactionStore, Store<ProcessingTransactionStore.Intent, ProcessingTransactionStore.State, Nothing> by storeFactory.create(
             name = "ProcessingTransactionStore",
@@ -27,7 +20,7 @@ class ProcessingTransactionStoreFactory(
             reducer = ReducerImpl
         ) {}
     private sealed class Msg {
-        data class PaymentPollingLoaded(val paymentStatus: PaymentStatuses): Msg()
+        data class PaymentPollingLoaded(val paymentStatus: PrestaPollingResponse): Msg()
         data class ProcessingTransactionLoading(val isLoading: Boolean = true): Msg()
         data class ProcessingTransactionFailed(val error: String?): Msg()
         data class  ClearError(val error: String?): Msg()
@@ -45,6 +38,7 @@ class ProcessingTransactionStoreFactory(
             when(intent) {
                 is ProcessingTransactionStore.Intent.UpdatePaymentStatus -> dispatch(Msg.PaymentPollingLoaded(paymentStatus = intent.paymentStatus))
                 is ProcessingTransactionStore.Intent.UpdateError -> dispatch(Msg.ClearError(intent.error))
+                is ProcessingTransactionStore.Intent.UpdateLoading -> dispatch(Msg.ProcessingTransactionLoading(intent.isLoading))
             }
     }
 

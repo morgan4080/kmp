@@ -6,7 +6,6 @@ import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.registration.model.PrestaRegistrationResponse
 import com.presta.customer.ui.components.root.DefaultRootComponent
 import com.presta.customer.ui.composables.InputTypes
-import io.ktor.utils.io.core.Input
 
 
 enum class InputFields {
