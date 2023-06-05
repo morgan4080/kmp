@@ -15,7 +15,7 @@ import com.presta.customer.ui.components.banKDisbursement.BankDisbursementScreen
 import com.presta.customer.ui.components.failedTransaction.FailedTransactionScreen
 import com.presta.customer.ui.components.loanConfirmation.ui.LoansConfirmationScreen
 import com.presta.customer.ui.components.longTermLoans.LongTermLoansScreen
-import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionScreen
+import com.presta.customer.ui.components.processingTransaction.ui.ProcessingTransactionScreen
 import com.presta.customer.ui.components.rootLoans.RootLoansComponent
 import com.presta.customer.ui.components.shortTermLoans.ui.ShortTermLoansScreen
 import com.presta.customer.ui.components.specificLoanType.ui.SpecificLoansScreen

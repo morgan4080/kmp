@@ -1,15 +1,20 @@
 package com.presta.customer.ui.components.processingTransaction
 
-import com.arkivanov.decompose.value.Value
+import com.presta.customer.ui.components.addSavings.store.AddSavingsStore
+import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.processingTransaction.store.ProcessingTransactionStore
+import kotlinx.coroutines.flow.StateFlow
 
 interface ProcessingTransactionComponent {
+    val correlationId: String
+    val authStore: AuthStore
+    val authState: StateFlow<AuthStore.State>
 
-    val model: Value<Model>
+    val processingTransactionStore: ProcessingTransactionStore
+    val processingTransactionState: StateFlow<ProcessingTransactionStore.State>
 
-    fun onSelected(item: String)
+    fun onBackNavSelected()
+    fun onAuthEvent(event: AuthStore.Intent)
 
-    data class Model(
-        val items: List<String>,
-    )
-
+    fun onProcessingTransactionEvent(event: ProcessingTransactionStore.Intent)
 }

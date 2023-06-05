@@ -13,14 +13,13 @@ interface AddSavingsStore: Store<AddSavingsStore.Intent, AddSavingsStore.State, 
             val amount: Int,
             val paymentType: PaymentTypes
         ): Intent()
-        data class PollPayment(val token: String, val correlationId: String): Intent()
         data class UpdateError(val error: String?): Intent()
+        data class ClearCorrelationId(val correlationId: String?): Intent()
     }
 
     data class State(
         val isLoading: Boolean = false,
         val error: String? = null,
-        val correlationId: String? = null,
-        val paymentStatus: String? = null,
+        val correlationId: String? = null
     )
 }

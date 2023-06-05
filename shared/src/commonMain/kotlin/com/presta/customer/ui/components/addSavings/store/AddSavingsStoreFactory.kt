@@ -27,8 +27,7 @@ class AddSavingsStoreFactory (
             reducer = ReducerImpl
         ) {}
     private sealed class Msg {
-        data class AddSavingsLoaded(val correlationId: String): Msg()
-        data class PaymentPollingLoaded(val paymentStatus: String): Msg()
+        data class AddSavingsLoaded(val correlationId: String?): Msg()
         data class AddSavingsLoading(val isLoading: Boolean = true): Msg()
         data class AddSavingsFailed(val error: String?): Msg()
         data class  ClearError(val error: String?): Msg()
@@ -52,36 +51,9 @@ class AddSavingsStoreFactory (
                     amount = intent.amount,
                     paymentType = intent.paymentType
                 )
-                is AddSavingsStore.Intent.PollPayment -> pollPayment(
-                    token = intent.token,
-                    correlationId = intent.correlationId
-                )
+                is AddSavingsStore.Intent.ClearCorrelationId -> dispatch(Msg.AddSavingsLoaded(intent.correlationId))
                 is AddSavingsStore.Intent.UpdateError -> dispatch(Msg.ClearError(intent.error))
             }
-
-
-        private var pollPaymentJob: Job? = null
-
-        private fun pollPayment(
-            token: String,
-            correlationId: String
-        ) {
-            if (pollPaymentJob?.isActive == true) return
-
-            dispatch(Msg.AddSavingsLoading())
-
-            pollPaymentJob = scope.launch {
-                paymentsRepository
-                    .pollPaymentStatus(token, correlationId)
-                    .onSuccess { response ->
-                        dispatch(Msg.PaymentPollingLoaded(response))
-                    }.onFailure { e ->
-                        dispatch(Msg.AddSavingsFailed(e.message))
-                    }
-
-                dispatch(Msg.AddSavingsLoading(false))
-            }
-        }
 
         private var makePaymentsJob: Job? = null
 
@@ -120,7 +92,6 @@ class AddSavingsStoreFactory (
         override fun AddSavingsStore.State.reduce(msg: Msg): AddSavingsStore.State =
             when (msg) {
                 is Msg.AddSavingsLoaded -> copy(correlationId = msg.correlationId)
-                is Msg.PaymentPollingLoaded -> copy(paymentStatus = msg.paymentStatus)
                 is Msg.AddSavingsLoading -> copy(isLoading = msg.isLoading)
                 is Msg.AddSavingsFailed -> copy(error = msg.error)
                 is Msg.ClearError -> copy(error = msg.error)

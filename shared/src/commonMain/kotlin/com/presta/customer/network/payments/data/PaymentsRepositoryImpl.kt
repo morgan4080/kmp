@@ -1,6 +1,7 @@
 package com.presta.customer.network.payments.data
 
 import com.presta.customer.network.payments.client.PrestaPaymentsClient
+import com.presta.customer.network.payments.model.PaymentStatuses
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -9,7 +10,7 @@ class PaymentsRepositoryImpl : PaymentsRepository, KoinComponent {
     override suspend fun pollPaymentStatus(
         token: String,
         correlationId: String
-    ): Result<String> {
+    ): Result<PaymentStatuses> {
         return try {
             val response = paymentsClient.pollPaymentStatus(token, correlationId)
             Result.success(response)

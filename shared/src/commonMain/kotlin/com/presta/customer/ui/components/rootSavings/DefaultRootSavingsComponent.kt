@@ -10,6 +10,8 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.presta.customer.network.payments.data.PaymentTypes
+import com.presta.customer.network.payments.model.PaymentStatuses
 import com.presta.customer.ui.components.addSavings.AddSavingsComponent
 import com.presta.customer.ui.components.addSavings.DefaultAddSavingsComponent
 import com.presta.customer.ui.components.processingTransaction.DefaultProcessingTransactionComponent
@@ -47,7 +49,7 @@ class DefaultRootSavingsComponent(
                 addSavingsComponent(componentContext)
             )
             is ConfigSavings.ProcessingTransaction -> RootSavingsComponent.ChildSavings.ProcessingTransactionChild(
-                processingTransactionComponent(componentContext)
+                processingTransactionComponent(componentContext, config)
             )
             is ConfigSavings.SavingsTransactionHistory -> RootSavingsComponent.ChildSavings.TransactionHistoryChild(
                 savingsTransactionHistoryComponent(componentContext)
@@ -78,10 +80,8 @@ class DefaultRootSavingsComponent(
            componentContext = componentContext,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
-            onConfirmClicked = {
-                //Navigate to processing Transaction
-                savingsNavigation.push(ConfigSavings.ProcessingTransaction)
-
+            onConfirmClicked = {correlationId, amount, mode ->
+                savingsNavigation.push(ConfigSavings.ProcessingTransaction(correlationId, amount, mode))
             },
             onBackNavClicked = {
                 savingsNavigation.pop()
@@ -89,9 +89,24 @@ class DefaultRootSavingsComponent(
         )
 
 
-    private fun processingTransactionComponent(componentContext: ComponentContext): ProcessingTransactionComponent =
+    private fun processingTransactionComponent(componentContext: ComponentContext, config: ConfigSavings.ProcessingTransaction): ProcessingTransactionComponent =
         DefaultProcessingTransactionComponent(
-            componentContext = componentContext
+            componentContext = componentContext,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            correlationId = config.correlationId,
+            onPop = {
+                savingsNavigation.pop()
+            },
+            navigateToCompleteFailure = { paymentStatus ->
+                if (paymentStatus == PaymentStatuses.COMPLETED) {
+                    println("Show COMPLETED")
+                }
+
+                if (paymentStatus == PaymentStatuses.FAILURE) {
+                    println("Show FAILURE")
+                }
+            }
         )
 
     private fun savingsTransactionHistoryComponent(componentContext: ComponentContext): SavingsTransactionHistoryComponent =
@@ -108,7 +123,7 @@ class DefaultRootSavingsComponent(
         object AddSavings: ConfigSavings()
 
         @Parcelize
-        object ProcessingTransaction: ConfigSavings()
+        data class ProcessingTransaction(val correlationId: String, val amount: Double,val mode: PaymentTypes): ConfigSavings()
 
         @Parcelize
         object SavingsTransactionHistory: ConfigSavings()

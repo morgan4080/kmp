@@ -1,4 +1,4 @@
-package com.presta.customer.ui.components.processingTransaction
+package com.presta.customer.ui.components.processingTransaction.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
 import com.presta.customer.ui.composables.NavigateBackTopBar
 
 @Composable
@@ -84,7 +85,7 @@ fun ProcessingTransactionScreen(component: ProcessingTransactionComponent) {
             Row(modifier = Modifier.padding(start = 80.dp, end = 80.dp, top = 22.dp)) {
 
                 Text(
-                    text = "Your transaction is being processed...…….……..",
+                    text = "Your transaction is being processed ${component.correlationId}",
                     fontSize = 14.sp
                 )
 

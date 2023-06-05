@@ -12,6 +12,7 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.presta.customer.network.payments.model.PaymentStatuses
 import com.presta.customer.ui.components.applyLoan.DefaultApplyLoanComponent
 import com.presta.customer.ui.components.banKDisbursement.BankDisbursementComponent
 import com.presta.customer.ui.components.banKDisbursement.DefaultBankDisbursementComponent
@@ -23,6 +24,7 @@ import com.presta.customer.ui.components.longTermLoans.LongTermLoansComponent
 import com.presta.customer.ui.components.modeofDisbursement.ModeOfDisbursementComponent
 import com.presta.customer.ui.components.processingTransaction.DefaultProcessingTransactionComponent
 import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
+import com.presta.customer.ui.components.rootSavings.DefaultRootSavingsComponent
 import com.presta.customer.ui.components.shortTermLoans.DefaultShortTermLoansComponent
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
 import com.presta.customer.ui.components.specificLoanType.DefaultSpecificLoansComponent
@@ -81,7 +83,7 @@ class DefaultRootLoansComponent(
         )
 
         is ConfigLoans.ProcessingTransaction -> RootLoansComponent.ChildLoans.ProcessingTransactionChild(
-            processingTransactionComponent(componentContext)
+            processingTransactionComponent(componentContext, config)
         )
 
         is ConfigLoans.BankDisbursement -> RootLoansComponent.ChildLoans.BankDisbursementChild(
@@ -174,39 +176,49 @@ class DefaultRootLoansComponent(
         DefaultModeOfDisbursementComponent(
             componentContext = componentContext,
             onMpesaClicked = {
-            //Navigate to processing payment screen
-            // loansNavigation.push()
-            loansNavigation.push(ConfigLoans.ProcessingTransaction)
+                loansNavigation.push(ConfigLoans.ProcessingTransaction(it))
+            },
+            onBankClicked = {
+                loansNavigation.push(ConfigLoans.BankDisbursement)
+            },
+            onBackNavClicked = {
+                loansNavigation.pop()
+            },
+            TransactionSuccessful = {
+                loansNavigation.push(ConfigLoans.SuccessfulTransaction)
+            }
+        )
 
-        }, onBankClicked = {
-            //navigate to  BankDisbursement Screen
-            loansNavigation.push(ConfigLoans.BankDisbursement)
-
-        },
-        onBackNavClicked = {
-            loansNavigation.pop()
-        },
-        TransactionSuccessful = {
-            loansNavigation.push(ConfigLoans.SuccessfulTransaction)
-
-        })
-
-    private fun processingTransactionComponent(componentContext: ComponentContext): ProcessingTransactionComponent =
+    private fun processingTransactionComponent(componentContext: ComponentContext, config: ConfigLoans.ProcessingTransaction): ProcessingTransactionComponent =
         DefaultProcessingTransactionComponent(
-            componentContext = componentContext
+            storeFactory = storeFactory,
+            componentContext = componentContext,
+            correlationId = config.correlationId,
+            mainContext = prestaDispatchers.main,
+            onPop = {
+                loansNavigation.pop()
+            },
+            navigateToCompleteFailure = { paymentStatus ->
+                if (paymentStatus == PaymentStatuses.COMPLETED) {
+                    loansNavigation.push(ConfigLoans.SuccessfulTransaction)
+                }
+
+                if (paymentStatus == PaymentStatuses.FAILURE) {
+                    loansNavigation.push(ConfigLoans.FailedTransaction)
+                }
+            }
         )
 
     private fun bankDisbursementComponent(componentContext: ComponentContext): BankDisbursementComponent =
         DefaultBankDisbursementComponent(
             componentContext = componentContext,
             onConfirmClicked = {
-            //Proceed  to show processing,--show failed or successful based on state
                 loansNavigation.push(ConfigLoans.SuccessfulTransaction)
-               // loansNavigation.push(ConfigLoans.FailedTransaction)
-        },
-        onBackNavClicked = {
-            loansNavigation.pop()
-        })
+            },
+            onBackNavClicked = {
+                loansNavigation.pop()
+            }
+        )
     private fun successfulTransactionComponent(componentContext: ComponentContext): SuccessfulTransactionComponent =
         DefaultSuccessfulTransactionComponent(
             componentContext = componentContext,
@@ -256,7 +268,7 @@ class DefaultRootLoansComponent(
         object DisbursementMethod : ConfigLoans()
 
         @Parcelize
-        object ProcessingTransaction : ConfigLoans()
+        data class ProcessingTransaction(val correlationId: String) : ConfigLoans()
 
         @Parcelize
         object BankDisbursement : ConfigLoans()

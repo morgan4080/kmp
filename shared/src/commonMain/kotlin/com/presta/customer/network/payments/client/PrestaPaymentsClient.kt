@@ -3,6 +3,7 @@ package com.presta.customer.network.payments.client
 import com.presta.customer.network.NetworkConstants
 import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.network.payments.errorHandler.paymentsErrorHandler
+import com.presta.customer.network.payments.model.PaymentStatuses
 import io.ktor.client.HttpClient
 import io.ktor.client.request.header
 import io.ktor.client.request.post
@@ -20,7 +21,7 @@ class PrestaPaymentsClient(
     suspend fun pollPaymentStatus(
         token: String,
         correlationId: String
-    ): String {
+    ): PaymentStatuses {
         return paymentsErrorHandler {
             httpClient.get(NetworkConstants.PrestaPollPaymentStatus.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")

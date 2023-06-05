@@ -7,7 +7,7 @@ import com.presta.customer.ui.components.modeofDisbursement.ModeOfDisbursementCo
 
 class DefaultModeOfDisbursementComponent(
 
-    private val onMpesaClicked: () -> Unit,
+    private val onMpesaClicked: (correlationId: String) -> Unit,
     private val onBankClicked: () -> Unit,
     private val onBackNavClicked: () -> Unit,
     private  val TransactionSuccessful: () -> Unit,
@@ -27,10 +27,10 @@ class DefaultModeOfDisbursementComponent(
 
     override val model: Value<ModeOfDisbursementComponent.Model> = models
     override fun onMpesaSelected() {
-        if (Transact){
-            onMpesaClicked()
-
-        }else{
+        if (Transact) {
+            // state flow collection
+            onMpesaClicked("")
+        } else{
             TransactionSuccessful()
         }
 
