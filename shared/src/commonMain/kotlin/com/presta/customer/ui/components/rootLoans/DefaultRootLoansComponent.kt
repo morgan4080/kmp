@@ -21,10 +21,6 @@ import com.presta.customer.ui.components.loanConfirmation.LoanConfirmationCompon
 import com.presta.customer.ui.components.longTermLoans.DefaultLongTermComponent
 import com.presta.customer.ui.components.longTermLoans.LongTermLoansComponent
 import com.presta.customer.ui.components.modeofDisbursement.ModeOfDisbursementComponent
-import com.presta.customer.ui.components.payLoan.DefaultPayLoanComponent
-import com.presta.customer.ui.components.payLoan.PayLoanComponent
-import com.presta.customer.ui.components.payLoanPropmpt.DefaultPayLoanPromptComponent
-import com.presta.customer.ui.components.payLoanPropmpt.PayLoanPromptComponent
 import com.presta.customer.ui.components.processingTransaction.DefaultProcessingTransactionComponent
 import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
 import com.presta.customer.ui.components.shortTermLoans.DefaultShortTermLoansComponent
@@ -36,7 +32,6 @@ import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransact
 import com.presta.customer.ui.components.topUp.DefaultLoanTopUpComponent
 import com.presta.customer.ui.components.topUp.LoanTopUpComponent
 import components.modeofDisbursement.DefaultModeOfDisbursementComponent
-import components.rootLoans.RootLoansComponent
 import prestaDispatchers
 
 class DefaultRootLoansComponent(
@@ -101,12 +96,7 @@ class DefaultRootLoansComponent(
         is ConfigLoans.LoanTopUp -> RootLoansComponent.ChildLoans.LoanTopUpChild(
             loanTopUpComponent(componentContext)
         )
-        is ConfigLoans.PayLoan -> RootLoansComponent.ChildLoans.PayLoanChild(
-            payLoanComponent(componentContext)
-        )
-        is ConfigLoans.PayLoanPrompt -> RootLoansComponent.ChildLoans.PayLoanPromptChild(
-            payLoanPromptComponent(componentContext)
-        )
+
     }
 
     private fun applyLoanComponent(componentContext: ComponentContext): ApplyLoanComponent =
@@ -239,21 +229,6 @@ class DefaultRootLoansComponent(
                 loansNavigation.pop()
             }
         )
-    private fun payLoanComponent(componentContext: ComponentContext): PayLoanComponent =
-        DefaultPayLoanComponent(
-            componentContext = componentContext,
-            onPayClicked = {
-                //push  to confirm Loan Details Screen
-                //Navigate to pay Loan child  a child Of loans
-                //Show  the Pay  Loan child first
-                loansNavigation.push(ConfigLoans.PayLoanPrompt)
-            }
-        )
-    private fun payLoanPromptComponent(componentContext: ComponentContext):PayLoanPromptComponent =
-        DefaultPayLoanPromptComponent(
-            componentContext = componentContext,
-
-            )
 
     private sealed class ConfigLoans : Parcelable {
         @Parcelize
@@ -291,9 +266,6 @@ class DefaultRootLoansComponent(
         object FailedTransaction : ConfigLoans()
         @Parcelize
         data class LoanTopUp(val refId: String) : ConfigLoans()
-        @Parcelize
-        data class PayLoan(val refId: String) : ConfigLoans()
-        @Parcelize
-        object PayLoanPrompt : ConfigLoans()
+
     }
 }

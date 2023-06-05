@@ -10,21 +10,19 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
+import com.presta.customer.ui.components.applyLoan.ui.ApplyLoanScreen
 import com.presta.customer.ui.components.banKDisbursement.BankDisbursementScreen
-import com.presta.customer.ui.components.specificLoanType.ui.SpecificLoansScreen
 import com.presta.customer.ui.components.failedTransaction.FailedTransactionScreen
 import com.presta.customer.ui.components.loanConfirmation.ui.LoansConfirmationScreen
 import com.presta.customer.ui.components.longTermLoans.LongTermLoansScreen
-import com.presta.customer.ui.components.payLoan.PayLoanScreen
+import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionScreen
+import com.presta.customer.ui.components.rootLoans.RootLoansComponent
 import com.presta.customer.ui.components.shortTermLoans.ui.ShortTermLoansScreen
+import com.presta.customer.ui.components.specificLoanType.ui.SpecificLoansScreen
 import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransactionScreen
 import com.presta.customer.ui.components.topUp.LoanTopUpScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
-import com.presta.customer.ui.components.applyLoan.ui.ApplyLoanScreen
-import com.presta.customer.ui.components.payLoanPropmpt.PayLoanPromptScreen
 import components.modeofDisbursement.SelectModeOfDisbursementScreen
-import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionScreen
-import components.rootLoans.RootLoansComponent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,9 +47,6 @@ fun RootLoansScreen(component: RootLoansComponent) {
                 is RootLoansComponent.ChildLoans.SuccessfulTransactionChild-> SuccessfulTransactionScreen(child.component)
                 is RootLoansComponent.ChildLoans.FailedTransactionChild-> FailedTransactionScreen(child.component)
                 is RootLoansComponent.ChildLoans.LoanTopUpChild-> LoanTopUpScreen(child.component)
-                is RootLoansComponent.ChildLoans.PayLoanChild-> PayLoanScreen(child.component)
-                is RootLoansComponent.ChildLoans.PayLoanPromptChild-> PayLoanPromptScreen(child.component)
-
             }
         }
     }

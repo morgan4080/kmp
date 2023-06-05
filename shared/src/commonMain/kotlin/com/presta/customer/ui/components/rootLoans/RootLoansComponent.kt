@@ -1,4 +1,4 @@
-package components.rootLoans
+package com.presta.customer.ui.components.rootLoans
 
 import ApplyLoanComponent
 import FailedTransactionComponent
@@ -38,9 +38,6 @@ interface RootLoansComponent {
         class SuccessfulTransactionChild(val component: SuccessfulTransactionComponent) : ChildLoans()
         class FailedTransactionChild(val component: FailedTransactionComponent) : ChildLoans()
         class LoanTopUpChild(val component: LoanTopUpComponent) : ChildLoans()
-        class PayLoanChild(val component: PayLoanComponent) : ChildLoans()
-        class PayLoanPromptChild(val component: PayLoanPromptComponent) : ChildLoans()
-
     }
 
 }

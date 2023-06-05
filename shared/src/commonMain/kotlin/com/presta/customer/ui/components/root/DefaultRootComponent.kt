@@ -18,6 +18,10 @@ import com.presta.customer.ui.components.onBoarding.DefaultOnboardingComponent
 import com.presta.customer.ui.components.onBoarding.OnBoardingComponent
 import com.presta.customer.ui.components.otp.DefaultOtpComponent
 import com.presta.customer.ui.components.otp.OtpComponent
+import com.presta.customer.ui.components.payLoan.DefaultPayLoanComponent
+import com.presta.customer.ui.components.payLoan.PayLoanComponent
+import com.presta.customer.ui.components.payLoanPropmpt.DefaultPayLoanPromptComponent
+import com.presta.customer.ui.components.payLoanPropmpt.PayLoanPromptComponent
 import com.presta.customer.ui.components.registration.DefaultRegistrationComponent
 import com.presta.customer.ui.components.registration.RegistrationComponent
 import com.presta.customer.ui.components.rootBottomStack.DefaultRootBottomComponent
@@ -58,6 +62,8 @@ class DefaultRootComponent(
             is Config.Auth -> RootComponent.Child.AuthChild(authComponent(componentContext, config))
             is Config.RootBottom -> RootComponent.Child.RootBottomChild(rootBottomComponent(componentContext))
             is Config.AllTransactions -> RootComponent.Child.AllTransactionsChild(allTransactionHistory(componentContext))
+            is Config.PayLoanPrompt->RootComponent.Child.PayLoanPromptChild(payLoanPromptComponent(componentContext))
+            is Config.PayLoan->RootComponent.Child.PayLoanChild(payLoanComponent(componentContext))
         }
 
     private fun splashComponent(componentContext: ComponentContext): SplashComponent =
@@ -213,6 +219,24 @@ class DefaultRootComponent(
             }
         )
 
+    private fun payLoanComponent(componentContext: ComponentContext): PayLoanComponent =
+        DefaultPayLoanComponent(
+            componentContext = componentContext,
+            onPayClicked = {
+                //push  to confirm Loan Details Screen
+                //Navigate to pay Loan child  a child Of loans
+                //Show  the Pay  Loan child first
+                ///loansNavigation.push(DefaultRootLoansComponent.ConfigLoans.PayLoanPrompt)
+            }
+        )
+    private fun payLoanPromptComponent(componentContext: ComponentContext): PayLoanPromptComponent =
+        DefaultPayLoanPromptComponent(
+            componentContext = componentContext,
+
+            )
+
+
+
     enum class OnBoardingContext {
         LOGIN,
         REGISTRATION
@@ -235,5 +259,10 @@ class DefaultRootComponent(
         object AllTransactions : Config()
         @Parcelize
         object RootBottom : Config()
+        @Parcelize
+        data class PayLoan (val refId: String) :Config()
+        @Parcelize
+        object PayLoanPrompt :Config()
+
     }
 }

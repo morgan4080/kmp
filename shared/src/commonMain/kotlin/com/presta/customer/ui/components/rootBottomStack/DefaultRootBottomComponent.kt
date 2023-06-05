@@ -6,7 +6,6 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
@@ -18,9 +17,7 @@ import com.presta.customer.ui.components.rootSavings.DefaultRootSavingsComponent
 import com.presta.customer.ui.components.rootSavings.RootSavingsComponent
 import com.presta.customer.ui.components.sign.DefaultSignComponent
 import com.presta.customer.ui.components.sign.SignComponent
-import com.presta.customer.ui.components.transactionHistory.DefaultTransactionHistoryComponent
-import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
-import components.rootLoans.RootLoansComponent
+import com.presta.customer.ui.components.rootLoans.RootLoansComponent
 import prestaDispatchers
 
 

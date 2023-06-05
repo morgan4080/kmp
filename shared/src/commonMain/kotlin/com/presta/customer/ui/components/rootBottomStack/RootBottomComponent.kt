@@ -1,14 +1,11 @@
 package com.presta.customer.ui.components.rootBottomStack
 
-import ApplyLoanComponent
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
 import com.presta.customer.ui.components.profile.ProfileComponent
 import com.presta.customer.ui.components.rootSavings.RootSavingsComponent
-import com.presta.customer.ui.components.savings.SavingsComponent
 import com.presta.customer.ui.components.sign.SignComponent
-import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
-import components.rootLoans.RootLoansComponent
+import com.presta.customer.ui.components.rootLoans.RootLoansComponent
 
 interface RootBottomComponent {
 
