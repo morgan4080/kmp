@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,7 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
-import com.presta.customer.ui.theme.labelTextColor
+import com.presta.customer.ui.helpers.formatDate
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
@@ -36,7 +37,8 @@ fun LoanStatusContainer(
 ) {
     ElevatedCard(modifier = Modifier.fillMaxWidth()
         .clip(RoundedCornerShape(size = 12.dp))
-        .absolutePadding(left = 2.dp, right = 2.dp, top = 10.dp, bottom = 5.dp)) {
+        .absolutePadding(left = 2.dp, right = 2.dp, top = 10.dp, bottom = 5.dp)
+    ) {
         Box(
             modifier = Modifier
                 .background(color = MaterialTheme.colorScheme.inverseOnSurface)
@@ -47,9 +49,7 @@ fun LoanStatusContainer(
                     start = 24.dp,
                     end = 19.5.dp,
                     bottom = 33.dp,
-                )
-                    .fillMaxWidth()
-
+                ).fillMaxWidth()
             ) {
                 Column(
                     modifier = Modifier
@@ -78,6 +78,7 @@ fun LoanStatusContainer(
                                 fontSize = 12.sp,
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                             )
+
                             Text(
                                 modifier = Modifier.background(
                                     brush = ShimmerBrush(
@@ -97,19 +98,33 @@ fun LoanStatusContainer(
                     Row(
                         modifier = Modifier
                             .padding(top = 10.dp)
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            modifier = Modifier.background(
+                        Text (
+                            modifier = Modifier.background (
                                 brush = ShimmerBrush(
                                     targetValue = 1300f,
                                     showShimmer = totalAmount == null
                                 ),
                                 shape = RoundedCornerShape(12.dp)
-                            ).defaultMinSize(150.dp),
+                            ).defaultMinSize(130.dp),
                             text = if (totalAmount !== null) "KES $totalAmount" else "",
                             fontSize = 20.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                        )
+
+                        Text (
+                            modifier = Modifier.padding(start = 10.dp).background (
+                                brush = ShimmerBrush(
+                                    targetValue = 1300f,
+                                    showShimmer = loanStatus == null
+                                ),
+                                shape = RoundedCornerShape(12.dp)
+                            ).defaultMinSize(80.dp),
+                            text = if (loanStatus !== null) "($loanStatus)" else "",
+                            fontSize = 12.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                         )
                     }
 
@@ -136,7 +151,7 @@ fun LoanStatusContainer(
                                     shape = RoundedCornerShape(12.dp)
                                 ).defaultMinSize(80.dp),
                                 text = if (amountDue !== null) "KES $amountDue" else "",
-                                color = MaterialTheme.colorScheme.error, // #002C56
+                                color = MaterialTheme.colorScheme.error,
                                 fontSize = 12.sp,
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                             )
@@ -144,7 +159,7 @@ fun LoanStatusContainer(
                         Column(modifier = Modifier.padding(start = 29.dp)) {
 
                             Text(
-                                text = "Due",
+                                text = "Due Date",
                                 fontSize = 10.sp,
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                             )
@@ -157,30 +172,7 @@ fun LoanStatusContainer(
                                     ),
                                     shape = RoundedCornerShape(12.dp)
                                 ).defaultMinSize(80.dp),
-                                text = if (dueDate !== null) dueDate else "",
-                                fontSize = 12.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
-                            )
-                        }
-
-
-                        Column(modifier = Modifier.padding(start = 29.dp)) {
-
-                            Text(
-                                text = "Status",
-                                fontSize = 10.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                            )
-
-                            Text(
-                                modifier = Modifier.background(
-                                    brush = ShimmerBrush(
-                                        targetValue = 1300f,
-                                        showShimmer = loanStatus == null
-                                    ),
-                                    shape = RoundedCornerShape(12.dp)
-                                ).defaultMinSize(80.dp),
-                                text = if (loanStatus !== null) loanStatus else "",
+                                text = if (dueDate !== null) formatDate(dueDate) else "",
                                 fontSize = 12.sp,
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                             )

@@ -1,17 +1,15 @@
-package com.presta.customer.ui.components.processingTransaction.ui
+package com.presta.customer.ui.components.payRegistrationFeePrompt.ui
 
-import ProcessingTransactionContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
+import com.presta.customer.ui.components.payRegistrationFeePrompt.PayRegistrationFeeComponent
 
 @Composable
-fun ProcessingTransactionScreen(component: ProcessingTransactionComponent) {
+fun PayRegistrationFeeScreen(component: PayRegistrationFeeComponent) {
     val authState by component.authState.collectAsState()
     val state by component.processingTransactionState.collectAsState()
-
-    ProcessingTransactionContent(
+    PayRegistrationFeeContent(
         authState,
         state,
         component.amount

@@ -21,22 +21,18 @@ import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.processingTransaction.store.ProcessingTransactionStore
-import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.formatMoney
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
 fun ProcessingTransactionContent(
-    onBackNavSelected: () -> Unit,
     authState: AuthStore.State,
     state: ProcessingTransactionStore.State,
     amount: Double
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.fillMaxWidth()) {
-            NavigateBackTopBar("", onClickContainer ={
-                onBackNavSelected()
-            })
+
         }
         Column(modifier = Modifier.fillMaxWidth().padding(top = 26.dp)) {
 

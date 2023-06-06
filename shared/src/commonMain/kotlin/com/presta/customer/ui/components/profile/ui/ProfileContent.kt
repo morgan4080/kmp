@@ -59,6 +59,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.ui.components.addSavings.store.AddSavingsStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.profile.store.ProfileStore
 import com.presta.customer.ui.composables.ActionButton
@@ -81,12 +82,14 @@ data class QuickLinks(val labelTop: String, val labelBottom: String, val icon: I
 fun ProfileContent(
     authState: AuthStore.State,
     state: ProfileStore.State,
+    addSavingsState: AddSavingsStore.State,
     innerPadding: PaddingValues,
     seeAllTransactions: () -> Unit,
     goToSavings: () -> Unit,
     goToLoans: () -> Unit,
     goToPayLoans: () -> Unit,
-    goToStatement: () -> Unit
+    goToStatement: () -> Unit,
+    activateAccount: (amount: Double) -> Unit,
 ) {
     val stateLazyRow0 = rememberLazyListState()
 
@@ -180,8 +183,12 @@ fun ProfileContent(
                             .padding(top = 22.dp, bottom = 22.dp)
                     ) {
                         ActionButton("Activate Now!", onClickContainer = {
-
-                        })
+                            if (authState.cachedMemberData !== null) {
+                                activateAccount(
+                                    authState.cachedMemberData.registrationFees
+                                )
+                            }
+                        }, enabled = authState.cachedMemberData !== null, loading = addSavingsState.isLoading)
                     }
                 }
             }

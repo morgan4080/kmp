@@ -8,12 +8,15 @@ import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.network.onBoarding.model.PinStatus
+import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.organisation.OrganisationModel
+import com.presta.customer.ui.components.addSavings.store.AddSavingsStore
+import com.presta.customer.ui.components.addSavings.store.AddSavingsStoreFactory
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
-import kotlinx.coroutines.CoroutineScope
 import com.presta.customer.ui.components.profile.store.ProfileStore
 import com.presta.customer.ui.components.profile.store.ProfileStoreFactory
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -41,6 +44,7 @@ class DefaultProfileComponent(
     private val gotoLoans: () -> Unit,
     private val gotoPayLoans: () -> Unit,
     private val gotoStatement: () -> Unit,
+    private val onConfirmClicked: (correlationId: String, amount: Double) -> Unit
 ) : ProfileComponent, ComponentContext by componentContext {
 
     override val authStore =
@@ -79,7 +83,6 @@ class DefaultProfileComponent(
     }
 
     override fun seeAllTransactions() {
-        println("::::::gotoAllTransactions")
         gotoAllTransactions()
     }
 
@@ -97,6 +100,58 @@ class DefaultProfileComponent(
 
     override fun goToStatement() {
         gotoStatement()
+    }
+
+    override val addSavingsStore =
+        instanceKeeper.getStore {
+            AddSavingsStoreFactory(
+                storeFactory = storeFactory
+            ).create()
+        }
+
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val addSavingsState: StateFlow<AddSavingsStore.State> = addSavingsStore.stateFlow
+
+    override fun onAddSavingsEvent(event: AddSavingsStore.Intent) {
+        addSavingsStore.accept(event)
+    }
+
+    private var authUserScopeJob1: Job? = null
+
+    private var activateAccountScopeJob: Job? = null
+
+    override fun activateAccount(amount: Double) {
+        if (authUserScopeJob1?.isActive == true) return
+
+        authUserScopeJob1 = scope.launch {
+            authState.collect { state ->
+                if (state.cachedMemberData !== null) {
+                    onAddSavingsEvent(
+                        AddSavingsStore.Intent.MakePayment(
+                            token = state.cachedMemberData.accessToken,
+                            phoneNumber = state.cachedMemberData.phoneNumber,
+                            loanRefId = null,
+                            beneficiaryPhoneNumber = null,
+                            amount = amount.toInt(),
+                            paymentType = PaymentTypes.MEMBERSHIPFEES
+                        )
+                    )
+                }
+                this.cancel()
+            }
+        }
+
+        activateAccountScopeJob = scope.launch {
+            addSavingsState.collect { state ->
+                if (state.correlationId !== null) {
+                    val correlationId = state.correlationId
+                    onConfirmClicked(correlationId, amount)
+                    onAddSavingsEvent(AddSavingsStore.Intent.ClearCorrelationId(null))
+                    this.cancel()
+                }
+            }
+        }
     }
 
     private var profileStateScopeJob: Job? = null

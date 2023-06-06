@@ -8,8 +8,11 @@ import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.network.onBoarding.model.PinStatus
+import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.network.profile.model.LoanBreakDown
 import com.presta.customer.organisation.OrganisationModel
+import com.presta.customer.ui.components.addSavings.store.AddSavingsStore
+import com.presta.customer.ui.components.addSavings.store.AddSavingsStoreFactory
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.profile.coroutineScope
@@ -17,6 +20,7 @@ import com.presta.customer.ui.components.profile.store.ProfileStore
 import com.presta.customer.ui.components.profile.store.ProfileStoreFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
@@ -36,9 +40,24 @@ class DefaultPayLoanComponent(
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     componentContext: ComponentContext,
-    private val onPayClicked: (desiredAmount: String, loan: LoanBreakDown) -> Unit,
+    private val onPayClicked: (desiredAmount: String, correlationId: String) -> Unit,
     private val onPop: () -> Unit
 ) : PayLoanComponent, ComponentContext by componentContext {
+    override val addSavingsStore =
+        instanceKeeper.getStore {
+            AddSavingsStoreFactory(
+                storeFactory = storeFactory
+            ).create()
+        }
+
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val addSavingsState: StateFlow<AddSavingsStore.State> = addSavingsStore.stateFlow
+
+    override fun onAddSavingsEvent(event: AddSavingsStore.Intent) {
+        addSavingsStore.accept(event)
+    }
+
     override val authStore =
         instanceKeeper.getStore {
             AuthStoreFactory(
@@ -75,8 +94,42 @@ class DefaultPayLoanComponent(
     override fun onEvent(event: ProfileStore.Intent) {
         profileStore.accept(event)
     }
+
+    private var authUserScopeJob: Job? = null
+
+    private var payLoanScopeJob: Job? = null
+
     override fun onPaySelected(desiredAmount: String, loan: LoanBreakDown) {
-        onPayClicked(desiredAmount, loan)
+        if (authUserScopeJob?.isActive == true) return
+
+        authUserScopeJob = scope.launch {
+            authState.collect { state ->
+                if (state.cachedMemberData !== null) {
+                    onAddSavingsEvent(
+                        AddSavingsStore.Intent.MakePayment(
+                            token = state.cachedMemberData.accessToken,
+                            phoneNumber = state.cachedMemberData.phoneNumber,
+                            loanRefId = loan.refId,
+                            beneficiaryPhoneNumber = null,
+                            amount = desiredAmount.toInt(),
+                            paymentType = PaymentTypes.LOAN
+                        )
+                    )
+                }
+                this.cancel()
+            }
+        }
+
+        payLoanScopeJob = scope.launch {
+            addSavingsState.collect { state ->
+                if (state.correlationId !== null) {
+                    val correlationId = state.correlationId
+                    onPayClicked(desiredAmount, correlationId)
+                    onAddSavingsEvent(AddSavingsStore.Intent.ClearCorrelationId(null))
+                    this.cancel()
+                }
+            }
+        }
     }
 
     override fun onBack() {

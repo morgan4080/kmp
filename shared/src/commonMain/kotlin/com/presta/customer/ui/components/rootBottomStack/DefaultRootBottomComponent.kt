@@ -27,6 +27,7 @@ class DefaultRootBottomComponent(
     private val logoutToSplash: () -> Unit,
     private val gotoAllTransactions: () -> Unit,
     private val gotoPayLoans: () -> Unit,
+    private val gotoPayRegistrationFees: (correlationId: String, amount: Double) -> Unit
 ) : RootBottomComponent, ComponentContext by componentContext {
 
     private val navigationBottomStackNavigation = StackNavigation<ConfigBottom>()
@@ -72,6 +73,9 @@ class DefaultRootBottomComponent(
             },
             gotoStatement = {
 
+            },
+            onConfirmClicked = { correlationId, amount ->
+                gotoPayRegistrationFees(correlationId, amount)
             }
         )
 

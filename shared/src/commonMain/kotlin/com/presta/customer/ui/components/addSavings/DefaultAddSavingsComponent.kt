@@ -33,7 +33,7 @@ fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineSc
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
 
-class DefaultAddSavingsComponent (
+class DefaultAddSavingsComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,

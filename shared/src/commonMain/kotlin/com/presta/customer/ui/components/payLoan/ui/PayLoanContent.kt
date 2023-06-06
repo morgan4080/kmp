@@ -184,10 +184,10 @@ fun PayLoanContent(
                         .padding(top = 35.dp)
                 ) {
                     ActionButton("Pay Now", onClickContainer = {
-                        if (state.loansBalances !== null && state.loansBalances.loanBreakDown.isNotEmpty()) {
+                        if (amount.text !== "" && state.loansBalances !== null && state.loansBalances.loanBreakDown.isNotEmpty()) {
                             onPaySelected(amount.text, state.loansBalances.loanBreakDown[stateLazyRow0.firstVisibleItemIndex])
                         }
-                    }, enabled = amount.text !== "")
+                    }, enabled = (amount.text !== "" && state.loansBalances !== null && state.loansBalances.loanBreakDown.isNotEmpty()))
                 }
 
                 Card(
@@ -317,7 +317,7 @@ fun MoreDetails(
                     }
 
                     Row(modifier = Modifier
-                        .fillMaxWidth().padding(vertical = 16.dp)
+                        .fillMaxWidth().padding(vertical = 12.dp)
                     ) {
                         Text(text = "Loan schedule",
                             style = MaterialTheme.typography.labelLarge,
@@ -334,7 +334,7 @@ fun MoreDetails(
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
                             shape = RoundedCornerShape(size = 12.dp)
                         ),
-                        contentPadding = PaddingValues(vertical = 5.dp, horizontal = 16.dp)
+                        contentPadding = PaddingValues(vertical = 10.dp, horizontal = 16.dp)
                     ) {
                         loanBreakDown.loanSchedule.map { schedule ->
                             val replacementPattern = Regex("\\s")
@@ -385,7 +385,7 @@ fun MoreDetails(
 
                 Row(
                     modifier = Modifier
-                        .padding(top = 14.dp)
+                        .padding(top = 20.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {

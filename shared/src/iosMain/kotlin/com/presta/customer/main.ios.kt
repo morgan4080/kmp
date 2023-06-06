@@ -7,10 +7,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ComposeUIViewController
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import components.root.DefaultRootComponent
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import com.presta.customer.di.initKoin
 import com.presta.customer.ui.AppRootUi
+import com.presta.customer.ui.components.root.DefaultRootComponent
 import com.presta.customer.ui.helpers.LocalSafeArea
 import platform.UIKit.UIViewController
 import com.presta.customer.ui.theme.AppTheme
