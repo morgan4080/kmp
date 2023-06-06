@@ -95,10 +95,6 @@ class DefaultProcessingTransactionComponent(
     private fun refreshToken() {
         scope.launch {
             authState.collect { state ->
-                println("::::state.cachedMemberData")
-
-                println(state.cachedMemberData)
-
                 if (state.cachedMemberData !== null) {
                     onAuthEvent(AuthStore.Intent.RefreshToken(
                         tenantId = OrganisationModel.organisation.tenant_id,
