@@ -27,57 +27,43 @@ fun  LoanConfirmationContent(
     state: ShortTermLoansStore.State,
     onEvent: (ShortTermLoansStore.Intent) -> Unit,
     onAuthEvent: (AuthStore.Intent) -> Unit,
-    innerPadding: PaddingValues,
+    innerPadding: PaddingValues
 ){
-
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background),
         color = MaterialTheme.colorScheme.background
     ) {
-
         Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
-
             Row(modifier = Modifier.fillMaxWidth()) {
                 //set Title based on the  Data carried by the RefId
-
                 NavigateBackTopBar(state.prestaShortTermLoanProductById?.name.toString(), onClickContainer ={
                     component.onBackNavSelected()
-
                 } )
-
             }
-
             Column(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                     .background(color = MaterialTheme.colorScheme.background)
                     .fillMaxHeight()
             ) {
-
-
                 Text(
                     modifier = Modifier,
                     text = "Confirm Loan  Details",
                     fontSize = MaterialTheme.typography.bodyMedium.fontSize
                 )
-
                 //Disbursement Details
-
-                DisbursementDetailsContainer(state)
-
+                DisbursementDetailsContainer(state,component,)
                 //action Button
                 Row(modifier = Modifier.padding(top = 30.dp)) {
                     ActionButton("Confirm", onClickContainer = {
                         //Navigate  to mode of Disbursement
-                        component.onConfirmSelected()
+                        component.onConfirmSelected(component.refId,component.amount,component.loanPeriod,
+                        state.prestaShortTermLoanProductById?.name.toString())
+
                     })
-
                 }
-
             }
-
         }
-
     }
 }
 

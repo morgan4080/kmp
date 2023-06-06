@@ -1,4 +1,4 @@
-package components.modeofDisbursement
+package com.presta.customer.ui.components.modeofDisbursement.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -21,7 +21,10 @@ import com.presta.customer.ui.composables.ProductSelectionCard2
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
-fun SelectModeOfDisbursementScreen(component: ModeOfDisbursementComponent) {
+fun ModeOfDisbursementContent(
+    component: ModeOfDisbursementComponent
+
+){
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background),
@@ -50,7 +53,7 @@ fun SelectModeOfDisbursementScreen(component: ModeOfDisbursementComponent) {
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                     fontSize = 14.sp,
 
-                )
+                    )
 
                 Spacer(modifier = Modifier.padding(top = 25.dp))
 
@@ -60,8 +63,6 @@ fun SelectModeOfDisbursementScreen(component: ModeOfDisbursementComponent) {
                         //Navigate to processing Transaction
                         //show failed or success based on the  state
                         component.onMpesaSelected()
-
-
 
                     })
 
@@ -76,11 +77,7 @@ fun SelectModeOfDisbursementScreen(component: ModeOfDisbursementComponent) {
                     })
 
                 }
-
             }
-
         }
-
     }
-
 }

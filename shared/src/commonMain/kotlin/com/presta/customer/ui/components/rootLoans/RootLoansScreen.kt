@@ -22,7 +22,7 @@ import com.presta.customer.ui.components.specificLoanType.ui.SpecificLoansScreen
 import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransactionScreen
 import com.presta.customer.ui.components.topUp.LoanTopUpScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
-import components.modeofDisbursement.SelectModeOfDisbursementScreen
+import com.presta.customer.ui.components.modeofDisbursement.ui.SelectModeOfDisbursementScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

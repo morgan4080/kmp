@@ -26,9 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
-import com.presta.customer.network.shortTermLoans.model.PrestaShortTermProductsListResponse
 import com.presta.customer.ui.components.auth.store.AuthStore
-import com.presta.customer.ui.components.profile.store.ProfileStore
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import com.presta.customer.ui.composables.NavigateBackTopBar

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,18 +24,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
+import com.presta.customer.ui.helpers.formatMoney
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
-fun LoanLimitContainer(state: ShortTermLoansStore.State){
-    val  showShimmer:Boolean=state.isLoading
-    ElevatedCard(modifier = Modifier
-        .padding(top = 10.dp)
-        .border(BorderStroke(0.5.dp, Color.White), shape = RoundedCornerShape(size = 12.dp))) {
-        Box (modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+fun LoanLimitContainer(state: ShortTermLoansStore.State) {
+    val showShimmer: Boolean = state.isLoading
+    ElevatedCard(
+        modifier = Modifier
+            .padding(top = 10.dp)
+            .border(BorderStroke(0.5.dp, Color.White), shape = RoundedCornerShape(size = 12.dp))
+    ) {
+        Box(
+            modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.inverseOnSurface)
         ) {
-            Column (
+            Column(
                 modifier = Modifier.padding(
                     top = 23.dp,
                     start = 24.dp,
@@ -42,8 +47,9 @@ fun LoanLimitContainer(state: ShortTermLoansStore.State){
                     bottom = 33.dp,
                 )
             ) {
-                Row (modifier = Modifier
-                    .fillMaxWidth(),
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
@@ -53,54 +59,84 @@ fun LoanLimitContainer(state: ShortTermLoansStore.State){
                         fontSize = 16.sp
                     )
                 }
-                Row (modifier = Modifier
-                    .padding(top = 0.dp)
-                    .fillMaxWidth()
+                Row(
+                    modifier = Modifier
+                        .padding(top = 0.dp)
+                        .fillMaxWidth()
                 ) {
-                    Text(
-                        text ="Min. Kes" + state.prestaShortTermLoanProductById?.minAmount.toString() +
-                              "- Max " +   state.prestaShortTermLoanProductById?.maxAmount.toString(),
-                        color= MaterialTheme.colorScheme.onBackground,
-                        fontSize = 16.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                        modifier = Modifier.background(brush = ShimmerBrush(showShimmer,800f))
-
-                    )
+                    if (state.prestaShortTermLoanProductById?.minAmount == null) {
+                        Text(
+                            text = "",
+                            modifier = Modifier.background(brush = ShimmerBrush(true, 1300f))
+                                .defaultMinSize(200.dp)
+                        )
+                    } else {
+                        Text(
+                            text = "Min. Kes" + formatMoney(state.prestaShortTermLoanProductById.minAmount) +
+                                    "- Max " + formatMoney(state.prestaShortTermLoanProductById.maxAmount),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontSize = 16.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                            modifier = Modifier,
+                        )
+                    }
                 }
-                Row (modifier = Modifier
-                    .padding(top = 11.dp)
-                    .fillMaxWidth()
+                Row(
+                    modifier = Modifier
+                        .padding(top = 11.dp)
+                        .fillMaxWidth()
                 ) {
-                    Column(){
+                    Column() {
                         Text(
                             text = "Interest",
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light), // #002C56
                             fontSize = 10.sp
                         )
-                        Text(
-                            text = state.prestaShortTermLoanProductById?.interestRate.toString()+"%",
-                            color= MaterialTheme.colorScheme.onBackground, // #002C56
-                            fontSize = 12.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                            modifier = Modifier.background(brush = ShimmerBrush(showShimmer,800f))
-                        )
-
+                        if (state.isLoading) {
+                            Text(
+                                text = "",
+                                modifier = Modifier.background(brush = ShimmerBrush(true, 1300f))
+                                    .defaultMinSize(minWidth = 50.dp, minHeight = 20.dp)
+                            )
+                        } else {
+                            Text(
+                                text = if (state.prestaShortTermLoanProductById?.interestRate !== null) state.prestaShortTermLoanProductById.interestRate.toString() + "%" else "0.0%",
+                                color = MaterialTheme.colorScheme.onBackground, // #002C56
+                                fontSize = 12.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                modifier = Modifier.background(
+                                    brush = ShimmerBrush(
+                                        showShimmer,
+                                        800f
+                                    )
+                                )
+                            )
+                        }
                     }
                     Spacer(modifier = Modifier.padding(start = 42.dp))
-                    Column(){
+                    Column() {
                         Text(
                             text = "Max loan  Period",
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light), // #002C56
                             fontSize = 10.sp
                         )
-                        Text(
-                            text = state.prestaShortTermLoanProductById?.maxTerm.toString() + " "+
-                            state.prestaShortTermLoanProductById?.loanPeriodUnit,
-                            color= MaterialTheme.colorScheme.onBackground, // #002C56
-                            fontSize = 12.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                            modifier = Modifier.background(brush = ShimmerBrush(showShimmer,800f))
-                        )
+
+                        if (state.isLoading) {
+                            Text(
+                                text = "",
+                                modifier = Modifier
+                                    .background(brush = ShimmerBrush(true, 1300f))
+                                    .defaultMinSize(minWidth = 50.dp, minHeight = 20.dp)
+                            )
+                        } else {
+                            Text(
+                                text = state.prestaShortTermLoanProductById?.maxTerm.toString() + " " +
+                                        state.prestaShortTermLoanProductById?.loanPeriodUnit,
+                                color = MaterialTheme.colorScheme.onBackground, // #002C56
+                                fontSize = 12.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                            )
+                        }
                     }
                 }
             }

@@ -2,6 +2,8 @@ package com.presta.customer.network.di
 
 import com.presta.customer.network.authDevice.data.AuthRepository
 import com.presta.customer.network.authDevice.data.AuthRepositoryImpl
+import com.presta.customer.network.loanRequest.data.LoanRequestRepository
+import com.presta.customer.network.loanRequest.data.LoanRequestRepositoryImpl
 import com.presta.customer.network.onBoarding.data.OnBoardingRepository
 import com.presta.customer.network.onBoarding.data.OnBoardingRepositoryImpl
 import com.presta.customer.network.otp.data.OtpRepository
@@ -24,4 +26,5 @@ val dataModule = module {
     single<ProfileRepository> { ProfileRepositoryImpl() }
     single<PaymentsRepository> { PaymentsRepositoryImpl() }
     single<ShortTermLoansRepository> { ShortTermLoansRepositoryImpl() }
+    single<LoanRequestRepository>{ LoanRequestRepositoryImpl() }
 }

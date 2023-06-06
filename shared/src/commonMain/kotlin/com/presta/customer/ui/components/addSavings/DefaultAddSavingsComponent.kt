@@ -69,7 +69,6 @@ class DefaultAddSavingsComponent (
             ).create()
         }
 
-
     @OptIn(ExperimentalCoroutinesApi::class)
     override val addSavingsState: StateFlow<AddSavingsStore.State> = addSavingsStore.stateFlow
 

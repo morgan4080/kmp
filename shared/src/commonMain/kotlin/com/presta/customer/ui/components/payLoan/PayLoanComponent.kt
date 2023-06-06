@@ -11,6 +11,4 @@ interface PayLoanComponent {
     data class Model(
         val items: List<String>,
     )
-
-
 }

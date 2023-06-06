@@ -19,7 +19,6 @@ interface ShortTermLoansComponent {
     fun onProductSelected(refId: String)
     fun onConfirmSelected(refId: String)
     fun onBackNav()
-
     data class Model(
         val items: List<String>,
     )

@@ -12,22 +12,15 @@ fun LoansConfirmationScreen(
     innerPadding: PaddingValues
 
 ) {
-
     val authState by component.authState.collectAsState()
     val  loanConfirmationState by component.shortTermloansState.collectAsState()
-
     LoanConfirmationContent(
         authState = authState,
         state = loanConfirmationState,
         onEvent = component::onEvent,
         onAuthEvent = component::onAuthEvent,
         innerPadding = innerPadding,
-        component = component
-
+        component = component,
     )
-
-
-
-
 
 }

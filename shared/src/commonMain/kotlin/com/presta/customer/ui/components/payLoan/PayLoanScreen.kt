@@ -27,7 +27,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -57,7 +56,7 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun PayLoanScreen(component: PayLoanComponent){
+fun PayLoanScreen(component: PayLoanComponent) {
     val stateLazyRow0 = rememberLazyListState()
     var amount by remember {
         mutableStateOf(TextFieldValue())
@@ -66,7 +65,7 @@ fun PayLoanScreen(component: PayLoanComponent){
 
     val snackBarHostState = remember { SnackbarHostState() }
 
-    Scaffold (
+    Scaffold(
         modifier = Modifier
             .padding(LocalSafeArea.current)
             .background(color = MaterialTheme.colorScheme.background)
@@ -133,9 +132,13 @@ fun PayLoanScreen(component: PayLoanComponent){
                         .padding(top = 30.dp)
                 ) {
 
-                    TextInputContainer("Desired Amount","", inputType = InputTypes.NUMBER, callback = {
-                        amount = TextFieldValue(it)
-                    })
+                    TextInputContainer(
+                        "Desired Amount",
+                        "",
+                        inputType = InputTypes.NUMBER,
+                        callback = {
+                            amount = TextFieldValue(it)
+                        })
 
                 }
 
@@ -172,11 +175,13 @@ fun PayLoanScreen(component: PayLoanComponent){
                 //Added overlay  to the po up screen
                 if (launchPopUp) {
                     Popup {
-                        Column(modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight()
-                            .background(color = Color.Black.copy(alpha = 0.7f)),
-                            verticalArrangement = Arrangement.Top) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                                .background(color = Color.Black.copy(alpha = 0.7f)),
+                            verticalArrangement = Arrangement.Top
+                        ) {
 
                             ElevatedCard(
                                 modifier = Modifier
@@ -185,7 +190,8 @@ fun PayLoanScreen(component: PayLoanComponent){
                                     .padding(
                                         start = 25.dp,
                                         end = 25.dp,
-                                        top = 26.dp),
+                                        top = 26.dp
+                                    ),
                                 colors = CardDefaults.elevatedCardColors(containerColor = Color.White)
                             ) {
 
@@ -194,14 +200,18 @@ fun PayLoanScreen(component: PayLoanComponent){
                                         .fillMaxWidth()
                                         .padding(
                                             start = 16.dp,
-                                            end = 16.dp)
+                                            end = 16.dp
+                                        )
                                 ) {
 
-                                    Row(modifier = Modifier
-                                        .padding(top = 14.dp)
-                                        .fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween){
-                                        Text(text = "Loan Details",
+                                    Row(
+                                        modifier = Modifier
+                                            .padding(top = 14.dp)
+                                            .fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Text(
+                                            text = "Loan Details",
                                             fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                                             fontSize = 14.sp
                                         )
@@ -210,7 +220,7 @@ fun PayLoanScreen(component: PayLoanComponent){
                                             contentDescription = "Cancel  Arrow",
                                             tint = backArrowColor,
                                             modifier = Modifier.clickable {
-                                                launchPopUp=false
+                                                launchPopUp = false
 
                                             }
                                         )
@@ -223,17 +233,20 @@ fun PayLoanScreen(component: PayLoanComponent){
                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                     )
 
-                                    Row(modifier = Modifier
-                                        .fillMaxWidth(),){
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                    ) {
 
-                                        Row(verticalAlignment = Alignment.CenterVertically){
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
                                             Text(
                                                 text = "Kes 30,000",
                                                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                                                 fontSize = MaterialTheme.typography.headlineSmall.fontSize,
                                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                                             )
-                                            Text(text = "(PerForming)",
+                                            Text(
+                                                text = "(PerForming)",
                                                 fontSize = 10.sp,
                                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                                             )
@@ -244,10 +257,12 @@ fun PayLoanScreen(component: PayLoanComponent){
 
                                     //data Rows
 
-                                    LazyColumn(modifier =Modifier
-                                        .fillMaxWidth()
-                                        .fillMaxHeight(0.4f)){
-                                        items(8){
+                                    LazyColumn(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .fillMaxHeight(0.4f)
+                                    ) {
+                                        items(8) {
                                             disbursementDetailsRow("Requested Amount", "Kes 30,000")
 
                                         }
@@ -256,9 +271,12 @@ fun PayLoanScreen(component: PayLoanComponent){
 
                                     //Loan schedule
 
-                                    Row(modifier = Modifier
-                                        .fillMaxWidth()){
-                                        Text(text = "Loan schedule",
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                    ) {
+                                        Text(
+                                            text = "Loan schedule",
                                             fontSize = 12.sp,
                                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
                                             color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -266,14 +284,18 @@ fun PayLoanScreen(component: PayLoanComponent){
 
                                     }
 
-                                    LazyColumn(modifier =Modifier
-                                        .fillMaxWidth()
-                                        .fillMaxHeight(0.7f)){
-                                        items(5){
-                                            Row(modifier = Modifier
-                                                .padding(top = 7.dp)
-                                                .fillMaxWidth(),
-                                                verticalAlignment = Alignment.CenterVertically){
+                                    LazyColumn(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .fillMaxHeight(0.7f)
+                                    ) {
+                                        items(5) {
+                                            Row(
+                                                modifier = Modifier
+                                                    .padding(top = 7.dp)
+                                                    .fillMaxWidth(),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
                                                 LoanScheduleContainer()
                                             }
 
@@ -291,57 +313,57 @@ fun PayLoanScreen(component: PayLoanComponent){
 
                                     OutlinedButton(modifier = Modifier.height(30.dp),
                                         onClick = {
-                                            launchPopUp=false
+                                            launchPopUp = false
 
-                                        }){
-                                        Text(text = "Dismiss",
+                                        }) {
+                                        Text(
+                                            text = "Dismiss",
                                             fontSize = 9.sp,
-                                            color = labelTextColor)
-
+                                            color = labelTextColor
+                                        )
                                     }
-
                                 }
-
                             }
-
                         }
-
                     }
-
                 }
-
-
             }
-
         }
     }
 }
 
-
 @Composable
-fun LoanScheduleContainer(){
-    Row(modifier = Modifier.fillMaxWidth(),
-    horizontalArrangement = Arrangement.SpaceBetween,
-    verticalAlignment = Alignment.CenterVertically){
-        Column(){
-            Text(text = "12 May 2023",
-            fontSize = MaterialTheme.typography.labelSmall.fontSize,
-            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+fun LoanScheduleContainer() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column() {
+            Text(
+                text = "12 May 2023",
+                fontSize = MaterialTheme.typography.labelSmall.fontSize,
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
                 color = labelTextColor
             )
-            Text(text = "12:20pm",
-             fontSize = MaterialTheme.typography.labelSmall.fontSize,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular))
+            Text(
+                text = "12:20pm",
+                fontSize = MaterialTheme.typography.labelSmall.fontSize,
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+            )
 
         }
 
-        Column(){
-            Text(text = "kes 8000.00",
+        Column() {
+            Text(
+                text = "kes 8000.00",
                 fontSize = MaterialTheme.typography.labelMedium.fontSize,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold))
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+            )
 
-            Text(text = "Paid",
+            Text(
+                text = "Paid",
                 fontSize = MaterialTheme.typography.labelSmall.fontSize,
                 fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
             )

@@ -32,7 +32,7 @@ fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
 class DefaultSpecificLoansComponent (
     componentContext: ComponentContext,
-    private val onConfirmClicked: (refid:String) -> Unit,
+    private val onConfirmClicked: (refid:String,amount:Double,loanPeriod:String,loanType:String) -> Unit,
     private val onBackNavClicked: () -> Unit,
     refId: String,
     storeFactory: StoreFactory,
@@ -40,9 +40,11 @@ class DefaultSpecificLoansComponent (
 
 ): SpecificLoansComponent, ComponentContext by componentContext {
     var specificId:String=refId
-    override fun onConfirmSelected(refId: String) {
-        onConfirmClicked(refId)
+    override fun onConfirmSelected(refID: String,amount:Double,loanPeriod:String,loanType: String) {
+        //Pass Data to loan confirm Screen
+        onConfirmClicked(refID,amount,loanPeriod,loanType)
     }
+
     override fun onBackNavSelected() {
        onBackNavClicked()
     }
@@ -119,13 +121,11 @@ private val scope = coroutineScope(mainContext + SupervisorJob())
             }
         }
     }
-
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
 
         checkAuthenticatedUser()
 
         refreshToken()
-
     }
 }

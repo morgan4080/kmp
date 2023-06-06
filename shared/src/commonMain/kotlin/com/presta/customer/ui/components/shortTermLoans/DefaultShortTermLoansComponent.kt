@@ -76,7 +76,6 @@ class DefaultShortTermLoansComponent(
             items = listOf()
         )
     )
-
     override val model: Value<ShortTermLoansComponent.Model> = models
 
     override fun onProductSelected(refId: String) {
@@ -98,7 +97,6 @@ class DefaultShortTermLoansComponent(
     override fun onEvent(event: ShortTermLoansStore.Intent) {
         shortTermloansStore.accept(event)
     }
-
     private var authUserScopeJob: Job? = null
 
     private fun checkAuthenticatedUser() {

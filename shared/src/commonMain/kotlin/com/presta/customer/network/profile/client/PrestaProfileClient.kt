@@ -11,7 +11,6 @@ import io.ktor.client.request.header
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
-import io.ktor.http.encodedPath
 
 class PrestaProfileClient(
     private val httpClient: HttpClient

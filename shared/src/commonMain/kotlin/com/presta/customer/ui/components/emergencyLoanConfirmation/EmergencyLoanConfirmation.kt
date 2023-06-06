@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.presta.customer.ui.composables.ActionButton
-import com.presta.customer.ui.composables.DisbursementDetailsContainer
 import com.presta.customer.ui.theme.containerColor
 
 @Composable

@@ -31,7 +31,7 @@ import com.presta.customer.ui.components.succesfulTransaction.DefaultSuccessfulT
 import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransactionComponent
 import com.presta.customer.ui.components.topUp.DefaultLoanTopUpComponent
 import com.presta.customer.ui.components.topUp.LoanTopUpComponent
-import components.modeofDisbursement.DefaultModeOfDisbursementComponent
+import com.presta.customer.ui.components.modeofDisbursement.DefaultModeOfDisbursementComponent
 import prestaDispatchers
 
 class DefaultRootLoansComponent(
@@ -40,7 +40,6 @@ class DefaultRootLoansComponent(
     val pop: () -> Unit = {}
 ) : RootLoansComponent, ComponentContext by componentContext {
     private val loansNavigation = StackNavigation<ConfigLoans>()
-
 
     private val _childLoansStack = childStack(
         source = loansNavigation,
@@ -52,7 +51,6 @@ class DefaultRootLoansComponent(
 
     override val childLoansStack: Value<ChildStack<*, RootLoansComponent.ChildLoans>> =
         _childLoansStack
-
     private fun createLoansChild(
         config: ConfigLoans, componentContext: ComponentContext
     ): RootLoansComponent.ChildLoans = when (config) {
@@ -73,11 +71,11 @@ class DefaultRootLoansComponent(
         )
 
         is ConfigLoans.LoanConfirmation -> RootLoansComponent.ChildLoans.ConfirmLoanChild(
-            loanConfirmationComponent(componentContext,config)
+            loanConfirmationComponent(componentContext, config)
         )
 
         is ConfigLoans.DisbursementMethod -> RootLoansComponent.ChildLoans.DisbursementModeChild(
-            modeOfDisbursementComponent(componentContext)
+            modeOfDisbursementComponent(componentContext,config)
         )
 
         is ConfigLoans.ProcessingTransaction -> RootLoansComponent.ChildLoans.ProcessingTransactionChild(
@@ -87,18 +85,20 @@ class DefaultRootLoansComponent(
         is ConfigLoans.BankDisbursement -> RootLoansComponent.ChildLoans.BankDisbursementChild(
             bankDisbursementComponent(componentContext)
         )
+
         is ConfigLoans.SuccessfulTransaction -> RootLoansComponent.ChildLoans.SuccessfulTransactionChild(
             successfulTransactionComponent(componentContext)
         )
+
         is ConfigLoans.FailedTransaction -> RootLoansComponent.ChildLoans.FailedTransactionChild(
             failedTransactionComponent(componentContext)
         )
+
         is ConfigLoans.LoanTopUp -> RootLoansComponent.ChildLoans.LoanTopUpChild(
             loanTopUpComponent(componentContext)
         )
 
     }
-
     private fun applyLoanComponent(componentContext: ComponentContext): ApplyLoanComponent =
         DefaultApplyLoanComponent(
             componentContext = componentContext,
@@ -116,6 +116,7 @@ class DefaultRootLoansComponent(
                 pop()
             }
         )
+
     //Pass the RefId
     private fun shortTermComponent(componentContext: ComponentContext): ShortTermLoansComponent =
         DefaultShortTermLoansComponent(
@@ -135,20 +136,26 @@ class DefaultRootLoansComponent(
                 loansNavigation.push(ConfigLoans.SpecificLoan(refId))
             }
         )
-
     private fun longTermComponent(componentContext: ComponentContext): LongTermLoansComponent =
         DefaultLongTermComponent(componentContext = componentContext,
             onProductSelected = { refId ->
-            // loansNavigation.push(ConfigLoans.LoanProduct(refId = refId))
+                // loansNavigation.push(ConfigLoans.LoanProduct(refId = refId))
                 //Get data on the specif  RefId
-           // loansNavigation.push(ConfigLoans.EmergencyLoan(refId = refId))
-        })
-    private fun specificLoanComponent(componentContext: ComponentContext, config: ConfigLoans.SpecificLoan): SpecificLoansComponent =
+                // loansNavigation.push(ConfigLoans.EmergencyLoan(refId = refId))
+            })
+    private fun specificLoanComponent(
+        componentContext: ComponentContext,
+        config: ConfigLoans.SpecificLoan
+    ): SpecificLoansComponent =
         DefaultSpecificLoansComponent(
             componentContext = componentContext,
             refId = config.refId,
-            onConfirmClicked = {refId->
-                loansNavigation.push(ConfigLoans.LoanConfirmation(refId = refId))
+            onConfirmClicked = { refId, amount,loanPeriod,loanType ->
+                println("Ref id")
+                println(refId)
+                println("Amount")
+                println(amount)
+                loansNavigation.push(ConfigLoans.LoanConfirmation(refId = refId, amount = amount, loanPeriod =loanPeriod, loanType =loanType ))
             },
             onBackNavClicked = {
                 loansNavigation.pop()
@@ -156,40 +163,52 @@ class DefaultRootLoansComponent(
             mainContext = prestaDispatchers.main,
             storeFactory = storeFactory
         )
-    private fun loanConfirmationComponent(componentContext: ComponentContext, config:ConfigLoans.LoanConfirmation): LoanConfirmationComponent =
+
+    private fun loanConfirmationComponent(
+        componentContext: ComponentContext,
+        config: ConfigLoans.LoanConfirmation
+    ): LoanConfirmationComponent =
         DefaultLoanConfirmationComponent(
             componentContext = componentContext,
             refId = config.refId,
-            onConfirmClicked = {
-            //navigate to mode of Disbursement
-            loansNavigation.push(ConfigLoans.DisbursementMethod)
-        },
-        onBackNavClicked = {
-            loansNavigation.pop()
-        },
+            onConfirmClicked = { refId, amount,loanPeriod,loantype ->
+                //navigate to mode of Disbursement
+                loansNavigation.push(ConfigLoans.DisbursementMethod(refId = refId, amount = amount,loanPeriod=loanPeriod, loanType = loantype))
+            },
+            onBackNavClicked = {
+                loansNavigation.pop()
+            },
             mainContext = prestaDispatchers.main,
-            storeFactory = storeFactory)
+            storeFactory = storeFactory,
+            amount = config.amount,
+            loanPeriod =config.loanPeriod
+        )
 
-    private fun modeOfDisbursementComponent(componentContext: ComponentContext): ModeOfDisbursementComponent =
+    private fun modeOfDisbursementComponent(
+        componentContext: ComponentContext, config: ConfigLoans.DisbursementMethod): ModeOfDisbursementComponent =
         DefaultModeOfDisbursementComponent(
             componentContext = componentContext,
             onMpesaClicked = {
-            //Navigate to processing payment screen
-            // loansNavigation.push()
-            loansNavigation.push(ConfigLoans.ProcessingTransaction)
+                loansNavigation.push(ConfigLoans.ProcessingTransaction)
+            },
+            onBankClicked = {
+                //navigate to  BankDisbursement Screen
+                loansNavigation.push(ConfigLoans.BankDisbursement)
 
-        }, onBankClicked = {
-            //navigate to  BankDisbursement Screen
-            loansNavigation.push(ConfigLoans.BankDisbursement)
-
-        },
-        onBackNavClicked = {
-            loansNavigation.pop()
-        },
-        TransactionSuccessful = {
-            loansNavigation.push(ConfigLoans.SuccessfulTransaction)
-
-        })
+            },
+            onBackNavClicked = {
+                loansNavigation.pop()
+            },
+            TransactionSuccessful = {
+                loansNavigation.push(ConfigLoans.SuccessfulTransaction)
+            },
+            mainContext = prestaDispatchers.main,
+            storeFactory = storeFactory,
+            refId = config.refId,
+            amount = config.amount,
+            loanPeriod = config.loanPeriod,
+            loanType = config.loanType
+        )
 
     private fun processingTransactionComponent(componentContext: ComponentContext): ProcessingTransactionComponent =
         DefaultProcessingTransactionComponent(
@@ -200,29 +219,30 @@ class DefaultRootLoansComponent(
         DefaultBankDisbursementComponent(
             componentContext = componentContext,
             onConfirmClicked = {
-            //Proceed  to show processing,--show failed or successful based on state
                 loansNavigation.push(ConfigLoans.SuccessfulTransaction)
-               // loansNavigation.push(ConfigLoans.FailedTransaction)
-        },
-        onBackNavClicked = {
-            loansNavigation.pop()
-        })
+            },
+            onBackNavClicked = {
+                loansNavigation.pop()
+            })
+
     private fun successfulTransactionComponent(componentContext: ComponentContext): SuccessfulTransactionComponent =
         DefaultSuccessfulTransactionComponent(
             componentContext = componentContext,
-           )
+        )
+
     private fun failedTransactionComponent(componentContext: ComponentContext): FailedTransactionComponent =
         DefaultFailedTransactionComponent(
             componentContext = componentContext,
             onRetryClicked = {
             }
         )
+
     private fun loanTopUpComponent(componentContext: ComponentContext): LoanTopUpComponent =
         DefaultLoanTopUpComponent(
             componentContext = componentContext,
             onConfirmClicked = {
                 //push  to confirm Loan Details Screen
-                loansNavigation.push(ConfigLoans.LoanConfirmation(refId = ""))
+                loansNavigation.push(ConfigLoans.LoanConfirmation(refId = "", amount = 0.0,"",""))
 
             },
             onBackNavClicked = {
@@ -247,23 +267,22 @@ class DefaultRootLoansComponent(
         data class SpecificLoan(val refId: String) : ConfigLoans()
 
         @Parcelize
-        data class LoanConfirmation(val refId: String) : ConfigLoans()
-
-//        @Parcelize
-//        object LoanConfirmation : ConfigLoans()
-
+        data class LoanConfirmation(val refId: String, val amount: Double,val loanPeriod: String,val loanType :String) : ConfigLoans()
         @Parcelize
-        object DisbursementMethod : ConfigLoans()
+        data class DisbursementMethod(val refId: String, val amount: Double,val loanPeriod: String,val loanType: String) : ConfigLoans()
 
         @Parcelize
         object ProcessingTransaction : ConfigLoans()
 
         @Parcelize
         object BankDisbursement : ConfigLoans()
+
         @Parcelize
         object SuccessfulTransaction : ConfigLoans()
+
         @Parcelize
         object FailedTransaction : ConfigLoans()
+
         @Parcelize
         data class LoanTopUp(val refId: String) : ConfigLoans()
 

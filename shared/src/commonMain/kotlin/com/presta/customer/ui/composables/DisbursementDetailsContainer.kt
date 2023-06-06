@@ -22,13 +22,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.presta.customer.MR
+import com.presta.customer.ui.components.loanConfirmation.LoanConfirmationComponent
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
+import com.presta.customer.ui.helpers.formatMoney
 import dev.icerock.moko.resources.compose.fontFamilyResource
-
 
 @Composable
 fun DisbursementDetailsContainer(
-    state: ShortTermLoansStore.State) {
+    state: ShortTermLoansStore.State,
+    component: LoanConfirmationComponent,
+) {
     ElevatedCard(
         modifier = Modifier
             .padding(top = 10.dp)
@@ -66,7 +69,7 @@ fun DisbursementDetailsContainer(
                         .fillMaxWidth()
                 ) {
                     Text(
-                        text = "Kes 30,000",
+                        text = "Kes "+formatMoney(component.amount) ,
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = MaterialTheme.typography.headlineSmall.fontSize,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
@@ -77,22 +80,19 @@ fun DisbursementDetailsContainer(
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())){
                     //Amount
-                        disbursementDetailsRow("Requested Amount", "Kes 30,000")
+                        disbursementDetailsRow("Requested Amount","Kes "+formatMoney(component.amount))
                     //Interest
                     disbursementDetailsRow("Interest", state.prestaShortTermLoanProductById?.interestRate.toString()+" %")
-
                     //Fee  Charges
-
                     //Loan  Period
                     disbursementDetailsRow("Loan  Period",
-                        state.prestaShortTermLoanProductById?.maxTerm.toString()+ " "+
+                        component.loanPeriod+ " "+
                     state.prestaShortTermLoanProductById?.loanPeriodUnit)
                     // Due date
 
                     //Balance Brought Forward
 
                     //Repayment  amount
-
                 }
             }
         }
@@ -120,7 +120,6 @@ fun disbursementDetailsRow(label: String, data: String) {
             fontSize = MaterialTheme.typography.labelMedium.fontSize,
             color = MaterialTheme.colorScheme.onBackground,
             fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
-
         )
     }
 }

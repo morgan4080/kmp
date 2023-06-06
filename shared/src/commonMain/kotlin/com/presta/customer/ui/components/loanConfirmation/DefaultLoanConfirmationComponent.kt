@@ -1,8 +1,6 @@
 package com.presta.customer.ui.components.loanConfirmation
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.value.MutableValue
-import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.doOnDestroy
@@ -25,7 +23,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-
 fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineScope {
     val scope = CoroutineScope(context)
     lifecycle.doOnDestroy(scope::cancel)
@@ -36,31 +33,14 @@ fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
 
 class DefaultLoanConfirmationComponent(
     componentContext: ComponentContext,
-    private val onConfirmClicked: () -> Unit,
+    private val onConfirmClicked: (refid:String,amount:Double,loanPeriod:String,loanType:String) -> Unit,
     private val onBackNavClicked: () -> Unit,
     storeFactory: StoreFactory,
-    refId: String,
+    override val refId: String,
+    override val amount: Double,
+    override val loanPeriod: String,
     mainContext: CoroutineContext,
 ) : LoanConfirmationComponent, ComponentContext by componentContext{
-    var  specificLoanId=refId
-
-    private val models = MutableValue(
-        LoanConfirmationComponent.Model(
-            items = listOf()
-        )
-    )
-    override val model: Value<LoanConfirmationComponent.Model> = models
-    override fun onConfirmSelected() {
-        onConfirmClicked()
-    }
-
-    override fun onBackNavSelected() {
-       onBackNavClicked()
-    }
-
-
-    private val scope = coroutineScope(mainContext + SupervisorJob())
-
     override val authStore: AuthStore =
         instanceKeeper.getStore {
             AuthStoreFactory(
@@ -71,6 +51,14 @@ class DefaultLoanConfirmationComponent(
                 pinStatus = PinStatus.SET
             ).create()
         }
+
+    override fun onConfirmSelected(refID: String,amount:Double,loanPeriod:String,loanType: String) {
+        onConfirmClicked(refID,amount,loanPeriod,loanType)
+    }
+    override fun onBackNavSelected() {
+       onBackNavClicked()
+    }
+    private val scope = coroutineScope(mainContext + SupervisorJob())
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val authState: StateFlow<AuthStore.State> =authStore.stateFlow
@@ -83,7 +71,6 @@ class DefaultLoanConfirmationComponent(
         }
     @OptIn(ExperimentalCoroutinesApi::class)
     override val shortTermloansState: StateFlow<ShortTermLoansStore.State> = shortTermloansStore.stateFlow
-
     override fun onAuthEvent(event: AuthStore.Intent) {
         authStore.accept(event)
     }
@@ -110,14 +97,13 @@ class DefaultLoanConfirmationComponent(
                     onEvent(
                         ShortTermLoansStore.Intent.GetPrestaShortTermProductById(
                         token = state.cachedMemberData.accessToken,
-                        loanId = specificLoanId
+                        loanId = refId,
                     ))
                 }
             }
         }
     }
     private var refreshTokenScopeJob: Job? = null
-
     private fun refreshToken() {
         if (refreshTokenScopeJob?.isActive == true) return
         refreshTokenScopeJob = scope.launch {
@@ -133,14 +119,9 @@ class DefaultLoanConfirmationComponent(
             }
         }
     }
-
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
-
         checkAuthenticatedUser()
-
         refreshToken()
-
     }
-
 }
