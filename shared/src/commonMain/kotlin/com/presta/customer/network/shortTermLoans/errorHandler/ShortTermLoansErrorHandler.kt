@@ -6,7 +6,7 @@ import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.withContext
-import prestaDispatchers
+import com.presta.customer.prestaDispatchers
 
 suspend inline fun <reified T> shortTermLoansErrorHandler(
     crossinline response: suspend () -> HttpResponse

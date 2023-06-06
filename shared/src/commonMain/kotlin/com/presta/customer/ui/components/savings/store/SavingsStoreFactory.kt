@@ -8,12 +8,11 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.profile.data.ProfileRepository
 import com.presta.customer.network.profile.model.PrestaSavingsBalancesResponse
 import com.presta.customer.network.profile.model.PrestaTransactionHistoryResponse
-import com.presta.customer.ui.components.profile.store.ProfileStoreFactory
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import prestaDispatchers
+import com.presta.customer.prestaDispatchers
 
 class SavingsStoreFactory (
     private val storeFactory: StoreFactory

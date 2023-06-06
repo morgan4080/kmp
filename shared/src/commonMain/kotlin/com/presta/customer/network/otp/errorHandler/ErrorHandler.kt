@@ -6,7 +6,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.withContext
 import com.presta.customer.network.otp.errors.OtpException
-import prestaDispatchers
+import com.presta.customer.prestaDispatchers
 
 suspend inline fun <reified T> otpErrorHandler(
     crossinline response: suspend () -> HttpResponse

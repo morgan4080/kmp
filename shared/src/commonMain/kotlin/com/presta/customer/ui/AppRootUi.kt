@@ -9,7 +9,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stac
 import com.presta.customer.ui.components.auth.ui.AuthScreen
 import com.presta.customer.ui.components.onBoarding.ui.OnBoardingScreen
 import com.presta.customer.ui.components.otp.ui.OtpScreen
-import com.presta.customer.ui.components.payLoan.PayLoanScreen
+import com.presta.customer.ui.components.payLoan.ui.PayLoanScreen
 import com.presta.customer.ui.components.payLoanPropmpt.PayLoanPromptScreen
 import com.presta.customer.ui.components.registration.ui.RegistrationScreen
 import com.presta.customer.ui.components.root.RootComponent

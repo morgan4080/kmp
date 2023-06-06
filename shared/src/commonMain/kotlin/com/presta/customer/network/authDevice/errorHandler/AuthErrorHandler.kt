@@ -6,9 +6,8 @@ import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.withContext
 import com.presta.customer.network.authDevice.errors.AuthClientError
 import com.presta.customer.network.authDevice.errors.AuthClientException
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
-import prestaDispatchers
+import com.presta.customer.prestaDispatchers
 
 @Serializable
 data class Message(val message: String, val code: Int, val timestamp: String)

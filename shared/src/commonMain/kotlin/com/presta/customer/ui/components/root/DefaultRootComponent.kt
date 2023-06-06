@@ -13,6 +13,7 @@ import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.presta.customer.network.onBoarding.model.PinStatus
+import com.presta.customer.network.profile.model.LoanBreakDown
 import com.presta.customer.ui.components.auth.AuthComponent
 import com.presta.customer.ui.components.auth.DefaultAuthComponent
 import com.presta.customer.ui.components.onBoarding.DefaultOnboardingComponent
@@ -33,7 +34,7 @@ import com.presta.customer.ui.components.transactionHistory.DefaultTransactionHi
 import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
 import com.presta.customer.ui.components.welcome.DefaultWelcomeComponent
 import com.presta.customer.ui.components.welcome.WelcomeComponent
-import prestaDispatchers
+import com.presta.customer.prestaDispatchers
 
 class DefaultRootComponent(
     componentContext: ComponentContext,
@@ -224,19 +225,22 @@ class DefaultRootComponent(
 
     private fun payLoanComponent(componentContext: ComponentContext): PayLoanComponent =
         DefaultPayLoanComponent(
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
             componentContext = componentContext,
-            onPayClicked = {
-                //push  to confirm Loan Details Screen
-                //Navigate to pay Loan child  a child Of loans
-                //Show  the Pay  Loan child first
-                ///loansNavigation.push(DefaultRootLoansComponent.ConfigLoans.PayLoanPrompt)
+            onPayClicked = { amount, loan ->
+                navigation.push(Config.PayLoanPrompt(amount, loan))
+            },
+            onPop = {
+                navigation.pop()
             }
         )
     private fun payLoanPromptComponent(componentContext: ComponentContext): PayLoanPromptComponent =
         DefaultPayLoanPromptComponent(
             componentContext = componentContext,
-
-            )
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main
+        )
 
 
 
@@ -265,7 +269,7 @@ class DefaultRootComponent(
         @Parcelize
         object PayLoan :Config()
         @Parcelize
-        object PayLoanPrompt :Config()
+        data class PayLoanPrompt(val amount: String, val loanBreakDown: LoanBreakDown) :Config()
 
     }
 }

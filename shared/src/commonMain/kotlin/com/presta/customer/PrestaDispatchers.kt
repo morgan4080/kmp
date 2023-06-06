@@ -1,3 +1,5 @@
+package com.presta.customer
+
 import kotlinx.coroutines.CoroutineDispatcher
 
 interface PrestaDispatchers {

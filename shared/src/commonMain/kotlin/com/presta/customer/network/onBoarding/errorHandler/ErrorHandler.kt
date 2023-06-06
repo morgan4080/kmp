@@ -7,7 +7,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
-import prestaDispatchers
+import com.presta.customer.prestaDispatchers
 @Serializable
 data class ConfigResponse(val timestamp: String, val code: Int, val message: String)
 suspend inline fun <reified T> onBoardingErrorHandler(

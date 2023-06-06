@@ -18,7 +18,7 @@ import com.presta.customer.ui.components.rootSavings.RootSavingsComponent
 import com.presta.customer.ui.components.sign.DefaultSignComponent
 import com.presta.customer.ui.components.sign.SignComponent
 import com.presta.customer.ui.components.rootLoans.RootLoansComponent
-import prestaDispatchers
+import com.presta.customer.prestaDispatchers
 
 
 class DefaultRootBottomComponent(

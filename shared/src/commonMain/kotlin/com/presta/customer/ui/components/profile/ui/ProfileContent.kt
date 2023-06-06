@@ -287,7 +287,7 @@ fun ProfileContent(
                                                 totalLoans = if (state.loansBalances !== null && balance.key == "Total Loan Balance") state.loansBalances.loanCount else null,
                                                 savingsBalance = if (state.savingsBalances !== null) state.savingsBalances.savingsBalance else null,
                                                 sharesBalance = if (state.savingsBalances !== null) state.savingsBalances.sharesBalance else null,
-                                                goToLoans = goToLoans,
+                                                goToPayLoans = goToPayLoans,
                                                 goToSavings = goToSavings,
                                                 loanBreakDown = if (state.loansBalances !== null) state.loansBalances.loanBreakDown else null
                                             )

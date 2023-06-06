@@ -6,7 +6,7 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.payments.model.PrestaPollingResponse
-import prestaDispatchers
+import com.presta.customer.prestaDispatchers
 
 class ProcessingTransactionStoreFactory(
     private val storeFactory: StoreFactory

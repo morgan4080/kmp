@@ -33,7 +33,7 @@ import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransact
 import com.presta.customer.ui.components.topUp.DefaultLoanTopUpComponent
 import com.presta.customer.ui.components.topUp.LoanTopUpComponent
 import components.modeofDisbursement.DefaultModeOfDisbursementComponent
-import prestaDispatchers
+import com.presta.customer.prestaDispatchers
 
 class DefaultRootLoansComponent(
     componentContext: ComponentContext,

@@ -20,7 +20,7 @@ import com.presta.customer.ui.components.savings.DefaultSavingsComponent
 import com.presta.customer.ui.components.savings.SavingsComponent
 import com.presta.customer.ui.components.savingsTransactionHistory.DefaultSavingsTransactionHistoryComponent
 import com.presta.customer.ui.components.savingsTransactionHistory.SavingsTransactionHistoryComponent
-import prestaDispatchers
+import com.presta.customer.prestaDispatchers
 
 class DefaultRootSavingsComponent(
     componentContext: ComponentContext,
