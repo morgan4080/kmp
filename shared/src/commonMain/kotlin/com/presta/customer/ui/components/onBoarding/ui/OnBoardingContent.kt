@@ -62,8 +62,17 @@ import kotlinx.coroutines.launch
 fun OnBoardingContent(
     state: OnBoardingStore.State,
     onEvent: (OnBoardingStore.Intent) -> Unit,
-    navigate: (memberRefId: String?, phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean,  onBoardingContext: DefaultRootComponent.OnBoardingContext, pinStatus: PinStatus?) -> Unit
+    navigate: (
+        memberRefId: String?,
+        phoneNumber: String,
+        isTermsAccepted: Boolean,
+        isActive: Boolean,
+        onBoardingContext: DefaultRootComponent.OnBoardingContext,
+        pinStatus: PinStatus?
+    ) -> Unit
 ) {
+    println("state.member.authenticationInfo.pinStatus")
+    println(state.member?.authenticationInfo?.pinStatus)
     val scaffoldState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden
     )

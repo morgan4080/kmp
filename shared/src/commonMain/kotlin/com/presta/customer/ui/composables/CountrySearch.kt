@@ -69,7 +69,7 @@ fun CountriesSearch(
     Column (
         modifier = Modifier
             .padding(LocalSafeArea.current)
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         Row (
             modifier = Modifier.fillMaxWidth(),
@@ -97,6 +97,7 @@ fun CountriesSearch(
             )
 
         }
+
         Row (
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -104,10 +105,12 @@ fun CountriesSearch(
                 modifier = Modifier.fillMaxWidth().absoluteOffset(y = (-20).dp),
                 text = "Select a country",
                 style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                 textAlign = TextAlign.Center
             )
         }
+
         Row (
             modifier = Modifier
                 .fillMaxWidth().padding(bottom = 20.dp),
@@ -163,6 +166,7 @@ fun CountriesSearch(
                 }
             )
         }
+
         LazyColumn (
             modifier = Modifier
                 .padding(bottom = 10.dp)

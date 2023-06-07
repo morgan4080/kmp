@@ -64,7 +64,14 @@ fun OtpContent(
     state: OtpStore.State,
     authState: AuthStore.State,
     onEvent: (OtpStore.Intent) -> Unit,
-    navigate: (memberRefId: String?,phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean, onBoardingContext: DefaultRootComponent.OnBoardingContext, pinStatus: PinStatus?) -> Unit
+    navigate: (
+        memberRefId: String?,
+        phoneNumber: String,
+        isTermsAccepted: Boolean,
+        isActive: Boolean,
+        onBoardingContext: DefaultRootComponent.OnBoardingContext,
+        pinStatus: PinStatus?
+    ) -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
