@@ -95,7 +95,7 @@ class DefaultRootLoansComponent(
         )
 
         is ConfigLoans.LoanTopUp -> RootLoansComponent.ChildLoans.LoanTopUpChild(
-            loanTopUpComponent(componentContext)
+            loanTopUpComponent(componentContext,config)
         )
 
     }
@@ -185,7 +185,8 @@ class DefaultRootLoansComponent(
         )
 
     private fun modeOfDisbursementComponent(
-        componentContext: ComponentContext, config: ConfigLoans.DisbursementMethod): ModeOfDisbursementComponent =
+        componentContext: ComponentContext,
+        config: ConfigLoans.DisbursementMethod): ModeOfDisbursementComponent =
         DefaultModeOfDisbursementComponent(
             componentContext = componentContext,
             onMpesaClicked = {
@@ -237,7 +238,9 @@ class DefaultRootLoansComponent(
             }
         )
 
-    private fun loanTopUpComponent(componentContext: ComponentContext): LoanTopUpComponent =
+    private fun loanTopUpComponent(
+        componentContext: ComponentContext,
+        config: ConfigLoans.LoanTopUp): LoanTopUpComponent =
         DefaultLoanTopUpComponent(
             componentContext = componentContext,
             onConfirmClicked = {
@@ -247,7 +250,11 @@ class DefaultRootLoansComponent(
             },
             onBackNavClicked = {
                 loansNavigation.pop()
-            }
+            },
+            mainContext = prestaDispatchers.main,
+            storeFactory = storeFactory,
+            refId = config.refId
+
         )
 
     private sealed class ConfigLoans : Parcelable {

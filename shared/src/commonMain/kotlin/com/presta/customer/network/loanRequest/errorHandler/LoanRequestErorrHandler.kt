@@ -14,11 +14,11 @@ suspend inline fun <reified T> loanRequestErrorHandler(
 
     val result = try {
         response()
-    } catch(e: IOException) {
+    } catch (e: IOException) {
         throw LoanRequestExceptions(LoanRequestError.ServiceUnavailable)
     }
 
-    when(result.status.value) {
+    when (result.status.value) {
         in 200..299 -> Unit
         in 400..499 -> throw LoanRequestExceptions(LoanRequestError.ClientError)
         500 -> throw LoanRequestExceptions(LoanRequestError.ServerError)
@@ -27,7 +27,7 @@ suspend inline fun <reified T> loanRequestErrorHandler(
 
     return@withContext try {
         result.body()
-    } catch(e: Exception) {
+    } catch (e: Exception) {
         throw LoanRequestExceptions(LoanRequestError.ServerError)
     }
 

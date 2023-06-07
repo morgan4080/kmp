@@ -1,5 +1,4 @@
 package com.presta.customer.ui.composables
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
-import com.presta.customer.ui.theme.labelTextColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
@@ -119,7 +117,9 @@ fun ShortTermTopUpList(
 
             ActionButton("Proceed", onClickContainer = {
                 //Navigate  to topUp Screen
-                component.onConfirmSelected("topUp")
+                //pass product refId
+                //pass  The selected ToPUp product Id
+                component.onConfirmSelected(state.prestaShortTermLoanProductById?.refId.toString())
 
             })
         }

@@ -13,9 +13,9 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 
-class PrestaShortTermLoansClient (
+class PrestaShortTermLoansClient(
     private val httpClient: HttpClient
-        ){
+) {
     suspend fun getShortTermProductsList(
         token: String,
         memberRefId: String,
@@ -31,11 +31,12 @@ class PrestaShortTermLoansClient (
             }
         }
     }
+
     //Get  Loan By Id
     suspend fun getShortTermProductLoanById(
         token: String,
         loanId: String,
-    ): PrestaShortTermProductsListResponse{
+    ): PrestaShortTermProductsListResponse {
         return profileErrorHandler {
             httpClient.get("${NetworkConstants.PrestaGetTShortTermProductsList.route}/${loanId}") {
                 header(HttpHeaders.Authorization, "Bearer $token")
@@ -48,7 +49,7 @@ class PrestaShortTermLoansClient (
     suspend fun getShortTermTopUpList(
         token: String,
         memberRefId: String,
-        session_id:String
+        session_id: String
     ): PrestaShortTermTopUpListResponse {
         return shortTermLoansErrorHandler {
             httpClient.get(NetworkConstants.PrestaGetShortTermToUpList.route) {

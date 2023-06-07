@@ -23,8 +23,7 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 @Composable
 fun ModeOfDisbursementContent(
     component: ModeOfDisbursementComponent
-
-){
+) {
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background),
@@ -54,7 +53,6 @@ fun ModeOfDisbursementContent(
                     fontSize = 14.sp,
 
                     )
-
                 Spacer(modifier = Modifier.padding(top = 25.dp))
 
                 Row(modifier = Modifier.fillMaxWidth()) {

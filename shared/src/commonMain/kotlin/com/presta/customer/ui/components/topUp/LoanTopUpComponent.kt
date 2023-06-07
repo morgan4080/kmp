@@ -1,16 +1,20 @@
 package com.presta.customer.ui.components.topUp
 
 import com.arkivanov.decompose.value.Value
+import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
+import kotlinx.coroutines.flow.StateFlow
 
 interface LoanTopUpComponent {
-
-    val model: Value<Model>
-
     fun onConfirmSelected()
     fun onBackNavSelected()
+    val authStore: AuthStore
 
-    data class Model(
-        val items: List<String>,
-    )
+    val authState: StateFlow<AuthStore.State>
 
+    val shortTermloansStore: ShortTermLoansStore
+
+    val shortTermloansState: StateFlow<ShortTermLoansStore.State>
+    fun onAuthEvent(event: AuthStore.Intent)
+    fun onEvent(event: ShortTermLoansStore.Intent)
 }

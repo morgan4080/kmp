@@ -5,10 +5,10 @@ import com.presta.customer.ui.components.modeofDisbursement.ModeOfDisbursementCo
 
 @Composable
 fun SelectModeOfDisbursementScreen(
-    component: ModeOfDisbursementComponent) {
-
+    component: ModeOfDisbursementComponent
+) {
     ModeOfDisbursementContent(
-        component=component
+        component = component
 
     )
 

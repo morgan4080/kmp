@@ -5,7 +5,10 @@ import com.presta.customer.network.loanRequest.errorHandler.loanRequestErrorHand
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
 import com.presta.customer.network.loanRequest.model.LoanRequestResponse
 import com.presta.customer.network.loanRequest.model.LoanType
+import com.presta.customer.network.payments.errorHandler.paymentsErrorHandler
+import com.presta.customer.network.payments.model.PaymentsResponse
 import io.ktor.client.HttpClient
+import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -28,16 +31,16 @@ data class LoanRequestData @OptIn(ExperimentalSerializationApi::class) construct
     @EncodeDefault val loanType: LoanType,
     val productRefId: String,
     val referencedLoanRefId: String?,
-    val requestId: String?=null,
+    val requestId: String? = null,
     val sessionId: String,
-    )
+)
 
 class PrestaLoanRequestClient(
     private val httpClient: HttpClient
-){
+) {
     suspend fun sendLoanRequest(
         token: String,
-        amount :Int,
+        amount: Int,
         currentTerm: String,
         customerRefId: String,
         disbursementAccountReference: String,
@@ -46,9 +49,9 @@ class PrestaLoanRequestClient(
         loanType: LoanType,
         productRefId: String,
         referencedLoanRefId: String?,
-        requestId: String?=null,
+        requestId: String? = null,
         sessionId: String
-    ): LoanRequestResponse{
+    ): LoanRequestResponse {
         return loanRequestErrorHandler {
             httpClient.post(NetworkConstants.PrestaLoanRequest.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")
@@ -59,15 +62,30 @@ class PrestaLoanRequestClient(
                         currentTerm = currentTerm,
                         customerRefId = customerRefId,
                         disbursementAccountReference = disbursementAccountReference,
-                        disbursementMethod=disbursementMethod,
+                        disbursementMethod = disbursementMethod,
                         loanPeriod = loanPeriod,
-                        loanType=loanType,
+                        loanType = loanType,
                         productRefId = productRefId,
                         referencedLoanRefId = referencedLoanRefId,
                         requestId = requestId,
                         sessionId = sessionId
                     )
                 )
+            }
+        }
+    }
+    suspend fun pollPaymentStatus(
+        token: String,
+        correlationId: String
+    ): LoanRequestResponse {
+        return paymentsErrorHandler {
+            httpClient.get(NetworkConstants.PrestaPollPaymentStatus.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                contentType(ContentType.Application.Json)
+
+                url {
+                    parameters.append("correlationId", correlationId)
+                }
             }
         }
     }

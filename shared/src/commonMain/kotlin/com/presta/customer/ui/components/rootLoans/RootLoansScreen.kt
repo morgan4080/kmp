@@ -20,7 +20,7 @@ import com.presta.customer.ui.components.rootLoans.RootLoansComponent
 import com.presta.customer.ui.components.shortTermLoans.ui.ShortTermLoansScreen
 import com.presta.customer.ui.components.specificLoanType.ui.SpecificLoansScreen
 import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransactionScreen
-import com.presta.customer.ui.components.topUp.LoanTopUpScreen
+import com.presta.customer.ui.components.topUp.ui.LoanTopUpScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.components.modeofDisbursement.ui.SelectModeOfDisbursementScreen
 

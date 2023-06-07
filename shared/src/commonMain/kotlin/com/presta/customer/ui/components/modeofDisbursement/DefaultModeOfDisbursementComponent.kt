@@ -31,6 +31,7 @@ fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineSc
     lifecycle.doOnDestroy(scope::cancel)
     return scope
 }
+
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
 
@@ -38,7 +39,7 @@ class DefaultModeOfDisbursementComponent(
     private val onMpesaClicked: (response: LoanRequestResponse) -> Unit,
     private val onBankClicked: () -> Unit,
     private val onBackNavClicked: () -> Unit,
-    private  val TransactionSuccessful: () -> Unit,
+    private val TransactionSuccessful: () -> Unit,
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
@@ -46,8 +47,8 @@ class DefaultModeOfDisbursementComponent(
     override val amount: Double,
     override val loanPeriod: String,
     override val loanType: String,
-    ) : ModeOfDisbursementComponent, ComponentContext by componentContext {
-    override val authStore: AuthStore=
+) : ModeOfDisbursementComponent, ComponentContext by componentContext {
+    override val authStore: AuthStore =
         instanceKeeper.getStore {
             AuthStoreFactory(
                 storeFactory = storeFactory,
@@ -60,21 +61,26 @@ class DefaultModeOfDisbursementComponent(
                 }
             ).create()
         }
-    override val modeOfDisbursementStore=
+    override val modeOfDisbursementStore =
         instanceKeeper.getStore {
             ModeOfDisbursementStoreFactory(
                 storeFactory = storeFactory
             ).create()
         }
-    override val modeOfDisbursementState: StateFlow<ModeOfDisbursementStore.State> = modeOfDisbursementStore.stateFlow
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val modeOfDisbursementState: StateFlow<ModeOfDisbursementStore.State> =
+        modeOfDisbursementStore.stateFlow
+
     override fun onAuthEvent(event: AuthStore.Intent) {
         authStore.accept(event)
     }
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val authState: StateFlow<AuthStore.State> =authStore.stateFlow
+    override val authState: StateFlow<AuthStore.State> = authStore.stateFlow
     override fun onRequestLoanEvent(event: ModeOfDisbursementStore.Intent) {
         modeOfDisbursementStore.accept(event)
     }
+
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
     private var refreshTokenJob: Job? = null
@@ -85,15 +91,18 @@ class DefaultModeOfDisbursementComponent(
             authState.collect { state ->
                 println(state.cachedMemberData)
                 if (state.cachedMemberData !== null) {
-                    onAuthEvent(AuthStore.Intent.RefreshToken(
-                        tenantId = OrganisationModel.organisation.tenant_id,
-                        refId = state.cachedMemberData.refId
-                    ))
+                    onAuthEvent(
+                        AuthStore.Intent.RefreshToken(
+                            tenantId = OrganisationModel.organisation.tenant_id,
+                            refId = state.cachedMemberData.refId
+                        )
+                    )
                 }
                 this.cancel()
             }
         }
     }
+
     private var authUserScopeJob: Job? = null
 
     private var loanRequestScopeJob: Job? = null
@@ -106,17 +115,17 @@ class DefaultModeOfDisbursementComponent(
                     onRequestLoanEvent(
                         ModeOfDisbursementStore.Intent.RequestLoan(
                             token = state.cachedMemberData.accessToken,
-                            amount =amount.toInt() ,
-                            currentTerm="FALSE",
-                            customerRefId=state.cachedMemberData.refId,
-                            disbursementAccountReference=state.cachedMemberData.phoneNumber,
-                            disbursementMethod=DisbursementMethod.MOBILEMONEY,
-                            loanPeriod=loanPeriod.toInt(),
-                            loanType=LoanType._NORMAL_LOAN,
-                            productRefId=refId,
-                            referencedLoanRefId=null,
-                            requestId=null,
-                            sessionId=state.cachedMemberData.session_id
+                            amount = amount.toInt(),
+                            currentTerm = "FALSE",
+                            customerRefId = state.cachedMemberData.refId,
+                            disbursementAccountReference = state.cachedMemberData.phoneNumber,
+                            disbursementMethod = DisbursementMethod.MOBILEMONEY,
+                            loanPeriod = loanPeriod.toInt(),
+                            loanType = LoanType._NORMAL_LOAN,
+                            productRefId = refId,
+                            referencedLoanRefId = null,
+                            requestId = null,
+                            sessionId = state.cachedMemberData.session_id
                         )
                     )
                 }
@@ -134,16 +143,19 @@ class DefaultModeOfDisbursementComponent(
             }
         }
     }
+
     override fun onBankSelected() {
         onBankClicked()
     }
 
     override fun onBackNavSelected() {
-      onBackNavClicked()
+        onBackNavClicked()
     }
+
     override fun successFulTransaction() {
-     TransactionSuccessful
+        TransactionSuccessful
     }
+
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         refreshToken()
