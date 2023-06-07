@@ -2,11 +2,11 @@ package com.presta.customer.network.loanRequest.errorHandler
 
 import com.presta.customer.network.loanRequest.errors.LoanRequestError
 import com.presta.customer.network.loanRequest.errors.LoanRequestExceptions
+import com.presta.customer.prestaDispatchers
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.withContext
-import prestaDispatchers
 
 suspend inline fun <reified T> loanRequestErrorHandler(
     crossinline response: suspend () -> HttpResponse

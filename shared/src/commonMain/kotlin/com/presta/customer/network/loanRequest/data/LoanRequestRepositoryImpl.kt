@@ -4,9 +4,9 @@ import com.presta.customer.network.loanRequest.client.PrestaLoanRequestClient
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
 import com.presta.customer.network.loanRequest.model.LoanRequestResponse
 import com.presta.customer.network.loanRequest.model.LoanType
-import com.presta.customer.network.payments.model.PaymentsResponse
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+
 class LoanRequestRepositoryImpl : LoanRequestRepository,KoinComponent {
     private val loanRequestClient by inject<PrestaLoanRequestClient>()
     override suspend fun requestLoan(

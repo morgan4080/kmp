@@ -36,7 +36,7 @@ fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
 
 class DefaultModeOfDisbursementComponent(
-    private val onMpesaClicked: (response: LoanRequestResponse) -> Unit,
+    private val onMpesaClicked: (amount: Double, fees: Double) -> Unit,
     private val onBankClicked: () -> Unit,
     private val onBackNavClicked: () -> Unit,
     private val TransactionSuccessful: () -> Unit,
@@ -135,8 +135,8 @@ class DefaultModeOfDisbursementComponent(
 
         loanRequestScopeJob = scope.launch {
             modeOfDisbursementState.collect { state ->
-                if (state.loanRequestResponse !== null) {
-                    onMpesaClicked(state.loanRequestResponse)
+                if (state.loanRequestResponse !== null && state.loanRequestResponse.amount !== null) {
+                    onMpesaClicked(state.loanRequestResponse.amount.toDouble(), 0.00)
                 }
 
                 this.cancel()

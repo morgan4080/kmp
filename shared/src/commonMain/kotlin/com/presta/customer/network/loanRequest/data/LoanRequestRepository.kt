@@ -3,7 +3,6 @@ package com.presta.customer.network.loanRequest.data
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
 import com.presta.customer.network.loanRequest.model.LoanRequestResponse
 import com.presta.customer.network.loanRequest.model.LoanType
-import com.presta.customer.network.payments.model.PaymentsResponse
 
 interface LoanRequestRepository {
     suspend fun requestLoan(

@@ -6,7 +6,6 @@ import com.presta.customer.network.loanRequest.model.DisbursementMethod
 import com.presta.customer.network.loanRequest.model.LoanRequestResponse
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.payments.errorHandler.paymentsErrorHandler
-import com.presta.customer.network.payments.model.PaymentsResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header

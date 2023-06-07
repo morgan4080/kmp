@@ -12,6 +12,7 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.presta.customer.network.payments.model.PaymentStatuses
 import com.presta.customer.ui.components.applyLoan.DefaultApplyLoanComponent
 import com.presta.customer.ui.components.banKDisbursement.BankDisbursementComponent
 import com.presta.customer.ui.components.banKDisbursement.DefaultBankDisbursementComponent
@@ -31,8 +32,8 @@ import com.presta.customer.ui.components.succesfulTransaction.DefaultSuccessfulT
 import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransactionComponent
 import com.presta.customer.ui.components.topUp.DefaultLoanTopUpComponent
 import com.presta.customer.ui.components.topUp.LoanTopUpComponent
-import components.modeofDisbursement.DefaultModeOfDisbursementComponent
 import com.presta.customer.prestaDispatchers
+import com.presta.customer.ui.components.modeofDisbursement.DefaultModeOfDisbursementComponent
 
 class DefaultRootLoansComponent(
     componentContext: ComponentContext,
@@ -191,8 +192,8 @@ class DefaultRootLoansComponent(
         config: ConfigLoans.DisbursementMethod): ModeOfDisbursementComponent =
         DefaultModeOfDisbursementComponent(
             componentContext = componentContext,
-            onMpesaClicked = {
-                loansNavigation.push(ConfigLoans.ProcessingTransaction)
+            onMpesaClicked = { amount, fees ->
+
             },
             onBankClicked = {
                 //navigate to  BankDisbursement Screen
