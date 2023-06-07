@@ -7,7 +7,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
-import prestaDispatchers
+import com.presta.customer.prestaDispatchers
 
 /*{
     "timestamp":"29-05-2023 02:43:43",

@@ -12,7 +12,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import prestaDispatchers
+import com.presta.customer.prestaDispatchers
 
 class ShortTermLoansStoreFactory(
     private val storeFactory: StoreFactory

@@ -1,4 +1,4 @@
-package com.presta.customer.ui.components.payLoanPropmpt
+package com.presta.customer.ui.components.payRegistrationFeePrompt
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.Lifecycle
@@ -39,14 +39,14 @@ fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineSc
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
 
-class DefaultPayLoanPromptComponent(
+class DefaultPayRegistrationFeeComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineDispatcher,
-    override val amount: String,
+    override val amount: Double,
     override val correlationId: String,
     val navigateToCompleteFailure: (paymentStatus: PaymentStatuses) -> Unit
-): PayLoanPromptComponent, ComponentContext by componentContext, KoinComponent {
+): PayRegistrationFeeComponent, ComponentContext by componentContext, KoinComponent {
     private val paymentsRepository by inject<PaymentsRepository>()
 
     override val authStore =

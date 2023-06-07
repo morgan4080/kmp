@@ -9,7 +9,6 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.payments.data.PaymentTypes
-import com.presta.customer.network.payments.model.PaymentsResponse
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.addSavings.store.AddSavingsStore
 import com.presta.customer.ui.components.addSavings.store.AddSavingsStoreFactory
@@ -34,11 +33,11 @@ fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineSc
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
 
-class DefaultAddSavingsComponent (
+class DefaultAddSavingsComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
-    private val onConfirmClicked: (response: PaymentsResponse) -> Unit,
+    private val onConfirmClicked: (correlationId: String, amount: Double, mode: PaymentTypes) -> Unit,
     private val onBackNavClicked: () -> Unit,
 ): AddSavingsComponent,ComponentContext by componentContext {
     override val authStore =
@@ -124,11 +123,12 @@ class DefaultAddSavingsComponent (
 
         addSavingsScopeJob = scope.launch {
             addSavingsState.collect { state ->
-                if (state.paymentsResponse !== null) {
-                    onConfirmClicked(state.paymentsResponse)
+                if (state.correlationId !== null) {
+                    val correlationId = state.correlationId
+                    onConfirmClicked(correlationId, amount, mode)
+                    onAddSavingsEvent(AddSavingsStore.Intent.ClearCorrelationId(null))
+                    this.cancel()
                 }
-
-                this.cancel()
             }
         }
     }

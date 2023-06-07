@@ -14,7 +14,7 @@ import com.presta.customer.network.otp.model.OtpVerificationResponse
 import com.presta.customer.ui.components.root.DefaultRootComponent
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import prestaDispatchers
+import com.presta.customer.prestaDispatchers
 
 internal class OtpStoreFactory (
     private val storeFactory: StoreFactory,

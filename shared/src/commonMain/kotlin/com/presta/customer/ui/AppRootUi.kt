@@ -9,8 +9,9 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stac
 import com.presta.customer.ui.components.auth.ui.AuthScreen
 import com.presta.customer.ui.components.onBoarding.ui.OnBoardingScreen
 import com.presta.customer.ui.components.otp.ui.OtpScreen
-import com.presta.customer.ui.components.payLoan.PayLoanScreen
-import com.presta.customer.ui.components.payLoanPropmpt.PayLoanPromptScreen
+import com.presta.customer.ui.components.payLoan.ui.PayLoanScreen
+import com.presta.customer.ui.components.payLoanPropmpt.ui.PayLoanPromptScreen
+import com.presta.customer.ui.components.payRegistrationFeePrompt.ui.PayRegistrationFeeScreen
 import com.presta.customer.ui.components.registration.ui.RegistrationScreen
 import com.presta.customer.ui.components.root.RootComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomScreen
@@ -35,6 +36,7 @@ fun AppRootUi(component: RootComponent) {
             is RootComponent.Child.RootBottomChild -> RootBottomScreen(child.component)
             is RootComponent.Child.PayLoanChild-> PayLoanScreen(child.component)
             is RootComponent.Child.PayLoanPromptChild-> PayLoanPromptScreen(child.component)
+            is RootComponent.Child.PayRegistrationFeeChild-> PayRegistrationFeeScreen(child.component)
         }
     }
 }

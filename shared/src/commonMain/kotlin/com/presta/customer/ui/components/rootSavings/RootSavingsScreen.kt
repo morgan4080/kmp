@@ -11,7 +11,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scal
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.presta.customer.ui.components.addSavings.ui.AddSavingsScreen
-import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionScreen
+import com.presta.customer.ui.components.processingTransaction.ui.ProcessingTransactionScreen
 import com.presta.customer.ui.components.rootSavings.RootSavingsComponent
 import com.presta.customer.ui.components.savings.ui.SavingsScreen
 import com.presta.customer.ui.components.savingsTransactionHistory.SavingsTransactionHistoryScreen

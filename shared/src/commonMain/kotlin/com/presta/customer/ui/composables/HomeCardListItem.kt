@@ -33,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,7 +52,7 @@ fun HomeCardListItem(
     loanStatus: String? = null,
     totalLoans: Int? = null,
     goToSavings: () -> Unit = {},
-    goToLoans: () -> Unit = {},
+    goToPayLoans: () -> Unit = {},
     loanBreakDown: List<LoanBreakDown>? = null
 ) {
     var showExpanded by remember { mutableStateOf(false) }
@@ -220,7 +219,7 @@ fun HomeCardListItem(
 
                                 Row (
                                     modifier = Modifier.clickable {
-                                        goToLoans()
+                                        goToPayLoans()
                                     },
                                     horizontalArrangement = Arrangement.Center,
                                     verticalAlignment = Alignment.CenterVertically

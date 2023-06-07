@@ -31,8 +31,8 @@ import com.presta.customer.ui.components.succesfulTransaction.DefaultSuccessfulT
 import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransactionComponent
 import com.presta.customer.ui.components.topUp.DefaultLoanTopUpComponent
 import com.presta.customer.ui.components.topUp.LoanTopUpComponent
-import com.presta.customer.ui.components.modeofDisbursement.DefaultModeOfDisbursementComponent
-import prestaDispatchers
+import components.modeofDisbursement.DefaultModeOfDisbursementComponent
+import com.presta.customer.prestaDispatchers
 
 class DefaultRootLoansComponent(
     componentContext: ComponentContext,
@@ -40,6 +40,7 @@ class DefaultRootLoansComponent(
     val pop: () -> Unit = {}
 ) : RootLoansComponent, ComponentContext by componentContext {
     private val loansNavigation = StackNavigation<ConfigLoans>()
+
 
     private val _childLoansStack = childStack(
         source = loansNavigation,
@@ -51,6 +52,7 @@ class DefaultRootLoansComponent(
 
     override val childLoansStack: Value<ChildStack<*, RootLoansComponent.ChildLoans>> =
         _childLoansStack
+
     private fun createLoansChild(
         config: ConfigLoans, componentContext: ComponentContext
     ): RootLoansComponent.ChildLoans = when (config) {
@@ -79,7 +81,7 @@ class DefaultRootLoansComponent(
         )
 
         is ConfigLoans.ProcessingTransaction -> RootLoansComponent.ChildLoans.ProcessingTransactionChild(
-            processingTransactionComponent(componentContext)
+            processingTransactionComponent(componentContext, config)
         )
 
         is ConfigLoans.BankDisbursement -> RootLoansComponent.ChildLoans.BankDisbursementChild(
@@ -99,6 +101,7 @@ class DefaultRootLoansComponent(
         )
 
     }
+
     private fun applyLoanComponent(componentContext: ComponentContext): ApplyLoanComponent =
         DefaultApplyLoanComponent(
             componentContext = componentContext,
@@ -116,7 +119,6 @@ class DefaultRootLoansComponent(
                 pop()
             }
         )
-
     //Pass the RefId
     private fun shortTermComponent(componentContext: ComponentContext): ShortTermLoansComponent =
         DefaultShortTermLoansComponent(
@@ -211,9 +213,26 @@ class DefaultRootLoansComponent(
             loanType = config.loanType
         )
 
-    private fun processingTransactionComponent(componentContext: ComponentContext): ProcessingTransactionComponent =
+    private fun processingTransactionComponent(componentContext: ComponentContext, config: ConfigLoans.ProcessingTransaction): ProcessingTransactionComponent =
         DefaultProcessingTransactionComponent(
-            componentContext = componentContext
+            storeFactory = storeFactory,
+            componentContext = componentContext,
+            correlationId = config.correlationId,
+            amount = config.amount,
+            mainContext = prestaDispatchers.main,
+            onPop = {
+                loansNavigation.pop()
+            },
+            navigateToCompleteFailure = { paymentStatus ->
+                if (paymentStatus == PaymentStatuses.COMPLETED) {
+                    loansNavigation.push(ConfigLoans.SuccessfulTransaction)
+                }
+
+                if (paymentStatus == PaymentStatuses.FAILURE
+                    || paymentStatus == PaymentStatuses.CANCELLED) {
+                    loansNavigation.push(ConfigLoans.FailedTransaction)
+                }
+            }
         )
 
     private fun bankDisbursementComponent(componentContext: ComponentContext): BankDisbursementComponent =
@@ -279,7 +298,7 @@ class DefaultRootLoansComponent(
         data class DisbursementMethod(val refId: String, val amount: Double,val loanPeriod: String,val loanType: String) : ConfigLoans()
 
         @Parcelize
-        object ProcessingTransaction : ConfigLoans()
+        data class ProcessingTransaction(val correlationId: String, val amount: Double) : ConfigLoans()
 
         @Parcelize
         object BankDisbursement : ConfigLoans()

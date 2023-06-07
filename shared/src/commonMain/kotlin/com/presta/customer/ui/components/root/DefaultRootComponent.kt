@@ -13,6 +13,8 @@ import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.presta.customer.network.onBoarding.model.PinStatus
+import com.presta.customer.network.payments.model.PaymentStatuses
+import com.presta.customer.prestaDispatchers
 import com.presta.customer.ui.components.auth.AuthComponent
 import com.presta.customer.ui.components.auth.DefaultAuthComponent
 import com.presta.customer.ui.components.onBoarding.DefaultOnboardingComponent
@@ -23,6 +25,8 @@ import com.presta.customer.ui.components.payLoan.DefaultPayLoanComponent
 import com.presta.customer.ui.components.payLoan.PayLoanComponent
 import com.presta.customer.ui.components.payLoanPropmpt.DefaultPayLoanPromptComponent
 import com.presta.customer.ui.components.payLoanPropmpt.PayLoanPromptComponent
+import com.presta.customer.ui.components.payRegistrationFeePrompt.DefaultPayRegistrationFeeComponent
+import com.presta.customer.ui.components.payRegistrationFeePrompt.PayRegistrationFeeComponent
 import com.presta.customer.ui.components.registration.DefaultRegistrationComponent
 import com.presta.customer.ui.components.registration.RegistrationComponent
 import com.presta.customer.ui.components.rootBottomStack.DefaultRootBottomComponent
@@ -33,7 +37,6 @@ import com.presta.customer.ui.components.transactionHistory.DefaultTransactionHi
 import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
 import com.presta.customer.ui.components.welcome.DefaultWelcomeComponent
 import com.presta.customer.ui.components.welcome.WelcomeComponent
-import prestaDispatchers
 
 class DefaultRootComponent(
     componentContext: ComponentContext,
@@ -63,7 +66,8 @@ class DefaultRootComponent(
             is Config.Auth -> RootComponent.Child.AuthChild(authComponent(componentContext, config))
             is Config.RootBottom -> RootComponent.Child.RootBottomChild(rootBottomComponent(componentContext))
             is Config.AllTransactions -> RootComponent.Child.AllTransactionsChild(allTransactionHistory(componentContext))
-            is Config.PayLoanPrompt->RootComponent.Child.PayLoanPromptChild(payLoanPromptComponent(componentContext))
+            is Config.PayLoanPrompt->RootComponent.Child.PayLoanPromptChild(payLoanPromptComponent(componentContext, config))
+            is Config.PayRegistrationFee->RootComponent.Child.PayRegistrationFeeChild(payRegistrationFeeComponent(componentContext, config))
             is Config.PayLoan->RootComponent.Child.PayLoanChild(payLoanComponent(componentContext))
         }
 
@@ -209,6 +213,9 @@ class DefaultRootComponent(
             },
             gotoPayLoans = {
                 navigation.bringToFront(Config.PayLoan)
+            },
+            gotoPayRegistrationFees = { correlationId, amount ->
+                navigation.bringToFront(Config.PayRegistrationFee(amount, correlationId))
             }
         )
 
@@ -224,19 +231,52 @@ class DefaultRootComponent(
 
     private fun payLoanComponent(componentContext: ComponentContext): PayLoanComponent =
         DefaultPayLoanComponent(
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
             componentContext = componentContext,
-            onPayClicked = {
-                //push  to confirm Loan Details Screen
-                //Navigate to pay Loan child  a child Of loans
-                //Show  the Pay  Loan child first
-                ///loansNavigation.push(DefaultRootLoansComponent.ConfigLoans.PayLoanPrompt)
+            onPayClicked = { amount, correlationId ->
+                navigation.push(Config.PayLoanPrompt(amount, correlationId))
+            },
+            onPop = {
+                navigation.pop()
             }
         )
-    private fun payLoanPromptComponent(componentContext: ComponentContext): PayLoanPromptComponent =
+    private fun payLoanPromptComponent(componentContext: ComponentContext, config: Config.PayLoanPrompt): PayLoanPromptComponent =
         DefaultPayLoanPromptComponent(
             componentContext = componentContext,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            amount = config.amount,
+            correlationId = config.correlationId,
+            navigateToCompleteFailure =  { paymentStatus ->
+                if (paymentStatus == PaymentStatuses.COMPLETED) {
+                    println("navigate to success")
+                }
 
-            )
+                if (paymentStatus == PaymentStatuses.FAILURE
+                    || paymentStatus == PaymentStatuses.CANCELLED) {
+                    println("navigate to failure")
+                }
+            }
+        )
+    private fun payRegistrationFeeComponent(componentContext: ComponentContext, config: Config.PayRegistrationFee): PayRegistrationFeeComponent =
+        DefaultPayRegistrationFeeComponent(
+            componentContext = componentContext,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            amount = config.amount,
+            correlationId = config.correlationId,
+            navigateToCompleteFailure =  { paymentStatus ->
+                if (paymentStatus == PaymentStatuses.COMPLETED) {
+                    println("navigate to success")
+                }
+
+                if (paymentStatus == PaymentStatuses.FAILURE
+                    || paymentStatus == PaymentStatuses.CANCELLED) {
+                    println("navigate to failure")
+                }
+            }
+        )
 
 
 
@@ -265,7 +305,8 @@ class DefaultRootComponent(
         @Parcelize
         object PayLoan :Config()
         @Parcelize
-        object PayLoanPrompt :Config()
-
+        data class PayLoanPrompt(val amount: String, val correlationId: String) :Config()
+        @Parcelize
+        data class PayRegistrationFee(val amount: Double, val correlationId: String) :Config()
     }
 }

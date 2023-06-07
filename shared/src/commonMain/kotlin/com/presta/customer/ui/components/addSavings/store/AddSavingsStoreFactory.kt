@@ -7,12 +7,11 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.network.payments.data.PaymentsRepository
-import com.presta.customer.network.payments.model.PaymentsResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import prestaDispatchers
+import com.presta.customer.prestaDispatchers
 
 class AddSavingsStoreFactory (
     private val storeFactory: StoreFactory
@@ -28,7 +27,7 @@ class AddSavingsStoreFactory (
             reducer = ReducerImpl
         ) {}
     private sealed class Msg {
-        data class AddSavingsLoaded(val paymentsResponse: PaymentsResponse): Msg()
+        data class AddSavingsLoaded(val correlationId: String?): Msg()
         data class AddSavingsLoading(val isLoading: Boolean = true): Msg()
         data class AddSavingsFailed(val error: String?): Msg()
         data class  ClearError(val error: String?): Msg()
@@ -52,6 +51,7 @@ class AddSavingsStoreFactory (
                     amount = intent.amount,
                     paymentType = intent.paymentType
                 )
+                is AddSavingsStore.Intent.ClearCorrelationId -> dispatch(Msg.AddSavingsLoaded(intent.correlationId))
                 is AddSavingsStore.Intent.UpdateError -> dispatch(Msg.ClearError(intent.error))
             }
 
@@ -91,7 +91,7 @@ class AddSavingsStoreFactory (
     private object ReducerImpl: Reducer<AddSavingsStore.State, Msg> {
         override fun AddSavingsStore.State.reduce(msg: Msg): AddSavingsStore.State =
             when (msg) {
-                is Msg.AddSavingsLoaded -> copy(paymentsResponse = msg.paymentsResponse)
+                is Msg.AddSavingsLoaded -> copy(correlationId = msg.correlationId)
                 is Msg.AddSavingsLoading -> copy(isLoading = msg.isLoading)
                 is Msg.AddSavingsFailed -> copy(error = msg.error)
                 is Msg.ClearError -> copy(error = msg.error)
