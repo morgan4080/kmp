@@ -23,6 +23,7 @@ import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransact
 import com.presta.customer.ui.components.topUp.ui.LoanTopUpScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.components.modeofDisbursement.ui.SelectModeOfDisbursementScreen
+import com.presta.customer.ui.components.processLoanDisbursement.ui.ProcessLoanDisbursementScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,6 +44,7 @@ fun RootLoansScreen(component: RootLoansComponent) {
                 is RootLoansComponent.ChildLoans.ConfirmLoanChild-> LoansConfirmationScreen(child.component,innerPadding)
                 is RootLoansComponent.ChildLoans.DisbursementModeChild-> SelectModeOfDisbursementScreen(child.component)
                 is RootLoansComponent.ChildLoans.ProcessingTransactionChild-> ProcessingTransactionScreen(child.component)
+                is RootLoansComponent.ChildLoans.ProcessingLoanDisbursementChild-> ProcessLoanDisbursementScreen(child.component)
                 is RootLoansComponent.ChildLoans.BankDisbursementChild-> BankDisbursementScreen(child.component)
                 is RootLoansComponent.ChildLoans.SuccessfulTransactionChild-> SuccessfulTransactionScreen(child.component)
                 is RootLoansComponent.ChildLoans.FailedTransactionChild-> FailedTransactionScreen(child.component)

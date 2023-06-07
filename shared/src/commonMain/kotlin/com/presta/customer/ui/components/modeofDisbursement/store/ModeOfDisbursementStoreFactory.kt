@@ -29,7 +29,7 @@ class ModeOfDisbursementStoreFactory(
                 reducer = ReducerImpl
             ) {}
     private sealed class Msg {
-        data class LoanRequestLoaded(val loanRequestResponse: LoanRequestResponse) : Msg()
+        data class LoanRequestLoaded(val correlationId: String?) : Msg()
 
         data class LoanRequestsLoading(val isLoading: Boolean = true) : Msg()
 
@@ -100,13 +100,12 @@ class ModeOfDisbursementStoreFactory(
                 dispatch(Msg.LoanRequestsLoading(false))
             }
         }
-        //poll loan status
 
     }
     private object ReducerImpl : Reducer<ModeOfDisbursementStore.State, Msg> {
         override fun ModeOfDisbursementStore.State.reduce(msg: Msg): ModeOfDisbursementStore.State =
             when (msg) {
-                is Msg.LoanRequestLoaded -> copy(loanRequestResponse = msg.loanRequestResponse)
+                is Msg.LoanRequestLoaded -> copy(correlationId = msg.correlationId)
                 is Msg.LoanRequestsLoading -> copy(isLoading = msg.isLoading)
                 is Msg.LoanRequestFailedFailed -> copy(error = msg.error)
             }

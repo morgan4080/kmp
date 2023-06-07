@@ -25,6 +25,6 @@ interface ModeOfDisbursementStore : Store<ModeOfDisbursementStore.Intent, ModeOf
     data class State(
         val isLoading: Boolean = false,
         val error: String? = null,
-        val loanRequestResponse: LoanRequestResponse? = null,
+        val correlationId: String? = null
     )
 }

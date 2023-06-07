@@ -8,7 +8,6 @@ import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
-import com.presta.customer.network.loanRequest.model.LoanRequestResponse
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
@@ -36,7 +35,7 @@ fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
 
 class DefaultModeOfDisbursementComponent(
-    private val onMpesaClicked: (amount: Double, fees: Double) -> Unit,
+    private val onMpesaClicked: (correlationId: String ,amount: Double, fees: Double,) -> Unit,
     private val onBankClicked: () -> Unit,
     private val onBackNavClicked: () -> Unit,
     private val TransactionSuccessful: () -> Unit,
@@ -44,7 +43,7 @@ class DefaultModeOfDisbursementComponent(
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     override val refId: String,
-    override val amount: Double,
+    override val fees: Double,
     override val loanPeriod: String,
     override val loanType: String,
 ) : ModeOfDisbursementComponent, ComponentContext by componentContext {
@@ -115,7 +114,7 @@ class DefaultModeOfDisbursementComponent(
                     onRequestLoanEvent(
                         ModeOfDisbursementStore.Intent.RequestLoan(
                             token = state.cachedMemberData.accessToken,
-                            amount = amount.toInt(),
+                            amount = fees.toInt(),
                             currentTerm = "FALSE",
                             customerRefId = state.cachedMemberData.refId,
                             disbursementAccountReference = state.cachedMemberData.phoneNumber,
@@ -132,14 +131,14 @@ class DefaultModeOfDisbursementComponent(
                 this.cancel()
             }
         }
-
         loanRequestScopeJob = scope.launch {
             modeOfDisbursementState.collect { state ->
-                if (state.loanRequestResponse !== null && state.loanRequestResponse.amount !== null) {
-                    onMpesaClicked(state.loanRequestResponse.amount.toDouble(), 0.00)
-                }
+                if (state.correlationId!==null) {
+                    val correlationId = state.correlationId
 
-                this.cancel()
+                    onMpesaClicked(correlationId, 0.00,fees)
+                    this.cancel()
+                }
             }
         }
     }

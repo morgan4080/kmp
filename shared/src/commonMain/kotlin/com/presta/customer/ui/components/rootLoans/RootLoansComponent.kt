@@ -15,18 +15,16 @@ import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransact
 import com.presta.customer.ui.components.topUp.LoanTopUpComponent
 import com.presta.customer.ui.components.longTermLoans.LongTermLoansComponent
 import com.presta.customer.ui.components.payLoanPropmpt.PayLoanPromptComponent
+import com.presta.customer.ui.components.processLoanDisbursement.ProcessLoanDisbursementComponent
 
 interface RootLoansComponent {
     val childLoansStack: Value<ChildStack<*, ChildLoans>>
-
     sealed class ChildLoans {
         class ApplyLoanChild(val component: ApplyLoanComponent) : ChildLoans()
 
         class ShortTermLoansChild(val component: ShortTermLoansComponent) : ChildLoans()
 
         class LongTermLoansChild(val component: LongTermLoansComponent) : ChildLoans()
-
-        // class ProductLoansChild(val component: ProductComponent):ChildLoans()
         class EmergencyLoanChild(val component: SpecificLoansComponent) : ChildLoans()
 
         class ConfirmLoanChild(val component: LoanConfirmationComponent) : ChildLoans()
@@ -34,6 +32,7 @@ interface RootLoansComponent {
         class DisbursementModeChild(val component: ModeOfDisbursementComponent) : ChildLoans()
 
         class ProcessingTransactionChild(val component: ProcessingTransactionComponent) : ChildLoans()
+        class ProcessingLoanDisbursementChild(val component: ProcessLoanDisbursementComponent) : ChildLoans()
         class BankDisbursementChild(val component: BankDisbursementComponent) : ChildLoans()
         class SuccessfulTransactionChild(val component: SuccessfulTransactionComponent) : ChildLoans()
         class FailedTransactionChild(val component: FailedTransactionComponent) : ChildLoans()

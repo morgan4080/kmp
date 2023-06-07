@@ -23,6 +23,7 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 @Composable
 fun ModeOfDisbursementContent(
     component: ModeOfDisbursementComponent
+
 ) {
     Surface(
         modifier = Modifier

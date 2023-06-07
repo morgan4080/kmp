@@ -1,13 +1,12 @@
 package com.presta.customer.ui.components.modeofDisbursement
 
-import com.arkivanov.decompose.value.Value
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStore
 import kotlinx.coroutines.flow.StateFlow
 
 interface ModeOfDisbursementComponent {
     val refId: String
-    val amount: Double
+    val fees: Double
     val loanPeriod : String
     val loanType:String
      val authStore: AuthStore

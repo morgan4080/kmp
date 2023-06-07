@@ -3,6 +3,7 @@ package com.presta.customer.network.loanRequest.data
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
 import com.presta.customer.network.loanRequest.model.LoanRequestResponse
 import com.presta.customer.network.loanRequest.model.LoanType
+import com.presta.customer.network.payments.model.PrestaPollingResponse
 
 interface LoanRequestRepository {
     suspend fun requestLoan(
@@ -18,11 +19,11 @@ interface LoanRequestRepository {
         referencedLoanRefId: String?,
         requestId: String?,
         sessionId: String
-    ): Result<LoanRequestResponse>
+    ): Result<String>
 
     suspend fun pollPaymentStatus(
         token: String,
         correlationId: String
-    ): Result<LoanRequestResponse>
+    ): Result<PrestaPollingResponse>
 
 }

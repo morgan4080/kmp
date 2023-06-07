@@ -3,9 +3,9 @@ package com.presta.customer.network.loanRequest.client
 import com.presta.customer.network.NetworkConstants
 import com.presta.customer.network.loanRequest.errorHandler.loanRequestErrorHandler
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
-import com.presta.customer.network.loanRequest.model.LoanRequestResponse
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.payments.errorHandler.paymentsErrorHandler
+import com.presta.customer.network.payments.model.PrestaPollingResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -50,7 +50,7 @@ class PrestaLoanRequestClient(
         referencedLoanRefId: String?,
         requestId: String? = null,
         sessionId: String
-    ): LoanRequestResponse {
+    ): String {
         return loanRequestErrorHandler {
             httpClient.post(NetworkConstants.PrestaLoanRequest.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")
@@ -76,7 +76,7 @@ class PrestaLoanRequestClient(
     suspend fun pollPaymentStatus(
         token: String,
         correlationId: String
-    ): LoanRequestResponse {
+    ): PrestaPollingResponse {
         return paymentsErrorHandler {
             httpClient.get(NetworkConstants.PrestaPollPaymentStatus.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")

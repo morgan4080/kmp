@@ -100,7 +100,7 @@ fun DisbursementDetailsContainer(
 }
 
 @Composable
-fun disbursementDetailsRow(label: String, data: String) {
+fun disbursementDetailsRow(label: String, data: String?) {
 
     Row(
         modifier = Modifier
@@ -116,7 +116,7 @@ fun disbursementDetailsRow(label: String, data: String) {
         )
 
         Text(
-            text = data,
+            text = data ?: "",
             fontSize = MaterialTheme.typography.labelMedium.fontSize,
             color = MaterialTheme.colorScheme.onBackground,
             fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)

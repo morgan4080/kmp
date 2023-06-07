@@ -4,6 +4,7 @@ import com.presta.customer.network.loanRequest.client.PrestaLoanRequestClient
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
 import com.presta.customer.network.loanRequest.model.LoanRequestResponse
 import com.presta.customer.network.loanRequest.model.LoanType
+import com.presta.customer.network.payments.model.PrestaPollingResponse
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -22,7 +23,7 @@ class LoanRequestRepositoryImpl : LoanRequestRepository,KoinComponent {
         referencedLoanRefId: String?,
         requestId: String?,
         sessionId: String
-    ): Result<LoanRequestResponse> {
+    ): Result<String> {
         return try {
             val response = loanRequestClient.sendLoanRequest(
                 token = token,
@@ -48,7 +49,7 @@ class LoanRequestRepositoryImpl : LoanRequestRepository,KoinComponent {
     override suspend fun pollPaymentStatus(
         token: String,
         correlationId: String
-    ): Result<LoanRequestResponse> {
+    ): Result<PrestaPollingResponse> {
         return try {
             val response = loanRequestClient.pollPaymentStatus(token, correlationId)
             Result.success(response)

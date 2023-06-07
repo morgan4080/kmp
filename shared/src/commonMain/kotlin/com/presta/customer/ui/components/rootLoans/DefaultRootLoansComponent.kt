@@ -13,6 +13,7 @@ import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.presta.customer.network.payments.model.PaymentStatuses
+import com.presta.customer.prestaDispatchers
 import com.presta.customer.ui.components.applyLoan.DefaultApplyLoanComponent
 import com.presta.customer.ui.components.banKDisbursement.BankDisbursementComponent
 import com.presta.customer.ui.components.banKDisbursement.DefaultBankDisbursementComponent
@@ -21,7 +22,10 @@ import com.presta.customer.ui.components.loanConfirmation.DefaultLoanConfirmatio
 import com.presta.customer.ui.components.loanConfirmation.LoanConfirmationComponent
 import com.presta.customer.ui.components.longTermLoans.DefaultLongTermComponent
 import com.presta.customer.ui.components.longTermLoans.LongTermLoansComponent
+import com.presta.customer.ui.components.modeofDisbursement.DefaultModeOfDisbursementComponent
 import com.presta.customer.ui.components.modeofDisbursement.ModeOfDisbursementComponent
+import com.presta.customer.ui.components.processLoanDisbursement.DefaultProcessLoanDisbursementComponent
+import com.presta.customer.ui.components.processLoanDisbursement.ProcessLoanDisbursementComponent
 import com.presta.customer.ui.components.processingTransaction.DefaultProcessingTransactionComponent
 import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
 import com.presta.customer.ui.components.shortTermLoans.DefaultShortTermLoansComponent
@@ -32,8 +36,6 @@ import com.presta.customer.ui.components.succesfulTransaction.DefaultSuccessfulT
 import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransactionComponent
 import com.presta.customer.ui.components.topUp.DefaultLoanTopUpComponent
 import com.presta.customer.ui.components.topUp.LoanTopUpComponent
-import com.presta.customer.prestaDispatchers
-import com.presta.customer.ui.components.modeofDisbursement.DefaultModeOfDisbursementComponent
 
 class DefaultRootLoansComponent(
     componentContext: ComponentContext,
@@ -83,6 +85,10 @@ class DefaultRootLoansComponent(
 
         is ConfigLoans.ProcessingTransaction -> RootLoansComponent.ChildLoans.ProcessingTransactionChild(
             processingTransactionComponent(componentContext, config)
+        )
+
+        is ConfigLoans.ProcessingLoanLoanDisbursement->RootLoansComponent.ChildLoans.ProcessingLoanDisbursementChild(
+            processingLoanLoanDisbursementComponent(componentContext,config)
         )
 
         is ConfigLoans.BankDisbursement -> RootLoansComponent.ChildLoans.BankDisbursementChild(
@@ -192,8 +198,8 @@ class DefaultRootLoansComponent(
         config: ConfigLoans.DisbursementMethod): ModeOfDisbursementComponent =
         DefaultModeOfDisbursementComponent(
             componentContext = componentContext,
-            onMpesaClicked = { amount, fees ->
-
+            onMpesaClicked = { correlationId,amount,fees->
+                loansNavigation.push(ConfigLoans.ProcessingLoanLoanDisbursement(correlationId,amount,fees))
             },
             onBankClicked = {
                 //navigate to  BankDisbursement Screen
@@ -209,7 +215,7 @@ class DefaultRootLoansComponent(
             mainContext = prestaDispatchers.main,
             storeFactory = storeFactory,
             refId = config.refId,
-            amount = config.amount,
+            fees = config.amount,
             loanPeriod = config.loanPeriod,
             loanType = config.loanType
         )
@@ -235,6 +241,26 @@ class DefaultRootLoansComponent(
                 }
             }
         )
+
+    private fun processingLoanLoanDisbursementComponent(componentContext: ComponentContext, config: ConfigLoans.ProcessingLoanLoanDisbursement): ProcessLoanDisbursementComponent=
+        DefaultProcessLoanDisbursementComponent(
+            storeFactory = storeFactory,
+            componentContext = componentContext,
+            correlationId = config.correlationId,
+            amount = config.amount,
+            mainContext = prestaDispatchers.main,
+            fees = config.fees
+        ) { paymentStatus ->
+            if (paymentStatus == PaymentStatuses.COMPLETED) {
+                loansNavigation.push(ConfigLoans.SuccessfulTransaction)
+            }
+
+            if (paymentStatus == PaymentStatuses.FAILURE
+                || paymentStatus == PaymentStatuses.CANCELLED
+            ) {
+                loansNavigation.push(ConfigLoans.FailedTransaction)
+            }
+        }
 
     private fun bankDisbursementComponent(componentContext: ComponentContext): BankDisbursementComponent =
         DefaultBankDisbursementComponent(
@@ -286,10 +312,6 @@ class DefaultRootLoansComponent(
 
         @Parcelize
         object ShortTermLoans : ConfigLoans()
-
-//        @Parcelize
-//        data class LoanProduct(val  refId: String): ConfigLoans()
-
         @Parcelize
         data class SpecificLoan(val refId: String) : ConfigLoans()
 
@@ -300,6 +322,9 @@ class DefaultRootLoansComponent(
 
         @Parcelize
         data class ProcessingTransaction(val correlationId: String, val amount: Double) : ConfigLoans()
+
+        @Parcelize
+        data  class ProcessingLoanLoanDisbursement(val correlationId: String, val amount: Double, val fees: Double) :ConfigLoans()
 
         @Parcelize
         object BankDisbursement : ConfigLoans()
