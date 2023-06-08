@@ -29,26 +29,49 @@ fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineSc
     lifecycle.doOnDestroy(scope::cancel)
     return scope
 }
+
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
+
 class DefaultLoanTopUpComponent(
     componentContext: ComponentContext,
-    private val onConfirmClicked: () -> Unit,
+    private val onProceedClicked: (refId: String, minAmount: Double, maxAmount: Double, loanName: String, InterestRate: Double, enteredAmount: Double, loanPeriod: String) -> Unit,
     private val onBackNavClicked: () -> Unit,
     refId: String,
     storeFactory: StoreFactory,
-    mainContext: CoroutineContext
+    mainContext: CoroutineContext,
+    override val maxAmount: Double,
+    override val minAmount: String,
+    override val loanRefId: String,
+    override val loanName: String,
+    override val interestRate: Double,
+    override val loanPeriod: String
 ) : LoanTopUpComponent, ComponentContext by componentContext {
-    var specificId:String=refId
+    var specificId: String = refId
 
-    override fun onConfirmSelected() {
-        onConfirmClicked()
+    override fun onProceedSelected(
+        refId: String,
+        minAmount: Double,
+        maxAmount: Double,
+        loanName: String,
+        InterestRate: Double,
+        enteredAmount: Double,
+        loanPeriod: String
+    ) {
+        onProceedClicked(
+            refId,
+            minAmount,
+            maxAmount,
+            loanName,
+            InterestRate,
+            enteredAmount,
+            loanPeriod
+        )
     }
 
     override fun onBackNavSelected() {
         onBackNavClicked()
     }
-
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
     override val authStore: AuthStore =
@@ -63,7 +86,7 @@ class DefaultLoanTopUpComponent(
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val authState: StateFlow<AuthStore.State> =authStore.stateFlow
+    override val authState: StateFlow<AuthStore.State> = authStore.stateFlow
 
     override val shortTermloansStore: ShortTermLoansStore =
         instanceKeeper.getStore {
@@ -71,15 +94,19 @@ class DefaultLoanTopUpComponent(
                 storeFactory = storeFactory
             ).create()
         }
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val shortTermloansState: StateFlow<ShortTermLoansStore.State> = shortTermloansStore.stateFlow
+    override val shortTermloansState: StateFlow<ShortTermLoansStore.State> =
+        shortTermloansStore.stateFlow
 
     override fun onAuthEvent(event: AuthStore.Intent) {
         authStore.accept(event)
     }
+
     override fun onEvent(event: ShortTermLoansStore.Intent) {
         shortTermloansStore.accept(event)
     }
+
     private var authUserScopeJob: Job? = null
     private fun checkAuthenticatedUser() {
         if (authUserScopeJob?.isActive == true) return
@@ -89,23 +116,28 @@ class DefaultLoanTopUpComponent(
                     onAuthEvent(
                         AuthStore.Intent.CheckAuthenticatedUser(
                             token = state.cachedMemberData.accessToken
-                        ))
+                        )
+                    )
 
                     onEvent(
                         ShortTermLoansStore.Intent.GetPrestaShortTermProductById(
-                        token = state.cachedMemberData.accessToken,
-                        loanId = specificId
-                    ))
+                            token = state.cachedMemberData.accessToken,
+                            loanId = specificId
+                        )
+                    )
 
-                    onEvent(ShortTermLoansStore.Intent.GetPrestaShortTermTopUpList(
-                        token = state.cachedMemberData.accessToken,
-                        session_id =state.cachedMemberData.session_id,
-                        refId = state.cachedMemberData.refId
-                    ))
+                    onEvent(
+                        ShortTermLoansStore.Intent.GetPrestaShortTermTopUpList(
+                            token = state.cachedMemberData.accessToken,
+                            session_id = state.cachedMemberData.session_id,
+                            refId = state.cachedMemberData.refId
+                        )
+                    )
                 }
             }
         }
     }
+
     private var refreshTokenScopeJob: Job? = null
 
     private fun refreshToken() {
@@ -117,12 +149,14 @@ class DefaultLoanTopUpComponent(
                         AuthStore.Intent.RefreshToken(
                             tenantId = OrganisationModel.organisation.tenant_id,
                             refId = state.cachedMemberData.refId
-                        ))
+                        )
+                    )
                 }
                 this.cancel()
             }
         }
     }
+
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
 
@@ -130,10 +164,6 @@ class DefaultLoanTopUpComponent(
 
         refreshToken()
     }
-
-
-
-
 
 
 }

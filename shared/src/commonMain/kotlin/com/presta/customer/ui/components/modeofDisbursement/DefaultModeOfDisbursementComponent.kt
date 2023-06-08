@@ -43,9 +43,10 @@ class DefaultModeOfDisbursementComponent(
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     override val refId: String,
-    override val fees: Double,
+    override val amount: Double,
     override val loanPeriod: String,
     override val loanType: String,
+    override val fees: Double,
 ) : ModeOfDisbursementComponent, ComponentContext by componentContext {
     override val authStore: AuthStore =
         instanceKeeper.getStore {
@@ -114,7 +115,7 @@ class DefaultModeOfDisbursementComponent(
                     onRequestLoanEvent(
                         ModeOfDisbursementStore.Intent.RequestLoan(
                             token = state.cachedMemberData.accessToken,
-                            amount = fees.toInt(),
+                            amount = amount.toInt(),
                             currentTerm = "FALSE",
                             customerRefId = state.cachedMemberData.refId,
                             disbursementAccountReference = state.cachedMemberData.phoneNumber,
@@ -136,7 +137,7 @@ class DefaultModeOfDisbursementComponent(
                 if (state.correlationId!==null) {
                     val correlationId = state.correlationId
 
-                    onMpesaClicked(correlationId, 0.00,fees)
+                    onMpesaClicked(correlationId,amount,0.00)
                     this.cancel()
                 }
             }

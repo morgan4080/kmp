@@ -10,10 +10,12 @@ fun ProcessLoanDisbursementScreen(
     component: ProcessLoanDisbursementComponent
 ) {
     val authState by component.authState.collectAsState()
+    val state by component.processingTransactionState.collectAsState()
 
     ProcessLoanDisbursementContent(
         amount = component.amount,
         fees = component.fees,
-        phoneNumber = authState.cachedMemberData?.phoneNumber
+        phoneNumber = authState.cachedMemberData?.phoneNumber,
+        state = state
     )
 }

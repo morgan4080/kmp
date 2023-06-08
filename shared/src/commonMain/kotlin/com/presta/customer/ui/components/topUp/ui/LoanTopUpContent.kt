@@ -23,6 +23,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import com.presta.customer.MR
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import com.presta.customer.ui.components.topUp.LoanTopUpComponent
 import com.presta.customer.ui.composables.ActionButton
@@ -32,22 +34,22 @@ import com.presta.customer.ui.composables.OptionsSelectionContainer
 import com.presta.customer.ui.composables.ProductSelectionCard2
 import com.presta.customer.ui.composables.TextInputContainer
 import com.presta.customer.ui.theme.actionButtonColor
-import com.presta.customer.ui.theme.labelTextColor
-import androidx.compose.ui.window.Popup
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun  LoanTopUpContent(
+fun LoanTopUpContent(
     component: LoanTopUpComponent,
     state: ShortTermLoansStore.State,
-){
-
+) {
     var launchPopUp by remember { mutableStateOf(false) }
     var isError by remember { mutableStateOf(false) }
-    var amount by remember {
-        mutableStateOf(TextFieldValue())
-    }
+    var amount by remember { mutableStateOf(TextFieldValue()) }
+    val allowedMaxAmount = component.maxAmount
+    val allowedMinAmount = component.minAmount
+    var loanTerm by remember { mutableStateOf(false) }
+
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background)
@@ -78,19 +80,13 @@ fun  LoanTopUpContent(
                     text = "Enter top up details",
                     color = MaterialTheme.colorScheme.onBackground
                 )
-                //show The min  and the  max allowed
-              //  state.prestaShortTermTopUpList?.loans?.map{topUpList->}
-              //  state.prestaShortTermTopUpList?.loans?.map{topUpList-> topUpList.minAmount}.toString()
-
                 Text(
                     modifier = Modifier
                         .padding(top = 10.dp),
-                    text = "min .15.0- max. 6000.0" ,
-                    fontSize = 10.sp
+                    text = "min " + component.minAmount + " - " + "max " + component.maxAmount,
+                    fontSize = 10.sp,
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                 )
-
-                //select top up Pop up
-                //Added overlay  to the po up screen
                 if (launchPopUp) {
                     Popup() {
                         Column(
@@ -151,7 +147,7 @@ fun  LoanTopUpContent(
                                             .fillMaxWidth()
                                     ) {
                                         OptionsSelectionContainer(
-                                            label = "Emergency Loan at 10%/Month",
+                                            label = component.loanName + " at " + component.interestRate +"%/month",
                                             onClickContainer = {
 
                                             })
@@ -222,23 +218,35 @@ fun  LoanTopUpContent(
                 ) {
                     //Throw Error if amount exceed desired min or max
 
-                    TextInputContainer("Desired Amount", "", inputType = InputTypes.NUMBER){
+                    TextInputContainer("Desired Amount", "", inputType = InputTypes.NUMBER) {
                         val inputValue: Double? = TextFieldValue(it).text.toDoubleOrNull()
                         if (inputValue != null) {
-//                            if ((inputValue >= allowedMinAmount!!.toDouble() && inputValue <= allowedMaxAmount!!.toDouble()) && (TextFieldValue(it).text !== "")
-//                            ) {
-//                                amount = TextFieldValue(it)
-//                                isError = false
-//
-//                            } else {
-//                                isError = true
-//                            }
+                            if ((inputValue >= allowedMinAmount.toDouble() && inputValue <= allowedMaxAmount.toDouble()) && (TextFieldValue(
+                                    it
+                                ).text !== "")
+                            ) {
+                                amount = TextFieldValue(it)
+                                isError = false
+
+                            } else {
+                                isError = true
+                            }
                         }
 
                     }
 
                 }
+                if (isError) {
 
+                    Text(
+                        modifier = Modifier.padding(top = 10.dp, start = 5.dp),
+                        text = "min value Ksh $allowedMinAmount max value Ksh $allowedMaxAmount",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        color = Color.Red
+                    )
+
+                }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -252,7 +260,6 @@ fun  LoanTopUpContent(
                     })
 
                 }
-
                 //Text input occurs  Here
 
                 Row(
@@ -262,24 +269,18 @@ fun  LoanTopUpContent(
                 ) {
 
                     ActionButton("Proceed", onClickContainer = {
+                        component.onProceedSelected(
+                            component.loanRefId,
+                            component.minAmount.toDouble(),
+                            component.maxAmount,
+                            component.loanName,
+                            component.interestRate,
+                            amount.text.toDouble(),
+                            component.loanPeriod)
 
-                        //Proceed To confirm the Details
-                        //pass refId to identify Top Up
-                        component.onConfirmSelected()
-                    }, enabled =true )
-
+                    }, enabled = amount.text != "" && !isError)
                 }
-
             }
-
         }
-
     }
-
-
-
-
-
-
-
 }

@@ -6,7 +6,8 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface ModeOfDisbursementComponent {
     val refId: String
-    val fees: Double
+    val amount: Double
+    val fees:Double
     val loanPeriod : String
     val loanType:String
      val authStore: AuthStore

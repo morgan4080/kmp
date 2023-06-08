@@ -1,12 +1,27 @@
 package com.presta.customer.ui.components.topUp
 
-import com.arkivanov.decompose.value.Value
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import kotlinx.coroutines.flow.StateFlow
 
 interface LoanTopUpComponent {
-    fun onConfirmSelected()
+
+    val maxAmount: Double
+    val minAmount: String
+    val loanRefId: String
+    val loanName: String
+    val interestRate: Double
+    val loanPeriod:String
+    fun onProceedSelected(
+        refId: String,
+        minAmount: Double,
+        maxAmount: Double,
+        loanName: String,
+        InterestRate: Double,
+        enteredAmount: Double,
+        loanPeriod: String
+    )
+
     fun onBackNavSelected()
     val authStore: AuthStore
 

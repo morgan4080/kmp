@@ -40,14 +40,14 @@ class DefaultShortTermLoansComponent(
     mainContext: CoroutineContext,
     storeFactory: StoreFactory,
     private var onProductClicked: (refId: String) -> Unit,
-    private val onConfirmClicked: (refId: String) -> Unit,
+    private val onConfirmClicked: (refId: String, maxAmount: Double, minAmount: Double, loanName: String, interestRate: Double, loanPeriod: String) -> Unit,
     private val onBackNavClicked: () -> Unit,
 
-): ShortTermLoansComponent, ComponentContext by componentContext {
+    ) : ShortTermLoansComponent, ComponentContext by componentContext {
 
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
-    override val authStore: AuthStore=
+    override val authStore: AuthStore =
         instanceKeeper.getStore {
             AuthStoreFactory(
                 storeFactory = storeFactory,
@@ -59,9 +59,9 @@ class DefaultShortTermLoansComponent(
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val authState: StateFlow<AuthStore.State> =authStore.stateFlow
+    override val authState: StateFlow<AuthStore.State> = authStore.stateFlow
 
-    override val shortTermloansStore: ShortTermLoansStore=
+    override val shortTermloansStore: ShortTermLoansStore =
         instanceKeeper.getStore {
             ShortTermLoansStoreFactory(
                 storeFactory = storeFactory
@@ -69,7 +69,8 @@ class DefaultShortTermLoansComponent(
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val shortTermloansState: StateFlow<ShortTermLoansStore.State> = shortTermloansStore.stateFlow
+    override val shortTermloansState: StateFlow<ShortTermLoansStore.State> =
+        shortTermloansStore.stateFlow
 
     private val models = MutableValue(
         ShortTermLoansComponent.Model(
@@ -82,12 +83,20 @@ class DefaultShortTermLoansComponent(
         onProductClicked(refId)
     }
 
-    override fun onConfirmSelected(refId: String) {
-       onConfirmClicked(refId)
+    override fun onConfirmSelected(
+        refId: String,
+        maxAmmount: Double,
+        minAmount: Double,
+        loanName: String,
+        interestRate: Double,
+        loanPeriod: String
+
+    ) {
+        onConfirmClicked(refId, maxAmmount, minAmount, loanName, interestRate,loanPeriod)
     }
 
     override fun onBackNav() {
-       onBackNavClicked()
+        onBackNavClicked()
     }
 
     override fun onAuthEvent(event: AuthStore.Intent) {
@@ -97,6 +106,7 @@ class DefaultShortTermLoansComponent(
     override fun onEvent(event: ShortTermLoansStore.Intent) {
         shortTermloansStore.accept(event)
     }
+
     private var authUserScopeJob: Job? = null
 
     private fun checkAuthenticatedUser() {
@@ -105,20 +115,26 @@ class DefaultShortTermLoansComponent(
         authUserScopeJob = scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
-                    onAuthEvent(AuthStore.Intent.CheckAuthenticatedUser(
-                        token = state.cachedMemberData.accessToken
-                    ))
+                    onAuthEvent(
+                        AuthStore.Intent.CheckAuthenticatedUser(
+                            token = state.cachedMemberData.accessToken
+                        )
+                    )
 
-                    onEvent(ShortTermLoansStore.Intent.GetPrestaShortTermProductList(
-                        token = state.cachedMemberData.accessToken,
-                        refId = state.cachedMemberData.refId
-                    ))
+                    onEvent(
+                        ShortTermLoansStore.Intent.GetPrestaShortTermProductList(
+                            token = state.cachedMemberData.accessToken,
+                            refId = state.cachedMemberData.refId
+                        )
+                    )
 
-                    onEvent(ShortTermLoansStore.Intent.GetPrestaShortTermTopUpList(
-                        token = state.cachedMemberData.accessToken,
-                        session_id =state.cachedMemberData.session_id,
-                        refId = state.cachedMemberData.refId
-                    ))
+                    onEvent(
+                        ShortTermLoansStore.Intent.GetPrestaShortTermTopUpList(
+                            token = state.cachedMemberData.accessToken,
+                            session_id = state.cachedMemberData.session_id,
+                            refId = state.cachedMemberData.refId
+                        )
+                    )
                 }
             }
         }
@@ -132,10 +148,12 @@ class DefaultShortTermLoansComponent(
         refreshTokenScopeJob = scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
-                    onAuthEvent(AuthStore.Intent.RefreshToken(
-                        tenantId = OrganisationModel.organisation.tenant_id,
-                        refId = state.cachedMemberData.refId
-                    ))
+                    onAuthEvent(
+                        AuthStore.Intent.RefreshToken(
+                            tenantId = OrganisationModel.organisation.tenant_id,
+                            refId = state.cachedMemberData.refId
+                        )
+                    )
                 }
                 this.cancel()
             }

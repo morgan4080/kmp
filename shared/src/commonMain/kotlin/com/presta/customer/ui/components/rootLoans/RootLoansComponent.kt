@@ -5,17 +5,15 @@ import FailedTransactionComponent
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
 import com.presta.customer.ui.components.banKDisbursement.BankDisbursementComponent
-import com.presta.customer.ui.components.specificLoanType.SpecificLoansComponent
 import com.presta.customer.ui.components.loanConfirmation.LoanConfirmationComponent
+import com.presta.customer.ui.components.longTermLoans.LongTermLoansComponent
 import com.presta.customer.ui.components.modeofDisbursement.ModeOfDisbursementComponent
-import com.presta.customer.ui.components.payLoan.PayLoanComponent
+import com.presta.customer.ui.components.processLoanDisbursement.ProcessLoanDisbursementComponent
 import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
+import com.presta.customer.ui.components.specificLoanType.SpecificLoansComponent
 import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransactionComponent
 import com.presta.customer.ui.components.topUp.LoanTopUpComponent
-import com.presta.customer.ui.components.longTermLoans.LongTermLoansComponent
-import com.presta.customer.ui.components.payLoanPropmpt.PayLoanPromptComponent
-import com.presta.customer.ui.components.processLoanDisbursement.ProcessLoanDisbursementComponent
 
 interface RootLoansComponent {
     val childLoansStack: Value<ChildStack<*, ChildLoans>>

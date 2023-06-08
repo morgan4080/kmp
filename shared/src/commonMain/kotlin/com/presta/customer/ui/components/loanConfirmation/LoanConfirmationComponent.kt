@@ -8,6 +8,7 @@ interface LoanConfirmationComponent {
     val refId: String
     val amount: Double
     val loanPeriod : String
+    val loanInterest:String
     fun onConfirmSelected(refid:String,amount:Double,loanPeriod:String,loanType:String)
     fun onBackNavSelected()
     val authStore: AuthStore

@@ -21,6 +21,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.ui.components.processLoanDisbursement.store.ProcessingLoanDisbursementStore
+import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.formatMoney
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
@@ -28,16 +30,23 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 fun ProcessLoanDisbursementContent(
     amount: Double,
     fees: Double,
-    phoneNumber: String?
+    phoneNumber: String?,
+    state:ProcessingLoanDisbursementStore.State
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.fillMaxWidth()) {
+            NavigateBackTopBar("", onClickContainer = {
+
+            })
 
         }
-        Column(modifier = Modifier.fillMaxWidth().padding(top = 26.dp)) {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 26.dp)) {
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
@@ -95,7 +104,7 @@ fun ProcessLoanDisbursementContent(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Your transaction is processing",
+                    text = "Your transaction is ${state.paymentStatus?.status}",
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 14.sp,
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
