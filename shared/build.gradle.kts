@@ -48,7 +48,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api("io.github.qdsfdhvh:image-loader:1.4.1")
-
+                implementation("com.moriatsushi.insetsx:insetsx:0.1.0-alpha07")
                 with(compose) {
                     implementation(runtime)
                     implementation(foundation)

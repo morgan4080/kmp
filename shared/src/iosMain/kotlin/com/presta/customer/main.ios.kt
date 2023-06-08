@@ -26,7 +26,7 @@ fun MainViewController(
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
         storeFactory = DefaultStoreFactory(),
     )
-    return ComposeUIViewController {
+    return WindowInsetsUIViewController {
         val density = LocalDensity.current
 
         val topSafeAreaDp = with(density) { topSafeArea.toDp() }

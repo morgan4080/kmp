@@ -3,6 +3,7 @@ package com.presta.customer.ui.components.rootBottomStack
 import GetIconForScreen
 import RootLoansScreen
 import RootSavingsScreen
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.padding
@@ -33,84 +34,88 @@ import com.presta.customer.ui.components.profile.ui.ProfileScreen
 import com.presta.customer.ui.components.sign.SignScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RootBottomScreen(component: RootBottomComponent) {
     val childStackBottom by component.childStackBottom.subscribeAsState()
     val activeComponentStackBottom = childStackBottom.active.instance
+
     Scaffold (
         modifier = Modifier.padding(LocalSafeArea.current),
         bottomBar = {
             val screens = listOf("Home", "Loans", "Savings", "Sign")
 
-            BottomAppBar (
-                contentPadding = PaddingValues(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 25.dp),
-                containerColor = MaterialTheme.colorScheme.background,
-                contentColor = Color.Transparent,
-                tonalElevation = 0.dp
-            ) {
-                NavigationBarItem (
-                    icon = {
-                        Icon(imageVector = GetIconForScreen(screens[0]), contentDescription = null, modifier = Modifier.size(27.dp))
-                    },
-                    label = {
-                        Text(
-                            text = screens[0],
-                            color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.ProfileChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Light,
-                            modifier = Modifier.absoluteOffset(y = 28.dp)
-                        )
-                    },
-                    selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.ProfileChild,
-                    onClick = component::onProfileTabClicked,
-                    colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.primary, indicatorColor = MaterialTheme.colorScheme.background, unselectedIconColor = MaterialTheme.colorScheme.outline)
-                )
-                NavigationBarItem (
-                    icon = { Icon(imageVector = GetIconForScreen(screens[1]), contentDescription = null, modifier = Modifier.size(27.dp)) },
-                    label = {
-                        Text(
-                            text = screens[1],
-                            color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.RootLoansChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Light,
-                            modifier = Modifier.absoluteOffset(y = 28.dp)
-                        )
-                    },
-                    selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.RootLoansChild,
-                    onClick = component::onLoanTabClicked,
-                    colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.primary, indicatorColor = MaterialTheme.colorScheme.background, unselectedIconColor = MaterialTheme.colorScheme.outline)
-                )
-                NavigationBarItem (
-                    icon = { Icon(imageVector = GetIconForScreen(screens[2]), contentDescription = null, modifier = Modifier.size(27.dp)) },
-                    label = {
-                        Text(
-                            text = screens[2],
-                            color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.RootSavingsChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Light,
-                            modifier = Modifier.absoluteOffset(y = 28.dp)
-                        )
-                    },
-                    selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.RootSavingsChild,
-                    onClick = component::onSavingsTabClicked,
-                    colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.primary, indicatorColor = MaterialTheme.colorScheme.background, unselectedIconColor = MaterialTheme.colorScheme.outline)
-                )
-                NavigationBarItem (
-                    icon = { Icon(imageVector = GetIconForScreen(screens[3]), contentDescription = null, modifier = Modifier.size(27.dp)) },
-                    label = {
-                        Text(
-                            text = screens[3],
-                            color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.SignChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Light,
-                            modifier = Modifier.absoluteOffset(y = 28.dp)
-                        )
-                    },
-                    selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.SignChild,
-                    onClick = component::onSignTabClicked,
-                    colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.primary, indicatorColor = MaterialTheme.colorScheme.background, unselectedIconColor = MaterialTheme.colorScheme.outline)
-                )
+            AnimatedVisibility(true) {
+                BottomAppBar (
+                    contentPadding = PaddingValues(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 25.dp),
+                    containerColor = MaterialTheme.colorScheme.background,
+                    contentColor = Color.Transparent,
+                    tonalElevation = 0.dp
+                ) {
+                    NavigationBarItem (
+                        icon = {
+                            Icon(imageVector = GetIconForScreen(screens[0]), contentDescription = null, modifier = Modifier.size(27.dp))
+                        },
+                        label = {
+                            Text(
+                                text = screens[0],
+                                color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.ProfileChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Light,
+                                modifier = Modifier.absoluteOffset(y = 28.dp)
+                            )
+                        },
+                        selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.ProfileChild,
+                        onClick = component::onProfileTabClicked,
+                        colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.primary, indicatorColor = MaterialTheme.colorScheme.background, unselectedIconColor = MaterialTheme.colorScheme.outline)
+                    )
+                    NavigationBarItem (
+                        icon = { Icon(imageVector = GetIconForScreen(screens[1]), contentDescription = null, modifier = Modifier.size(27.dp)) },
+                        label = {
+                            Text(
+                                text = screens[1],
+                                color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.RootLoansChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Light,
+                                modifier = Modifier.absoluteOffset(y = 28.dp)
+                            )
+                        },
+                        selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.RootLoansChild,
+                        onClick = component::onLoanTabClicked,
+                        colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.primary, indicatorColor = MaterialTheme.colorScheme.background, unselectedIconColor = MaterialTheme.colorScheme.outline)
+                    )
+                    NavigationBarItem (
+                        icon = { Icon(imageVector = GetIconForScreen(screens[2]), contentDescription = null, modifier = Modifier.size(27.dp)) },
+                        label = {
+                            Text(
+                                text = screens[2],
+                                color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.RootSavingsChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Light,
+                                modifier = Modifier.absoluteOffset(y = 28.dp)
+                            )
+                        },
+                        selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.RootSavingsChild,
+                        onClick = component::onSavingsTabClicked,
+                        colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.primary, indicatorColor = MaterialTheme.colorScheme.background, unselectedIconColor = MaterialTheme.colorScheme.outline)
+                    )
+                    NavigationBarItem (
+                        icon = { Icon(imageVector = GetIconForScreen(screens[3]), contentDescription = null, modifier = Modifier.size(27.dp)) },
+                        label = {
+                            Text(
+                                text = screens[3],
+                                color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.SignChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Light,
+                                modifier = Modifier.absoluteOffset(y = 28.dp)
+                            )
+                        },
+                        selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.SignChild,
+                        onClick = component::onSignTabClicked,
+                        colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.primary, indicatorColor = MaterialTheme.colorScheme.background, unselectedIconColor = MaterialTheme.colorScheme.outline)
+                    )
+                }
             }
         },
         content = { innerPadding ->

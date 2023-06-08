@@ -37,6 +37,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,6 +63,8 @@ import com.presta.customer.ui.composables.TextInputContainer
 import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,6 +83,8 @@ fun AddSavingsContent(
     var paymentMode: PaymentTypes? by remember { mutableStateOf(null) }
 
     val snackBarHostState = remember { SnackbarHostState() }
+
+    val scope = rememberCoroutineScope()
 
     var amount by remember {
         mutableStateOf(TextFieldValue())
@@ -193,12 +198,20 @@ fun AddSavingsContent(
                                     ) {
                                         OptionsSelectionContainer(PaymentTypes.SAVINGS, "Current Savings", onClickContainer = {
                                             paymentMode = it
+                                            scope.launch {
+                                                delay(100L)
+                                                launchPopUp = false
+                                            }
                                         })
                                     }
 
                                     Row(modifier = Modifier.fillMaxWidth()) {
                                         OptionsSelectionContainer(PaymentTypes.SHARES, "Shares", onClickContainer = {
                                             paymentMode = it
+                                            scope.launch {
+                                                delay(100L)
+                                                launchPopUp = false
+                                            }
                                         })
                                     }
 
