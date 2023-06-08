@@ -152,8 +152,8 @@ class DefaultRootLoansComponent(
             },
             mainContext = prestaDispatchers.main,
             storeFactory = storeFactory,
-            onProductClicked = { refId ->
-                loansNavigation.push(ConfigLoans.SpecificLoan(refId))
+            onProductClicked = { refId,loanName ->
+                loansNavigation.push(ConfigLoans.SpecificLoan(refId,loanName))
             }
         )
 
@@ -172,7 +172,7 @@ class DefaultRootLoansComponent(
         DefaultSpecificLoansComponent(
             componentContext = componentContext,
             refId = config.refId,
-            onConfirmClicked = { refId, amount, loanPeriod, loanType ->
+            onConfirmClicked = { refId, amount, loanPeriod, loanType,LoanName ->
                 println("Ref id")
                 println(refId)
                 println("Amount")
@@ -184,7 +184,8 @@ class DefaultRootLoansComponent(
                         loanPeriod = loanPeriod,
                         loanType = loanType,
                         interestRate = 0.00,
-                        enteredAmount = 0.00
+                        enteredAmount = 0.00,
+                        loanName = LoanName
                     )
                 )
             },
@@ -192,7 +193,8 @@ class DefaultRootLoansComponent(
                 loansNavigation.pop()
             },
             mainContext = prestaDispatchers.main,
-            storeFactory = storeFactory
+            storeFactory = storeFactory,
+            loanName = config.loanName
         )
 
     private fun loanConfirmationComponent(
@@ -202,7 +204,7 @@ class DefaultRootLoansComponent(
         DefaultLoanConfirmationComponent(
             componentContext = componentContext,
             refId = config.refId,
-            onConfirmClicked = { refId, amount, loanPeriod, loantype ->
+            onConfirmClicked = { refId, amount, loanPeriod, loantype,loanName ->
                 //navigate to mode of Disbursement
                 loansNavigation.push(
                     ConfigLoans.DisbursementMethod(
@@ -221,7 +223,8 @@ class DefaultRootLoansComponent(
             storeFactory = storeFactory,
             amount = config.amount,
             loanPeriod = config.loanPeriod,
-            loanInterest = config.interestRate.toString()
+            loanInterest = config.interestRate.toString(),
+            loanName = config.loanName
         )
 
     private fun modeOfDisbursementComponent(
@@ -342,9 +345,10 @@ class DefaultRootLoansComponent(
                         refId = refid,
                         amount = enteredAmount,
                         loanPeriod = loanPeriod,
-                        loanName,
                         interestRate = interestRate,
-                        enteredAmount = enteredAmount
+                        enteredAmount = enteredAmount,
+                        loanName = loanName,
+                        loanType = ""
                     )
                 )
             },
@@ -372,7 +376,7 @@ class DefaultRootLoansComponent(
         object ShortTermLoans : ConfigLoans()
 
         @Parcelize
-        data class SpecificLoan(val refId: String) : ConfigLoans()
+        data class SpecificLoan(val refId: String, val loanName: String) : ConfigLoans()
 
         @Parcelize
         data class LoanConfirmation(
@@ -381,7 +385,8 @@ class DefaultRootLoansComponent(
             val loanPeriod: String,
             val loanType: String,
             val interestRate: Double,
-            val enteredAmount: Double
+            val enteredAmount: Double,
+            val loanName: String
         ) : ConfigLoans()
 
         @Parcelize

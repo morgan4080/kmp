@@ -39,7 +39,7 @@ class DefaultShortTermLoansComponent(
     componentContext: ComponentContext,
     mainContext: CoroutineContext,
     storeFactory: StoreFactory,
-    private var onProductClicked: (refId: String) -> Unit,
+    private var onProductClicked: (refId: String,loanName:String) -> Unit,
     private val onConfirmClicked: (refId: String, maxAmount: Double, minAmount: Double, loanName: String, interestRate: Double, loanPeriod: String) -> Unit,
     private val onBackNavClicked: () -> Unit,
 
@@ -79,8 +79,8 @@ class DefaultShortTermLoansComponent(
     )
     override val model: Value<ShortTermLoansComponent.Model> = models
 
-    override fun onProductSelected(refId: String) {
-        onProductClicked(refId)
+    override fun onProductSelected(refId: String,loanName: String) {
+        onProductClicked(refId,loanName)
     }
 
     override fun onConfirmSelected(

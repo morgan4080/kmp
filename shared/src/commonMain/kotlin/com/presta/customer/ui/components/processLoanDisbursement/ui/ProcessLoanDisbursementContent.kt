@@ -104,7 +104,7 @@ fun ProcessLoanDisbursementContent(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Your transaction is ${state.paymentStatus?.status}",
+                    text = if (state.paymentStatus!=null)"Your transaction is ${state.paymentStatus.status}" else "",
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 14.sp,
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),

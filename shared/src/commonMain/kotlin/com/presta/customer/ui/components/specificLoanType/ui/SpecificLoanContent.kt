@@ -63,7 +63,7 @@ fun SpecificLoaContent(
     ) {
         Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
             Row(modifier = Modifier.fillMaxWidth()) {
-                NavigateBackTopBar(if (state.prestaShortTermLoanProductById?.name != null) state.prestaShortTermLoanProductById.name.toString() else "",
+                NavigateBackTopBar(if (state.prestaShortTermLoanProductById?.name != null) component.loanName else "",
                     onClickContainer = {
                         component.onBackNavSelected()
                     })
@@ -160,7 +160,7 @@ fun SpecificLoaContent(
                                 if (amount.text !== "" && desiredPeriod.text !== "") {
                                     //pass  amount  and the desired period
                                     component.onConfirmSelected(state.prestaShortTermLoanProductById?.refId.toString(),amount.text.toDouble(),desiredPeriod.text,
-                                    state.prestaShortTermLoanProductById?.name.toString())
+                                    state.prestaShortTermLoanProductById?.name.toString(),state.prestaShortTermLoanProductById?.name.toString())
                                 }
 
                             }, enabled = amount.text != "" && desiredPeriod.text !== "" && !isError && !isPeriodError)

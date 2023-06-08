@@ -16,7 +16,7 @@ interface ShortTermLoansComponent {
     fun onAuthEvent(event: AuthStore.Intent)
     fun onEvent(event: ShortTermLoansStore.Intent)
     val model: Value<Model>
-    fun onProductSelected(refId: String)
+    fun onProductSelected(refId: String,loanName:String)
     fun onConfirmSelected(
         refId: String,
         minAmount: Double,

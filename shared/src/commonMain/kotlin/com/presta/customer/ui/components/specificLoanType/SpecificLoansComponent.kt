@@ -6,7 +6,9 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface SpecificLoansComponent {
 
-    fun onConfirmSelected(refid:String,amount:Double,loanPeriod:String,loanType:String)
+    val loanName:String
+
+    fun onConfirmSelected(refid:String,amount:Double,loanPeriod:String,loanType:String,LoanName:String)
     fun onBackNavSelected()
 
     val authStore: AuthStore

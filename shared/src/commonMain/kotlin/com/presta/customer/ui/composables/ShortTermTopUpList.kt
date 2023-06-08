@@ -44,9 +44,9 @@ fun ShortTermTopUpList(
     component: ShortTermLoansComponent,
     state: ShortTermLoansStore.State
 ) {
-//    var checkedState by remember { mutableStateOf(false) }
-//    var selectedIndex by remember { mutableStateOf(-1) }
     var selectedIndex by remember { mutableStateOf(-1) }
+    var enabled by remember { mutableStateOf(false) }
+
 
     Column(
         modifier = Modifier
@@ -76,6 +76,10 @@ fun ShortTermTopUpList(
                             selected = selectedIndex == index,
                             onClick = { index: Int ->
                                 selectedIndex = if (selectedIndex == index) -1 else index
+                                if(!enabled){
+                                    enabled=true
+                                }
+
                             },
                             topUpList.name.toString(),
                             topUpList.maxAmount.toString(),
@@ -122,7 +126,7 @@ fun ShortTermTopUpList(
                         println(maxAmount)
                     }
                 }
-            })
+            }, enabled = enabled && selectedIndex >= 0  )
         }
         //Action Button appears above the action Button
         Spacer(

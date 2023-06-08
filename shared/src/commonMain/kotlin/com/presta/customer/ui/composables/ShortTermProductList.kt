@@ -55,12 +55,8 @@ fun ShortTermProductList(
                         ProductSelectionCard(shortTermProduct.name!!,
                             if (shortTermProduct.interestRate != null) "Interest " + shortTermProduct.interestRate.toString() +"%" else "",
                             onClickContainer = {
-                                //Navigate  to  EmergencyLoan Screen
-                                //Transfer data to the second screen
-                                //component.onEmergencyLoanSelected()
-                                //Pass  The specific Loan id
-                                //Todo -Configure components
-                                component.onProductSelected(shortTermProduct.refId.toString())
+                               val loanName=shortTermProduct.name
+                                component.onProductSelected(shortTermProduct.refId.toString(),loanName)
                             })
                     }
                 }

@@ -37,7 +37,7 @@ fun  LoanConfirmationContent(
         Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 //set Title based on the  Data carried by the RefId
-                NavigateBackTopBar(state.prestaShortTermLoanProductById?.name.toString(), onClickContainer ={
+                NavigateBackTopBar(component.loanName, onClickContainer ={
                     component.onBackNavSelected()
                 } )
             }
@@ -58,7 +58,7 @@ fun  LoanConfirmationContent(
                     ActionButton("Confirm", onClickContainer = {
                         //Navigate  to mode of Disbursement
                         component.onConfirmSelected(component.refId,component.amount,component.loanPeriod,
-                        state.prestaShortTermLoanProductById?.name.toString())
+                        state.prestaShortTermLoanProductById?.name.toString(), loanName = component.loanName)
 
                     })
                 }
