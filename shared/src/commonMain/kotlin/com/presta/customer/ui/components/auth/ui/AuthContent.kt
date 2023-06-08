@@ -28,6 +28,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -72,9 +73,12 @@ fun AuthContent(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    var inputEnabled = true
+
     var pinInput by remember { mutableStateOf("") }
 
     var pinToConfirm by remember { mutableStateOf("") }
+
     val maxChar = state.inputs.size
 
     val pinCharList = remember { mutableListOf( "" ) }
@@ -195,14 +199,13 @@ fun AuthContent(
 
 
     LaunchedEffect(state.phoneNumber, state.loginResponse) {
-        if (state.loginResponse !== null) {
+        if (state.loginResponse !== null && state.phoneNumber != null) {
+            inputEnabled = false
             snackbarHostState.showSnackbar(
-                "Login Successful!"
+                message = "Login Successful!",
+                duration =  SnackbarDuration.Short
             )
-
-            if (state.phoneNumber != null) {
-                navigate()
-            }
+            navigate()
         }
 
         if (state.phoneNumber !== null) {
@@ -384,7 +387,7 @@ fun AuthContent(
                             pinInput = it
                         }
                     },
-                    enabled = false,
+                    enabled = inputEnabled,
                     singleLine = true,
                     decorationBox = { innerTextField ->
                         innerTextField()

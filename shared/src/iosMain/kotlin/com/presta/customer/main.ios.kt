@@ -12,18 +12,18 @@ import com.presta.customer.di.initKoin
 import com.presta.customer.ui.AppRootUi
 import com.presta.customer.ui.components.root.DefaultRootComponent
 import com.presta.customer.ui.helpers.LocalSafeArea
-import platform.UIKit.UIViewController
 import com.presta.customer.ui.theme.AppTheme
+import platform.UIKit.*
 
+@Suppress("unused", "FunctionName")
 fun MainViewController(
     lifecycle: LifecycleRegistry,
     topSafeArea: Float,
     bottomSafeArea: Float
 ): UIViewController {
     initKoin()
-    val rootComponentContext = DefaultComponentContext(lifecycle = lifecycle)
     val root = DefaultRootComponent(
-        componentContext = rootComponentContext,
+        componentContext = DefaultComponentContext(lifecycle = lifecycle),
         storeFactory = DefaultStoreFactory(),
     )
     return ComposeUIViewController {

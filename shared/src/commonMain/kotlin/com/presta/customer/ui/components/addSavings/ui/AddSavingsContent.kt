@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
+//import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
 import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.ui.components.addSavings.store.AddSavingsStore
@@ -124,7 +124,7 @@ fun AddSavingsContent (
 
                 if (launchPopUp) {
 
-                    Popup {
+                    /*Popup {
 
                         Column (
                             modifier = Modifier
@@ -234,7 +234,7 @@ fun AddSavingsContent (
                                 }
                             }
                         }
-                    }
+                    }*/
                 }
 
                 Row (modifier = Modifier.fillMaxWidth().padding(top = 23.dp)){

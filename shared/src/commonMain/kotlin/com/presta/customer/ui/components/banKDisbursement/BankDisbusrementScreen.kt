@@ -31,7 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
+//import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.NavigateBackTopBar
@@ -84,7 +84,7 @@ fun BankDisbursementScreen(component: BankDisbursementComponent) {
 
                 //Select  banks  from the pop up
                 if (launchPopUp) {
-                    Popup() {
+                    /*Popup() {
                         // Composable to select The bank
                         Column(
                             modifier = Modifier
@@ -221,7 +221,7 @@ fun BankDisbursementScreen(component: BankDisbursementComponent) {
                                 }
                             }
                         }
-                    }
+                    }*/
                 }
 
                 Row(
