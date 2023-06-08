@@ -11,6 +11,7 @@ interface AddSavingsComponent {
 
     val addSavingsStore: AddSavingsStore
     val addSavingsState: StateFlow<AddSavingsStore.State>
+    val sharePrice: Double
     fun onConfirmSelected(mode: PaymentTypes, amount: Double)
     fun onBackNavSelected()
     fun onAuthEvent(event: AuthStore.Intent)

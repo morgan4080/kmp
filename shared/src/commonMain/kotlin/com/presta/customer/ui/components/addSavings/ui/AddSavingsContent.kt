@@ -1,16 +1,32 @@
 package com.presta.customer.ui.components.addSavings.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -22,12 +38,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-//import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
 import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.ui.components.addSavings.store.AddSavingsStore
@@ -39,18 +60,20 @@ import com.presta.customer.ui.composables.OptionsSelectionContainer
 import com.presta.customer.ui.composables.ProductSelectionCard2
 import com.presta.customer.ui.composables.TextInputContainer
 import com.presta.customer.ui.theme.actionButtonColor
+import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddSavingsContent (
+fun AddSavingsContent(
     onConfirmSelected: (mode: PaymentTypes, amount: Double) -> Unit,
     onBackNavSelected: () -> Unit,
     onAuthEvent: (AuthStore.Intent) -> Unit,
     onAddSavingsEvent: (AddSavingsStore.Intent) -> Unit,
     authState: AuthStore.State,
     state: AddSavingsStore.State,
-    innerPadding: PaddingValues
+    innerPadding: PaddingValues,
+    sharePrice: Double
 ) {
     var launchPopUp by remember { mutableStateOf(false) }
 
@@ -67,8 +90,6 @@ fun AddSavingsContent (
         authState.error
     ) {
         if (state.error !== null) {
-            println("::::::state.error")
-            println(state.error)
             snackBarHostState.showSnackbar(
                 state.error
             )
@@ -108,6 +129,7 @@ fun AddSavingsContent (
                     onBackNavSelected()
                 })
             }
+
             Column(
                 modifier = Modifier
                     .padding(start = 16.dp, end = 16.dp)
@@ -124,8 +146,7 @@ fun AddSavingsContent (
 
                 if (launchPopUp) {
 
-                    /*Popup {
-
+                    Popup {
                         Column (
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -234,7 +255,7 @@ fun AddSavingsContent (
                                 }
                             }
                         }
-                    }*/
+                    }
                 }
 
                 Row (modifier = Modifier.fillMaxWidth().padding(top = 23.dp)){
@@ -246,12 +267,120 @@ fun AddSavingsContent (
 
                 //Text input occurs  Here
 
+                AnimatedVisibility(paymentMode == PaymentTypes.SHARES) {
+                    Row (
+                        modifier = Modifier.fillMaxWidth().padding(top = 33.dp)
+                    ) {
+                        TextInputContainer(
+                            "Desired share buy",
+                                "",
+                            inputType = InputTypes.NUMBER,
+                            callback = {
+                                val shareCount = it.toDoubleOrNull()
+                                amount = if (shareCount !== null) {
+                                    TextFieldValue((shareCount * sharePrice).toInt().toString())
+                                } else {
+                                    TextFieldValue()
+                                }
+                            }
+                        )
+                    }
+                }
+
                 Row (
                     modifier = Modifier.fillMaxWidth().padding(top = 33.dp)
                 ) {
-                    TextInputContainer("Desired Amount","", inputType = InputTypes.NUMBER, callback = {
-                        amount = TextFieldValue(it)
-                    })
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .shadow(0.5.dp, RoundedCornerShape(10.dp))
+                            .background(
+                                color = MaterialTheme.colorScheme.inverseOnSurface,
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                    ) {
+                        BasicTextField(
+                            modifier = Modifier
+                                .height(65.dp)
+                                .padding(top = 20.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                                .absoluteOffset(y = 2.dp),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            value = amount,
+                            onValueChange = { value ->
+                                amount = value
+                            },
+                            singleLine = true,
+                            textStyle = TextStyle(
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
+                                fontSize = 13.sp,
+                                fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
+                                letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
+                                lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                                fontFamily = MaterialTheme.typography.bodySmall.fontFamily
+                            ),
+                            enabled = when (paymentMode) {
+                                PaymentTypes.SHARES -> false
+                                else -> true
+                            },
+                            decorationBox = { innerTextField ->
+                                if (amount.text.isEmpty()) {
+                                    Text(
+                                        modifier = Modifier,
+                                        text = when (paymentMode) {
+                                            PaymentTypes.SHARES -> "Share Amount"
+                                            else -> "Desired Amount"
+                                        },
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+
+                                AnimatedVisibility(
+                                    visible = amount.text.isNotEmpty(),
+                                    modifier = Modifier.absoluteOffset(y = -(14).dp),
+                                    enter = fadeIn() + expandVertically(),
+                                    exit = fadeOut() + shrinkVertically(),
+                                ) {
+                                    Text (
+                                        text = when (paymentMode) {
+                                            PaymentTypes.SHARES -> "Share Amount"
+                                            else -> "Desired Amount"
+                                        },
+                                        color = primaryColor,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontSize = 11.sp
+                                    )
+                                }
+
+                                Row (
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.Bottom,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        innerTextField()
+                                    }
+
+                                    IconButton(
+                                        modifier = Modifier.size(18.dp),
+                                        onClick = {
+                                            amount = TextFieldValue()
+                                        },
+                                        content = {
+                                            Icon(
+                                                modifier = Modifier.alpha(0.4f),
+                                                imageVector = Icons.Filled.Cancel,
+                                                contentDescription = "Clear Amount",
+                                                tint = actionButtonColor
+                                            )
+                                        }
+                                    )
+                                }
+                            }
+                        )
+                    }
                 }
                 Row (modifier = Modifier.fillMaxWidth().padding(top = 44.dp)) {
                     ActionButton("Confirm", onClickContainer = {

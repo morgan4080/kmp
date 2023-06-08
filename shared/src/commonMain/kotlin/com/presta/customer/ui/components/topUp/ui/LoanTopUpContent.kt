@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import com.presta.customer.ui.components.topUp.LoanTopUpComponent
 import com.presta.customer.ui.composables.ActionButton
@@ -32,8 +33,6 @@ import com.presta.customer.ui.composables.OptionsSelectionContainer
 import com.presta.customer.ui.composables.ProductSelectionCard2
 import com.presta.customer.ui.composables.TextInputContainer
 import com.presta.customer.ui.theme.actionButtonColor
-import com.presta.customer.ui.theme.labelTextColor
-//import androidx.compose.ui.window.Popup
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,7 +91,7 @@ fun  LoanTopUpContent(
                 //select top up Pop up
                 //Added overlay  to the po up screen
                 if (launchPopUp) {
-                    /*Popup() {
+                    Popup() {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -212,7 +211,7 @@ fun  LoanTopUpContent(
                                 }
                             }
                         }
-                    }*/
+                    }
                 }
 
                 Row(

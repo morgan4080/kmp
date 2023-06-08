@@ -11,7 +11,7 @@ interface SavingsComponent {
     val savingsState: StateFlow<SavingsStore.State>
     fun onAuthEvent(event: AuthStore.Intent)
     fun onEvent(event: SavingsStore.Intent)
-    fun onAddSavingsSelected()
+    fun onAddSavingsSelected(sharePrice: Double)
     fun onSeeALlSelected()
     fun onBack()
 }

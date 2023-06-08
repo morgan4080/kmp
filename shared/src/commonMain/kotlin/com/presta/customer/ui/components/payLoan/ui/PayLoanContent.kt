@@ -44,7 +44,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
-//import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.Popup
 import com.presta.customer.network.profile.model.LoanBreakDown
 import com.presta.customer.ui.components.profile.store.ProfileStore
 import com.presta.customer.ui.composables.ActionButton
@@ -225,7 +225,7 @@ fun MoreDetails(
     loanBreakDown: LoanBreakDown,
     dismiss: () -> Unit
 ) {
-    /*Popup {
+    Popup {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -403,5 +403,5 @@ fun MoreDetails(
                 }
             }
         }
-    }*/
+    }
 }

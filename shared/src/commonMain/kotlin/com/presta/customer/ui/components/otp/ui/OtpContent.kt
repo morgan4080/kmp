@@ -83,6 +83,8 @@ fun OtpContent(
 
     val maxChar = state.inputs.size
 
+    var inputEnabled = true
+
     val otpCharList = remember { mutableListOf( "" ) }
 
     state.inputs.forEach { input ->
@@ -162,6 +164,7 @@ fun OtpContent(
                 state.otpVerificationData.message
             )
             if (state.otpVerificationData.validated) {
+                inputEnabled = false
                 navigate(
                     state.memberRefId,
                     state.phone_number,
@@ -193,161 +196,158 @@ fun OtpContent(
                 ),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column (
-                modifier = Modifier.fillMaxHeight()
-            ) {
-                Column {
-                    Row (
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    ) {
-                        Text(
-                            text = state.title,
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                            fontSize = 20.0.sp
-                        )
-                    }
-                    Row (
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    ) {
-                        Text(
-                            text = "${state.label}${if (state.phone_number != null) " to ${state.phone_number}" else ""}",
-                            style = MaterialTheme.typography.bodySmall,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                        )
-                    }
-                    Row(
-                        modifier = Modifier
-                            .padding(top = 25.dp, start = 16.dp, end = 16.dp)
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        for ((index, _) in state.inputs.withIndex()) {
-                            Column (modifier = Modifier
-                                .weight(0.2f),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                            ) {
-                                BasicTextField (
-                                    modifier = Modifier
-                                        .shadow(1.dp, RoundedCornerShape(10.dp))
-                                        .align(Alignment.CenterHorizontally)
-                                        .fillMaxWidth(0.88f)
-                                        .height(70.dp)
-                                        .background(
-                                            color = MaterialTheme.colorScheme.inverseOnSurface,
-                                            shape = RoundedCornerShape(10.dp)
-                                        ),
-                                    value = otpCharList[index],
-                                    textStyle = TextStyle(
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                                        fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
-                                        fontSize = MaterialTheme.typography.headlineLarge.fontSize,
-                                        fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
-                                        letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
-                                        lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
-                                        textAlign = TextAlign.Center
+            Column {
+                Row (
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                ) {
+                    Text(
+                        text = state.title,
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                        fontSize = 20.0.sp
+                    )
+                }
+                Row (
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                ) {
+                    Text(
+                        text = "${state.label}${if (state.phone_number != null) " to ${state.phone_number}" else ""}",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .padding(top = 25.dp, start = 16.dp, end = 16.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    for ((index, _) in state.inputs.withIndex()) {
+                        Column (modifier = Modifier
+                            .weight(0.2f),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            BasicTextField (
+                                modifier = Modifier
+                                    .shadow(1.dp, RoundedCornerShape(10.dp))
+                                    .align(Alignment.CenterHorizontally)
+                                    .fillMaxWidth(0.88f)
+                                    .height(70.dp)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.inverseOnSurface,
+                                        shape = RoundedCornerShape(10.dp)
                                     ),
-                                    onValueChange = {
-                                        println("state.inputs")
-                                        println(it)
-                                    },
-                                    enabled = false,
-                                    singleLine = true,
-                                    decorationBox = { innerTextField ->
-                                        Column (
-                                            verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ) {
-                                            innerTextField()
-                                        }
+                                value = otpCharList[index],
+                                textStyle = TextStyle(
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                    fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
+                                    fontSize = MaterialTheme.typography.headlineLarge.fontSize,
+                                    fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+                                    letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
+                                    lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                                    textAlign = TextAlign.Center
+                                ),
+                                onValueChange = {
+                                    println("state.inputs")
+                                    println(it)
+                                },
+                                enabled = false,
+                                singleLine = true,
+                                decorationBox = { innerTextField ->
+                                    Column (
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        innerTextField()
                                     }
-                                )
-                            }
-                        }
-                    }
-
-                    Row (
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .absoluteOffset(y = -(70).dp),
-                    ) {
-                        BasicTextField(
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Number
-                            ),
-                            modifier = Modifier
-                                .focusRequester(focusRequester)
-                                .fillMaxWidth()
-                                .height(70.dp)
-                                .alpha(0.0f),
-                            value = otpInput,
-                            onValueChange = {
-                                println("value change")
-                                println(it)
-                            },
-                            enabled = false,
-                            singleLine = true,
-                            decorationBox = { innerTextField ->
-                                innerTextField()
-                            }
-                        )
-                    }
-
-                    Row (
-                        modifier = Modifier
-                            .padding(top = 25.dp, start = 16.dp, end = 16.dp)
-                            .absoluteOffset(y = -(70).dp).fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                    ) {
-                        Text(
-                            modifier = Modifier.clickable {
-                                if (state.phone_number !== null) {
-                                    onEvent(OtpStore.Intent.RequestOTP(
-                                        token = "",
-                                        phoneNumber = state.phone_number,
-                                        tenantId = OrganisationModel.organisation.tenant_id
-                                    ))
                                 }
-                            },
-                            textAlign = TextAlign.Center,
-                            textDecoration = TextDecoration.Underline,
-                            text = "Resend verification code",
-                            style = MaterialTheme.typography.titleSmall,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                        )
-                    }
-
-                    Row (
-                        modifier = Modifier
-                            .padding(top = 25.dp)
-                            .padding(horizontal = 16.dp)
-                            .absoluteOffset(y = -(70).dp)
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(25.dp)
-                                .alpha(if (state.isLoading || authState.isLoading) 0.8f else 0.0f),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
+                            )
+                        }
                     }
                 }
 
+                Row (
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .absoluteOffset(y = -(70).dp),
+                ) {
+                    BasicTextField(
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        ),
+                        modifier = Modifier
+                            .focusRequester(focusRequester)
+                            .fillMaxWidth()
+                            .height(70.dp)
+                            .alpha(0.0f),
+                        value = otpInput,
+                        onValueChange = {
+                            println("value change")
+                            println(it)
+                        },
+                        enabled = false,
+                        singleLine = true,
+                        decorationBox = { innerTextField ->
+                            innerTextField()
+                        }
+                    )
+                }
+
+                Row (
+                    modifier = Modifier
+                        .padding(top = 25.dp, start = 16.dp, end = 16.dp)
+                        .absoluteOffset(y = -(70).dp).fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        modifier = Modifier.clickable {
+                            if (state.phone_number !== null) {
+                                onEvent(OtpStore.Intent.RequestOTP(
+                                    token = "",
+                                    phoneNumber = state.phone_number,
+                                    tenantId = OrganisationModel.organisation.tenant_id
+                                ))
+                            }
+                        },
+                        textAlign = TextAlign.Center,
+                        textDecoration = TextDecoration.Underline,
+                        text = "Resend verification code",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                    )
+                }
+
+                Row (
+                    modifier = Modifier
+                        .padding(top = 25.dp)
+                        .padding(horizontal = 16.dp)
+                        .absoluteOffset(y = -(70).dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(25.dp)
+                            .alpha(if (state.isLoading || authState.isLoading) 0.8f else 0.0f),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+
+            Column (modifier = Modifier.absoluteOffset(y = -(30).dp)) {
                 LazyVerticalGrid(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxHeight()
-                        .absoluteOffset(y = -(70).dp),
+                        .fillMaxHeight(),
                     columns = GridCells.Fixed(3),
-                    verticalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.Top,
                     contentPadding = PaddingValues(
                         start = 2.dp,
                         top = 5.dp,
                         end = 2.dp,
                         bottom = 5.dp
-                    ),
+                    )
                 ) {
                     items(listOf(1,2,3,4,5,6,7,8,9,10,0,12)) {
                         Button(
@@ -368,7 +368,7 @@ fun OtpContent(
                                         println(otpInput)
                                     }
                                     else -> {
-                                        if (otpInput.length <= maxChar) {
+                                        if (otpInput.length <= maxChar  && inputEnabled) {
                                             builder.append(otpInput).append(it.toString())
                                             otpInput = builder.toString()
                                             setupOtpCharacters(otpInput)
@@ -413,7 +413,7 @@ fun OtpContent(
                                             letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
                                             lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
                                             textAlign = TextAlign.Center
-                                        ),
+                                        )
                                     )
                                 }
                             }
