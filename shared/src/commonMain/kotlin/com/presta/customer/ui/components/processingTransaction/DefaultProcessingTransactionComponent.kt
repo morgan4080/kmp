@@ -42,7 +42,6 @@ class DefaultProcessingTransactionComponent(
     storeFactory: StoreFactory,
     componentContext: ComponentContext,
     mainContext: CoroutineDispatcher,
-    val onPop: () -> Unit,
     val navigateToCompleteFailure: (paymentStatus: PaymentStatuses) -> Unit,
     override val correlationId: String,
     override val amount: Double,
@@ -76,9 +75,6 @@ class DefaultProcessingTransactionComponent(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val processingTransactionState: StateFlow<ProcessingTransactionStore.State> = processingTransactionStore.stateFlow
-    override fun onBackNavSelected() {
-        onPop()
-    }
 
     override fun onAuthEvent(event: AuthStore.Intent) {
         authStore.accept(event)
@@ -128,6 +124,8 @@ class DefaultProcessingTransactionComponent(
                         onProcessingTransactionEvent(ProcessingTransactionStore.Intent.UpdateLoading(false))
                         if (!state.isLoading) {
                             navigateToCompleteFailure(state.paymentStatus.status)
+                            poller.close()
+                            this.cancel()
                         }
                     }
                 }

@@ -15,6 +15,7 @@ import com.presta.customer.ui.components.otp.ui.OtpScreen
 import com.presta.customer.ui.components.payLoan.ui.PayLoanScreen
 import com.presta.customer.ui.components.payLoanPropmpt.ui.PayLoanPromptScreen
 import com.presta.customer.ui.components.payRegistrationFeePrompt.ui.PayRegistrationFeeScreen
+import com.presta.customer.ui.components.processingTransaction.ui.ProcessingTransactionScreen
 import com.presta.customer.ui.components.registration.ui.RegistrationScreen
 import com.presta.customer.ui.components.root.RootComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomScreen
@@ -51,6 +52,7 @@ fun AppRootUi(component: RootComponent) {
             is RootComponent.Child.PayLoanChild-> PayLoanScreen(child.component)
             is RootComponent.Child.PayLoanPromptChild-> PayLoanPromptScreen(child.component)
             is RootComponent.Child.PayRegistrationFeeChild-> PayRegistrationFeeScreen(child.component)
+            is RootComponent.Child.ProcessingTransactionChild-> ProcessingTransactionScreen(child.component)
         }
     }
 }

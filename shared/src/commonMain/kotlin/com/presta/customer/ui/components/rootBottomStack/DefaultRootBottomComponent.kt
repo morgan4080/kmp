@@ -10,6 +10,7 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.ui.components.profile.DefaultProfileComponent
 import com.presta.customer.ui.components.profile.ProfileComponent
 import com.presta.customer.ui.components.rootLoans.DefaultRootLoansComponent
@@ -27,7 +28,12 @@ class DefaultRootBottomComponent(
     private val logoutToSplash: () -> Unit,
     private val gotoAllTransactions: () -> Unit,
     private val gotoPayLoans: () -> Unit,
-    private val gotoPayRegistrationFees: (correlationId: String, amount: Double) -> Unit
+    private val gotoPayRegistrationFees: (correlationId: String, amount: Double) -> Unit,
+    private val processTransaction: (
+        correlationId: String,
+        amount: Double,
+        mode: PaymentTypes
+    ) -> Unit,
 ) : RootBottomComponent, ComponentContext by componentContext {
 
     private val navigationBottomStackNavigation = StackNavigation<ConfigBottom>()
@@ -96,6 +102,9 @@ class DefaultRootBottomComponent(
             pop = {
                 println("popping")
                 navigationBottomStackNavigation.pop()
+            },
+            processTransaction = { correlationId, amount, mode ->
+                processTransaction(correlationId, amount, mode)
             }
         )
     private fun signComponent(componentContext: ComponentContext): SignComponent =

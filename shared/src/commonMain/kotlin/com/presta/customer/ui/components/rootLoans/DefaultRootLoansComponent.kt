@@ -289,9 +289,6 @@ class DefaultRootLoansComponent(
             correlationId = config.correlationId,
             amount = config.amount,
             mainContext = prestaDispatchers.main,
-            onPop = {
-                loansNavigation.pop()
-            },
             navigateToCompleteFailure = { paymentStatus ->
                 if (paymentStatus == PaymentStatuses.COMPLETED) {
                     loansNavigation.push(ConfigLoans.SuccessfulTransaction)

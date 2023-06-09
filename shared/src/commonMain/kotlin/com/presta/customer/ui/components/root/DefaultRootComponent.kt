@@ -13,6 +13,7 @@ import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.presta.customer.network.onBoarding.model.PinStatus
+import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.network.payments.model.PaymentStatuses
 import com.presta.customer.prestaDispatchers
 import com.presta.customer.ui.components.auth.AuthComponent
@@ -27,6 +28,8 @@ import com.presta.customer.ui.components.payLoanPropmpt.DefaultPayLoanPromptComp
 import com.presta.customer.ui.components.payLoanPropmpt.PayLoanPromptComponent
 import com.presta.customer.ui.components.payRegistrationFeePrompt.DefaultPayRegistrationFeeComponent
 import com.presta.customer.ui.components.payRegistrationFeePrompt.PayRegistrationFeeComponent
+import com.presta.customer.ui.components.processingTransaction.DefaultProcessingTransactionComponent
+import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
 import com.presta.customer.ui.components.registration.DefaultRegistrationComponent
 import com.presta.customer.ui.components.registration.RegistrationComponent
 import com.presta.customer.ui.components.rootBottomStack.DefaultRootBottomComponent
@@ -69,6 +72,7 @@ class DefaultRootComponent(
             is Config.PayLoanPrompt->RootComponent.Child.PayLoanPromptChild(payLoanPromptComponent(componentContext, config))
             is Config.PayRegistrationFee->RootComponent.Child.PayRegistrationFeeChild(payRegistrationFeeComponent(componentContext, config))
             is Config.PayLoan->RootComponent.Child.PayLoanChild(payLoanComponent(componentContext))
+            is Config.ProcessingTransaction->RootComponent.Child.ProcessingTransactionChild(processingTransactionComponent(componentContext, config))
         }
 
     private fun splashComponent(componentContext: ComponentContext): SplashComponent =
@@ -216,6 +220,9 @@ class DefaultRootComponent(
             },
             gotoPayRegistrationFees = { correlationId, amount ->
                 navigation.bringToFront(Config.PayRegistrationFee(amount, correlationId))
+            },
+            processTransaction = {correlationId, amount, mode ->
+                navigation.bringToFront(Config.ProcessingTransaction(correlationId, amount, mode))
             }
         )
 
@@ -279,6 +286,28 @@ class DefaultRootComponent(
         )
 
 
+    private fun processingTransactionComponent(componentContext: ComponentContext, config: Config.ProcessingTransaction): ProcessingTransactionComponent =
+        DefaultProcessingTransactionComponent(
+            componentContext = componentContext,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            correlationId = config.correlationId,
+            amount = config.amount,
+            navigateToCompleteFailure = { paymentStatus ->
+                if (paymentStatus == PaymentStatuses.COMPLETED) {
+                    println("::::::::Show COMPLETED")
+                }
+
+                if (
+                    paymentStatus == PaymentStatuses.FAILURE
+                    || paymentStatus == PaymentStatuses.CANCELLED
+                ) {
+                    println("::::::::Show FAILURE")
+                }
+            }
+        )
+
+
 
     enum class OnBoardingContext {
         LOGIN,
@@ -308,5 +337,7 @@ class DefaultRootComponent(
         data class PayLoanPrompt(val amount: String, val correlationId: String) :Config()
         @Parcelize
         data class PayRegistrationFee(val amount: Double, val correlationId: String) :Config()
+        @Parcelize
+        data class ProcessingTransaction(val correlationId: String, val amount: Double,val mode: PaymentTypes) :Config()
     }
 }

@@ -25,7 +25,12 @@ import com.presta.customer.prestaDispatchers
 class DefaultRootSavingsComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
-    val pop: () -> Unit = {},
+    private val pop: () -> Unit = {},
+    private val processTransaction: (
+        correlationId: String,
+        amount: Double,
+        mode: PaymentTypes
+    ) -> Unit,
 ): RootSavingsComponent, ComponentContext by componentContext {
     private val savingsNavigation = StackNavigation<ConfigSavings>()
 
@@ -47,9 +52,6 @@ class DefaultRootSavingsComponent(
             )
             is ConfigSavings.AddSavings -> RootSavingsComponent.ChildSavings.AddSavingsChild(
                 addSavingsComponent(componentContext, config)
-            )
-            is ConfigSavings.ProcessingTransaction -> RootSavingsComponent.ChildSavings.ProcessingTransactionChild(
-                processingTransactionComponent(componentContext, config)
             )
             is ConfigSavings.SavingsTransactionHistory -> RootSavingsComponent.ChildSavings.TransactionHistoryChild(
                 savingsTransactionHistoryComponent(componentContext)
@@ -81,35 +83,10 @@ class DefaultRootSavingsComponent(
             mainContext = prestaDispatchers.main,
             sharePrice = config.sharePrice,
             onConfirmClicked = {correlationId, amount, mode ->
-                savingsNavigation.push(ConfigSavings.ProcessingTransaction(correlationId, amount, mode))
+                processTransaction(correlationId, amount, mode)
             },
             onBackNavClicked = {
                 savingsNavigation.pop()
-            }
-        )
-
-
-    private fun processingTransactionComponent(componentContext: ComponentContext, config: ConfigSavings.ProcessingTransaction): ProcessingTransactionComponent =
-        DefaultProcessingTransactionComponent(
-            componentContext = componentContext,
-            storeFactory = storeFactory,
-            mainContext = prestaDispatchers.main,
-            correlationId = config.correlationId,
-            amount = config.amount,
-            onPop = {
-                savingsNavigation.pop()
-            },
-            navigateToCompleteFailure = { paymentStatus ->
-                if (paymentStatus == PaymentStatuses.COMPLETED) {
-                    println("Show COMPLETED")
-                }
-
-                if (
-                    paymentStatus == PaymentStatuses.FAILURE
-                    || paymentStatus == PaymentStatuses.CANCELLED
-                ) {
-                    println("Show FAILURE")
-                }
             }
         )
 
@@ -125,9 +102,6 @@ class DefaultRootSavingsComponent(
 
         @Parcelize
         data class AddSavings(val sharePrice: Double): ConfigSavings()
-
-        @Parcelize
-        data class ProcessingTransaction(val correlationId: String, val amount: Double,val mode: PaymentTypes): ConfigSavings()
 
         @Parcelize
         object SavingsTransactionHistory: ConfigSavings()
