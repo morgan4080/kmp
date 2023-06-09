@@ -7,6 +7,7 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
@@ -35,7 +36,18 @@ fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
 
 class DefaultLoanTopUpComponent(
     componentContext: ComponentContext,
-    private val onProceedClicked: (refId: String, minAmount: Double, maxAmount: Double, loanName: String, InterestRate: Double, enteredAmount: Double, loanPeriod: String,loanPeriodUnit:String) -> Unit,
+    private val onProceedClicked: (
+        refId: String,
+        minAmount: Double,
+        maxAmount: Double,
+        loanName: String,
+        InterestRate: Double,
+        enteredAmount: Double,
+        loanPeriod: String,
+        loanPeriodUnit: String,
+        loanType:LoanType,
+        referencedLoanRefId:String
+    ) -> Unit,
     private val onBackNavClicked: () -> Unit,
     refId: String,
     storeFactory: StoreFactory,
@@ -46,7 +58,9 @@ class DefaultLoanTopUpComponent(
     override val loanName: String,
     override val interestRate: Double,
     override val loanPeriod: String,
-    override val loanPeriodUnit: String
+    override val loanPeriodUnit: String,
+    override val loanOperation: String,
+    override val referencedLoanRefId: String
 ) : LoanTopUpComponent, ComponentContext by componentContext {
     var specificId: String = refId
 
@@ -58,7 +72,9 @@ class DefaultLoanTopUpComponent(
         InterestRate: Double,
         enteredAmount: Double,
         loanPeriod: String,
-        LoanPeriodUnit:String
+        loanPeriodUnit: String,
+        loanType:LoanType,
+        referencedLoanRefId:String
     ) {
         onProceedClicked(
             refId,
@@ -68,13 +84,17 @@ class DefaultLoanTopUpComponent(
             InterestRate,
             enteredAmount,
             loanPeriod,
-            LoanPeriodUnit
+            loanPeriodUnit,
+            loanType,
+            referencedLoanRefId
+
         )
     }
 
     override fun onBackNavSelected() {
         onBackNavClicked()
     }
+
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
     override val authStore: AuthStore =

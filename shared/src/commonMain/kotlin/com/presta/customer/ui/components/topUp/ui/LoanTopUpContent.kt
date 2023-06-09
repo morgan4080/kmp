@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
+import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import com.presta.customer.ui.components.topUp.LoanTopUpComponent
 import com.presta.customer.ui.composables.ActionButton
@@ -49,6 +50,11 @@ fun LoanTopUpContent(
     val allowedMaxAmount = component.maxAmount
     val allowedMinAmount = component.minAmount
     var loanTerm by remember { mutableStateOf(false) }
+    val LoanType: LoanType = LoanType._TOP_UP
+
+
+
+
 
     Surface(
         modifier = Modifier
@@ -147,7 +153,7 @@ fun LoanTopUpContent(
                                             .fillMaxWidth()
                                     ) {
                                         OptionsSelectionContainer(
-                                            label = component.loanName + " at " + component.interestRate +"%/month",
+                                            label = component.loanName + " at " + component.interestRate + "%/month",
                                             onClickContainer = {
 
                                             })
@@ -183,7 +189,6 @@ fun LoanTopUpContent(
                                                     end = 20.dp
                                                 )
                                         )
-
                                     }
                                     ElevatedCard(
                                         onClick = {
@@ -232,9 +237,7 @@ fun LoanTopUpContent(
                                 isError = true
                             }
                         }
-
                     }
-
                 }
                 if (isError) {
 
@@ -275,7 +278,10 @@ fun LoanTopUpContent(
                             component.interestRate,
                             amount.text.toDouble(),
                             component.loanPeriod,
-                            component.loanPeriodUnit)
+                            component.loanPeriodUnit,
+                            LoanType,
+                            referencedLoanRefId = component.referencedLoanRefId
+                        )
 
                     }, enabled = amount.text != "" && !isError)
                 }

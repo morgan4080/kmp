@@ -56,7 +56,7 @@ fun ShortTermProductList(
                             if (shortTermProduct.interestRate != null) "Interest " + shortTermProduct.interestRate.toString() +"%" else "",
                             onClickContainer = {
                                val loanName=shortTermProduct.name
-                                component.onProductSelected(shortTermProduct.refId.toString(),loanName)
+                                component.onProductSelected(shortTermProduct.refId.toString(),loanName, referencedLoanRefId = component.referencedLoanRefId)
                             })
                     }
                 }

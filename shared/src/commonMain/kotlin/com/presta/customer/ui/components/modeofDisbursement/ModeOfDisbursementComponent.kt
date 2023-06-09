@@ -1,5 +1,6 @@
 package com.presta.customer.ui.components.modeofDisbursement
 
+import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStore
 import kotlinx.coroutines.flow.StateFlow
@@ -9,7 +10,8 @@ interface ModeOfDisbursementComponent {
     val amount: Double
     val fees:Double
     val loanPeriod : String
-    val loanType:String
+    val loanType:LoanType
+    val referencedLoanRefId: String
      val authStore: AuthStore
     val authState: StateFlow<AuthStore.State>
     val modeOfDisbursementStore: ModeOfDisbursementStore

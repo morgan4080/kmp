@@ -1,5 +1,6 @@
 package com.presta.customer.ui.components.loanConfirmation
 
+import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import kotlinx.coroutines.flow.StateFlow
@@ -11,7 +12,16 @@ interface LoanConfirmationComponent {
     val loanInterest:String
     val loanName:String
     val loanPeriodUnit:String
-    fun onConfirmSelected(refid:String,amount:Double,loanPeriod:String,loanType:String,loanName:String)
+    val loanOperation: String
+    val loanType:LoanType
+     val referencedLoanRefId:String
+    fun onConfirmSelected(
+        refid:String,
+        amount:Double,
+        loanPeriod:String,
+        loanType:LoanType,
+        loanName:String,
+        referencedLoanRefId:String)
     fun onBackNavSelected()
     val authStore: AuthStore
 

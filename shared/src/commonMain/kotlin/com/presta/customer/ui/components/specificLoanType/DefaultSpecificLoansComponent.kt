@@ -7,6 +7,7 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
@@ -38,17 +39,20 @@ class DefaultSpecificLoansComponent(
         refid: String,
         amount: Double,
         loanPeriod: String,
-        loanType: String,
+        loanType: LoanType,
         LoanName: String,
         Interest: Double,
         loanPeriodUnit: String,
-        maxPeriodUnit: Int
+        maxPeriodUnit: Int,
+        referencedLoanRefId: String
     ) -> Unit,
     private val onBackNavClicked: () -> Unit,
     refId: String,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     override val loanName: String,
+    override val loanOperation: String,
+    override val referencedLoanRefId: String,
 
     ) : SpecificLoansComponent, ComponentContext by componentContext {
     var specificId: String = refId
@@ -56,13 +60,14 @@ class DefaultSpecificLoansComponent(
         refid: String,
         amount: Double,
         loanPeriod: String,
-        loanType: String,
+        loanType: LoanType,
         LoanName: String,
         interest: Double,
         loanPeriodUnit: String,
-        maxPeriodUnit: Int
+        maxPeriodUnit: Int,
+        referencedLoanRefId: String
     ) {
-        onConfirmClicked(refid, amount, loanPeriod, loanType, LoanName, interest, loanPeriodUnit,maxPeriodUnit)
+        onConfirmClicked(refid, amount, loanPeriod, loanType, LoanName, interest, loanPeriodUnit,maxPeriodUnit,referencedLoanRefId)
     }
 
     override fun onBackNavSelected() {

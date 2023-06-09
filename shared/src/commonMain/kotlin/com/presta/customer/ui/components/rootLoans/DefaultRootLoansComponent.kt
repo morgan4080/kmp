@@ -12,6 +12,7 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.payments.model.PaymentStatuses
 import com.presta.customer.prestaDispatchers
 import com.presta.customer.ui.components.applyLoan.DefaultApplyLoanComponent
@@ -132,7 +133,7 @@ class DefaultRootLoansComponent(
         DefaultShortTermLoansComponent(
             componentContext = componentContext,
 
-            onConfirmClicked = { refid, maxAmount, minAmount, loanName, interestRate,loanPeriod,loanPeriodUnit ->
+            onConfirmClicked = { refid, maxAmount, minAmount, loanName, interestRate, loanPeriod, loanPeriodUnit, referencedLoanRefId ->
                 //Navigation to TopUp Screen
                 loansNavigation.push(
                     ConfigLoans.LoanTopUp(
@@ -143,7 +144,8 @@ class DefaultRootLoansComponent(
                         InterestRate = interestRate,
                         enteredAmount = 0.0,
                         loanPeriod = loanPeriod,
-                        loanPeriodUnit = loanPeriodUnit
+                        loanPeriodUnit = loanPeriodUnit,
+                        referencedLoanRefId = referencedLoanRefId
                     )
                 )
             },
@@ -153,9 +155,12 @@ class DefaultRootLoansComponent(
             },
             mainContext = prestaDispatchers.main,
             storeFactory = storeFactory,
-            onProductClicked = { refId,loanName ->
-                loansNavigation.push(ConfigLoans.SpecificLoan(refId,loanName))
-            }
+            onProductClicked = { refId, loanName, referencedLoanRefId ->
+                loansNavigation.push(
+                    ConfigLoans.SpecificLoan(refId, loanName, referencedLoanRefId)
+                )
+            },
+            referencedLoanRefId = ""
         )
 
     private fun longTermComponent(componentContext: ComponentContext): LongTermLoansComponent =
@@ -173,7 +178,7 @@ class DefaultRootLoansComponent(
         DefaultSpecificLoansComponent(
             componentContext = componentContext,
             refId = config.refId,
-            onConfirmClicked = { refId, amount, loanPeriod, loanType,LoanName,Interest,loanPeriodUnit,maxPeriodUnit ->
+            onConfirmClicked = { refId, amount, loanPeriod, loanType, LoanName, Interest, loanPeriodUnit, maxPeriodUnit, referencedLoanRefId ->
                 println("Ref id")
                 println(refId)
                 println("Amount")
@@ -187,7 +192,9 @@ class DefaultRootLoansComponent(
                         interestRate = Interest,
                         enteredAmount = 0.00,
                         loanName = LoanName,
-                        loanPeriodUnit = loanPeriodUnit
+                        loanPeriodUnit = loanPeriodUnit,
+                        loanOperation = "loan",
+                        referencedLoanRefId = referencedLoanRefId
                     )
                 )
             },
@@ -197,6 +204,8 @@ class DefaultRootLoansComponent(
             mainContext = prestaDispatchers.main,
             storeFactory = storeFactory,
             loanName = config.loanName,
+            loanOperation = "loan",
+            referencedLoanRefId = config.referencedLoanRefId
         )
 
     private fun loanConfirmationComponent(
@@ -206,7 +215,7 @@ class DefaultRootLoansComponent(
         DefaultLoanConfirmationComponent(
             componentContext = componentContext,
             refId = config.refId,
-            onConfirmClicked = { refId, amount, loanPeriod, loantype,loanName ->
+            onConfirmClicked = { refId, amount, loanPeriod, loantype, loanName,referencedLoanRefId ->
                 //navigate to mode of Disbursement
                 loansNavigation.push(
                     ConfigLoans.DisbursementMethod(
@@ -214,7 +223,8 @@ class DefaultRootLoansComponent(
                         amount = amount,
                         loanPeriod = loanPeriod,
                         loanType = loantype,
-                        fees = 0.00
+                        fees = 0.00,
+                        referencedLoanRefId = referencedLoanRefId
                     )
                 )
             },
@@ -227,7 +237,10 @@ class DefaultRootLoansComponent(
             loanPeriod = config.loanPeriod,
             loanInterest = config.interestRate.toString(),
             loanName = config.loanName,
-            loanPeriodUnit = config.loanPeriodUnit
+            loanPeriodUnit = config.loanPeriodUnit,
+            loanOperation = config.loanOperation,
+            loanType = config.loanType,
+            referencedLoanRefId = config.referencedLoanRefId
         )
 
     private fun modeOfDisbursementComponent(
@@ -262,7 +275,8 @@ class DefaultRootLoansComponent(
             amount = config.amount,
             loanPeriod = config.loanPeriod,
             loanType = config.loanType,
-            fees = config.fees
+            fees = config.fees,
+            referencedLoanRefId = config.referencedLoanRefId
         )
 
     private fun processingTransactionComponent(
@@ -335,13 +349,14 @@ class DefaultRootLoansComponent(
             onRetryClicked = {
             }
         )
+
     private fun loanTopUpComponent(
         componentContext: ComponentContext,
         config: ConfigLoans.LoanTopUp
     ): LoanTopUpComponent =
         DefaultLoanTopUpComponent(
             componentContext = componentContext,
-            onProceedClicked = { refid, maxAmount, minAmount, loanName, interestRate, enteredAmount, loanPeriod,LoanPeriodUnit ->
+            onProceedClicked = { refid, maxAmount, minAmount, loanName, interestRate, enteredAmount, loanPeriod, LoanPeriodUnit, loanType, referencedLoanRefId ->
                 //push  to confirm Loan Details Screen
                 loansNavigation.push(
                     ConfigLoans.LoanConfirmation(
@@ -351,8 +366,11 @@ class DefaultRootLoansComponent(
                         interestRate = interestRate,
                         enteredAmount = enteredAmount,
                         loanName = loanName,
-                        loanType = "",
-                        loanPeriodUnit = LoanPeriodUnit
+                        loanType = loanType,
+                        loanPeriodUnit = LoanPeriodUnit,
+                        loanOperation = "topUp",
+                        referencedLoanRefId = referencedLoanRefId
+
                     )
                 )
             },
@@ -368,8 +386,11 @@ class DefaultRootLoansComponent(
             loanName = config.loanName,
             interestRate = config.InterestRate,
             loanPeriod = config.loanPeriod,
-            loanPeriodUnit = config.loanPeriodUnit
+            loanPeriodUnit = config.loanPeriodUnit,
+            loanOperation = "topUp",
+            referencedLoanRefId = config.referencedLoanRefId
         )
+
     private sealed class ConfigLoans : Parcelable {
         @Parcelize
         object ApplyLoan : ConfigLoans()
@@ -381,18 +402,24 @@ class DefaultRootLoansComponent(
         object ShortTermLoans : ConfigLoans()
 
         @Parcelize
-        data class SpecificLoan(val refId: String, val loanName: String) : ConfigLoans()
+        data class SpecificLoan(
+            val refId: String,
+            val loanName: String,
+            val referencedLoanRefId: String
+        ) : ConfigLoans()
 
         @Parcelize
         data class LoanConfirmation(
             val refId: String,
             val amount: Double,
             val loanPeriod: String,
-            val loanType: String,
+            val loanType: LoanType,
             val interestRate: Double,
             val enteredAmount: Double,
             val loanName: String,
-            val loanPeriodUnit: String
+            val loanPeriodUnit: String,
+            val loanOperation: String,
+            val referencedLoanRefId: String
         ) : ConfigLoans()
 
         @Parcelize
@@ -400,8 +427,9 @@ class DefaultRootLoansComponent(
             val refId: String,
             val amount: Double,
             val loanPeriod: String,
-            val loanType: String,
-            val fees: Double
+            val loanType: LoanType,
+            val fees: Double,
+            val referencedLoanRefId: String
         ) : ConfigLoans()
 
         @Parcelize
@@ -433,7 +461,8 @@ class DefaultRootLoansComponent(
             val InterestRate: Double,
             val enteredAmount: Double,
             val loanPeriod: String,
-            val loanPeriodUnit: String
+            val loanPeriodUnit: String,
+            val referencedLoanRefId: String
         ) : ConfigLoans()
 
     }

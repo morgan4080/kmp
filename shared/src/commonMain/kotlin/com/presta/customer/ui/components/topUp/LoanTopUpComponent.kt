@@ -1,5 +1,6 @@
 package com.presta.customer.ui.components.topUp
 
+import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import kotlinx.coroutines.flow.StateFlow
@@ -13,6 +14,8 @@ interface LoanTopUpComponent {
     val interestRate: Double
     val loanPeriod: String
     val loanPeriodUnit: String
+    val loanOperation: String
+    val referencedLoanRefId: String
     fun onProceedSelected(
         refId: String,
         minAmount: Double,
@@ -21,7 +24,9 @@ interface LoanTopUpComponent {
         InterestRate: Double,
         enteredAmount: Double,
         loanPeriod: String,
-        loanPeriodUnit : String
+        loanPeriodUnit : String,
+        loanType: LoanType,
+        referencedLoanRefId:String
     )
 
     fun onBackNavSelected()

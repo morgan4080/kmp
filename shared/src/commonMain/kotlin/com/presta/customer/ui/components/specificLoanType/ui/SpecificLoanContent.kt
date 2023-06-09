@@ -23,6 +23,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import com.presta.customer.ui.components.specificLoanType.SpecificLoansComponent
@@ -56,6 +57,7 @@ fun SpecificLoaContent(
     val allowedMaxTerm = state.prestaShortTermLoanProductById?.maxTerm
     val allowedMinTerm = state.prestaShortTermLoanProductById?.minTerm
     val loanPeriodUnit = state.prestaShortTermLoanProductById?.loanPeriodUnit
+    val LoanType:LoanType=LoanType._NORMAL_LOAN
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background),
@@ -161,7 +163,6 @@ fun SpecificLoaContent(
                             ActionButton(
                                 "Confirm",
                                 onClickContainer = {
-                                    //Navigate  to confirm Screen
                                     if (amount.text !== "" && desiredPeriod.text !== "") {
                                         state.prestaShortTermLoanProductById?.interestRate?.let {
                                             state.prestaShortTermLoanProductById.maxTerm?.let { it1 ->
@@ -169,11 +170,12 @@ fun SpecificLoaContent(
                                                     state.prestaShortTermLoanProductById.refId.toString(),
                                                     amount.text.toDouble(),
                                                     desiredPeriod.text,
-                                                    state.prestaShortTermLoanProductById.name.toString(),
+                                                    loanType = LoanType,
                                                     state.prestaShortTermLoanProductById.name.toString(),
                                                     it,
                                                     state.prestaShortTermLoanProductById.loanPeriodUnit.toString(),
-                                                    it1
+                                                    it1,
+                                                    referencedLoanRefId =component.referencedLoanRefId
                                                 )
                                             }
                                         }

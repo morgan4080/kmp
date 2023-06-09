@@ -6,6 +6,7 @@ import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStor
 import kotlinx.coroutines.flow.StateFlow
 
 interface ShortTermLoansComponent {
+     val referencedLoanRefId: String
     val authStore: AuthStore
 
     val authState: StateFlow<AuthStore.State>
@@ -16,7 +17,7 @@ interface ShortTermLoansComponent {
     fun onAuthEvent(event: AuthStore.Intent)
     fun onEvent(event: ShortTermLoansStore.Intent)
     val model: Value<Model>
-    fun onProductSelected(refId: String,loanName:String)
+    fun onProductSelected(refId: String,loanName:String,referencedLoanRefId: String)
     fun onConfirmSelected(
         refId: String,
         minAmount: Double,
@@ -24,7 +25,8 @@ interface ShortTermLoansComponent {
         loanName: String,
         InterestRate: Double,
         loanPeriod: String,
-        loanPeriodUnit: String
+        loanPeriodUnit: String,
+        referencedLoanRefId: String
     )
 
     fun onBackNav()
