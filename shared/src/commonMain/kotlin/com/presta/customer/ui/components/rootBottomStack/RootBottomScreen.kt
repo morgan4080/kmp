@@ -44,7 +44,7 @@ fun RootBottomScreen(component: RootBottomComponent) {
     Scaffold (
         modifier = Modifier.padding(LocalSafeArea.current),
         bottomBar = {
-            val screens = listOf("Home", "Loans", "Savings", "Sign")
+            val screens = listOf("Home", "Loans", "Savings", "Sign", "Account")
 
             AnimatedVisibility(true) {
                 BottomAppBar (
