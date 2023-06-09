@@ -8,6 +8,7 @@ import androidx.compose.ui.window.ComposeUIViewController
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
+import com.moriatsushi.insetsx.WindowInsetsUIViewController
 import com.presta.customer.di.initKoin
 import com.presta.customer.ui.AppRootUi
 import com.presta.customer.ui.components.root.DefaultRootComponent
