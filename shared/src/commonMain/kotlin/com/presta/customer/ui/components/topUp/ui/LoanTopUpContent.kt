@@ -52,10 +52,6 @@ fun LoanTopUpContent(
     var loanTerm by remember { mutableStateOf(false) }
     val LoanType: LoanType = LoanType._TOP_UP
 
-
-
-
-
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background)
