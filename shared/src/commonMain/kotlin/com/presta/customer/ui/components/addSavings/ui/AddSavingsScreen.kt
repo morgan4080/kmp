@@ -18,6 +18,7 @@ fun AddSavingsScreen (component: AddSavingsComponent, innerPadding: PaddingValue
         component::onAddSavingsEvent,
         authState,
         state,
-        innerPadding
+        innerPadding,
+        sharePrice = component.sharePrice
     )
 }

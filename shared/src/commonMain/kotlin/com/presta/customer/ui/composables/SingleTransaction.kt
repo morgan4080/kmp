@@ -52,9 +52,9 @@ fun singleTransaction(transactionHistory:  List<PrestaTransactionHistoryResponse
                                 .clip(CircleShape)
                                 .background(
                                     if (transaction.postingType == PostingType.CR)
-                                        MaterialTheme.colorScheme.secondaryContainer
+                                        MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f)
                                     else
-                                        Color(0xFF9deeff)
+                                        Color(0xFF9deeff).copy(alpha = 0.4f)
                                 )
                                 .size(30.dp),
                             onClick = {
@@ -79,14 +79,14 @@ fun singleTransaction(transactionHistory:  List<PrestaTransactionHistoryResponse
                             text = "${transaction.purpose}",
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 14.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                         )
 
                         Text(
                             text = transaction.transactionReference,
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 10.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                         )
                     }
                 }
@@ -102,7 +102,7 @@ fun singleTransaction(transactionHistory:  List<PrestaTransactionHistoryResponse
                     Text(
                         text = formatDate(transaction.created),
                         fontSize = 10.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                     )
                 }
             }

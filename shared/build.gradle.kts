@@ -13,14 +13,13 @@ plugins {
 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
 kotlin {
     android()
-
     iosX64()
     iosArm64()
     iosSimulatorArm64()
 
     cocoapods {
         version = "1.0.0"
-        summary = "Some description for the Shared Module"
+        summary = "Presta Customer Shared Module"
         homepage = "Link to the Shared Module homepage"
         ios.deploymentTarget = "15.2"
         podfile = project.file("../iosApp/Podfile")
@@ -49,7 +48,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api("io.github.qdsfdhvh:image-loader:1.4.1")
-
+                implementation("com.moriatsushi.insetsx:insetsx:0.1.0-alpha07")
                 with(compose) {
                     implementation(runtime)
                     implementation(foundation)
@@ -129,15 +128,11 @@ kotlin {
                 implementation(deps.koin.android)
             }
         }
+
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
         val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
-
             dependencies {
                 // Ktor
                 implementation(deps.ktor.clientDarwin)
@@ -149,6 +144,11 @@ kotlin {
 
                 api(deps.essenty.lifecycle)
             }
+
+            dependsOn(commonMain)
+            iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+            iosSimulatorArm64Main.dependsOn(this)
         }
 
         multiplatformResources {

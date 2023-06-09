@@ -55,7 +55,7 @@ class DefaultProfileComponent(
                 isTermsAccepted = false,
                 isActive = false,
                 pinStatus = PinStatus.SET,
-                onLogOut = { logoutToSplash() }
+                onLogOut = logoutToSplash
             ).create()
         }
 
@@ -167,6 +167,8 @@ class DefaultProfileComponent(
                         refId = refId,
                         purposeIds = state.transactionMapping.keys.toList()
                     ))
+
+                    this.cancel()
                 }
             }
         }
@@ -213,6 +215,18 @@ class DefaultProfileComponent(
                         tenantId = OrganisationModel.organisation.tenant_id,
                         refId = state.cachedMemberData.refId
                     ))
+
+                    this.cancel()
+                }
+            }
+        }
+    }
+
+    override fun logout() {
+        scope.launch {
+            authState.collect { state ->
+                if (state.cachedMemberData !== null) {
+                    onAuthEvent(AuthStore.Intent.LogOutUser)
                 }
                 this.cancel()
             }

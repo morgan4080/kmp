@@ -129,7 +129,7 @@ fun TextInputContainer(
                 }
                 AnimatedVisibility(
                     visible = userInput.text.isNotEmpty() || callingCode !== null,
-                    modifier = Modifier.absoluteOffset(y = -(14).dp),
+                    modifier = Modifier.absoluteOffset(y = -(18).dp),
                     enter = fadeIn() + expandVertically(),
                     exit = fadeOut() + shrinkVertically(),
                 ) {

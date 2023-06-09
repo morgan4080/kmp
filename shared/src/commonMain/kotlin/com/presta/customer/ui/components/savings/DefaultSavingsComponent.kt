@@ -38,7 +38,7 @@ class DefaultSavingsComponent (
     mainContext: CoroutineContext,
     storeFactory: StoreFactory,
     private val onPop: () -> Unit,
-    private val onAddSavingsClicked: () -> Unit,
+    private val onAddSavingsClicked: (sharePrice: Double) -> Unit,
     private val onSeeAlClicked: () -> Unit,
 ): SavingsComponent, ComponentContext by componentContext {
 
@@ -153,8 +153,8 @@ class DefaultSavingsComponent (
     override fun onBack() {
         onPop()
     }
-    override fun onAddSavingsSelected() {
-       onAddSavingsClicked()
+    override fun onAddSavingsSelected(sharePrice: Double) {
+       onAddSavingsClicked(sharePrice)
     }
 
     override fun onSeeALlSelected() {

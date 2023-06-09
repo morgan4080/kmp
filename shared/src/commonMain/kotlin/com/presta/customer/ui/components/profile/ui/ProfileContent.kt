@@ -90,12 +90,13 @@ fun ProfileContent(
     goToPayLoans: () -> Unit,
     goToStatement: () -> Unit,
     activateAccount: (amount: Double) -> Unit,
+    logout: () -> Unit,
 ) {
     val stateLazyRow0 = rememberLazyListState()
 
     val scope = rememberCoroutineScope()
 
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackBarHostState = remember { SnackbarHostState() }
 
     val quickLinks: List<QuickLinks> = listOf(
         QuickLinks("Add", "Savings", Icons.Outlined.Savings, goToSavings),
@@ -107,7 +108,6 @@ fun ProfileContent(
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden
     )
-
 
     LaunchedEffect(authState.cachedMemberData) {
         if (authState.cachedMemberData !== null && authState.cachedMemberData.registrationFeeStatus == "NOT_PAID") {
@@ -130,9 +130,6 @@ fun ProfileContent(
     if (state.loansBalances !== null) {
         balancesMap["Total Loan Balance"] = state.loansBalances.totalBalance
     }
-
-    println("::::::::state.savingsBalances.lastSavingsAmount")
-    println(state.savingsBalances)
 
     ModalBottomSheetLayout(
         modifier = Modifier.padding(innerPadding),
@@ -223,9 +220,9 @@ fun ProfileContent(
                                     )
                                 }
                                 IconButton(
-                                    modifier = Modifier.absoluteOffset(x = 15.dp).alpha(0.0f),
+                                    modifier = Modifier.absoluteOffset(x = 15.dp),
                                     onClick = {
-//                                        onAuthEvent(AuthStore.Intent.LogOutUser)
+                                              logout()
                                     },
                                     content = {
                                         Icon(
@@ -425,7 +422,7 @@ fun ProfileContent(
                     }
                 }
             },
-            snackbarHost = { SnackbarHost(snackbarHostState) },
+            snackbarHost = { SnackbarHost(snackBarHostState) },
         )
     }
 }

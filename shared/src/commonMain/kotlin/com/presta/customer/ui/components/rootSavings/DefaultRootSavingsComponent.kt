@@ -46,7 +46,7 @@ class DefaultRootSavingsComponent(
                 savingsHomeComponent(componentContext)
             )
             is ConfigSavings.AddSavings -> RootSavingsComponent.ChildSavings.AddSavingsChild(
-                addSavingsComponent(componentContext)
+                addSavingsComponent(componentContext, config)
             )
             is ConfigSavings.ProcessingTransaction -> RootSavingsComponent.ChildSavings.ProcessingTransactionChild(
                 processingTransactionComponent(componentContext, config)
@@ -65,9 +65,8 @@ class DefaultRootSavingsComponent(
             onPop = {
                 pop()
             },
-            onAddSavingsClicked = {
-                savingsNavigation.push(ConfigSavings.AddSavings)
-
+            onAddSavingsClicked = { sharePrice ->
+                savingsNavigation.push(ConfigSavings.AddSavings(sharePrice))
             },
             onSeeAlClicked = {
                 savingsNavigation.push(ConfigSavings.SavingsTransactionHistory)
@@ -75,11 +74,12 @@ class DefaultRootSavingsComponent(
 
         )
 
-    private fun addSavingsComponent(componentContext: ComponentContext): AddSavingsComponent =
+    private fun addSavingsComponent(componentContext: ComponentContext, config: ConfigSavings.AddSavings): AddSavingsComponent =
         DefaultAddSavingsComponent(
            componentContext = componentContext,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
+            sharePrice = config.sharePrice,
             onConfirmClicked = {correlationId, amount, mode ->
                 savingsNavigation.push(ConfigSavings.ProcessingTransaction(correlationId, amount, mode))
             },
@@ -124,7 +124,7 @@ class DefaultRootSavingsComponent(
         object SavingsHome: ConfigSavings()
 
         @Parcelize
-        object AddSavings: ConfigSavings()
+        data class AddSavings(val sharePrice: Double): ConfigSavings()
 
         @Parcelize
         data class ProcessingTransaction(val correlationId: String, val amount: Double,val mode: PaymentTypes): ConfigSavings()

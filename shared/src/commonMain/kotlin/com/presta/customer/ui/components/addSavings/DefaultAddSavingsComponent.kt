@@ -37,6 +37,7 @@ class DefaultAddSavingsComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
+    override val sharePrice: Double,
     private val onConfirmClicked: (correlationId: String, amount: Double, mode: PaymentTypes) -> Unit,
     private val onBackNavClicked: () -> Unit,
 ): AddSavingsComponent,ComponentContext by componentContext {

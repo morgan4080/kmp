@@ -1,18 +1,17 @@
 package com.presta.customer.network
 
 object NetworkConstants {
-    const val applicationsBaseUrl = "https://staging-lending.presta.co.ke/applications/api/v2/"
-    const val applicationsBaseUrlV1 = "https://staging-lending.presta.co.ke/applications/api/v1/"
-    const val accountsBaseUrl = "https://staging-accounts.presta.co.ke/"
-    const val applicationV1BaseUrl="https://staging-lending.presta.co.ke/applications/api/v1/"
+    const val applicationV2BaseUrl = "https://lending.presta.co.ke/applications/api/v2/"
+    const val accountsBaseUrl = "https://accounts.presta.co.ke/"
+    const val applicationV1BaseUrl="https://lending.presta.co.ke/applications/api/v1/"
 
 
     object PrestaAuthenticateUser {
-        const val route = applicationsBaseUrl + "authentication"
+        const val route = applicationV2BaseUrl + "authentication"
     }
 
     object PrestaRefreshToken {
-        const val route = applicationsBaseUrl + "authentication/renew-token"
+        const val route = applicationV2BaseUrl + "authentication/renew-token"
     }
 
     object PrestaCheckAuthUser {
@@ -20,47 +19,47 @@ object NetworkConstants {
     }
 
     object PrestaOnBoardingClient {
-        const val route = applicationsBaseUrl + "account-config"
+        const val route = applicationV2BaseUrl + "account-config"
     }
 
     object PrestaUpdatePinTermsClient {
-        const val route = applicationsBaseUrl + "pin-and-terms-acceptance"
+        const val route = applicationV2BaseUrl + "pin-and-terms-acceptance"
     }
 
     object PrestaSelfRegistration {
-        const val route = applicationsBaseUrl + "customers/self-registration"
+        const val route = applicationV2BaseUrl + "customers/self-registration"
     }
 
     object PrestaOtpRequestClient {
-        const val route = applicationsBaseUrl + "otp"
+        const val route = applicationV2BaseUrl + "otp"
     }
 
     object PrestaOtpVerifyClient {
-        const val route = applicationsBaseUrl + "otp/validation"
+        const val route = applicationV2BaseUrl + "otp/validation"
     }
 
     object PrestaGetSavingsBalance {
-        const val route = applicationsBaseUrl + "balances/savings"
+        const val route = applicationV2BaseUrl + "balances/savings"
     }
 
     object PrestaGetLoansBalance {
-        const val route = applicationsBaseUrl + "balances/loans"
+        const val route = applicationV2BaseUrl + "balances/loans"
     }
 
     object PrestaMakePayment {
-        const val route = applicationsBaseUrl + "app-payments"
+        const val route = applicationV2BaseUrl + "app-payments"
     }
 
     object PrestaPollPaymentStatus {
-        const val route = applicationsBaseUrl + "app-payments/poll-status"
+        const val route = applicationV2BaseUrl + "app-payments/poll-status"
     }
 
     object PrestaGetTransactionsHistory {
-        const  val route = applicationsBaseUrl + "transactions"
+        const  val route = applicationV2BaseUrl + "transactions"
     }
 
     object PrestaGetTShortTermProductsList {
-        const  val route = applicationsBaseUrl + "loanproduct"
+        const  val route = applicationV2BaseUrl + "loanproduct"
     }
     object  PrestaGetShortTermToUpList{
         const val  route= applicationV1BaseUrl + "query/topup-loans"

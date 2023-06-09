@@ -8,5 +8,5 @@ enum class OnBoardingError {
 }
 
 class OnBoardingException(error: OnBoardingError, message: String?): Exception(
-    "Account Config Error: ${if (message !== null) message else error}"
+    "Account Config Error: ${message ?: error}"
 )

@@ -28,6 +28,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -72,9 +73,12 @@ fun AuthContent(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    var inputEnabled = true
+
     var pinInput by remember { mutableStateOf("") }
 
     var pinToConfirm by remember { mutableStateOf("") }
+
     val maxChar = state.inputs.size
 
     val pinCharList = remember { mutableListOf( "" ) }
@@ -195,14 +199,13 @@ fun AuthContent(
 
 
     LaunchedEffect(state.phoneNumber, state.loginResponse) {
-        if (state.loginResponse !== null) {
+        if (state.loginResponse !== null && state.phoneNumber != null) {
+            inputEnabled = false
             snackbarHostState.showSnackbar(
-                "Login Successful!"
+                message = "Login Successful!",
+                duration =  SnackbarDuration.Short
             )
-
-            if (state.phoneNumber != null) {
-                navigate()
-            }
+            navigate()
         }
 
         if (state.phoneNumber !== null) {
@@ -284,206 +287,216 @@ fun AuthContent(
     ) {
         Column(
             modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
                 .padding(
                     vertical = 30.dp
-                )
+                ),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Row (
-                modifier = Modifier
-                    .padding(
-                        horizontal = 16.dp)
-            ) {
-                Text(
-                    text = state.title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                    fontSize = 20.0.sp
-                )
-            }
-            Row (
-                modifier = Modifier
-                    .padding(
-                        horizontal = 16.dp)
-            ) {
-                Text(
-                    text = state.label,
-                    style = MaterialTheme.typography.bodySmall,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                )
-            }
-            Row(
-                modifier = Modifier
-                    .padding(top = 35.dp)
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                for ((index, _) in state.inputs.withIndex()) {
-                    Column (modifier = Modifier
-                        .weight(0.2f),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        BasicTextField(
-                            modifier = Modifier
-                                .shadow(1.dp, RoundedCornerShape(10.dp))
-                                .align(Alignment.CenterHorizontally)
-                                .fillMaxWidth(0.88f)
-                                .height(70.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.inverseOnSurface,
-                                    shape = RoundedCornerShape(10.dp)
+            Column {
+                Row (
+                    modifier = Modifier
+                        .padding(
+                            horizontal = 16.dp)
+                ) {
+                    Text(
+                        text = state.title,
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                        fontSize = 20.0.sp
+                    )
+                }
+
+                Row (
+                    modifier = Modifier
+                        .padding(
+                            horizontal = 16.dp)
+                ) {
+                    Text(
+                        text = state.label,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .padding(top = 35.dp)
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    for ((index, _) in state.inputs.withIndex()) {
+                        Column (modifier = Modifier
+                            .weight(0.2f),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            BasicTextField(
+                                modifier = Modifier
+                                    .shadow(1.dp, RoundedCornerShape(10.dp))
+                                    .align(Alignment.CenterHorizontally)
+                                    .fillMaxWidth(0.88f)
+                                    .height(70.dp)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.inverseOnSurface,
+                                        shape = RoundedCornerShape(10.dp)
+                                    ),
+                                value = pinCharList[index],
+                                textStyle = TextStyle(
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                    fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
+                                    fontSize = MaterialTheme.typography.headlineLarge.fontSize,
+                                    fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+                                    letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
+                                    lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                                    textAlign = TextAlign.Center
                                 ),
-                            value = pinCharList[index],
-                            textStyle = TextStyle(
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                                fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
-                                fontSize = MaterialTheme.typography.headlineLarge.fontSize,
-                                fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
-                                letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
-                                lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
-                                textAlign = TextAlign.Center
-                            ),
-                            onValueChange = {
-                                if (it.length <= maxChar) {
-                                    pinCharList[index] = it
+                                onValueChange = {
+                                    if (it.length <= maxChar) {
+                                        pinCharList[index] = it
+                                    }
+                                },
+                                enabled = false,
+                                singleLine = true,
+                                decorationBox = { innerTextField ->
+                                    Box (
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        innerTextField()
+                                    }
                                 }
-                            },
-                            enabled = false,
-                            singleLine = true,
-                            decorationBox = { innerTextField ->
-                                Box (
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    innerTextField()
-                                }
-                            }
-                        )
+                            )
+                        }
                     }
                 }
-            }
-            Row (
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth()
-                    .absoluteOffset(y = -(70).dp),
-            ) {
-                BasicTextField(
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number
-                    ),
+                Row (
                     modifier = Modifier
-                        .focusRequester(focusRequester)
+                        .padding(horizontal = 16.dp)
                         .fillMaxWidth()
-                        .height(70.dp)
-                        .alpha(0.0f),
-                    value = pinInput,
-                    onValueChange = {
-                        if (it.length <= maxChar) {
-                            setupPinCharacters(it)
-                            pinInput = it
-                        }
-                    },
-                    enabled = false,
-                    singleLine = true,
-                    decorationBox = { innerTextField ->
-                        innerTextField()
-                    }
-                )
-            }
-
-            Row (
-                modifier = Modifier
-                    .padding(top = 25.dp)
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(25.dp).padding(end = 2.dp).alpha(if (state.isLoading || onBoardingState.isLoading) 1f else 0.0f),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-
-            LazyVerticalGrid(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
-                columns = GridCells.Fixed(3),
-                verticalArrangement = Arrangement.Center,
-                contentPadding = PaddingValues(
-                    start = 2.dp,
-                    top = 5.dp,
-                    end = 2.dp,
-                    bottom = 5.dp
-                ),
-            ) {
-                items(listOf(1,2,3,4,5,6,7,8,9,10,0,12)) {
-                    Button(
-                        modifier = Modifier
-                            .padding(vertical = 10.dp, horizontal = 10.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = MaterialTheme.colorScheme.onBackground,
+                        .absoluteOffset(y = -(70).dp),
+                ) {
+                    BasicTextField(
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
                         ),
-                        onClick = {
-                            when(it) {
-                                10 -> {
+                        modifier = Modifier
+                            .focusRequester(focusRequester)
+                            .fillMaxWidth()
+                            .height(70.dp)
+                            .alpha(0.0f),
+                        value = pinInput,
+                        onValueChange = {
+                            if (it.length <= maxChar) {
+                                setupPinCharacters(it)
+                                pinInput = it
+                            }
+                        },
+                        enabled = false,
+                        singleLine = true,
+                        decorationBox = { innerTextField ->
+                            innerTextField()
+                        }
+                    )
+                }
 
-                                }
-                                12 -> {
-                                    pinInput = pinInput.dropLast(1)
-                                    setupPinCharacters(pinInput)
-                                    println(pinInput)
-                                }
-                                else -> {
-                                    if (pinInput.length <= maxChar) {
-                                        builder.append(pinInput).append(it.toString())
-                                        pinInput = builder.toString()
+                Row (
+                    modifier = Modifier
+                        .padding(top = 25.dp)
+                        .padding(horizontal = 16.dp)
+                        .absoluteOffset(y = -(50).dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(25.dp).padding(end = 2.dp).alpha(if (state.isLoading || onBoardingState.isLoading || !inputEnabled) 1f else 0.0f),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+
+            Column (modifier = Modifier.absoluteOffset(y = -(30).dp)) {
+                LazyVerticalGrid(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
+                    columns = GridCells.Fixed(3),
+                    verticalArrangement = Arrangement.Center,
+                    contentPadding = PaddingValues(
+                        start = 2.dp,
+                        top = 5.dp,
+                        end = 2.dp,
+                        bottom = 5.dp
+                    )
+                ) {
+                    items(listOf(1,2,3,4,5,6,7,8,9,10,0,12)) {
+                        Button(
+                            modifier = Modifier
+                                .padding(vertical = 10.dp, horizontal = 10.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = MaterialTheme.colorScheme.onBackground,
+                            ),
+                            onClick = {
+                                when(it) {
+                                    10 -> {
+                                        // enable finger print
+                                    }
+                                    12 -> {
+                                        pinInput = pinInput.dropLast(1)
                                         setupPinCharacters(pinInput)
                                         println(pinInput)
                                     }
+                                    else -> {
+                                        if (pinInput.length <= maxChar && inputEnabled) {
+                                            builder.append(pinInput).append(it.toString())
+                                            pinInput = builder.toString()
+                                            setupPinCharacters(pinInput)
+                                            println(pinInput)
+                                        }
+                                    }
                                 }
                             }
-                        }
-                    ) {
-                        when(it) {
-                            10 -> {
-                                Icon(
-                                    modifier = Modifier
-                                        .padding(vertical = 12.dp)
-                                        .size(30.dp)
-                                        .align(Alignment.CenterVertically),
-                                    imageVector = Icons.Filled.Fingerprint,
-                                    contentDescription = "Finger Print",
-                                    tint = MaterialTheme.colorScheme.onBackground
-                                )
-                            }
-                            12 -> {
-                                Icon(
-                                    modifier = Modifier
-                                        .padding(vertical = 12.dp)
-                                        .size(30.dp)
-                                        .align(Alignment.CenterVertically),
-                                    imageVector = Icons.Outlined.Backspace,
-                                    contentDescription = "Finger Print",
-                                    tint = MaterialTheme.colorScheme.onBackground
-                                )
-                            }
-                            else -> {
-                                Text(
-                                    textAlign = TextAlign.Center,
-                                    text = it.toString(),
-                                    style = TextStyle(
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                                        fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
-                                        fontSize = MaterialTheme.typography.headlineLarge.fontSize,
-                                        fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
-                                        letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
-                                        lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
-                                        textAlign = TextAlign.Center
-                                    ),
-                                )
+                        ) {
+                            when(it) {
+                                10 -> {
+                                    Icon(
+                                        modifier = Modifier
+                                            .padding(vertical = 12.dp)
+                                            .size(30.dp)
+                                            .align(Alignment.CenterVertically),
+                                        imageVector = Icons.Filled.Fingerprint,
+                                        contentDescription = "Finger Print",
+                                        tint = MaterialTheme.colorScheme.onBackground
+                                    )
+                                }
+                                12 -> {
+                                    Icon(
+                                        modifier = Modifier
+                                            .padding(vertical = 12.dp)
+                                            .size(30.dp)
+                                            .align(Alignment.CenterVertically),
+                                        imageVector = Icons.Outlined.Backspace,
+                                        contentDescription = "Finger Print",
+                                        tint = MaterialTheme.colorScheme.onBackground
+                                    )
+                                }
+                                else -> {
+                                    Text(
+                                        textAlign = TextAlign.Center,
+                                        text = it.toString(),
+                                        style = TextStyle(
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                            fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
+                                            fontSize = MaterialTheme.typography.headlineLarge.fontSize,
+                                            fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+                                            letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
+                                            lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                                            textAlign = TextAlign.Center
+                                        ),
+                                    )
+                                }
                             }
                         }
                     }

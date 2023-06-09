@@ -4,29 +4,29 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.ComposeUIViewController
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
+import com.moriatsushi.insetsx.WindowInsetsUIViewController
 import com.presta.customer.di.initKoin
 import com.presta.customer.ui.AppRootUi
 import com.presta.customer.ui.components.root.DefaultRootComponent
 import com.presta.customer.ui.helpers.LocalSafeArea
-import platform.UIKit.UIViewController
 import com.presta.customer.ui.theme.AppTheme
+import platform.UIKit.UIViewController
 
+@Suppress("unused", "FunctionName")
 fun MainViewController(
     lifecycle: LifecycleRegistry,
     topSafeArea: Float,
     bottomSafeArea: Float
 ): UIViewController {
     initKoin()
-    val rootComponentContext = DefaultComponentContext(lifecycle = lifecycle)
     val root = DefaultRootComponent(
-        componentContext = rootComponentContext,
+        componentContext = DefaultComponentContext(lifecycle = lifecycle),
         storeFactory = DefaultStoreFactory(),
     )
-    return ComposeUIViewController {
+    return WindowInsetsUIViewController {
         val density = LocalDensity.current
 
         val topSafeAreaDp = with(density) { topSafeArea.toDp() }

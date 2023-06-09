@@ -207,7 +207,7 @@ internal class AuthStoreFactory(
                     phoneNumber = msg.phoneNumber,
                     isTermsAccepted = msg.isTermsAccepted,
                     isActive = msg.isActive,
-                    pinStatus =msg.pinStatus
+                    pinStatus = msg.pinStatus
                 )
                 is Msg.UpdateContext -> copy(
                     context = msg.context,
