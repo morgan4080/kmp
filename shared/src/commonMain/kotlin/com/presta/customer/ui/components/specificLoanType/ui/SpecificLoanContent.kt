@@ -53,9 +53,9 @@ fun SpecificLoaContent(
     var isPeriodError by remember { mutableStateOf(false) }
     val allowedMaxAmount = state.prestaShortTermLoanProductById?.maxAmount
     val allowedMinAmount = state.prestaShortTermLoanProductById?.minAmount
-    val allowedMaxTerm=state.prestaShortTermLoanProductById?.maxTerm
-    val  allowedMinTerm=state.prestaShortTermLoanProductById?.minTerm
-    val loanPeriodUnit=state.prestaShortTermLoanProductById?.loanPeriodUnit
+    val allowedMaxTerm = state.prestaShortTermLoanProductById?.maxTerm
+    val allowedMinTerm = state.prestaShortTermLoanProductById?.minTerm
+    val loanPeriodUnit = state.prestaShortTermLoanProductById?.loanPeriodUnit
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background),
@@ -68,7 +68,7 @@ fun SpecificLoaContent(
                         component.onBackNavSelected()
                     })
             }
-            LazyColumn(modifier = Modifier.fillMaxWidth()){
+            LazyColumn(modifier = Modifier.fillMaxWidth()) {
                 item {
 
                     Column(
@@ -84,7 +84,6 @@ fun SpecificLoaContent(
                             fontSize = 14.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                         )
-                        //container Card
                         LoanLimitContainer(state)
 
                         Row(modifier = Modifier.padding(top = 16.dp)) {
@@ -95,7 +94,9 @@ fun SpecificLoaContent(
                             ) {
                                 val inputValue: Double? = TextFieldValue(it).text.toDoubleOrNull()
                                 if (inputValue != null) {
-                                    if ((inputValue >= allowedMinAmount!!.toDouble() && inputValue <= allowedMaxAmount!!.toDouble()) && (TextFieldValue(it).text !== "")
+                                    if ((inputValue >= allowedMinAmount!!.toDouble() && inputValue <= allowedMaxAmount!!.toDouble()) && (TextFieldValue(
+                                            it
+                                        ).text !== "")
                                     ) {
                                         amount = TextFieldValue(it)
                                         isError = false
@@ -111,7 +112,7 @@ fun SpecificLoaContent(
 
                             Text(
                                 modifier = Modifier.padding(top = 10.dp, start = 5.dp),
-                                text = "min value Ksh "+ allowedMinAmount.toString() +" max value Ksh "+ allowedMaxAmount.toString(),
+                                text = "min value Ksh " + allowedMinAmount.toString() + " max value Ksh " + allowedMaxAmount.toString(),
                                 style = MaterialTheme.typography.bodySmall,
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 color = Color.Red
@@ -127,13 +128,15 @@ fun SpecificLoaContent(
                                 "Desired Period(Months)",
                                 inputType = InputTypes.NUMBER,
                                 inputValue = ""
-                            ){
+                            ) {
                                 val inputPeriod: Int? = TextFieldValue(it).text.toIntOrNull()
                                 if (inputPeriod != null) {
-                                    if ((inputPeriod >= allowedMinTerm!!.toInt() && inputPeriod <= allowedMaxTerm!!.toInt()) && (TextFieldValue(it).text !== "")
+                                    if ((inputPeriod >= allowedMinTerm!!.toInt() && inputPeriod <= allowedMaxTerm!!.toInt()) && (TextFieldValue(
+                                            it
+                                        ).text !== "")
                                     ) {
                                         desiredPeriod = TextFieldValue(it)
-                                        isPeriodError= false
+                                        isPeriodError = false
 
                                     } else {
                                         isPeriodError = true
@@ -144,7 +147,7 @@ fun SpecificLoaContent(
                         if (isPeriodError) {
                             Text(
                                 modifier = Modifier.padding(top = 10.dp, start = 5.dp),
-                                text = "min period is "+allowedMinTerm.toString()+loanPeriodUnit.toString() +" max period is " +allowedMaxTerm.toString() + loanPeriodUnit,
+                                text = "min period is " + allowedMinTerm.toString() + loanPeriodUnit.toString() + " max period is " + allowedMaxTerm.toString() + loanPeriodUnit,
                                 style = MaterialTheme.typography.bodySmall,
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 color = Color.Red
@@ -155,15 +158,30 @@ fun SpecificLoaContent(
                             modifier = Modifier
                                 .padding(top = 30.dp)
                         ) {
-                            ActionButton("Confirm", onClickContainer = {
-                                //Navigate  to confirm Screen
-                                if (amount.text !== "" && desiredPeriod.text !== "") {
-                                    //pass  amount  and the desired period
-                                    component.onConfirmSelected(state.prestaShortTermLoanProductById?.refId.toString(),amount.text.toDouble(),desiredPeriod.text,
-                                    state.prestaShortTermLoanProductById?.name.toString(),state.prestaShortTermLoanProductById?.name.toString())
-                                }
+                            ActionButton(
+                                "Confirm",
+                                onClickContainer = {
+                                    //Navigate  to confirm Screen
+                                    if (amount.text !== "" && desiredPeriod.text !== "") {
+                                        state.prestaShortTermLoanProductById?.interestRate?.let {
+                                            state.prestaShortTermLoanProductById.maxTerm?.let { it1 ->
+                                                component.onConfirmSelected(
+                                                    state.prestaShortTermLoanProductById.refId.toString(),
+                                                    amount.text.toDouble(),
+                                                    desiredPeriod.text,
+                                                    state.prestaShortTermLoanProductById.name.toString(),
+                                                    state.prestaShortTermLoanProductById.name.toString(),
+                                                    it,
+                                                    state.prestaShortTermLoanProductById.loanPeriodUnit.toString(),
+                                                    it1
+                                                )
+                                            }
+                                        }
+                                    }
 
-                            }, enabled = amount.text != "" && desiredPeriod.text !== "" && !isError && !isPeriodError)
+                                },
+                                enabled = amount.text != "" && desiredPeriod.text !== "" && !isError && !isPeriodError
+                            )
                         }
                     }
                 }

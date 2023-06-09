@@ -260,8 +260,6 @@ fun LoanTopUpContent(
                     })
 
                 }
-                //Text input occurs  Here
-
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -276,7 +274,8 @@ fun LoanTopUpContent(
                             component.loanName,
                             component.interestRate,
                             amount.text.toDouble(),
-                            component.loanPeriod)
+                            component.loanPeriod,
+                            component.loanPeriodUnit)
 
                     }, enabled = amount.text != "" && !isError)
                 }

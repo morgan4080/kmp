@@ -35,7 +35,7 @@ fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
 
 class DefaultLoanTopUpComponent(
     componentContext: ComponentContext,
-    private val onProceedClicked: (refId: String, minAmount: Double, maxAmount: Double, loanName: String, InterestRate: Double, enteredAmount: Double, loanPeriod: String) -> Unit,
+    private val onProceedClicked: (refId: String, minAmount: Double, maxAmount: Double, loanName: String, InterestRate: Double, enteredAmount: Double, loanPeriod: String,loanPeriodUnit:String) -> Unit,
     private val onBackNavClicked: () -> Unit,
     refId: String,
     storeFactory: StoreFactory,
@@ -45,7 +45,8 @@ class DefaultLoanTopUpComponent(
     override val loanRefId: String,
     override val loanName: String,
     override val interestRate: Double,
-    override val loanPeriod: String
+    override val loanPeriod: String,
+    override val loanPeriodUnit: String
 ) : LoanTopUpComponent, ComponentContext by componentContext {
     var specificId: String = refId
 
@@ -56,7 +57,8 @@ class DefaultLoanTopUpComponent(
         loanName: String,
         InterestRate: Double,
         enteredAmount: Double,
-        loanPeriod: String
+        loanPeriod: String,
+        LoanPeriodUnit:String
     ) {
         onProceedClicked(
             refId,
@@ -65,7 +67,8 @@ class DefaultLoanTopUpComponent(
             loanName,
             InterestRate,
             enteredAmount,
-            loanPeriod
+            loanPeriod,
+            LoanPeriodUnit
         )
     }
 

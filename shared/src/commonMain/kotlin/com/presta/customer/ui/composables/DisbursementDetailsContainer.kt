@@ -82,12 +82,12 @@ fun DisbursementDetailsContainer(
                     //Amount
                         disbursementDetailsRow("Requested Amount","Kes "+formatMoney(component.amount))
                     //Interest
-                    disbursementDetailsRow("Interest", state.prestaShortTermLoanProductById?.interestRate.toString()+" %")
+                    disbursementDetailsRow("Interest", component.loanInterest+" %")
                     //Fee  Charges
                     //Loan  Period
                     disbursementDetailsRow("Loan  Period",
                         component.loanPeriod+ " "+
-                    state.prestaShortTermLoanProductById?.loanPeriodUnit)
+                    component.loanPeriodUnit)
                     // Due date
 
                     //Balance Brought Forward

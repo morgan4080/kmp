@@ -42,6 +42,7 @@ class DefaultLoanConfirmationComponent(
     mainContext: CoroutineContext,
     override val loanInterest: String,
     override val loanName: String,
+    override val loanPeriodUnit: String,
 ) : LoanConfirmationComponent, ComponentContext by componentContext{
     override val authStore: AuthStore =
         instanceKeeper.getStore {

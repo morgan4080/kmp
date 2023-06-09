@@ -104,19 +104,23 @@ fun ShortTermTopUpList(
                         val interestRate = state.prestaShortTermTopUpList.loans[selectedIndex].interest
                         val loanName = state.prestaShortTermTopUpList.loans[selectedIndex].name
                         val loanPeriod = state.prestaShortTermTopUpList.loans[selectedIndex].maxPeriod
+                        val loanPeriodUnit = state.prestaShortTermTopUpList.loans[selectedIndex].termUnit
                         if (maxAmount != null) {
                             if (minAmount != null) {
                                 if (loaRefId != null) {
                                     if (loanName != null) {
                                         if (interestRate != null) {
-                                            component.onConfirmSelected(
-                                                loaRefId,
-                                                maxAmount,
-                                                minAmount,
-                                                loanName,
-                                                interestRate,
-                                                loanPeriod.toString()
-                                            )
+                                            if (loanPeriodUnit != null) {
+                                                component.onConfirmSelected(
+                                                    loaRefId,
+                                                    maxAmount,
+                                                    minAmount,
+                                                    loanName,
+                                                    interestRate,
+                                                    loanPeriod.toString(),
+                                                    loanPeriodUnit
+                                                )
+                                            }
                                         }
                                     }
                                 }

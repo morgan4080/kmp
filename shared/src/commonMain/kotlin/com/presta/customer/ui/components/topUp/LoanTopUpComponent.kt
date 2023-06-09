@@ -9,9 +9,10 @@ interface LoanTopUpComponent {
     val maxAmount: Double
     val minAmount: String
     val loanRefId: String
-    val loanName: String
+    val loanName:  String
     val interestRate: Double
-    val loanPeriod:String
+    val loanPeriod: String
+    val loanPeriodUnit: String
     fun onProceedSelected(
         refId: String,
         minAmount: Double,
@@ -19,7 +20,8 @@ interface LoanTopUpComponent {
         loanName: String,
         InterestRate: Double,
         enteredAmount: Double,
-        loanPeriod: String
+        loanPeriod: String,
+        loanPeriodUnit : String
     )
 
     fun onBackNavSelected()

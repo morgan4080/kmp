@@ -28,28 +28,47 @@ fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineSc
     lifecycle.doOnDestroy(scope::cancel)
     return scope
 }
+
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
-class DefaultSpecificLoansComponent (
+
+class DefaultSpecificLoansComponent(
     componentContext: ComponentContext,
-    private val onConfirmClicked: (refid:String,amount:Double,loanPeriod:String,loanType:String,LoanName:String) -> Unit,
+    private val onConfirmClicked: (
+        refid: String,
+        amount: Double,
+        loanPeriod: String,
+        loanType: String,
+        LoanName: String,
+        Interest: Double,
+        loanPeriodUnit: String,
+        maxPeriodUnit: Int
+    ) -> Unit,
     private val onBackNavClicked: () -> Unit,
     refId: String,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     override val loanName: String,
 
-    ): SpecificLoansComponent, ComponentContext by componentContext {
-    var specificId:String=refId
-    override fun onConfirmSelected(refid: String, amount:Double, loanPeriod:String, loanType: String, LoanName: String) {
-        //Pass Data to loan confirm Screen
-        onConfirmClicked(refid,amount,loanPeriod,loanType,LoanName)
+    ) : SpecificLoansComponent, ComponentContext by componentContext {
+    var specificId: String = refId
+    override fun onConfirmSelected(
+        refid: String,
+        amount: Double,
+        loanPeriod: String,
+        loanType: String,
+        LoanName: String,
+        interest: Double,
+        loanPeriodUnit: String,
+        maxPeriodUnit: Int
+    ) {
+        onConfirmClicked(refid, amount, loanPeriod, loanType, LoanName, interest, loanPeriodUnit,maxPeriodUnit)
     }
 
     override fun onBackNavSelected() {
-       onBackNavClicked()
+        onBackNavClicked()
     }
-private val scope = coroutineScope(mainContext + SupervisorJob())
+    private val scope = coroutineScope(mainContext + SupervisorJob())
 
     override val authStore: AuthStore =
         instanceKeeper.getStore {
@@ -63,7 +82,7 @@ private val scope = coroutineScope(mainContext + SupervisorJob())
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val authState: StateFlow<AuthStore.State> =authStore.stateFlow
+    override val authState: StateFlow<AuthStore.State> = authStore.stateFlow
 
     override val shortTermloansStore: ShortTermLoansStore =
         instanceKeeper.getStore {
@@ -71,15 +90,19 @@ private val scope = coroutineScope(mainContext + SupervisorJob())
                 storeFactory = storeFactory
             ).create()
         }
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val shortTermloansState: StateFlow<ShortTermLoansStore.State> = shortTermloansStore.stateFlow
+    override val shortTermloansState: StateFlow<ShortTermLoansStore.State> =
+        shortTermloansStore.stateFlow
 
     override fun onAuthEvent(event: AuthStore.Intent) {
         authStore.accept(event)
     }
+
     override fun onEvent(event: ShortTermLoansStore.Intent) {
         shortTermloansStore.accept(event)
     }
+
     private var authUserScopeJob: Job? = null
     private fun checkAuthenticatedUser() {
         if (authUserScopeJob?.isActive == true) return
@@ -88,23 +111,27 @@ private val scope = coroutineScope(mainContext + SupervisorJob())
                 if (state.cachedMemberData !== null) {
                     onAuthEvent(
                         AuthStore.Intent.CheckAuthenticatedUser(
-                        token = state.cachedMemberData.accessToken
-                    ))
+                            token = state.cachedMemberData.accessToken
+                        )
+                    )
                     onEvent(
                         ShortTermLoansStore.Intent.GetPrestaShortTermProductList(
-                        token = state.cachedMemberData.accessToken,
-                        refId = state.cachedMemberData.refId
-                    )
+                            token = state.cachedMemberData.accessToken,
+                            refId = state.cachedMemberData.refId
+                        )
                     )
 
-                    onEvent(ShortTermLoansStore.Intent.GetPrestaShortTermProductById(
-                        token = state.cachedMemberData.accessToken,
-                        loanId = specificId
-                    ))
+                    onEvent(
+                        ShortTermLoansStore.Intent.GetPrestaShortTermProductById(
+                            token = state.cachedMemberData.accessToken,
+                            loanId = specificId
+                        )
+                    )
                 }
             }
         }
     }
+
     private var refreshTokenScopeJob: Job? = null
 
     private fun refreshToken() {
@@ -114,14 +141,16 @@ private val scope = coroutineScope(mainContext + SupervisorJob())
                 if (state.cachedMemberData !== null) {
                     onAuthEvent(
                         AuthStore.Intent.RefreshToken(
-                        tenantId = OrganisationModel.organisation.tenant_id,
-                        refId = state.cachedMemberData.refId
-                    ))
+                            tenantId = OrganisationModel.organisation.tenant_id,
+                            refId = state.cachedMemberData.refId
+                        )
+                    )
                 }
                 this.cancel()
             }
         }
     }
+
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
 

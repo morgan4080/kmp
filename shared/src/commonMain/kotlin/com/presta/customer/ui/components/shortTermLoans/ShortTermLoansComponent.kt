@@ -23,7 +23,8 @@ interface ShortTermLoansComponent {
         maxAmount: Double,
         loanName: String,
         InterestRate: Double,
-        loanPeriod: String
+        loanPeriod: String,
+        loanPeriodUnit: String
     )
 
     fun onBackNav()
