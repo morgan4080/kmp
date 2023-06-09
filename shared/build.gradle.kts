@@ -7,6 +7,7 @@ plugins {
     id("com.arkivanov.parcelize.darwin")
     id("kotlin-parcelize")
     id("dev.icerock.mobile.multiplatform-resources")
+    id("app.cash.sqldelight")
 }
 
 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
@@ -48,9 +49,11 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api("io.github.qdsfdhvh:image-loader:1.4.1")
+
                 with(compose) {
                     implementation(runtime)
                     implementation(foundation)
+                    implementation(material)
                     implementation(material3)
                     implementation(material)
                     implementation(components.resources)
@@ -101,6 +104,11 @@ kotlin {
                 api(deps.moko.resources.compose)
                 implementation(deps.moko.resources.test)
 
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+
+                // settings
+                implementation(deps.russhwolf.settings.core)
+                implementation(deps.russhwolf.settings.serialization)
             }
         }
 
@@ -169,5 +177,13 @@ android {
     }
     kotlin {
         jvmToolchain(11)
+    }
+}
+
+sqldelight {
+    databases {
+        create("PrestaCustomerDatabase") {
+            packageName.set("com.presta.customer.database")
+        }
     }
 }
