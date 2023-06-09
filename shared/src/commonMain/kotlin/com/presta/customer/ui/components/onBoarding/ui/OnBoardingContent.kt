@@ -74,7 +74,8 @@ fun OnBoardingContent(
     println("state.member.authenticationInfo.pinStatus")
     println(state.member?.authenticationInfo?.pinStatus)
     val scaffoldState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true
     )
     val listState = rememberLazyListState()
     var phoneNumber by remember {

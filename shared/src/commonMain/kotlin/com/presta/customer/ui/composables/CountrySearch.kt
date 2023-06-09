@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -69,6 +71,7 @@ fun CountriesSearch(
     Column (
         modifier = Modifier
             .padding(LocalSafeArea.current)
+            .fillMaxHeight()
             .background(MaterialTheme.colorScheme.surface)
     ) {
         Row (

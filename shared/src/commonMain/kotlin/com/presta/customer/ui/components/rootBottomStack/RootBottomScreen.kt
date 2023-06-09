@@ -63,7 +63,7 @@ fun RootBottomScreen(component: RootBottomComponent) {
                                 color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.ProfileChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Light,
-                                modifier = Modifier.absoluteOffset(y = 28.dp)
+                                modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
                         selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.ProfileChild,
@@ -78,7 +78,7 @@ fun RootBottomScreen(component: RootBottomComponent) {
                                 color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.RootLoansChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Light,
-                                modifier = Modifier.absoluteOffset(y = 28.dp)
+                                modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
                         selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.RootLoansChild,
@@ -93,7 +93,7 @@ fun RootBottomScreen(component: RootBottomComponent) {
                                 color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.RootSavingsChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Light,
-                                modifier = Modifier.absoluteOffset(y = 28.dp)
+                                modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
                         selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.RootSavingsChild,
@@ -108,7 +108,7 @@ fun RootBottomScreen(component: RootBottomComponent) {
                                 color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.SignChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Light,
-                                modifier = Modifier.absoluteOffset(y = 28.dp)
+                                modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
                         selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.SignChild,
