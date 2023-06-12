@@ -2,7 +2,6 @@ package com.presta.customer.ui.components.modeofDisbursement.store
 
 import com.arkivanov.mvikotlin.core.store.Store
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
-import com.presta.customer.network.loanRequest.model.LoanRequestResponse
 import com.presta.customer.network.loanRequest.model.LoanType
 
 interface ModeOfDisbursementStore : Store<ModeOfDisbursementStore.Intent, ModeOfDisbursementStore.State, Nothing> {
@@ -25,6 +24,6 @@ interface ModeOfDisbursementStore : Store<ModeOfDisbursementStore.Intent, ModeOf
     data class State(
         val isLoading: Boolean = false,
         val error: String? = null,
-        val correlationId: String? = null
+        val requestId: String? = null
     )
 }

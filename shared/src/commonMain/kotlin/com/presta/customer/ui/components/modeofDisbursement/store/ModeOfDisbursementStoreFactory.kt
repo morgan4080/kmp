@@ -7,7 +7,6 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.loanRequest.data.LoanRequestRepository
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
-import com.presta.customer.network.loanRequest.model.LoanRequestResponse
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.prestaDispatchers
 import kotlinx.coroutines.Job
@@ -29,7 +28,7 @@ class ModeOfDisbursementStoreFactory(
                 reducer = ReducerImpl
             ) {}
     private sealed class Msg {
-        data class LoanRequestLoaded(val correlationId: String?) : Msg()
+        data class LoanRequestLoaded(val requestId:  String?) : Msg()
 
         data class LoanRequestsLoading(val isLoading: Boolean = true) : Msg()
 
@@ -105,7 +104,7 @@ class ModeOfDisbursementStoreFactory(
     private object ReducerImpl : Reducer<ModeOfDisbursementStore.State, Msg> {
         override fun ModeOfDisbursementStore.State.reduce(msg: Msg): ModeOfDisbursementStore.State =
             when (msg) {
-                is Msg.LoanRequestLoaded -> copy(correlationId = msg.correlationId)
+                is Msg.LoanRequestLoaded -> copy(requestId = msg.requestId)
                 is Msg.LoanRequestsLoading -> copy(isLoading = msg.isLoading)
                 is Msg.LoanRequestFailedFailed -> copy(error = msg.error)
             }

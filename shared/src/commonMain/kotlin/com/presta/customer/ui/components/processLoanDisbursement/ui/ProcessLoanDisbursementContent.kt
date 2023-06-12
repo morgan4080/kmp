@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,10 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.ui.components.processLoanDisbursement.store.ProcessingLoanDisbursementStore
-import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.formatMoney
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProcessLoanDisbursementContent(
     amount: Double,
@@ -35,14 +36,11 @@ fun ProcessLoanDisbursementContent(
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.fillMaxWidth()) {
-            NavigateBackTopBar("", onClickContainer = {
-
-            })
 
         }
         Column(modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 26.dp)) {
+            .padding(top = 50.dp)) {
 
             Row(
                 modifier = Modifier
@@ -104,7 +102,7 @@ fun ProcessLoanDisbursementContent(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = if (state.paymentStatus!=null)"Your transaction is ${state.paymentStatus.status}" else "",
+                    text = if (state.loanDisburseMentStatus!=null)"Your transaction is ${state.loanDisburseMentStatus.applicationStatus}" else "",
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 14.sp,
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),

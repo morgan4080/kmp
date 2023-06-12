@@ -8,8 +8,8 @@ import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.network.loanRequest.data.LoanRequestRepository
+import com.presta.customer.network.loanRequest.model.LoanRequestStatus
 import com.presta.customer.network.onBoarding.model.PinStatus
-import com.presta.customer.network.payments.model.PaymentStatuses
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
@@ -43,8 +43,8 @@ class DefaultProcessLoanDisbursementComponent(
     mainContext: CoroutineDispatcher,
     override val amount: Double,
     override val fees: Double,
-    override val correlationId: String,
-    val navigateToCompleteFailure: (paymentStatus: PaymentStatuses) -> Unit,
+    override val requestId: String,
+    val navigateToCompleteFailure: (loanRequestStatus: LoanRequestStatus) -> Unit,
 ): ProcessLoanDisbursementComponent, ComponentContext by componentContext,KoinComponent {
     private val loanRequestRepository by inject<LoanRequestRepository>()
 
@@ -97,7 +97,7 @@ class DefaultProcessLoanDisbursementComponent(
                         refId = state.cachedMemberData.refId
                     ))
 
-                    val flow = poller.poll(2_000L, state.cachedMemberData.accessToken, correlationId)
+                    val flow = poller.poll(2_000L, state.cachedMemberData.accessToken, requestId)
 
                     flow.collect {
                         it.onSuccess { response ->
@@ -119,11 +119,11 @@ class DefaultProcessLoanDisbursementComponent(
     private fun processTransactionState() {
         processingTransactionStateScopeJob = scope.launch {
             processingTransactionState.collect {  state ->
-                if (state.paymentStatus !== null) {
-                    if (state.paymentStatus.status == PaymentStatuses.COMPLETED || state.paymentStatus.status == PaymentStatuses.FAILURE || state.paymentStatus.status == PaymentStatuses.CANCELLED) {
+                if (state.loanDisburseMentStatus !== null) {
+                    if (state.loanDisburseMentStatus.applicationStatus == LoanRequestStatus.COMPLETED || state.loanDisburseMentStatus.applicationStatus == LoanRequestStatus.FAILED|| state.loanDisburseMentStatus.applicationStatus == LoanRequestStatus.FAILED) {
                         onProcessingLoanDisbursementEvent(ProcessingLoanDisbursementStore.Intent.UpdateLoading(false))
                         if (!state.isLoading) {
-                            navigateToCompleteFailure(state.paymentStatus.status)
+                            navigateToCompleteFailure(state.loanDisburseMentStatus.applicationStatus)
                         }
                     }
                 }

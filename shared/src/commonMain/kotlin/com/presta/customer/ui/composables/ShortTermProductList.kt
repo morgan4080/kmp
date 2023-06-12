@@ -61,7 +61,6 @@ fun ShortTermProductList(
                     }
                 }
             }
-            //DefaultLoading  shimmer
            if (state.isLoading){
                items(4){
                    ElevatedCard(modifier = Modifier
@@ -80,8 +79,6 @@ fun ShortTermProductList(
                    }
                }
            }
-
-            //spacer to show items obove the common BottomAppbar
             item {
                 Spacer(modifier = Modifier.padding(top = 50.dp))
             }

@@ -135,10 +135,10 @@ class DefaultModeOfDisbursementComponent(
         }
         loanRequestScopeJob = scope.launch {
             modeOfDisbursementState.collect { state ->
-                if (state.correlationId!==null) {
-                    val correlationId = state.correlationId
+                if (state.requestId!==null) {
+                    val requestId = state.requestId
 
-                    onMpesaClicked(correlationId,amount,0.00)
+                    onMpesaClicked(requestId,amount,0.00)
                     this.cancel()
                 }
             }

@@ -12,6 +12,7 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.presta.customer.network.loanRequest.model.LoanRequestStatus
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.payments.model.PaymentStatuses
 import com.presta.customer.prestaDispatchers
@@ -316,19 +317,18 @@ class DefaultRootLoansComponent(
         DefaultProcessLoanDisbursementComponent(
             storeFactory = storeFactory,
             componentContext = componentContext,
-            correlationId = config.correlationId,
+            requestId = config.correlationId,
             amount = config.amount,
             mainContext = prestaDispatchers.main,
             fees = config.fees
-        ) { paymentStatus ->
-            if (paymentStatus == PaymentStatuses.COMPLETED) {
-                loansNavigation.push(ConfigLoans.SuccessfulTransaction)
+        ) { loanRequestStatus ->
+            if (loanRequestStatus == LoanRequestStatus.COMPLETED) {
+               // loansNavigation.push(ConfigLoans.SuccessfulTransaction)
             }
 
-            if (paymentStatus == PaymentStatuses.FAILURE
-                || paymentStatus == PaymentStatuses.CANCELLED
+            if (loanRequestStatus == LoanRequestStatus.FAILED
             ) {
-                loansNavigation.push(ConfigLoans.FailedTransaction)
+               // loansNavigation.push(ConfigLoans.FailedTransaction)
             }
         }
 

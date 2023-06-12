@@ -5,7 +5,7 @@ import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
-import com.presta.customer.network.payments.model.PrestaPollingResponse
+import com.presta.customer.network.loanRequest.model.PrestaLoanPollingResponse
 import com.presta.customer.prestaDispatchers
 
 class ProcessLoanDisbursementStoreFactory(
@@ -21,7 +21,7 @@ class ProcessLoanDisbursementStoreFactory(
         ) {}
 
     private sealed class Msg {
-        data class LoanRequestPollingLoaded(val paymentStatus: PrestaPollingResponse): Msg()
+        data class LoanRequestPollingLoaded(val applicationStatus: PrestaLoanPollingResponse): Msg()
         data class ProcessingTransactionLoading(val isLoading: Boolean = true): Msg()
         data class ProcessingTransactionFailed(val error: String?): Msg()
         data class  ClearError(val error: String?): Msg()
@@ -37,7 +37,7 @@ class ProcessLoanDisbursementStoreFactory(
 
         override fun executeIntent(intent: ProcessingLoanDisbursementStore.Intent, getState: () -> ProcessingLoanDisbursementStore.State): Unit =
             when(intent) {
-                is ProcessingLoanDisbursementStore.Intent.UpdateLoanRequestStatus -> dispatch(Msg.LoanRequestPollingLoaded(paymentStatus = intent.loanaRequestStatus))
+                is ProcessingLoanDisbursementStore.Intent.UpdateLoanRequestStatus -> dispatch(Msg.LoanRequestPollingLoaded(applicationStatus = intent.loanRequestStatus))
                 is ProcessingLoanDisbursementStore.Intent.UpdateError -> dispatch(Msg.ClearError(intent.error))
                 is ProcessingLoanDisbursementStore.Intent.UpdateLoading -> dispatch(Msg.ProcessingTransactionLoading(intent.isLoading))
             }
@@ -46,7 +46,7 @@ class ProcessLoanDisbursementStoreFactory(
     private object ReducerImpl: Reducer<ProcessingLoanDisbursementStore.State, Msg> {
         override fun ProcessingLoanDisbursementStore.State.reduce(msg: Msg): ProcessingLoanDisbursementStore.State =
             when (msg) {
-                is Msg.LoanRequestPollingLoaded -> copy(paymentStatus = msg.paymentStatus)
+                is Msg.LoanRequestPollingLoaded -> copy(loanDisburseMentStatus = msg.applicationStatus)
                 is Msg.ProcessingTransactionLoading -> copy(isLoading = msg.isLoading)
                 is Msg.ProcessingTransactionFailed -> copy(error = msg.error)
                 is Msg.ClearError -> copy(error = msg.error)

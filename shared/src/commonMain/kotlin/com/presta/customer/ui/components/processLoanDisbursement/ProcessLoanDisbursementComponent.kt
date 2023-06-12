@@ -9,7 +9,7 @@ interface ProcessLoanDisbursementComponent {
     val authStore: AuthStore
     val amount: Double
     val fees: Double
-    val correlationId: String
+    val requestId: String
     val processingLoanDisbursementStore: ProcessingLoanDisbursementStore
     val processingTransactionState: StateFlow<ProcessingLoanDisbursementStore.State>
     fun onAuthEvent(event: AuthStore.Intent)

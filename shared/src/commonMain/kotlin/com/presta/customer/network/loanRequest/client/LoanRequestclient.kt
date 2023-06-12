@@ -4,8 +4,7 @@ import com.presta.customer.network.NetworkConstants
 import com.presta.customer.network.loanRequest.errorHandler.loanRequestErrorHandler
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
 import com.presta.customer.network.loanRequest.model.LoanType
-import com.presta.customer.network.payments.errorHandler.paymentsErrorHandler
-import com.presta.customer.network.payments.model.PrestaPollingResponse
+import com.presta.customer.network.loanRequest.model.PrestaLoanPollingResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -73,18 +72,15 @@ class PrestaLoanRequestClient(
             }
         }
     }
-    suspend fun pollPaymentStatus(
+    suspend fun pollApplicationStatus(
         token: String,
-        correlationId: String
-    ): PrestaPollingResponse {
-        return paymentsErrorHandler {
-            httpClient.get(NetworkConstants.PrestaPollPaymentStatus.route) {
+        requestId: String
+    ): PrestaLoanPollingResponse {
+        return loanRequestErrorHandler {
+            httpClient.get("${NetworkConstants.PrestaLoanRequest.route}/${requestId}") {
                 header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
-
-                url {
-                    parameters.append("correlationId", correlationId)
-                }
             }
         }
     }
