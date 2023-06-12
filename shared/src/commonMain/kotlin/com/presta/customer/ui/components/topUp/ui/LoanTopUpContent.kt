@@ -49,8 +49,9 @@ fun LoanTopUpContent(
     var amount by remember { mutableStateOf(TextFieldValue()) }
     val allowedMaxAmount = component.maxAmount
     val allowedMinAmount = component.minAmount
-    var loanTerm by remember { mutableStateOf(false) }
+    var currentTerm by remember { mutableStateOf(false) }
     val LoanType: LoanType = LoanType._TOP_UP
+    var labelText=""
 
     Surface(
         modifier = Modifier
@@ -141,6 +142,9 @@ fun LoanTopUpContent(
                                         OptionsSelectionContainer(
                                             label = "Current term",
                                             onClickContainer = {
+                                                //set current term to true
+                                                currentTerm=true
+                                                labelText="Current term"
 
                                             })
                                     }
@@ -151,6 +155,9 @@ fun LoanTopUpContent(
                                         OptionsSelectionContainer(
                                             label = component.loanName + " at " + component.interestRate + "%/month",
                                             onClickContainer = {
+                                                //current term to false
+                                                currentTerm=false
+                                                labelText=component.loanName + " at " + component.interestRate + "%/month"
 
                                             })
                                     }
@@ -170,6 +177,7 @@ fun LoanTopUpContent(
                                     ElevatedCard(
                                         onClick = {
                                             launchPopUp = false
+                                            labelText=""
                                         }, modifier = Modifier
                                             .padding(start = 16.dp)
                                     ) {
@@ -251,8 +259,7 @@ fun LoanTopUpContent(
                         .fillMaxWidth()
                         .padding(top = 23.dp)
                 ) {
-                    ProductSelectionCard2("Loan Term", onClickContainer = {
-
+                    ProductSelectionCard2(if(labelText=="") "loan Term" else labelText, onClickContainer = {
                         //pop up
                         launchPopUp = true
 
@@ -279,7 +286,7 @@ fun LoanTopUpContent(
                             referencedLoanRefId = component.referencedLoanRefId
                         )
 
-                    }, enabled = amount.text != "" && !isError)
+                    }, enabled = amount.text != "" && !isError && labelText!="")
                 }
             }
         }

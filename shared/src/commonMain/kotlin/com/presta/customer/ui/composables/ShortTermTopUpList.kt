@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
+import com.presta.customer.ui.helpers.formatMoney
 import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
@@ -64,28 +66,41 @@ fun ShortTermTopUpList(
                 fontSize = 14.sp,
                 fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
             )
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp)
-            ) {
-                state.prestaShortTermTopUpList?.loans?.mapIndexed { index, topUpList ->
-                    item {
-                        TopUpListView(
-                            Index = index,
-                            selected = selectedIndex == index,
-                            onClick = { index: Int ->
-                                selectedIndex = if (selectedIndex == index) -1 else index
-                                if(!enabled){
-                                    enabled=true
-                                }
 
-                            },
-                            topUpList.name.toString(),
-                            topUpList.maxAmount.toString(),
-                            topUpList.loanBalance.toString(),
-                            topUpList.daysAvailable.toString()
-                        )
+            if(state.prestaShortTermTopUpList?.loans==null){
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+                    horizontalArrangement = Arrangement.Center){
+                    Text(text = "You don't have top up Loans")
+
+                }
+
+            }else{
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp)
+                ) {
+                    state.prestaShortTermTopUpList.loans.mapIndexed { index, topUpList ->
+                        item {
+                            TopUpListView(
+                                Index = index,
+                                selected = selectedIndex == index,
+                                onClick = { index: Int ->
+                                    selectedIndex = if (selectedIndex == index) -1 else index
+                                    if(!enabled){
+                                        enabled=true
+                                    }
+
+                                },
+                                topUpList.name.toString(),
+                                topUpList.maxAmount.toString(),
+                                topUpList.loanBalance.toString(),
+                                topUpList.daysAvailable.toString()
+                            )
+                        }
                     }
                 }
             }
@@ -136,7 +151,6 @@ fun ShortTermTopUpList(
                 }
             }, enabled = enabled && selectedIndex >= 0  )
         }
-        //Action Button appears above the action Button
         Spacer(
             modifier = Modifier
                 .padding(bottom = 80.dp)
@@ -144,6 +158,7 @@ fun ShortTermTopUpList(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopUpListView(
     Index: Int,
@@ -154,78 +169,88 @@ fun TopUpListView(
     Balance: String,
     DaysAvailable: String
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Card(
-                modifier = Modifier
-                    .background(color = MaterialTheme.colorScheme.background)
-                    .clip(shape = CircleShape),
-                elevation = CardDefaults.cardElevation(0.dp),
-                border = BorderStroke(
-                    1.dp,
-                    color = if (selected) actionButtonColor else Color.Gray
-                ),
+    ElevatedCard(
+        onClick = {
+            onClick.invoke(Index)
+        },
+        modifier =Modifier
+            .fillMaxWidth()
+            .padding(bottom = 10.dp)){
+        Box(modifier = Modifier.fillMaxWidth().padding(5.dp)){
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(19.dp)
-                        .background(
-                            if (selected) actionButtonColor else Color(
-                                0xFFE5F1F5
-                            )
-                        )
-                        .clickable {
-                            // onClickContainer(mode)
-                            onClick.invoke(Index)
 
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (selected)
-                        Icon(
-                            Icons.Default.Check,
-                            contentDescription = "Check Box",
-                            tint = Color.White,
-                            modifier = Modifier.padding(1.dp)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Card(
+                        modifier = Modifier
+                            .background(color = MaterialTheme.colorScheme.background)
+                            .clip(shape = CircleShape),
+                        elevation = CardDefaults.cardElevation(0.dp),
+                        border = BorderStroke(
+                            1.dp,
+                            color = if (selected) actionButtonColor else Color.Gray
+                        ),
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(19.dp)
+                                .background(
+                                    if (selected) actionButtonColor else Color(
+                                        0xFFE5F1F5
+                                    )
+                                )
+                                .clickable {
+                                    // onClickContainer(mode)
+                                    onClick.invoke(Index)
+
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (selected)
+                                Icon(
+                                    Icons.Default.Check,
+                                    contentDescription = "Check Box",
+                                    tint = Color.White,
+                                    modifier = Modifier.padding(1.dp)
+                                )
+                        }
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .padding(start = 10.dp)
+                    ) {
+                        Text(
+                            text = name,
+                            fontSize = 12.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                            color = MaterialTheme.colorScheme.onBackground
                         )
+                        Text(
+                            text = "Kes " + formatMoney(Amount.toDouble()) ,
+                            fontSize = 10.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                        )
+                    }
+                }
+                Column() {
+
+                    Text(
+                        text ="Bal. Kes "+ formatMoney(Balance.toDouble()) ,
+                        fontSize = 12.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Text(
+                        text = DaysAvailable,
+                        fontSize = 10.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                    )
                 }
             }
-
-            Column(
-                modifier = Modifier
-                    .padding(start = 10.dp)
-            ) {
-                Text(
-                    text = name,
-                    fontSize = 12.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    text = Amount,
-                    fontSize = 10.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                )
-            }
-        }
-        Column() {
-
-            Text(
-                text = Balance,
-                fontSize = 12.sp,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Text(
-                text = DaysAvailable,
-                fontSize = 10.sp,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-            )
         }
     }
 }

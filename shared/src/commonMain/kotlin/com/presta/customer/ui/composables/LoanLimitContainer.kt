@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,7 +30,7 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
 fun LoanLimitContainer(state: ShortTermLoansStore.State) {
-    val showShimmer: Boolean = state.isLoading
+    val showShimmer: Boolean = state.prestaShortTermLoanProductById?.refId==null
     ElevatedCard(
         modifier = Modifier
             .padding(top = 10.dp)
@@ -57,6 +58,7 @@ fun LoanLimitContainer(state: ShortTermLoansStore.State) {
                         text = "Loan  Limit ",
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                         fontSize = 16.sp
+
                     )
                 }
                 Row(
@@ -64,22 +66,17 @@ fun LoanLimitContainer(state: ShortTermLoansStore.State) {
                         .padding(top = 0.dp)
                         .fillMaxWidth()
                 ) {
-                    if (state.prestaShortTermLoanProductById?.minAmount == null) {
-                        Text(
-                            text = "",
-                            modifier = Modifier.background(brush = ShimmerBrush(true, 1300f))
-                                .defaultMinSize(200.dp)
-                        )
-                    } else {
-                        Text(
-                            text = "Min. Kes" + formatMoney(state.prestaShortTermLoanProductById.minAmount) +
-                                    "- Max " + formatMoney(state.prestaShortTermLoanProductById.maxAmount),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = 16.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                            modifier = Modifier,
-                        )
-                    }
+                    Text(
+                        text = if(state.prestaShortTermLoanProductById?.minAmount!=null ) "Min. Kes" + formatMoney(state.prestaShortTermLoanProductById.minAmount) +
+                                "- Max " + formatMoney(state.prestaShortTermLoanProductById.maxAmount) else "",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 16.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                        modifier = Modifier
+                            .clip(shape = RoundedCornerShape(12.dp))
+                            .defaultMinSize(minHeight = 20.dp, minWidth = 200.dp)
+                            .background(brush = ShimmerBrush(showShimmer, 800f)),
+                    )
                 }
                 Row(
                     modifier = Modifier
@@ -92,26 +89,18 @@ fun LoanLimitContainer(state: ShortTermLoansStore.State) {
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light), // #002C56
                             fontSize = 10.sp
                         )
-                        if (state.isLoading) {
-                            Text(
-                                text = "",
-                                modifier = Modifier.background(brush = ShimmerBrush(true, 1300f))
-                                    .defaultMinSize(minWidth = 50.dp, minHeight = 20.dp)
-                            )
-                        } else {
-                            Text(
-                                text = if (state.prestaShortTermLoanProductById?.interestRate !== null) state.prestaShortTermLoanProductById.interestRate.toString() + "%" else "0.0%",
-                                color = MaterialTheme.colorScheme.onBackground, // #002C56
-                                fontSize = 12.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                                modifier = Modifier.background(
-                                    brush = ShimmerBrush(
-                                        showShimmer,
-                                        800f
-                                    )
-                                )
-                            )
-                        }
+
+                        Text(
+                            text =if(!showShimmer) state.prestaShortTermLoanProductById?.interestRate.toString() +"%" else "",
+                            color = MaterialTheme.colorScheme.onBackground, // #002C56
+                            fontSize = 12.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                            modifier = Modifier
+                                .clip(shape = RoundedCornerShape(12.dp))
+                                .defaultMinSize(minHeight = 20.dp, minWidth = 70.dp)
+                                .background(brush = ShimmerBrush(showShimmer, 800f))
+                        )
+
                     }
                     Spacer(modifier = Modifier.padding(start = 42.dp))
                     Column() {
@@ -121,22 +110,17 @@ fun LoanLimitContainer(state: ShortTermLoansStore.State) {
                             fontSize = 10.sp
                         )
 
-                        if (state.isLoading) {
-                            Text(
-                                text = "",
-                                modifier = Modifier
-                                    .background(brush = ShimmerBrush(true, 1300f))
-                                    .defaultMinSize(minWidth = 50.dp, minHeight = 20.dp)
-                            )
-                        } else {
-                            Text(
-                                text = state.prestaShortTermLoanProductById?.maxTerm.toString() + " " +
-                                        state.prestaShortTermLoanProductById?.loanPeriodUnit,
-                                color = MaterialTheme.colorScheme.onBackground, // #002C56
-                                fontSize = 12.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                            )
-                        }
+                        Text(
+                            text =if(!showShimmer) state.prestaShortTermLoanProductById?.maxTerm.toString() + " " +
+                                    state.prestaShortTermLoanProductById?.loanPeriodUnit else "",
+                            color = MaterialTheme.colorScheme.onBackground, // #002C56
+                            fontSize = 12.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                            modifier = Modifier
+                                .clip(shape = RoundedCornerShape(12.dp))
+                                .defaultMinSize(minHeight = 20.dp, minWidth = 70.dp)
+                                .background(brush = ShimmerBrush(showShimmer, 800f))
+                        )
                     }
                 }
             }
