@@ -43,6 +43,8 @@ class DefaultProcessingTransactionComponent(
     componentContext: ComponentContext,
     mainContext: CoroutineDispatcher,
     val navigateToCompleteFailure: (paymentStatus: PaymentStatuses) -> Unit,
+    val onPop: () -> Unit,
+    val navigateToProfile: () -> Unit,
     override val correlationId: String,
     override val amount: Double,
 ): ProcessingTransactionComponent, ComponentContext by componentContext, KoinComponent {
@@ -82,6 +84,14 @@ class DefaultProcessingTransactionComponent(
 
     override fun onProcessingTransactionEvent(event: ProcessingTransactionStore.Intent) {
         processingTransactionStore.accept(event)
+    }
+
+    override fun retryTransaction() {
+        onPop()
+    }
+
+    override fun navigateBack() {
+        navigateToProfile()
     }
 
     private val scope = coroutineScope(mainContext + SupervisorJob())

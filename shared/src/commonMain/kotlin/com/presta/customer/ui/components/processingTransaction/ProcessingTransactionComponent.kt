@@ -14,4 +14,6 @@ interface ProcessingTransactionComponent {
     val amount: Double
     fun onAuthEvent(event: AuthStore.Intent)
     fun onProcessingTransactionEvent(event: ProcessingTransactionStore.Intent)
+    fun retryTransaction()
+    fun navigateBack()
 }

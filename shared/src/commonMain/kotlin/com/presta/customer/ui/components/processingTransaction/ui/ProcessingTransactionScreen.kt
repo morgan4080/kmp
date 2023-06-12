@@ -14,6 +14,8 @@ fun ProcessingTransactionScreen(component: ProcessingTransactionComponent) {
     ProcessingTransactionContent(
         authState,
         state,
-        component.amount
+        component.amount,
+        component::retryTransaction,
+        component::navigateBack
     )
 }

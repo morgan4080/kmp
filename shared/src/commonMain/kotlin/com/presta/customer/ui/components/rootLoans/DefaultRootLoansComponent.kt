@@ -41,7 +41,8 @@ import com.presta.customer.ui.components.topUp.LoanTopUpComponent
 class DefaultRootLoansComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
-    val pop: () -> Unit = {}
+    val pop: () -> Unit = {},
+    val navigateToProfile: () -> Unit = {},
 ) : RootLoansComponent, ComponentContext by componentContext {
     private val loansNavigation = StackNavigation<ConfigLoans>()
 
@@ -294,11 +295,17 @@ class DefaultRootLoansComponent(
                     loansNavigation.push(ConfigLoans.SuccessfulTransaction)
                 }
 
-                if (paymentStatus == PaymentStatuses.FAILURE
+                /*if (paymentStatus == PaymentStatuses.FAILURE
                     || paymentStatus == PaymentStatuses.CANCELLED
                 ) {
                     loansNavigation.push(ConfigLoans.FailedTransaction)
-                }
+                }*/
+            },
+            onPop = {
+                loansNavigation.pop()
+            },
+            navigateToProfile = {
+                navigateToProfile()
             }
         )
 
@@ -367,7 +374,6 @@ class DefaultRootLoansComponent(
                         loanPeriodUnit = LoanPeriodUnit,
                         loanOperation = "topUp",
                         referencedLoanRefId = referencedLoanRefId
-
                     )
                 )
             },

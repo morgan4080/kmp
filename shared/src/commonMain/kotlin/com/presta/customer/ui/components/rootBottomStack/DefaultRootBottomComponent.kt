@@ -91,8 +91,10 @@ class DefaultRootBottomComponent(
             storeFactory = storeFactory,
             pop = {
                 navigationBottomStackNavigation.pop()
+            },
+            navigateToProfile = {
+                navigationBottomStackNavigation.bringToFront(ConfigBottom.Profile)
             }
-
         )
 
     private fun rootSavingsComponent(componentContext: ComponentContext): RootSavingsComponent =
@@ -100,7 +102,6 @@ class DefaultRootBottomComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
             pop = {
-                println("popping")
                 navigationBottomStackNavigation.pop()
             },
             processTransaction = { correlationId, amount, mode ->

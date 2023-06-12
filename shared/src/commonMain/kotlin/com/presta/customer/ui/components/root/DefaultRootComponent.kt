@@ -259,11 +259,6 @@ class DefaultRootComponent(
                 if (paymentStatus == PaymentStatuses.COMPLETED) {
                     println("navigate to success")
                 }
-
-                if (paymentStatus == PaymentStatuses.FAILURE
-                    || paymentStatus == PaymentStatuses.CANCELLED) {
-                    println("navigate to failure")
-                }
             }
         )
     private fun payRegistrationFeeComponent(componentContext: ComponentContext, config: Config.PayRegistrationFee): PayRegistrationFeeComponent =
@@ -276,11 +271,6 @@ class DefaultRootComponent(
             navigateToCompleteFailure =  { paymentStatus ->
                 if (paymentStatus == PaymentStatuses.COMPLETED) {
                     println("navigate to success")
-                }
-
-                if (paymentStatus == PaymentStatuses.FAILURE
-                    || paymentStatus == PaymentStatuses.CANCELLED) {
-                    println("navigate to failure")
                 }
             }
         )
@@ -297,13 +287,12 @@ class DefaultRootComponent(
                 if (paymentStatus == PaymentStatuses.COMPLETED) {
                     println("::::::::Show COMPLETED")
                 }
-
-                if (
-                    paymentStatus == PaymentStatuses.FAILURE
-                    || paymentStatus == PaymentStatuses.CANCELLED
-                ) {
-                    println("::::::::Show FAILURE")
-                }
+            },
+            onPop = {
+                navigation.pop()
+            },
+            navigateToProfile = {
+                navigation.replaceAll(Config.RootBottom)
             }
         )
 

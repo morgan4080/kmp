@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -44,7 +45,9 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 fun ProcessingTransactionContent(
     authState: AuthStore.State,
     state: ProcessingTransactionStore.State,
-    amount: Double
+    amount: Double,
+    retryTransaction: () -> Unit,
+    navigateBack: () -> Unit
 ) {
     Scaffold (
         modifier = Modifier.fillMaxHeight().fillMaxWidth()
@@ -108,9 +111,18 @@ fun ProcessingTransactionContent(
                                     .background(MaterialTheme.colorScheme.background),
                                 contentAlignment = Alignment.Center
                             ) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.then(Modifier.size(60.dp).alpha(if (state.isLoading) 1f else 0.0f)),
-                                )
+                                if (state.isLoading) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.then(Modifier.size(60.dp).alpha(if (state.isLoading) 1f else 0.0f)),
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = Icons.Filled.CheckCircle,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(150.dp),
+                                        tint = Color.Green
+                                    )
+                                }
                             }
                         }
 
@@ -128,7 +140,7 @@ fun ProcessingTransactionContent(
                         }
                     }
                     Row(
-                        modifier = Modifier.padding(start = 80.dp, end = 80.dp, top = 22.dp),
+                        modifier = Modifier.padding(start = 80.dp, end = 80.dp, top = 50.dp),
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Text(
@@ -168,7 +180,7 @@ fun ProcessingTransactionContent(
                                     contentColor = MaterialTheme.colorScheme.primary
                                 ),
                                 onClick = {
-
+                                    navigateBack()
                                 }
                             ) {
                                 Text(
@@ -181,7 +193,7 @@ fun ProcessingTransactionContent(
                                 modifier = Modifier.width(150.dp),
                                 shape = RoundedCornerShape(size = 12.dp),
                                 onClick = {
-
+                                    retryTransaction()
                                 }
                             ) {
                                 Text(
