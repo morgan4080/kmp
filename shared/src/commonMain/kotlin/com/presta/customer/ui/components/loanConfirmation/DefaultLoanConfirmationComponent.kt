@@ -34,7 +34,7 @@ fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
 
 class DefaultLoanConfirmationComponent(
     componentContext: ComponentContext,
-    private val onConfirmClicked: (refid:String,amount:Double,loanPeriod:String,loanType:LoanType,loanName:String,referencedLoanRefId:String) -> Unit,
+    private val onConfirmClicked: (refid:String,amount:Double,loanPeriod:String,loanType:LoanType,loanName:String,referencedLoanRefId:String?) -> Unit,
     private val onBackNavClicked: () -> Unit,
     storeFactory: StoreFactory,
     override val refId: String,
@@ -46,7 +46,7 @@ class DefaultLoanConfirmationComponent(
     override val loanPeriodUnit: String,
     override val loanOperation: String,
     override val loanType: LoanType,
-    override val referencedLoanRefId: String,
+    override val referencedLoanRefId: String?,
 ) : LoanConfirmationComponent, ComponentContext by componentContext{
     override val authStore: AuthStore =
         instanceKeeper.getStore {
@@ -59,7 +59,7 @@ class DefaultLoanConfirmationComponent(
             ).create()
         }
 
-    override fun onConfirmSelected(refID: String,amount:Double,loanPeriod:String,loanType: LoanType,loanName: String,referencedLoanRefId:String) {
+    override fun onConfirmSelected(refID: String,amount:Double,loanPeriod:String,loanType: LoanType,loanName: String,referencedLoanRefId:String?) {
         onConfirmClicked(refID,amount,loanPeriod,loanType,loanName,referencedLoanRefId)
     }
     override fun onBackNavSelected() {

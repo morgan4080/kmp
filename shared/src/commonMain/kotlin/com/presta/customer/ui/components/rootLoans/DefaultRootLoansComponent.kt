@@ -71,7 +71,7 @@ class DefaultRootLoansComponent(
         )
 
         is ConfigLoans.ShortTermLoans -> RootLoansComponent.ChildLoans.ShortTermLoansChild(
-            shortTermComponent(componentContext)
+            shortTermComponent(componentContext,config)
         )
 
         is ConfigLoans.SpecificLoan -> RootLoansComponent.ChildLoans.EmergencyLoanChild(
@@ -116,7 +116,9 @@ class DefaultRootLoansComponent(
         DefaultApplyLoanComponent(
             componentContext = componentContext,
             onShortTermClicked = {
-                loansNavigation.push(ConfigLoans.ShortTermLoans)
+                loansNavigation.push(ConfigLoans.ShortTermLoans(
+                    referencedLoanRefId = null
+                ))
             }, onLongTermClicked = {
                 loansNavigation.push(ConfigLoans.LongTermLoans)
             },
@@ -131,7 +133,10 @@ class DefaultRootLoansComponent(
         )
 
     //Pass the RefId
-    private fun shortTermComponent(componentContext: ComponentContext): ShortTermLoansComponent =
+    private fun shortTermComponent(
+        componentContext: ComponentContext,
+        config: ConfigLoans.ShortTermLoans
+    ): ShortTermLoansComponent =
         DefaultShortTermLoansComponent(
             componentContext = componentContext,
 
@@ -162,7 +167,7 @@ class DefaultRootLoansComponent(
                     ConfigLoans.SpecificLoan(refId, loanName, referencedLoanRefId)
                 )
             },
-            referencedLoanRefId = ""
+            referencedLoanRefId = config.referencedLoanRefId
         )
 
     private fun longTermComponent(componentContext: ComponentContext): LongTermLoansComponent =
@@ -401,14 +406,16 @@ class DefaultRootLoansComponent(
         @Parcelize
         object LongTermLoans : ConfigLoans()
 
+//        @Parcelize
+//        object ShortTermLoans : ConfigLoans()
         @Parcelize
-        object ShortTermLoans : ConfigLoans()
+        data class ShortTermLoans(  val referencedLoanRefId: String?) :ConfigLoans()
 
         @Parcelize
         data class SpecificLoan(
             val refId: String,
             val loanName: String,
-            val referencedLoanRefId: String
+            val referencedLoanRefId: String?
         ) : ConfigLoans()
 
         @Parcelize
@@ -422,7 +429,7 @@ class DefaultRootLoansComponent(
             val loanName: String,
             val loanPeriodUnit: String,
             val loanOperation: String,
-            val referencedLoanRefId: String
+            val referencedLoanRefId: String?
         ) : ConfigLoans()
 
         @Parcelize
@@ -432,7 +439,7 @@ class DefaultRootLoansComponent(
             val loanPeriod: String,
             val loanType: LoanType,
             val fees: Double,
-            val referencedLoanRefId: String
+            val referencedLoanRefId: String?
         ) : ConfigLoans()
 
         @Parcelize

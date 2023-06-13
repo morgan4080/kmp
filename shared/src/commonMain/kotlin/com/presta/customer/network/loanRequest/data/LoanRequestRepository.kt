@@ -8,7 +8,7 @@ interface LoanRequestRepository {
     suspend fun requestLoan(
         token: String,
         amount: Int,
-        currentTerm: String,
+        currentTerm: Boolean,
         customerRefId: String,
         disbursementAccountReference: String,
         disbursementMethod: DisbursementMethod,

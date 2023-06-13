@@ -9,7 +9,7 @@ interface SpecificLoansComponent {
 
     val loanName: String
     val loanOperation: String
-     val referencedLoanRefId: String
+     val referencedLoanRefId: String?
 
 
     fun onConfirmSelected(
@@ -21,7 +21,7 @@ interface SpecificLoansComponent {
         interest: Double,
         loanPeriodUnit: String,
         maxPeriodUnit: Int,
-        referencedLoanRefId: String
+        referencedLoanRefId: String?
     )
 
     fun onBackNavSelected()

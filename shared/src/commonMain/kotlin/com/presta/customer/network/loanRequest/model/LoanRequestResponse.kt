@@ -21,7 +21,6 @@ enum class DisbursementMethod {
     BANK
 }
 
-//[_NORMAL_LOAN, _TOP_UP]
 
 @Serializable
 enum class LoanType {

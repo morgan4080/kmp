@@ -2,7 +2,6 @@ package com.presta.customer.network.shortTermLoans.client
 
 import com.presta.customer.network.NetworkConstants
 import com.presta.customer.network.profile.errorHandler.profileErrorHandler
-import com.presta.customer.network.profile.model.PrestaSavingsBalancesResponse
 import com.presta.customer.network.shortTermLoans.errorHandler.shortTermLoansErrorHandler
 import com.presta.customer.network.shortTermLoans.model.PrestaShortTermProductsListResponse
 import com.presta.customer.network.shortTermLoans.model.PrestaShortTermTopUpListResponse

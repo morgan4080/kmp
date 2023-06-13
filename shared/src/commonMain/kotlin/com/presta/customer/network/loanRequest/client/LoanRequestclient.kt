@@ -21,7 +21,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LoanRequestData @OptIn(ExperimentalSerializationApi::class) constructor(
     val amount: Int,
-    val currentTerm: String,
+    val currentTerm: Boolean,
     val customerRefId: String,
     val disbursementAccountReference: String,
     val disbursementMethod: DisbursementMethod,
@@ -39,7 +39,7 @@ class PrestaLoanRequestClient(
     suspend fun sendLoanRequest(
         token: String,
         amount: Int,
-        currentTerm: String,
+        currentTerm: Boolean,
         customerRefId: String,
         disbursementAccountReference: String,
         disbursementMethod: DisbursementMethod,
@@ -72,7 +72,7 @@ class PrestaLoanRequestClient(
             }
         }
     }
-    suspend fun pollApplicationStatus(
+    suspend fun pollLoanApplicationStatus(
         token: String,
         requestId: String
     ): PrestaLoanPollingResponse {

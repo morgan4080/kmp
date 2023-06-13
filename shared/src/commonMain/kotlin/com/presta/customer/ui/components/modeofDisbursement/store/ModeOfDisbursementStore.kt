@@ -9,7 +9,7 @@ interface ModeOfDisbursementStore : Store<ModeOfDisbursementStore.Intent, ModeOf
         data class RequestLoan(
             val token: String,
             val amount: Int,
-            val currentTerm: String,
+            val currentTerm: Boolean,
             val customerRefId: String,
             val disbursementAccountReference: String,
             val disbursementMethod: DisbursementMethod,

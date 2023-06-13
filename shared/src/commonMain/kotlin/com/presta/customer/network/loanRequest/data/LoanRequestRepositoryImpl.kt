@@ -12,7 +12,7 @@ class LoanRequestRepositoryImpl : LoanRequestRepository,KoinComponent {
     override suspend fun requestLoan(
         token: String,
         amount: Int,
-        currentTerm: String,
+        currentTerm: Boolean,
         customerRefId: String,
         disbursementAccountReference: String,
         disbursementMethod: DisbursementMethod,
@@ -50,7 +50,7 @@ class LoanRequestRepositoryImpl : LoanRequestRepository,KoinComponent {
         requestId: String
     ): Result<PrestaLoanPollingResponse> {
         return try {
-            val response = loanRequestClient.pollApplicationStatus(token, requestId)
+            val response = loanRequestClient.pollLoanApplicationStatus(token, requestId)
             Result.success(response)
         } catch (e: Exception) {
             e.printStackTrace()

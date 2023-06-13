@@ -44,7 +44,7 @@ class DefaultSpecificLoansComponent(
         Interest: Double,
         loanPeriodUnit: String,
         maxPeriodUnit: Int,
-        referencedLoanRefId: String
+        referencedLoanRefId: String?
     ) -> Unit,
     private val onBackNavClicked: () -> Unit,
     refId: String,
@@ -52,7 +52,7 @@ class DefaultSpecificLoansComponent(
     mainContext: CoroutineContext,
     override val loanName: String,
     override val loanOperation: String,
-    override val referencedLoanRefId: String,
+    override val referencedLoanRefId: String?,
 
     ) : SpecificLoansComponent, ComponentContext by componentContext {
     var specificId: String = refId
@@ -65,7 +65,7 @@ class DefaultSpecificLoansComponent(
         interest: Double,
         loanPeriodUnit: String,
         maxPeriodUnit: Int,
-        referencedLoanRefId: String
+        referencedLoanRefId: String?
     ) {
         onConfirmClicked(refid, amount, loanPeriod, loanType, LoanName, interest, loanPeriodUnit,maxPeriodUnit,referencedLoanRefId)
     }

@@ -23,6 +23,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlin.coroutines.CoroutineContext
 
 fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineScope {
@@ -47,7 +48,7 @@ class DefaultModeOfDisbursementComponent(
     override val loanPeriod: String,
     override val loanType: LoanType,
     override val fees: Double,
-    override val referencedLoanRefId: String,
+    override val referencedLoanRefId: String?,
 ) : ModeOfDisbursementComponent, ComponentContext by componentContext {
     override val authStore: AuthStore =
         instanceKeeper.getStore {
@@ -117,7 +118,7 @@ class DefaultModeOfDisbursementComponent(
                         ModeOfDisbursementStore.Intent.RequestLoan(
                             token = state.cachedMemberData.accessToken,
                             amount = amount.toInt(),
-                            currentTerm = "FALSE",
+                            currentTerm =false,
                             customerRefId = state.cachedMemberData.refId,
                             disbursementAccountReference = state.cachedMemberData.phoneNumber,
                             disbursementMethod = DisbursementMethod.MOBILEMONEY,

@@ -14,14 +14,14 @@ interface LoanConfirmationComponent {
     val loanPeriodUnit:String
     val loanOperation: String
     val loanType:LoanType
-     val referencedLoanRefId:String
+     val referencedLoanRefId:String?
     fun onConfirmSelected(
         refid:String,
         amount:Double,
         loanPeriod:String,
         loanType:LoanType,
         loanName:String,
-        referencedLoanRefId:String)
+        referencedLoanRefId:String?)
     fun onBackNavSelected()
     val authStore: AuthStore
 

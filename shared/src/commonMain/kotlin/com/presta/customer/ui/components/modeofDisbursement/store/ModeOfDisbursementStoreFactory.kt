@@ -62,7 +62,7 @@ class ModeOfDisbursementStoreFactory(
         private fun requestLoan(
             token: String,
             amount: Int,
-            currentTerm: String,
+            currentTerm: Boolean,
             customerRefId: String,
             disbursementAccountReference: String,
             disbursementMethod: DisbursementMethod,
@@ -92,7 +92,9 @@ class ModeOfDisbursementStoreFactory(
                     sessionId,
                 ).onSuccess { response ->
                     dispatch(Msg.LoanRequestLoaded(response))
-                    println("Request processed::::::")
+                    println("Request processed::::::"+ response)
+
+
                 }.onFailure { e ->
                     dispatch(Msg.LoanRequestFailedFailed(e.message))
                 }

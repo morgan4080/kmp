@@ -11,7 +11,7 @@ interface ModeOfDisbursementComponent {
     val fees:Double
     val loanPeriod : String
     val loanType:LoanType
-    val referencedLoanRefId: String
+    val referencedLoanRefId: String?
      val authStore: AuthStore
     val authState: StateFlow<AuthStore.State>
     val modeOfDisbursementStore: ModeOfDisbursementStore
