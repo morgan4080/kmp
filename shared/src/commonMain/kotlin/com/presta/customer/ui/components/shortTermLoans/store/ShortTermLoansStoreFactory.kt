@@ -140,13 +140,13 @@ class ShortTermLoansStoreFactory(
                     session_id = session_id,
                     memberRefId = refId
                 ).onSuccess { response ->
-                    println(":::::::::getShortTermToPUpListData")
+                    println("getShortTermToPUpListData::::::Loaded")
                     println(response)
                     dispatch(Msg.ShortTermTopUpListLoaded(response))
                 }.onFailure { e ->
                     dispatch(Msg.ShortTermLoansFailed(e.message))
                     //Test
-                    println("An error occured ")
+                    println("An error occured:::::::;;; ")
                 }
 
                 dispatch(Msg.ShortTermLoansLoading(false))

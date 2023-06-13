@@ -10,7 +10,7 @@ data class PrestaTopUpLoansList @OptIn(ExperimentalSerializationApi::class) cons
     @EncodeDefault val cycle: String?=null,
     @EncodeDefault val daysAvailable: String?=null,
     @EncodeDefault  val interest: Double?=null,
-    @EncodeDefault val loanBalance: Int?=null,
+    @EncodeDefault val loanBalance: Double?=null,
     @EncodeDefault val loanRefId: String?=null,
     @EncodeDefault val maxAmount: Double?=null,
     @EncodeDefault  val maxPeriod: Int?=null,

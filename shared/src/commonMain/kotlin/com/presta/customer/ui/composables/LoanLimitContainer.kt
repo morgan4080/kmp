@@ -91,7 +91,7 @@ fun LoanLimitContainer(state: ShortTermLoansStore.State) {
                         )
 
                         Text(
-                            text =if(!showShimmer) state.prestaShortTermLoanProductById?.interestRate.toString() +"%" else "",
+                            text =if(state.prestaShortTermLoanProductById?.interestRate!=null) state.prestaShortTermLoanProductById.interestRate.toString() +"%" else "",
                             color = MaterialTheme.colorScheme.onBackground, // #002C56
                             fontSize = 12.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),

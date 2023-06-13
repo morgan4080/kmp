@@ -72,7 +72,10 @@ fun ShortTermTopUpList(
                     .fillMaxWidth()
                     .padding(top = 10.dp),
                     horizontalArrangement = Arrangement.Center){
-                    Text(text = "You don't have top up Loans")
+                    Text(text = "Top Ups have not been activated",
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        fontSize = 12.sp
+                    )
 
                 }
 
