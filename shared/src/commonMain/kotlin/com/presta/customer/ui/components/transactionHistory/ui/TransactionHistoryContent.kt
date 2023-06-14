@@ -222,7 +222,7 @@ fun TransactionHistoryContent(
 
                 LazyColumn(
                     modifier = Modifier
-                        .padding(top = 16.dp)
+                        .padding(top = 16.dp, start = 16.dp, end = 16.dp)
                         .fillMaxWidth()
                 ) {
                     item {

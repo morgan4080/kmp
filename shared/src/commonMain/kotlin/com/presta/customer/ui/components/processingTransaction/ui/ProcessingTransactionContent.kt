@@ -1,3 +1,5 @@
+package com.presta.customer.ui.components.processingTransaction.ui
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

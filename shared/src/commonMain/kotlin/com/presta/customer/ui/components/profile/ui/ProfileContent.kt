@@ -410,7 +410,9 @@ fun ProfileContent(
                     }
 
                     item {
-                        singleTransaction(state.transactionHistory)
+                        Column (modifier = Modifier.padding(horizontal = 16.dp)) {
+                            singleTransaction(state.transactionHistory)
+                        }
                     }
 
                     item {

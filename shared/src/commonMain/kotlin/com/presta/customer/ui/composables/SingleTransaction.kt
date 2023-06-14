@@ -39,7 +39,7 @@ fun singleTransaction(transactionHistory:  List<PrestaTransactionHistoryResponse
     if (transactionHistory !== null) {
         transactionHistory.map { transaction ->
             Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp).padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
