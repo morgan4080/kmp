@@ -84,31 +84,6 @@ fun SavingsContent(
                         fontSize = 14.sp,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                     )
-
-                    // after mvp already can be reached from else where
-
-                    /*Row (
-                        modifier = Modifier.clickable{onSeeALlSelected()},
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    )  {
-                        Text(
-                            modifier = Modifier.padding(end = 5.dp),
-                            text = "See all",
-                            textAlign = TextAlign.Center,
-                            color = backArrowColor,
-                            fontSize = 12.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
-                            style = MaterialTheme.typography.headlineSmall
-                        )
-
-                        Icon (
-                            Icons.Filled.ArrowForward,
-                            contentDescription = "Forward Arrow",
-                            tint = backArrowColor,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }*/
                 }
 
                 LazyColumn(

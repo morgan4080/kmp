@@ -18,7 +18,6 @@ import com.presta.customer.ui.components.profile.store.ProfileStore
 import com.presta.customer.ui.components.profile.store.ProfileStoreFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
@@ -117,14 +116,8 @@ class DefaultProfileComponent(
         addSavingsStore.accept(event)
     }
 
-    private var authUserScopeJob1: Job? = null
-
-    private var activateAccountScopeJob: Job? = null
-
     override fun activateAccount(amount: Double) {
-        if (authUserScopeJob1?.isActive == true) return
-
-        authUserScopeJob1 = scope.launch {
+        scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
                     onAddSavingsEvent(
@@ -142,7 +135,7 @@ class DefaultProfileComponent(
             }
         }
 
-        activateAccountScopeJob = scope.launch {
+        scope.launch {
             addSavingsState.collect { state ->
                 if (state.correlationId !== null) {
                     val correlationId = state.correlationId
@@ -154,12 +147,8 @@ class DefaultProfileComponent(
         }
     }
 
-    private var profileStateScopeJob: Job? = null
-
     private fun checkProfileTransactions (access_token: String, refId: String) {
-        if (profileStateScopeJob?.isActive == true) return
-
-        profileStateScopeJob = scope.launch {
+        scope.launch {
             profileState.collect { state ->
                 if (state.transactionMapping !== null) {
                     onEvent(ProfileStore.Intent.GetTransactionHistory (
@@ -174,12 +163,9 @@ class DefaultProfileComponent(
         }
     }
 
-    private var authUserScopeJob: Job? = null
-
     private fun checkAuthenticatedUser() {
-        if (authUserScopeJob?.isActive == true) return
 
-        authUserScopeJob = scope.launch {
+        scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
                     onAuthEvent(AuthStore.Intent.CheckAuthenticatedUser(
@@ -203,12 +189,8 @@ class DefaultProfileComponent(
         }
     }
 
-    private var refreshTokenScopeJob: Job? = null
-
     private fun refreshToken() {
-        if (refreshTokenScopeJob?.isActive == true) return
-
-        refreshTokenScopeJob = scope.launch {
+        scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
                     onAuthEvent(AuthStore.Intent.RefreshToken(
@@ -231,6 +213,12 @@ class DefaultProfileComponent(
                 this.cancel()
             }
         }
+    }
+
+    override fun reloadModels() {
+        onAuthEvent(AuthStore.Intent.GetCachedMemberData)
+        refreshToken()
+        checkAuthenticatedUser()
     }
 
     init {

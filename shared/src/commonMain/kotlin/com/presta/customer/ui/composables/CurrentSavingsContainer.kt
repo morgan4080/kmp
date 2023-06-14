@@ -43,7 +43,6 @@ fun CurrentSavingsContainer (
 
     ElevatedCard(modifier = Modifier
         .padding(top = 10.dp)
-        .border( BorderStroke(1.dp,Color.White), shape = RoundedCornerShape(size = 12.dp))
     ) {
         Box (modifier = Modifier
             .background(color = MaterialTheme.colorScheme.inverseOnSurface)

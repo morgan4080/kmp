@@ -1,3 +1,5 @@
+package com.presta.customer.ui.components.processingTransaction.ui
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -35,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.network.payments.model.PaymentStatuses
+import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.processingTransaction.store.ProcessingTransactionStore
 import com.presta.customer.ui.helpers.formatMoney
@@ -105,7 +108,7 @@ fun ProcessingTransactionContent(
                             Box(
                                 modifier = Modifier
                                     .clip(CircleShape)
-                                    .size(70.dp)
+                                    .size(150.dp)
                                     .background(MaterialTheme.colorScheme.background)
                                     .clip(CircleShape)
                                     .background(MaterialTheme.colorScheme.background),
@@ -139,32 +142,77 @@ fun ProcessingTransactionContent(
                             )
                         }
                     }
-                    Row(
-                        modifier = Modifier.padding(start = 80.dp, end = 80.dp, top = 50.dp),
-                        horizontalArrangement = Arrangement.Center
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(start = 80.dp, end = 80.dp, top = 50.dp),
                     ) {
-                        Text(
-                            text = "Your transaction is ${if (state.paymentStatus !== null) state.paymentStatus.status else ""}",
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = 14.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
-                            textAlign = TextAlign.Center
-                        )
+                        if (state.paymentStatus !== null && (state.paymentStatus.status == PaymentStatuses.COMPLETED)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = "TRANSACTION SUCCESSFUL!",
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 22.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                                    textAlign = TextAlign.Center,
+                                    lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(top = 15.dp),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = "You paid KES ${formatMoney(amount)} to ${OrganisationModel.organisation.tenant_name}",
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 14.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        } else {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = "Your transaction ${if (state.paymentStatus !== null) "status is ${state.paymentStatus.status}" else "failed"}!",
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 22.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                                    textAlign = TextAlign.Center,
+                                    lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
+                                )
+                            }
+                        }
                     }
                 }
 
-                AnimatedVisibility((state.paymentStatus !== null
-                        &&
-                        (state.paymentStatus.status == PaymentStatuses.CANCELLED
-                                ||
-                                state.paymentStatus.status == PaymentStatuses.FAILURE))) {
-                    Column(
-                        modifier = Modifier.padding(horizontal = 16.dp)
+                Column(
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
+                        if (state.paymentStatus !== null && (state.paymentStatus.status == PaymentStatuses.COMPLETED)) {
+                            Button(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(size = 12.dp),
+                                onClick = {
+                                    navigateBack()
+                                }
+                            ) {
+                                Text(
+                                    text = "Done",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                                )
+                            }
+                        } else {
                             Button(
                                 modifier = Modifier.width(150.dp)
                                     .border(

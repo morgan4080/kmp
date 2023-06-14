@@ -21,5 +21,6 @@ interface ProfileComponent {
     fun goToPayLoans()
     fun goToStatement()
     fun logout()
+    fun reloadModels()
     fun activateAccount(amount: Double)
 }
