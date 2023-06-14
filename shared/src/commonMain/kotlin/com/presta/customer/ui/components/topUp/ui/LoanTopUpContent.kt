@@ -7,6 +7,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,7 +42,7 @@ import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun LoanTopUpContent(
     component: LoanTopUpComponent,
@@ -52,6 +56,8 @@ fun LoanTopUpContent(
     var currentTerm by remember { mutableStateOf(false) }
     val LoanType: LoanType = LoanType._TOP_UP
     var labelText=""
+
+
 
     Surface(
         modifier = Modifier
@@ -77,6 +83,7 @@ fun LoanTopUpContent(
                     .padding(start = 16.dp, end = 16.dp)
                     .background(color = MaterialTheme.colorScheme.background)
                     .fillMaxHeight()
+
             ) {
                 Text(
                     modifier = Modifier,
