@@ -46,7 +46,8 @@ class DefaultLoanTopUpComponent(
         loanPeriod: String,
         loanPeriodUnit: String,
         loanType:LoanType,
-        referencedLoanRefId:String
+        referencedLoanRefId:String,
+        currentTerm:Boolean
     ) -> Unit,
     private val onBackNavClicked: () -> Unit,
     refId: String,
@@ -74,7 +75,9 @@ class DefaultLoanTopUpComponent(
         loanPeriod: String,
         loanPeriodUnit: String,
         loanType:LoanType,
-        referencedLoanRefId:String
+        referencedLoanRefId:String,
+        currentTerm:Boolean
+
     ) {
         onProceedClicked(
             refId,
@@ -86,7 +89,8 @@ class DefaultLoanTopUpComponent(
             loanPeriod,
             loanPeriodUnit,
             loanType,
-            referencedLoanRefId
+            referencedLoanRefId,
+            currentTerm
 
         )
     }

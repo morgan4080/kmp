@@ -21,7 +21,8 @@ interface SpecificLoansComponent {
         interest: Double,
         loanPeriodUnit: String,
         maxPeriodUnit: Int,
-        referencedLoanRefId: String?
+        referencedLoanRefId: String?,
+        currentTerm: Boolean
     )
 
     fun onBackNavSelected()

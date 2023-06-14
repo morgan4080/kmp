@@ -63,7 +63,8 @@ fun LoanConfirmationContent(
                             component.loanPeriod,
                             component.loanType,
                             loanName = component.loanName,
-                            referencedLoanRefId =component.referencedLoanRefId
+                            referencedLoanRefId =component.referencedLoanRefId,
+                            currentTerm = component.currentTerm
                         )
 
                     })

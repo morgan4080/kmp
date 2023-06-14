@@ -8,5 +8,5 @@ enum class LoanRequestError {
 }
 
 class LoanRequestExceptions(error: LoanRequestError ): Exception(
-    "Payments Error: $error"
+    "Loan Request  Error: $error"
 )

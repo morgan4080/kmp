@@ -8,16 +8,17 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.shortTermLoans.data.ShortTermLoansRepository
 import com.presta.customer.network.shortTermLoans.model.PrestaShortTermProductsListResponse
 import com.presta.customer.network.shortTermLoans.model.PrestaShortTermTopUpListResponse
+import com.presta.customer.prestaDispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import com.presta.customer.prestaDispatchers
 
 class ShortTermLoansStoreFactory(
     private val storeFactory: StoreFactory
 ) : KoinComponent {
     private val shortTermLoansRepository by inject<ShortTermLoansRepository>()
+
 
     fun create(): ShortTermLoansStore =
         object : ShortTermLoansStore,
@@ -31,9 +32,14 @@ class ShortTermLoansStoreFactory(
 
     private sealed class Msg {
         data class ShortTermLoansLoading(val isLoading: Boolean = true) : Msg()
-        data class ShortTermLoansProductsListLoaded(val shortTermLoansProductList: List<PrestaShortTermProductsListResponse> = listOf()) : Msg()
-        data class ShortTermLoanProductsByIdLoaded(val shortTermLoansProductById : PrestaShortTermProductsListResponse): Msg()
-        data class ShortTermTopUpListLoaded(val shortTermTopUpList: PrestaShortTermTopUpListResponse) : Msg()
+        data class ShortTermLoansProductsListLoaded(val shortTermLoansProductList: List<PrestaShortTermProductsListResponse> = listOf()) :
+            Msg()
+
+        data class ShortTermLoanProductsByIdLoaded(val shortTermLoansProductById: PrestaShortTermProductsListResponse) :
+            Msg()
+
+        data class ShortTermTopUpListLoaded(val shortTermTopUpList: PrestaShortTermTopUpListResponse) :
+            Msg()
 
         data class ShortTermLoansFailed(val error: String?) : Msg()
     }
@@ -54,6 +60,7 @@ class ShortTermLoansStoreFactory(
                     token = intent.token,
                     refId = intent.refId
                 )
+
                 is ShortTermLoansStore.Intent.GetPrestaShortTermTopUpList -> getShortTermTopUpList(
                     token = intent.token,
                     session_id = intent.session_id,
@@ -65,7 +72,14 @@ class ShortTermLoansStoreFactory(
                     loanId = intent.loanId
                 )
 
+                is ShortTermLoansStore.Intent.GetPrestaLoanEligibilityStatus -> getLoanEligibilityStatus(
+                    token = intent.token,
+                    session_id = intent.session_id,
+                    CustomerRefId = intent.customerRefId
+                )
+
             }
+
         //Get ShortTermLoansProducts
         private var getShortTermProductListJob: Job? = null
 
@@ -99,13 +113,13 @@ class ShortTermLoansStoreFactory(
 
         private fun getShortTermLoanProductsById(
             token: String,
-            loanId:String
+            loanId: String
         ) {
             if (getShortTermLoanProductBYIdJob?.isActive == true) return
 
             dispatch(Msg.ShortTermLoansLoading())
 
-            getShortTermLoanProductBYIdJob= scope.launch {
+            getShortTermLoanProductBYIdJob = scope.launch {
                 shortTermLoansRepository.getShortTermProductLoanById(
                     token = token,
                     loanId = loanId
@@ -126,7 +140,7 @@ class ShortTermLoansStoreFactory(
         private var getShortTermTopUpListJob: Job? = null
         private fun getShortTermTopUpList(
             token: String,
-            session_id:String,
+            session_id: String,
             refId: String
 
         ) {
@@ -152,15 +166,35 @@ class ShortTermLoansStoreFactory(
                 dispatch(Msg.ShortTermLoansLoading(false))
             }
         }
+
+        //Get loan Eligibility  Status
+        private var getLoanEligibiltyJob: Job? = null
+        private fun getLoanEligibilityStatus(
+            token: String,
+            session_id: String,
+            CustomerRefId: String
+        ) {
+            if (getLoanEligibiltyJob?.isActive == true) return
+
+            getLoanEligibiltyJob=scope.launch {
+
+
+
+                
+            }
+
+        }
+
     }
+
     private object ReducerImpl : Reducer<ShortTermLoansStore.State, Msg> {
         override fun ShortTermLoansStore.State.reduce(msg: Msg): ShortTermLoansStore.State =
             when (msg) {
                 is Msg.ShortTermLoansLoading -> copy(isLoading = msg.isLoading)
                 is Msg.ShortTermLoansFailed -> copy(error = msg.error)
                 is Msg.ShortTermLoansProductsListLoaded -> copy(prestaShortTermProductList = msg.shortTermLoansProductList)
-                is Msg.ShortTermTopUpListLoaded->copy(prestaShortTermTopUpList=msg.shortTermTopUpList)
-                is Msg.ShortTermLoanProductsByIdLoaded->copy(prestaShortTermLoanProductById=msg.shortTermLoansProductById)
+                is Msg.ShortTermTopUpListLoaded -> copy(prestaShortTermTopUpList = msg.shortTermTopUpList)
+                is Msg.ShortTermLoanProductsByIdLoaded -> copy(prestaShortTermLoanProductById = msg.shortTermLoansProductById)
             }
     }
 }

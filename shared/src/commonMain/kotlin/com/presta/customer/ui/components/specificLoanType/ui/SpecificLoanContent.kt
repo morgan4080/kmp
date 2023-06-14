@@ -59,6 +59,7 @@ fun SpecificLoaContent(
     val loanPeriodUnit = state.prestaShortTermLoanProductById?.loanPeriodUnit
     val LoanType:LoanType=LoanType._NORMAL_LOAN
     val referencedLoanRefId=null
+    val  currentTerm=false
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background),
@@ -176,7 +177,8 @@ fun SpecificLoaContent(
                                                     it,
                                                     state.prestaShortTermLoanProductById.loanPeriodUnit.toString(),
                                                     it1,
-                                                    referencedLoanRefId =referencedLoanRefId
+                                                    referencedLoanRefId =referencedLoanRefId,
+                                                    currentTerm = currentTerm
                                                 )
                                             }
                                         }

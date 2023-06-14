@@ -29,12 +29,21 @@ fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineSc
     lifecycle.doOnDestroy(scope::cancel)
     return scope
 }
+
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
 
 class DefaultLoanConfirmationComponent(
     componentContext: ComponentContext,
-    private val onConfirmClicked: (refid:String,amount:Double,loanPeriod:String,loanType:LoanType,loanName:String,referencedLoanRefId:String?) -> Unit,
+    private val onConfirmClicked: (
+        refid: String,
+        amount: Double,
+        loanPeriod: String,
+        loanType: LoanType,
+        loanName: String,
+        referencedLoanRefId: String?,
+        currentTerm:Boolean
+    ) -> Unit,
     private val onBackNavClicked: () -> Unit,
     storeFactory: StoreFactory,
     override val refId: String,
@@ -47,7 +56,8 @@ class DefaultLoanConfirmationComponent(
     override val loanOperation: String,
     override val loanType: LoanType,
     override val referencedLoanRefId: String?,
-) : LoanConfirmationComponent, ComponentContext by componentContext{
+    override val currentTerm: Boolean,
+) : LoanConfirmationComponent, ComponentContext by componentContext {
     override val authStore: AuthStore =
         instanceKeeper.getStore {
             AuthStoreFactory(
@@ -59,16 +69,35 @@ class DefaultLoanConfirmationComponent(
             ).create()
         }
 
-    override fun onConfirmSelected(refID: String,amount:Double,loanPeriod:String,loanType: LoanType,loanName: String,referencedLoanRefId:String?) {
-        onConfirmClicked(refID,amount,loanPeriod,loanType,loanName,referencedLoanRefId)
+    override fun onConfirmSelected(
+        refID: String,
+        amount: Double,
+        loanPeriod: String,
+        loanType: LoanType,
+        loanName: String,
+        referencedLoanRefId: String?,
+        currentTerm: Boolean
+
+    ) {
+        onConfirmClicked(
+            refID,
+            amount,
+            loanPeriod,
+            loanType,
+            loanName,
+            referencedLoanRefId,
+            currentTerm
+        )
     }
+
     override fun onBackNavSelected() {
-       onBackNavClicked()
+        onBackNavClicked()
     }
+
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val authState: StateFlow<AuthStore.State> =authStore.stateFlow
+    override val authState: StateFlow<AuthStore.State> = authStore.stateFlow
 
     override val shortTermloansStore: ShortTermLoansStore =
         instanceKeeper.getStore {
@@ -76,14 +105,19 @@ class DefaultLoanConfirmationComponent(
                 storeFactory = storeFactory
             ).create()
         }
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val shortTermloansState: StateFlow<ShortTermLoansStore.State> = shortTermloansStore.stateFlow
+    override val shortTermloansState: StateFlow<ShortTermLoansStore.State> =
+        shortTermloansStore.stateFlow
+
     override fun onAuthEvent(event: AuthStore.Intent) {
         authStore.accept(event)
     }
+
     override fun onEvent(event: ShortTermLoansStore.Intent) {
         shortTermloansStore.accept(event)
     }
+
     private var authUserScopeJob: Job? = null
     private fun checkAuthenticatedUser() {
         if (authUserScopeJob?.isActive == true) return
@@ -93,7 +127,8 @@ class DefaultLoanConfirmationComponent(
                     onAuthEvent(
                         AuthStore.Intent.CheckAuthenticatedUser(
                             token = state.cachedMemberData.accessToken
-                        ))
+                        )
+                    )
                     onEvent(
                         ShortTermLoansStore.Intent.GetPrestaShortTermProductList(
                             token = state.cachedMemberData.accessToken,
@@ -103,13 +138,15 @@ class DefaultLoanConfirmationComponent(
 
                     onEvent(
                         ShortTermLoansStore.Intent.GetPrestaShortTermProductById(
-                        token = state.cachedMemberData.accessToken,
-                        loanId = refId,
-                    ))
+                            token = state.cachedMemberData.accessToken,
+                            loanId = refId,
+                        )
+                    )
                 }
             }
         }
     }
+
     private var refreshTokenScopeJob: Job? = null
     private fun refreshToken() {
         if (refreshTokenScopeJob?.isActive == true) return
@@ -120,12 +157,14 @@ class DefaultLoanConfirmationComponent(
                         AuthStore.Intent.RefreshToken(
                             tenantId = OrganisationModel.organisation.tenant_id,
                             refId = state.cachedMemberData.refId
-                        ))
+                        )
+                    )
                 }
                 this.cancel()
             }
         }
     }
+
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         checkAuthenticatedUser()

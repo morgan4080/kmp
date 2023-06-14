@@ -1,6 +1,7 @@
 package com.presta.customer.network.shortTermLoans.data
 
 import com.presta.customer.network.shortTermLoans.client.PrestaShortTermLoansClient
+import com.presta.customer.network.shortTermLoans.model.PrestaLoanEligibilityResponse
 import com.presta.customer.network.shortTermLoans.model.PrestaShortTermProductsListResponse
 import com.presta.customer.network.shortTermLoans.model.PrestaShortTermTopUpListResponse
 import org.koin.core.component.KoinComponent
@@ -62,6 +63,24 @@ class ShortTermLoansRepositoryImpl : ShortTermLoansRepository,KoinComponent {
             )
             Result.success(response)
 
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun checkLoanEligibility(
+        token: String,
+        session_id: String,
+        customerRefId: String,
+    ): Result<PrestaLoanEligibilityResponse> {
+        return try {
+            val response = shortTermLoansClient.sendLoanEligibilityRequest(
+                token = token,
+                session_id = session_id,
+                customerRefId = customerRefId,
+            )
+            Result.success(response)
         } catch (e: Exception) {
             e.printStackTrace()
             Result.failure(e)

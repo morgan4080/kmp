@@ -1,13 +1,16 @@
 package com.presta.customer.network.shortTermLoans.client
 
 import com.presta.customer.network.NetworkConstants
+import com.presta.customer.network.loanRequest.errorHandler.loanRequestErrorHandler
 import com.presta.customer.network.profile.errorHandler.profileErrorHandler
 import com.presta.customer.network.shortTermLoans.errorHandler.shortTermLoansErrorHandler
+import com.presta.customer.network.shortTermLoans.model.PrestaLoanEligibilityResponse
 import com.presta.customer.network.shortTermLoans.model.PrestaShortTermProductsListResponse
 import com.presta.customer.network.shortTermLoans.model.PrestaShortTermTopUpListResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
@@ -56,6 +59,24 @@ class PrestaShortTermLoansClient(
                 url {
                     parameters.append("sessionId", session_id)
                     parameters.append("customerRefId", memberRefId)
+                }
+            }
+        }
+    }
+
+    //Loan eligibility
+    suspend fun sendLoanEligibilityRequest(
+        token: String,
+        session_id: String,
+        customerRefId: String,
+    ): PrestaLoanEligibilityResponse {
+        return loanRequestErrorHandler {
+            httpClient.post(NetworkConstants.PrestaLoanEligibility.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                contentType(ContentType.Application.Json)
+                url {
+                    parameters.append("sessionId", session_id)
+                    parameters.append("customerRefId", customerRefId)
                 }
             }
         }

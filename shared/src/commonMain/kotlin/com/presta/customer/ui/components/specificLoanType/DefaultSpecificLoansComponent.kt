@@ -44,7 +44,8 @@ class DefaultSpecificLoansComponent(
         Interest: Double,
         loanPeriodUnit: String,
         maxPeriodUnit: Int,
-        referencedLoanRefId: String?
+        referencedLoanRefId: String?,
+        currentTerm: Boolean
     ) -> Unit,
     private val onBackNavClicked: () -> Unit,
     refId: String,
@@ -65,14 +66,28 @@ class DefaultSpecificLoansComponent(
         interest: Double,
         loanPeriodUnit: String,
         maxPeriodUnit: Int,
-        referencedLoanRefId: String?
+        referencedLoanRefId: String?,
+        currentTerm: Boolean
+
     ) {
-        onConfirmClicked(refid, amount, loanPeriod, loanType, LoanName, interest, loanPeriodUnit,maxPeriodUnit,referencedLoanRefId)
+        onConfirmClicked(
+            refid,
+            amount,
+            loanPeriod,
+            loanType,
+            LoanName,
+            interest,
+            loanPeriodUnit,
+            maxPeriodUnit,
+            referencedLoanRefId,
+            currentTerm
+        )
     }
 
     override fun onBackNavSelected() {
         onBackNavClicked()
     }
+
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
     override val authStore: AuthStore =

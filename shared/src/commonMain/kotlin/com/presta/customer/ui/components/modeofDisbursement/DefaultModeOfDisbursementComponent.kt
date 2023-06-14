@@ -49,6 +49,7 @@ class DefaultModeOfDisbursementComponent(
     override val loanType: LoanType,
     override val fees: Double,
     override val referencedLoanRefId: String?,
+    override val currentTerm: Boolean,
 ) : ModeOfDisbursementComponent, ComponentContext by componentContext {
     override val authStore: AuthStore =
         instanceKeeper.getStore {
@@ -118,7 +119,7 @@ class DefaultModeOfDisbursementComponent(
                         ModeOfDisbursementStore.Intent.RequestLoan(
                             token = state.cachedMemberData.accessToken,
                             amount = amount.toInt(),
-                            currentTerm =false,
+                            currentTerm =currentTerm,
                             customerRefId = state.cachedMemberData.refId,
                             disbursementAccountReference = state.cachedMemberData.phoneNumber,
                             disbursementMethod = DisbursementMethod.MOBILEMONEY,

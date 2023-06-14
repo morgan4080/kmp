@@ -68,4 +68,9 @@ object NetworkConstants {
         const val route= applicationV1BaseUrl + "loanrequests"
 
     }
+    object PrestaLoanEligibility{
+        const val route= applicationV1BaseUrl + "query/eligibility"
+
+    }
+
 }

@@ -26,7 +26,9 @@ interface LoanTopUpComponent {
         loanPeriod: String,
         loanPeriodUnit : String,
         loanType: LoanType,
-        referencedLoanRefId:String
+        referencedLoanRefId:String,
+        currentTerm:Boolean
+
     )
 
     fun onBackNavSelected()
