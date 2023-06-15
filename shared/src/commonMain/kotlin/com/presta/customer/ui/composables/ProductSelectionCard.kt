@@ -18,11 +18,10 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 @OptIn(ExperimentalMaterial3Api::class)
 
 @Composable
-fun  ProductSelectionCard(label: String, description: String?=null, onClickContainer: () -> Unit){
+fun  ProductSelectionCard(label: String, description: String? = null, onClickContainer: () -> Unit){
     //Product selection card  with bottom text
     ElevatedCard(
-        onClick = onClickContainer
-        ,
+        onClick = onClickContainer,
         modifier = Modifier.fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.background)
     ) {
@@ -31,26 +30,27 @@ fun  ProductSelectionCard(label: String, description: String?=null, onClickConta
                 modifier = Modifier.padding(top = 9.dp, bottom = 9.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically){
-                Column(){
+                Column {
                     Text(
                         text = label,
                         modifier = Modifier.padding(start = 15.dp),
                         fontSize = 14.sp,
                         color= MaterialTheme.colorScheme.onBackground,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                     )
-                    //Spacer(modifier = Modifier.weight(1f))
+
                     if (description != null) {
                         Text(
                             text = description,
                             modifier = Modifier.padding(start = 15.dp),
                             fontSize = 10.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                         )
                     }
 
                 }
-                Row(){
+
+                Row {
                     Spacer(modifier = Modifier.weight(1f))
                     Icon(
                         Icons.Filled.KeyboardArrowRight,

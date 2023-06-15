@@ -1,8 +1,6 @@
 package com.presta.customer.ui.composables
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,16 +8,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,15 +21,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import com.presta.customer.ui.helpers.formatMoney
-import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -174,82 +163,49 @@ fun TopUpListView(
         onClick = {
             onClick.invoke(Index)
         },
-        modifier =Modifier
-            .fillMaxWidth()
-            .padding(bottom = 10.dp)){
-        Box(modifier = Modifier.fillMaxWidth().padding(5.dp)){
+        modifier = Modifier.fillMaxWidth()
+            .background(color = MaterialTheme.colorScheme.background)
+    ) {
+        Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.inverseOnSurface)) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.padding(top = 9.dp, bottom = 9.dp)
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Card(
-                        modifier = Modifier
-                            .background(color = MaterialTheme.colorScheme.background)
-                            .clip(shape = CircleShape),
-                        elevation = CardDefaults.cardElevation(0.dp),
-                        border = BorderStroke(
-                            1.dp,
-                            color = if (selected) actionButtonColor else Color.Gray
-                        ),
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(19.dp)
-                                .background(
-                                    if (selected) actionButtonColor else Color(
-                                        0xFFE5F1F5
-                                    )
-                                )
-                                .clickable {
-                                    // onClickContainer(mode)
-                                    onClick.invoke(Index)
-
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            if (selected)
-                                Icon(
-                                    Icons.Default.Check,
-                                    contentDescription = "Check Box",
-                                    tint = Color.White,
-                                    modifier = Modifier.padding(1.dp)
-                                )
-                        }
-                    }
-
-                    Column(
-                        modifier = Modifier
-                            .padding(start = 10.dp)
-                    ) {
-                        Text(
-                            text = name,
-                            fontSize = 12.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        Text(
-                            text = "Kes " + formatMoney(Amount.toDouble()) ,
-                            fontSize = 10.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                        )
-                    }
-                }
-                Column() {
-
+            ){
+                Checkbox(
+                    checked = selected,
+                    onCheckedChange = { onClick.invoke(Index) }
+                )
+                Column {
                     Text(
-                        text ="Bal. Kes "+ formatMoney(Balance.toDouble()) ,
-                        fontSize = 12.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                        color = MaterialTheme.colorScheme.onBackground
+                        text = name,
+                        fontSize = 14.sp,
+                        color= MaterialTheme.colorScheme.onBackground,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                     )
+
                     Text(
-                        text = DaysAvailable,
+                        text = "KES " + formatMoney(Amount.toDouble()),
                         fontSize = 10.sp,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                     )
+                }
+                Row{
+                    Spacer(modifier = Modifier.weight(1f))
+                    Column {
+                        Text(
+                            text ="Balance. KES "+ formatMoney(Balance.toDouble()) ,
+                            fontSize = 12.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                        Text(
+                            text = DaysAvailable,
+                            fontSize = 10.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        )
+                    }
+                    Spacer(modifier = Modifier.padding(end = 15.dp))
                 }
             }
         }
