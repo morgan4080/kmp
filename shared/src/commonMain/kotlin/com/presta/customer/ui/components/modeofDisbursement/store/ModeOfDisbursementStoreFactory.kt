@@ -92,13 +92,11 @@ class ModeOfDisbursementStoreFactory(
                     sessionId,
                 ).onSuccess { response ->
                     dispatch(Msg.LoanRequestLoaded(response))
-                    println("Request processed::::::"+ response)
-
-
+                    dispatch(Msg.LoanRequestsLoading(false))
                 }.onFailure { e ->
                     dispatch(Msg.LoanRequestFailedFailed(e.message))
+                    dispatch(Msg.LoanRequestsLoading(false))
                 }
-                dispatch(Msg.LoanRequestsLoading(false))
             }
         }
 

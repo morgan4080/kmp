@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HourglassEmpty
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -50,68 +51,70 @@ fun ProcessLoanDisbursementContent(
 //        )
 //    )
 
-    Column(
-        modifier = Modifier.fillMaxWidth().fillMaxHeight(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Scaffold {
         Column(
+            modifier = Modifier.fillMaxWidth().fillMaxHeight(),
             verticalArrangement = Arrangement.Center,
-
-            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Column(
+                verticalArrangement = Arrangement.Center,
 
-
-            Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                Box(
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(70.dp)
-                        .graphicsLayer {  }
-                        .background(actionButtonColor)
-                        .clip(CircleShape)
-                        .background(actionButtonColor),
-                    contentAlignment = Alignment.Center
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
                 ) {
 
-                    Icon(
-                        imageVector = Icons.Default.HourglassEmpty,
-                        contentDescription = "",
-                        tint = Color.White,
-                        modifier = Modifier.size(70.dp)
+                    Box(
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .size(80.dp)
+                            .graphicsLayer {  }
+                            .background(actionButtonColor)
+                            .clip(CircleShape)
+                            .background(actionButtonColor),
+                        contentAlignment = Alignment.Center
+                    ) {
+
+                        Icon(
+                            imageVector = Icons.Default.HourglassEmpty,
+                            contentDescription = "",
+                            tint = Color.White,
+                            modifier = Modifier.size(70.dp)
+                        )
+                    }
+                }
+
+                Text(
+                    "PENDING APPROVAL!",
+                    fontSize = 4.em,
+                    modifier = Modifier.padding(top = 29.dp),
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                )
+
+                Row(modifier = Modifier.padding(start = 42.dp, end = 42.dp, top = 5.dp)) {
+
+                    Text(
+                        text = "Loan Request of Kes ${formatMoney(amount)} has been received , its is pending  approval",
+                        fontSize = 2.4.em
                     )
+
                 }
             }
 
-            Text(
-                "PENDING APPROVAL!",
-                fontSize = 4.em,
-                modifier = Modifier.padding(top = 29.dp),
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
-            )
+            Spacer(modifier = Modifier.padding(top = 26.dp))
 
-            Row(modifier = Modifier.padding(start = 42.dp, end = 42.dp, top = 5.dp)) {
+            Row(modifier = Modifier.padding(start = 25.dp, end = 25.dp, top = 70.dp)) {
 
-                Text(
-                    text = "Loan Request of Kes ${formatMoney(amount)} has been received , its is pending  approval",
-                    fontSize = 2.4.em
-                )
+                ActionButton("Check  Status", onClickContainer = {
 
+                })
             }
-        }
-
-        Spacer(modifier = Modifier.padding(top = 26.dp))
-
-        Row(modifier = Modifier.padding(start = 25.dp, end = 25.dp, top = 70.dp)) {
-
-            ActionButton("Check  Status", onClickContainer = {
-
-            })
         }
     }
 }

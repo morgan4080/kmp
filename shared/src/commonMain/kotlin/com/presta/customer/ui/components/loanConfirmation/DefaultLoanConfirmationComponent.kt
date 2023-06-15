@@ -193,7 +193,6 @@ class DefaultLoanConfirmationComponent(
             modeOfDisbursementState.collect { state ->
                 if (state.requestId !== null) {
                     val requestId = state.requestId
-                    delay(2000L)
                     onConfirmClicked(requestId, amount, 0.00)
                 }
             }
