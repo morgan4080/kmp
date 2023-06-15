@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentComposer
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -57,8 +58,21 @@ fun ModeOfDisbursementContent(
                 Spacer(modifier = Modifier.padding(top = 25.dp))
 
                 Row(modifier = Modifier.fillMaxWidth()) {
+                    //Navigate  to confirm  Screen  and execute  payment
                     ProductSelectionCard2("Mpesa", onClickContainer = {
-                        component.onMpesaSelected()
+                        component.onMpesaSelected(
+                            correlationId = component.correlationId,
+                            refId = component.refId,
+                            amount = component.amount,
+                            fees = component.fees,
+                            loanPeriod = component.loanPeriod,
+                            loanType = component.loanType,
+                            interestRate = component.interestRate,
+                            LoanName = component.loanName,
+                            loanPeriodUnit =component.loanPeriodUnit ,
+                            referencedLoanRefId = component.referencedLoanRefId,
+                            currentTerm =component.currentTerm
+                        )
                     })
 
                 }

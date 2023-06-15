@@ -74,6 +74,11 @@ fun ShortTermLoansContent(
                 tabIndex = 4
             }
         }
+        println("Eligibility")
+        println(state.prestaLoanEligibilityStatus)
+        println("Eligibility Condition")
+        println(state.prestaLoanEligibilityStatus !== null &&
+                state.prestaLoanEligibilityStatus.isEligible)
     }
 
     Surface(

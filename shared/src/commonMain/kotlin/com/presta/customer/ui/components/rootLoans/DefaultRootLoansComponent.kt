@@ -199,7 +199,8 @@ class DefaultRootLoansComponent(
                         loanOperation = "loan",
                         referencedLoanRefId = referencedLoanRefId,
                         currentTerm =currentTerm,
-                        fees = 0.0
+                        fees = 0.0,
+                        correlationId = ""
                     )
                 )
             },
@@ -282,7 +283,11 @@ class DefaultRootLoansComponent(
             loanType = config.loanType,
             fees = config.fees,
             referencedLoanRefId = config.referencedLoanRefId,
-            currentTerm = config.currentTerm
+            currentTerm = config.currentTerm,
+            correlationId = config.correlationId,
+            interestRate = config.interestRate,
+            loanName =config.loanName ,
+            loanPeriodUnit = config.loanPeriodUnit
         )
 
     private fun processingTransactionComponent(
@@ -358,7 +363,9 @@ class DefaultRootLoansComponent(
                         loanOperation = "topUp",
                         referencedLoanRefId = referencedLoanRefId,
                         currentTerm = currentTerm,
-                        fees = 0.0
+                        fees = 0.0,
+                        correlationId = "",
+
                     )
                 )
             },
@@ -376,7 +383,8 @@ class DefaultRootLoansComponent(
             loanPeriod = config.loanPeriod,
             loanPeriodUnit = config.loanPeriodUnit,
             loanOperation = "topUp",
-            referencedLoanRefId = config.referencedLoanRefId
+            referencedLoanRefId = config.referencedLoanRefId,
+
         )
 
     private sealed class ConfigLoans : Parcelable {
@@ -422,12 +430,14 @@ class DefaultRootLoansComponent(
             val loanType: LoanType,
             val interestRate: Double,
             val enteredAmount: Double,
-            val loanName: String,
             val loanPeriodUnit: String,
             val loanOperation: String,
             val referencedLoanRefId: String?,
             val currentTerm: Boolean,
-            val fees: Double
+            val fees: Double,
+            val correlationId: String,
+            val loanName: String
+
         ) : ConfigLoans()
 
         @Parcelize

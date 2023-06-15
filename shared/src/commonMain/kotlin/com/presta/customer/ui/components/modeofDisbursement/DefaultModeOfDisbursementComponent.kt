@@ -7,7 +7,6 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
-import com.presta.customer.network.loanRequest.model.DisbursementMethod
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
@@ -23,7 +22,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlin.coroutines.CoroutineContext
 
 fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineScope {
@@ -48,7 +46,7 @@ class DefaultModeOfDisbursementComponent(
         interestRate: Double,
         LoanName: String,
         loanPeriodUnit: String,
-        referencedLoanRefId: String,
+        referencedLoanRefId: String?,
         currentTerm: Boolean,
     ) -> Unit,
     private val onBankClicked: () -> Unit,
@@ -64,6 +62,10 @@ class DefaultModeOfDisbursementComponent(
     override val fees: Double,
     override val referencedLoanRefId: String?,
     override val currentTerm: Boolean,
+    override val interestRate: Double,
+    override val loanName: String,
+    override val loanPeriodUnit: String,
+    override val correlationId: String,
 ) : ModeOfDisbursementComponent, ComponentContext by componentContext {
     override val authStore: AuthStore =
         instanceKeeper.getStore {
@@ -84,6 +86,7 @@ class DefaultModeOfDisbursementComponent(
                 storeFactory = storeFactory
             ).create()
         }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     override val modeOfDisbursementState: StateFlow<ModeOfDisbursementStore.State> =
         modeOfDisbursementStore.stateFlow
@@ -119,11 +122,39 @@ class DefaultModeOfDisbursementComponent(
             }
         }
     }
-
     private var authUserScopeJob: Job? = null
 
     private var loanRequestScopeJob: Job? = null
-    override fun onMpesaSelected() {
+
+    override fun onMpesaSelected(
+        correlationId: String,
+        refId: String,
+        amount: Double,
+        fees: Double,
+        loanPeriod: String,
+        loanType: LoanType,
+        interestRate: Double,
+        LoanName: String,
+        loanPeriodUnit: String,
+        referencedLoanRefId: String?,
+        currentTerm: Boolean,
+        ) {
+
+        onMpesaClicked(
+            correlationId,
+            refId,
+            amount,
+            fees,
+            loanPeriod,
+            loanType,
+            interestRate,
+            LoanName,
+            loanPeriodUnit,
+            referencedLoanRefId,
+            currentTerm
+        )
+
+
         //business logic send   request and call the  appropriate screen  based on  the response
         /*if (authUserScopeJob?.isActive == true) return
         authUserScopeJob = scope.launch {

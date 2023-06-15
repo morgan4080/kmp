@@ -77,21 +77,7 @@ fun ShortTermProductList(
             fontSize = 14.sp,
             fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
         )
-
-        if (isEligible==true){
-
-
-        }else{
-
-            Text(
-                text = "",
-                modifier = Modifier.padding(top = 22.dp),
-                fontSize = 14.sp,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
-            )
-        }
-
-
+        
         val refreshState = rememberPullRefreshState(refreshing, ::refresh,)
 
         Box(Modifier.pullRefresh(refreshState)) {

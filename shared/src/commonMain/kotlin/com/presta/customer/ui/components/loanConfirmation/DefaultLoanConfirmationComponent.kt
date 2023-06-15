@@ -7,11 +7,14 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.presta.customer.network.loanRequest.model.DisbursementMethod
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
+import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStore
+import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStoreFactory
 import com.presta.customer.ui.components.profile.coroutineScope
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStoreFactory
@@ -35,6 +38,7 @@ fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
 
 class DefaultLoanConfirmationComponent(
     componentContext: ComponentContext,
+
     private val onConfirmClicked: (
         correlationId: String,
         amount: Double,
@@ -42,10 +46,10 @@ class DefaultLoanConfirmationComponent(
     ) -> Unit,
     private val onBackNavClicked: () -> Unit,
     storeFactory: StoreFactory,
+    mainContext: CoroutineContext,
     override val refId: String,
     override val amount: Double,
     override val loanPeriod: String,
-    mainContext: CoroutineContext,
     override val loanInterest: String,
     override val loanName: String,
     override val loanPeriodUnit: String,
@@ -65,17 +69,14 @@ class DefaultLoanConfirmationComponent(
             ).create()
         }
 
-    override fun onConfirmSelected(
-        correlationId: String,
-        amount: Double,
-        fees: Double
-    ) {
-        onConfirmClicked(
-            correlationId,
-            amount,
-            fees
-        )
-    }
+
+    override val modeOfDisbursementStore =
+        instanceKeeper.getStore {
+            ModeOfDisbursementStoreFactory(
+                storeFactory = storeFactory
+            ).create()
+        }
+
 
     override fun onBackNavSelected() {
         onBackNavClicked()
@@ -150,6 +151,56 @@ class DefaultLoanConfirmationComponent(
                 this.cancel()
             }
         }
+    }
+
+    //Execute   payment  on confirm
+
+    override fun onRequestLoanEvent(event: ModeOfDisbursementStore.Intent) {
+        modeOfDisbursementStore.accept(event)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val modeOfDisbursementState: StateFlow<ModeOfDisbursementStore.State> =
+        modeOfDisbursementStore.stateFlow
+
+    private var loanRequestScopeJob: Job? = null
+
+    override fun onConfirmSelected() {
+        if (authUserScopeJob?.isActive == true) return
+        authUserScopeJob = scope.launch {
+            authState.collect { state ->
+                if (state.cachedMemberData !== null) {
+                    onRequestLoanEvent(
+                        ModeOfDisbursementStore.Intent.RequestLoan(
+                            token = state.cachedMemberData.accessToken,
+                            amount = amount.toInt(),
+                            currentTerm = currentTerm,
+                            customerRefId = state.cachedMemberData.refId,
+                            disbursementAccountReference = state.cachedMemberData.phoneNumber,
+                            disbursementMethod = DisbursementMethod.MOBILEMONEY,
+                            loanPeriod = loanPeriod.toInt(),
+                            loanType = loanType,
+                            productRefId = refId,
+                            referencedLoanRefId = referencedLoanRefId,
+                            requestId = null,
+                            sessionId = state.cachedMemberData.session_id
+                        )
+                    )
+                }
+                this.cancel()
+            }
+        }
+
+        loanRequestScopeJob = scope.launch {
+            modeOfDisbursementState.collect { state ->
+                if (state.requestId !== null) {
+                    val requestId = state.requestId
+                    onConfirmClicked(requestId, amount, 0.00)
+
+                }
+            }
+        }
+
     }
 
     init {

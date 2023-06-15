@@ -57,11 +57,10 @@ fun LoanConfirmationContent(
                 Row(modifier = Modifier.padding(top = 30.dp)) {
                     ActionButton("Confirm", onClickContainer = {
                         // TODO ADD CORRELATION ID
-                        component.onConfirmSelected(
-                            correlationId = "",
-                            amount = component.amount,
-                            fees = 0.0
-                        )
+                        //Execute the payment
+                        //navigate  processing loan disbursement screen
+
+                        component.onConfirmSelected()
                     })
                 }
             }
