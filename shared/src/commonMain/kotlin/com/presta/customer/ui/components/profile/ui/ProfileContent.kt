@@ -128,9 +128,9 @@ fun ProfileContent(
 
     LaunchedEffect(authState.cachedMemberData) {
         if (authState.cachedMemberData !== null && authState.cachedMemberData.registrationFeeStatus == "NOT_PAID") {
-            delay(2000L)
             sheetState.show()
         } else {
+            delay(2000L)
             sheetState.hide()
         }
     }
