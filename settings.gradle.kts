@@ -19,6 +19,7 @@ pluginManagement {
 
         kotlin("jvm").version(kotlinVersion)
         kotlin("multiplatform").version(kotlinVersion)
+        kotlin("native.cocoapods").version(kotlinVersion)
         kotlin("android").version(kotlinVersion)
 
         id("com.android.application").version(agpVersion)

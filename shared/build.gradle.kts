@@ -21,7 +21,7 @@ kotlin {
         version = "1.0.0"
         summary = "Presta Customer Shared Module"
         homepage = "Link to the Shared Module homepage"
-        ios.deploymentTarget = "15.2"
+        ios.deploymentTarget = "14.1"
         podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "shared"
@@ -42,6 +42,11 @@ kotlin {
             export(deps.moko.resources.graphics)
         }
         extraSpecAttributes["resources"] = "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
+
+        // https://github.com/tonymillion/Reachability
+        pod("Reachability") {
+            version = "3.2"
+        }
     }
 
     sourceSets {
