@@ -35,6 +35,9 @@ import com.presta.customer.SharedStatus
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import dev.icerock.moko.resources.compose.painterResource
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,12 +45,15 @@ fun SplashScreen(component: SplashComponent, connectivityStatus: SharedStatus?) 
     val model by component.model.subscribeAsState()
     val authState by component.authState.collectAsState()
 
+    val connectivityState = MutableStateFlow(false)
+    val connectivity = connectivityState.collectAsState()
     LaunchedEffect(connectivityStatus) {
         if (connectivityStatus !== null) {
             connectivityStatus.current.collect{
-                println(":::::::connectivityStatus.current")
-                println(it)
-                println(":::::::connectivityStatus.collect")
+                connectivityState.update { st ->
+                    connectivityState.value = it
+                   st
+                }
             }
         }
     }
@@ -107,9 +113,7 @@ fun SplashScreen(component: SplashComponent, connectivityStatus: SharedStatus?) 
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    println("::::::::::::::authState.cachedMemberData")
-                    println(authState.cachedMemberData)
-                    if (authState.isLoading || authState.cachedMemberData?.session_id !== "") {
+                    if (authState.isLoading || authState.cachedMemberData?.session_id !== "" || connectivityStatus == null || !connectivity.value) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(25.dp).padding(end = 2.dp),
                             color = MaterialTheme.colorScheme.onSurface
