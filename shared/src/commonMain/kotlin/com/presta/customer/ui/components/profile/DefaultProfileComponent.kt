@@ -126,7 +126,7 @@ class DefaultProfileComponent(
                             phoneNumber = state.cachedMemberData.phoneNumber,
                             loanRefId = null,
                             beneficiaryPhoneNumber = null,
-                            amount = amount.toInt(),
+                            amount = amount,
                             paymentType = PaymentTypes.MEMBERSHIPFEES
                         )
                     )
