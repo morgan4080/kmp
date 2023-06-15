@@ -19,7 +19,8 @@ import platform.UIKit.UIViewController
 fun MainViewController(
     lifecycle: LifecycleRegistry,
     topSafeArea: Float,
-    bottomSafeArea: Float
+    bottomSafeArea: Float,
+    connectivityStatus: SharedStatus?
 ): UIViewController {
     initKoin()
     val root = DefaultRootComponent(

@@ -276,7 +276,9 @@ fun ProfileContent(
                                                 /*logout()*/
                                             },
                                             content = {
-                                                BadgedBox(badge = { Badge { Text("8") } }) {
+                                                BadgedBox(badge = {
+//                                                    Badge { Text("8") }
+                                                }) {
                                                     Icon(
                                                         imageVector = Icons.Filled.Apps,
                                                         modifier = Modifier.size(25.dp),

@@ -1,23 +1,42 @@
 package com.presta.customer.ui.components.auth
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.essenty.lifecycle.Lifecycle
+import com.arkivanov.essenty.lifecycle.LifecycleOwner
+import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
-import com.github.ln_12.library.ConnectivityStatus
-import com.github.ln_12.library.AppContext
+import com.presta.customer.AppContext
+import com.presta.customer.SharedStatus
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.onBoarding.store.OnBoardingStore
 import com.presta.customer.ui.components.onBoarding.store.OnBoardingStoreFactory
+import com.presta.customer.ui.components.profile.coroutineScope
 import com.presta.customer.ui.components.root.DefaultRootComponent
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
+
+fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineScope {
+    val scope = CoroutineScope(context)
+    lifecycle.doOnDestroy(scope::cancel)
+    return scope
+}
+
+fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
+    CoroutineScope(context, lifecycle)
 
 class DefaultAuthComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
+    mainContext: CoroutineContext,
     phoneNumber: String,
     isTermsAccepted: Boolean,
     isActive: Boolean,
@@ -51,22 +70,6 @@ class DefaultAuthComponent(
     @OptIn(ExperimentalCoroutinesApi::class)
     override val onBoardingState: StateFlow<OnBoardingStore.State> = onBoardingStore.stateFlow
 
-    init {
-        /*onEvent(AuthStore.Intent.AuthenticateClient(
-           client_secret = OrganisationModel.organisation.client_secret
-        ))*/
-    }
-
-    // authenticate client to get token
-    // token gives access to member api, member api will have pin status and terms status
-    // token access allows verified user to set pin on an account if terms not accepted or pinStatus != SET
-
-    // EVENTS
-    // - AuthenticateClient
-    // - GetMemberDetails
-    // - UpdateMember
-    // - LoginUser
-
     override fun onEvent(event: AuthStore.Intent) {
         authStore.accept(event)
     }
@@ -78,6 +81,8 @@ class DefaultAuthComponent(
     override fun navigate() {
         onLogin()
     }
+
+    private val scope = coroutineScope(mainContext + SupervisorJob())
 
     init {
 

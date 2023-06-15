@@ -12,8 +12,10 @@ import com.presta.customer.di.initKoin
 import com.presta.customer.ui.components.root.DefaultRootComponent
 
 class MainActivity : AppCompatActivity() {
+    var connectivityStatus: SharedStatus? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        connectivityStatus = SharedStatus(this)
         WindowCompat.setDecorFitsSystemWindows(window, true)
         initKoin(
             // add to build configuration, false in prod
@@ -28,8 +30,13 @@ class MainActivity : AppCompatActivity() {
         )
 
         setContent {
-            MainView(root)
+            MainView(root, connectivityStatus)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        connectivityStatus?.start()
     }
 
     override fun onDestroy() {

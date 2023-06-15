@@ -204,6 +204,7 @@ class DefaultRootComponent(
         DefaultAuthComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
             phoneNumber = config.phoneNumber,
             isTermsAccepted = config.isTermsAccepted,
             isActive = config.isActive,
