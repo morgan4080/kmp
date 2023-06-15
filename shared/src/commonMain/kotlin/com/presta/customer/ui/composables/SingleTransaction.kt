@@ -76,7 +76,15 @@ fun singleTransaction(transactionHistory:  List<PrestaTransactionHistoryResponse
                     }
                     Column {
                         Text(
-                            text = "${transaction.purpose}",
+                            modifier = Modifier.background(
+                                brush = ShimmerBrush(
+                                    targetValue = 1300f,
+                                    showShimmer = transaction.purpose === null
+                                ),
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                                .defaultMinSize(minHeight = 8.dp, minWidth = 100.dp),
+                            text = if (transaction.purpose !== null) "${transaction.purpose}" else "",
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 14.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)

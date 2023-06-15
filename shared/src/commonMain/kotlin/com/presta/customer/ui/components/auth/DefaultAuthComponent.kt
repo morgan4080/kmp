@@ -4,15 +4,16 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.github.ln_12.library.ConnectivityStatus
+import com.github.ln_12.library.AppContext
 import com.presta.customer.network.onBoarding.model.PinStatus
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.StateFlow
-import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.onBoarding.store.OnBoardingStore
 import com.presta.customer.ui.components.onBoarding.store.OnBoardingStoreFactory
 import com.presta.customer.ui.components.root.DefaultRootComponent
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.StateFlow
 
 class DefaultAuthComponent(
     componentContext: ComponentContext,
@@ -76,5 +77,9 @@ class DefaultAuthComponent(
 
     override fun navigate() {
         onLogin()
+    }
+
+    init {
+
     }
 }

@@ -13,9 +13,8 @@ plugins {
 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
 kotlin {
     android()
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    ios()
+//    iosSimulatorArm64()
 
     cocoapods {
         version = "1.0.0"
@@ -42,16 +41,12 @@ kotlin {
             export(deps.moko.resources.graphics)
         }
         extraSpecAttributes["resources"] = "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
-
-        // https://github.com/tonymillion/Reachability
-        pod("Reachability") {
-            version = "3.2"
-        }
     }
 
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation("com.github.ln-12:multiplatform-connectivity-status:1.2.0")
                 api("io.github.qdsfdhvh:image-loader:1.4.1")
                 implementation("com.moriatsushi.insetsx:insetsx:0.1.0-alpha07")
                 with(compose) {
@@ -134,10 +129,9 @@ kotlin {
             }
         }
 
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
+//        val iosSimulatorArm64Main by getting
+
+        val iosMain by getting {
             dependencies {
                 // Ktor
                 implementation(deps.ktor.clientDarwin)
@@ -151,9 +145,7 @@ kotlin {
             }
 
             dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
+//            iosSimulatorArm64Main.dependsOn(this)
         }
 
         multiplatformResources {
