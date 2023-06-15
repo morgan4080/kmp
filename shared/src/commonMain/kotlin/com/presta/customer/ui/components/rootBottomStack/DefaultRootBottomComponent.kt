@@ -34,6 +34,12 @@ class DefaultRootBottomComponent(
         amount: Double,
         mode: PaymentTypes
     ) -> Unit,
+    private val processLoanDisbursement: (
+        correlationId: String,
+        amount: Double,
+        fees:Double
+    ) -> Unit
+
 ) : RootBottomComponent, ComponentContext by componentContext {
 
     private val navigationBottomStackNavigation = StackNavigation<ConfigBottom>()
@@ -94,7 +100,11 @@ class DefaultRootBottomComponent(
             },
             navigateToProfile = {
                 navigationBottomStackNavigation.bringToFront(ConfigBottom.Profile)
+            },
+            processLoanDisbursement = {correlationId, amount,fees->
+              processLoanDisbursement(correlationId, amount, fees)
             }
+
         )
 
     private fun rootSavingsComponent(componentContext: ComponentContext): RootSavingsComponent =

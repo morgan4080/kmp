@@ -15,10 +15,12 @@ import com.presta.customer.ui.components.otp.ui.OtpScreen
 import com.presta.customer.ui.components.payLoan.ui.PayLoanScreen
 import com.presta.customer.ui.components.payLoanPropmpt.ui.PayLoanPromptScreen
 import com.presta.customer.ui.components.payRegistrationFeePrompt.ui.PayRegistrationFeeScreen
+import com.presta.customer.ui.components.processLoanDisbursement.ui.ProcessLoanDisbursementScreen
 import com.presta.customer.ui.components.processingTransaction.ui.ProcessingTransactionScreen
 import com.presta.customer.ui.components.registration.ui.RegistrationScreen
 import com.presta.customer.ui.components.root.RootComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomScreen
+import com.presta.customer.ui.components.rootLoans.RootLoansComponent
 import com.presta.customer.ui.components.splash.SplashScreen
 import com.presta.customer.ui.components.transactionHistory.ui.TransactionHistoryScreen
 import com.presta.customer.ui.components.welcome.WelcomeScreen
@@ -53,6 +55,7 @@ fun AppRootUi(component: RootComponent) {
             is RootComponent.Child.PayLoanPromptChild-> PayLoanPromptScreen(child.component)
             is RootComponent.Child.PayRegistrationFeeChild-> PayRegistrationFeeScreen(child.component)
             is RootComponent.Child.ProcessingTransactionChild-> ProcessingTransactionScreen(child.component)
+            is RootComponent.Child.ProcessingLoanDisbursementChild-> ProcessLoanDisbursementScreen(child.component)
         }
     }
 }

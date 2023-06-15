@@ -70,7 +70,7 @@ class PrestaShortTermLoansClient(
         session_id: String,
         customerRefId: String,
     ): PrestaLoanEligibilityResponse {
-        return loanRequestErrorHandler {
+        return shortTermLoansErrorHandler {
             httpClient.post(NetworkConstants.PrestaLoanEligibility.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 contentType(ContentType.Application.Json)

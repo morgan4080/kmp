@@ -14,6 +14,7 @@ import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.presta.customer.network.loanRequest.model.LoanRequestStatus
 import com.presta.customer.network.loanRequest.model.LoanType
+import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.network.payments.model.PaymentStatuses
 import com.presta.customer.prestaDispatchers
 import com.presta.customer.ui.components.applyLoan.DefaultApplyLoanComponent
@@ -44,6 +45,13 @@ class DefaultRootLoansComponent(
     val storeFactory: StoreFactory,
     val pop: () -> Unit = {},
     val navigateToProfile: () -> Unit = {},
+    private val processLoanDisbursement: (
+        correlationId: String,
+        amount: Double,
+        fees:Double
+    ) -> Unit
+
+
 ) : RootLoansComponent, ComponentContext by componentContext {
     private val loansNavigation = StackNavigation<ConfigLoans>()
 
@@ -88,10 +96,6 @@ class DefaultRootLoansComponent(
 
         is ConfigLoans.ProcessingTransaction -> RootLoansComponent.ChildLoans.ProcessingTransactionChild(
             processingTransactionComponent(componentContext, config)
-        )
-
-        is ConfigLoans.ProcessingLoanLoanDisbursement -> RootLoansComponent.ChildLoans.ProcessingLoanDisbursementChild(
-            processingLoanLoanDisbursementComponent(componentContext, config)
         )
 
         is ConfigLoans.BankDisbursement -> RootLoansComponent.ChildLoans.BankDisbursementChild(
@@ -260,13 +264,14 @@ class DefaultRootLoansComponent(
         DefaultModeOfDisbursementComponent(
             componentContext = componentContext,
             onMpesaClicked = { correlationId, amount, fees ->
-                loansNavigation.push(
-                    ConfigLoans.ProcessingLoanLoanDisbursement(
-                        correlationId,
-                        amount,
-                        fees
-                    )
-                )
+//                loansNavigation.push(
+//                    Config.ProcessingLoanLoanDisbursement(
+//                        correlationId,
+//                        amount,
+//                        fees
+//                    )
+//                )
+                processLoanDisbursement(correlationId,amount,fees)
             },
             onBankClicked = {
                 //navigate to  BankDisbursement Screen
@@ -319,27 +324,6 @@ class DefaultRootLoansComponent(
             }
         )
 
-    private fun processingLoanLoanDisbursementComponent(
-        componentContext: ComponentContext,
-        config: ConfigLoans.ProcessingLoanLoanDisbursement
-    ): ProcessLoanDisbursementComponent =
-        DefaultProcessLoanDisbursementComponent(
-            storeFactory = storeFactory,
-            componentContext = componentContext,
-            requestId = config.correlationId,
-            amount = config.amount,
-            mainContext = prestaDispatchers.main,
-            fees = config.fees
-        ) { loanRequestStatus ->
-            if (loanRequestStatus == LoanRequestStatus.COMPLETED) {
-               // loansNavigation.push(ConfigLoans.SuccessfulTransaction)
-            }
-
-            if (loanRequestStatus == LoanRequestStatus.FAILED
-            ) {
-               // loansNavigation.push(ConfigLoans.FailedTransaction)
-            }
-        }
 
     private fun bankDisbursementComponent(componentContext: ComponentContext): BankDisbursementComponent =
         DefaultBankDisbursementComponent(
@@ -454,12 +438,6 @@ class DefaultRootLoansComponent(
         data class ProcessingTransaction(val correlationId: String, val amount: Double) :
             ConfigLoans()
 
-        @Parcelize
-        data class ProcessingLoanLoanDisbursement(
-            val correlationId: String,
-            val amount: Double,
-            val fees: Double
-        ) : ConfigLoans()
 
         @Parcelize
         object BankDisbursement : ConfigLoans()

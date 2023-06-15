@@ -139,7 +139,6 @@ class DefaultModeOfDisbursementComponent(
             modeOfDisbursementState.collect { state ->
                 if (state.requestId!==null) {
                     val requestId = state.requestId
-
                     onMpesaClicked(requestId,amount,0.00)
                     this.cancel()
                 }

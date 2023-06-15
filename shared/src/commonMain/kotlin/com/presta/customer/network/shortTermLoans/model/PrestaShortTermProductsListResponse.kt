@@ -4,20 +4,6 @@ import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 
-// {
-//  "refId":"gYHLSIKmNLYrM9Lw",
-//  "name":"Jiinue",
-//  "interestRate":0.0,
-//  "interestPeriodCycle":"DAILY",
-//  "isInterestGraduated":false,
-//  "daysAvailable":"",
-//  "loanPeriodUnit":"DAYS",
-//  "minTerm":1,
-//  "maxTerm":10,
-//  "minAmount":50.0,
-//  "maxAmount":100.0
-//  }
-
 @Serializable
 data class PrestaShortTermProductsListResponse @OptIn(ExperimentalSerializationApi::class) constructor(
     @EncodeDefault val name: String? = null,

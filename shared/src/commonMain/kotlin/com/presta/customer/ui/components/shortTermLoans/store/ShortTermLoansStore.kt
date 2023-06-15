@@ -18,8 +18,8 @@ interface ShortTermLoansStore: Store<ShortTermLoansStore.Intent,ShortTermLoansSt
         val error: String? = null,
         val prestaShortTermProductList: List<PrestaShortTermProductsListResponse> = emptyList(),
         val  prestaShortTermTopUpList: PrestaShortTermTopUpListResponse? = null,
-        val prestaShortTermLoanProductById: PrestaShortTermProductsListResponse?=null,
-        val prestaLoanEligibilityStatus: PrestaLoanEligibilityResponse?=null
+        val prestaShortTermLoanProductById: PrestaShortTermProductsListResponse? = null,
+        val prestaLoanEligibilityStatus: PrestaLoanEligibilityResponse? = null
 
     )
 }

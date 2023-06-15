@@ -44,7 +44,6 @@ fun RootLoansScreen(component: RootLoansComponent) {
                 is RootLoansComponent.ChildLoans.ConfirmLoanChild-> LoansConfirmationScreen(child.component,innerPadding)
                 is RootLoansComponent.ChildLoans.DisbursementModeChild-> SelectModeOfDisbursementScreen(child.component)
                 is RootLoansComponent.ChildLoans.ProcessingTransactionChild-> ProcessingTransactionScreen(child.component)
-                is RootLoansComponent.ChildLoans.ProcessingLoanDisbursementChild-> ProcessLoanDisbursementScreen(child.component)
                 is RootLoansComponent.ChildLoans.BankDisbursementChild-> BankDisbursementScreen(child.component)
                 is RootLoansComponent.ChildLoans.SuccessfulTransactionChild-> SuccessfulTransactionScreen(child.component)
                 is RootLoansComponent.ChildLoans.FailedTransactionChild-> FailedTransactionScreen(child.component)

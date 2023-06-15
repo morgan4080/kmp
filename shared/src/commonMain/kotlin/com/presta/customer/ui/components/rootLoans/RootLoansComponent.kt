@@ -30,7 +30,6 @@ interface RootLoansComponent {
         class DisbursementModeChild(val component: ModeOfDisbursementComponent) : ChildLoans()
 
         class ProcessingTransactionChild(val component: ProcessingTransactionComponent) : ChildLoans()
-        class ProcessingLoanDisbursementChild(val component: ProcessLoanDisbursementComponent) : ChildLoans()
         class BankDisbursementChild(val component: BankDisbursementComponent) : ChildLoans()
         class SuccessfulTransactionChild(val component: SuccessfulTransactionComponent) : ChildLoans()
         class FailedTransactionChild(val component: FailedTransactionComponent) : ChildLoans()

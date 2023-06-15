@@ -12,6 +12,7 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.presta.customer.network.loanRequest.model.LoanRequestStatus
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.network.payments.model.PaymentStatuses
@@ -28,12 +29,16 @@ import com.presta.customer.ui.components.payLoanPropmpt.DefaultPayLoanPromptComp
 import com.presta.customer.ui.components.payLoanPropmpt.PayLoanPromptComponent
 import com.presta.customer.ui.components.payRegistrationFeePrompt.DefaultPayRegistrationFeeComponent
 import com.presta.customer.ui.components.payRegistrationFeePrompt.PayRegistrationFeeComponent
+import com.presta.customer.ui.components.processLoanDisbursement.DefaultProcessLoanDisbursementComponent
+import com.presta.customer.ui.components.processLoanDisbursement.ProcessLoanDisbursementComponent
 import com.presta.customer.ui.components.processingTransaction.DefaultProcessingTransactionComponent
 import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
 import com.presta.customer.ui.components.registration.DefaultRegistrationComponent
 import com.presta.customer.ui.components.registration.RegistrationComponent
 import com.presta.customer.ui.components.rootBottomStack.DefaultRootBottomComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
+import com.presta.customer.ui.components.rootLoans.DefaultRootLoansComponent
+import com.presta.customer.ui.components.rootLoans.RootLoansComponent
 import com.presta.customer.ui.components.splash.DefaultSplashComponent
 import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.transactionHistory.DefaultTransactionHistoryComponent
@@ -73,6 +78,10 @@ class DefaultRootComponent(
             is Config.PayRegistrationFee->RootComponent.Child.PayRegistrationFeeChild(payRegistrationFeeComponent(componentContext, config))
             is Config.PayLoan->RootComponent.Child.PayLoanChild(payLoanComponent(componentContext))
             is Config.ProcessingTransaction->RootComponent.Child.ProcessingTransactionChild(processingTransactionComponent(componentContext, config))
+            is Config.ProcessingLoanLoanDisbursement -> RootComponent.Child.ProcessingLoanDisbursementChild(
+                processingLoanLoanDisbursementComponent(componentContext, config)
+            )
+
         }
 
     private fun splashComponent(componentContext: ComponentContext): SplashComponent =
@@ -223,6 +232,9 @@ class DefaultRootComponent(
             },
             processTransaction = {correlationId, amount, mode ->
                 navigation.bringToFront(Config.ProcessingTransaction(correlationId, amount, mode))
+            },
+            processLoanDisbursement = {correlationId, amount, fees, ->
+                navigation.bringToFront(Config.ProcessingLoanLoanDisbursement(correlationId, amount, fees))
             }
         )
 
@@ -297,6 +309,29 @@ class DefaultRootComponent(
         )
 
 
+    private fun processingLoanLoanDisbursementComponent(
+        componentContext: ComponentContext,
+        config: Config .ProcessingLoanLoanDisbursement
+    ): ProcessLoanDisbursementComponent =
+        DefaultProcessLoanDisbursementComponent(
+            storeFactory = storeFactory,
+            componentContext = componentContext,
+            requestId = config.correlationId,
+            amount = config.amount,
+            mainContext = prestaDispatchers.main,
+            fees = config.fees
+        ) { loanRequestStatus ->
+            if (loanRequestStatus == LoanRequestStatus.COMPLETED) {
+                // loansNavigation.push(ConfigLoans.SuccessfulTransaction)
+            }
+
+            if (loanRequestStatus == LoanRequestStatus.FAILED
+            ) {
+                // loansNavigation.push(ConfigLoans.FailedTransaction)
+            }
+        }
+
+
 
     enum class OnBoardingContext {
         LOGIN,
@@ -328,5 +363,8 @@ class DefaultRootComponent(
         data class PayRegistrationFee(val amount: Double, val correlationId: String) :Config()
         @Parcelize
         data class ProcessingTransaction(val correlationId: String, val amount: Double,val mode: PaymentTypes) :Config()
+
+        @Parcelize
+        data class ProcessingLoanLoanDisbursement(val correlationId: String, val amount: Double, val fees: Double) : Config()
     }
 }

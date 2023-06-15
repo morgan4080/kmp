@@ -187,7 +187,7 @@ class ShortTermLoansStoreFactory(
                     session_id = session_id,
                     customerRefId = customerRefId
                 ).onSuccess { response ->
-                    println("getShortTermToPUpListData::::::Loaded")
+                    println("LoanEligibility Data :::::Loaded")
                     println(response)
                     dispatch(Msg.LoanEligibilityStatusLoaded(response))
                 }.onFailure { e ->
