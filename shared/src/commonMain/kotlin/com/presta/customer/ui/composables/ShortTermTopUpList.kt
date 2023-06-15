@@ -29,7 +29,6 @@ import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStor
 import com.presta.customer.ui.helpers.formatMoney
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShortTermTopUpList(
     component: ShortTermLoansComponent,
