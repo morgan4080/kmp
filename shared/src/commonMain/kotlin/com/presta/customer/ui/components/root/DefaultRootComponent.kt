@@ -37,8 +37,6 @@ import com.presta.customer.ui.components.registration.DefaultRegistrationCompone
 import com.presta.customer.ui.components.registration.RegistrationComponent
 import com.presta.customer.ui.components.rootBottomStack.DefaultRootBottomComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
-import com.presta.customer.ui.components.rootLoans.DefaultRootLoansComponent
-import com.presta.customer.ui.components.rootLoans.RootLoansComponent
 import com.presta.customer.ui.components.splash.DefaultSplashComponent
 import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.transactionHistory.DefaultTransactionHistoryComponent
@@ -229,7 +227,7 @@ class DefaultRootComponent(
                 navigation.bringToFront(Config.PayLoan)
             },
             gotoPayRegistrationFees = { correlationId, amount ->
-                navigation.bringToFront(Config.PayRegistrationFee(amount, correlationId))
+                navigation.bringToFront(Config.ProcessingTransaction(amount = amount, correlationId = correlationId, mode = PaymentTypes.MEMBERSHIPFEES))
             },
             processTransaction = {correlationId, amount, mode ->
                 navigation.bringToFront(Config.ProcessingTransaction(correlationId, amount, mode))
@@ -255,7 +253,7 @@ class DefaultRootComponent(
             mainContext = prestaDispatchers.main,
             componentContext = componentContext,
             onPayClicked = { amount, correlationId ->
-                navigation.push(Config.PayLoanPrompt(amount, correlationId))
+                navigation.push(Config.ProcessingTransaction(amount = amount.toDouble(), correlationId = correlationId, mode = PaymentTypes.LOAN))
             },
             onPop = {
                 navigation.pop()

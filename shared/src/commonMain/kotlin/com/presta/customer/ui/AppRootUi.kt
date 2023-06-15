@@ -9,6 +9,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scal
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.moriatsushi.insetsx.SystemBarsBehavior
 import com.moriatsushi.insetsx.rememberWindowInsetsController
+import com.presta.customer.SharedStatus
 import com.presta.customer.ui.components.auth.ui.AuthScreen
 import com.presta.customer.ui.components.onBoarding.ui.OnBoardingScreen
 import com.presta.customer.ui.components.otp.ui.OtpScreen
@@ -26,7 +27,7 @@ import com.presta.customer.ui.components.transactionHistory.ui.TransactionHistor
 import com.presta.customer.ui.components.welcome.WelcomeScreen
 
 @Composable
-fun AppRootUi(component: RootComponent) {
+fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
 
     val windowInsetsController = rememberWindowInsetsController()
     LaunchedEffect(Unit) {
@@ -43,7 +44,7 @@ fun AppRootUi(component: RootComponent) {
         animation = stackAnimation(fade() + scale()),// tabAnimation()
     ) {
         when (val child = it.instance) {
-            is RootComponent.Child.SplashChild -> SplashScreen(child.component)
+            is RootComponent.Child.SplashChild -> SplashScreen(child.component, connectivityStatus)
             is RootComponent.Child.WelcomeChild -> WelcomeScreen(child.component)
             is RootComponent.Child.OnboardingChild -> OnBoardingScreen(child.component)
             is RootComponent.Child.OTPChild -> OtpScreen(child.component)

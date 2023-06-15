@@ -36,7 +36,7 @@ fun MainViewController(
         // Bind safe area as the value for helpers.getLocalSafeArea
         CompositionLocalProvider(LocalSafeArea provides safeArea) {
             AppTheme {
-                AppRootUi(root)
+                AppRootUi(root, connectivityStatus)
             }
         }
     }

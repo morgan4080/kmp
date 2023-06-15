@@ -38,6 +38,7 @@ import androidx.compose.material.icons.outlined.CreditCard
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Savings
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -163,7 +164,7 @@ fun ProfileContent(
 
     val refreshState = rememberPullRefreshState(refreshing, ::refresh)
 
-    val items = listOf("Home" to Icons.Outlined.Home, "Favorite" to Icons.Outlined.Favorite)
+    val items = listOf("Log Out" to Icons.Outlined.Logout)
     var selectedItem by remember { mutableStateOf(items[0]) }
 
     val scopeDrawer = rememberCoroutineScope()
@@ -175,6 +176,7 @@ fun ProfileContent(
             MainModalDrawerSheet(
                 items = items,
                 authState,
+                logout,
                 selectedItem = selectedItem,
                 onItemsClick = { item ->
                     scopeDrawer.launch { drawerState.close() }

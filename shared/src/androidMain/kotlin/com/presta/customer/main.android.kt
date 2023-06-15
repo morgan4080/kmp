@@ -6,5 +6,5 @@ import com.presta.customer.ui.components.root.RootComponent
 import com.presta.customer.ui.theme.AppTheme
 
 @Composable fun MainView(component: RootComponent, connectivityStatus: SharedStatus?) = AppTheme {
-    AppRootUi(component)
+    AppRootUi(component, connectivityStatus)
 }

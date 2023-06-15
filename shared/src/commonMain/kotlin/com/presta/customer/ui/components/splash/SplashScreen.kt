@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.presta.customer.MR
+import com.presta.customer.SharedStatus
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.ui.components.root.DefaultRootComponent
 import dev.icerock.moko.resources.compose.fontFamilyResource
@@ -40,9 +41,19 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SplashScreen(component: SplashComponent) {
+fun SplashScreen(component: SplashComponent, connectivityStatus: SharedStatus?) {
     val model by component.model.subscribeAsState()
     val authState by component.authState.collectAsState()
+
+    LaunchedEffect(connectivityStatus) {
+        if (connectivityStatus !== null) {
+            connectivityStatus.current.collect{
+                println(":::::::connectivityStatus.current")
+                println(it)
+                println(":::::::connectivityStatus.collect")
+            }
+        }
+    }
 
     Scaffold (
         modifier = Modifier.
@@ -99,7 +110,9 @@ fun SplashScreen(component: SplashComponent) {
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    if (authState.isLoading || authState.cachedMemberData !== null) {
+                    println("::::::::::::::authState.cachedMemberData")
+                    println(authState.cachedMemberData)
+                    if (authState.isLoading || authState.cachedMemberData?.session_id !== "") {
                         CircularProgressIndicator(
                             modifier = Modifier.size(25.dp).padding(end = 2.dp),
                             color = MaterialTheme.colorScheme.onSurface

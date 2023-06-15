@@ -271,21 +271,12 @@ fun MoreDetails(
                     }
 
                     Text(
-                        text = "Loan Balance",
                         modifier = Modifier
-                            .padding(top = 7.dp),
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                            .padding(vertical = 7.dp),
+                        text = "Balance: KES ${formatMoney(loanBreakDown.totalBalance)}",
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                     )
-
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                    ){
-                        Text(
-                            text = "KES ${formatMoney(loanBreakDown.totalBalance)}",
-                            fontSize = MaterialTheme.typography.headlineSmall.fontSize,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                        )
-                    }
 
                     val loanDetailsMap: MutableMap<String, String?> = mutableMapOf(
                         "Loan Type" to loanBreakDown.loanType,
@@ -317,7 +308,7 @@ fun MoreDetails(
                     }
 
                     Row(modifier = Modifier
-                        .fillMaxWidth().padding(vertical = 12.dp)
+                        .fillMaxWidth().padding(top = 14.dp, bottom = 7.dp)
                     ) {
                         Text(text = "Loan schedule",
                             style = MaterialTheme.typography.labelLarge,
