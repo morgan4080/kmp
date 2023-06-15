@@ -65,32 +65,26 @@ class DefaultLoanTopUpComponent(
 
     override fun onProceedSelected(
         refId: String,
-        minAmount: Double,
-        maxAmount: Double,
-        loanName: String,
-        InterestRate: Double,
-        enteredAmount: Double,
+        amount: Double,
         loanPeriod: String,
-        loanPeriodUnit: String,
         loanType:LoanType,
+        loanName: String,
+        interest: Double,
+        loanPeriodUnit: String,
         referencedLoanRefId:String,
         currentTerm:Boolean
-
     ) {
-       /* onProceedClicked(
+        onProceedClicked(
             refId,
-            minAmount,
-            maxAmount,
-            loanName,
-            InterestRate,
-            enteredAmount,
+            amount,
             loanPeriod,
-            loanPeriodUnit,
             loanType,
+            loanName,
+            interest,
+            loanPeriodUnit,
             referencedLoanRefId,
             currentTerm
-
-        )*/
+        )
     }
 
     override fun onBackNavSelected() {

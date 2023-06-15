@@ -58,20 +58,13 @@ fun ModeOfDisbursementContent(
 
                 Row(modifier = Modifier.fillMaxWidth()) {
                     ProductSelectionCard2("Mpesa", onClickContainer = {
-                        //Business  Logic
-                        //Navigate to processing Transaction
-                        //show failed or success based on the  state
                         component.onMpesaSelected()
-
                     })
 
                 }
 
                 Row(modifier = Modifier.fillMaxWidth().padding(top = 11.dp)) {
-
                     ProductSelectionCard2("Bank", onClickContainer = {
-                        //Business  Logic
-                        //Navigate to bank disbursement
                         component.onBankSelected()
                     })
 

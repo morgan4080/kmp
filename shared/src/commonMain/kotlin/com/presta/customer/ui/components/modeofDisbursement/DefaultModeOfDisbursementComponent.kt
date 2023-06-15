@@ -125,7 +125,7 @@ class DefaultModeOfDisbursementComponent(
     private var loanRequestScopeJob: Job? = null
     override fun onMpesaSelected() {
         //business logic send   request and call the  appropriate screen  based on  the response
-        if (authUserScopeJob?.isActive == true) return
+        /*if (authUserScopeJob?.isActive == true) return
         authUserScopeJob = scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
@@ -153,11 +153,24 @@ class DefaultModeOfDisbursementComponent(
             modeOfDisbursementState.collect { state ->
                 if (state.requestId !== null) {
                     val requestId = state.requestId
-//                    onMpesaClicked(requestId,amount,0.00)
+                    *//*correlationId: String,
+                        refId: String,
+                        amount: Double,
+                        fees: Double,
+                        loanPeriod: String,
+                        loanType: LoanType,
+                        interestRate: Double,
+                        LoanName: String,
+                        loanPeriodUnit: String,
+                        referencedLoanRefId: String,
+                        currentTerm: Boolean,
+
+                        requestId,amount,0.00*//*
+
                     this.cancel()
                 }
             }
-        }
+        }*/
     }
 
     override fun onBankSelected() {

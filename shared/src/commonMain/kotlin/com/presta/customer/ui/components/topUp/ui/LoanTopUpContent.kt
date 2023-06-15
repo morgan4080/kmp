@@ -273,23 +273,18 @@ fun LoanTopUpContent(
                         .fillMaxWidth()
                         .padding(top = 44.dp)
                 ) {
-
                     ActionButton("Proceed", onClickContainer = {
                         component.onProceedSelected(
                             component.loanRefId,
-                            component.minAmount.toDouble(),
-                            component.maxAmount,
-                            component.loanName,
-                            component.interestRate,
                             amount.text.toDouble(),
                             component.loanPeriod,
-                            component.loanPeriodUnit,
                             LoanType._TOP_UP,
-                            referencedLoanRefId = component.referencedLoanRefId,
-                            currentTerm = currentTerm
+                            component.loanName,
+                            component.interestRate,
+                            component.loanPeriodUnit,
+                            component.referencedLoanRefId,
+                            currentTerm
                         )
-
-
                     }, enabled = amount.text != "" && !isError && labelText!="")
                 }
             }

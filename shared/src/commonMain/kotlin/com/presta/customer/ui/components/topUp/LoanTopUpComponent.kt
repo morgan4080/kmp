@@ -18,17 +18,14 @@ interface LoanTopUpComponent {
     val referencedLoanRefId: String
     fun onProceedSelected(
         refId: String,
-        minAmount: Double,
-        maxAmount: Double,
-        loanName: String,
-        InterestRate: Double,
-        enteredAmount: Double,
+        amount: Double,
         loanPeriod: String,
-        loanPeriodUnit : String,
-        loanType: LoanType,
+        loanType:LoanType,
+        loanName: String,
+        interest: Double,
+        loanPeriodUnit: String,
         referencedLoanRefId:String,
         currentTerm:Boolean
-
     )
 
     fun onBackNavSelected()
