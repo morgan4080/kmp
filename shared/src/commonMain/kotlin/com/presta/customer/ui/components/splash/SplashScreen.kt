@@ -99,7 +99,7 @@ fun SplashScreen(component: SplashComponent) {
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    if (authState.isLoading) {
+                    if (authState.isLoading || authState.cachedMemberData !== null) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(25.dp).padding(end = 2.dp),
                             color = MaterialTheme.colorScheme.onSurface
