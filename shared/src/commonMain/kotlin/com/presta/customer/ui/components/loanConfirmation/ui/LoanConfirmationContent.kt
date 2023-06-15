@@ -61,7 +61,8 @@ fun LoanConfirmationContent(
                         //navigate  processing loan disbursement screen
 
                         component.onConfirmSelected()
-                    })
+                        println("confirmed")
+                    }, loading = state.isLoading || authState.isLoading)
                 }
             }
         }

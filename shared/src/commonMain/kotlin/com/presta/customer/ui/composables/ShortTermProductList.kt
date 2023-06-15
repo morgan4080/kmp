@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -114,25 +116,33 @@ fun ShortTermProductList(
                 }
 
                 if (productRefId=="") {
-                    items(4) {
-                        ElevatedCard(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 30.dp, bottom = 30.dp)
-                        ) {
-                            Box(
+                    items(6) {
+
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp, bottom = 10.dp),){
+                            ElevatedCard(
                                 modifier = Modifier
-                                    .defaultMinSize(40.dp, 40.dp)
-                                    .background(
-                                        ShimmerBrush(
-                                            targetValue = 1300f,
-                                            showShimmer = true
-                                        )
-                                    )
                                     .fillMaxWidth()
+                                    .background(color = androidx.compose.material3.MaterialTheme.colorScheme.inverseOnSurface),
+                                colors = CardDefaults.elevatedCardColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.inverseOnSurface)
                             ) {
+                                Box(
+                                    modifier = Modifier
+                                        .defaultMinSize(40.dp, 40.dp)
+                                        .background(
+                                            ShimmerBrush(
+                                                targetValue = 1300f,
+                                                showShimmer = true
+                                            )
+                                        )
+                                        .fillMaxWidth()
+                                ) {
+                                }
                             }
+
                         }
+
                     }
                 }
                 item {

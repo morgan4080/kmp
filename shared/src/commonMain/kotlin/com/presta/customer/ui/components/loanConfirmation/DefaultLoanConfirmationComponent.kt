@@ -23,6 +23,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
@@ -163,11 +164,8 @@ class DefaultLoanConfirmationComponent(
     override val modeOfDisbursementState: StateFlow<ModeOfDisbursementStore.State> =
         modeOfDisbursementStore.stateFlow
 
-    private var loanRequestScopeJob: Job? = null
-
     override fun onConfirmSelected() {
-        if (authUserScopeJob?.isActive == true) return
-        authUserScopeJob = scope.launch {
+        scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
                     onRequestLoanEvent(
@@ -186,17 +184,17 @@ class DefaultLoanConfirmationComponent(
                             sessionId = state.cachedMemberData.session_id
                         )
                     )
+                    this.cancel()
                 }
-                this.cancel()
             }
         }
 
-        loanRequestScopeJob = scope.launch {
+        scope.launch {
             modeOfDisbursementState.collect { state ->
                 if (state.requestId !== null) {
                     val requestId = state.requestId
+                    delay(2000L)
                     onConfirmClicked(requestId, amount, 0.00)
-
                 }
             }
         }
