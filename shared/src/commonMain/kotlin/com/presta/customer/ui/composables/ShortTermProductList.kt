@@ -49,7 +49,8 @@ fun ShortTermProductList(
     var refreshing by remember { mutableStateOf(false) }
     val refreshScope = rememberCoroutineScope()
     var productRefId= ""
-
+    val isEligibleForNormalLoanAndTopUp=state.prestaLoanEligibilityStatus?.isEligibleForNormalLoanAndTopup
+    val isEligible=state.prestaLoanEligibilityStatus?.isEligible
 
     fun refresh() = refreshScope.launch {
         refreshing = true
@@ -76,6 +77,21 @@ fun ShortTermProductList(
             fontSize = 14.sp,
             fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
         )
+
+        if (isEligible==true){
+
+
+        }else{
+
+            Text(
+                text = "",
+                modifier = Modifier.padding(top = 22.dp),
+                fontSize = 14.sp,
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+            )
+        }
+
+
         val refreshState = rememberPullRefreshState(refreshing, ::refresh,)
 
         Box(Modifier.pullRefresh(refreshState)) {

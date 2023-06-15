@@ -148,8 +148,6 @@ fun ShortTermTopUpList(
                                 }
                             }
                         }
-                        println("Loan Id:::::")
-                        println(maxAmount)
                     }
                 }
             }, enabled = enabled && selectedIndex >= 0  )

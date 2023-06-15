@@ -95,10 +95,10 @@ class DefaultShortTermLoansComponent(
 
     override fun onConfirmSelected(
         refId: String,
-        maxAmmount: Double,
         minAmount: Double,
+        maxAmount: Double,
         loanName: String,
-        interestRate: Double,
+        InterestRate: Double,
         loanPeriod: String,
         loanPeriodUnit: String,
         referencedLoanRefId: String
@@ -106,10 +106,10 @@ class DefaultShortTermLoansComponent(
     ) {
         onConfirmClicked(
             refId,
-            maxAmmount,
             minAmount,
+            maxAmount,
             loanName,
-            interestRate,
+            InterestRate,
             loanPeriod,
             loanPeriodUnit,
             referencedLoanRefId
@@ -154,6 +154,14 @@ class DefaultShortTermLoansComponent(
                             token = state.cachedMemberData.accessToken,
                             session_id = state.cachedMemberData.session_id,
                             refId = state.cachedMemberData.refId
+                        )
+                    )
+
+                    onEvent(
+                        ShortTermLoansStore.Intent.GetPrestaLoanEligibilityStatus(
+                            token = state.cachedMemberData.accessToken,
+                            session_id = state.cachedMemberData.session_id,
+                            customerRefId = state.cachedMemberData.refId
                         )
                     )
                 }

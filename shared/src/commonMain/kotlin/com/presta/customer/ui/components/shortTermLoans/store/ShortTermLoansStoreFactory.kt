@@ -6,6 +6,7 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.shortTermLoans.data.ShortTermLoansRepository
+import com.presta.customer.network.shortTermLoans.model.PrestaLoanEligibilityResponse
 import com.presta.customer.network.shortTermLoans.model.PrestaShortTermProductsListResponse
 import com.presta.customer.network.shortTermLoans.model.PrestaShortTermTopUpListResponse
 import com.presta.customer.prestaDispatchers
@@ -41,6 +42,8 @@ class ShortTermLoansStoreFactory(
         data class ShortTermTopUpListLoaded(val shortTermTopUpList: PrestaShortTermTopUpListResponse) :
             Msg()
 
+        data  class LoanEligibilityStatusLoaded(val loanEligibilityStatus: PrestaLoanEligibilityResponse) : Msg()
+
         data class ShortTermLoansFailed(val error: String?) : Msg()
     }
 
@@ -75,7 +78,7 @@ class ShortTermLoansStoreFactory(
                 is ShortTermLoansStore.Intent.GetPrestaLoanEligibilityStatus -> getLoanEligibilityStatus(
                     token = intent.token,
                     session_id = intent.session_id,
-                    CustomerRefId = intent.customerRefId
+                    customerRefId = intent.customerRefId
                 )
 
             }
@@ -172,15 +175,27 @@ class ShortTermLoansStoreFactory(
         private fun getLoanEligibilityStatus(
             token: String,
             session_id: String,
-            CustomerRefId: String
+            customerRefId: String
         ) {
             if (getLoanEligibiltyJob?.isActive == true) return
+            dispatch(Msg.ShortTermLoansLoading())
 
             getLoanEligibiltyJob=scope.launch {
 
+                shortTermLoansRepository.checkLoanEligibility(
+                    token = token,
+                    session_id = session_id,
+                    customerRefId = customerRefId
+                ).onSuccess { response ->
+                    println("getShortTermToPUpListData::::::Loaded")
+                    println(response)
+                    dispatch(Msg.LoanEligibilityStatusLoaded(response))
+                }.onFailure { e ->
+                    dispatch(Msg.ShortTermLoansFailed(e.message))
+                    //Test
+                    println("An error occured loading Loan Elijibility:::::::;;; ")
+                }
 
-
-                
             }
 
         }
@@ -195,6 +210,7 @@ class ShortTermLoansStoreFactory(
                 is Msg.ShortTermLoansProductsListLoaded -> copy(prestaShortTermProductList = msg.shortTermLoansProductList)
                 is Msg.ShortTermTopUpListLoaded -> copy(prestaShortTermTopUpList = msg.shortTermTopUpList)
                 is Msg.ShortTermLoanProductsByIdLoaded -> copy(prestaShortTermLoanProductById = msg.shortTermLoansProductById)
+                is Msg.LoanEligibilityStatusLoaded -> copy (prestaLoanEligibilityStatus=msg.loanEligibilityStatus)
             }
     }
 }
