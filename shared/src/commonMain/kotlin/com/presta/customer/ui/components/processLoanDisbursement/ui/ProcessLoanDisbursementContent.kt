@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.presta.customer.MR
@@ -97,11 +98,15 @@ fun ProcessLoanDisbursementContent(
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
                 )
 
-                Row(modifier = Modifier.padding(start = 42.dp, end = 42.dp, top = 5.dp)) {
+                Row(modifier = Modifier
+                    .padding(start = 42.dp, end = 42.dp, top = 5.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
 
                     Text(
                         text = "Loan Request of Kes ${formatMoney(amount)} has been received , its is pending  approval",
-                        fontSize = 2.4.em
+                        fontSize = 2.4.em,
+                        textAlign = TextAlign.Center
                     )
 
                 }
