@@ -32,12 +32,9 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.presta.customer.MR
 import com.presta.customer.SharedStatus
-import com.presta.customer.network.onBoarding.model.PinStatus
-import com.presta.customer.ui.components.root.DefaultRootComponent
+import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import dev.icerock.moko.resources.compose.painterResource
-import com.presta.customer.ui.helpers.LocalSafeArea
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
