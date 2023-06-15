@@ -36,13 +36,9 @@ fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
 class DefaultLoanConfirmationComponent(
     componentContext: ComponentContext,
     private val onConfirmClicked: (
-        refid: String,
+        correlationId: String,
         amount: Double,
-        loanPeriod: String,
-        loanType: LoanType,
-        loanName: String,
-        referencedLoanRefId: String?,
-        currentTerm:Boolean
+        fees: Double
     ) -> Unit,
     private val onBackNavClicked: () -> Unit,
     storeFactory: StoreFactory,
@@ -70,23 +66,14 @@ class DefaultLoanConfirmationComponent(
         }
 
     override fun onConfirmSelected(
-        refID: String,
+        correlationId: String,
         amount: Double,
-        loanPeriod: String,
-        loanType: LoanType,
-        loanName: String,
-        referencedLoanRefId: String?,
-        currentTerm: Boolean
-
+        fees: Double
     ) {
         onConfirmClicked(
-            refID,
+            correlationId,
             amount,
-            loanPeriod,
-            loanType,
-            loanName,
-            referencedLoanRefId,
-            currentTerm
+            fees
         )
     }
 

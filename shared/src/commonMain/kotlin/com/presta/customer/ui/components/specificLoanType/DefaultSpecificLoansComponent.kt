@@ -43,7 +43,6 @@ class DefaultSpecificLoansComponent(
         LoanName: String,
         Interest: Double,
         loanPeriodUnit: String,
-        maxPeriodUnit: Int,
         referencedLoanRefId: String?,
         currentTerm: Boolean
     ) -> Unit,
@@ -53,9 +52,8 @@ class DefaultSpecificLoansComponent(
     mainContext: CoroutineContext,
     override val loanName: String,
     override val loanOperation: String,
-    override val referencedLoanRefId: String?,
-
-    ) : SpecificLoansComponent, ComponentContext by componentContext {
+    override val referencedLoanRefId: String?
+) : SpecificLoansComponent, ComponentContext by componentContext {
     var specificId: String = refId
     override fun onConfirmSelected(
         refid: String,
@@ -78,7 +76,6 @@ class DefaultSpecificLoansComponent(
             LoanName,
             interest,
             loanPeriodUnit,
-            maxPeriodUnit,
             referencedLoanRefId,
             currentTerm
         )
@@ -145,6 +142,14 @@ class DefaultSpecificLoansComponent(
                         ShortTermLoansStore.Intent.GetPrestaShortTermProductById(
                             token = state.cachedMemberData.accessToken,
                             loanId = specificId
+                        )
+                    )
+
+                    onEvent(
+                        ShortTermLoansStore.Intent.GetPrestaLoanEligibilityStatus(
+                            token = state.cachedMemberData.accessToken,
+                            session_id = state.cachedMemberData.session_id,
+                            customerRefId = state.cachedMemberData.refId
                         )
                     )
                 }

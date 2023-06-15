@@ -35,8 +35,22 @@ fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineSc
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
 
+/*correlationId, refId, amount, fees, loanPeriod, loanType, interestRate, LoanName, loanPeriodUnit, referencedLoanRefId, currentTerm*/
+
 class DefaultModeOfDisbursementComponent(
-    private val onMpesaClicked: (correlationId: String ,amount: Double, fees: Double,) -> Unit,
+    private val onMpesaClicked: (
+        correlationId: String,
+        refId: String,
+        amount: Double,
+        fees: Double,
+        loanPeriod: String,
+        loanType: LoanType,
+        interestRate: Double,
+        LoanName: String,
+        loanPeriodUnit: String,
+        referencedLoanRefId: String,
+        currentTerm: Boolean,
+    ) -> Unit,
     private val onBankClicked: () -> Unit,
     private val onBackNavClicked: () -> Unit,
     private val TransactionSuccessful: () -> Unit,
@@ -137,9 +151,9 @@ class DefaultModeOfDisbursementComponent(
         }
         loanRequestScopeJob = scope.launch {
             modeOfDisbursementState.collect { state ->
-                if (state.requestId!==null) {
+                if (state.requestId !== null) {
                     val requestId = state.requestId
-                    onMpesaClicked(requestId,amount,0.00)
+//                    onMpesaClicked(requestId,amount,0.00)
                     this.cancel()
                 }
             }

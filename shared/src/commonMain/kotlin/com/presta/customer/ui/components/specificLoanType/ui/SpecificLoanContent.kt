@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,7 +33,7 @@ import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.TextInputContainer
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun SpecificLoaContent(
     component: SpecificLoansComponent,
@@ -52,14 +51,18 @@ fun SpecificLoaContent(
     }
     var isError by remember { mutableStateOf(false) }
     var isPeriodError by remember { mutableStateOf(false) }
-    val allowedMaxAmount = state.prestaShortTermLoanProductById?.maxAmount
+    val allowedMaxAmount = state.prestaLoanEligibilityStatus?.amountAvailable
     val allowedMinAmount = state.prestaShortTermLoanProductById?.minAmount
     val allowedMaxTerm = state.prestaShortTermLoanProductById?.maxTerm
     val allowedMinTerm = state.prestaShortTermLoanProductById?.minTerm
     val loanPeriodUnit = state.prestaShortTermLoanProductById?.loanPeriodUnit
-    val LoanType:LoanType=LoanType._NORMAL_LOAN
-    val referencedLoanRefId=null
-    val  currentTerm=false
+    val referencedLoanRefId = null
+    val  currentTerm = false
+
+    if (allowedMaxTerm !== null) {
+        desiredPeriod = TextFieldValue(allowedMaxTerm.toString())
+    }
+
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background),
@@ -83,11 +86,12 @@ fun SpecificLoaContent(
                     ) {
                         Text(
                             modifier = Modifier,
-                            text = "Enter Loan  Amount",
+                            text = "Enter Loan Amount",
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 14.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                         )
+
                         LoanLimitContainer(state)
 
                         Row(modifier = Modifier.padding(top = 16.dp)) {
@@ -131,7 +135,7 @@ fun SpecificLoaContent(
                             TextInputContainer(
                                 "Desired Period(Months)",
                                 inputType = InputTypes.NUMBER,
-                                inputValue = ""
+                                inputValue = if (allowedMaxTerm !== null) allowedMaxTerm.toString() else ""
                             ) {
                                 val inputPeriod: Int? = TextFieldValue(it).text.toIntOrNull()
                                 if (inputPeriod != null) {
@@ -172,7 +176,7 @@ fun SpecificLoaContent(
                                                     state.prestaShortTermLoanProductById.refId.toString(),
                                                     amount.text.toDouble(),
                                                     desiredPeriod.text,
-                                                    loanType = LoanType,
+                                                    loanType = LoanType._NORMAL_LOAN,
                                                     state.prestaShortTermLoanProductById.name.toString(),
                                                     it,
                                                     state.prestaShortTermLoanProductById.loanPeriodUnit.toString(),

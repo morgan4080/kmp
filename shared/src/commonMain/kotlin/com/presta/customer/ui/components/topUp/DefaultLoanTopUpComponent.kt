@@ -38,14 +38,12 @@ class DefaultLoanTopUpComponent(
     componentContext: ComponentContext,
     private val onProceedClicked: (
         refId: String,
-        minAmount: Double,
-        maxAmount: Double,
-        loanName: String,
-        InterestRate: Double,
-        enteredAmount: Double,
+        amount: Double,
         loanPeriod: String,
-        loanPeriodUnit: String,
         loanType:LoanType,
+        loanName: String,
+        interest: Double,
+        loanPeriodUnit: String,
         referencedLoanRefId:String,
         currentTerm:Boolean
     ) -> Unit,
@@ -79,7 +77,7 @@ class DefaultLoanTopUpComponent(
         currentTerm:Boolean
 
     ) {
-        onProceedClicked(
+       /* onProceedClicked(
             refId,
             minAmount,
             maxAmount,
@@ -92,7 +90,7 @@ class DefaultLoanTopUpComponent(
             referencedLoanRefId,
             currentTerm
 
-        )
+        )*/
     }
 
     override fun onBackNavSelected() {
@@ -158,6 +156,14 @@ class DefaultLoanTopUpComponent(
                             token = state.cachedMemberData.accessToken,
                             session_id = state.cachedMemberData.session_id,
                             refId = state.cachedMemberData.refId
+                        )
+                    )
+
+                    onEvent(
+                        ShortTermLoansStore.Intent.GetPrestaLoanEligibilityStatus(
+                            token = state.cachedMemberData.accessToken,
+                            session_id = state.cachedMemberData.session_id,
+                            customerRefId = state.cachedMemberData.refId
                         )
                     )
                 }

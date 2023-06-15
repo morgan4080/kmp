@@ -10,7 +10,6 @@ import com.presta.customer.ui.components.specificLoanType.SpecificLoansComponent
 fun SpecificLoansScreen(
     component: SpecificLoansComponent,
     innerPadding: PaddingValues
-
 ) {
     val authState by component.authState.collectAsState()
     val  specificLoanState by component.shortTermloansState.collectAsState()

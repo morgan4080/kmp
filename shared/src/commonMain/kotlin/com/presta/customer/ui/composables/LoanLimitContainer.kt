@@ -34,7 +34,6 @@ fun LoanLimitContainer(state: ShortTermLoansStore.State) {
     ElevatedCard(
         modifier = Modifier
             .padding(top = 10.dp)
-            .border(BorderStroke(0.5.dp, Color.White), shape = RoundedCornerShape(size = 12.dp))
     ) {
         Box(
             modifier = Modifier
@@ -55,7 +54,7 @@ fun LoanLimitContainer(state: ShortTermLoansStore.State) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
-                        text = "Loan  Limit ",
+                        text = "Loan  Limit",
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                         fontSize = 16.sp
 
@@ -67,8 +66,9 @@ fun LoanLimitContainer(state: ShortTermLoansStore.State) {
                         .fillMaxWidth()
                 ) {
                     Text(
-                        text = if(state.prestaShortTermLoanProductById?.minAmount!=null ) "Min. Kes" + formatMoney(state.prestaShortTermLoanProductById.minAmount) +
-                                "- Max " + formatMoney(state.prestaShortTermLoanProductById.maxAmount) else "",
+                        text = if (state.prestaLoanEligibilityStatus !== null && state.prestaShortTermLoanProductById !== null)
+                            "Min ${formatMoney(state.prestaShortTermLoanProductById.minAmount)} - Max ${formatMoney(state.prestaLoanEligibilityStatus.amountAvailable)}"
+                        else "",
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 16.sp,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),

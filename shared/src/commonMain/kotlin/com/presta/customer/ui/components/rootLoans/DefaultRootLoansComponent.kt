@@ -12,9 +12,7 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
-import com.presta.customer.network.loanRequest.model.LoanRequestStatus
 import com.presta.customer.network.loanRequest.model.LoanType
-import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.network.payments.model.PaymentStatuses
 import com.presta.customer.prestaDispatchers
 import com.presta.customer.ui.components.applyLoan.DefaultApplyLoanComponent
@@ -27,8 +25,6 @@ import com.presta.customer.ui.components.longTermLoans.DefaultLongTermComponent
 import com.presta.customer.ui.components.longTermLoans.LongTermLoansComponent
 import com.presta.customer.ui.components.modeofDisbursement.DefaultModeOfDisbursementComponent
 import com.presta.customer.ui.components.modeofDisbursement.ModeOfDisbursementComponent
-import com.presta.customer.ui.components.processLoanDisbursement.DefaultProcessLoanDisbursementComponent
-import com.presta.customer.ui.components.processLoanDisbursement.ProcessLoanDisbursementComponent
 import com.presta.customer.ui.components.processingTransaction.DefaultProcessingTransactionComponent
 import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
 import com.presta.customer.ui.components.shortTermLoans.DefaultShortTermLoansComponent
@@ -189,24 +185,21 @@ class DefaultRootLoansComponent(
         DefaultSpecificLoansComponent(
             componentContext = componentContext,
             refId = config.refId,
-            onConfirmClicked = { refId, amount, loanPeriod, loanType, LoanName, Interest, loanPeriodUnit, maxPeriodUnit, referencedLoanRefId,currentTerm ->
-                println("Ref id")
-                println(refId)
-                println("Amount")
-                println(amount)
+            onConfirmClicked = { refId, amount, loanPeriod, loanType, LoanName, interest, loanPeriodUnit, referencedLoanRefId, currentTerm ->
                 loansNavigation.push(
-                    ConfigLoans.LoanConfirmation(
+                    ConfigLoans.DisbursementMethod(
                         refId = refId,
                         amount = amount,
                         loanPeriod = loanPeriod,
                         loanType = loanType,
-                        interestRate = Interest,
+                        interestRate = interest,
                         enteredAmount = 0.00,
                         loanName = LoanName,
                         loanPeriodUnit = loanPeriodUnit,
                         loanOperation = "loan",
                         referencedLoanRefId = referencedLoanRefId,
-                        currentTerm =currentTerm
+                        currentTerm =currentTerm,
+                        fees = 0.0
                     )
                 )
             },
@@ -227,19 +220,8 @@ class DefaultRootLoansComponent(
         DefaultLoanConfirmationComponent(
             componentContext = componentContext,
             refId = config.refId,
-            onConfirmClicked = { refId, amount, loanPeriod, loantype, loanName,referencedLoanRefId,currentTerm ->
-                //navigate to mode of Disbursement
-                loansNavigation.push(
-                    ConfigLoans.DisbursementMethod(
-                        refId = refId,
-                        amount = amount,
-                        loanPeriod = loanPeriod,
-                        loanType = loantype,
-                        fees = 0.00,
-                        referencedLoanRefId = referencedLoanRefId,
-                        currentTerm=currentTerm
-                    )
-                )
+            onConfirmClicked = { correlationId, amount, fees ->
+                processLoanDisbursement(correlationId, amount, fees)
             },
             onBackNavClicked = {
                 loansNavigation.pop()
@@ -263,15 +245,23 @@ class DefaultRootLoansComponent(
     ): ModeOfDisbursementComponent =
         DefaultModeOfDisbursementComponent(
             componentContext = componentContext,
-            onMpesaClicked = { correlationId, amount, fees ->
-//                loansNavigation.push(
-//                    Config.ProcessingLoanLoanDisbursement(
-//                        correlationId,
-//                        amount,
-//                        fees
-//                    )
-//                )
-                processLoanDisbursement(correlationId,amount,fees)
+            onMpesaClicked = { correlationId, refId, amount, fees, loanPeriod, loanType, interestRate, LoanName, loanPeriodUnit, referencedLoanRefId, currentTerm ->
+                loansNavigation.push(
+                    ConfigLoans.LoanConfirmation(
+                        correlationId = correlationId,
+                        refId = refId,
+                        amount = amount,
+                        fees = fees,
+                        loanPeriod = loanPeriod,
+                        loanType = loanType,
+                        interestRate = interestRate,
+                        loanName = LoanName,
+                        loanPeriodUnit = loanPeriodUnit,
+                        loanOperation = "loan",
+                        referencedLoanRefId = referencedLoanRefId,
+                        currentTerm = currentTerm
+                    )
+                )
             },
             onBankClicked = {
                 //navigate to  BankDisbursement Screen
@@ -353,21 +343,22 @@ class DefaultRootLoansComponent(
     ): LoanTopUpComponent =
         DefaultLoanTopUpComponent(
             componentContext = componentContext,
-            onProceedClicked = { refid, maxAmount, minAmount, loanName, interestRate, enteredAmount, loanPeriod, LoanPeriodUnit, loanType, referencedLoanRefId,currentTerm ->
+            onProceedClicked = { refId, amount, loanPeriod, loanType, LoanName, interest, loanPeriodUnit, referencedLoanRefId, currentTerm ->
                 //push  to confirm Loan Details Screen
                 loansNavigation.push(
-                    ConfigLoans.LoanConfirmation(
-                        refId = refid,
-                        amount = enteredAmount,
+                    ConfigLoans.DisbursementMethod(
+                        refId = refId,
+                        amount = amount,
                         loanPeriod = loanPeriod,
-                        interestRate = interestRate,
-                        enteredAmount = enteredAmount,
-                        loanName = loanName,
                         loanType = loanType,
-                        loanPeriodUnit = LoanPeriodUnit,
+                        interestRate = interest,
+                        enteredAmount = 0.00,
+                        loanName = LoanName,
+                        loanPeriodUnit = loanPeriodUnit,
                         loanOperation = "topUp",
                         referencedLoanRefId = referencedLoanRefId,
-                        currentTerm = currentTerm
+                        currentTerm = currentTerm,
+                        fees = 0.0
                     )
                 )
             },
@@ -409,12 +400,13 @@ class DefaultRootLoansComponent(
 
         @Parcelize
         data class LoanConfirmation(
+            val correlationId: String,
             val refId: String,
             val amount: Double,
+            val fees: Double,
             val loanPeriod: String,
             val loanType: LoanType,
             val interestRate: Double,
-            val enteredAmount: Double,
             val loanName: String,
             val loanPeriodUnit: String,
             val loanOperation: String,
@@ -428,10 +420,14 @@ class DefaultRootLoansComponent(
             val amount: Double,
             val loanPeriod: String,
             val loanType: LoanType,
-            val fees: Double,
+            val interestRate: Double,
+            val enteredAmount: Double,
+            val loanName: String,
+            val loanPeriodUnit: String,
+            val loanOperation: String,
             val referencedLoanRefId: String?,
-            val currentTerm:Boolean
-
+            val currentTerm: Boolean,
+            val fees: Double
         ) : ConfigLoans()
 
         @Parcelize

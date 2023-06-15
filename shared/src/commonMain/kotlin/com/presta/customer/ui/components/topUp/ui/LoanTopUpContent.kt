@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,7 +38,7 @@ import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoanTopUpContent(
     component: LoanTopUpComponent,
@@ -51,8 +50,7 @@ fun LoanTopUpContent(
     val allowedMaxAmount = component.maxAmount
     val allowedMinAmount = component.minAmount
     var currentTerm by remember { mutableStateOf(false) }
-    val LoanType: LoanType = LoanType._TOP_UP
-    var labelText=""
+    var labelText = ""
 
     Surface(
         modifier = Modifier
@@ -88,12 +86,12 @@ fun LoanTopUpContent(
                 Text(
                     modifier = Modifier
                         .padding(top = 10.dp),
-                    text = "min " + component.minAmount + " - " + "max " + component.maxAmount,
+                    text = if (state.prestaLoanEligibilityStatus !== null) "min " + component.minAmount + " - " + "max " + state.prestaLoanEligibilityStatus.amountAvailable else "",
                     fontSize = 10.sp,
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                 )
                 if (launchPopUp) {
-                    Popup() {
+                    Popup {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -110,7 +108,7 @@ fun LoanTopUpContent(
                                         end = 25.dp,
                                         top = 26.dp
                                     ),
-                                colors = CardDefaults.elevatedCardColors(containerColor = Color.White)
+                                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                             ) {
 
                                 Column(
@@ -231,8 +229,10 @@ fun LoanTopUpContent(
 
                     TextInputContainer("Desired Amount", "", inputType = InputTypes.NUMBER) {
                         val inputValue: Double? = TextFieldValue(it).text.toDoubleOrNull()
-                        if (inputValue != null) {
-                            if ((inputValue >= allowedMinAmount.toDouble() && inputValue <= allowedMaxAmount.toDouble()) && (TextFieldValue(
+                        if (inputValue != null && state.prestaLoanEligibilityStatus != null) {
+                            if (
+                                (inputValue >= allowedMinAmount.toDouble() && inputValue <= state.prestaLoanEligibilityStatus.amountAvailable)
+                                && (TextFieldValue(
                                     it
                                 ).text !== "")
                             ) {
@@ -249,7 +249,7 @@ fun LoanTopUpContent(
 
                     Text(
                         modifier = Modifier.padding(top = 10.dp, start = 5.dp),
-                        text = "min value Ksh $allowedMinAmount max value Ksh $allowedMaxAmount",
+                        text = if (state.prestaLoanEligibilityStatus !== null) "min value Ksh $allowedMinAmount max value Ksh ${state.prestaLoanEligibilityStatus.amountAvailable}" else "",
                         style = MaterialTheme.typography.bodySmall,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                         color = Color.Red
@@ -261,7 +261,7 @@ fun LoanTopUpContent(
                         .fillMaxWidth()
                         .padding(top = 23.dp)
                 ) {
-                    ProductSelectionCard2(if(labelText=="") "loan Term" else labelText, onClickContainer = {
+                    ProductSelectionCard2(if(labelText=="") "Select loan term" else labelText, onClickContainer = {
                         //pop up
                         launchPopUp = true
 
@@ -284,7 +284,7 @@ fun LoanTopUpContent(
                             amount.text.toDouble(),
                             component.loanPeriod,
                             component.loanPeriodUnit,
-                            LoanType,
+                            LoanType._TOP_UP,
                             referencedLoanRefId = component.referencedLoanRefId,
                             currentTerm = currentTerm
                         )

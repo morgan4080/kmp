@@ -17,13 +17,9 @@ interface LoanConfirmationComponent {
     val referencedLoanRefId: String?
     val currentTerm: Boolean
     fun onConfirmSelected(
-        refid: String,
+        correlationId: String,
         amount: Double,
-        loanPeriod: String,
-        loanType: LoanType,
-        loanName: String,
-        referencedLoanRefId: String?,
-        currentTerm:Boolean
+        fees: Double
     )
 
     fun onBackNavSelected()
