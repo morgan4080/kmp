@@ -128,9 +128,9 @@ fun ProfileContent(
 
     LaunchedEffect(authState.cachedMemberData) {
         if (authState.cachedMemberData !== null && authState.cachedMemberData.registrationFeeStatus == "NOT_PAID") {
+            delay(2000L)
             sheetState.show()
         } else {
-            delay(2000L)
             sheetState.hide()
         }
     }
@@ -157,9 +157,11 @@ fun ProfileContent(
 
         reloadModels()
 
-        delay(1500L)
+        delay(1500)
         refreshing = false
     }
+
+    val refreshState = rememberPullRefreshState(refreshing, ::refresh)
 
     val items = listOf("Home" to Icons.Outlined.Home, "Favorite" to Icons.Outlined.Favorite)
     var selectedItem by remember { mutableStateOf(items[0]) }
@@ -294,17 +296,10 @@ fun ProfileContent(
                         )
                     },
                     content = { innerPadding ->
-                        val refreshState = rememberPullRefreshState(refreshing, ::refresh)
+                        Box (Modifier.consumeWindowInsets(innerPadding).pullRefresh(refreshState)) {
 
-                        Box (Modifier.pullRefresh(refreshState)) {
-                            PullRefreshIndicator(refreshing, refreshState,
-                                Modifier
-                                    .align(Alignment.TopCenter).zIndex(1f),
-                                contentColor = actionButtonColor
-                            )
                             LazyColumn(
                                 modifier = Modifier
-                                    .consumeWindowInsets(innerPadding)
                                     .wrapContentHeight(),
                                 contentPadding = innerPadding
                             ) {
@@ -482,6 +477,13 @@ fun ProfileContent(
                                     )
                                 }
                             }
+
+                            PullRefreshIndicator(refreshing, refreshState,
+                                Modifier
+                                    .padding(innerPadding)
+                                    .align(Alignment.TopCenter).zIndex(1f),
+                                contentColor = actionButtonColor
+                            )
                         }
                     },
                     snackbarHost = { SnackbarHost(snackBarHostState) },
