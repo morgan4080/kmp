@@ -38,7 +38,7 @@ class PrestaPaymentsClient(
         phoneNumber: String,
         loanRefId: String?,
         beneficiaryPhoneNumber: String?,
-        amount: Int,
+        amount: Double,
         paymentType: PaymentTypes
     ): String {
         return paymentsErrorHandler {
@@ -63,6 +63,6 @@ data class C2BPaymentData(
     val phoneNumber: String,
     val loanRefId: String?,
     val beneficiaryPhoneNumber: String?,
-    val amount: Int,
+    val amount: Double,
     val paymentType: PaymentTypes
 )

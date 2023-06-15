@@ -111,7 +111,7 @@ class DefaultPayLoanComponent(
                             phoneNumber = state.cachedMemberData.phoneNumber,
                             loanRefId = loan.refId,
                             beneficiaryPhoneNumber = null,
-                            amount = desiredAmount.toInt(),
+                            amount = desiredAmount.toDouble(),
                             paymentType = PaymentTypes.LOAN
                         )
                     )

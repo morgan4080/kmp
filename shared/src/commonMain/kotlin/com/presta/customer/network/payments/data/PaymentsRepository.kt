@@ -22,7 +22,7 @@ interface PaymentsRepository {
         phoneNumber: String,
         loanRefId: String?,
         beneficiaryPhoneNumber: String?,
-        amount: Int,
+        amount: Double,
         paymentType: PaymentTypes
     ): Result<String>
 }

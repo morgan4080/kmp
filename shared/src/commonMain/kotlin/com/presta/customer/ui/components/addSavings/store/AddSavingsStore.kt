@@ -10,7 +10,7 @@ interface AddSavingsStore: Store<AddSavingsStore.Intent, AddSavingsStore.State, 
             val phoneNumber: String,
             val loanRefId: String?,
             val beneficiaryPhoneNumber: String?,
-            val amount: Int,
+            val amount: Double,
             val paymentType: PaymentTypes
         ): Intent()
         data class UpdateError(val error: String?): Intent()

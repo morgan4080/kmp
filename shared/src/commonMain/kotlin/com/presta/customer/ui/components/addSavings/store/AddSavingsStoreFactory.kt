@@ -62,7 +62,7 @@ class AddSavingsStoreFactory (
             phoneNumber: String,
             loanRefId: String?,
             beneficiaryPhoneNumber: String?,
-            amount: Int,
+            amount: Double,
             paymentType: PaymentTypes
         ) {
             if (makePaymentsJob?.isActive == true) return
