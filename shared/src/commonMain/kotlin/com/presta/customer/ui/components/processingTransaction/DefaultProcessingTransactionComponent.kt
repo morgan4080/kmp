@@ -107,7 +107,7 @@ class DefaultProcessingTransactionComponent(
                         refId = state.cachedMemberData.refId
                     ))
 
-                    val flow = poller.poll(2_000L, state.cachedMemberData.accessToken, correlationId)
+                    val flow = poller.poll(1_000L, state.cachedMemberData.accessToken, correlationId)
 
                     flow.collect {
                         it.onSuccess { response ->
