@@ -18,11 +18,14 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -32,28 +35,27 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.presta.customer.MR
 import com.presta.customer.SharedStatus
+import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import dev.icerock.moko.resources.compose.painterResource
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SplashScreen(component: SplashComponent, connectivityStatus: SharedStatus?) {
     val model by component.model.subscribeAsState()
     val authState by component.authState.collectAsState()
+    val snackBarHostState = remember { SnackbarHostState() }
 
-    val connectivityState = MutableStateFlow(false)
-    val connectivity = connectivityState.collectAsState()
     LaunchedEffect(connectivityStatus) {
         if (connectivityStatus !== null) {
             connectivityStatus.current.collect{
-                connectivityState.update { st ->
-                    connectivityState.value = it
-                   st
+                if (!it) {
+                    snackBarHostState.showSnackbar(
+                        "No internet connection"
+                    )
                 }
+                component.onEvent(AuthStore.Intent.UpdateOnlineState(it))
             }
         }
     }
@@ -61,7 +63,8 @@ fun SplashScreen(component: SplashComponent, connectivityStatus: SharedStatus?) 
     Scaffold (
         modifier = Modifier.
         fillMaxHeight(1f)
-            .padding(LocalSafeArea.current)
+            .padding(LocalSafeArea.current),
+        snackbarHost = { SnackbarHost(snackBarHostState) },
     ) {
         Column(
             modifier = Modifier
@@ -113,7 +116,7 @@ fun SplashScreen(component: SplashComponent, connectivityStatus: SharedStatus?) 
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    if (authState.isLoading || authState.cachedMemberData?.session_id !== "" || connectivityStatus == null || !connectivity.value) {
+                    if (authState.isLoading || authState.cachedMemberData?.session_id !== "" || connectivityStatus == null || !authState.isOnline) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(25.dp).padding(end = 2.dp),
                             color = MaterialTheme.colorScheme.onSurface

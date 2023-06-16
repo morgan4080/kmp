@@ -48,6 +48,7 @@ internal class AuthStoreFactory(
             val error: String?
         ) : Msg()
         data class LoginFulfilled(val logInResponse: PrestaLogInResponse) : Msg()
+        data class ConnectivityFulfilled(val isOnline: Boolean) : Msg()
         data class RefreshFulfilled(val refreshResponse: RefreshTokenResponse) : Msg()
 
         data class CheckAuthenticatedUserLoaded(val authUserResponse: PrestaCheckAuthUserResponse): Msg()
@@ -86,6 +87,7 @@ internal class AuthStoreFactory(
                 ))
                 is AuthStore.Intent.RefreshToken -> updateAuthToken(intent.tenantId,intent.refId)
                 is AuthStore.Intent.LogOutUser -> logOutUser()
+                is AuthStore.Intent.UpdateOnlineState -> dispatch(Msg.ConnectivityFulfilled(isOnline = intent.isOnline))
             }
 
         private var loginUserJob: Job? = null
@@ -233,6 +235,9 @@ internal class AuthStoreFactory(
                     loginResponse = null,
                     refreshTokenResponse = null,
                     authUserResponse = null
+                )
+                is Msg.ConnectivityFulfilled -> copy(
+                    isOnline = msg.isOnline
                 )
             }
     }

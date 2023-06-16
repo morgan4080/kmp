@@ -30,11 +30,12 @@ interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
         data class CheckAuthenticatedUser(val token: String): Intent()
         data class UpdateError(val error: String?): Intent()
         data class UpdateContext(val context: Contexts, val title: String, val label: String, val pinCreated: Boolean, val pinConfirmed: Boolean, val error: String?): Intent()
-
         object LogOutUser: Intent()
+        data class UpdateOnlineState(val isOnline: Boolean): Intent()
     }
 
     data class State(
+        val isOnline: Boolean = false,
         val isLoading: Boolean = false,
         val isTermsAccepted: Boolean = false,
         val isActive: Boolean = false,

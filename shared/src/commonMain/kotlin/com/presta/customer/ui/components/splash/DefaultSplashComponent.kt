@@ -39,9 +39,7 @@ class DefaultSplashComponent(
     mainContext: CoroutineContext,
     private val onSignUp: () -> Unit,
     private val onSignIn: () -> Unit,
-    private val navigateToProfile: () -> Unit,
     private val navigateToAuth: ( memberRefId: String?, phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean, onBoardingContext: DefaultRootComponent.OnBoardingContext, pinStatus: PinStatus?) -> Unit,
-
 ): SplashComponent, ComponentContext by componentContext {
 
     override val authStore =
@@ -81,15 +79,16 @@ class DefaultSplashComponent(
                         state.cachedMemberData.refId !== "" &&
                         state.cachedMemberData.phoneNumber !== ""
                     ) {
-
-                        navigateToAuth(
-                            state.cachedMemberData.refId,
-                            state.cachedMemberData.phoneNumber,
-                            true,
-                            true,
-                            DefaultRootComponent.OnBoardingContext.LOGIN,
-                            PinStatus.SET
-                        )
+                        if (state.isOnline) {
+                            navigateToAuth(
+                                state.cachedMemberData.refId,
+                                state.cachedMemberData.phoneNumber,
+                                true,
+                                true,
+                                DefaultRootComponent.OnBoardingContext.LOGIN,
+                                PinStatus.SET
+                            )
+                        }
                     }
                 }
             }

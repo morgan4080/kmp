@@ -102,9 +102,6 @@ class DefaultRootComponent(
                     onBoardingContext = onBoardingContext,
                     pinStatus = pinStatus
                 ))
-            },
-            navigateToProfile = {
-                navigation.replaceAll(Config.RootBottom)
             }
         )
 
