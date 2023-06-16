@@ -78,6 +78,7 @@ class DefaultLoanConfirmationComponent(
         }
 
 
+
     override fun onBackNavSelected() {
         onBackNavClicked()
     }
@@ -198,6 +199,7 @@ class DefaultLoanConfirmationComponent(
         }
 
     }
+
 
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)

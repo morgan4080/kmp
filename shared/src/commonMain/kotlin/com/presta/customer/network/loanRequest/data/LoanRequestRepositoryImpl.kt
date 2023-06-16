@@ -3,6 +3,7 @@ package com.presta.customer.network.loanRequest.data
 import com.presta.customer.network.loanRequest.client.PrestaLoanRequestClient
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
 import com.presta.customer.network.loanRequest.model.LoanQuotationResponse
+import com.presta.customer.network.loanRequest.model.LoanRequestResponse
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.loanRequest.model.PrestaLoanPollingResponse
 import org.koin.core.component.KoinComponent
@@ -23,7 +24,7 @@ class LoanRequestRepositoryImpl : LoanRequestRepository,KoinComponent {
         referencedLoanRefId: String?,
         requestId: String?,
         sessionId: String
-    ): Result<String> {
+    ): Result<LoanRequestResponse> {
         return try {
             val response = loanRequestClient.sendLoanRequest(
                 token = token,

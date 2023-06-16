@@ -44,8 +44,8 @@ class DefaultProcessLoanDisbursementComponent(
     override val amount: Double,
     override val fees: Double,
     override val requestId: String,
-    val navigateToCompleteFailure: (loanRequestStatus: LoanRequestStatus) -> Unit,
-): ProcessLoanDisbursementComponent, ComponentContext by componentContext,KoinComponent {
+    val navigateToCompleteFailure: () -> Unit,
+): ProcessLoanDisbursementComponent, ComponentContext by componentContext, KoinComponent {
     private val loanRequestRepository by inject<LoanRequestRepository>()
 
     override val authStore =
@@ -80,6 +80,10 @@ class DefaultProcessLoanDisbursementComponent(
         processingLoanDisbursementStore.accept(event)
     }
 
+    override fun navigate() {
+        navigateToCompleteFailure()
+    }
+
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
     private val poller = CoroutineLoanRequestPoller(loanRequestRepository, mainContext)
@@ -97,11 +101,14 @@ class DefaultProcessLoanDisbursementComponent(
                         refId = state.cachedMemberData.refId
                     ))
 
+                    println("::::::::::requestId:::::::::::::")
+                    println(requestId)
+
                     val flow = poller.poll(2_000L, state.cachedMemberData.accessToken, requestId)
 
                     flow.collect {
                         it.onSuccess { response ->
-                            onProcessingLoanDisbursementEvent(ProcessingLoanDisbursementStore.Intent.UpdateLoanRequestStatus(response))
+                            onProcessingLoanDisbursementEvent(ProcessingLoanDisbursementStore.Intent.UpdateLoanRequestStatus(response.applicationStatus))
                         }.onFailure { error ->
                             onProcessingLoanDisbursementEvent(ProcessingLoanDisbursementStore.Intent.UpdateError(error.message))
                         }
@@ -115,25 +122,8 @@ class DefaultProcessLoanDisbursementComponent(
         }
     }
 
-    private var processingTransactionStateScopeJob: Job? = null
-    private fun processTransactionState() {
-        processingTransactionStateScopeJob = scope.launch {
-            processingTransactionState.collect {  state ->
-                if (state.loanDisburseMentStatus !== null) {
-                    if (state.loanDisburseMentStatus.applicationStatus == LoanRequestStatus.COMPLETED || state.loanDisburseMentStatus.applicationStatus == LoanRequestStatus.FAILED|| state.loanDisburseMentStatus.applicationStatus == LoanRequestStatus.FAILED) {
-                        onProcessingLoanDisbursementEvent(ProcessingLoanDisbursementStore.Intent.UpdateLoading(false))
-                        if (!state.isLoading) {
-                            navigateToCompleteFailure(state.loanDisburseMentStatus.applicationStatus)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     init {
         refreshToken()
-        processTransactionState()
         onProcessingLoanDisbursementEvent(ProcessingLoanDisbursementStore.Intent.UpdateLoading(true))
     }
 }

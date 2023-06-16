@@ -34,6 +34,7 @@ fun ModeOfDisbursementContent(
     onAuthEvent: (AuthStore.Intent) -> Unit,
     ) {
 
+
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background),

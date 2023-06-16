@@ -308,7 +308,7 @@ class DefaultRootComponent(
 
     private fun processingLoanLoanDisbursementComponent(
         componentContext: ComponentContext,
-        config: Config .ProcessingLoanLoanDisbursement
+        config: Config.ProcessingLoanLoanDisbursement
     ): ProcessLoanDisbursementComponent =
         DefaultProcessLoanDisbursementComponent(
             storeFactory = storeFactory,
@@ -316,17 +316,11 @@ class DefaultRootComponent(
             requestId = config.correlationId,
             amount = config.amount,
             mainContext = prestaDispatchers.main,
-            fees = config.fees
-        ) { loanRequestStatus ->
-            if (loanRequestStatus == LoanRequestStatus.COMPLETED) {
-                // loansNavigation.push(ConfigLoans.SuccessfulTransaction)
+            fees = config.fees,
+            navigateToCompleteFailure = {
+                navigation.replaceAll(Config.RootBottom)
             }
-
-            if (loanRequestStatus == LoanRequestStatus.FAILED
-            ) {
-                // loansNavigation.push(ConfigLoans.FailedTransaction)
-            }
-        }
+        )
 
 
 

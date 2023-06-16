@@ -5,7 +5,7 @@ import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
-import com.presta.customer.network.loanRequest.model.PrestaLoanPollingResponse
+import com.presta.customer.network.loanRequest.model.LoanRequestStatus
 import com.presta.customer.prestaDispatchers
 
 class ProcessLoanDisbursementStoreFactory(
@@ -21,7 +21,7 @@ class ProcessLoanDisbursementStoreFactory(
         ) {}
 
     private sealed class Msg {
-        data class LoanRequestPollingLoaded(val applicationStatus: PrestaLoanPollingResponse): Msg()
+        data class LoanRequestPollingLoaded(val applicationStatus: LoanRequestStatus?): Msg()
         data class ProcessingTransactionLoading(val isLoading: Boolean = true): Msg()
         data class ProcessingTransactionFailed(val error: String?): Msg()
         data class  ClearError(val error: String?): Msg()

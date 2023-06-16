@@ -16,6 +16,7 @@ fun ProcessLoanDisbursementScreen(
         amount = component.amount,
         fees = component.fees,
         phoneNumber = authState.cachedMemberData?.phoneNumber,
-        state = state
+        state = state,
+        component::navigate
     )
 }

@@ -4,6 +4,7 @@ import com.presta.customer.network.NetworkConstants
 import com.presta.customer.network.loanRequest.errorHandler.loanRequestErrorHandler
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
 import com.presta.customer.network.loanRequest.model.LoanQuotationResponse
+import com.presta.customer.network.loanRequest.model.LoanRequestResponse
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.loanRequest.model.PrestaLoanPollingResponse
 import io.ktor.client.HttpClient
@@ -50,7 +51,7 @@ class PrestaLoanRequestClient(
         referencedLoanRefId: String?,
         requestId: String? = null,
         sessionId: String
-    ): String {
+    ): LoanRequestResponse {
         return loanRequestErrorHandler {
             httpClient.post(NetworkConstants.PrestaLoanRequest.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")
@@ -77,6 +78,8 @@ class PrestaLoanRequestClient(
         token: String,
         requestId: String
     ): PrestaLoanPollingResponse {
+        println(":::::::::::::::;requestId")
+        println(requestId)
         return loanRequestErrorHandler {
             httpClient.get("${NetworkConstants.PrestaLoanRequest.route}/${requestId}") {
                 header(HttpHeaders.Authorization, "Bearer $token")

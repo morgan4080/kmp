@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.presta.customer.MR
 import com.presta.customer.ui.components.loanConfirmation.LoanConfirmationComponent
+import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStore
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import com.presta.customer.ui.helpers.formatMoney
 import dev.icerock.moko.resources.compose.fontFamilyResource
@@ -31,6 +32,7 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 fun DisbursementDetailsContainer(
     state: ShortTermLoansStore.State,
     component: LoanConfirmationComponent,
+    modeOfDisbursementState: ModeOfDisbursementStore.State,
 ) {
     ElevatedCard(
         modifier = Modifier
@@ -83,11 +85,16 @@ fun DisbursementDetailsContainer(
                     //Interest
                     disbursementDetailsRow("Interest", component.loanInterest+" %")
                     //Fee  Charges
+
                     //Loan  Period
                     disbursementDetailsRow("Loan  Period",
                         component.loanPeriod+ " "+
                     component.loanPeriodUnit)
                     // Due date
+                    disbursementDetailsRow("Maturity date",if (modeOfDisbursementState.prestaLoanQuotation !== null) modeOfDisbursementState.prestaLoanQuotation.maturityDate else "")
+                    disbursementDetailsRow("Balance brought forward",if (modeOfDisbursementState.prestaLoanQuotation !== null) "Kes" +  formatMoney(modeOfDisbursementState.prestaLoanQuotation.balanceBroughtForward) else "")
+                    disbursementDetailsRow("Repayment amount",if (modeOfDisbursementState.prestaLoanQuotation !== null) "Kes" + formatMoney(modeOfDisbursementState.prestaLoanQuotation.totalAmount) else "")
+
 
                     //Balance Brought Forward
 

@@ -14,4 +14,5 @@ interface ProcessLoanDisbursementComponent {
     val processingTransactionState: StateFlow<ProcessingLoanDisbursementStore.State>
     fun onAuthEvent(event: AuthStore.Intent)
     fun onProcessingLoanDisbursementEvent(event: ProcessingLoanDisbursementStore.Intent)
+    fun navigate()
 }

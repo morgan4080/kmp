@@ -27,7 +27,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.network.loanRequest.model.LoanRequestStatus
 import com.presta.customer.ui.components.processLoanDisbursement.store.ProcessingLoanDisbursementStore
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.helpers.formatMoney
@@ -40,7 +42,8 @@ fun ProcessLoanDisbursementContent(
     amount: Double,
     fees: Double,
     phoneNumber: String?,
-    state: ProcessingLoanDisbursementStore.State
+    state: ProcessingLoanDisbursementStore.State,
+    navigate: () -> Unit
 ) {
 
    val infiniteTransition = rememberInfiniteTransition()
@@ -104,9 +107,30 @@ fun ProcessLoanDisbursementContent(
                 ) {
 
                     Text(
-                        text = "Loan Request of Kes ${formatMoney(amount)} has been received , its is pending  approval",
-                        fontSize = 2.4.em,
-                        textAlign = TextAlign.Center
+                        text = "Loan Request of Kes ${formatMoney(amount)} has been received , approval status:",
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                    )
+
+                }
+
+                Row(modifier = Modifier
+                    .padding(start = 42.dp, end = 42.dp, top = 5.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+
+                    Text(
+                        text = if (state.loanDisburseMentStatus !== null) when(state.loanDisburseMentStatus) {
+                            LoanRequestStatus.NEWAPPLICATION -> "NEW APPLICATION"
+                            LoanRequestStatus.INITIATED -> "INITIATED"
+                            LoanRequestStatus.INPROGRESS -> "IN PROGRESS"
+                            LoanRequestStatus.COMPLETED -> "COMPLETED"
+                            LoanRequestStatus.FAILED -> "FAILED"
+                        } else "",
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                     )
 
                 }
@@ -116,8 +140,8 @@ fun ProcessLoanDisbursementContent(
 
             Row(modifier = Modifier.padding(start = 25.dp, end = 25.dp, top = 70.dp)) {
 
-                ActionButton("Check  Status", onClickContainer = {
-
+                ActionButton("Done", onClickContainer = {
+                    navigate()
                 })
             }
         }

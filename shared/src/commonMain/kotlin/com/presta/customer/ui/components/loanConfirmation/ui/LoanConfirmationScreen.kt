@@ -14,9 +14,11 @@ fun LoansConfirmationScreen(
 ) {
     val authState by component.authState.collectAsState()
     val  loanConfirmationState by component.shortTermloansState.collectAsState()
+    val  modeOfDisbursementState by component.modeOfDisbursementState.collectAsState()
     LoanConfirmationContent(
         authState = authState,
         state = loanConfirmationState,
+        modeOfDisbursementState = modeOfDisbursementState,
         onEvent = component::onEvent,
         onAuthEvent = component::onAuthEvent,
         innerPadding = innerPadding,
