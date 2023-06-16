@@ -3,6 +3,7 @@ package com.presta.customer.network.loanRequest.client
 import com.presta.customer.network.NetworkConstants
 import com.presta.customer.network.loanRequest.errorHandler.loanRequestErrorHandler
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
+import com.presta.customer.network.loanRequest.model.LoanQuotationResponse
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.loanRequest.model.PrestaLoanPollingResponse
 import io.ktor.client.HttpClient
@@ -81,6 +82,42 @@ class PrestaLoanRequestClient(
                 header(HttpHeaders.Authorization, "Bearer $token")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
+            }
+        }
+    }
+    suspend fun sendLoanQuotationRequest(
+        token: String,
+        amount: Int,
+        currentTerm: Boolean,
+        customerRefId: String,
+        disbursementAccountReference: String,
+        disbursementMethod: DisbursementMethod,
+        loanPeriod: Int,
+        loanType: LoanType,
+        productRefId: String,
+        referencedLoanRefId: String?,
+        requestId: String? = null,
+        sessionId: String
+    ): LoanQuotationResponse {
+        return loanRequestErrorHandler {
+            httpClient.post(NetworkConstants.PrestaLoanQuotation.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                contentType(ContentType.Application.Json)
+                setBody(
+                    LoanRequestData(
+                        amount = amount,
+                        currentTerm = currentTerm,
+                        customerRefId = customerRefId,
+                        disbursementAccountReference = disbursementAccountReference,
+                        disbursementMethod = disbursementMethod,
+                        loanPeriod = loanPeriod,
+                        loanType = loanType,
+                        productRefId = productRefId,
+                        referencedLoanRefId = referencedLoanRefId,
+                        requestId = requestId,
+                        sessionId = sessionId
+                    )
+                )
             }
         }
     }

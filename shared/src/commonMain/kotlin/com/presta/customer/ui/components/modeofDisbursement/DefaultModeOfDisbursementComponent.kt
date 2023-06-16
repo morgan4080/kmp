@@ -154,55 +154,9 @@ class DefaultModeOfDisbursementComponent(
             currentTerm
         )
 
-
-        //business logic send   request and call the  appropriate screen  based on  the response
-        /*if (authUserScopeJob?.isActive == true) return
-        authUserScopeJob = scope.launch {
-            authState.collect { state ->
-                if (state.cachedMemberData !== null) {
-                    onRequestLoanEvent(
-                        ModeOfDisbursementStore.Intent.RequestLoan(
-                            token = state.cachedMemberData.accessToken,
-                            amount = amount.toInt(),
-                            currentTerm =currentTerm,
-                            customerRefId = state.cachedMemberData.refId,
-                            disbursementAccountReference = state.cachedMemberData.phoneNumber,
-                            disbursementMethod = DisbursementMethod.MOBILEMONEY,
-                            loanPeriod = loanPeriod.toInt(),
-                            loanType = loanType,
-                            productRefId = refId,
-                            referencedLoanRefId = referencedLoanRefId,
-                            requestId = null,
-                            sessionId = state.cachedMemberData.session_id
-                        )
-                    )
-                }
-                this.cancel()
-            }
-        }
-        loanRequestScopeJob = scope.launch {
-            modeOfDisbursementState.collect { state ->
-                if (state.requestId !== null) {
-                    val requestId = state.requestId
-                    *//*correlationId: String,
-                        refId: String,
-                        amount: Double,
-                        fees: Double,
-                        loanPeriod: String,
-                        loanType: LoanType,
-                        interestRate: Double,
-                        LoanName: String,
-                        loanPeriodUnit: String,
-                        referencedLoanRefId: String,
-                        currentTerm: Boolean,
-
-                        requestId,amount,0.00*//*
-
-                    this.cancel()
-                }
-            }
-        }*/
     }
+
+
 
     override fun onBankSelected() {
         onBankClicked()

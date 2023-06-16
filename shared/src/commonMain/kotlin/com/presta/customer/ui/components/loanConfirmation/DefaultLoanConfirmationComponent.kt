@@ -23,7 +23,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
@@ -205,4 +204,36 @@ class DefaultLoanConfirmationComponent(
         checkAuthenticatedUser()
         refreshToken()
     }
+
+
+    init {
+        scope.launch {
+            authState.collect { state ->
+                if (state.cachedMemberData !== null) {
+                    onRequestLoanEvent(
+                        ModeOfDisbursementStore.Intent.GetLoanQuotation(
+                            token = state.cachedMemberData.accessToken,
+                            amount = amount.toInt(),
+                            currentTerm = currentTerm,
+                            customerRefId = state.cachedMemberData.refId,
+                            disbursementAccountReference = state.cachedMemberData.phoneNumber,
+                            disbursementMethod = DisbursementMethod.MOBILEMONEY,
+                            loanPeriod = loanPeriod.toInt(),
+                            loanType = loanType,
+                            productRefId = refId,
+                            referencedLoanRefId = referencedLoanRefId,
+                            requestId = null,
+                            sessionId = state.cachedMemberData.session_id
+                        )
+                    )
+                    this.cancel()
+                }
+            }
+        }
+
+    }
+
+
+
+
 }

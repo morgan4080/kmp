@@ -2,6 +2,7 @@ package com.presta.customer.network.loanRequest.data
 
 import com.presta.customer.network.loanRequest.client.PrestaLoanRequestClient
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
+import com.presta.customer.network.loanRequest.model.LoanQuotationResponse
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.loanRequest.model.PrestaLoanPollingResponse
 import org.koin.core.component.KoinComponent
@@ -51,6 +52,43 @@ class LoanRequestRepositoryImpl : LoanRequestRepository,KoinComponent {
     ): Result<PrestaLoanPollingResponse> {
         return try {
             val response = loanRequestClient.pollLoanApplicationStatus(token, requestId)
+            Result.success(response)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun loanQuotationRequest(
+        token: String,
+        amount: Int,
+        currentTerm: Boolean,
+        customerRefId: String,
+        disbursementAccountReference: String,
+        disbursementMethod: DisbursementMethod,
+        loanPeriod: Int,
+        loanType: LoanType,
+        productRefId: String,
+        referencedLoanRefId: String?,
+        requestId: String?,
+        sessionId: String
+    ): Result<LoanQuotationResponse> {
+
+        return try {
+            val response = loanRequestClient.sendLoanQuotationRequest(
+                token = token,
+                amount = amount,
+                currentTerm = currentTerm,
+                customerRefId = customerRefId,
+                disbursementAccountReference = disbursementAccountReference,
+                disbursementMethod=disbursementMethod,
+                loanPeriod = loanPeriod,
+                loanType = loanType,
+                productRefId = productRefId,
+                referencedLoanRefId = referencedLoanRefId,
+                requestId = requestId,
+                sessionId = sessionId
+            )
             Result.success(response)
         } catch (e: Exception) {
             e.printStackTrace()

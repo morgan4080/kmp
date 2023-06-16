@@ -1,5 +1,6 @@
 package com.presta.customer.ui.components.processLoanDisbursement.ui
 
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
@@ -43,7 +43,7 @@ fun ProcessLoanDisbursementContent(
     state: ProcessingLoanDisbursementStore.State
 ) {
 
-//    val infiniteTransition = rememberInfiniteTransition()
+   val infiniteTransition = rememberInfiniteTransition()
 //    val angle by infiniteTransition.animateFloat(
 //        initialValue = 0F,
 //        targetValue = 360F,

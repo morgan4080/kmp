@@ -7,6 +7,7 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.loanRequest.data.LoanRequestRepository
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
+import com.presta.customer.network.loanRequest.model.LoanQuotationResponse
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.prestaDispatchers
 import kotlinx.coroutines.Job
@@ -33,6 +34,7 @@ class ModeOfDisbursementStoreFactory(
         data class LoanRequestsLoading(val isLoading: Boolean = true) : Msg()
 
         data class LoanRequestFailedFailed(val error: String?) : Msg()
+        data class LoanQuotationDataLoaded(val loanQuotationResponse: LoanQuotationResponse ) :Msg()
     }
 
     private inner class ExecutorImpl : CoroutineExecutor<ModeOfDisbursementStore.Intent, Unit, ModeOfDisbursementStore.State, Msg, Nothing>(
@@ -57,6 +59,22 @@ class ModeOfDisbursementStoreFactory(
                     requestId = intent.requestId,
                     sessionId = intent.sessionId
                 )
+
+                is ModeOfDisbursementStore.Intent.GetLoanQuotation-> checkLoanQuotation (
+                    token = intent.token,
+                    amount = intent.amount,
+                    currentTerm = intent.currentTerm,
+                    customerRefId = intent.customerRefId,
+                    disbursementAccountReference = intent.disbursementAccountReference,
+                    disbursementMethod = intent.disbursementMethod,
+                    loanPeriod = intent.loanPeriod,
+                    loanType = intent.loanType,
+                    productRefId = intent.productRefId,
+                    referencedLoanRefId = intent.referencedLoanRefId,
+                    requestId = intent.requestId,
+                    sessionId = intent.sessionId
+                )
+
             }
         private var requestLoanJob: Job? = null
         private fun requestLoan(
@@ -100,11 +118,56 @@ class ModeOfDisbursementStoreFactory(
             }
         }
 
+        private var requestLoanQuotationJob: Job? = null
+        private fun checkLoanQuotation(
+            token: String,
+            amount: Int,
+            currentTerm: Boolean,
+            customerRefId: String,
+            disbursementAccountReference: String,
+            disbursementMethod: DisbursementMethod,
+            loanPeriod: Int,
+            loanType: LoanType,
+            productRefId: String,
+            referencedLoanRefId: String?=null,
+            requestId: String?=null,
+            sessionId: String
+        ) {
+            if (requestLoanQuotationJob?.isActive == true) return
+            dispatch(Msg.LoanRequestsLoading())
+
+            requestLoanQuotationJob= scope.launch {
+                loanRequestRepository.loanQuotationRequest (
+                    token,
+                    amount,
+                    currentTerm,
+                    customerRefId,
+                    disbursementAccountReference,
+                    disbursementMethod,
+                    loanPeriod,
+                    loanType,
+                    productRefId,
+                    referencedLoanRefId,
+                    requestId,
+                    sessionId,
+                ).onSuccess { response ->
+                    dispatch(Msg.LoanQuotationDataLoaded(response))
+                    println("Loan quotation loaded::::::;;;- $response")
+
+                    dispatch(Msg.LoanRequestsLoading(false))
+                }.onFailure { e ->
+                    dispatch(Msg.LoanRequestFailedFailed(e.message))
+                    dispatch(Msg.LoanRequestsLoading(false))
+                }
+            }
+        }
     }
+
     private object ReducerImpl : Reducer<ModeOfDisbursementStore.State, Msg> {
         override fun ModeOfDisbursementStore.State.reduce(msg: Msg): ModeOfDisbursementStore.State =
             when (msg) {
                 is Msg.LoanRequestLoaded -> copy(requestId = msg.requestId)
+                is Msg.LoanQuotationDataLoaded-> copy  (prestaLoanQuotation=msg.loanQuotationResponse)
                 is Msg.LoanRequestsLoading -> copy(isLoading = msg.isLoading)
                 is Msg.LoanRequestFailedFailed -> copy(error = msg.error)
             }

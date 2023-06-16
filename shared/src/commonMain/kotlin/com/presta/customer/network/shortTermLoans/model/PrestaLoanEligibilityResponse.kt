@@ -31,4 +31,3 @@ data class PrestaLoanEligibilityResponse @OptIn(ExperimentalSerializationApi::cl
 
 //Dennis
 
-//Dennis update
