@@ -142,7 +142,7 @@ fun ProfileContent(
     )
 
     if (state.savingsBalances !== null ) {
-        balancesMap["Total Savings Amount"] = state.savingsBalances.savingsTotalAmount
+        balancesMap["Total Savings Amount"] = state.savingsBalances.savingsTotalAmount + state.savingsBalances.sharesBalance
     }
 
     if (state.loansBalances !== null) {
@@ -277,7 +277,6 @@ fun ProfileContent(
                                             modifier = Modifier.absoluteOffset(x = 6.dp).zIndex(1f),
                                             onClick = {
                                                 scopeDrawer.launch { drawerState.open() }
-                                                /*logout()*/
                                             },
                                             content = {
                                                 BadgedBox(badge = {

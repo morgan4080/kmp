@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.network.profile.model.LoanBreakDown
+import com.presta.customer.ui.helpers.formatMoney
 import com.presta.customer.ui.theme.backArrowColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
@@ -116,7 +117,7 @@ fun HomeCardListItem(
                             shape = RoundedCornerShape(12.dp)
                         ).defaultMinSize(150.dp),
                         text = if (balance !== null) {
-                            balance.toString() +
+                            formatMoney(balance) +
                                     " KES"
                         } else "",
                         color= MaterialTheme.colorScheme.onBackground,
@@ -157,15 +158,13 @@ fun HomeCardListItem(
                                 shape = RoundedCornerShape(12.dp)
                             ).defaultMinSize(150.dp),
                             text = if (lastAmount !== null && lastDate !== null)
-                                "KES $lastAmount - $lastDate"
+                                "KES ${formatMoney(lastAmount)} - $lastDate"
                             else "",
                             color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.labelLarge,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                         )
                     }
-
-
 
                     if (name == "Total Loan Balance") {
                         Text(

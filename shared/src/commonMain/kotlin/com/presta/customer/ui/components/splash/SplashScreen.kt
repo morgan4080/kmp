@@ -18,6 +18,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -52,7 +53,9 @@ fun SplashScreen(component: SplashComponent, connectivityStatus: SharedStatus?) 
             connectivityStatus.current.collect{
                 if (!it) {
                     snackBarHostState.showSnackbar(
-                        "No internet connection"
+                        message = "No internet connection",
+                        duration = SnackbarDuration.Indefinite,
+                        withDismissAction = true
                     )
                 }
                 component.onEvent(AuthStore.Intent.UpdateOnlineState(it))
@@ -64,7 +67,7 @@ fun SplashScreen(component: SplashComponent, connectivityStatus: SharedStatus?) 
         modifier = Modifier.
         fillMaxHeight(1f)
             .padding(LocalSafeArea.current),
-        snackbarHost = { SnackbarHost(snackBarHostState) },
+        snackbarHost = { SnackbarHost(modifier = Modifier.padding(bottom = 10.dp), hostState = snackBarHostState) },
     ) {
         Column(
             modifier = Modifier
