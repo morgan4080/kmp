@@ -214,6 +214,7 @@ class DefaultRootComponent(
         DefaultRootBottomComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
             gotoAllTransactions = {
                 navigation.push(Config.AllTransactions)
             },

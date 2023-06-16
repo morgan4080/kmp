@@ -5,7 +5,6 @@ import com.presta.customer.network.authDevice.model.PrestaCheckAuthUserResponse
 import com.presta.customer.network.authDevice.model.PrestaLogInResponse
 import com.presta.customer.network.authDevice.model.RefreshTokenResponse
 import com.presta.customer.network.onBoarding.model.PinStatus
-import com.presta.customer.network.onBoarding.model.RegistrationFeeStatus
 
 data class InputMethod(val value: String)
 enum class Contexts {
@@ -16,7 +15,9 @@ enum class Contexts {
 data class CachedMemberData(
     val accessToken: String,
     val refreshToken: String,
-    val session_id:String,
+    val session_id: String,
+    val expires_in: Long,
+    val refresh_expires_in: Long,
     val refId: String,
     val registrationFees: Double,
     val registrationFeeStatus: String,
@@ -32,6 +33,7 @@ interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
         data class UpdateContext(val context: Contexts, val title: String, val label: String, val pinCreated: Boolean, val pinConfirmed: Boolean, val error: String?): Intent()
         object LogOutUser: Intent()
         data class UpdateOnlineState(val isOnline: Boolean): Intent()
+        data class UpdateRefreshToken(val refreshResponse: RefreshTokenResponse): Intent()
     }
 
     data class State(

@@ -7,24 +7,54 @@ import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.lifecycle.Lifecycle
+import com.arkivanov.essenty.lifecycle.LifecycleOwner
+import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
+import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.presta.customer.network.authDevice.data.AuthRepository
+import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.payments.data.PaymentTypes
+import com.presta.customer.organisation.OrganisationModel
+import com.presta.customer.prestaDispatchers
+import com.presta.customer.ui.components.auth.poller.AuthPoller
+import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.profile.DefaultProfileComponent
 import com.presta.customer.ui.components.profile.ProfileComponent
+import com.presta.customer.ui.components.profile.coroutineScope
 import com.presta.customer.ui.components.rootLoans.DefaultRootLoansComponent
+import com.presta.customer.ui.components.rootLoans.RootLoansComponent
 import com.presta.customer.ui.components.rootSavings.DefaultRootSavingsComponent
 import com.presta.customer.ui.components.rootSavings.RootSavingsComponent
 import com.presta.customer.ui.components.sign.DefaultSignComponent
 import com.presta.customer.ui.components.sign.SignComponent
-import com.presta.customer.ui.components.rootLoans.RootLoansComponent
-import com.presta.customer.prestaDispatchers
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import kotlin.coroutines.CoroutineContext
 
+fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineScope {
+    val scope = CoroutineScope(context)
+    lifecycle.doOnDestroy(scope::cancel)
+    return scope
+}
 
+fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
+    CoroutineScope(context, lifecycle)
 class DefaultRootBottomComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
+    val mainContext: CoroutineDispatcher,
     private val logoutToSplash: () -> Unit,
     private val gotoAllTransactions: () -> Unit,
     private val gotoPayLoans: () -> Unit,
@@ -40,7 +70,55 @@ class DefaultRootBottomComponent(
         fees:Double
     ) -> Unit
 
-) : RootBottomComponent, ComponentContext by componentContext {
+) : RootBottomComponent, ComponentContext by componentContext, KoinComponent {
+    private val authRepository by inject<AuthRepository>()
+
+    override val authStore =
+        instanceKeeper.getStore {
+            AuthStoreFactory(
+                storeFactory = storeFactory,
+                phoneNumber = null,
+                isTermsAccepted = false,
+                isActive = false,
+                pinStatus = PinStatus.SET,
+                onLogOut = logoutToSplash
+            ).create()
+        }
+
+    override fun onAuthEvent(event: AuthStore.Intent) {
+        authStore.accept(event)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val authState: StateFlow<AuthStore.State> = authStore.stateFlow
+
+    private val scope = coroutineScope(mainContext + SupervisorJob())
+
+    private val poller = AuthPoller(authRepository = authRepository, mainContext)
+    private fun refreshToken() {
+        scope.launch {
+            authState.collect { state ->
+                if (state.cachedMemberData !== null) {
+                    val flow = poller.poll(
+                        state.cachedMemberData.refresh_expires_in,
+                        OrganisationModel.organisation.tenant_id,
+                        state.cachedMemberData.refId
+                    )
+
+                    flow.collect {
+                        it.onSuccess { response ->
+                            println("::::::::::::::::::::::::UpdateRefreshToken")
+                            onAuthEvent(AuthStore.Intent.UpdateRefreshToken(response))
+                        }.onFailure { error ->
+                            onAuthEvent(AuthStore.Intent.UpdateError(error.message))
+                        }
+                    }
+
+                    poller.close()
+                }
+            }
+        }
+    }
 
     private val navigationBottomStackNavigation = StackNavigation<ConfigBottom>()
 
@@ -151,5 +229,9 @@ class DefaultRootBottomComponent(
         object RootSavings : ConfigBottom()
         @Parcelize
         object Sign : ConfigBottom()
+    }
+
+    init {
+        refreshToken()
     }
 }

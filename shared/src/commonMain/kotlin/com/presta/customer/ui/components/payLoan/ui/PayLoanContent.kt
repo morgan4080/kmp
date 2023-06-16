@@ -161,7 +161,9 @@ fun PayLoanContent(
                 )
 
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp)
                 ) {
                     Paginator(if (state.loansBalances !== null) state.loansBalances.loanBreakDown.size else 1, stateLazyRow0.firstVisibleItemIndex)
                 }

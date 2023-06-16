@@ -36,7 +36,9 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
                 session_id = response.session_id,
                 registrationFees = registrationFees,
                 registrationFeeStatus = registrationFeeStatus,
-                phoneNumber = phoneNumber
+                phoneNumber = phoneNumber,
+                expires_in = response.expires_in,
+                refresh_expires_in = response.refresh_expires_in,
             )
 
             Result.success(response)
@@ -64,13 +66,12 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
                 tenantId = tenantId
             )
 
-            println("::::::update Access Token with Response")
-            println(response)
-
             userAuthDao.updateAccessToken(
                 response.access_token,
                 response.refresh_token,
                 response.session_id,
+                response.expires_in,
+                response.refresh_expires_in,
                 refId
             )
 
@@ -89,7 +90,9 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
         var accessToken = ""
         var refreshToken = ""
         var refId = ""
-        var session_id = ""
+        var sessionId = ""
+        var expiresIn: Long = 300
+        var refreshExpiresIn: Long = 1800
         var phoneNumber = ""
         var registrationFees = 0.0
         var registrationFeeStatus = "NOT_PAID"
@@ -98,7 +101,9 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
             accessToken = it.access_token
             refreshToken = it.access_token
             refId = it.refId
-            session_id = it.session_id
+            sessionId = it.session_id
+            expiresIn = it.expires_in
+            refreshExpiresIn = it.refresh_expires_in
             registrationFees = it.registrationFees
             registrationFeeStatus = it.registrationFeeStatus
             phoneNumber = it.phoneNumber
@@ -108,7 +113,9 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
             access_token = accessToken,
             refresh_token = refreshToken,
             refId = refId,
-            session_id = session_id,
+            session_id = sessionId,
+            expires_in = expiresIn,
+            refresh_expires_in = refreshExpiresIn,
             registrationFees = registrationFees,
             registrationFeeStatus = registrationFeeStatus,
             phoneNumber = phoneNumber,

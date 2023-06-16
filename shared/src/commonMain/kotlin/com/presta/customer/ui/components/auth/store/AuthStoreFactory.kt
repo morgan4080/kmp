@@ -54,7 +54,7 @@ internal class AuthStoreFactory(
         data class CheckAuthenticatedUserLoaded(val authUserResponse: PrestaCheckAuthUserResponse): Msg()
         data class AuthFailed(val error: String?) : Msg()
 
-        data class CachedMemberData(val accessToken: String, val refreshToken: String, val refId: String, val session_id: String, val registrationFees: Double, val registrationFeeStatus: String, val phoneNumber: String): Msg()
+        data class CachedMemberData(val accessToken: String, val refreshToken: String, val refId: String, val session_id: String, val registrationFees: Double, val registrationFeeStatus: String, val phoneNumber: String, val expires_in: Long, val refresh_expires_in: Long): Msg()
     }
 
     private inner class ExecutorImpl : CoroutineExecutor<AuthStore.Intent, Unit, AuthStore.State, Msg, Nothing>(
@@ -88,6 +88,7 @@ internal class AuthStoreFactory(
                 is AuthStore.Intent.RefreshToken -> updateAuthToken(intent.tenantId,intent.refId)
                 is AuthStore.Intent.LogOutUser -> logOutUser()
                 is AuthStore.Intent.UpdateOnlineState -> dispatch(Msg.ConnectivityFulfilled(isOnline = intent.isOnline))
+                is AuthStore.Intent.UpdateRefreshToken -> dispatch(Msg.RefreshFulfilled(refreshResponse = intent.refreshResponse))
             }
 
         private var loginUserJob: Job? = null
@@ -157,6 +158,8 @@ internal class AuthStoreFactory(
                     registrationFees = response.registrationFees,
                     registrationFeeStatus = response.registrationFeeStatus,
                     phoneNumber = response.phoneNumber,
+                    expires_in = response.expires_in,
+                    refresh_expires_in = response.refresh_expires_in,
                 ))
             }
         }
@@ -230,6 +233,8 @@ internal class AuthStoreFactory(
                     registrationFees = msg.registrationFees,
                     registrationFeeStatus = msg.registrationFeeStatus,
                     phoneNumber = msg.phoneNumber,
+                    expires_in = msg.expires_in,
+                    refresh_expires_in = msg.refresh_expires_in,
                 ))
                 is Msg.ClearAuthDetails -> copy(
                     loginResponse = null,

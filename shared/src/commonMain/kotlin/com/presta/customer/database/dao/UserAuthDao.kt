@@ -18,18 +18,22 @@ class UserAuthDao(
         query.removeUserAuthCredentials()
     }
 
-    suspend fun updateAccessToken(accessToken: String, refreshToken: String, sessionId: String, refId: String) = withContext(
-        prestaDispatchers.io) {
+    suspend fun updateAccessToken(accessToken: String, refreshToken: String, sessionId: String, expires_in: Long, refresh_expires_in: Long, refId: String) = withContext(
+        prestaDispatchers.io
+    ) {
         query.updateAccessToken(
             access_token = accessToken,
             refresh_token = refreshToken,
             session_id = sessionId,
             refId = refId,
+            expires_in = expires_in,
+            refresh_expires_in = refresh_expires_in
         )
     }
 
-    suspend fun insert(access_token: String, refresh_token: String, refId: String, session_id: String, registrationFees: Double, registrationFeeStatus: String, phoneNumber: String) = withContext(
-        prestaDispatchers.io) {
+    suspend fun insert(access_token: String, refresh_token: String, refId: String, session_id: String, registrationFees: Double, registrationFeeStatus: String, phoneNumber: String, expires_in: Long, refresh_expires_in: Long) = withContext(
+        prestaDispatchers.io
+    ) {
         query.insert(
             access_token = access_token,
             refresh_token = refresh_token,
@@ -38,6 +42,8 @@ class UserAuthDao(
             registrationFees = registrationFees,
             registrationFeeStatus = registrationFeeStatus,
             phoneNumber = phoneNumber,
+            expires_in = expires_in,
+            refresh_expires_in = refresh_expires_in
         )
     }
 }

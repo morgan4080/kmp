@@ -24,5 +24,7 @@ interface AuthRepository {
         val registrationFees: Double,
         val registrationFeeStatus: String,
         val phoneNumber: String,
+        val expires_in: Long,
+        val refresh_expires_in: Long
     )
 }

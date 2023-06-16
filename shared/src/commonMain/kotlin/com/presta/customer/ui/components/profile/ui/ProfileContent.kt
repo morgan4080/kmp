@@ -142,7 +142,7 @@ fun ProfileContent(
     )
 
     if (state.savingsBalances !== null ) {
-        balancesMap["Total Savings Amount"] = state.savingsBalances.savingsTotalAmount + state.savingsBalances.sharesBalance
+        balancesMap["Total Savings Amount"] = state.savingsBalances.savingsTotalAmount
     }
 
     if (state.loansBalances !== null) {
