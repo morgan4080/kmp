@@ -8,7 +8,7 @@ import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.network.loanRequest.data.LoanRequestRepository
-import com.presta.customer.network.loanRequest.model.LoanRequestStatus
+import com.presta.customer.network.loanRequest.model.LoanApplicationStatus
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
@@ -108,7 +108,11 @@ class DefaultProcessLoanDisbursementComponent(
 
                     flow.collect {
                         it.onSuccess { response ->
-                            onProcessingLoanDisbursementEvent(ProcessingLoanDisbursementStore.Intent.UpdateLoanRequestStatus(response.applicationStatus))
+                            onProcessingLoanDisbursementEvent(ProcessingLoanDisbursementStore.Intent.UpdateApprovalStatus(response.applicationStatus))
+                            onProcessingLoanDisbursementEvent(ProcessingLoanDisbursementStore.Intent.UpdateDisbursementStatus(response.disbursementResult?.disbursementStatus))
+                            onProcessingLoanDisbursementEvent(ProcessingLoanDisbursementStore.Intent.UpdateAppraisalStatus(response.appraisalResult.appraisalStatus))
+                            onProcessingLoanDisbursementEvent(ProcessingLoanDisbursementStore.Intent.UpdateAccountingStatus(response.accountingResult?.accountingStatus))
+                            onProcessingLoanDisbursementEvent(ProcessingLoanDisbursementStore.Intent.UpdateDisbursementTransactionId(response.disbursementResult?.transactionId))
                         }.onFailure { error ->
                             onProcessingLoanDisbursementEvent(ProcessingLoanDisbursementStore.Intent.UpdateError(error.message))
                         }

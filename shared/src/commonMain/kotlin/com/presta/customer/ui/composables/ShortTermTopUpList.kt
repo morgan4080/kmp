@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.network.shortTermLoans.model.PrestaLoanEligibilityResponse
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import com.presta.customer.ui.helpers.formatMoney
@@ -32,7 +33,8 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 @Composable
 fun ShortTermTopUpList(
     component: ShortTermLoansComponent,
-    state: ShortTermLoansStore.State
+    state: ShortTermLoansStore.State,
+    eligibilityResponse: PrestaLoanEligibilityResponse?
 ) {
     var selectedIndex by remember { mutableStateOf(-1) }
     var enabled by remember { mutableStateOf(false) }
@@ -48,7 +50,7 @@ fun ShortTermTopUpList(
                 .weight(0.2f)
         ) {
             Text(
-                text = "Select Loan to Top Up",
+                text = if (eligibilityResponse !== null && eligibilityResponse.isEligible) "Select Loan to Top Up" else "",
                 modifier = Modifier
                     .padding(top = 25.dp),
                 fontSize = 14.sp,

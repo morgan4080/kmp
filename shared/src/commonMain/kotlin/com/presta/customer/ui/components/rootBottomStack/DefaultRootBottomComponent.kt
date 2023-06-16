@@ -68,8 +68,8 @@ class DefaultRootBottomComponent(
         correlationId: String,
         amount: Double,
         fees:Double
-    ) -> Unit
-
+    ) -> Unit,
+    backTopProfile: Boolean = false
 ) : RootBottomComponent, ComponentContext by componentContext, KoinComponent {
     private val authRepository by inject<AuthRepository>()
 
@@ -233,5 +233,8 @@ class DefaultRootBottomComponent(
 
     init {
         refreshToken()
+        if (backTopProfile) {
+            navigationBottomStackNavigation.bringToFront(ConfigBottom.Profile)
+        }
     }
 }

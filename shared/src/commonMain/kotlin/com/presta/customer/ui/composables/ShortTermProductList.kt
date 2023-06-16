@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.network.shortTermLoans.model.PrestaLoanEligibilityResponse
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
@@ -46,13 +47,11 @@ fun ShortTermProductList(
     state: ShortTermLoansStore.State,
     authState: AuthStore.State,
     onEvent: (ShortTermLoansStore.Intent) -> Unit,
+    eligibilityResponse: PrestaLoanEligibilityResponse?
 ) {
 
     var refreshing by remember { mutableStateOf(false) }
     val refreshScope = rememberCoroutineScope()
-    var productRefId= ""
-    val isEligibleForNormalLoanAndTopUp=state.prestaLoanEligibilityStatus?.isEligibleForNormalLoanAndTopup
-    val isEligible=state.prestaLoanEligibilityStatus?.isEligible
 
     fun refresh() = refreshScope.launch {
         refreshing = true
@@ -67,6 +66,8 @@ fun ShortTermProductList(
 
     }
 
+    var productRefId= ""
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -74,7 +75,7 @@ fun ShortTermProductList(
     ) {
 
         Text(
-            text = "Select Loan Product",
+            text = if (eligibilityResponse !== null && eligibilityResponse.isEligible)"Select Loan Product" else   "",
             modifier = Modifier.padding(top = 22.dp),
             fontSize = 14.sp,
             fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)

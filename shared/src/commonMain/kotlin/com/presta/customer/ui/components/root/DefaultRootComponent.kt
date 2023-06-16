@@ -12,7 +12,7 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
-import com.presta.customer.network.loanRequest.model.LoanRequestStatus
+import com.presta.customer.network.loanRequest.model.LoanApplicationStatus
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.network.payments.model.PaymentStatuses
@@ -70,7 +70,7 @@ class DefaultRootComponent(
             is Config.OTP -> RootComponent.Child.OTPChild(otpComponent(componentContext, config))
             is Config.Register -> RootComponent.Child.RegisterChild(registerComponent(componentContext, config))
             is Config.Auth -> RootComponent.Child.AuthChild(authComponent(componentContext, config))
-            is Config.RootBottom -> RootComponent.Child.RootBottomChild(rootBottomComponent(componentContext))
+            is Config.RootBottom -> RootComponent.Child.RootBottomChild(rootBottomComponent(componentContext, config))
             is Config.AllTransactions -> RootComponent.Child.AllTransactionsChild(allTransactionHistory(componentContext))
             is Config.PayLoanPrompt->RootComponent.Child.PayLoanPromptChild(payLoanPromptComponent(componentContext, config))
             is Config.PayRegistrationFee->RootComponent.Child.PayRegistrationFeeChild(payRegistrationFeeComponent(componentContext, config))
@@ -206,11 +206,11 @@ class DefaultRootComponent(
             pinStatus = config.pinStatus,
             onBoardingContext = config.onBoardingContext,
             onLogin = {
-                navigation.replaceAll(Config.RootBottom)
+                navigation.replaceAll(Config.RootBottom(false))
             }
         )
 
-    private fun rootBottomComponent(componentContext: ComponentContext): RootBottomComponent =
+    private fun rootBottomComponent(componentContext: ComponentContext, config: Config.RootBottom): RootBottomComponent =
         DefaultRootBottomComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
@@ -232,7 +232,8 @@ class DefaultRootComponent(
             },
             processLoanDisbursement = {correlationId, amount, fees, ->
                 navigation.bringToFront(Config.ProcessingLoanLoanDisbursement(correlationId, amount, fees))
-            }
+            },
+            backTopProfile = config.backTopProfile
         )
 
     private fun allTransactionHistory(componentContext: ComponentContext): TransactionHistoryComponent =
@@ -301,7 +302,7 @@ class DefaultRootComponent(
                 navigation.pop()
             },
             navigateToProfile = {
-                navigation.replaceAll(Config.RootBottom)
+                navigation.replaceAll(Config.RootBottom(false))
             }
         )
 
@@ -318,11 +319,9 @@ class DefaultRootComponent(
             mainContext = prestaDispatchers.main,
             fees = config.fees,
             navigateToCompleteFailure = {
-                navigation.replaceAll(Config.RootBottom)
+                navigation.replaceAll(Config.RootBottom(true))
             }
         )
-
-
 
     enum class OnBoardingContext {
         LOGIN,
@@ -345,7 +344,7 @@ class DefaultRootComponent(
         @Parcelize
         object AllTransactions : Config()
         @Parcelize
-        object RootBottom : Config()
+        data class RootBottom(val backTopProfile: Boolean) : Config()
         @Parcelize
         object PayLoan :Config()
         @Parcelize

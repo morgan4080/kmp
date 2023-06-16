@@ -75,123 +75,123 @@ fun SpecificLoaContent(
                         component.onBackNavSelected()
                     })
             }
-            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+            LazyColumn(modifier = Modifier.padding(start = 16.dp, end = 16.dp).fillMaxWidth()) {
                 item {
+                    Text(
+                        modifier = Modifier,
+                        text = "Enter Loan Amount",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 14.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                    )
+                }
+                item {
+                    LoanLimitContainer(state)
+                }
+                item {
+                    Row(modifier = Modifier.padding(top = 16.dp)) {
+                        TextInputContainer(
+                            "Enter the desired amount",
+                            "",
+                            inputType = InputTypes.NUMBER,
+                        ) {
+                            val inputValue: Double? = TextFieldValue(it).text.toDoubleOrNull()
+                            if (inputValue != null) {
+                                if ((inputValue >= allowedMinAmount!!.toDouble() && inputValue <= allowedMaxAmount!!.toDouble()) && (TextFieldValue(
+                                        it
+                                    ).text !== "")
+                                ) {
+                                    amount = TextFieldValue(it)
+                                    isError = false
 
-                    Column(
-                        modifier = Modifier
-                            .padding(start = 16.dp, end = 16.dp)
-                            .background(color = MaterialTheme.colorScheme.background)
-                            .fillMaxHeight()
-                    ) {
+                                } else {
+                                    isError = true
+                                }
+                            }
+                        }
+                    }
+                }
+                item {
+                    if (isError) {
+
                         Text(
-                            modifier = Modifier,
-                            text = "Enter Loan Amount",
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = 14.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                            modifier = Modifier.padding(top = 10.dp, start = 5.dp),
+                            text = "min value Ksh " + allowedMinAmount.toString() + " max value Ksh " + allowedMaxAmount.toString(),
+                            style = MaterialTheme.typography.bodySmall,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                            color = Color.Red
                         )
 
-                        LoanLimitContainer(state)
+                    }
+                }
+                item {
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                    ) {
+                        TextInputContainer(
+                            "Desired Period(Months)",
+                            inputType = InputTypes.NUMBER,
+                            inputValue = if (allowedMaxTerm !== null) allowedMaxTerm.toString() else ""
+                        ) {
+                            val inputPeriod: Int? = TextFieldValue(it).text.toIntOrNull()
+                            if (inputPeriod != null) {
+                                if ((inputPeriod >= allowedMinTerm!!.toInt() && inputPeriod <= allowedMaxTerm!!.toInt()) && (TextFieldValue(
+                                        it
+                                    ).text !== "")
+                                ) {
+                                    desiredPeriod = TextFieldValue(it)
+                                    isPeriodError = false
 
-                        Row(modifier = Modifier.padding(top = 16.dp)) {
-                            TextInputContainer(
-                                "Enter the desired amount",
-                                "",
-                                inputType = InputTypes.NUMBER,
-                            ) {
-                                val inputValue: Double? = TextFieldValue(it).text.toDoubleOrNull()
-                                if (inputValue != null) {
-                                    if ((inputValue >= allowedMinAmount!!.toDouble() && inputValue <= allowedMaxAmount!!.toDouble()) && (TextFieldValue(
-                                            it
-                                        ).text !== "")
-                                    ) {
-                                        amount = TextFieldValue(it)
-                                        isError = false
-
-                                    } else {
-                                        isError = true
-                                    }
+                                } else {
+                                    isPeriodError = true
                                 }
                             }
                         }
+                    }
+                }
+                item {
+                    if (isPeriodError) {
+                        Text(
+                            modifier = Modifier.padding(top = 10.dp, start = 5.dp),
+                            text = "min period is " + allowedMinTerm.toString() + loanPeriodUnit.toString() + " max period is " + allowedMaxTerm.toString() + loanPeriodUnit,
+                            style = MaterialTheme.typography.bodySmall,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                            color = Color.Red
+                        )
 
-                        if (isError) {
-
-                            Text(
-                                modifier = Modifier.padding(top = 10.dp, start = 5.dp),
-                                text = "min value Ksh " + allowedMinAmount.toString() + " max value Ksh " + allowedMaxAmount.toString(),
-                                style = MaterialTheme.typography.bodySmall,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                color = Color.Red
-                            )
-
-                        }
-
-                        Row(
-                            modifier = Modifier
-                                .padding(top = 16.dp)
-                        ) {
-                            TextInputContainer(
-                                "Desired Period(Months)",
-                                inputType = InputTypes.NUMBER,
-                                inputValue = if (allowedMaxTerm !== null) allowedMaxTerm.toString() else ""
-                            ) {
-                                val inputPeriod: Int? = TextFieldValue(it).text.toIntOrNull()
-                                if (inputPeriod != null) {
-                                    if ((inputPeriod >= allowedMinTerm!!.toInt() && inputPeriod <= allowedMaxTerm!!.toInt()) && (TextFieldValue(
-                                            it
-                                        ).text !== "")
-                                    ) {
-                                        desiredPeriod = TextFieldValue(it)
-                                        isPeriodError = false
-
-                                    } else {
-                                        isPeriodError = true
-                                    }
-                                }
-                            }
-                        }
-                        if (isPeriodError) {
-                            Text(
-                                modifier = Modifier.padding(top = 10.dp, start = 5.dp),
-                                text = "min period is " + allowedMinTerm.toString() + loanPeriodUnit.toString() + " max period is " + allowedMaxTerm.toString() + loanPeriodUnit,
-                                style = MaterialTheme.typography.bodySmall,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                color = Color.Red
-                            )
-
-                        }
-                        Row(
-                            modifier = Modifier
-                                .padding(top = 30.dp)
-                        ) {
-                            ActionButton(
-                                "Confirm",
-                                onClickContainer = {
-                                    if (amount.text !== "" && desiredPeriod.text !== "") {
-                                        state.prestaShortTermLoanProductById?.interestRate?.let {
-                                            state.prestaShortTermLoanProductById.maxTerm?.let { it1 ->
-                                                component.onConfirmSelected(
-                                                    state.prestaShortTermLoanProductById.refId.toString(),
-                                                    amount.text.toDouble(),
-                                                    desiredPeriod.text,
-                                                    loanType = LoanType._NORMAL_LOAN,
-                                                    state.prestaShortTermLoanProductById.name.toString(),
-                                                    it,
-                                                    state.prestaShortTermLoanProductById.loanPeriodUnit.toString(),
-                                                    it1,
-                                                    referencedLoanRefId =referencedLoanRefId,
-                                                    currentTerm = currentTerm
-                                                )
-                                            }
+                    }
+                }
+                item {
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 30.dp, bottom = 400.dp)
+                    ) {
+                        ActionButton(
+                            "Confirm",
+                            onClickContainer = {
+                                if (amount.text !== "" && desiredPeriod.text !== "") {
+                                    state.prestaShortTermLoanProductById?.interestRate?.let {
+                                        state.prestaShortTermLoanProductById.maxTerm?.let { it1 ->
+                                            component.onConfirmSelected(
+                                                state.prestaShortTermLoanProductById.refId.toString(),
+                                                amount.text.toDouble(),
+                                                desiredPeriod.text,
+                                                loanType = LoanType._NORMAL_LOAN,
+                                                state.prestaShortTermLoanProductById.name.toString(),
+                                                it,
+                                                state.prestaShortTermLoanProductById.loanPeriodUnit.toString(),
+                                                it1,
+                                                referencedLoanRefId =referencedLoanRefId,
+                                                currentTerm = currentTerm
+                                            )
                                         }
                                     }
+                                }
 
-                                },
-                                enabled = amount.text != "" && desiredPeriod.text !== "" && !isError && !isPeriodError
-                            )
-                        }
+                            },
+                            enabled = amount.text != "" && desiredPeriod.text !== "" && !isError && !isPeriodError
+                        )
                     }
                 }
             }

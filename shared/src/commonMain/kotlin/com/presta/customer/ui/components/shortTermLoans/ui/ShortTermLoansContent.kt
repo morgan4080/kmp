@@ -1,9 +1,8 @@
 package com.presta.customer.ui.components.shortTermLoans.ui
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,11 +10,14 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.ChatBubble
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -29,10 +31,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -48,7 +50,10 @@ import com.presta.customer.ui.composables.ShortTermProductList
 import com.presta.customer.ui.composables.ShortTermTopUpList
 import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ShortTermLoansContent(
     component: ShortTermLoansComponent,
@@ -80,6 +85,24 @@ fun ShortTermLoansContent(
         println(state.prestaLoanEligibilityStatus !== null &&
                 state.prestaLoanEligibilityStatus.isEligible)
     }
+
+    var refreshing by remember { mutableStateOf(false) }
+    val refreshScope = rememberCoroutineScope()
+
+    fun refresh() = refreshScope.launch {
+        refreshing = true
+        authState.cachedMemberData?.let {
+            ShortTermLoansStore.Intent.GetPrestaShortTermProductList(
+                it.accessToken,
+                authState.cachedMemberData.refId
+            )
+        }?.let { onEvent.invoke(it) }
+        delay(1500)
+        refreshing = false
+
+    }
+
+    val refreshState = rememberPullRefreshState(refreshing, ::refresh,)
 
     Surface(
         modifier = Modifier
@@ -155,8 +178,8 @@ fun ShortTermLoansContent(
                         }
                     }
                     when (tabIndex) {
-                        0 -> ShortTermProductList(component,state,authState,onEvent)
-                        1 -> ShortTermTopUpList(component,state)
+                        0 -> ShortTermProductList(component,state,authState,onEvent, state.prestaLoanEligibilityStatus)
+                        1 -> ShortTermTopUpList(component,state, state.prestaLoanEligibilityStatus)
                         3 -> {
                             Column (
                                 modifier = Modifier
@@ -176,22 +199,46 @@ fun ShortTermLoansContent(
                                         tint = actionButtonColor
                                     )
                                 }
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(0.8f).padding(top = 25.dp),
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    Text(
-                                        text = "It seems you are not eligible to borrow or access any loans at this time.",
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        style = MaterialTheme.typography.headlineSmall,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                                        textAlign = TextAlign.Center,
-                                        lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
-                                    )
+                                Box(modifier = Modifier.pullRefresh(refreshState)) {
+                                    LazyColumn {
+                                        item {
+                                            Row (
+                                                modifier = Modifier.fillMaxWidth(0.8f).padding(top = 25.dp),
+                                                horizontalArrangement = Arrangement.Center
+                                            ) {
+                                                Text(
+                                                    text = "It seems you are not eligible to borrow, reason:",
+                                                    color = MaterialTheme.colorScheme.onBackground,
+                                                    style = MaterialTheme.typography.headlineSmall,
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                                                    textAlign = TextAlign.Center,
+                                                    lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
+                                                )
+                                            }
+                                            Row (
+                                                modifier = Modifier.fillMaxWidth(0.8f),
+                                                horizontalArrangement = Arrangement.Center
+                                            ) {
+                                                Text (
+                                                    text = if (state.prestaLoanEligibilityStatus !== null) state.prestaLoanEligibilityStatus.description else "",
+                                                    color = actionButtonColor,
+                                                    style = MaterialTheme.typography.headlineSmall,
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                                    textAlign = TextAlign.Center,
+                                                    lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    PullRefreshIndicator(refreshing, refreshState,
+                                        Modifier
+                                            .align(Alignment.TopCenter),
+                                        contentColor = actionButtonColor)
                                 }
                             }
                         }
-                        4 -> ShortTermTopUpList(component,state)
+                        4 -> ShortTermTopUpList(component,state, state.prestaLoanEligibilityStatus)
                     }
                 }
             }
