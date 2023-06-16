@@ -50,7 +50,7 @@ fun SavingsScreen(
         authState = authState,
         state = savingsState,
         onAddSavingsSelected = component::onAddSavingsSelected,
-        onSeeALlSelected = component::onSeeALlSelected,
-        onBack = component::onBack
+        onBack = component::onBack,
+        loadEssentials = component::loadEssentials,
     )
 }

@@ -14,4 +14,5 @@ interface SavingsComponent {
     fun onAddSavingsSelected(sharePrice: Double)
     fun onSeeALlSelected()
     fun onBack()
+    fun loadEssentials()
 }

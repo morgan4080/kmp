@@ -110,7 +110,7 @@ class DefaultSavingsComponent (
                         SavingsStore.Intent.GetSavingsTransactions (
                             token = access_token,
                             refId = refId,
-                            purposeIds = listOf("3"),
+                            purposeIds = listOf("2","3"),
                             searchTerm = null
                         )
                     )
@@ -121,7 +121,7 @@ class DefaultSavingsComponent (
 
     private var loadEssentialsJob: Job? = null
 
-    private fun loadEssentials() {
+    override fun loadEssentials() {
         if (loadEssentialsJob?.isActive == true) return
 
         loadEssentialsJob = scope.launch {
