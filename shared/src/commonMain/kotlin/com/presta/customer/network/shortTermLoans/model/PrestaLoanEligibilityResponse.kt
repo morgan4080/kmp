@@ -30,3 +30,5 @@ data class PrestaLoanEligibilityResponse @OptIn(ExperimentalSerializationApi::cl
 // {"isEligible":false,"isEligibleForNormalLoanAndTopup":false,"reason":"LOANINPROGRESS","loanType":"_NORMAL_LOAN","description":"You have a loan in progress"}
 
 //Dennis
+
+//Dennis update
