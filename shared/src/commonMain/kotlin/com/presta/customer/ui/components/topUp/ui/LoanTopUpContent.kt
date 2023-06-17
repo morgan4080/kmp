@@ -52,6 +52,9 @@ fun LoanTopUpContent(
     var currentTerm by remember { mutableStateOf(false) }
     var labelText = ""
 
+
+
+
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background)

@@ -89,6 +89,7 @@ fun ProcessLoanDisbursementContent(
                         contentAlignment = Alignment.Center
                     ) {
                         if (state.loanDisbursementStatus == DisbursementStatus.DISBURSED) {
+                            //Bounce the icon to  show the action has been   approved
                             Icon(
                                 modifier = Modifier.size(70.dp),
                                 imageVector = Icons.Default.CheckCircle,

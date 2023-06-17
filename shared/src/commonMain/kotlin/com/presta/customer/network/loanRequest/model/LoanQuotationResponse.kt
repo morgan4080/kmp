@@ -16,9 +16,9 @@ data class LoanQuotationResponse @OptIn(ExperimentalSerializationApi::class) con
     @EncodeDefault val interestRate: Double? = null,
     @EncodeDefault val interestAmount: Double? = null,
     @EncodeDefault val deductedInterest: Double? = null,
-    @EncodeDefault val upfrontFees: Int? = null,//
-    @EncodeDefault val deductedFees: Int? = null, //
-    @EncodeDefault val installmentFees: Int? = null,//
+    @EncodeDefault val upfrontFees: Double? = null,//
+    @EncodeDefault val deductedFees: Double? = null, //
+    @EncodeDefault val installmentFees: Double? = null,//
     @EncodeDefault val totalFees: Double? = null,
     @EncodeDefault val totalAmount: Double? = null,
     @EncodeDefault val disbursementAmount: Double? = null,

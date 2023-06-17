@@ -65,6 +65,7 @@ fun LoanConfirmationContent(
                     .background(color = MaterialTheme.colorScheme.background)
                     .fillMaxHeight()
             ) {
+                //confirm the specific loan operation
                 Text(
                     modifier = Modifier,
                     text = "Confirm " + component.loanOperation + " Details",

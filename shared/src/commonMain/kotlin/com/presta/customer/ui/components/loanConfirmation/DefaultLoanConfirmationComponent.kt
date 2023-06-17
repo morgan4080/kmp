@@ -206,7 +206,7 @@ class DefaultLoanConfirmationComponent(
         checkAuthenticatedUser()
         refreshToken()
     }
-
+// for top up loans pass  the  referencedrefId
 
     init {
         scope.launch {
@@ -234,8 +234,4 @@ class DefaultLoanConfirmationComponent(
         }
 
     }
-
-
-
-
 }

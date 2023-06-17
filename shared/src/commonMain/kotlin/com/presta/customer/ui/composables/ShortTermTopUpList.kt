@@ -108,11 +108,12 @@ fun ShortTermTopUpList(
                     if (state.prestaShortTermTopUpList.loans.isNotEmpty()) {
                         val maxAmount = state.prestaShortTermTopUpList.loans[selectedIndex].maxAmount
                         val minAmount = state.prestaShortTermTopUpList.loans[selectedIndex].minAmount
-                        val loaRefId = state.prestaShortTermTopUpList.loans[selectedIndex].loanRefId
+                        val loaRefId = state.prestaShortTermTopUpList.loans[selectedIndex].productRefId
                         val interestRate = state.prestaShortTermTopUpList.loans[selectedIndex].interest
                         val loanName = state.prestaShortTermTopUpList.loans[selectedIndex].name
                         val loanPeriod = state.prestaShortTermTopUpList.loans[selectedIndex].maxPeriod
                         val loanPeriodUnit = state.prestaShortTermTopUpList.loans[selectedIndex].termUnit
+                        //pass the referenced  loan refid
                         val referencedLoanRefId= state.prestaShortTermTopUpList.loans[selectedIndex].loanRefId
                         if (maxAmount != null) {
                             if (minAmount != null) {
