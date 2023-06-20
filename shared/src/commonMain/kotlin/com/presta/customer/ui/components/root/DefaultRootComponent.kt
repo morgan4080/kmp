@@ -41,6 +41,7 @@ import com.presta.customer.ui.components.registration.DefaultRegistrationCompone
 import com.presta.customer.ui.components.registration.RegistrationComponent
 import com.presta.customer.ui.components.rootBottomStack.DefaultRootBottomComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
+import com.presta.customer.ui.components.rootLoans.ProcessLoanDisbursement
 import com.presta.customer.ui.components.splash.DefaultSplashComponent
 import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.transactionHistory.DefaultTransactionHistoryComponent
@@ -51,6 +52,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
@@ -231,12 +233,27 @@ class DefaultRootComponent(
     private val logOutPrompt = MutableStateFlow(false)
 
     private val scope = coroutineScope(prestaDispatchers.main + SupervisorJob())
+
+    private val processLoanState = MutableStateFlow<ProcessLoanDisbursement?>(null)
+
     init {
         scope.launch {
             logOutPrompt.collect {
                 if (it) {
-                    logOutPrompt.value = false
                     navigation.replaceAll(Config.Splash)
+                    logOutPrompt.value = false
+                }
+            }
+        }
+        scope.launch {
+            processLoanState.collect {
+                if (it !== null) {
+                    navigation.bringToFront(Config.ProcessingLoanLoanDisbursement(
+                        it.correlationId,
+                        it.amount,
+                        it.fees
+                    ))
+                    processLoanState.value = null
                 }
             }
         }
@@ -260,9 +277,7 @@ class DefaultRootComponent(
             processTransaction = {correlationId, amount, mode ->
                 navigation.bringToFront(Config.ProcessingTransaction(correlationId, amount, mode))
             },
-            processLoanDisbursement = {correlationId, amount, fees, ->
-                navigation.bringToFront(Config.ProcessingLoanLoanDisbursement(correlationId, amount, fees))
-            },
+            processLoanState = processLoanState,
             backTopProfile = config.backTopProfile
         )
 

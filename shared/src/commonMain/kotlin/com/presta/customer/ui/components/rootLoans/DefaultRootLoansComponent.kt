@@ -35,19 +35,20 @@ import com.presta.customer.ui.components.succesfulTransaction.DefaultSuccessfulT
 import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransactionComponent
 import com.presta.customer.ui.components.topUp.DefaultLoanTopUpComponent
 import com.presta.customer.ui.components.topUp.LoanTopUpComponent
+import kotlinx.coroutines.flow.MutableStateFlow
+
+data class ProcessLoanDisbursement(
+    val correlationId: String,
+    val amount: Double,
+    val fees: Double
+)
 
 class DefaultRootLoansComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
     val pop: () -> Unit = {},
     val navigateToProfile: () -> Unit = {},
-    private val processLoanDisbursement: (
-        correlationId: String,
-        amount: Double,
-        fees:Double
-    ) -> Unit
-
-
+    private var processLoanState: MutableStateFlow<ProcessLoanDisbursement?>
 ) : RootLoansComponent, ComponentContext by componentContext {
     private val loansNavigation = StackNavigation<ConfigLoans>()
 
@@ -222,7 +223,7 @@ class DefaultRootLoansComponent(
             componentContext = componentContext,
             refId = config.refId,
             onConfirmClicked = { correlationId, amount, fees ->
-                processLoanDisbursement(correlationId, amount, fees)
+                processLoanState.value = ProcessLoanDisbursement(correlationId, amount, fees)
             },
             onBackNavClicked = {
                 loansNavigation.pop()

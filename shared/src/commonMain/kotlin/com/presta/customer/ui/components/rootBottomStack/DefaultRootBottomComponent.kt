@@ -27,6 +27,7 @@ import com.presta.customer.ui.components.profile.DefaultProfileComponent
 import com.presta.customer.ui.components.profile.ProfileComponent
 import com.presta.customer.ui.components.profile.coroutineScope
 import com.presta.customer.ui.components.rootLoans.DefaultRootLoansComponent
+import com.presta.customer.ui.components.rootLoans.ProcessLoanDisbursement
 import com.presta.customer.ui.components.rootLoans.RootLoansComponent
 import com.presta.customer.ui.components.rootSavings.DefaultRootSavingsComponent
 import com.presta.customer.ui.components.rootSavings.RootSavingsComponent
@@ -65,11 +66,7 @@ class DefaultRootBottomComponent(
         amount: Double,
         mode: PaymentTypes
     ) -> Unit,
-    private val processLoanDisbursement: (
-        correlationId: String,
-        amount: Double,
-        fees:Double
-    ) -> Unit,
+    private var processLoanState: MutableStateFlow<ProcessLoanDisbursement?>,
     backTopProfile: Boolean = false
 ) : RootBottomComponent, ComponentContext by componentContext, KoinComponent {
     private val authRepository by inject<AuthRepository>()
@@ -178,10 +175,7 @@ class DefaultRootBottomComponent(
             navigateToProfile = {
                 navigationBottomStackNavigation.bringToFront(ConfigBottom.Profile)
             },
-            processLoanDisbursement = {correlationId, amount,fees->
-              processLoanDisbursement(correlationId, amount, fees)
-            }
-
+            processLoanState = processLoanState
         )
 
     private fun rootSavingsComponent(componentContext: ComponentContext): RootSavingsComponent =
