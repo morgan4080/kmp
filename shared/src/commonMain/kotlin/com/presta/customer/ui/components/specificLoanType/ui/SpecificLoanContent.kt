@@ -1,13 +1,28 @@
 package com.presta.customer.ui.components.specificLoanType.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -16,8 +31,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,6 +53,8 @@ import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.LoanLimitContainer
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.TextInputContainer
+import com.presta.customer.ui.theme.actionButtonColor
+import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 
@@ -43,10 +67,9 @@ fun SpecificLoaContent(
     onAuthEvent: (AuthStore.Intent) -> Unit,
     innerPadding: PaddingValues,
 ) {
+
+
     var amount by remember {
-        mutableStateOf(TextFieldValue())
-    }
-    var desiredPeriod by remember {
         mutableStateOf(TextFieldValue())
     }
     var isError by remember { mutableStateOf(false) }
@@ -58,6 +81,9 @@ fun SpecificLoaContent(
     val loanPeriodUnit = state.prestaShortTermLoanProductById?.loanPeriodUnit
     val referencedLoanRefId = null
     val  currentTerm = false
+    val focusRequester = remember { FocusRequester() }
+    var desiredPeriod by remember { mutableStateOf(TextFieldValue()) }
+    val emptyDesiredPeriod by remember { mutableStateOf(TextFieldValue()) }
 
     if (allowedMaxTerm !== null) {
         desiredPeriod = TextFieldValue(allowedMaxTerm.toString())
@@ -125,31 +151,106 @@ fun SpecificLoaContent(
                     }
                 }
                 item {
-                    Row(
+                    Column(
                         modifier = Modifier
-                            .padding(top = 16.dp)
+                            .fillMaxWidth()
+                            .padding(top = 10.dp)
+                            .shadow(0.5.dp, RoundedCornerShape(10.dp))
+                            .background(
+                                color = MaterialTheme.colorScheme.inverseOnSurface,
+                                shape = RoundedCornerShape(10.dp)
+                            ),
                     ) {
-                        TextInputContainer(
-                            "Desired Period(Months)",
-                            inputType = InputTypes.NUMBER,
-                            inputValue = if (allowedMaxTerm !== null) allowedMaxTerm.toString() else ""
-                        ) {
-                            val inputPeriod: Int? = TextFieldValue(it).text.toIntOrNull()
-                            if (inputPeriod != null) {
-                                if ((inputPeriod >= allowedMinTerm!!.toInt() && inputPeriod <= allowedMaxTerm!!.toInt()) && (TextFieldValue(
-                                        it
-                                    ).text !== "")
-                                ) {
-                                    desiredPeriod = TextFieldValue(it)
-                                    isPeriodError = false
+                        BasicTextField (
+                            modifier = Modifier
+                                .focusRequester(focusRequester)
+                                .height(65.dp)
+                                .padding(top = 20.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                                .absoluteOffset(y = 2.dp),
+                            keyboardOptions = KeyboardOptions(keyboardType =KeyboardType.Number
+                            ),
+                            value = desiredPeriod,
+                            onValueChange = {
+                                 desiredPeriod=it
 
-                                } else {
-                                    isPeriodError = true
+                            },
+                            singleLine = true,
+                            textStyle = TextStyle(
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
+                                fontSize = 13.sp,
+                                fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
+                                letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
+                                lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                                fontFamily = MaterialTheme.typography.bodySmall.fontFamily
+                            ),
+                            decorationBox = { innerTextField ->
+
+                                if (desiredPeriod.text.isEmpty()
+                                ) {
+                                    Text(
+                                        modifier = Modifier.alpha(.3f),
+                                        text = "Enter desired loan term",
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+
+                                AnimatedVisibility(
+                                    visible = desiredPeriod.text.isNotEmpty(),
+                                    modifier = Modifier.absoluteOffset(y = -(16).dp),
+                                    enter = fadeIn() + expandVertically(),
+                                    exit = fadeOut() + shrinkVertically(),
+                                ) {
+                                    Text(
+                                        text = "Enter Desired loan Term",
+                                        color = primaryColor,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontSize = 11.sp
+                                    )
+                                }
+
+                                Row (
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+
+                                        innerTextField()
+                                    }
+
+                                    AnimatedVisibility(
+                                        visible = desiredPeriod.text.isNotEmpty(),
+                                        enter = fadeIn() + expandVertically(),
+                                        exit = fadeOut() + shrinkVertically(),
+                                    ) {
+
+                                        IconButton(
+                                            modifier = Modifier.size(18.dp),
+                                            onClick = { desiredPeriod=emptyDesiredPeriod},
+                                            content = {
+                                                Icon(
+                                                    modifier = Modifier.alpha(0.4f),
+                                                    imageVector = Icons.Filled.Cancel,
+                                                    contentDescription = null,
+                                                    tint = actionButtonColor
+                                                )
+                                            }
+                                        )
+                                    }
                                 }
                             }
-                        }
+                        )
+                    }
+
+                    if (allowedMaxTerm!=null && desiredPeriod.text!="") {
+                        isPeriodError = !(desiredPeriod.text.toInt() >= allowedMinTerm!!.toInt() && desiredPeriod.text.toInt() <= allowedMaxTerm.toInt())
+
                     }
                 }
+
                 item {
                     if (isPeriodError) {
                         Text(
@@ -170,6 +271,7 @@ fun SpecificLoaContent(
                         ActionButton(
                             "Confirm",
                             onClickContainer = {
+
                                 if (amount.text !== "" && desiredPeriod.text !== "") {
                                     state.prestaShortTermLoanProductById?.interestRate?.let {
                                         state.prestaShortTermLoanProductById.maxTerm?.let { it1 ->

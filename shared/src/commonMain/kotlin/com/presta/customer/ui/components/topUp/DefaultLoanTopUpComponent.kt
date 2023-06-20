@@ -7,12 +7,16 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.presta.customer.network.loanRequest.model.DisbursementMethod
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
+import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStore
 import com.presta.customer.ui.components.profile.coroutineScope
+import com.presta.customer.ui.components.profile.store.ProfileStore
+import com.presta.customer.ui.components.profile.store.ProfileStoreFactory
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStoreFactory
 import kotlinx.coroutines.CoroutineScope
@@ -59,7 +63,7 @@ class DefaultLoanTopUpComponent(
     override val loanPeriod: String,
     override val loanPeriodUnit: String,
     override val loanOperation: String,
-    override val referencedLoanRefId: String
+    override val referencedLoanRefId: String,
 ) : LoanTopUpComponent, ComponentContext by componentContext {
     var specificId: String = refId
 
@@ -126,6 +130,22 @@ class DefaultLoanTopUpComponent(
         shortTermloansStore.accept(event)
     }
 
+    override val profileStore =
+        instanceKeeper.getStore {
+            ProfileStoreFactory(
+                storeFactory = storeFactory
+            ).create()
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val profileState: StateFlow<ProfileStore.State> = profileStore.stateFlow
+
+
+    override fun onProfileEvent(event: ProfileStore.Intent) {
+        profileStore.accept(event)
+    }
+
+
     private var authUserScopeJob: Job? = null
     private fun checkAuthenticatedUser() {
         if (authUserScopeJob?.isActive == true) return
@@ -184,13 +204,30 @@ class DefaultLoanTopUpComponent(
         }
     }
 
+
+
     init {
+
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
 
         checkAuthenticatedUser()
 
         refreshToken()
     }
+    init {
+        scope.launch {
+            authState.collect { state ->
+                if (state.cachedMemberData !== null) {
+                    onProfileEvent(
+                        ProfileStore.Intent.GetLoanBalances (
+                        token = state.cachedMemberData.accessToken,
+                        refId = state.cachedMemberData.refId,
+                    ))
+                    this.cancel()
+                }
+            }
+        }
 
+    }
 
 }

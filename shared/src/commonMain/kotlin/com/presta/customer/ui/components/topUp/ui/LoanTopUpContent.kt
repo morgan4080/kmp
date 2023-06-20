@@ -1,15 +1,29 @@
 package com.presta.customer.ui.components.topUp.ui
 
+import ShimmerBrush
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absolutePadding
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -18,7 +32,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -26,15 +42,18 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
 import com.presta.customer.network.loanRequest.model.LoanType
+import com.presta.customer.ui.components.profile.store.ProfileStore
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import com.presta.customer.ui.components.topUp.LoanTopUpComponent
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.OptionsSelectionContainer
-import com.presta.customer.ui.composables.ProductSelectionCard2
 import com.presta.customer.ui.composables.TextInputContainer
+import com.presta.customer.ui.helpers.formatDDMMYY
+import com.presta.customer.ui.helpers.formatMoney
 import com.presta.customer.ui.theme.actionButtonColor
+import com.presta.customer.ui.theme.backArrowColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 
@@ -43,17 +62,27 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 fun LoanTopUpContent(
     component: LoanTopUpComponent,
     state: ShortTermLoansStore.State,
+    profileState: ProfileStore.State,
 ) {
     var launchPopUp by remember { mutableStateOf(false) }
     var isError by remember { mutableStateOf(false) }
     var amount by remember { mutableStateOf(TextFieldValue()) }
-    val allowedMaxAmount = component.maxAmount
     val allowedMinAmount = component.minAmount
     var currentTerm by remember { mutableStateOf(false) }
     var labelText = ""
+    val currentTermText = "Current Term"
+    val newTermText = "New Term"
+    val radioOptions = listOf(currentTermText, newTermText)
+    var isIconPresent by remember { mutableStateOf(false) }
+
+    var shimmer=profileState.loansBalances==null
 
 
-
+    val (selectedOption: Int, onOptionSelected: (Int) -> Unit) = remember {
+        mutableStateOf(
+            -1
+        )
+    }
 
     Surface(
         modifier = Modifier
@@ -74,223 +103,452 @@ fun LoanTopUpContent(
 
                 })
             }
-            Column(
+            LazyColumn(
                 modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
-                    .background(color = MaterialTheme.colorScheme.background)
+                    .fillMaxWidth()
                     .fillMaxHeight()
-
             ) {
-                Text(
-                    modifier = Modifier,
-                    text = "Enter top up details",
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(top = 10.dp),
-                    text = if (state.prestaLoanEligibilityStatus !== null) "min " + component.minAmount + " - " + "max " + state.prestaLoanEligibilityStatus.amountAvailable else "",
-                    fontSize = 10.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                )
-                if (launchPopUp) {
-                    Popup {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight()
-                                .background(color = Color.Black.copy(alpha = 0.7f)),
-                            verticalArrangement = Arrangement.Center
+
+                item {
+
+                    Column(
+                        modifier = Modifier
+                            .padding(start = 16.dp, end = 16.dp)
+                            .background(color = MaterialTheme.colorScheme.background)
+                            .fillMaxHeight()
+
+                    ) {
+                        ElevatedCard(
+                            modifier = Modifier.fillMaxWidth()
+                                .clip(RoundedCornerShape(size = 12.dp))
+                                .absolutePadding(
+                                    left = 0.dp,
+                                    right = 2.dp,
+                                    top = 10.dp,
+                                    bottom = 5.dp
+                                )
                         ) {
-
-                            ElevatedCard(
+                            Box(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(
-                                        start = 25.dp,
-                                        end = 25.dp,
-                                        top = 26.dp
-                                    ),
-                                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
+                                    .background(color = MaterialTheme.colorScheme.inverseOnSurface)
                             ) {
+                                Column(
+                                    modifier = Modifier.padding(
+                                        top = 23.dp,
+                                        start = 24.dp,
+                                        end = 19.5.dp,
+                                        bottom = 23.dp,
+                                    ).fillMaxWidth()
+                                ) {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                    ) {
+                                        Row(modifier = Modifier.fillMaxWidth()) {
+                                            Text(
+                                                modifier = Modifier,
+                                                text = "Current  loan",
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                            )
+                                        }
+                                        Row(
+                                            modifier = Modifier
+                                                .padding(top = 10.dp)
+                                                .fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                        ) {
+                                            if (profileState.loansBalances == null) {
+                                                Text(
+                                                    text = "",// #002C56
+                                                    modifier = Modifier
+                                                        .clip(shape = RoundedCornerShape(12.dp))
+                                                        .defaultMinSize(
+                                                            minHeight = 20.dp,
+                                                            minWidth = 70.dp
+                                                        )
+                                                        .background(
+                                                            brush = ShimmerBrush(
+                                                                shimmer,
+                                                                800f
+                                                            )
+                                                        )
+                                                )
 
+                                            } else {
+
+                                                profileState.loansBalances.loanBreakDown.map { loanData ->
+                                                    Text(
+                                                        text = if (loanData.totalBalance.toString() != "") "Kes" + formatMoney(
+                                                            loanData.totalBalance
+                                                        ) else "",
+                                                        color = MaterialTheme.colorScheme.onBackground, // #002C56
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                                                        modifier = Modifier
+                                                            .clip(shape = RoundedCornerShape(12.dp))
+                                                            .defaultMinSize(
+                                                                minHeight = 20.dp,
+                                                                minWidth = 70.dp
+                                                            )
+                                                    )
+                                                }
+                                            }
+                                        }
+                                        Row(
+                                            modifier = Modifier
+                                                .padding(top = 11.dp)
+                                                .fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+
+                                            if (profileState.loansBalances == null) {
+                                                Row(modifier = Modifier.fillMaxWidth()){
+                                                    Text(
+                                                        text = "",
+                                                        modifier = Modifier
+                                                            .clip(shape = RoundedCornerShape(12.dp))
+                                                            .defaultMinSize(minHeight = 20.dp, minWidth = 100.dp)
+                                                            .background(brush = ShimmerBrush(shimmer, 800f))
+                                                    )
+                                                    Spacer(modifier = Modifier.width(10.dp))
+                                                    Text(
+                                                        text = "",
+                                                        modifier = Modifier
+                                                            .clip(shape = RoundedCornerShape(12.dp))
+                                                            .defaultMinSize(minHeight = 20.dp, minWidth = 100.dp)
+                                                            .background(brush = ShimmerBrush(shimmer, 800f))
+                                                    )
+                                                }
+
+                                            } else {
+
+                                                profileState.loansBalances.loanBreakDown.map { loanName ->
+                                                    Text(
+                                                        text = loanName.loanType + " loan",
+                                                        fontSize = 14.sp,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                                        modifier = Modifier
+                                                            .clip(shape = RoundedCornerShape(12.dp))
+                                                            .defaultMinSize(minHeight = 20.dp, minWidth = 100.dp)
+                                                    )
+                                                }
+
+                                                profileState.loansBalances.loanBreakDown.map { loanData ->
+                                                    Text(
+                                                        modifier = Modifier
+                                                            .padding(start = 10.dp)
+                                                            .clip(shape = RoundedCornerShape(12.dp))
+                                                            .defaultMinSize(minHeight = 20.dp, minWidth = 100.dp),
+                                                        text = if (loanData.dueDate.isNotEmpty()) "Due: " + formatDDMMYY(
+                                                            loanData.dueDate
+                                                        ) else "",
+                                                        fontSize = 12.sp,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                text = "Select Loan Term",
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                modifier = Modifier.padding(top = 10.dp),
+                                fontSize = 14.sp
+                            )
+                        }
+                        Column(Modifier.selectableGroup()) {
+                            radioOptions.forEachIndexed { index, text ->
+                                isIconPresent = text.contains(newTermText)
+                                SelectOptionsCheckBox(
+                                    index = index,
+                                    text = text,
+                                    isSelectedOption = selectedOption == index,
+                                    onSelectOption = {
+                                        if (it == selectedOption) {
+                                            onOptionSelected(-1)
+                                        } else {
+                                            onOptionSelected(it)
+                                        }
+
+                                    },
+                                    isIconPresent = isIconPresent,
+                                    showPopUp = launchPopUp,
+                                    onShowPopUpOption = {
+                                        if (text.contains(newTermText)) {
+                                            launchPopUp = true
+                                            onOptionSelected(-1)
+                                        }
+                                    }
+                                )
+                            }
+                            if (selectedOption == 0) {
+                                currentTerm = true
+                            }
+                            if (selectedOption == 1) {
+                                currentTerm = false
+                            }
+                        }
+                        if (launchPopUp) {
+                            Popup {
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(
-                                            start = 16.dp,
-                                            end = 16.dp
-                                        )
+                                        .fillMaxHeight()
+                                        .background(color = Color.Black.copy(alpha = 0.7f)),
+                                    verticalArrangement = Arrangement.Center
                                 ) {
-                                    Text(
-                                        text = "Set Loan Term",
+
+                                    ElevatedCard(
                                         modifier = Modifier
+                                            .fillMaxWidth()
                                             .padding(
-                                                top = 14.dp
-                                            )
-                                    )
-
-                                    Text(
-                                        text = "Select Options Below",
-                                        fontSize = 10.sp,
-                                        modifier = Modifier
-                                            .padding(top = 3.dp)
-                                    )
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(top = 18.dp)
+                                                start = 25.dp,
+                                                end = 25.dp,
+                                                top = 26.dp
+                                            ),
+                                        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                                     ) {
 
-                                        OptionsSelectionContainer(
-                                            label = "Current term",
-                                            onClickContainer = {
-                                                //set current term to true
-                                                currentTerm=true
-                                                labelText="Current term"
-
-                                            })
-                                    }
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                    ) {
-                                        OptionsSelectionContainer(
-                                            label = component.loanName + " at " + component.interestRate + "%/month",
-                                            onClickContainer = {
-                                                //current term to false
-                                                currentTerm=false
-                                                labelText=component.loanName + " at " + component.interestRate + "%/month"
-
-                                            })
-                                    }
-                                }
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(
-                                            top = 10.dp,
-                                            bottom = 10.dp,
-                                            start = 16.dp,
-                                            end = 16.dp
-                                        ),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-
-                                    ElevatedCard(
-                                        onClick = {
-                                            launchPopUp = false
-                                            labelText=""
-                                        }, modifier = Modifier
-                                            .padding(start = 16.dp)
-                                    ) {
-
-                                        Text(
-                                            text = "Dismiss",
-                                            fontSize = 11.sp,
+                                        Column(
                                             modifier = Modifier
+                                                .fillMaxWidth()
                                                 .padding(
-                                                    top = 5.dp,
-                                                    bottom = 5.dp,
-                                                    start = 20.dp,
-                                                    end = 20.dp
+                                                    start = 16.dp,
+                                                    end = 16.dp
                                                 )
-                                        )
-                                    }
-                                    ElevatedCard(
-                                        onClick = {
-                                            launchPopUp = false
-                                        }, modifier = Modifier
-                                            .padding(end = 16.dp),
-                                        colors = CardDefaults.elevatedCardColors(containerColor = actionButtonColor)
-                                    ) {
-                                        Text(
-                                            text = "Proceed",
-                                            color = Color.White,
-                                            fontSize = 11.sp,
+                                        ) {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(top = 14.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+
+                                                Text(
+                                                    text = "Set Loan Term(Months)",
+                                                    modifier = Modifier
+                                                )
+                                            }
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                            ) {
+                                                OptionsSelectionContainer(
+                                                    label = component.loanPeriod + " " + component.loanPeriodUnit,
+                                                    onClickContainer = {
+                                                        //current term to false
+                                                        onOptionSelected(1)
+                                                        labelText =
+                                                            component.loanName + " at " + component.interestRate + "%/month"
+
+                                                    })
+                                            }
+                                        }
+                                        Row(
                                             modifier = Modifier
+                                                .fillMaxWidth()
                                                 .padding(
-                                                    top = 5.dp,
-                                                    bottom = 5.dp,
-                                                    start = 20.dp,
-                                                    end = 20.dp
+                                                    top = 10.dp,
+                                                    bottom = 10.dp,
+                                                    start = 16.dp,
+                                                    end = 16.dp
+                                                ),
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+
+                                            ElevatedCard(
+                                                onClick = {
+                                                    launchPopUp = false
+                                                    labelText = ""
+                                                    onOptionSelected(-1)
+                                                }, modifier = Modifier
+                                                    .padding(start = 16.dp)
+                                            ) {
+
+                                                Text(
+                                                    text = "Dismiss",
+                                                    fontSize = 11.sp,
+                                                    modifier = Modifier
+                                                        .padding(
+                                                            top = 5.dp,
+                                                            bottom = 5.dp,
+                                                            start = 20.dp,
+                                                            end = 20.dp
+                                                        )
                                                 )
-                                        )
+                                            }
+                                            ElevatedCard(
+                                                onClick = {
+                                                    launchPopUp = false
+
+                                                }, modifier = Modifier
+                                                    .padding(end = 16.dp),
+                                                colors = CardDefaults.elevatedCardColors(
+                                                    containerColor = actionButtonColor
+                                                )
+                                            ) {
+                                                Text(
+                                                    text = "Proceed",
+                                                    color = Color.White,
+                                                    fontSize = 11.sp,
+                                                    modifier = Modifier
+                                                        .padding(
+                                                            top = 5.dp,
+                                                            bottom = 5.dp,
+                                                            start = 20.dp,
+                                                            end = 20.dp
+                                                        )
+                                                )
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                }
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 6.dp)
-                ) {
-                    //Throw Error if amount exceed desired min or max
-
-                    TextInputContainer("Desired Amount", "", inputType = InputTypes.NUMBER) {
-                        val inputValue: Double? = TextFieldValue(it).text.toDoubleOrNull()
-                        if (inputValue != null && state.prestaLoanEligibilityStatus != null) {
-                            if (
-                                (inputValue >= allowedMinAmount.toDouble() && inputValue <= state.prestaLoanEligibilityStatus.amountAvailable)
-                                && (TextFieldValue(
-                                    it
-                                ).text !== "")
-                            ) {
-                                amount = TextFieldValue(it)
-                                isError = false
-
-                            } else {
-                                isError = true
-                            }
-                        }
-                    }
-                }
-                if (isError) {
-
-                    Text(
-                        modifier = Modifier.padding(top = 10.dp, start = 5.dp),
-                        text = if (state.prestaLoanEligibilityStatus !== null) "min value Ksh $allowedMinAmount max value Ksh ${state.prestaLoanEligibilityStatus.amountAvailable}" else "",
-                        style = MaterialTheme.typography.bodySmall,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                        color = Color.Red
-                    )
-
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 23.dp)
-                ) {
-                    ProductSelectionCard2(if(labelText=="") "Select loan term" else labelText, onClickContainer = {
-                        //pop up
-                        launchPopUp = true
-
-                    })
-
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 44.dp)
-                ) {
-                    ActionButton("Proceed", onClickContainer = {
-                        component.onProceedSelected(
-                            component.loanRefId,
-                            amount.text.toDouble(),
-                            component.loanPeriod,
-                            LoanType._TOP_UP,
-                            component.loanName,
-                            component.interestRate,
-                            component.loanPeriodUnit,
-                            component.referencedLoanRefId,
-                            currentTerm
+                        Text(
+                            modifier = Modifier,
+                            text = "Top up amount",
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                            fontSize = 14.sp
                         )
-                    }, enabled = amount.text != "" && !isError && labelText!="")
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 6.dp)
+                        ) {
+                            //Throw Error if amount exceed desired min or max
+
+                            TextInputContainer(
+                                "Desired Amount",
+                                "",
+                                inputType = InputTypes.NUMBER
+                            ) {
+                                val inputValue: Double? = TextFieldValue(it).text.toDoubleOrNull()
+                                if (inputValue != null && state.prestaLoanEligibilityStatus != null) {
+                                    if (
+                                        (inputValue >= allowedMinAmount.toDouble() && inputValue <= state.prestaLoanEligibilityStatus.amountAvailable)
+                                        && (TextFieldValue(
+                                            it
+                                        ).text !== "")
+                                    ) {
+                                        amount = TextFieldValue(it)
+                                        isError = false
+
+                                    } else {
+                                        isError = true
+                                    }
+                                }
+                            }
+                        }
+                        if (isError) {
+
+                            Text(
+                                modifier = Modifier.padding(top = 10.dp, start = 5.dp),
+                                text = if (state.prestaLoanEligibilityStatus !== null) "min value Ksh $allowedMinAmount max value Ksh ${state.prestaLoanEligibilityStatus.amountAvailable}" else "",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                color = Color.Red
+                            )
+
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp, bottom = 300.dp)
+                                .padding(top = 10.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            ActionButton("Proceed", onClickContainer = {
+
+                                component.onProceedSelected(
+                                    component.loanRefId,
+                                    amount.text.toDouble(),
+                                    component.loanPeriod,
+                                    LoanType._TOP_UP,
+                                    component.loanName,
+                                    component.interestRate,
+                                    component.loanPeriodUnit,
+                                    component.referencedLoanRefId,
+                                    currentTerm
+                                )
+                            }, enabled = amount.text != "" && !isError && (selectedOption > -1))
+                        }
+                    }
                 }
             }
         }
     }
 }
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SelectOptionsCheckBox(
+    index: Int,
+    text: String,
+    isSelectedOption: Boolean,
+    onSelectOption: (Int) -> Unit,
+    isIconPresent: Boolean,
+    showPopUp: Boolean,
+    onShowPopUpOption: (Boolean) -> Unit,
+) {
+    ElevatedCard(
+        onClick = {
+            onSelectOption(index)
+            onShowPopUpOption(showPopUp)
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 10.dp)
+            .background(color = MaterialTheme.colorScheme.background)
+    ) {
+        Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.inverseOnSurface)) {
+            Row(
+                modifier = Modifier.padding(top = 2.dp, bottom = 2.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = isSelectedOption,
+                    onCheckedChange = {
+                        onSelectOption(index)
+                        onShowPopUpOption(showPopUp)
+                    }
+                )
+                Column {
+                    Text(
+                        text = text,
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                    )
+                }
+
+                if (isIconPresent) {
+                    Row() {
+
+                        Spacer(modifier = Modifier.weight(1f))
+                        Icon(
+
+                            Icons.Filled.KeyboardArrowRight,
+                            contentDescription = "Forward Arrow",
+                            modifier = Modifier.clip(shape = CircleShape)
+                                .background(Color(0xFFE5F1F5)),
+                            tint = backArrowColor
+                        )
+                        Spacer(modifier = Modifier.padding(end = 15.dp))
+                    }
+                }
+            }
+        }
+    }
+}
+
+

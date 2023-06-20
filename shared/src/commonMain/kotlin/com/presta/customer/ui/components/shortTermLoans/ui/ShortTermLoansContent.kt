@@ -179,7 +179,7 @@ fun ShortTermLoansContent(
                     }
                     when (tabIndex) {
                         0 -> ShortTermProductList(component,state,authState,onEvent, state.prestaLoanEligibilityStatus)
-                        1 -> ShortTermTopUpList(component,state, state.prestaLoanEligibilityStatus)
+                        1 -> ShortTermTopUpList(component,state, state.prestaLoanEligibilityStatus,authState, onEvent)
                         3 -> {
                             Column (
                                 modifier = Modifier
@@ -238,7 +238,7 @@ fun ShortTermLoansContent(
                                 }
                             }
                         }
-                        4 -> ShortTermTopUpList(component,state, state.prestaLoanEligibilityStatus)
+                        4 -> ShortTermTopUpList(component,state, state.prestaLoanEligibilityStatus,authState, onEvent)
                     }
                 }
             }

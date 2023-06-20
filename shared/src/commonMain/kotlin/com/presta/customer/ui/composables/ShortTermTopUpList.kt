@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,20 +30,43 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.network.shortTermLoans.model.PrestaLoanEligibilityResponse
+import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import com.presta.customer.ui.helpers.formatMoney
+import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ShortTermTopUpList(
     component: ShortTermLoansComponent,
     state: ShortTermLoansStore.State,
-    eligibilityResponse: PrestaLoanEligibilityResponse?
+    eligibilityResponse: PrestaLoanEligibilityResponse?,
+    authState: AuthStore.State,
+    onEvent: (ShortTermLoansStore.Intent) -> Unit,
 ) {
     var selectedIndex by remember { mutableStateOf(-1) }
     var enabled by remember { mutableStateOf(false) }
 
+    var refreshing by remember { mutableStateOf(false) }
+    val refreshScope = rememberCoroutineScope()
+
+    fun refresh() = refreshScope.launch {
+        refreshing = true
+        authState.cachedMemberData?.let {
+            ShortTermLoansStore.Intent.GetPrestaLoanEligibilityStatus(
+                it.accessToken,
+                authState.cachedMemberData.refId,
+                authState.cachedMemberData.refId
+            )
+        }?.let { onEvent.invoke(it) }
+        delay(1500)
+        refreshing = false
+
+    }
 
     Column(
         modifier = Modifier
@@ -49,54 +77,66 @@ fun ShortTermTopUpList(
                 .fillMaxWidth()
                 .weight(0.2f)
         ) {
-            Text(
-                text = if (eligibilityResponse !== null && eligibilityResponse.isEligible) "Select Loan to Top Up" else "",
-                modifier = Modifier
-                    .padding(top = 25.dp),
-                fontSize = 14.sp,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
-            )
+            val refreshState = rememberPullRefreshState(refreshing, ::refresh,)
 
-            if(state.prestaShortTermTopUpList?.loans==null){
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp),
-                    horizontalArrangement = Arrangement.Center){
-                    Text(text = "Top Ups have not been activated",
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                        fontSize = 12.sp
-                    )
+            Box(Modifier.pullRefresh(refreshState)) {
 
-                }
-
-            }else{
-
-                LazyColumn(
+                Text(
+                    text = if (eligibilityResponse !== null && eligibilityResponse.isEligible) "Select Loan to Top Up" else "",
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp)
-                ) {
-                    state.prestaShortTermTopUpList.loans.mapIndexed { index, topUpList ->
-                        item {
-                            TopUpListView(
-                                Index = index,
-                                selected = selectedIndex == index,
-                                onClick = { index: Int ->
-                                    selectedIndex = if (selectedIndex == index) -1 else index
-                                    if(!enabled){
-                                        enabled=true
-                                    }
+                        .padding(top = 25.dp),
+                    fontSize = 14.sp,
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                )
 
-                                },
-                                topUpList.name.toString(),
-                                topUpList.maxAmount.toString(),
-                                topUpList.loanBalance.toString(),
-                                topUpList.daysAvailable.toString()
-                            )
+                if(state.prestaShortTermTopUpList?.loans==null){
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp),
+                        horizontalArrangement = Arrangement.Center){
+                        Text(text = "Error loading top Ups",
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                            fontSize = 12.sp
+                        )
+
+                    }
+
+                }else{
+
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp)
+                    ) {
+                        state.prestaShortTermTopUpList.loans.mapIndexed { index, topUpList ->
+                            item {
+                                TopUpListView(
+                                    Index = index,
+                                    selected = selectedIndex == index,
+                                    onClick = { index: Int ->
+                                        selectedIndex = if (selectedIndex == index) -1 else index
+                                        if(!enabled){
+                                            enabled=true
+                                        }
+
+                                    },
+                                    topUpList.name.toString(),
+                                    topUpList.maxAmount.toString(),
+                                    topUpList.loanBalance.toString(),
+                                    topUpList.daysAvailable.toString()
+                                )
+                            }
                         }
                     }
                 }
+                PullRefreshIndicator(refreshing, refreshState,
+                    Modifier
+                        .align(Alignment.TopCenter),
+                    contentColor = actionButtonColor
+                )
+
             }
+
         }
         Row(
             modifier = Modifier
@@ -113,6 +153,7 @@ fun ShortTermTopUpList(
                         val loanName = state.prestaShortTermTopUpList.loans[selectedIndex].name
                         val loanPeriod = state.prestaShortTermTopUpList.loans[selectedIndex].maxPeriod
                         val loanPeriodUnit = state.prestaShortTermTopUpList.loans[selectedIndex].termUnit
+
                         //pass the referenced  loan refid
                         val referencedLoanRefId= state.prestaShortTermTopUpList.loans[selectedIndex].loanRefId
                         if (maxAmount != null) {
@@ -165,12 +206,16 @@ fun TopUpListView(
         onClick = {
             onClick.invoke(Index)
         },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 10.dp, top = 5.dp)
             .background(color = MaterialTheme.colorScheme.background)
     ) {
-        Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.inverseOnSurface)) {
+        Box(modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.inverseOnSurface)) {
             Row(
-                modifier = Modifier.padding(top = 9.dp, bottom = 9.dp)
+                modifier = Modifier
+                    .padding(top = 9.dp, bottom = 9.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ){

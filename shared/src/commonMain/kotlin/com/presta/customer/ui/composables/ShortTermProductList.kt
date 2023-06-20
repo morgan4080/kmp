@@ -13,12 +13,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -121,11 +121,12 @@ fun ShortTermProductList(
 
                         Row(modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 10.dp, bottom = 10.dp),){
+                            .padding(top = 10.dp, bottom = 10.dp)
+                            .background(color = MaterialTheme.colorScheme.background),){
                             ElevatedCard(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(color = androidx.compose.material3.MaterialTheme.colorScheme.inverseOnSurface),
+                                    .background(color = androidx.compose.material3.MaterialTheme.colorScheme.background),
                                 colors = CardDefaults.elevatedCardColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.inverseOnSurface)
                             ) {
                                 Box(

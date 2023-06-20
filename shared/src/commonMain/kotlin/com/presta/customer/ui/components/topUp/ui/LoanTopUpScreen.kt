@@ -13,10 +13,13 @@ fun LoanTopUpScreen(
 ) {
     val authState by component.authState.collectAsState()
     val  shortTermLoansState by component.shortTermloansState.collectAsState()
+    val  profileState  by component.profileState.collectAsState()
+    //pass profile  state and fetch the loan data
 
     LoanTopUpContent(
         component=component,
-        state = shortTermLoansState
+        state = shortTermLoansState,
+        profileState=profileState
     )
 
 

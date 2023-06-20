@@ -66,14 +66,13 @@ fun TextInputContainer(
     imageUrl: String? = null,
     icon:  ImageVector? = null,
     callingCode: String? = null,
-    callback: (userInput: String) -> Unit = {}
+    callback: (userInput: String) -> Unit = {},
 ) {
     var userInput by remember { mutableStateOf(TextFieldValue()) }
 
-    if (inputValue.isNotEmpty()) {
+    if (inputValue.isNotEmpty() ) {
         userInput = TextFieldValue(inputValue)
     }
-
     Column(
         modifier = Modifier
             .fillMaxWidth()

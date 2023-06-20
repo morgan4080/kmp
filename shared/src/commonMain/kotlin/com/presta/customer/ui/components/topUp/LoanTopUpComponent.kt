@@ -2,6 +2,8 @@ package com.presta.customer.ui.components.topUp
 
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStore
+import com.presta.customer.ui.components.profile.store.ProfileStore
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import kotlinx.coroutines.flow.StateFlow
 
@@ -38,4 +40,9 @@ interface LoanTopUpComponent {
     val shortTermloansState: StateFlow<ShortTermLoansStore.State>
     fun onAuthEvent(event: AuthStore.Intent)
     fun onEvent(event: ShortTermLoansStore.Intent)
+    fun onProfileEvent(event: ProfileStore.Intent)
+    val profileStore: ProfileStore
+    val profileState: StateFlow<ProfileStore.State>
+
+
 }
