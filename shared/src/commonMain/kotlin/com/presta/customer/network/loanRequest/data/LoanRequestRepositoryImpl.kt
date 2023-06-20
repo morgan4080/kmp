@@ -2,9 +2,11 @@ package com.presta.customer.network.loanRequest.data
 
 import com.presta.customer.network.loanRequest.client.PrestaLoanRequestClient
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
+import com.presta.customer.network.loanRequest.model.LoanApplicationStatus
 import com.presta.customer.network.loanRequest.model.LoanQuotationResponse
 import com.presta.customer.network.loanRequest.model.LoanRequestResponse
 import com.presta.customer.network.loanRequest.model.LoanType
+import com.presta.customer.network.loanRequest.model.PrestaLoanApplicationStatusResponse
 import com.presta.customer.network.loanRequest.model.PrestaLoanPollingResponse
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -89,6 +91,24 @@ class LoanRequestRepositoryImpl : LoanRequestRepository,KoinComponent {
                 referencedLoanRefId = referencedLoanRefId,
                 requestId = requestId,
                 sessionId = sessionId
+            )
+            Result.success(response)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getPendingLoans(
+        token: String,
+        customerRefId: String,
+        applicationStatus: List<LoanApplicationStatus>
+    ): Result<List<PrestaLoanApplicationStatusResponse>> {
+        return try {
+            val response = loanRequestClient.getLoansByApplicationStatus(
+                token,
+                customerRefId,
+                applicationStatus
             )
             Result.success(response)
         } catch (e: Exception) {

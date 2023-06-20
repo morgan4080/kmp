@@ -38,10 +38,6 @@ object NetworkConstants {
         const val route = applicationV2BaseUrl + "otp/validation"
     }
 
-    object PrestaGetPendingApplications {
-        const val route = applicationV2BaseUrl + "loans"
-    }
-
     object PrestaGetSavingsBalance {
         const val route = applicationV2BaseUrl + "balances/savings"
     }
@@ -79,6 +75,10 @@ object NetworkConstants {
     object PrestaLoanQuotation{
         const val route= applicationV1BaseUrl + "loanrequests/quotation"
 
+    }
+
+    object PrestaGetPendingApplications {
+        const val route = applicationV2BaseUrl + "loans"
     }
 
 }

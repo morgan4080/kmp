@@ -73,6 +73,7 @@ import androidx.compose.ui.zIndex
 import com.presta.customer.MR
 import com.presta.customer.ui.components.addSavings.store.AddSavingsStore
 import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStore
 import com.presta.customer.ui.components.profile.store.ProfileStore
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.HomeCardListItem
@@ -97,6 +98,7 @@ fun ProfileContent(
     authState: AuthStore.State,
     state: ProfileStore.State,
     addSavingsState: AddSavingsStore.State,
+    modeOfDisbursementState: ModeOfDisbursementStore.State,
     innerPadding: PaddingValues,
     seeAllTransactions: () -> Unit,
     goToSavings: () -> Unit,
@@ -388,7 +390,7 @@ fun ProfileContent(
                                         quickLinks.map { item1 ->
                                             BadgedBox(badge = {
                                                 if (item1.badge) {
-                                                    Badge { Text("8") }
+                                                    Badge { Text(modeOfDisbursementState.loans.count().toString()) }
                                                 }
                                             }) {
                                                 Column(

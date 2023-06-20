@@ -7,8 +7,10 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.loanRequest.data.LoanRequestRepository
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
+import com.presta.customer.network.loanRequest.model.LoanApplicationStatus
 import com.presta.customer.network.loanRequest.model.LoanQuotationResponse
 import com.presta.customer.network.loanRequest.model.LoanType
+import com.presta.customer.network.loanRequest.model.PrestaLoanApplicationStatusResponse
 import com.presta.customer.prestaDispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -35,6 +37,7 @@ class ModeOfDisbursementStoreFactory(
 
         data class LoanRequestFailedFailed(val error: String?) : Msg()
         data class LoanQuotationDataLoaded(val loanQuotationResponse: LoanQuotationResponse ) :Msg()
+        data class PendingLoanDataLoaded(val loans: List<PrestaLoanApplicationStatusResponse>) :Msg()
     }
 
     private inner class ExecutorImpl : CoroutineExecutor<ModeOfDisbursementStore.Intent, Unit, ModeOfDisbursementStore.State, Msg, Nothing>(
@@ -75,6 +78,11 @@ class ModeOfDisbursementStoreFactory(
                     sessionId = intent.sessionId
                 )
 
+                is ModeOfDisbursementStore.Intent.GetPendingApprovals -> getPendingLoanApprovals(
+                    token = intent.token,
+                    customerRefId = intent.customerRefId,
+                    applicationStatus = intent.applicationStatus
+                )
             }
         private var requestLoanJob: Job? = null
         private fun requestLoan(
@@ -151,8 +159,27 @@ class ModeOfDisbursementStoreFactory(
                     sessionId,
                 ).onSuccess { response ->
                     dispatch(Msg.LoanQuotationDataLoaded(response))
-                    println("Loan quotation loaded::::::;;;- $response")
+                    dispatch(Msg.LoanRequestsLoading(false))
+                }.onFailure { e ->
+                    dispatch(Msg.LoanRequestFailedFailed(e.message))
+                    dispatch(Msg.LoanRequestsLoading(false))
+                }
+            }
+        }
 
+        private var pendingLoanApprovalsJob: Job? = null
+        private fun getPendingLoanApprovals(
+            token: String,
+            customerRefId: String,
+            applicationStatus: List<LoanApplicationStatus>
+        ) {
+            if (pendingLoanApprovalsJob?.isActive == true) return
+
+            pendingLoanApprovalsJob = scope.launch {
+                loanRequestRepository.getPendingLoans(
+                    token, customerRefId, applicationStatus
+                ).onSuccess { response ->
+                    dispatch(Msg.PendingLoanDataLoaded(response))
                     dispatch(Msg.LoanRequestsLoading(false))
                 }.onFailure { e ->
                     dispatch(Msg.LoanRequestFailedFailed(e.message))
@@ -166,7 +193,8 @@ class ModeOfDisbursementStoreFactory(
         override fun ModeOfDisbursementStore.State.reduce(msg: Msg): ModeOfDisbursementStore.State =
             when (msg) {
                 is Msg.LoanRequestLoaded -> copy(requestId = msg.requestId)
-                is Msg.LoanQuotationDataLoaded-> copy  (prestaLoanQuotation=msg.loanQuotationResponse)
+                is Msg.LoanQuotationDataLoaded-> copy  (prestaLoanQuotation = msg.loanQuotationResponse)
+                is Msg.PendingLoanDataLoaded-> copy  (loans = msg.loans)
                 is Msg.LoanRequestsLoading -> copy(isLoading = msg.isLoading)
                 is Msg.LoanRequestFailedFailed -> copy(error = msg.error)
             }

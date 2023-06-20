@@ -55,34 +55,35 @@ enum class LoanType {
 }
 
 @Serializable
-data class LoanRequestResponse (
-    val requestId: String,
-    val sessionId: String,
-    val loanType: LoanType,
-    val customerRefId: String,
-    val productRefId: String,
-    val amount: Int,
-    val loanPeriod: Int,
-    val currentTerm: Boolean,
-    val disbursementMethod: String,
-    val disbursementAccountReference: String
+data class LoanRequestResponse @OptIn(ExperimentalSerializationApi::class) constructor(
+    @EncodeDefault val requestId: String? = null,
+    @EncodeDefault val sessionId: String? = null,
+    @EncodeDefault val loanType: LoanType? = null,
+    @EncodeDefault val customerRefId: String? = null,
+    @EncodeDefault val productRefId: String? = null,
+    @EncodeDefault val amount: Int? = null,
+    @EncodeDefault val loanPeriod: Int? = null,
+    @EncodeDefault val currentTerm: Boolean? = null,
+    @EncodeDefault val disbursementMethod: DisbursementMethod? = null,
+    @EncodeDefault val disbursementAccountReference: String? = null
 )
 
 @Serializable
 data class Offer @OptIn(ExperimentalSerializationApi::class) constructor(
     val quotationRefId: String,
-    @EncodeDefault val principal: Int? = null,
-    @EncodeDefault val interestRate: Int? = null,
-    @EncodeDefault val interestAmount: Int? = null,
-    @EncodeDefault val deductedInterest: Int? = null,
-    @EncodeDefault val totalAmount: Int? = null,
-    @EncodeDefault val deductedFees: Int? = null,
-    @EncodeDefault val installmentFees: Int? = null,
-    @EncodeDefault val totalFees: Int? = null,
-    @EncodeDefault val disbursementAmount: Int? = null,
+    @EncodeDefault val principal: Double? = null,
+    @EncodeDefault val interestRate: Double? = null,
+    @EncodeDefault val interestAmount: Double? = null,
+    @EncodeDefault val deductedInterest: Double? = null,
+    @EncodeDefault val totalAmount: Double? = null,
+    @EncodeDefault val upfrontFees: Double? = null,
+    @EncodeDefault val deductedFees: Double? = null,
+    @EncodeDefault val installmentFees: Double? = null,
+    @EncodeDefault val totalFees: Double? = null,
+    @EncodeDefault val disbursementAmount: Double? = null,
     @EncodeDefault val maturityDate: String? = null,
     @EncodeDefault val installmentCount: Int? = null,
-    @EncodeDefault val monthlyInstallment: Int? = null,
+    @EncodeDefault val monthlyInstallment: Double? = null,
     @EncodeDefault val firstInstallment: String? = null,
     @EncodeDefault val lastInstallment: String? = null,
     @EncodeDefault val loanFees: List<LoanFee>? = null
@@ -146,12 +147,12 @@ data class PrestaLoanApplicationStatusResponse @OptIn(ExperimentalSerializationA
     @EncodeDefault val loanRefId: String? = null,
     @EncodeDefault val loanDesc: String? = null,
     @EncodeDefault val loanDate: String? = null,
+    @EncodeDefault val applicationStatus: LoanApplicationStatus? = null,
     @EncodeDefault val loanRequest: LoanRequestResponse? = null,
     @EncodeDefault val offer: Offer? = null,
     @EncodeDefault val customer: Customer? = null,
     @EncodeDefault val loanProduct: LoanProduct? = null,
     @EncodeDefault val appraisalRequest: AppraisalRequest? = null,
-    @EncodeDefault val applicationStatus: LoanApplicationStatus? = null,
     val appraisalResult: AppraisalResult,
     @EncodeDefault val disbursementResult: DisbursementResult? = null,
     @EncodeDefault val accountingResult: AccountingResult? = null

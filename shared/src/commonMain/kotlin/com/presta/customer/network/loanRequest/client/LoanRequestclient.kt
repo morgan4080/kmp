@@ -3,9 +3,11 @@ package com.presta.customer.network.loanRequest.client
 import com.presta.customer.network.NetworkConstants
 import com.presta.customer.network.loanRequest.errorHandler.loanRequestErrorHandler
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
+import com.presta.customer.network.loanRequest.model.LoanApplicationStatus
 import com.presta.customer.network.loanRequest.model.LoanQuotationResponse
 import com.presta.customer.network.loanRequest.model.LoanRequestResponse
 import com.presta.customer.network.loanRequest.model.LoanType
+import com.presta.customer.network.loanRequest.model.PrestaLoanApplicationStatusResponse
 import com.presta.customer.network.loanRequest.model.PrestaLoanPollingResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -78,8 +80,6 @@ class PrestaLoanRequestClient(
         token: String,
         requestId: String
     ): PrestaLoanPollingResponse {
-        println(":::::::::::::::;requestId")
-        println(requestId)
         return loanRequestErrorHandler {
             httpClient.get("${NetworkConstants.PrestaLoanRequest.route}/${requestId}") {
                 header(HttpHeaders.Authorization, "Bearer $token")
@@ -121,6 +121,23 @@ class PrestaLoanRequestClient(
                         sessionId = sessionId
                     )
                 )
+            }
+        }
+    }
+    suspend fun getLoansByApplicationStatus(
+        token: String,
+        customerRefId: String,
+        applicationStatus: List<LoanApplicationStatus>
+    ): List<PrestaLoanApplicationStatusResponse> {
+        return loanRequestErrorHandler {
+            httpClient.get(NetworkConstants.PrestaGetPendingApplications.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+                url {
+                    parameters.append("customerRefId", customerRefId)
+                    encodedParameters.append("applicationStatus", applicationStatus.joinToString(separator = ","))
+                }
             }
         }
     }

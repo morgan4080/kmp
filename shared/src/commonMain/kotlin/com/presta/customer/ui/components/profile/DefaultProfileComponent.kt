@@ -7,6 +7,7 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.presta.customer.network.loanRequest.model.LoanApplicationStatus
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.organisation.OrganisationModel
@@ -14,6 +15,8 @@ import com.presta.customer.ui.components.addSavings.store.AddSavingsStore
 import com.presta.customer.ui.components.addSavings.store.AddSavingsStoreFactory
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
+import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStore
+import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStoreFactory
 import com.presta.customer.ui.components.profile.store.ProfileStore
 import com.presta.customer.ui.components.profile.store.ProfileStoreFactory
 import kotlinx.coroutines.CoroutineScope
@@ -71,6 +74,16 @@ class DefaultProfileComponent(
     @OptIn(ExperimentalCoroutinesApi::class)
     override val profileState: StateFlow<ProfileStore.State> = profileStore.stateFlow
 
+    override val modeOfDisbursementStore =
+        instanceKeeper.getStore {
+            ModeOfDisbursementStoreFactory(
+                storeFactory = storeFactory
+            ).create()
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val modeOfDisbursementState: StateFlow<ModeOfDisbursementStore.State> = modeOfDisbursementStore.stateFlow
+
     override fun onAuthEvent(event: AuthStore.Intent) {
         authStore.accept(event)
     }
@@ -79,6 +92,10 @@ class DefaultProfileComponent(
 
     override fun onEvent(event: ProfileStore.Intent) {
         profileStore.accept(event)
+    }
+
+    override fun onModeOfDisbursementEvent(event: ModeOfDisbursementStore.Intent) {
+        modeOfDisbursementStore.accept(event)
     }
 
     override fun seeAllTransactions() {
@@ -181,6 +198,12 @@ class DefaultProfileComponent(
                     ))
                     onEvent(ProfileStore.Intent.GetTransactionMapping (
                         token = state.cachedMemberData.accessToken
+                    ))
+
+                    onModeOfDisbursementEvent(ModeOfDisbursementStore.Intent.GetPendingApprovals(
+                        token = state.cachedMemberData.accessToken,
+                        customerRefId = state.cachedMemberData.refId,
+                        applicationStatus = listOf(LoanApplicationStatus.INITIATED)
                     ))
 
                     checkProfileTransactions(state.cachedMemberData.accessToken, state.cachedMemberData.refId)

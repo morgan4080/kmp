@@ -1,9 +1,11 @@
 package com.presta.customer.network.loanRequest.data
 
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
+import com.presta.customer.network.loanRequest.model.LoanApplicationStatus
 import com.presta.customer.network.loanRequest.model.LoanQuotationResponse
 import com.presta.customer.network.loanRequest.model.LoanRequestResponse
 import com.presta.customer.network.loanRequest.model.LoanType
+import com.presta.customer.network.loanRequest.model.PrestaLoanApplicationStatusResponse
 import com.presta.customer.network.loanRequest.model.PrestaLoanPollingResponse
 
 interface LoanRequestRepository {
@@ -44,4 +46,9 @@ interface LoanRequestRepository {
         sessionId: String
     ): Result<LoanQuotationResponse>
 
+    suspend fun getPendingLoans(
+        token: String,
+        customerRefId: String,
+        applicationStatus: List<LoanApplicationStatus>
+    ): Result<List<PrestaLoanApplicationStatusResponse>>
 }

@@ -9,6 +9,9 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.lifecycle.Lifecycle
+import com.arkivanov.essenty.lifecycle.LifecycleOwner
+import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
@@ -33,6 +36,7 @@ import com.presta.customer.ui.components.processLoanDisbursement.DefaultProcessL
 import com.presta.customer.ui.components.processLoanDisbursement.ProcessLoanDisbursementComponent
 import com.presta.customer.ui.components.processingTransaction.DefaultProcessingTransactionComponent
 import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
+import com.presta.customer.ui.components.profile.coroutineScope
 import com.presta.customer.ui.components.registration.DefaultRegistrationComponent
 import com.presta.customer.ui.components.registration.RegistrationComponent
 import com.presta.customer.ui.components.rootBottomStack.DefaultRootBottomComponent
@@ -43,7 +47,21 @@ import com.presta.customer.ui.components.transactionHistory.DefaultTransactionHi
 import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
 import com.presta.customer.ui.components.welcome.DefaultWelcomeComponent
 import com.presta.customer.ui.components.welcome.WelcomeComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
+fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineScope {
+    val scope = CoroutineScope(context)
+    lifecycle.doOnDestroy(scope::cancel)
+    return scope
+}
+
+fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
+    CoroutineScope(context, lifecycle)
 class DefaultRootComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
@@ -210,6 +228,20 @@ class DefaultRootComponent(
             }
         )
 
+    private val logOutPrompt = MutableStateFlow(false)
+
+    private val scope = coroutineScope(prestaDispatchers.main + SupervisorJob())
+    init {
+        scope.launch {
+            logOutPrompt.collect {
+                if (it) {
+                    logOutPrompt.value = false
+                    navigation.replaceAll(Config.Splash)
+                }
+            }
+        }
+    }
+
     private fun rootBottomComponent(componentContext: ComponentContext, config: Config.RootBottom): RootBottomComponent =
         DefaultRootBottomComponent(
             componentContext = componentContext,
@@ -218,9 +250,7 @@ class DefaultRootComponent(
             gotoAllTransactions = {
                 navigation.push(Config.AllTransactions)
             },
-            logoutToSplash = {
-                navigation.replaceAll(Config.Splash)
-            },
+            logoutToSplash = logOutPrompt,
             gotoPayLoans = {
                 navigation.bringToFront(Config.PayLoan)
             },

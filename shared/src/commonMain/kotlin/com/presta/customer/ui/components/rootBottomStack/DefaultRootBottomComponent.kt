@@ -37,6 +37,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -55,7 +56,7 @@ class DefaultRootBottomComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
     val mainContext: CoroutineDispatcher,
-    private val logoutToSplash: () -> Unit,
+    private val logoutToSplash: MutableStateFlow<Boolean>,
     private val gotoAllTransactions: () -> Unit,
     private val gotoPayLoans: () -> Unit,
     private val gotoPayRegistrationFees: (correlationId: String, amount: Double) -> Unit,
@@ -81,7 +82,7 @@ class DefaultRootBottomComponent(
                 isTermsAccepted = false,
                 isActive = false,
                 pinStatus = PinStatus.SET,
-                onLogOut = logoutToSplash
+                onLogOut = { logoutToSplash.value = true }
             ).create()
         }
 
@@ -107,14 +108,12 @@ class DefaultRootBottomComponent(
 
                     flow.collect {
                         it.onSuccess { response ->
-                            println("::::::::::::::::::::::::UpdateRefreshToken")
+                            println(":::::UpdateRefreshToken:::::::")
                             onAuthEvent(AuthStore.Intent.UpdateRefreshToken(response))
                         }.onFailure { error ->
                             onAuthEvent(AuthStore.Intent.UpdateError(error.message))
                         }
                     }
-
-                    poller.close()
                 }
             }
         }
@@ -150,7 +149,7 @@ class DefaultRootBottomComponent(
                 gotoAllTransactions()
             },
             logoutToSplash = {
-                logoutToSplash()
+                logoutToSplash.value = true
             },
             gotoSavings = {
                 navigationBottomStackNavigation.bringToFront(ConfigBottom.RootSavings)
