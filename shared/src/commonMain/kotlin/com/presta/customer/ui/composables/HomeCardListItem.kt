@@ -329,7 +329,7 @@ fun HomeCardListItem(
                                         ),
                                         shape = RoundedCornerShape(12.dp)
                                     ).defaultMinSize(150.dp),
-                                    text = if (savingsBalance !== null) savingsBalance.toString() else "",
+                                    text = if (savingsBalance !== null) formatMoney(savingsBalance) else "",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 14.sp,
                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
@@ -358,7 +358,7 @@ fun HomeCardListItem(
                                         ),
                                         shape = RoundedCornerShape(12.dp)
                                     ).defaultMinSize(150.dp),
-                                    text = if (sharesBalance !== null) sharesBalance.toString() else "",
+                                    text = if (sharesBalance !== null) formatMoney(sharesBalance) else "",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 14.sp,
                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),

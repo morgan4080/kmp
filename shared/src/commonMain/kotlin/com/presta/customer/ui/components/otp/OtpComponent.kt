@@ -1,5 +1,6 @@
 package com.presta.customer.ui.components.otp
 
+import com.presta.customer.Platform
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.otp.store.OtpStore
@@ -7,6 +8,7 @@ import com.presta.customer.ui.components.root.DefaultRootComponent
 import kotlinx.coroutines.flow.StateFlow
 
 interface OtpComponent {
+    val platform: Platform
     val authStore: AuthStore
 
     val otpStore: OtpStore

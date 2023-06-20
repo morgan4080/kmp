@@ -6,13 +6,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import com.arkivanov.decompose.defaultComponentContext
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.stopKoin
 import com.presta.customer.di.initKoin
 import com.presta.customer.ui.components.root.DefaultRootComponent
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.stopKoin
 
 class MainActivity : AppCompatActivity() {
     var connectivityStatus: SharedStatus? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         connectivityStatus = SharedStatus(this)

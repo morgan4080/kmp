@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.presta.customer.Platform
 import com.presta.customer.network.onBoarding.model.PinStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
@@ -12,6 +13,8 @@ import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.otp.store.OtpStore
 import com.presta.customer.ui.components.otp.store.OtpStoreFactory
 import com.presta.customer.ui.components.root.DefaultRootComponent
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class DefaultOtpComponent(
     componentContext: ComponentContext,
@@ -23,7 +26,9 @@ class DefaultOtpComponent(
     isActive: Boolean,
     pinStatus: PinStatus?,
     private val onValidOTP: (memberRefId: String?, phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean, onBoardingContext: DefaultRootComponent.OnBoardingContext, pinStatus: PinStatus?) -> Unit
-): OtpComponent, ComponentContext by componentContext {
+): OtpComponent, ComponentContext by componentContext, KoinComponent {
+    override val platform by inject<Platform>()
+
     override val authStore =
         instanceKeeper.getStore {
             AuthStoreFactory(
@@ -64,5 +69,9 @@ class DefaultOtpComponent(
 
     override fun navigate(memberRefId: String?,phoneNumber: String, isTermsAccepted: Boolean, isActive: Boolean, onBoardingContext: DefaultRootComponent.OnBoardingContext, pinStatus: PinStatus?) {
         onValidOTP(memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext, pinStatus)
+    }
+
+    init {
+        platform.startSmsRetriever()
     }
 }

@@ -50,7 +50,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.presta.customer.AppContext
 import com.presta.customer.MR
+import com.presta.customer.Platform
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
@@ -67,7 +69,8 @@ fun AuthContent(
     onBoardingState: OnBoardingStore.State,
     onEvent: (AuthStore.Intent) -> Unit,
     onOnBoardingEvent: (OnBoardingStore.Intent) -> Unit,
-    navigate: () -> Unit
+    navigate: () -> Unit,
+    platform: Platform
 ) {
     val focusRequester = remember { FocusRequester() }
 
@@ -183,9 +186,7 @@ fun AuthContent(
 
     LaunchedEffect(onBoardingState.updateMemberResponse) {
         if (onBoardingState.updateMemberResponse !== null) {
-            snackbarHostState.showSnackbar(
-                "Pin Created Successfully!"
-            )
+            platform.showToast("Pin Created Successfully!")
             onEvent(AuthStore.Intent.UpdateContext(
                 context = Contexts.LOGIN,
                 title = "Enter pin code to login",
@@ -201,10 +202,7 @@ fun AuthContent(
     LaunchedEffect(state.phoneNumber, state.loginResponse) {
         if (state.loginResponse !== null && state.phoneNumber != null) {
             inputEnabled = false
-            snackbarHostState.showSnackbar(
-                message = "Login Successful!",
-                duration =  SnackbarDuration.Short
-            )
+            platform.showToast("Login Successful!")
             navigate()
         }
 
@@ -278,7 +276,6 @@ fun AuthContent(
             }
         }
     }
-
 
     Scaffold (modifier = Modifier
         .fillMaxHeight(1f)
@@ -422,7 +419,7 @@ fun AuthContent(
                         .fillMaxWidth()
                         .fillMaxHeight(),
                     columns = GridCells.Fixed(3),
-                    verticalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.Top,
                     contentPadding = PaddingValues(
                         start = 2.dp,
                         top = 5.dp,

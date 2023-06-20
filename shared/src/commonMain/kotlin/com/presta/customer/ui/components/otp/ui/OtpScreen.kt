@@ -15,6 +15,7 @@ fun OtpScreen(component: OtpComponent) {
         state = otpState,
         authState = authState,
         onEvent = component::onEvent,
-        navigate = component::navigate
+        navigate = component::navigate,
+        platform = component.platform
     )
 }

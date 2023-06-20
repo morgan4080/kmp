@@ -21,6 +21,6 @@ val networkModule: (enableLogging: Boolean) -> Module get() = { enableLogging ->
         single { PrestaRegistrationClient(httpClient = get()) }
         single { PrestaShortTermLoansClient(httpClient = get()) }
         single { PrestaPaymentsClient(httpClient = get()) }
-        single {PrestaLoanRequestClient(httpClient = get()) }
+        single { PrestaLoanRequestClient(httpClient = get()) }
     }
 }

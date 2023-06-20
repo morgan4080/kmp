@@ -7,8 +7,7 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
-import com.presta.customer.AppContext
-import com.presta.customer.SharedStatus
+import com.presta.customer.Platform
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
@@ -21,7 +20,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import kotlin.coroutines.CoroutineContext
 
 fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineScope {
@@ -43,7 +43,9 @@ class DefaultAuthComponent(
     pinStatus: PinStatus?,
     onBoardingContext: DefaultRootComponent.OnBoardingContext,
     private val onLogin: () -> Unit,
-): AuthComponent, ComponentContext by componentContext {
+): AuthComponent, ComponentContext by componentContext, KoinComponent {
+
+    override val platform by inject<Platform>()
 
     override val authStore =
         instanceKeeper.getStore {
@@ -83,8 +85,4 @@ class DefaultAuthComponent(
     }
 
     private val scope = coroutineScope(mainContext + SupervisorJob())
-
-    init {
-
-    }
 }

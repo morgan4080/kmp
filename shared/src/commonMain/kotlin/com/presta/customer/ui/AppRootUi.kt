@@ -21,7 +21,6 @@ import com.presta.customer.ui.components.processingTransaction.ui.ProcessingTran
 import com.presta.customer.ui.components.registration.ui.RegistrationScreen
 import com.presta.customer.ui.components.root.RootComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomScreen
-import com.presta.customer.ui.components.rootLoans.RootLoansComponent
 import com.presta.customer.ui.components.splash.SplashScreen
 import com.presta.customer.ui.components.transactionHistory.ui.TransactionHistoryScreen
 import com.presta.customer.ui.components.welcome.WelcomeScreen

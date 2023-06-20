@@ -126,6 +126,10 @@ kotlin {
 
                 // Koin
                 implementation(deps.koin.android)
+
+                implementation("com.google.android.gms:play-services-auth:20.5.0")
+
+                implementation("com.google.android.gms:play-services-auth-api-phone:18.0.1")
             }
         }
 

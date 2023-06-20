@@ -207,7 +207,7 @@ fun RegistrationContent(
                     state.email,
                     state.idNumber,
                     state.introducer,
-                ).map {inputMethod ->
+                ).map { inputMethod ->
                     item {
                         Column(
                             modifier = Modifier

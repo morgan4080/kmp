@@ -49,7 +49,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.presta.customer.Durations
 import com.presta.customer.MR
+import com.presta.customer.Platform
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
@@ -71,9 +73,10 @@ fun OtpContent(
         isActive: Boolean,
         onBoardingContext: DefaultRootComponent.OnBoardingContext,
         pinStatus: PinStatus?
-    ) -> Unit
+    ) -> Unit,
+    platform: Platform
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackBarHostState = remember { SnackbarHostState() }
 
     val focusRequester = remember { FocusRequester() }
 
@@ -125,15 +128,13 @@ fun OtpContent(
 
     LaunchedEffect(state.otpRequestData) {
         if (state.otpRequestData !== null) {
-            snackbarHostState.showSnackbar(
-                "OTP Sent!"
-            )
+            platform.showToast("OTP Sent!", Durations.SHORT)
         }
     }
 
     LaunchedEffect(state.error) {
         if (state.error !== null) {
-            snackbarHostState.showSnackbar(
+            snackBarHostState.showSnackbar(
                 state.error
             )
 
@@ -160,9 +161,7 @@ fun OtpContent(
             state.isTermsAccepted !== null &&
             state.isActive !== null
         ) {
-            snackbarHostState.showSnackbar(
-                state.otpVerificationData.message
-            )
+            platform.showToast(state.otpVerificationData.message, Durations.SHORT)
             if (state.otpVerificationData.validated) {
                 inputEnabled = false
                 navigate(
@@ -180,12 +179,21 @@ fun OtpContent(
         }
     }
 
-
+    LaunchedEffect(platform.otpCode) {
+        platform.otpCode.collect {
+            if (it !== "") {
+                builder.append(it)
+                otpInput = builder.toString()
+                setupOtpCharacters(otpInput)
+                println(otpInput)
+            }
+        }
+    }
 
     Scaffold (modifier = Modifier
         .fillMaxHeight()
         .padding(LocalSafeArea.current),
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { SnackbarHost(snackBarHostState) },
     ) {
         Column(
             modifier = Modifier
@@ -380,15 +388,7 @@ fun OtpContent(
                         ) {
                             when(it) {
                                 10 -> {
-                                    /*Icon(
-                                        modifier = Modifier
-                                            .padding(vertical = 12.dp)
-                                            .size(30.dp)
-                                            .align(Alignment.CenterVertically),
-                                        imageVector = Icons.Filled.Fingerprint,
-                                        contentDescription = "Finger Print",
-                                        tint = MaterialTheme.colorScheme.onBackground
-                                    )*/
+
                                 }
                                 12 -> {
                                     Icon(
@@ -397,7 +397,7 @@ fun OtpContent(
                                             .size(30.dp)
                                             .align(Alignment.CenterVertically),
                                         imageVector = Icons.Outlined.Backspace,
-                                        contentDescription = "Finger Print",
+                                        contentDescription = "Back Space",
                                         tint = MaterialTheme.colorScheme.onBackground
                                     )
                                 }

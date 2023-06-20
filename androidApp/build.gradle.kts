@@ -40,3 +40,6 @@ android {
         jvmToolchain(11)
     }
 }
+dependencies {
+
+}

@@ -71,8 +71,6 @@ fun OnBoardingContent(
         pinStatus: PinStatus?
     ) -> Unit
 ) {
-    println("state.member.authenticationInfo.pinStatus")
-    println(state.member?.authenticationInfo?.pinStatus)
     val scaffoldState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true
