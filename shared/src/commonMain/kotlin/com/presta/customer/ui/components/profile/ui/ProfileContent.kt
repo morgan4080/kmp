@@ -32,13 +32,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.Grid4x4
 import androidx.compose.material.icons.outlined.AttachMoney
 import androidx.compose.material.icons.outlined.CreditCard
-import androidx.compose.material.icons.outlined.Description
-import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Logout
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Savings
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -89,7 +86,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-data class QuickLinks(val labelTop: String, val labelBottom: String, val icon: ImageVector, val action: () -> Unit)
+data class QuickLinks(val labelTop: String, val labelBottom: String, val icon: ImageVector, val action: () -> Unit, val badge: Boolean = false)
 
 @OptIn(
     ExperimentalMaterialApi::class, ExperimentalLayoutApi::class,
@@ -110,6 +107,10 @@ fun ProfileContent(
     logout: () -> Unit,
     reloadModels: () -> Unit,
 ) {
+    println("::::::::::Profile Content Errors:::::::::::::::")
+    println(state.error)
+    println(authState.error)
+
     val stateLazyRow0 = rememberLazyListState()
 
     val scope = rememberCoroutineScope()
@@ -120,7 +121,7 @@ fun ProfileContent(
         QuickLinks("Add", "Savings", Icons.Outlined.Savings, goToSavings),
         QuickLinks("Apply", "Loan", Icons.Outlined.AttachMoney, goToLoans),
         QuickLinks("Pay", "Loan", Icons.Outlined.CreditCard, goToPayLoans),
-        QuickLinks("View Full", "Statement", Icons.Outlined.Description, goToStatement)
+        QuickLinks("Awaiting", "Approval", Icons.Outlined.Notifications, goToStatement, true)
     )
 
     val sheetState = rememberModalBottomSheetState(
@@ -385,43 +386,48 @@ fun ProfileContent(
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
                                         quickLinks.map { item1 ->
-                                            Column (
-                                                verticalArrangement = Arrangement.Center,
-                                                horizontalAlignment = Alignment.CenterHorizontally
-                                            ) {
+                                            BadgedBox(badge = {
+                                                if (item1.badge) {
+                                                    Badge { Text("8") }
+                                                }
+                                            }) {
+                                                Column(
+                                                    verticalArrangement = Arrangement.Center,
+                                                    horizontalAlignment = Alignment.CenterHorizontally
+                                                ) {
+                                                    IconButton(
+                                                        modifier = Modifier
+                                                            .clip(shape = RoundedCornerShape(10.dp))
+                                                            .background(MaterialTheme.colorScheme.primary)
+                                                            .size(57.dp),
+                                                        onClick = {
+                                                            item1.action()
+                                                        },
+                                                        content = {
+                                                            Icon(
+                                                                imageVector = item1.icon,
+                                                                modifier = Modifier.size(30.dp),
+                                                                contentDescription = null,
+                                                                tint = MaterialTheme.colorScheme.inverseOnSurface
+                                                            )
+                                                        }
+                                                    )
 
-                                                IconButton(
-                                                    modifier = Modifier
-                                                        .clip(shape = RoundedCornerShape(10.dp))
-                                                        .background(MaterialTheme.colorScheme.primary)
-                                                        .size(57.dp),
-                                                    onClick = {
-                                                        item1.action()
-                                                    },
-                                                    content = {
-                                                        Icon(
-                                                            imageVector = item1.icon,
-                                                            modifier = Modifier.size(30.dp),
-                                                            contentDescription = null,
-                                                            tint = MaterialTheme.colorScheme.inverseOnSurface
-                                                        )
-                                                    }
-                                                )
+                                                    Text(
+                                                        modifier = Modifier.padding(top = 7.08.dp),
+                                                        text = item1.labelTop,
+                                                        color = MaterialTheme.colorScheme.onBackground,
+                                                        fontSize = 12.sp,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                                    )
 
-                                                Text(
-                                                    modifier = Modifier.padding(top = 7.08.dp),
-                                                    text = item1.labelTop,
-                                                    color = MaterialTheme.colorScheme.onBackground,
-                                                    fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                                                )
-
-                                                Text(
-                                                    text = item1.labelBottom,
-                                                    color = MaterialTheme.colorScheme.onBackground,
-                                                    fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                                                )
+                                                    Text(
+                                                        text = item1.labelBottom,
+                                                        color = MaterialTheme.colorScheme.onBackground,
+                                                        fontSize = 12.sp,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                                    )
+                                                }
                                             }
                                         }
                                     }

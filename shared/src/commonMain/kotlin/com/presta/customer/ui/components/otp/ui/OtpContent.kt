@@ -182,10 +182,9 @@ fun OtpContent(
     LaunchedEffect(platform.otpCode) {
         platform.otpCode.collect {
             if (it !== "") {
-                builder.append(it)
-                otpInput = builder.toString()
+                val bs = StringBuilder().append(it)
+                otpInput = bs.toString()
                 setupOtpCharacters(otpInput)
-                println(otpInput)
             }
         }
     }
@@ -380,7 +379,6 @@ fun OtpContent(
                                             builder.append(otpInput).append(it.toString())
                                             otpInput = builder.toString()
                                             setupOtpCharacters(otpInput)
-                                            println(otpInput)
                                         }
                                     }
                                 }
