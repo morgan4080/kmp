@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -28,6 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
@@ -149,6 +151,22 @@ fun ShortTermProductList(
                 }
                 item {
                     Spacer(modifier = Modifier.padding(top = 50.dp))
+                }
+
+                item {
+                    if (
+                        state.error !== null || authState.error !== null
+                    ) {
+                        Column(modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(shape = RoundedCornerShape(10.dp))
+                            .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                            .padding(16.dp)
+                        ) {
+                            state.error?.let { txt -> Text(style = MaterialTheme.typography.labelSmall, text = txt) }
+                            authState.error?.let { txt -> Text(style = MaterialTheme.typography.labelSmall, text = txt) }
+                        }
+                    }
                 }
             }
 

@@ -15,7 +15,6 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
-import com.presta.customer.network.loanRequest.model.LoanApplicationStatus
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.network.payments.model.PaymentStatuses
@@ -32,6 +31,8 @@ import com.presta.customer.ui.components.payLoanPropmpt.DefaultPayLoanPromptComp
 import com.presta.customer.ui.components.payLoanPropmpt.PayLoanPromptComponent
 import com.presta.customer.ui.components.payRegistrationFeePrompt.DefaultPayRegistrationFeeComponent
 import com.presta.customer.ui.components.payRegistrationFeePrompt.PayRegistrationFeeComponent
+import com.presta.customer.ui.components.pendingApprovals.DefaultLoanPendingApprovalsComponent
+import com.presta.customer.ui.components.pendingApprovals.LoanPendingApprovalsComponent
 import com.presta.customer.ui.components.processLoanDisbursement.DefaultProcessLoanDisbursementComponent
 import com.presta.customer.ui.components.processLoanDisbursement.ProcessLoanDisbursementComponent
 import com.presta.customer.ui.components.processingTransaction.DefaultProcessingTransactionComponent
@@ -52,7 +53,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
@@ -86,7 +86,7 @@ class DefaultRootComponent(
         when (config) {
             is Config.Splash -> RootComponent.Child.SplashChild(splashComponent(componentContext))
             is Config.Welcome -> RootComponent.Child.WelcomeChild(welcomeComponent(componentContext, config))
-            is Config.OnBoarding -> RootComponent.Child.OnboardingChild(onboardingComponent(componentContext, config))
+            is Config.OnBoarding -> RootComponent.Child.OnboardingChild(onBoardingComponent(componentContext, config))
             is Config.OTP -> RootComponent.Child.OTPChild(otpComponent(componentContext, config))
             is Config.Register -> RootComponent.Child.RegisterChild(registerComponent(componentContext, config))
             is Config.Auth -> RootComponent.Child.AuthChild(authComponent(componentContext, config))
@@ -99,8 +99,20 @@ class DefaultRootComponent(
             is Config.ProcessingLoanLoanDisbursement -> RootComponent.Child.ProcessingLoanDisbursementChild(
                 processingLoanLoanDisbursementComponent(componentContext, config)
             )
-
+            is Config.LoanPendingApprovals ->  RootComponent.Child.LoanPendingApprovalsChild(
+                loansPendingApprovalComponent(componentContext)
+            )
         }
+
+    private fun loansPendingApprovalComponent(componentContext: ComponentContext): LoanPendingApprovalsComponent =
+        DefaultLoanPendingApprovalsComponent(
+            componentContext = componentContext,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            onBack = {
+                navigation.pop()
+            }
+        )
 
     private fun splashComponent(componentContext: ComponentContext): SplashComponent =
         DefaultSplashComponent(
@@ -138,7 +150,7 @@ class DefaultRootComponent(
             },
         )
 
-    private fun onboardingComponent(componentContext: ComponentContext, config: Config.OnBoarding): OnBoardingComponent =
+    private fun onBoardingComponent(componentContext: ComponentContext, config: Config.OnBoarding): OnBoardingComponent =
         DefaultOnboardingComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
@@ -230,34 +242,7 @@ class DefaultRootComponent(
             }
         )
 
-    private val logOutPrompt = MutableStateFlow(false)
-
-    private val scope = coroutineScope(prestaDispatchers.main + SupervisorJob())
-
-    private val processLoanState = MutableStateFlow<ProcessLoanDisbursement?>(null)
-
-    init {
-        scope.launch {
-            logOutPrompt.collect {
-                if (it) {
-                    navigation.replaceAll(Config.Splash)
-                    logOutPrompt.value = false
-                }
-            }
-        }
-        scope.launch {
-            processLoanState.collect {
-                if (it !== null) {
-                    navigation.bringToFront(Config.ProcessingLoanLoanDisbursement(
-                        it.correlationId,
-                        it.amount,
-                        it.fees
-                    ))
-                    processLoanState.value = null
-                }
-            }
-        }
-    }
+    val scope = coroutineScope(prestaDispatchers.main + SupervisorJob())
 
     private fun rootBottomComponent(componentContext: ComponentContext, config: Config.RootBottom): RootBottomComponent =
         DefaultRootBottomComponent(
@@ -267,7 +252,17 @@ class DefaultRootComponent(
             gotoAllTransactions = {
                 navigation.push(Config.AllTransactions)
             },
-            logoutToSplash = logOutPrompt,
+            gotToPendingApprovals = {
+                navigation.push(Config.LoanPendingApprovals)
+            },
+            logoutToSplash = {
+                println("::::::should logout here::::::")
+                scope.launch {
+                    if (it) {
+                        navigation.replaceAll(Config.Splash)
+                    }
+                }
+            },
             gotoPayLoans = {
                 navigation.bringToFront(Config.PayLoan)
             },
@@ -277,7 +272,17 @@ class DefaultRootComponent(
             processTransaction = {correlationId, amount, mode ->
                 navigation.bringToFront(Config.ProcessingTransaction(correlationId, amount, mode))
             },
-            processLoanState = processLoanState,
+            processLoanState = {
+                scope.launch {
+                    if (it !== null) {
+                        navigation.bringToFront(Config.ProcessingLoanLoanDisbursement(
+                            it.correlationId,
+                            it.amount,
+                            it.fees
+                        ))
+                    }
+                }
+            },
             backTopProfile = config.backTopProfile
         )
 
@@ -389,6 +394,8 @@ class DefaultRootComponent(
         @Parcelize
         object AllTransactions : Config()
         @Parcelize
+        object LoanPendingApprovals : Config()
+        @Parcelize
         data class RootBottom(val backTopProfile: Boolean) : Config()
         @Parcelize
         object PayLoan :Config()
@@ -398,7 +405,6 @@ class DefaultRootComponent(
         data class PayRegistrationFee(val amount: Double, val correlationId: String) :Config()
         @Parcelize
         data class ProcessingTransaction(val correlationId: String, val amount: Double,val mode: PaymentTypes) :Config()
-
         @Parcelize
         data class ProcessingLoanLoanDisbursement(val correlationId: String, val amount: Double, val fees: Double) : Config()
     }

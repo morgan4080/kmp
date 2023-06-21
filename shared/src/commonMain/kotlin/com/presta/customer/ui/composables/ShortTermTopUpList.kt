@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -26,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
@@ -89,7 +91,7 @@ fun ShortTermTopUpList(
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                 )
 
-                if(state.prestaShortTermTopUpList?.loans==null){
+                if (state.prestaShortTermTopUpList?.loans==null) {
                     Row(modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 10.dp),
@@ -101,7 +103,7 @@ fun ShortTermTopUpList(
 
                     }
 
-                }else{
+                } else{
 
                     LazyColumn(
                         modifier = Modifier
@@ -127,6 +129,22 @@ fun ShortTermTopUpList(
                                 )
                             }
                         }
+
+                        item {
+                            if (
+                                state.error !== null || authState.error !== null
+                            ) {
+                                Column(modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(shape = RoundedCornerShape(10.dp))
+                                    .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                                    .padding(16.dp)
+                                ) {
+                                    state.error?.let { txt -> Text(style = MaterialTheme.typography.labelSmall, text = txt) }
+                                    authState.error?.let { txt -> Text(style = MaterialTheme.typography.labelSmall, text = txt) }
+                                }
+                            }
+                        }
                     }
                 }
                 PullRefreshIndicator(refreshing, refreshState,
@@ -138,6 +156,7 @@ fun ShortTermTopUpList(
             }
 
         }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()

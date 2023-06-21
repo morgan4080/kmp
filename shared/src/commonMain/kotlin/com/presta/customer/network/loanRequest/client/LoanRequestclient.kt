@@ -102,24 +102,27 @@ class PrestaLoanRequestClient(
         requestId: String? = null,
         sessionId: String
     ): LoanQuotationResponse {
+        val payload = LoanRequestData(
+            amount = amount,
+            currentTerm = currentTerm,
+            customerRefId = customerRefId,
+            disbursementAccountReference = disbursementAccountReference,
+            disbursementMethod = disbursementMethod,
+            loanPeriod = loanPeriod,
+            loanType = loanType,
+            productRefId = productRefId,
+            referencedLoanRefId = referencedLoanRefId,
+            requestId = requestId,
+            sessionId = sessionId
+        )
+        println("::::Quotation Payload::::::")
+        println(payload)
         return loanRequestErrorHandler {
             httpClient.post(NetworkConstants.PrestaLoanQuotation.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 contentType(ContentType.Application.Json)
                 setBody(
-                    LoanRequestData(
-                        amount = amount,
-                        currentTerm = currentTerm,
-                        customerRefId = customerRefId,
-                        disbursementAccountReference = disbursementAccountReference,
-                        disbursementMethod = disbursementMethod,
-                        loanPeriod = loanPeriod,
-                        loanType = loanType,
-                        productRefId = productRefId,
-                        referencedLoanRefId = referencedLoanRefId,
-                        requestId = requestId,
-                        sessionId = sessionId
-                    )
+                    payload
                 )
             }
         }

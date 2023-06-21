@@ -141,19 +141,16 @@ data class AppraisalRequest(
 )
 
 @Serializable
-data class PrestaLoanApplicationStatusResponse @OptIn(ExperimentalSerializationApi::class) constructor(
-    @EncodeDefault val tenantId: String? = null,
-    @EncodeDefault val id: String? = null,
-    @EncodeDefault val loanRefId: String? = null,
-    @EncodeDefault val loanDesc: String? = null,
-    @EncodeDefault val loanDate: String? = null,
-    @EncodeDefault val applicationStatus: LoanApplicationStatus? = null,
-    @EncodeDefault val loanRequest: LoanRequestResponse? = null,
-    @EncodeDefault val offer: Offer? = null,
-    @EncodeDefault val customer: Customer? = null,
-    @EncodeDefault val loanProduct: LoanProduct? = null,
-    @EncodeDefault val appraisalRequest: AppraisalRequest? = null,
-    val appraisalResult: AppraisalResult,
-    @EncodeDefault val disbursementResult: DisbursementResult? = null,
-    @EncodeDefault val accountingResult: AccountingResult? = null
+data class PrestaLoanApplicationStatusResponse (
+    val refId: String,
+    val productName: String,
+    val applicationDate: String,
+    val amount: Double,
+    val applicationStatus: String,
+    val interestAmount: Double,
+    val interestRate: Double,
+    val totalFees: Double,
+    val loanPeriod: String,
+    val balanceBF: Double,
+    val repaymentAmount: Double
 )

@@ -1,5 +1,6 @@
 package com.presta.customer.network.shortTermLoans.errorHandler
 
+import com.presta.customer.network.authDevice.errorHandler.Message
 import com.presta.customer.network.shortTermLoans.errors.ShortTermLoansError
 import com.presta.customer.network.shortTermLoans.errors.ShortTermLoansExceptions
 import io.ktor.client.call.body
@@ -15,20 +16,23 @@ suspend inline fun <reified T> shortTermLoansErrorHandler(
     val result = try {
         response()
     } catch(e: IOException) {
-        throw ShortTermLoansExceptions(ShortTermLoansError.ServiceUnavailable)
+        throw ShortTermLoansExceptions(ShortTermLoansError.ServiceUnavailable, null)
     }
 
     when(result.status.value) {
         in 200..299 -> Unit
-        in 400..499 -> throw ShortTermLoansExceptions(ShortTermLoansError.ClientError)
-        500 -> throw ShortTermLoansExceptions(ShortTermLoansError.ServerError)
-        else -> throw ShortTermLoansExceptions(ShortTermLoansError.UnknownError)
+        in 400..499 -> throw ShortTermLoansExceptions(ShortTermLoansError.ClientError, null)
+        500 -> {
+            val data: Message = result.body()
+            throw ShortTermLoansExceptions(ShortTermLoansError.ServerError, data.message)
+        }
+        else -> throw ShortTermLoansExceptions(ShortTermLoansError.UnknownError, null)
     }
 
     return@withContext try {
         result.body()
     } catch(e: Exception) {
-        throw ShortTermLoansExceptions(ShortTermLoansError.ServerError)
+        throw ShortTermLoansExceptions(ShortTermLoansError.ServerError, null)
     }
 
 }

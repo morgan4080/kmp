@@ -45,7 +45,7 @@ class DefaultProfileComponent(
     private val gotoSavings: () -> Unit,
     private val gotoLoans: () -> Unit,
     private val gotoPayLoans: () -> Unit,
-    private val gotoStatement: () -> Unit,
+    private val goToPendingApproval: () -> Unit,
     private val onConfirmClicked: (correlationId: String, amount: Double) -> Unit
 ) : ProfileComponent, ComponentContext by componentContext {
 
@@ -114,8 +114,8 @@ class DefaultProfileComponent(
         gotoPayLoans()
     }
 
-    override fun goToStatement() {
-        gotoStatement()
+    override fun goToLoansPendingApproval() {
+        goToPendingApproval()
     }
 
     override val addSavingsStore =
@@ -203,25 +203,10 @@ class DefaultProfileComponent(
                     onModeOfDisbursementEvent(ModeOfDisbursementStore.Intent.GetPendingApprovals(
                         token = state.cachedMemberData.accessToken,
                         customerRefId = state.cachedMemberData.refId,
-                        applicationStatus = listOf(LoanApplicationStatus.INITIATED)
+                        applicationStatus = listOf(LoanApplicationStatus.NEWAPPLICATION)
                     ))
 
                     checkProfileTransactions(state.cachedMemberData.accessToken, state.cachedMemberData.refId)
-                }
-            }
-        }
-    }
-
-    private fun refreshToken() {
-        scope.launch {
-            authState.collect { state ->
-                if (state.cachedMemberData !== null) {
-                    onAuthEvent(AuthStore.Intent.RefreshToken(
-                        tenantId = OrganisationModel.organisation.tenant_id,
-                        refId = state.cachedMemberData.refId
-                    ))
-
-                    this.cancel()
                 }
             }
         }
@@ -233,20 +218,17 @@ class DefaultProfileComponent(
                 if (state.cachedMemberData !== null) {
                     onAuthEvent(AuthStore.Intent.LogOutUser)
                 }
-                this.cancel()
             }
         }
     }
 
     override fun reloadModels() {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
-        refreshToken()
         checkAuthenticatedUser()
     }
 
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
-        refreshToken()
         checkAuthenticatedUser()
     }
 }

@@ -116,8 +116,6 @@ class ProfileStoreFactory(
                     purposeIds = purposeIds,
                     searchTerm = null
                 ).onSuccess { response ->
-                    println(":::::getTransactionHistoryData")
-                    println(response)
                     dispatch(Msg.TransactionHistoryLoaded(response))
                 }.onFailure { e ->
                     dispatch(Msg.ProfileFailed(e.message))

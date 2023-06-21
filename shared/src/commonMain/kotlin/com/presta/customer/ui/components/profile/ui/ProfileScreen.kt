@@ -27,7 +27,7 @@ fun ProfileScreen(
         goToSavings = component::goToSavings,
         goToLoans = component::goToLoans,
         goToPayLoans = component::goToPayLoans,
-        goToStatement = component::goToStatement,
+        goToLoansPendingApproval = component::goToLoansPendingApproval,
         activateAccount = component::activateAccount,
         logout = component::logout,
         reloadModels = component::reloadModels,

@@ -112,7 +112,9 @@ internal fun MainModalDrawerSheet(
                 label = { Text(item.first) },
                 selected = item == selectedItem,
                 onClick = {
-                    if (item.first == "Log Out") logout()
+                    if (item.first == "Log Out") {
+                        logout()
+                    }
                     onItemsClick(item)
                 },
                 colors = NavigationDrawerItemDefaults.colors(

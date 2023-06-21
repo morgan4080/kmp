@@ -75,7 +75,7 @@ fun ProcessLoanDisbursementContent(
                         initialValue = 0F,
                         targetValue = 360F,
                         animationSpec = infiniteRepeatable(
-                            animation = tween(2000, easing =    LinearEasing)
+                            animation = tween(2000, easing = LinearEasing)
                         )
                     )
                     Box(

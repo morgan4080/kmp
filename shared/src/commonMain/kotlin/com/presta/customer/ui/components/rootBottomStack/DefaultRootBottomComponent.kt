@@ -38,7 +38,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -57,64 +56,20 @@ class DefaultRootBottomComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
     val mainContext: CoroutineDispatcher,
-    private val logoutToSplash: MutableStateFlow<Boolean>,
-    private val gotoAllTransactions: () -> Unit,
-    private val gotoPayLoans: () -> Unit,
-    private val gotoPayRegistrationFees: (correlationId: String, amount: Double) -> Unit,
-    private val processTransaction: (
+    val logoutToSplash: (state: Boolean) -> Unit,
+    val gotoAllTransactions: () -> Unit,
+    val gotToPendingApprovals: () -> Unit,
+    val gotoPayLoans: () -> Unit,
+    val gotoPayRegistrationFees: (correlationId: String, amount: Double) -> Unit,
+    val processTransaction: (
         correlationId: String,
         amount: Double,
         mode: PaymentTypes
     ) -> Unit,
-    private var processLoanState: MutableStateFlow<ProcessLoanDisbursement?>,
+    var processLoanState: (state: ProcessLoanDisbursement?) -> Unit,
     backTopProfile: Boolean = false
 ) : RootBottomComponent, ComponentContext by componentContext, KoinComponent {
     private val authRepository by inject<AuthRepository>()
-
-    override val authStore =
-        instanceKeeper.getStore {
-            AuthStoreFactory(
-                storeFactory = storeFactory,
-                phoneNumber = null,
-                isTermsAccepted = false,
-                isActive = false,
-                pinStatus = PinStatus.SET,
-                onLogOut = { logoutToSplash.value = true }
-            ).create()
-        }
-
-    override fun onAuthEvent(event: AuthStore.Intent) {
-        authStore.accept(event)
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val authState: StateFlow<AuthStore.State> = authStore.stateFlow
-
-    private val scope = coroutineScope(mainContext + SupervisorJob())
-
-    private val poller = AuthPoller(authRepository = authRepository, mainContext)
-    private fun refreshToken() {
-        scope.launch {
-            authState.collect { state ->
-                if (state.cachedMemberData !== null) {
-                    val flow = poller.poll(
-                        state.cachedMemberData.refresh_expires_in,
-                        OrganisationModel.organisation.tenant_id,
-                        state.cachedMemberData.refId
-                    )
-
-                    flow.collect {
-                        it.onSuccess { response ->
-                            println(":::::UpdateRefreshToken:::::::")
-                            onAuthEvent(AuthStore.Intent.UpdateRefreshToken(response))
-                        }.onFailure { error ->
-                            onAuthEvent(AuthStore.Intent.UpdateError(error.message))
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     private val navigationBottomStackNavigation = StackNavigation<ConfigBottom>()
 
@@ -146,7 +101,7 @@ class DefaultRootBottomComponent(
                 gotoAllTransactions()
             },
             logoutToSplash = {
-                logoutToSplash.value = true
+                logoutToSplash(true)
             },
             gotoSavings = {
                 navigationBottomStackNavigation.bringToFront(ConfigBottom.RootSavings)
@@ -157,8 +112,8 @@ class DefaultRootBottomComponent(
             gotoPayLoans = {
                 gotoPayLoans()
             },
-            gotoStatement = {
-
+            goToPendingApproval = {
+                gotToPendingApprovals()
             },
             onConfirmClicked = { correlationId, amount ->
                 gotoPayRegistrationFees(correlationId, amount)
@@ -175,7 +130,9 @@ class DefaultRootBottomComponent(
             navigateToProfile = {
                 navigationBottomStackNavigation.bringToFront(ConfigBottom.Profile)
             },
-            processLoanState = processLoanState
+            processLoanState = {
+                processLoanState(it)
+            }
         )
 
     private fun rootSavingsComponent(componentContext: ComponentContext): RootSavingsComponent =
@@ -224,10 +181,63 @@ class DefaultRootBottomComponent(
         object Sign : ConfigBottom()
     }
 
+    override val authStore =
+        instanceKeeper.getStore {
+            AuthStoreFactory(
+                storeFactory = storeFactory,
+                phoneNumber = null,
+                isTermsAccepted = false,
+                isActive = false,
+                pinStatus = PinStatus.SET
+            ).create()
+        }
+
+    override fun onAuthEvent(event: AuthStore.Intent) {
+        authStore.accept(event)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val authState: StateFlow<AuthStore.State> = authStore.stateFlow
+
+    private val scope = coroutineScope(mainContext + SupervisorJob())
+
+    private val poller = AuthPoller(authRepository = authRepository, mainContext)
+
+    private var firstLoad = true
+
     init {
-        refreshToken()
         if (backTopProfile) {
             navigationBottomStackNavigation.bringToFront(ConfigBottom.Profile)
         }
+
+        scope.launch {
+            authState.collect { state ->
+                if (state.cachedMemberData !== null) {
+
+                    val flow = poller.poll(
+                        state.cachedMemberData.expires_in * 1000,
+                        OrganisationModel.organisation.tenant_id,
+                        state.cachedMemberData.refId
+                    )
+
+                    flow.collect {
+                        it.onSuccess { response ->
+                            println(":::::UpdateRefreshToken:::::::")
+                            println(state.cachedMemberData.expires_in * 1000)
+                            onAuthEvent(AuthStore.Intent.UpdateRefreshToken(response))
+                        }.onFailure { error ->
+                            onAuthEvent(AuthStore.Intent.UpdateError(error.message))
+                        }
+                    }
+                }
+                if (state.error !== null || !state.isLoggedIn && !firstLoad) {
+                     logoutToSplash(true)
+                } else {
+                    firstLoad = false
+                }
+            }
+        }
+
+        onAuthEvent(AuthStore.Intent.GetCachedMemberData)
     }
 }

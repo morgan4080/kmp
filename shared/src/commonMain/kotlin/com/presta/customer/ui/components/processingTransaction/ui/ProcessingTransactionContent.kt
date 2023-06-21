@@ -181,7 +181,7 @@ fun ProcessingTransactionContent(
                                 Text(
                                     text = "Your transaction ${if (state.paymentStatus !== null) "status is ${state.paymentStatus.status}" else "failed"}!",
                                     color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 22.sp,
+                                    fontSize = 20.sp,
                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                                     textAlign = TextAlign.Center,
                                     lineHeight = MaterialTheme.typography.headlineLarge.lineHeight

@@ -48,7 +48,7 @@ class DefaultRootLoansComponent(
     val storeFactory: StoreFactory,
     val pop: () -> Unit = {},
     val navigateToProfile: () -> Unit = {},
-    private var processLoanState: MutableStateFlow<ProcessLoanDisbursement?>
+    private var processLoanState: (state: ProcessLoanDisbursement?) -> Unit
 ) : RootLoansComponent, ComponentContext by componentContext {
     private val loansNavigation = StackNavigation<ConfigLoans>()
 
@@ -223,7 +223,7 @@ class DefaultRootLoansComponent(
             componentContext = componentContext,
             refId = config.refId,
             onConfirmClicked = { correlationId, amount, fees ->
-                processLoanState.value = ProcessLoanDisbursement(correlationId, amount, fees)
+                processLoanState(ProcessLoanDisbursement(correlationId, amount, fees))
             },
             onBackNavClicked = {
                 loansNavigation.pop()

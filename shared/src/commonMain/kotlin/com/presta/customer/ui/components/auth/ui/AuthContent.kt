@@ -28,7 +28,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -47,10 +46,11 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.presta.customer.AppContext
 import com.presta.customer.MR
 import com.presta.customer.Platform
 import com.presta.customer.network.onBoarding.model.PinStatus
@@ -339,6 +339,7 @@ fun AuthContent(
                                         color = MaterialTheme.colorScheme.inverseOnSurface,
                                         shape = RoundedCornerShape(10.dp)
                                     ),
+                                visualTransformation = if (state.pinStatus == PinStatus.SET) PasswordVisualTransformation('\u2731') else VisualTransformation.None,
                                 value = pinCharList[index],
                                 textStyle = TextStyle(
                                     color = MaterialTheme.colorScheme.onBackground,

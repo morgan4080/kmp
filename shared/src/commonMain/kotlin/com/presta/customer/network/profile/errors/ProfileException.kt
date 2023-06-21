@@ -7,6 +7,6 @@ enum class ProfileError {
     UnknownError
 }
 
-class ProfileException(error: ProfileError): Exception(
-    "Data loading  Error: $error"
+class ProfileException(error: ProfileError, message: String?): Exception(
+    "Data loading  Error: ${if (message !== null) message else error}"
 )

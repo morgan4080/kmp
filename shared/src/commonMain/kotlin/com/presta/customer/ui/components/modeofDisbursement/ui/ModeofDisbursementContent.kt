@@ -87,14 +87,12 @@ fun ModeOfDisbursementContent(
                             currentTerm =component.currentTerm
                         )
                     })
-
                 }
 
                 Row(modifier = Modifier.fillMaxWidth().padding(top = 11.dp)) {
                     ProductSelectionCard2("Bank", onClickContainer = {
-                        component.onBankSelected()
+//                        component.onBankSelected()
                     })
-
                 }
             }
         }

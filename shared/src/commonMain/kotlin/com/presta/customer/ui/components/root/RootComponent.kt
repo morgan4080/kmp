@@ -8,6 +8,7 @@ import com.presta.customer.ui.components.otp.OtpComponent
 import com.presta.customer.ui.components.payLoan.PayLoanComponent
 import com.presta.customer.ui.components.payLoanPropmpt.PayLoanPromptComponent
 import com.presta.customer.ui.components.payRegistrationFeePrompt.PayRegistrationFeeComponent
+import com.presta.customer.ui.components.pendingApprovals.LoanPendingApprovalsComponent
 import com.presta.customer.ui.components.processLoanDisbursement.ProcessLoanDisbursementComponent
 import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
 import com.presta.customer.ui.components.registration.RegistrationComponent
@@ -35,5 +36,6 @@ interface RootComponent {
         class PayRegistrationFeeChild(val component: PayRegistrationFeeComponent) : Child()
         class ProcessingTransactionChild(val component: ProcessingTransactionComponent) : Child()
         class ProcessingLoanDisbursementChild(val component: ProcessLoanDisbursementComponent) : Child()
+        class LoanPendingApprovalsChild(val component: LoanPendingApprovalsComponent) : Child()
     }
 }

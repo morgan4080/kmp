@@ -222,9 +222,15 @@ internal class AuthStoreFactory(
                     pinConfirmed = msg.pinConfirmed,
                     error = msg.error
                 )
-                is Msg.LoginFulfilled -> copy(loginResponse = msg.logInResponse)
+                is Msg.LoginFulfilled -> copy(
+                    loginResponse = msg.logInResponse,
+                    isLoggedIn = true
+                )
                 is Msg.RefreshFulfilled -> copy(refreshTokenResponse = msg.refreshResponse)
-                is Msg.AuthFailed -> copy(error = msg.error)
+                is Msg.AuthFailed -> copy(
+                    error = msg.error,
+                    isLoggedIn = false
+                )
                 is Msg.CachedMemberData -> copy(cachedMemberData = CachedMemberData(
                     accessToken = msg.accessToken,
                     refreshToken = msg.refreshToken,

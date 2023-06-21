@@ -20,8 +20,10 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -53,7 +55,7 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ShortTermLoansContent(
     component: ShortTermLoansComponent,
@@ -96,6 +98,11 @@ fun ShortTermLoansContent(
                 it.accessToken,
                 authState.cachedMemberData.refId
             )
+            ShortTermLoansStore.Intent.GetPrestaLoanEligibilityStatus(
+                token = authState.cachedMemberData.accessToken,
+                session_id = authState.cachedMemberData.session_id,
+                customerRefId = authState.cachedMemberData.refId
+            )
         }?.let { onEvent.invoke(it) }
         delay(1500)
         refreshing = false
@@ -104,24 +111,21 @@ fun ShortTermLoansContent(
 
     val refreshState = rememberPullRefreshState(refreshing, ::refresh,)
 
-    Surface(
+    Scaffold(
         modifier = Modifier
-            .fillMaxHeight()
-            .background(color = MaterialTheme.colorScheme.background),
-        color = Color.White
-    ) {
+            .fillMaxHeight(),
+        topBar = {
+            NavigateBackTopBar("Short Term Loan", onClickContainer = {
+                component.onBackNav()
+            })
+        }
+    ) { paddingValues ->
         Column(modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background)
             .fillMaxWidth()
             .fillMaxHeight()
+            .padding(paddingValues)
         ) {
-            Row(modifier = Modifier
-                .fillMaxWidth()){
-                NavigateBackTopBar("Short Term Loan", onClickContainer = {
-                    component.onBackNav()
-
-                })
-            }
             Column(modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp)
                 .background(color = MaterialTheme.colorScheme.background)
@@ -229,12 +233,45 @@ fun ShortTermLoansContent(
                                                 )
                                             }
                                         }
+
+                                        item {
+                                            if (
+                                                state.error !== null || authState.error !== null
+                                            ) {
+                                                Row (
+                                                    modifier = Modifier.fillMaxWidth(0.8f).padding(top = 20.dp),
+                                                    horizontalArrangement = Arrangement.Center
+                                                ) {
+                                                    Column(
+                                                        modifier = Modifier
+                                                            .clip(shape = RoundedCornerShape(10.dp))
+                                                            .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                                                            .padding(16.dp)
+                                                    ) {
+                                                        state.error?.let { txt ->
+                                                            Text(
+                                                                style = MaterialTheme.typography.labelSmall,
+                                                                text = txt
+                                                            )
+                                                        }
+                                                        authState.error?.let { txt ->
+                                                            Text(
+                                                                style = MaterialTheme.typography.labelSmall,
+                                                                text = txt
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
 
-                                    PullRefreshIndicator(refreshing, refreshState,
-                                        Modifier
-                                            .align(Alignment.TopCenter),
-                                        contentColor = actionButtonColor)
+                                    PullRefreshIndicator(
+                                        refreshing,
+                                        refreshState,
+                                        Modifier.align(Alignment.TopCenter),
+                                        contentColor = actionButtonColor
+                                    )
                                 }
                             }
                         }

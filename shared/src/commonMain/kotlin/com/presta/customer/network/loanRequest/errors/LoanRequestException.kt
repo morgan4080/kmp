@@ -7,6 +7,6 @@ enum class LoanRequestError {
     UnknownError
 }
 
-class LoanRequestExceptions(error: LoanRequestError ): Exception(
-    "Loan Request  Error: $error"
+class LoanRequestExceptions(error: LoanRequestError, message: String?): Exception(
+    "Loan Request  Error: ${if (message !== null) message else error}"
 )

@@ -7,6 +7,6 @@ enum class ShortTermLoansError  {
     UnknownError
 }
 
-class ShortTermLoansExceptions(error: ShortTermLoansError): Exception(
-    "Data loading  Error: $error"
+class ShortTermLoansExceptions(error: ShortTermLoansError, message: String?): Exception(
+    "Data loading  Error: ${if (message !== null) message else error}"
 )

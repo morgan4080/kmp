@@ -2,6 +2,11 @@ package com.presta.customer.ui.components.profile.ui
 
 
 import ShimmerBrush
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -65,6 +70,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -104,15 +110,11 @@ fun ProfileContent(
     goToSavings: () -> Unit,
     goToLoans: () -> Unit,
     goToPayLoans: () -> Unit,
-    goToStatement: () -> Unit,
+    goToLoansPendingApproval: () -> Unit,
     activateAccount: (amount: Double) -> Unit,
     logout: () -> Unit,
     reloadModels: () -> Unit,
 ) {
-    println("::::::::::Profile Content Errors:::::::::::::::")
-    println(state.error)
-    println(authState.error)
-
     val stateLazyRow0 = rememberLazyListState()
 
     val scope = rememberCoroutineScope()
@@ -123,7 +125,7 @@ fun ProfileContent(
         QuickLinks("Add", "Savings", Icons.Outlined.Savings, goToSavings),
         QuickLinks("Apply", "Loan", Icons.Outlined.AttachMoney, goToLoans),
         QuickLinks("Pay", "Loan", Icons.Outlined.CreditCard, goToPayLoans),
-        QuickLinks("Awaiting", "Approval", Icons.Outlined.Notifications, goToStatement, true)
+        QuickLinks("Awaiting", "Approval", Icons.Outlined.Notifications, goToLoansPendingApproval, true)
     )
 
     val sheetState = rememberModalBottomSheetState(
@@ -282,16 +284,12 @@ fun ProfileContent(
                                                 scopeDrawer.launch { drawerState.open() }
                                             },
                                             content = {
-                                                BadgedBox(badge = {
-//                                                    Badge { Text("8") }
-                                                }) {
-                                                    Icon(
-                                                        imageVector = Icons.Filled.Apps,
-                                                        modifier = Modifier.size(25.dp),
-                                                        contentDescription = "Menu pending",
-                                                        tint = MaterialTheme.colorScheme.primary
-                                                    )
-                                                }
+                                                Icon(
+                                                    imageVector = Icons.Filled.Apps,
+                                                    modifier = Modifier.size(25.dp),
+                                                    contentDescription = "Menu pending",
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
                                             }
                                         )
                                     }
@@ -387,10 +385,23 @@ fun ProfileContent(
                                             .padding(start = 16.dp, end = 16.dp),
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
+                                        val transition = rememberInfiniteTransition()
+                                        val translateAnimation = transition.animateFloat(
+                                            initialValue = 0f,
+                                            targetValue = 10f,
+                                            animationSpec = infiniteRepeatable(
+                                                animation = tween(800), repeatMode = RepeatMode.Reverse
+                                            )
+                                        )
+
                                         quickLinks.map { item1 ->
                                             BadgedBox(badge = {
-                                                if (item1.badge) {
-                                                    Badge { Text(modeOfDisbursementState.loans.count().toString()) }
+                                                if (item1.badge && modeOfDisbursementState.loans.isNotEmpty()) {
+                                                    Badge (
+                                                        modifier = Modifier.graphicsLayer {
+                                                            translationY = translateAnimation.value
+                                                        }
+                                                    ) { Text(modeOfDisbursementState.loans.count().toString()) }
                                                 }
                                             }) {
                                                 Column(

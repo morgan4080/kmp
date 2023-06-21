@@ -23,7 +23,7 @@ interface ProfileComponent {
     fun goToSavings()
     fun goToLoans()
     fun goToPayLoans()
-    fun goToStatement()
+    fun goToLoansPendingApproval()
     fun logout()
     fun reloadModels()
     fun activateAccount(amount: Double)

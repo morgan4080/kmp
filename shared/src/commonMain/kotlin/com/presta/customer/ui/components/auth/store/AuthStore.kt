@@ -39,6 +39,7 @@ interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
     data class State(
         val isOnline: Boolean = false,
         val isLoading: Boolean = false,
+        val isLoggedIn: Boolean = false,
         val isTermsAccepted: Boolean = false,
         val isActive: Boolean = false,
         val error: String? = null,
