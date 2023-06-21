@@ -213,7 +213,11 @@ class DefaultRootBottomComponent(
         scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
-
+                    if (state.error !== null || !state.isLoggedIn && !firstLoad) {
+                        logoutToSplash(true)
+                    } else {
+                        firstLoad = false
+                    }
                     val flow = poller.poll(
                         state.cachedMemberData.expires_in * 1000,
                         OrganisationModel.organisation.tenant_id,
@@ -229,11 +233,6 @@ class DefaultRootBottomComponent(
                             onAuthEvent(AuthStore.Intent.UpdateError(error.message))
                         }
                     }
-                }
-                if (state.error !== null || !state.isLoggedIn && !firstLoad) {
-                     logoutToSplash(true)
-                } else {
-                    firstLoad = false
                 }
             }
         }

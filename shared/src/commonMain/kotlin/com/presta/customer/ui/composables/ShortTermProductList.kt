@@ -128,8 +128,8 @@ fun ShortTermProductList(
                             ElevatedCard(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(color = androidx.compose.material3.MaterialTheme.colorScheme.background),
-                                colors = CardDefaults.elevatedCardColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.inverseOnSurface)
+                                    .background(color = MaterialTheme.colorScheme.background),
+                                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                             ) {
                                 Box(
                                     modifier = Modifier

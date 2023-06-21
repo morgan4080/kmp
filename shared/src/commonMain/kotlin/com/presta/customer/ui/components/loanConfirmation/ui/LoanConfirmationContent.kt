@@ -70,7 +70,7 @@ fun LoanConfirmationContent(
             }
             //Disbursement Details
             item {
-                DisbursementDetailsContainer(state, component, modeOfDisbursementState)
+                DisbursementDetailsContainer(component, modeOfDisbursementState)
             }
             //action Button
 

@@ -388,7 +388,7 @@ fun ProfileContent(
                                         val transition = rememberInfiniteTransition()
                                         val translateAnimation = transition.animateFloat(
                                             initialValue = 0f,
-                                            targetValue = 10f,
+                                            targetValue = 5f,
                                             animationSpec = infiniteRepeatable(
                                                 animation = tween(800), repeatMode = RepeatMode.Reverse
                                             )

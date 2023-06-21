@@ -174,6 +174,7 @@ class ModeOfDisbursementStoreFactory(
             applicationStatus: List<LoanApplicationStatus>
         ) {
             if (pendingLoanApprovalsJob?.isActive == true) return
+            dispatch(Msg.LoanRequestsLoading(true))
 
             pendingLoanApprovalsJob = scope.launch {
                 loanRequestRepository.getPendingLoans(

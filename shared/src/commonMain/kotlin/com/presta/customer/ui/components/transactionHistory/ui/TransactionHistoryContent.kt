@@ -30,6 +30,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -120,26 +121,20 @@ fun TransactionHistoryContent(
 
     val refreshState = rememberPullRefreshState(refreshing, ::refresh)
 
-    Surface(
+    Scaffold(
         modifier = Modifier
-            .background(color = MaterialTheme
-                .colorScheme.background)
             .padding(LocalSafeArea.current),
-        color = MaterialTheme.colorScheme.background
-    ) {
+        topBar = {
+            NavigateBackTopBar("Transaction History", onClickContainer = {
+                onBack()
+            })
+        }
+    ) { paddingValues ->
         Column(modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
+            .padding(paddingValues)
         ) {
-            Row(
-                modifier = Modifier
-                .fillMaxWidth()
-            ) {
-                NavigateBackTopBar("Transaction History", onClickContainer = {
-                    onBack()
-                })
-            }
-
             Column(
                 modifier = Modifier
                 .fillMaxWidth()

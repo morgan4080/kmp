@@ -18,13 +18,11 @@ import androidx.compose.ui.unit.dp
 import com.presta.customer.MR
 import com.presta.customer.ui.components.loanConfirmation.LoanConfirmationComponent
 import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStore
-import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import com.presta.customer.ui.helpers.formatMoney
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
 fun DisbursementDetailsContainer(
-    state: ShortTermLoansStore.State,
     component: LoanConfirmationComponent,
     modeOfDisbursementState: ModeOfDisbursementStore.State,
 ) {

@@ -10,8 +10,12 @@ fun PendingApprovalsScreen(
     component: LoanPendingApprovalsComponent
 ) {
     val authState by component.authState.collectAsState()
+    val modeOfDisbursementState by component.modeOfDisbursementState.collectAsState()
+
     PendingApprovalsContent(
         authState = authState,
-        component::onBackClicked
+        modeOfDisbursementState = modeOfDisbursementState,
+        onBack = component::onBackClicked,
+        checkAuthenticatedUser = component::checkAuthenticatedUser,
     )
 }
