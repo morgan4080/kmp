@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
@@ -184,7 +185,7 @@ fun LoanTopUpContent(
                                         ) {
 
                                             Text(
-                                                text = component.loanName + " loan",
+                                                text = component.loanName ,
                                                 fontSize = 14.sp,
                                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                                 modifier = Modifier
@@ -194,6 +195,9 @@ fun LoanTopUpContent(
                                                         minWidth = 100.dp
                                                     )
                                                     .wrapContentHeight()
+                                                    .fillMaxWidth(0.5f),
+                                                overflow = TextOverflow.Ellipsis,
+                                                maxLines = 1
                                             )
 
                                             Text(
@@ -204,7 +208,7 @@ fun LoanTopUpContent(
                                                         minHeight = 20.dp,
                                                         minWidth = 100.dp
                                                     ),
-                                                text = if (state.prestaLoanProductById != null) state.prestaLoanProductById.offer?.maturityDate.toString() else " ",
+                                                text = if (state.prestaLoanProductById != null) "Due: " + state.prestaLoanProductById.offer?.maturityDate.toString() else " ",
                                                 fontSize = 12.sp,
                                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                             )

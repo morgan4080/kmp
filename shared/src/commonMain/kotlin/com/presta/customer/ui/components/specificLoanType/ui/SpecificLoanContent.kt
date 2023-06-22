@@ -67,8 +67,6 @@ fun SpecificLoaContent(
     onAuthEvent: (AuthStore.Intent) -> Unit,
     innerPadding: PaddingValues,
 ) {
-
-
     var amount by remember {
         mutableStateOf(TextFieldValue())
     }
