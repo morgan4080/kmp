@@ -142,12 +142,12 @@ data class AppraisalRequest(
 )
 
 @Serializable
-data class PrestaLoanApplicationStatusResponse (
+data class PrestaLoanApplicationStatusResponse @OptIn(ExperimentalSerializationApi::class) constructor(
     val refId: String,
     val productName: String,
     val applicationDate: String,
     val amount: Double,
-    val approvalStatus: ApprovalStatus,
+    @EncodeDefault val approvalStatus: ApprovalStatus? = null,
     val applicationStatus: LoanApplicationStatus,
     val interestAmount: Double,
     val interestRate: Double,

@@ -59,7 +59,6 @@ import com.presta.customer.network.loanRequest.model.PrestaLoanApplicationStatus
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStore
 import com.presta.customer.ui.composables.NavigateBackTopBar
-import com.presta.customer.ui.composables.disbursementDetailsRow
 import com.presta.customer.ui.helpers.formatDate
 import com.presta.customer.ui.helpers.formatMoney
 import com.presta.customer.ui.theme.actionButtonColor
@@ -343,12 +342,12 @@ fun PendingApprovalsContent(
                                 Column(modifier = Modifier
                                     .fillMaxWidth()
                                 ) {
-                                    disbursementDetailsRow("Requested Amount","KES "+formatMoney(pendingLoan.amount))
-                                    disbursementDetailsRow("Interest", "${pendingLoan.interestRate}" + " %")
-                                    disbursementDetailsRow("Loan  Period", pendingLoan.loanPeriod)
-                                    disbursementDetailsRow("Application date", pendingLoan.applicationDate)
-                                    disbursementDetailsRow("Balance brought forward", formatMoney(pendingLoan.balanceBF))
-                                    disbursementDetailsRow("Repayment amount", formatMoney(pendingLoan.repaymentAmount))
+                                    LoanDetailsRow("Requested Amount","KES "+formatMoney(pendingLoan.amount))
+                                    LoanDetailsRow("Interest", "${pendingLoan.interestRate}" + " %")
+                                    LoanDetailsRow("Loan  Period", pendingLoan.loanPeriod)
+                                    LoanDetailsRow("Application date", formatDate(pendingLoan.applicationDate))
+                                    LoanDetailsRow("Balance brought forward", formatMoney(pendingLoan.balanceBF))
+                                    LoanDetailsRow("Repayment amount", formatMoney(pendingLoan.repaymentAmount))
                                 }
 
                                 Row (
@@ -386,5 +385,31 @@ fun PendingApprovalsContent(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun LoanDetailsRow(
+    label: String,
+    data: String?,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = label,
+            fontSize = MaterialTheme.typography.labelSmall.fontSize,
+            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+        )
+
+        Text(
+            text = data ?: "",
+            fontSize = MaterialTheme.typography.labelMedium.fontSize,
+            color = MaterialTheme.colorScheme.onBackground,
+            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+        )
     }
 }

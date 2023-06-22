@@ -46,9 +46,6 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("com.github.ln-12:multiplatform-connectivity-status:1.2.0")
-                api("io.github.qdsfdhvh:image-loader:1.4.1")
-                implementation("com.moriatsushi.insetsx:insetsx:0.1.0-alpha07")
                 with(compose) {
                     implementation(runtime)
                     implementation(foundation)
@@ -102,11 +99,14 @@ kotlin {
                 api(deps.moko.resources.compose)
                 implementation(deps.moko.resources.test)
 
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
-
                 // settings
                 implementation(deps.russhwolf.settings.core)
                 implementation(deps.russhwolf.settings.serialization)
+
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+                implementation("com.github.ln-12:multiplatform-connectivity-status:1.2.0")
+                api("io.github.qdsfdhvh:image-loader:1.4.1")
+                implementation("com.moriatsushi.insetsx:insetsx:0.1.0-alpha07")
             }
         }
 
@@ -130,6 +130,8 @@ kotlin {
                 implementation("com.google.android.gms:play-services-auth:20.5.0")
 
                 implementation("com.google.android.gms:play-services-auth-api-phone:18.0.1")
+
+                implementation("androidx.biometric:biometric:1.2.0-alpha05")
             }
         }
 

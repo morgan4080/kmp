@@ -444,14 +444,12 @@ fun AuthContent(
                                     12 -> {
                                         pinInput = pinInput.dropLast(1)
                                         setupPinCharacters(pinInput)
-                                        println(pinInput)
                                     }
                                     else -> {
                                         if (pinInput.length <= maxChar && inputEnabled) {
                                             builder.append(pinInput).append(it.toString())
                                             pinInput = builder.toString()
                                             setupPinCharacters(pinInput)
-                                            println(pinInput)
                                         }
                                     }
                                 }
