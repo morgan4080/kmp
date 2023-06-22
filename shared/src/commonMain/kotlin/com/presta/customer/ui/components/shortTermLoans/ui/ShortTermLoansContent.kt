@@ -64,6 +64,7 @@ fun ShortTermLoansContent(
     onEvent: (ShortTermLoansStore.Intent) -> Unit,
     onAuthEvent: (AuthStore.Intent) -> Unit,
     innerPadding: PaddingValues,
+    reloadModels: () -> Unit,
 ) {
     val tabs = listOf("Product", "Top Up")
     var tabIndex by remember { mutableStateOf(0) }
@@ -93,6 +94,7 @@ fun ShortTermLoansContent(
 
     fun refresh() = refreshScope.launch {
         refreshing = true
+        reloadModels()
         authState.cachedMemberData?.let {
             ShortTermLoansStore.Intent.GetPrestaShortTermProductList(
                 it.accessToken,

@@ -59,16 +59,8 @@ fun ShortTermTopUpList(
 
     fun refresh() = refreshScope.launch {
         refreshing = true
-        authState.cachedMemberData?.let {
-            ShortTermLoansStore.Intent.GetPrestaLoanEligibilityStatus(
-                it.accessToken,
-                authState.cachedMemberData.refId,
-                authState.cachedMemberData.refId
-            )
-        }?.let { onEvent.invoke(it) }
         delay(1500)
         refreshing = false
-
     }
 
     Column(
@@ -91,42 +83,32 @@ fun ShortTermTopUpList(
 
             Box(Modifier.pullRefresh(refreshState)) {
 
-                if (state.prestaShortTermTopUpList?.loans==null) {
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp),
-                        horizontalArrangement = Arrangement.Center){
-                        Text(text = "Error loading top Ups",
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                            fontSize = 12.sp
-                        )
-
-                    }
-
-                } else{
-
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 10.dp)
                     ) {
-                        state.prestaShortTermTopUpList.loans.mapIndexed { index, topUpList ->
+                        state.prestaShortTermTopUpList?.loans?.mapIndexed { index, topUpList ->
                             item {
-                                TopUpListView(
-                                    Index = index,
-                                    selected = selectedIndex == index,
-                                    onClick = { index: Int ->
-                                        selectedIndex = if (selectedIndex == index) -1 else index
-                                        if(!enabled){
-                                            enabled=true
+                                    if (eligibilityResponse != null) {
+                                        topUpList.minAmount?.let {
+                                            TopUpListView(
+                                                Index = index,
+                                                selected = selectedIndex == index,
+                                                onClick = { index: Int ->
+                                                    selectedIndex = if (selectedIndex == index) -1 else index
+                                                    if(!enabled){
+                                                        enabled=true
+                                                    }
+                                                },
+                                                topUpList.name.toString(),
+                                                eligibilityResponse.amountAvailable,
+                                                it,
+                                                topUpList.loanBalance.toString(),
+                                                if ( topUpList.maturityDate!=null) topUpList.maturityDate.toString() else ""
+                                            )
                                         }
-
-                                    },
-                                    topUpList.name.toString(),
-                                    topUpList.maxAmount.toString(),
-                                    topUpList.loanBalance.toString(),
-                                    topUpList.maturityDate.toString()
-                                )
+                                    }
                             }
                         }
 
@@ -146,7 +128,6 @@ fun ShortTermTopUpList(
                             }
                         }
                     }
-                }
                 PullRefreshIndicator(refreshing, refreshState,
                     Modifier
                         .align(Alignment.TopCenter),
@@ -225,10 +206,11 @@ fun TopUpListView(
     selected: Boolean,
     onClick: (Int) -> Unit,
     name: String,
-    Amount: String,
-    Balance: String,
-    DaysAvailable: String
-) {
+    maxAmount: Double,
+    minAmount:Double,
+    balance: String,
+    daysAvailable: String?,
+    ) {
     ElevatedCard(
         onClick = {
             onClick.invoke(Index)
@@ -260,26 +242,33 @@ fun TopUpListView(
                         color= MaterialTheme.colorScheme.onBackground,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                     )
-
-                    Text(
-                        text = "KES " + formatMoney(Amount.toDouble()),
-                        fontSize = 10.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                    )
+                    Row(){
+                        Text(
+                            text = "Min. KES " + formatMoney(minAmount),
+                            fontSize = 10.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        )
+                        Text(
+                            text = " - Max. KES " + formatMoney(maxAmount),
+                            fontSize = 10.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        )
+                    }
                 }
                 Row{
                     Spacer(modifier = Modifier.weight(1f))
                     Column {
                         Text(
-                            modifier = Modifier.align(Alignment.End),
-                            text ="Bal. KES "+ formatMoney(Balance.toDouble()) ,
+                            modifier = Modifier
+                                .align(Alignment.End),
+                            text ="Bal. KES "+ formatMoney(balance.toDouble()) ,
                             fontSize = 12.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
                             color = MaterialTheme.colorScheme.onBackground
                         )
                         Text(
                             modifier = Modifier.align(Alignment.End),
-                            text = DaysAvailable,
+                            text = daysAvailable ?: "",
                             fontSize = 10.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                         )

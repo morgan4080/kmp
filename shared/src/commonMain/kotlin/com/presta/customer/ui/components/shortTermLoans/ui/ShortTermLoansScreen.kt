@@ -20,6 +20,7 @@ fun ShortTermLoansScreen(
         onEvent = component::onEvent,
         onAuthEvent = component::onAuthEvent,
         innerPadding = innerPadding,
-        component = component
+        component = component,
+        reloadModels = component::reloadModels,
     )
 }

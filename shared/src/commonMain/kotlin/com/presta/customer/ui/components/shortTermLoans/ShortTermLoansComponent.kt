@@ -16,7 +16,6 @@ interface ShortTermLoansComponent {
     val shortTermloansState: StateFlow<ShortTermLoansStore.State>
     fun onAuthEvent(event: AuthStore.Intent)
     fun onEvent(event: ShortTermLoansStore.Intent)
-    val model: Value<Model>
     fun onProductSelected(refId: String,loanName:String,referencedLoanRefId: String?)
     fun onProceedSelected(
         referencedLoanRefId: String,
@@ -30,11 +29,7 @@ interface ShortTermLoansComponent {
         minLoanPeriod:Int,
         loanRefIds:String,
     )
-
-
     fun onBackNav()
-    data class Model(
-        val items: List<String>,
-    )
+    fun reloadModels()
 
 }

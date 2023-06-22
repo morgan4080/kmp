@@ -83,13 +83,6 @@ class DefaultShortTermLoansComponent(
     override val shortTermloansState: StateFlow<ShortTermLoansStore.State> =
         shortTermloansStore.stateFlow
 
-    private val models = MutableValue(
-        ShortTermLoansComponent.Model(
-            items = listOf()
-        )
-    )
-    override val model: Value<ShortTermLoansComponent.Model> = models
-
     override fun onProductSelected(refId: String, loanName: String,referencedLoanRefId: String?) {
         onProductClicked(refId, loanName,referencedLoanRefId)
     }
@@ -122,6 +115,11 @@ class DefaultShortTermLoansComponent(
 
     override fun onBackNav() {
         onBackNavClicked()
+    }
+
+    override fun reloadModels() {
+        onAuthEvent(AuthStore.Intent.GetCachedMemberData)
+        checkAuthenticatedUser()
     }
 
     override fun onAuthEvent(event: AuthStore.Intent) {

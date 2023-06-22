@@ -253,7 +253,7 @@ fun SpecificLoaContent(
                     if (isPeriodError) {
                         Text(
                             modifier = Modifier.padding(top = 10.dp, start = 5.dp),
-                            text = "min period is " + allowedMinTerm.toString() + loanPeriodUnit.toString() + " max period is " + allowedMaxTerm.toString() + loanPeriodUnit,
+                            text = "min period is " + allowedMinTerm.toString() +" " + loanPeriodUnit.toString() + " max period is " + allowedMaxTerm.toString() +" " + loanPeriodUnit,
                             style = MaterialTheme.typography.bodySmall,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                             color = Color.Red
