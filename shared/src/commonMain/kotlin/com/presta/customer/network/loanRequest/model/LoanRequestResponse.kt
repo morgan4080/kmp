@@ -1,5 +1,6 @@
 package com.presta.customer.network.loanRequest.model
 
+import com.presta.customer.network.registration.model.ApprovalStatus
 import com.presta.customer.network.registration.model.CreditData
 import com.presta.customer.network.registration.model.CustomerMetadata
 import kotlinx.serialization.EncodeDefault
@@ -146,7 +147,8 @@ data class PrestaLoanApplicationStatusResponse (
     val productName: String,
     val applicationDate: String,
     val amount: Double,
-    val applicationStatus: String,
+    val approvalStatus: ApprovalStatus,
+    val applicationStatus: LoanApplicationStatus,
     val interestAmount: Double,
     val interestRate: Double,
     val totalFees: Double,

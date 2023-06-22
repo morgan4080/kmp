@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.zIndex
 import com.presta.customer.MR
+import com.presta.customer.network.loanRequest.model.LoanApplicationStatus
 import com.presta.customer.network.loanRequest.model.PrestaLoanApplicationStatusResponse
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStore
@@ -184,7 +185,13 @@ fun PendingApprovalsContent(
                                                         )
 
                                                         Text(
-                                                            text = pendingLoan.applicationStatus.uppercase(),
+                                                            text = when(pendingLoan.applicationStatus) {
+                                                                LoanApplicationStatus.NEWAPPLICATION -> "APPROVAL PENDING"
+                                                                LoanApplicationStatus.COMPLETED -> "COMPLETED"
+                                                                LoanApplicationStatus.INPROGRESS -> "IN PROGRESS"
+                                                                LoanApplicationStatus.FAILED -> "FAILED"
+                                                                LoanApplicationStatus.INITIATED -> "INITIATED"
+                                                            },
                                                             modifier = Modifier.padding(start = 15.dp)
                                                                 .align(Alignment.End),
                                                             fontSize = 10.sp,
@@ -255,6 +262,7 @@ fun PendingApprovalsContent(
                         ) {
                             Column(modifier = Modifier
                                 .clip(shape = RoundedCornerShape(10.dp))
+                                .fillMaxWidth()
                                 .background(color = MaterialTheme.colorScheme.inverseOnSurface)
                                 .padding(16.dp)
                             ) {
