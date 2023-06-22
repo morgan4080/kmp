@@ -48,7 +48,7 @@ class DefaultRootLoansComponent(
     val storeFactory: StoreFactory,
     val pop: () -> Unit = {},
     val navigateToProfile: () -> Unit = {},
-    private var processLoanState: (state: ProcessLoanDisbursement?) -> Unit
+    var processLoanState: (state: ProcessLoanDisbursement?) -> Unit = {}
 ) : RootLoansComponent, ComponentContext by componentContext {
     private val loansNavigation = StackNavigation<ConfigLoans>()
 
@@ -125,8 +125,6 @@ class DefaultRootLoansComponent(
             },
             onBackNavClicked = {
                 pop()
-
-
             },
             onPop = {
                 pop()

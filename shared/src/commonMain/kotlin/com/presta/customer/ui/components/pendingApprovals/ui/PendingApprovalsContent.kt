@@ -294,7 +294,7 @@ fun PendingApprovalsContent(
                                 top = 100.dp
                             )
                     ) {
-                        Box(
+                        Column (
                             modifier = Modifier
                                 .background(color = MaterialTheme.colorScheme.inverseOnSurface)
                         ) {
@@ -306,7 +306,6 @@ fun PendingApprovalsContent(
                                         end = 24.dp,
                                         bottom = 24.dp,
                                     )
-                                    .fillMaxHeight(0.5f)
                             ) {
                                 Row(
                                     modifier = Modifier

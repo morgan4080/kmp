@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
@@ -79,17 +80,16 @@ fun ShortTermTopUpList(
                 .fillMaxWidth()
                 .weight(0.2f)
         ) {
+            Text(
+                text = if (eligibilityResponse !== null && eligibilityResponse.isEligible) "Select loan to topup" else   "",
+                modifier = Modifier.padding(top = 22.dp),
+                fontSize = 14.sp,
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+            )
+
             val refreshState = rememberPullRefreshState(refreshing, ::refresh,)
 
             Box(Modifier.pullRefresh(refreshState)) {
-
-                Text(
-                    text = if (eligibilityResponse !== null && eligibilityResponse.isEligible) "Select Loan to Top Up" else "",
-                    modifier = Modifier
-                        .padding(top = 25.dp),
-                    fontSize = 14.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
-                )
 
                 if (state.prestaShortTermTopUpList?.loans==null) {
                     Row(modifier = Modifier
@@ -252,6 +252,9 @@ fun TopUpListView(
                 )
                 Column {
                     Text(
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth(0.5f),
                         text = name,
                         fontSize = 14.sp,
                         color= MaterialTheme.colorScheme.onBackground,
@@ -268,12 +271,14 @@ fun TopUpListView(
                     Spacer(modifier = Modifier.weight(1f))
                     Column {
                         Text(
-                            text ="Balance. KES "+ formatMoney(Balance.toDouble()) ,
+                            modifier = Modifier.align(Alignment.End),
+                            text ="Bal. KES "+ formatMoney(Balance.toDouble()) ,
                             fontSize = 12.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
                             color = MaterialTheme.colorScheme.onBackground
                         )
                         Text(
+                            modifier = Modifier.align(Alignment.End),
                             text = DaysAvailable,
                             fontSize = 10.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)

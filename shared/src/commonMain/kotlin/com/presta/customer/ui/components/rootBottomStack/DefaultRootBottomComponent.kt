@@ -56,7 +56,7 @@ class DefaultRootBottomComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
     val mainContext: CoroutineDispatcher,
-    val logoutToSplash: (state: Boolean) -> Unit,
+    val logoutToSplash: (state: Boolean) -> Unit = {},
     val gotoAllTransactions: () -> Unit,
     val gotToPendingApprovals: () -> Unit,
     val gotoPayLoans: () -> Unit,
