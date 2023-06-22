@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
@@ -55,6 +56,7 @@ import com.presta.customer.ui.helpers.formatMoney
 import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.backArrowColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import kotlinx.datetime.LocalDateTime
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,9 +76,6 @@ fun LoanTopUpContent(
     val newTermText = "New Term"
     val radioOptions = listOf(currentTermText, newTermText)
     var isIconPresent by remember { mutableStateOf(false) }
-
-    var shimmer=profileState.loansBalances==null
-
 
     val (selectedOption: Int, onOptionSelected: (Int) -> Unit) = remember {
         mutableStateOf(
@@ -157,41 +156,25 @@ fun LoanTopUpContent(
                                                 .fillMaxWidth(),
                                             verticalAlignment = Alignment.CenterVertically,
                                         ) {
-                                            if (profileState.loansBalances == null) {
-                                                Text(
-                                                    text = "",// #002C56
-                                                    modifier = Modifier
-                                                        .clip(shape = RoundedCornerShape(12.dp))
-                                                        .defaultMinSize(
-                                                            minHeight = 20.dp,
-                                                            minWidth = 70.dp
-                                                        )
-                                                        .background(
-                                                            brush = ShimmerBrush(
-                                                                shimmer,
-                                                                800f
-                                                            )
-                                                        )
-                                                )
-
-                                            } else {
-
-                                                profileState.loansBalances.loanBreakDown.map { loanData ->
-                                                    Text(
-                                                        text = if (loanData.totalBalance.toString() != "") "Kes" + formatMoney(
-                                                            loanData.totalBalance
-                                                        ) else "",
-                                                        color = MaterialTheme.colorScheme.onBackground, // #002C56
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                                                        modifier = Modifier
-                                                            .clip(shape = RoundedCornerShape(12.dp))
-                                                            .defaultMinSize(
-                                                                minHeight = 20.dp,
-                                                                minWidth = 70.dp
-                                                            )
+                                            Text(
+                                                text = if (state.prestaLoanProductById?.offer?.totalAmount != null) "Kes" + formatMoney(
+                                                    state.prestaLoanProductById.offer.totalAmount
+                                                ) else "",
+                                                color = MaterialTheme.colorScheme.onBackground, // #002C56
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                                                modifier = Modifier
+                                                    .clip(shape = RoundedCornerShape(12.dp))
+                                                    .defaultMinSize(
+                                                        minHeight = 20.dp,
+                                                        minWidth = 70.dp
                                                     )
-                                                }
-                                            }
+                                                    .background(
+                                                        brush = ShimmerBrush(
+                                                            state.prestaLoanProductById?.offer?.totalAmount == null,
+                                                            800f
+                                                        )
+                                                    )
+                                            )
                                         }
                                         Row(
                                             modifier = Modifier
@@ -200,58 +183,36 @@ fun LoanTopUpContent(
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
 
-                                            if (profileState.loansBalances == null) {
-                                                Row(modifier = Modifier.fillMaxWidth()){
-                                                    Text(
-                                                        text = "",
-                                                        modifier = Modifier
-                                                            .clip(shape = RoundedCornerShape(12.dp))
-                                                            .defaultMinSize(minHeight = 20.dp, minWidth = 100.dp)
-                                                            .background(brush = ShimmerBrush(shimmer, 800f))
+                                            Text(
+                                                text = component.loanName + " loan",
+                                                fontSize = 14.sp,
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                                modifier = Modifier
+                                                    .clip(shape = RoundedCornerShape(12.dp))
+                                                    .defaultMinSize(
+                                                        minHeight = 20.dp,
+                                                        minWidth = 100.dp
                                                     )
-                                                    Spacer(modifier = Modifier.width(10.dp))
-                                                    Text(
-                                                        text = "",
-                                                        modifier = Modifier
-                                                            .clip(shape = RoundedCornerShape(12.dp))
-                                                            .defaultMinSize(minHeight = 20.dp, minWidth = 100.dp)
-                                                            .background(brush = ShimmerBrush(shimmer, 800f))
-                                                    )
-                                                }
+                                                    .wrapContentHeight()
+                                            )
 
-                                            } else {
-
-                                                profileState.loansBalances.loanBreakDown.map { loanName ->
-                                                    Text(
-                                                        text = loanName.loanType + " loan",
-                                                        fontSize = 14.sp,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                                        modifier = Modifier
-                                                            .clip(shape = RoundedCornerShape(12.dp))
-                                                            .defaultMinSize(minHeight = 20.dp, minWidth = 100.dp)
-                                                    )
-                                                }
-
-                                                profileState.loansBalances.loanBreakDown.map { loanData ->
-                                                    Text(
-                                                        modifier = Modifier
-                                                            .padding(start = 10.dp)
-                                                            .clip(shape = RoundedCornerShape(12.dp))
-                                                            .defaultMinSize(minHeight = 20.dp, minWidth = 100.dp),
-                                                        text = if (loanData.dueDate.isNotEmpty()) "Due: " + formatDDMMYY(
-                                                            loanData.dueDate
-                                                        ) else "",
-                                                        fontSize = 12.sp,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
-                                                    )
-                                                }
-                                            }
+                                            Text(
+                                                modifier = Modifier
+                                                    .padding(start = 10.dp)
+                                                    .clip(shape = RoundedCornerShape(12.dp))
+                                                    .defaultMinSize(
+                                                        minHeight = 20.dp,
+                                                        minWidth = 100.dp
+                                                    ),
+                                                text = if (state.prestaLoanProductById != null) state.prestaLoanProductById.offer?.maturityDate.toString() else " ",
+                                                fontSize = 12.sp,
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                                            )
                                         }
                                     }
                                 }
                             }
                         }
-
                         Row(modifier = Modifier.fillMaxWidth()) {
                             Text(
                                 text = "Select Loan Term",
@@ -338,7 +299,7 @@ fun LoanTopUpContent(
                                                     .fillMaxWidth()
                                             ) {
                                                 OptionsSelectionContainer(
-                                                    label = component.loanPeriod + " " + component.loanPeriodUnit,
+                                                    label = component.maxLoanPeriod.toString() + " " + component.loanPeriodUnit,
                                                     onClickContainer = {
                                                         //current term to false
                                                         onOptionSelected(1)
@@ -468,15 +429,16 @@ fun LoanTopUpContent(
                             ActionButton("Proceed", onClickContainer = {
 
                                 component.onProceedSelected(
+                                    component.referencedLoanRefId,
                                     component.loanRefId,
                                     amount.text.toDouble(),
-                                    component.loanPeriod,
+                                    component.maxLoanPeriod,
                                     LoanType._TOP_UP,
                                     component.loanName,
                                     component.interestRate,
                                     component.loanPeriodUnit,
-                                    component.referencedLoanRefId,
-                                    currentTerm
+                                    currentTerm,
+                                    component.minLoanPeriod
                                 )
                             }, enabled = amount.text != "" && !isError && (selectedOption > -1))
                         }

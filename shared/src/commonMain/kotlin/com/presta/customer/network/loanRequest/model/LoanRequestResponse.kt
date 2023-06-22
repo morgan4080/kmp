@@ -154,3 +154,5 @@ data class PrestaLoanApplicationStatusResponse (
     val balanceBF: Double,
     val repaymentAmount: Double
 )
+
+

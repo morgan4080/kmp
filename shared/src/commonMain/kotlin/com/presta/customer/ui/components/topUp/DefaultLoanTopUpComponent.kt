@@ -7,13 +7,11 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
-import com.presta.customer.network.loanRequest.model.DisbursementMethod
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
-import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStore
 import com.presta.customer.ui.components.profile.coroutineScope
 import com.presta.customer.ui.components.profile.store.ProfileStore
 import com.presta.customer.ui.components.profile.store.ProfileStoreFactory
@@ -40,54 +38,56 @@ fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
 
 class DefaultLoanTopUpComponent(
     componentContext: ComponentContext,
+    storeFactory: StoreFactory,
+    mainContext: CoroutineContext,
     private val onProceedClicked: (
+        referencedLoanRefId: String,
         refId: String,
         amount: Double,
-        loanPeriod: String,
-        loanType:LoanType,
+        maxLoanPeriod: Int,
+        loanType: LoanType,
         loanName: String,
         interest: Double,
         loanPeriodUnit: String,
-        referencedLoanRefId:String,
-        currentTerm:Boolean
+        currentTerm: Boolean,
+        minLoanPeriod: Int
     ) -> Unit,
     private val onBackNavClicked: () -> Unit,
-    refId: String,
-    storeFactory: StoreFactory,
-    mainContext: CoroutineContext,
     override val maxAmount: Double,
     override val minAmount: String,
     override val loanRefId: String,
     override val loanName: String,
     override val interestRate: Double,
-    override val loanPeriod: String,
+    override val maxLoanPeriod: Int,
     override val loanPeriodUnit: String,
     override val loanOperation: String,
     override val referencedLoanRefId: String,
+    override val minLoanPeriod: Int,
+    override val loanRefIds: String,
 ) : LoanTopUpComponent, ComponentContext by componentContext {
-    var specificId: String = refId
-
     override fun onProceedSelected(
-        refId: String,
+        referencedLoanRefId: String,
+        loanRefId: String,
         amount: Double,
-        loanPeriod: String,
-        loanType:LoanType,
+        maxLoanPeriod: Int,
+        loanType: LoanType,
         loanName: String,
         interest: Double,
         loanPeriodUnit: String,
-        referencedLoanRefId:String,
-        currentTerm:Boolean
+        currentTerm: Boolean,
+        minLoanPeriod: Int
     ) {
         onProceedClicked(
-            refId,
+            referencedLoanRefId,
+            loanRefId,
             amount,
-            loanPeriod,
+            maxLoanPeriod,
             loanType,
             loanName,
             interest,
             loanPeriodUnit,
-            referencedLoanRefId,
-            currentTerm
+            currentTerm,
+            minLoanPeriod
         )
     }
 
@@ -145,7 +145,6 @@ class DefaultLoanTopUpComponent(
         profileStore.accept(event)
     }
 
-
     private var authUserScopeJob: Job? = null
     private fun checkAuthenticatedUser() {
         if (authUserScopeJob?.isActive == true) return
@@ -161,7 +160,7 @@ class DefaultLoanTopUpComponent(
                     onEvent(
                         ShortTermLoansStore.Intent.GetPrestaShortTermProductById(
                             token = state.cachedMemberData.accessToken,
-                            loanId = specificId
+                            loanId = loanRefIds
                         )
                     )
 
@@ -178,6 +177,13 @@ class DefaultLoanTopUpComponent(
                             token = state.cachedMemberData.accessToken,
                             session_id = state.cachedMemberData.session_id,
                             customerRefId = state.cachedMemberData.refId
+                        )
+                    )
+
+                    onEvent(
+                        ShortTermLoansStore.Intent.GetLoanProductById(
+                            token = state.cachedMemberData.accessToken,
+                            loanRefId = loanRefIds
                         )
                     )
                 }
@@ -204,8 +210,6 @@ class DefaultLoanTopUpComponent(
         }
     }
 
-
-
     init {
 
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
@@ -214,15 +218,17 @@ class DefaultLoanTopUpComponent(
 
         refreshToken()
     }
+
     init {
         scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
                     onProfileEvent(
-                        ProfileStore.Intent.GetLoanBalances (
-                        token = state.cachedMemberData.accessToken,
-                        refId = state.cachedMemberData.refId,
-                    ))
+                        ProfileStore.Intent.GetLoanBalances(
+                            token = state.cachedMemberData.accessToken,
+                            refId = state.cachedMemberData.refId,
+                        )
+                    )
                     this.cancel()
                 }
             }

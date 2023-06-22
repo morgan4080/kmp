@@ -10,7 +10,6 @@ import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.network.onBoarding.model.PinStatus
-import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.profile.coroutineScope
@@ -40,15 +39,17 @@ class DefaultShortTermLoansComponent(
     mainContext: CoroutineContext,
     storeFactory: StoreFactory,
     private var onProductClicked: (refId: String, loanName: String,referencedLoanRefId: String?) -> Unit,
-    private val onConfirmClicked: (
-        refId: String,
+    private val onProceedClicked: (
+        referencedLoanRefId: String,
+        loanRefId: String,
         maxAmount: Double,
         minAmount: Double,
         loanName: String,
         interestRate: Double,
-        loanPeriod: String,
+        maxLoanPeriod: Int,
         loanPeriodUnit: String,
-        referencedLoanRefId: String
+        minLoanPeriod:Int,
+        loanRefIds:String
     ) -> Unit,
     private val onBackNavClicked: () -> Unit,
     override val referencedLoanRefId: String?,
@@ -93,26 +94,29 @@ class DefaultShortTermLoansComponent(
         onProductClicked(refId, loanName,referencedLoanRefId)
     }
 
-    override fun onConfirmSelected(
-        refId: String,
+    override fun onProceedSelected(
+        referencedLoanRefId: String,
+        loanRefId: String,
         minAmount: Double,
         maxAmount: Double,
         loanName: String,
         InterestRate: Double,
-        loanPeriod: String,
+        maxLoanPeriod: Int,
         loanPeriodUnit: String,
-        referencedLoanRefId: String
-
+        minLoanPeriod: Int,
+        loanRefIds: String
     ) {
-        onConfirmClicked(
-            refId,
+        onProceedClicked(
+            referencedLoanRefId,
+            loanRefId,
             minAmount,
             maxAmount,
             loanName,
             InterestRate,
-            loanPeriod,
+            maxLoanPeriod,
             loanPeriodUnit,
-            referencedLoanRefId
+            minLoanPeriod,
+            loanRefIds
         )
     }
 

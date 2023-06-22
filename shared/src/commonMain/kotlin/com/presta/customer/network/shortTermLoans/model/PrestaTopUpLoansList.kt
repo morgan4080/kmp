@@ -18,5 +18,7 @@ data class PrestaTopUpLoansList @OptIn(ExperimentalSerializationApi::class) cons
     @EncodeDefault val minPeriod: Int?=null,
     @EncodeDefault  val name: String?=null,
     @EncodeDefault  val productRefId: String?=null,
-    @EncodeDefault val termUnit: String?=null
+    @EncodeDefault val termUnit: String?=null,
+    @EncodeDefault val maturityDate: String?=null
+
 )

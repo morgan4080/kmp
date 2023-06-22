@@ -1,10 +1,10 @@
 package com.presta.customer.network.shortTermLoans.client
 
 import com.presta.customer.network.NetworkConstants
-import com.presta.customer.network.loanRequest.errorHandler.loanRequestErrorHandler
 import com.presta.customer.network.profile.errorHandler.profileErrorHandler
 import com.presta.customer.network.shortTermLoans.errorHandler.shortTermLoansErrorHandler
 import com.presta.customer.network.shortTermLoans.model.PrestaLoanEligibilityResponse
+import com.presta.customer.network.shortTermLoans.model.PrestaLoanOfferMaturityResponse
 import com.presta.customer.network.shortTermLoans.model.PrestaShortTermProductsListResponse
 import com.presta.customer.network.shortTermLoans.model.PrestaShortTermTopUpListResponse
 import io.ktor.client.HttpClient
@@ -81,4 +81,33 @@ class PrestaShortTermLoansClient(
             }
         }
     }
+    //Get loan  product By id
+
+    suspend fun getLoanProductById(
+        token: String,
+        loanRefId: String,
+    ): PrestaLoanOfferMaturityResponse {
+        return profileErrorHandler {
+            httpClient.get("${NetworkConstants.PrestaGetLoanById.route}/${loanRefId}") {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

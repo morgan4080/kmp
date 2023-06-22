@@ -9,7 +9,7 @@ interface ModeOfDisbursementComponent {
     val refId: String
     val amount: Double
     val fees:Double
-    val loanPeriod : String
+    val loanPeriod : Int
     val loanType:LoanType
     val referencedLoanRefId: String?
     val currentTerm: Boolean
@@ -29,7 +29,7 @@ interface ModeOfDisbursementComponent {
         refId: String,
         amount: Double,
         fees: Double,
-        loanPeriod: String,
+        loanPeriod: Int,
         loanType: LoanType,
         interestRate: Double,
         LoanName: String,
@@ -40,8 +40,6 @@ interface ModeOfDisbursementComponent {
     fun onBankSelected()
     fun onBackNavSelected()
     fun successFulTransaction()
-    data class Model(
-        val items: List<String>,
-    )
+
 
 }

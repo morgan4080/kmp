@@ -278,7 +278,7 @@ fun SpecificLoaContent(
                                             component.onConfirmSelected(
                                                 state.prestaShortTermLoanProductById.refId.toString(),
                                                 amount.text.toDouble(),
-                                                desiredPeriod.text,
+                                                desiredPeriod.text.toInt(),
                                                 loanType = LoanType._NORMAL_LOAN,
                                                 state.prestaShortTermLoanProductById.name.toString(),
                                                 it,

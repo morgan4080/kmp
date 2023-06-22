@@ -49,7 +49,7 @@ class DefaultLoanConfirmationComponent(
     mainContext: CoroutineContext,
     override val refId: String,
     override val amount: Double,
-    override val loanPeriod: String,
+    override val loanPeriod: Int,
     override val loanInterest: String,
     override val loanName: String,
     override val loanPeriodUnit: String,
@@ -69,15 +69,12 @@ class DefaultLoanConfirmationComponent(
             ).create()
         }
 
-
     override val modeOfDisbursementStore =
         instanceKeeper.getStore {
             ModeOfDisbursementStoreFactory(
                 storeFactory = storeFactory
             ).create()
         }
-
-
 
     override fun onBackNavSelected() {
         onBackNavClicked()
@@ -154,8 +151,6 @@ class DefaultLoanConfirmationComponent(
         }
     }
 
-    //Execute   payment  on confirm
-
     override fun onRequestLoanEvent(event: ModeOfDisbursementStore.Intent) {
         modeOfDisbursementStore.accept(event)
     }
@@ -206,7 +201,6 @@ class DefaultLoanConfirmationComponent(
         checkAuthenticatedUser()
         refreshToken()
     }
-// for top up loans pass  the  referencedrefId
 
     init {
         scope.launch {

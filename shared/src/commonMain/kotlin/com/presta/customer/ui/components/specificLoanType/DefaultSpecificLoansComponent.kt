@@ -38,7 +38,7 @@ class DefaultSpecificLoansComponent(
     private val onConfirmClicked: (
         refid: String,
         amount: Double,
-        loanPeriod: String,
+        loanPeriod: Int,
         loanType: LoanType,
         LoanName: String,
         Interest: Double,
@@ -58,7 +58,7 @@ class DefaultSpecificLoansComponent(
     override fun onConfirmSelected(
         refid: String,
         amount: Double,
-        loanPeriod: String,
+        loanPeriod: Int,
         loanType: LoanType,
         LoanName: String,
         interest: Double,
@@ -66,7 +66,6 @@ class DefaultSpecificLoansComponent(
         maxPeriodUnit: Int,
         referencedLoanRefId: String?,
         currentTerm: Boolean
-
     ) {
         onConfirmClicked(
             refid,

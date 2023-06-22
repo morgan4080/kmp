@@ -6,7 +6,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.presta.customer.ui.components.topUp.LoanTopUpComponent
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoanTopUpScreen(
     component: LoanTopUpComponent

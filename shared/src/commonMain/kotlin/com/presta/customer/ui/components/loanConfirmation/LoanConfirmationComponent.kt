@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface LoanConfirmationComponent {
     val refId: String
     val amount: Double
-    val loanPeriod: String
+    val loanPeriod: Int
     val loanInterest: String
     val loanName: String
     val loanPeriodUnit: String

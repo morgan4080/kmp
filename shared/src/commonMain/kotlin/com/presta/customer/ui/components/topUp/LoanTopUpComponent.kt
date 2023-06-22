@@ -2,7 +2,6 @@ package com.presta.customer.ui.components.topUp
 
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.ui.components.auth.store.AuthStore
-import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStore
 import com.presta.customer.ui.components.profile.store.ProfileStore
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import kotlinx.coroutines.flow.StateFlow
@@ -14,20 +13,24 @@ interface LoanTopUpComponent {
     val loanRefId: String
     val loanName:  String
     val interestRate: Double
-    val loanPeriod: String
+     val maxLoanPeriod: Int
     val loanPeriodUnit: String
     val loanOperation: String
     val referencedLoanRefId: String
+    val minLoanPeriod:Int
+    val loanRefIds:String
+
     fun onProceedSelected(
-        refId: String,
+        referencedLoanRefId:String,
+        loanRefId: String,
         amount: Double,
-        loanPeriod: String,
+        maxLoanPeriod: Int,
         loanType:LoanType,
         loanName: String,
         interest: Double,
         loanPeriodUnit: String,
-        referencedLoanRefId:String,
-        currentTerm:Boolean
+        currentTerm:Boolean,
+        minLoanPeriod:Int
     )
 
     fun onBackNavSelected()
@@ -43,6 +46,5 @@ interface LoanTopUpComponent {
     fun onProfileEvent(event: ProfileStore.Intent)
     val profileStore: ProfileStore
     val profileState: StateFlow<ProfileStore.State>
-
 
 }

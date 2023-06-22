@@ -7,6 +7,7 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.shortTermLoans.data.ShortTermLoansRepository
 import com.presta.customer.network.shortTermLoans.model.PrestaLoanEligibilityResponse
+import com.presta.customer.network.shortTermLoans.model.PrestaLoanOfferMaturityResponse
 import com.presta.customer.network.shortTermLoans.model.PrestaShortTermProductsListResponse
 import com.presta.customer.network.shortTermLoans.model.PrestaShortTermTopUpListResponse
 import com.presta.customer.prestaDispatchers
@@ -37,6 +38,9 @@ class ShortTermLoansStoreFactory(
             Msg()
 
         data class ShortTermLoanProductsByIdLoaded(val shortTermLoansProductById: PrestaShortTermProductsListResponse) :
+            Msg()
+
+        data class LoanProductByIdLoaded(val loanProductById: PrestaLoanOfferMaturityResponse) :
             Msg()
 
         data class ShortTermTopUpListLoaded(val shortTermTopUpList: PrestaShortTermTopUpListResponse) :
@@ -79,6 +83,11 @@ class ShortTermLoansStoreFactory(
                     token = intent.token,
                     session_id = intent.session_id,
                     customerRefId = intent.customerRefId
+                )
+
+                is ShortTermLoansStore.Intent.GetLoanProductById  -> getLoanProductById(
+                    token = intent.token,
+                    loanRefId = intent.loanRefId
                 )
 
             }
@@ -200,6 +209,32 @@ class ShortTermLoansStoreFactory(
 
         }
 
+        private var getLoanProductBYIdJob: Job? = null
+
+        private fun getLoanProductById(
+            token: String,
+            loanRefId: String
+        ) {
+            if (getLoanProductBYIdJob?.isActive == true) return
+
+            dispatch(Msg.ShortTermLoansLoading())
+
+            getLoanProductBYIdJob = scope.launch {
+                shortTermLoansRepository.getLoanProductById(
+                    token = token,
+                    loanId = loanRefId
+                ).onSuccess { response ->
+                    println(":::::::::LoanProductByIdLoaded")
+                    println(response)
+                    dispatch(Msg.LoanProductByIdLoaded(response))
+                }.onFailure { e ->
+                    dispatch(Msg.ShortTermLoansFailed(e.message))
+                }
+
+                dispatch(Msg.ShortTermLoansLoading(false))
+            }
+        }
+
     }
 
     private object ReducerImpl : Reducer<ShortTermLoansStore.State, Msg> {
@@ -211,6 +246,7 @@ class ShortTermLoansStoreFactory(
                 is Msg.ShortTermTopUpListLoaded -> copy(prestaShortTermTopUpList = msg.shortTermTopUpList)
                 is Msg.ShortTermLoanProductsByIdLoaded -> copy(prestaShortTermLoanProductById = msg.shortTermLoansProductById)
                 is Msg.LoanEligibilityStatusLoaded -> copy (prestaLoanEligibilityStatus=msg.loanEligibilityStatus)
+                is Msg.LoanProductByIdLoaded->copy(prestaLoanProductById=msg.loanProductById)
             }
     }
 }

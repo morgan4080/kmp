@@ -80,7 +80,7 @@ fun DisbursementDetailsContainer(
 
                     //Loan  Period
                     disbursementDetailsRow("Loan  Period",
-                        component.loanPeriod+ " "+
+                        component.loanPeriod.toString()+ " "+
                     component.loanPeriodUnit)
                     // Due date
                     disbursementDetailsRow("Maturity date",if (modeOfDisbursementState.prestaLoanQuotation !== null) modeOfDisbursementState.prestaLoanQuotation.maturityDate else "")

@@ -125,7 +125,7 @@ fun ShortTermTopUpList(
                                     topUpList.name.toString(),
                                     topUpList.maxAmount.toString(),
                                     topUpList.loanBalance.toString(),
-                                    topUpList.daysAvailable.toString()
+                                    topUpList.maturityDate.toString()
                                 )
                             }
                         }
@@ -167,31 +167,39 @@ fun ShortTermTopUpList(
                     if (state.prestaShortTermTopUpList.loans.isNotEmpty()) {
                         val maxAmount = state.prestaShortTermTopUpList.loans[selectedIndex].maxAmount
                         val minAmount = state.prestaShortTermTopUpList.loans[selectedIndex].minAmount
-                        val loaRefId = state.prestaShortTermTopUpList.loans[selectedIndex].productRefId
+                        val referencedLoanRefId = state.prestaShortTermTopUpList.loans[selectedIndex].productRefId
                         val interestRate = state.prestaShortTermTopUpList.loans[selectedIndex].interest
                         val loanName = state.prestaShortTermTopUpList.loans[selectedIndex].name
-                        val loanPeriod = state.prestaShortTermTopUpList.loans[selectedIndex].maxPeriod
+                        val maxLoanPeriod = state.prestaShortTermTopUpList.loans[selectedIndex].maxPeriod
                         val loanPeriodUnit = state.prestaShortTermTopUpList.loans[selectedIndex].termUnit
-
-                        //pass the referenced  loan refid
-                        val referencedLoanRefId= state.prestaShortTermTopUpList.loans[selectedIndex].loanRefId
+                        val minLoanPeriod = state.prestaShortTermTopUpList.loans[selectedIndex].minPeriod
+                        val loanRefIds = state.prestaShortTermTopUpList.loans[selectedIndex].loanRefId
+                        val loanRefId= state.prestaShortTermTopUpList.loans[selectedIndex].loanRefId
                         if (maxAmount != null) {
                             if (minAmount != null) {
-                                if (loaRefId != null) {
+                                if (loanRefId != null) {
                                     if (loanName != null) {
                                         if (interestRate != null) {
                                             if (loanPeriodUnit != null) {
                                                 if (referencedLoanRefId != null) {
-                                                    component.onConfirmSelected(
-                                                        loaRefId,
-                                                        maxAmount,
-                                                        minAmount,
-                                                        loanName,
-                                                        interestRate,
-                                                        loanPeriod.toString(),
-                                                        loanPeriodUnit,
-                                                        referencedLoanRefId
-                                                    )
+                                                    if (loanRefIds != null) {
+                                                        if (minLoanPeriod != null) {
+                                                            if (maxLoanPeriod != null) {
+                                                                component.onProceedSelected(
+                                                                    referencedLoanRefId,
+                                                                    loanRefId,
+                                                                    maxAmount,
+                                                                    minAmount,
+                                                                    loanName,
+                                                                    interestRate,
+                                                                    maxLoanPeriod,
+                                                                    loanPeriodUnit,
+                                                                    minLoanPeriod,
+                                                                    loanRefIds
+                                                                )
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }

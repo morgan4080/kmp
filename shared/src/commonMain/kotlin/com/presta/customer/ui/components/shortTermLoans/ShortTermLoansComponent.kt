@@ -18,16 +18,19 @@ interface ShortTermLoansComponent {
     fun onEvent(event: ShortTermLoansStore.Intent)
     val model: Value<Model>
     fun onProductSelected(refId: String,loanName:String,referencedLoanRefId: String?)
-    fun onConfirmSelected(
-        refId: String,
+    fun onProceedSelected(
+        referencedLoanRefId: String,
+        loanRefId: String,
         minAmount: Double,
         maxAmount: Double,
         loanName: String,
         InterestRate: Double,
-        loanPeriod: String,
+        maxLoanPeriod: Int,
         loanPeriodUnit: String,
-        referencedLoanRefId: String
+        minLoanPeriod:Int,
+        loanRefIds:String,
     )
+
 
     fun onBackNav()
     data class Model(

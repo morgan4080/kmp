@@ -2,7 +2,6 @@ package com.presta.customer.ui.components.modeofDisbursement.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -12,7 +11,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.currentComposer
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -20,7 +18,6 @@ import com.presta.customer.MR
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.modeofDisbursement.ModeOfDisbursementComponent
 import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStore
-import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.ProductSelectionCard2
 import dev.icerock.moko.resources.compose.fontFamilyResource
