@@ -90,39 +90,31 @@ fun DisbursementDetailsContainer(
                         }
 
                     }else{
-
                         Text(
                             text = "Kes " + formatMoney(component.amount),
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = MaterialTheme.typography.headlineSmall.fontSize,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
                         )
-
                     }
                 }
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
-                    //Amount
                     disbursementDetailsRow(
                         "Requested Amount",
                         "Kes " + formatMoney(component.amount,
                         ),
                         modeOfDisbursementState
                     )
-                    //Interest
                     disbursementDetailsRow("Interest", component.loanInterest + " %", modeOfDisbursementState)
-                    //Fee  Charges
-
-                    //Loan  Period
                     disbursementDetailsRow(
                         "Loan  Period",
                         component.loanPeriod.toString() + " " +
                                 component.loanPeriodUnit,
                         modeOfDisbursementState
                     )
-                    // Due date
                     disbursementDetailsRow(
                         "Maturity date",
                         if (modeOfDisbursementState.prestaLoanQuotation !== null) modeOfDisbursementState.prestaLoanQuotation.maturityDate else "",
