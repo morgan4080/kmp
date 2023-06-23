@@ -7,8 +7,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -36,6 +39,7 @@ import com.presta.customer.network.shortTermLoans.model.PrestaLoanEligibilityRes
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
+import com.presta.customer.ui.helpers.formatDDMMYY
 import com.presta.customer.ui.helpers.formatMoney
 import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
@@ -105,7 +109,7 @@ fun ShortTermTopUpList(
                                                 eligibilityResponse.amountAvailable,
                                                 it,
                                                 topUpList.loanBalance.toString(),
-                                                if ( topUpList.maturityDate!=null) topUpList.maturityDate.toString() else ""
+                                                if ( topUpList.dueDate!=null)"Due - " + formatDDMMYY(topUpList.dueDate.toString()) else ""
                                             )
                                         }
                                     }
@@ -229,6 +233,7 @@ fun TopUpListView(
                 verticalAlignment = Alignment.CenterVertically
             ){
                 Checkbox(
+                    modifier = Modifier.clip(shape = CircleShape),
                     checked = selected,
                     onCheckedChange = { onClick.invoke(Index) }
                 )
@@ -244,12 +249,12 @@ fun TopUpListView(
                     )
                     Row(){
                         Text(
-                            text = "Min. KES " + formatMoney(minAmount),
+                            text =  formatMoney(minAmount),
                             fontSize = 10.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                         )
                         Text(
-                            text = " - Max. KES " + formatMoney(maxAmount),
+                            text = " - " + formatMoney(maxAmount),
                             fontSize = 10.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                         )

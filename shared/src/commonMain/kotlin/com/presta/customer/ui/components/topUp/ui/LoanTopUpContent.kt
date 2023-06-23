@@ -144,10 +144,22 @@ fun LoanTopUpContent(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                     ) {
-                                        Row(modifier = Modifier.fillMaxWidth()) {
+                                        Row(modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clip(shape = RoundedCornerShape(12.dp))
+                                            .defaultMinSize(
+                                                minHeight = 20.dp,
+                                                minWidth = 70.dp
+                                            )
+                                            .background(
+                                                brush = ShimmerBrush(
+                                                    state.prestaLoanProductById?.offer?.maturityDate == null,
+                                                    800f
+                                                )
+                                            )) {
                                             Text(
                                                 modifier = Modifier,
-                                                text = "Current  loan",
+                                                text =if (state.prestaLoanProductById?.offer?.maturityDate != null) "Current  loan" else "",
                                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                             )
                                         }
@@ -185,7 +197,7 @@ fun LoanTopUpContent(
                                         ) {
 
                                             Text(
-                                                text = component.loanName ,
+                                                text = if (state.prestaLoanProductById?.offer?.maturityDate != null)component.loanName  else "",
                                                 fontSize = 14.sp,
                                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                                 modifier = Modifier
@@ -195,7 +207,13 @@ fun LoanTopUpContent(
                                                         minWidth = 100.dp
                                                     )
                                                     .wrapContentHeight()
-                                                    .fillMaxWidth(0.5f),
+                                                    .fillMaxWidth(0.5f)
+                                                    .background(
+                                                        brush = ShimmerBrush(
+                                                            state.prestaLoanProductById?.offer?.maturityDate == null,
+                                                            800f
+                                                        )
+                                                    ),
                                                 overflow = TextOverflow.Ellipsis,
                                                 maxLines = 1
                                             )
@@ -207,8 +225,19 @@ fun LoanTopUpContent(
                                                     .defaultMinSize(
                                                         minHeight = 20.dp,
                                                         minWidth = 100.dp
-                                                    ),
-                                                text = if (state.prestaLoanProductById != null) "Due: " + state.prestaLoanProductById.offer?.maturityDate.toString() else " ",
+                                                    )
+                                                    .defaultMinSize(
+                                                        minHeight = 20.dp,
+                                                        minWidth = 80.dp
+                                                    )
+                                                    .background(
+                                                        brush = ShimmerBrush(
+                                                            state.prestaLoanProductById?.offer?.maturityDate == null,
+                                                            800f
+                                                        )
+                                                    )
+                                                ,
+                                                text = if (state.prestaLoanProductById != null) "Due: " + formatDDMMYY( state.prestaLoanProductById.offer?.maturityDate.toString() )else " ",
                                                 fontSize = 12.sp,
                                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                             )

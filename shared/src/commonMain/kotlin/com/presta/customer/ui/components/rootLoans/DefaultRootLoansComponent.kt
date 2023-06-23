@@ -37,7 +37,6 @@ import com.presta.customer.ui.components.succesfulTransaction.DefaultSuccessfulT
 import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransactionComponent
 import com.presta.customer.ui.components.topUp.DefaultLoanTopUpComponent
 import com.presta.customer.ui.components.topUp.LoanTopUpComponent
-import kotlinx.coroutines.flow.MutableStateFlow
 
 data class ProcessLoanDisbursement(
     val correlationId: String,
@@ -193,7 +192,7 @@ class DefaultRootLoansComponent(
                     ConfigLoans.DisbursementMethod(
                         refId = refId,
                         amount = amount,
-                        maxLoanPeriod = loanPeriod,
+                        loanPeriod = loanPeriod,
                         loanType = loanType,
                         interestRate = interest,
                         enteredAmount = 0.00,
@@ -282,7 +281,7 @@ class DefaultRootLoansComponent(
             storeFactory = storeFactory,
             refId = config.refId,
             amount = config.amount,
-            loanPeriod = config.maxLoanPeriod,
+            loanPeriod = config.loanPeriod,
             loanType = config.loanType,
             fees = config.fees,
             referencedLoanRefId = config.referencedLoanRefId,
@@ -356,7 +355,7 @@ class DefaultRootLoansComponent(
                         referencedLoanRefId = referencedLoanRefId,
                         refId = refId,
                         amount = amount,
-                        maxLoanPeriod = maxLoanPeriod,
+                        loanPeriod = maxLoanPeriod,
                         loanType = loanType,
                         interestRate = interest,
                         enteredAmount = 0.00,
@@ -426,7 +425,7 @@ class DefaultRootLoansComponent(
             val referencedLoanRefId: String?,
             val refId: String,
             val amount: Double,
-            val maxLoanPeriod: Int,
+            val loanPeriod: Int,
             val loanType: LoanType,
             val interestRate: Double,
             val enteredAmount: Double,

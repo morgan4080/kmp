@@ -172,7 +172,7 @@ class DefaultLoanConfirmationComponent(
                             customerRefId = state.cachedMemberData.refId,
                             disbursementAccountReference = state.cachedMemberData.phoneNumber,
                             disbursementMethod = DisbursementMethod.MOBILEMONEY,
-                            loanPeriod = loanPeriod.toInt(),
+                            loanPeriod = loanPeriod,
                             loanType = loanType,
                             productRefId = refId,
                             referencedLoanRefId = referencedLoanRefId,

@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,9 +84,11 @@ fun SpecificLoaContent(
     var desiredPeriod by remember { mutableStateOf(TextFieldValue()) }
     val emptyDesiredPeriod by remember { mutableStateOf(TextFieldValue()) }
 
-    if (allowedMaxTerm !== null) {
-        desiredPeriod = TextFieldValue(allowedMaxTerm.toString())
-    }
+            if (allowedMaxTerm!=null ){
+                desiredPeriod = TextFieldValue(allowedMaxTerm.toString())
+            }
+
+    val pattern = remember { Regex("^\\d+\$") }
 
     Surface(
         modifier = Modifier
@@ -169,8 +172,9 @@ fun SpecificLoaContent(
                             ),
                             value = desiredPeriod,
                             onValueChange = {
-                                 desiredPeriod=it
-
+                                if (it.text.isEmpty() || it.text.matches(pattern)) {
+                                    desiredPeriod= it
+                                }
                             },
                             singleLine = true,
                             textStyle = TextStyle(
