@@ -10,7 +10,6 @@ import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.network.loanRequest.model.LoanApplicationStatus
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.payments.data.PaymentTypes
-import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.addSavings.store.AddSavingsStore
 import com.presta.customer.ui.components.addSavings.store.AddSavingsStoreFactory
 import com.presta.customer.ui.components.auth.store.AuthStore
@@ -231,5 +230,14 @@ class DefaultProfileComponent(
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         checkAuthenticatedUser()
+
+        lifecycle.subscribe(
+            object : Lifecycle.Callbacks {
+                override fun onResume() {
+                    super.onResume()
+                    reloadModels()
+                }
+            }
+        )
     }
 }
