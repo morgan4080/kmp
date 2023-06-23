@@ -459,8 +459,10 @@ fun LoanTopUpContent(
                                 .padding(top = 10.dp),
                             horizontalArrangement = Arrangement.Center
                         ) {
-                            ActionButton("Proceed", onClickContainer = {
 
+
+
+                            ActionButton("Proceed", onClickContainer = {
                                 component.onProceedSelected(
                                     component.referencedLoanRefId,
                                     component.loanRefId,

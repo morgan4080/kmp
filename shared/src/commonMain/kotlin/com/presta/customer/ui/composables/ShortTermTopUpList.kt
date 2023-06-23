@@ -1,15 +1,12 @@
 package com.presta.customer.ui.composables
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,6 +39,7 @@ import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import com.presta.customer.ui.helpers.formatDDMMYY
 import com.presta.customer.ui.helpers.formatMoney
+import com.presta.customer.ui.helpers.isOverdue
 import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.delay
@@ -109,7 +108,7 @@ fun ShortTermTopUpList(
                                                 eligibilityResponse.amountAvailable,
                                                 it,
                                                 topUpList.loanBalance.toString(),
-                                                if ( topUpList.dueDate!=null)"Due - " + formatDDMMYY(topUpList.dueDate.toString()) else ""
+                                                if ( topUpList.dueDate!=null)  "Due - "  + topUpList.dueDate else ""
                                             )
                                         }
                                     }
@@ -213,8 +212,8 @@ fun TopUpListView(
     maxAmount: Double,
     minAmount:Double,
     balance: String,
-    daysAvailable: String?,
-    ) {
+    daysAvailable: String,
+) {
     ElevatedCard(
         onClick = {
             onClick.invoke(Index)
@@ -247,7 +246,7 @@ fun TopUpListView(
                         color= MaterialTheme.colorScheme.onBackground,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                     )
-                    Row(){
+                    Row {
                         Text(
                             text =  formatMoney(minAmount),
                             fontSize = 10.sp,
@@ -273,7 +272,8 @@ fun TopUpListView(
                         )
                         Text(
                             modifier = Modifier.align(Alignment.End),
-                            text = daysAvailable ?: "",
+//                            color = if (isOverdue(daysAvailable)) Color.Red else MaterialTheme.colorScheme.onBackground,
+                            text = daysAvailable,
                             fontSize = 10.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                         )
