@@ -457,7 +457,7 @@ fun AuthContent(
                         ) {
                             when(it) {
                                 10 -> {
-                                    Icon(
+                                    /*Icon(
                                         modifier = Modifier
                                             .padding(vertical = 12.dp)
                                             .size(30.dp)
@@ -465,7 +465,7 @@ fun AuthContent(
                                         imageVector = Icons.Filled.Fingerprint,
                                         contentDescription = "Finger Print",
                                         tint = MaterialTheme.colorScheme.onBackground
-                                    )
+                                    )*/
                                 }
                                 12 -> {
                                     Icon(
@@ -474,7 +474,7 @@ fun AuthContent(
                                             .size(30.dp)
                                             .align(Alignment.CenterVertically),
                                         imageVector = Icons.Outlined.Backspace,
-                                        contentDescription = "Finger Print",
+                                        contentDescription = "Delete",
                                         tint = MaterialTheme.colorScheme.onBackground
                                     )
                                 }

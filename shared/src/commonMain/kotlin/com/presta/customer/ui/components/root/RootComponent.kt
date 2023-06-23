@@ -13,7 +13,6 @@ import com.presta.customer.ui.components.processLoanDisbursement.ProcessLoanDisb
 import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
 import com.presta.customer.ui.components.registration.RegistrationComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
-import com.presta.customer.ui.components.rootLoans.RootLoansComponent
 import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
 import com.presta.customer.ui.components.welcome.WelcomeComponent

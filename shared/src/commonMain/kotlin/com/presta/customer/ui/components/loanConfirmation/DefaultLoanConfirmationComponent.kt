@@ -62,6 +62,7 @@ class DefaultLoanConfirmationComponent(
         instanceKeeper.getStore {
             AuthStoreFactory(
                 storeFactory = storeFactory,
+                componentContext = componentContext,
                 phoneNumber = null,
                 isTermsAccepted = false,
                 isActive = false,

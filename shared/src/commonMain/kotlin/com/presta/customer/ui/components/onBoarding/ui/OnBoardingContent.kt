@@ -1,6 +1,8 @@
 package com.presta.customer.ui.components.onBoarding.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -194,7 +196,8 @@ fun OnBoardingContent(
             ) {
                 item {
                     Row (
-                        modifier = Modifier.fillParentMaxHeight(0.3f),
+                        modifier = Modifier.fillMaxWidth()
+                            .fillParentMaxHeight(0.15f),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -203,7 +206,8 @@ fun OnBoardingContent(
                         Image(
                             painter = painter,
                             contentDescription = "Logo",
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth(0.66f)
                         )
                     }
                 }

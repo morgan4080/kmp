@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.presta.customer.MR
-import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.savings.store.SavingsStore
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.CurrentSavingsContainer
@@ -44,7 +43,6 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SavingsContent(
-    authState: AuthStore.State,
     state:  SavingsStore.State,
     onAddSavingsSelected: (shareAmount: Double) -> Unit,
     onBack: () -> Unit,

@@ -42,7 +42,6 @@ import com.presta.customer.ui.components.registration.DefaultRegistrationCompone
 import com.presta.customer.ui.components.registration.RegistrationComponent
 import com.presta.customer.ui.components.rootBottomStack.DefaultRootBottomComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
-import com.presta.customer.ui.components.rootLoans.ProcessLoanDisbursement
 import com.presta.customer.ui.components.splash.DefaultSplashComponent
 import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.transactionHistory.DefaultTransactionHistoryComponent
@@ -52,7 +51,6 @@ import com.presta.customer.ui.components.welcome.WelcomeComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
@@ -407,5 +405,16 @@ class DefaultRootComponent(
         data class ProcessingTransaction(val correlationId: String, val amount: Double,val mode: PaymentTypes) :Config()
         @Parcelize
         data class ProcessingLoanLoanDisbursement(val correlationId: String, val amount: Double, val fees: Double) : Config()
+    }
+
+    init {
+        lifecycle.subscribe(
+            object : Lifecycle.Callbacks {
+                override fun onResume() {
+                    super.onResume()
+                    navigation.replaceAll(Config.Splash)
+                }
+            }
+        )
     }
 }

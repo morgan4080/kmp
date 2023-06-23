@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -121,19 +122,19 @@ fun AddSavingsContent(
                 hostState = snackBarHostState,
                 modifier = Modifier.padding(bottom = 80.dp)
             )
+        },
+        topBar = {
+            NavigateBackTopBar("Add Savings", onClickContainer = {
+                onBackNavSelected()
+            })
         }
     ) {
         Column(modifier = Modifier
+            .padding(it)
             .background(color = MaterialTheme.colorScheme.background)
             .fillMaxWidth()
             .fillMaxHeight()
         ) {
-            Row(modifier = Modifier
-                .fillMaxWidth()) {
-                NavigateBackTopBar("Add Savings", onClickContainer = {
-                    onBackNavSelected()
-                })
-            }
 
             Column(
                 modifier = Modifier
@@ -149,261 +150,272 @@ fun AddSavingsContent(
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                 )
 
-                if (launchPopUp) {
+                LazyColumn {
+                    item {
+                        Row (modifier = Modifier.fillMaxWidth().padding(top = 23.dp)){
+                            ProductSelectionCard2(if (paymentMode == null) "Select Savings" else paymentMode.toString(), onClickContainer = {
+                                launchPopUp = true
+                            })
 
-                    Popup {
-                        Column (
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight()
-                                .background(color = Color.Black.copy(alpha = 0.7f)),
-                            verticalArrangement = Arrangement.Center
-                        ) {
+                        }
+                    }
 
-                            ElevatedCard (
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(
-                                        start = 25.dp,
-                                        end = 25.dp,
-                                        top = 26.dp),
-                                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
+                    //Text input occurs  Here
+
+                    item {
+                        AnimatedVisibility(paymentMode == PaymentTypes.SHARES) {
+                            Row (
+                                modifier = Modifier.fillMaxWidth().padding(top = 33.dp)
                             ) {
-
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(
-                                            start = 16.dp,
-                                            end = 16.dp)
-                                ) {
-                                    Text (
-                                        text = "Savings Type",
-                                        modifier = Modifier
-                                            .padding(
-                                                top = 14.dp)
-                                    )
-
-                                    Text(
-                                        text = "Select Options Below",
-                                        fontSize = 10.sp,
-                                        color = MaterialTheme.colorScheme.outline,
-                                        modifier = Modifier.padding(top = 3.dp)
-                                    )
-
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(top = 18.dp)
-                                    ) {
-                                        OptionsSelectionContainer(PaymentTypes.SAVINGS, "Current Savings", onClickContainer = {
-                                            paymentMode = it
-                                            scope.launch {
-                                                delay(100L)
-                                                launchPopUp = false
-                                            }
-                                        })
+                                TextInputContainer(
+                                    "Desired share buy",
+                                    "",
+                                    inputType = InputTypes.NUMBER,
+                                    callback = {
+                                        val shareCount = it.toDoubleOrNull()
+                                        amount = if (shareCount !== null) {
+                                            TextFieldValue((shareCount * sharePrice).toInt().toString())
+                                        } else {
+                                            TextFieldValue()
+                                        }
                                     }
-
-                                    Row(modifier = Modifier.fillMaxWidth()) {
-                                        OptionsSelectionContainer(PaymentTypes.SHARES, "Shares", onClickContainer = {
-                                            paymentMode = it
-                                            scope.launch {
-                                                delay(100L)
-                                                launchPopUp = false
-                                            }
-                                        })
-                                    }
-
-                                }
-                                Row (
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(
-                                            top = 10.dp,
-                                            bottom = 10.dp,
-                                            start = 16.dp,
-                                            end = 16.dp
-                                        ),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-
-                                    ElevatedCard (onClick = {
-                                        launchPopUp = false
-                                        paymentMode = null
-                                    }, modifier = Modifier
-                                        .padding(start = 16.dp)) {
-
-                                        Text (
-                                            text = "Dismiss",
-                                            fontSize = 11.sp,
-                                            modifier = Modifier.padding(
-                                                top = 5.dp,
-                                                bottom = 5.dp,
-                                                start = 20.dp,
-                                                end = 20.dp
-                                            )
-                                        )
-
-                                    }
-                                    ElevatedCard (
-                                        onClick = {
-                                            launchPopUp = false
-                                        },
-                                        modifier = Modifier.padding(end = 16.dp),
-                                        colors = CardDefaults.elevatedCardColors(containerColor = actionButtonColor)
-                                    ) {
-                                        Text (
-                                            text = "Proceed",
-                                            color = Color.White,
-                                            fontSize = 11.sp,
-                                            modifier = Modifier.padding(
-                                                top = 5.dp,
-                                                bottom = 5.dp,
-                                                start = 20.dp,
-                                                end = 20.dp
-                                            )
-                                        )
-                                    }
-                                }
+                                )
                             }
                         }
                     }
-                }
 
-                Row (modifier = Modifier.fillMaxWidth().padding(top = 23.dp)){
-                    ProductSelectionCard2(if (paymentMode == null) "Select Savings" else paymentMode.toString(), onClickContainer = {
-                        launchPopUp = true
-                    })
+                   item {
+                       Row (
+                           modifier = Modifier.fillMaxWidth().padding(top = 33.dp)
+                       ) {
+                           Column(
+                               modifier = Modifier
+                                   .fillMaxWidth()
+                                   .shadow(0.5.dp, RoundedCornerShape(10.dp))
+                                   .background(
+                                       color = MaterialTheme.colorScheme.inverseOnSurface,
+                                       shape = RoundedCornerShape(10.dp)
+                                   )
+                           ) {
+                               BasicTextField(
+                                   modifier = Modifier
+                                       .height(65.dp)
+                                       .padding(top = 20.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                                       .absoluteOffset(y = 2.dp),
+                                   keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                                   value = amount,
+                                   onValueChange = { value ->
+                                       amount = value
+                                   },
+                                   singleLine = true,
+                                   textStyle = TextStyle(
+                                       color = MaterialTheme.colorScheme.onBackground,
+                                       fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
+                                       fontSize = 13.sp,
+                                       fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
+                                       letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
+                                       lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                                       fontFamily = MaterialTheme.typography.bodySmall.fontFamily
+                                   ),
+                                   enabled = when (paymentMode) {
+                                       PaymentTypes.SHARES -> false
+                                       else -> true
+                                   },
+                                   decorationBox = { innerTextField ->
+                                       if (amount.text.isEmpty()) {
+                                           Text(
+                                               modifier = Modifier,
+                                               text = when (paymentMode) {
+                                                   PaymentTypes.SHARES -> "Share Amount"
+                                                   else -> "Desired Amount"
+                                               },
+                                               style = MaterialTheme.typography.bodySmall
+                                           )
+                                       }
 
-                }
+                                       AnimatedVisibility(
+                                           visible = amount.text.isNotEmpty(),
+                                           modifier = Modifier.absoluteOffset(y = -(14).dp),
+                                           enter = fadeIn() + expandVertically(),
+                                           exit = fadeOut() + shrinkVertically(),
+                                       ) {
+                                           Text (
+                                               text = when (paymentMode) {
+                                                   PaymentTypes.SHARES -> "Share Amount"
+                                                   else -> "Desired Amount"
+                                               },
+                                               color = primaryColor,
+                                               style = MaterialTheme.typography.labelSmall,
+                                               fontSize = 11.sp
+                                           )
+                                       }
 
-                //Text input occurs  Here
+                                       Row (
+                                           modifier = Modifier.fillMaxWidth(),
+                                           verticalAlignment = Alignment.Bottom,
+                                           horizontalArrangement = Arrangement.SpaceBetween
+                                       ) {
+                                           Row(
+                                               verticalAlignment = Alignment.CenterVertically,
+                                           ) {
+                                               innerTextField()
+                                           }
 
-                AnimatedVisibility(paymentMode == PaymentTypes.SHARES) {
-                    Row (
-                        modifier = Modifier.fillMaxWidth().padding(top = 33.dp)
-                    ) {
-                        TextInputContainer(
-                            "Desired share buy",
-                                "",
-                            inputType = InputTypes.NUMBER,
-                            callback = {
-                                val shareCount = it.toDoubleOrNull()
-                                amount = if (shareCount !== null) {
-                                    TextFieldValue((shareCount * sharePrice).toInt().toString())
-                                } else {
-                                    TextFieldValue()
+                                           IconButton(
+                                               modifier = Modifier.size(18.dp),
+                                               onClick = {
+                                                   amount = TextFieldValue()
+                                               },
+                                               content = {
+                                                   Icon(
+                                                       modifier = Modifier.alpha(0.4f),
+                                                       imageVector = Icons.Filled.Cancel,
+                                                       contentDescription = "Clear Amount",
+                                                       tint = actionButtonColor
+                                                   )
+                                               }
+                                           )
+                                       }
+                                   }
+                               )
+                           }
+                       }
+                   }
+
+                    item {
+                        Row (modifier = Modifier.fillMaxWidth().padding(top = 44.dp)) {
+                            ActionButton("Confirm", onClickContainer = {
+                                if (paymentMode !== null && amount.text !== "") {
+                                    onConfirmSelected(
+                                        paymentMode!!,
+                                        amount.text.toDouble()
+                                    )
                                 }
-                            }
-                        )
+                            }, enabled = paymentMode !== null && amount.text !== "", loading = state.isLoading)
+                        }
                     }
                 }
+            }
+        }
+    }
 
-                Row (
-                    modifier = Modifier.fillMaxWidth().padding(top = 33.dp)
+    if (launchPopUp) {
+
+        Popup {
+            Column (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .background(color = Color.Black.copy(alpha = 0.7f)),
+                verticalArrangement = Arrangement.Center
+            ) {
+
+                ElevatedCard (
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 25.dp,
+                            end = 25.dp,
+                            top = 26.dp),
+                    colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                 ) {
+
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .shadow(0.5.dp, RoundedCornerShape(10.dp))
-                            .background(
-                                color = MaterialTheme.colorScheme.inverseOnSurface,
-                                shape = RoundedCornerShape(10.dp)
-                            )
+                            .padding(
+                                start = 16.dp,
+                                end = 16.dp)
                     ) {
-                        BasicTextField(
+                        Text (
+                            text = "Savings Type",
                             modifier = Modifier
-                                .height(65.dp)
-                                .padding(top = 20.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
-                                .absoluteOffset(y = 2.dp),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                            value = amount,
-                            onValueChange = { value ->
-                                amount = value
-                            },
-                            singleLine = true,
-                            textStyle = TextStyle(
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
-                                fontSize = 13.sp,
-                                fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
-                                letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
-                                lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
-                                fontFamily = MaterialTheme.typography.bodySmall.fontFamily
-                            ),
-                            enabled = when (paymentMode) {
-                                PaymentTypes.SHARES -> false
-                                else -> true
-                            },
-                            decorationBox = { innerTextField ->
-                                if (amount.text.isEmpty()) {
-                                    Text(
-                                        modifier = Modifier,
-                                        text = when (paymentMode) {
-                                            PaymentTypes.SHARES -> "Share Amount"
-                                            else -> "Desired Amount"
-                                        },
-                                        style = MaterialTheme.typography.bodySmall
-                                    )
-                                }
-
-                                AnimatedVisibility(
-                                    visible = amount.text.isNotEmpty(),
-                                    modifier = Modifier.absoluteOffset(y = -(14).dp),
-                                    enter = fadeIn() + expandVertically(),
-                                    exit = fadeOut() + shrinkVertically(),
-                                ) {
-                                    Text (
-                                        text = when (paymentMode) {
-                                            PaymentTypes.SHARES -> "Share Amount"
-                                            else -> "Desired Amount"
-                                        },
-                                        color = primaryColor,
-                                        style = MaterialTheme.typography.labelSmall,
-                                        fontSize = 11.sp
-                                    )
-                                }
-
-                                Row (
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalAlignment = Alignment.Bottom,
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                    ) {
-                                        innerTextField()
-                                    }
-
-                                    IconButton(
-                                        modifier = Modifier.size(18.dp),
-                                        onClick = {
-                                            amount = TextFieldValue()
-                                        },
-                                        content = {
-                                            Icon(
-                                                modifier = Modifier.alpha(0.4f),
-                                                imageVector = Icons.Filled.Cancel,
-                                                contentDescription = "Clear Amount",
-                                                tint = actionButtonColor
-                                            )
-                                        }
-                                    )
-                                }
-                            }
+                                .padding(
+                                    top = 14.dp)
                         )
+
+                        Text(
+                            text = "Select Options Below",
+                            fontSize = 10.sp,
+                            color = MaterialTheme.colorScheme.outline,
+                            modifier = Modifier.padding(top = 3.dp)
+                        )
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 18.dp)
+                        ) {
+                            OptionsSelectionContainer(PaymentTypes.SAVINGS, "Current Savings", onClickContainer = {
+                                paymentMode = it
+                                scope.launch {
+                                    delay(100L)
+                                    launchPopUp = false
+                                }
+                            })
+                        }
+
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            OptionsSelectionContainer(PaymentTypes.SHARES, "Shares", onClickContainer = {
+                                paymentMode = it
+                                scope.launch {
+                                    delay(100L)
+                                    launchPopUp = false
+                                }
+                            })
+                        }
+
                     }
-                }
-                Row (modifier = Modifier.fillMaxWidth().padding(top = 44.dp)) {
-                    ActionButton("Confirm", onClickContainer = {
-                        if (paymentMode !== null && amount.text !== "") {
-                            onConfirmSelected(
-                                paymentMode!!,
-                                amount.text.toDouble()
+                    Row (
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                top = 10.dp,
+                                bottom = 10.dp,
+                                start = 16.dp,
+                                end = 16.dp
+                            ),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+
+                        ElevatedCard (onClick = {
+                            launchPopUp = false
+                            paymentMode = null
+                        }, modifier = Modifier
+                            .padding(start = 16.dp)) {
+
+                            Text (
+                                text = "Dismiss",
+                                fontSize = 11.sp,
+                                modifier = Modifier.padding(
+                                    top = 5.dp,
+                                    bottom = 5.dp,
+                                    start = 20.dp,
+                                    end = 20.dp
+                                )
+                            )
+
+                        }
+                        ElevatedCard (
+                            onClick = {
+                                launchPopUp = false
+                            },
+                            modifier = Modifier.padding(end = 16.dp),
+                            colors = CardDefaults.elevatedCardColors(containerColor = actionButtonColor)
+                        ) {
+                            Text (
+                                text = "Proceed",
+                                color = Color.White,
+                                fontSize = 11.sp,
+                                modifier = Modifier.padding(
+                                    top = 5.dp,
+                                    bottom = 5.dp,
+                                    start = 20.dp,
+                                    end = 20.dp
+                                )
                             )
                         }
-                    }, enabled = paymentMode !== null && amount.text !== "", loading = state.isLoading)
+                    }
                 }
             }
         }

@@ -53,6 +53,7 @@ class DefaultPayRegistrationFeeComponent(
         instanceKeeper.getStore {
             AuthStoreFactory(
                 storeFactory = storeFactory,
+                componentContext = componentContext,
                 phoneNumber = null,
                 isTermsAccepted = true,
                 isActive = true,

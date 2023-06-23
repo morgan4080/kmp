@@ -41,13 +41,9 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 fun SavingsScreen(
     component: SavingsComponent
 ) {
-
-    val authState by component.authState.collectAsState()
-
     val savingsState by component.savingsState.collectAsState()
 
     SavingsContent(
-        authState = authState,
         state = savingsState,
         onAddSavingsSelected = component::onAddSavingsSelected,
         onBack = component::onBack,

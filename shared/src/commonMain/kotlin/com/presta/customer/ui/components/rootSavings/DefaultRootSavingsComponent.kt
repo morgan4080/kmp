@@ -6,21 +6,20 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
+import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.presta.customer.network.payments.data.PaymentTypes
-import com.presta.customer.network.payments.model.PaymentStatuses
+import com.presta.customer.prestaDispatchers
 import com.presta.customer.ui.components.addSavings.AddSavingsComponent
 import com.presta.customer.ui.components.addSavings.DefaultAddSavingsComponent
-import com.presta.customer.ui.components.processingTransaction.DefaultProcessingTransactionComponent
-import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
 import com.presta.customer.ui.components.savings.DefaultSavingsComponent
 import com.presta.customer.ui.components.savings.SavingsComponent
 import com.presta.customer.ui.components.savingsTransactionHistory.DefaultSavingsTransactionHistoryComponent
 import com.presta.customer.ui.components.savingsTransactionHistory.SavingsTransactionHistoryComponent
-import com.presta.customer.prestaDispatchers
 
 class DefaultRootSavingsComponent(
     componentContext: ComponentContext,
@@ -106,5 +105,16 @@ class DefaultRootSavingsComponent(
         @Parcelize
         object SavingsTransactionHistory: ConfigSavings()
 
+    }
+
+    init {
+        lifecycle.subscribe(
+            object : Lifecycle.Callbacks {
+                override fun onResume() {
+                    super.onResume()
+                    savingsNavigation.replaceAll(ConfigSavings.SavingsHome)
+                }
+            }
+        )
     }
 }

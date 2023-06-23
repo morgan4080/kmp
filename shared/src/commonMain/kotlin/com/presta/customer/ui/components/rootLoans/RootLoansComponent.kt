@@ -3,13 +3,16 @@ package com.presta.customer.ui.components.rootLoans
 import ApplyLoanComponent
 import FailedTransactionComponent
 import com.arkivanov.decompose.router.stack.ChildStack
+import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.presta.customer.ui.components.banKDisbursement.BankDisbursementComponent
 import com.presta.customer.ui.components.loanConfirmation.LoanConfirmationComponent
 import com.presta.customer.ui.components.longTermLoans.LongTermLoansComponent
 import com.presta.customer.ui.components.modeofDisbursement.ModeOfDisbursementComponent
 import com.presta.customer.ui.components.processLoanDisbursement.ProcessLoanDisbursementComponent
 import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
+import com.presta.customer.ui.components.root.DefaultRootComponent
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
 import com.presta.customer.ui.components.specificLoanType.SpecificLoansComponent
 import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransactionComponent
@@ -35,5 +38,4 @@ interface RootLoansComponent {
         class FailedTransactionChild(val component: FailedTransactionComponent) : ChildLoans()
         class LoanTopUpChild(val component: LoanTopUpComponent) : ChildLoans()
     }
-
 }

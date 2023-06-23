@@ -8,7 +8,9 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
+import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
@@ -463,5 +465,16 @@ class DefaultRootLoansComponent(
 
         ) : ConfigLoans()
 
+    }
+
+    init {
+        lifecycle.subscribe(
+            object : Lifecycle.Callbacks {
+                override fun onResume() {
+                    super.onResume()
+                    loansNavigation.replaceAll(ConfigLoans.ApplyLoan)
+                }
+            }
+        )
     }
 }

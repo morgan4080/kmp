@@ -51,6 +51,7 @@ class DefaultAuthComponent(
         instanceKeeper.getStore {
             AuthStoreFactory(
                 storeFactory = storeFactory,
+                componentContext = componentContext,
                 phoneNumber = phoneNumber,
                 isTermsAccepted = isTermsAccepted,
                 isActive = isActive,
