@@ -110,6 +110,7 @@ fun TransactionHistoryContent(
 
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
+            println("current page")
             println(page)
             if (state.transactionMapping !== null) {
                 if (page == 0) {
