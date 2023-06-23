@@ -108,7 +108,7 @@ fun ShortTermTopUpList(
                                                 eligibilityResponse.amountAvailable,
                                                 it,
                                                 topUpList.loanBalance.toString(),
-                                                if ( topUpList.dueDate!=null)  "Due - "  + topUpList.dueDate else ""
+                                                if ( topUpList.dueDate!=null)  "Due - "  + formatDDMMYY( topUpList.dueDate ) else ""
                                             )
                                         }
                                     }
@@ -273,7 +273,7 @@ fun TopUpListView(
                         Text(
                             modifier = Modifier.align(Alignment.End),
 //                            color = if (isOverdue(daysAvailable)) Color.Red else MaterialTheme.colorScheme.onBackground,
-                            text = daysAvailable,
+                            text =  daysAvailable,
                             fontSize = 10.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                         )

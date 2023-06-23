@@ -237,7 +237,7 @@ fun LoanTopUpContent(
                                                         )
                                                     )
                                                 ,
-                                                text = if (state.prestaLoanProductById != null) "Due: " + formatDDMMYY( state.prestaLoanProductById.offer?.maturityDate.toString() )else " ",
+                                                text = if (state.prestaLoanProductById != null) "Due: " +  state.prestaLoanProductById.offer?.maturityDate.toString().take(10) else " ",
                                                 fontSize = 12.sp,
                                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                             )
