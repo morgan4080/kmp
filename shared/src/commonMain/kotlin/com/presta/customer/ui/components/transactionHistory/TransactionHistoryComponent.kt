@@ -20,4 +20,5 @@ interface TransactionHistoryComponent {
     fun onMappingChange(mapping: List<String>)
 
     fun onBack()
+    fun checkAuthenticatedUser()
 }

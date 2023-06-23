@@ -72,6 +72,8 @@ class TransactionHistoryStoreFactory(
                 }.onFailure { e ->
                     dispatch(Msg.TransactionHistoryFailed(e.message))
                 }
+
+                dispatch(Msg.TransactionHistoryLoading(false))
             }
         }
         //Get Transaction mapping
@@ -82,8 +84,6 @@ class TransactionHistoryStoreFactory(
             token: String
         ) {
             if (getTransactionMappingJob?.isActive == true) return
-
-            dispatch(Msg.TransactionHistoryLoading())
 
             getTransactionMappingJob = scope.launch {
                 profileRepository.getTransactionMappingData(

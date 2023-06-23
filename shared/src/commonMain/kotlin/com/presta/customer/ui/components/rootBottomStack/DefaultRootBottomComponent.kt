@@ -203,8 +203,6 @@ class DefaultRootBottomComponent(
 
     private val poller = AuthPoller(authRepository = authRepository, mainContext)
 
-    private var firstLoad = true
-
     init {
         if (backTopProfile) {
             navigationBottomStackNavigation.bringToFront(ConfigBottom.Profile)
@@ -213,21 +211,14 @@ class DefaultRootBottomComponent(
         scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
-                    if (state.error !== null || !state.isLoggedIn && !firstLoad) {
-                        logoutToSplash(true)
-                    } else {
-                        firstLoad = false
-                    }
                     val flow = poller.poll(
-                        state.cachedMemberData.expires_in * 1000,
+                        state.cachedMemberData.expires_in * 100,
                         OrganisationModel.organisation.tenant_id,
                         state.cachedMemberData.refId
                     )
 
                     flow.collect {
                         it.onSuccess { response ->
-                            println(":::::UpdateRefreshToken:::::::")
-                            println(state.cachedMemberData.expires_in * 1000)
                             onAuthEvent(AuthStore.Intent.UpdateRefreshToken(response))
                         }.onFailure { error ->
                             onAuthEvent(AuthStore.Intent.UpdateError(error.message))

@@ -118,10 +118,8 @@ class DefaultTransactionHistoryComponent(
 
     private var authUserScopeJob: Job? = null
 
-    private fun checkAuthenticatedUser() {
-        if (authUserScopeJob?.isActive == true) return
-
-        authUserScopeJob = scope.launch {
+    override fun checkAuthenticatedUser() {
+        scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
                     onAuthEvent(AuthStore.Intent.CheckAuthenticatedUser(

@@ -139,135 +139,31 @@ fun singleTransaction(transactionHistory:  List<PrestaTransactionHistoryResponse
                     .padding(start = 16.dp, end = 16.dp)
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 2.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Row (
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Box(
-                            modifier = Modifier.padding(end = 12.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            IconButton(
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .background(Color.Transparent).size(30.dp),
-                                onClick = {},
-                                content = {
-                                    Text(
-                                        text = "",
-                                        modifier = Modifier
-                                            .background(
-                                                brush = ShimmerBrush(
-                                                    targetValue = 1300f,
-                                                    showShimmer = true
-                                                ),
-                                                shape = RoundedCornerShape(12.dp)
-                                            )
-                                            .defaultMinSize(minHeight = 8.dp, minWidth = 25.dp)
-                                    )
-                                }
-                            )
-                        }
-                        Column {
-                            Row(
-                                modifier = Modifier
-                                    .background(MaterialTheme.colorScheme.background)
-                                    .clip(shape = RoundedCornerShape(15.dp))
-                                    .fillMaxWidth(0.5f)
-                            ) {
-                                Text(
-                                    modifier = Modifier
-                                        .background(
-                                            ShimmerBrush(
-                                                targetValue = 1300f,
-                                                showShimmer = true
-                                            )
-                                        ).fillMaxWidth(),
-                                    text = "",
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 14.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                                    textAlign = TextAlign.End
-                                )
-                            }
+                    Text(
+                        text = "",
+                        fontSize = MaterialTheme.typography.labelSmall.fontSize,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        modifier = Modifier
+                            .clip(shape = RoundedCornerShape(12.dp))
+                            .defaultMinSize(minHeight = 20.dp, minWidth = 150.dp)
+                            .background(brush = ShimmerBrush(true, 800f))
+                    )
 
-                            Row(
-                                modifier = Modifier
-                                    .padding(top = 5.dp)
-                                    .background(MaterialTheme.colorScheme.background)
-                                    .clip(shape = RoundedCornerShape(15.dp))
-                                    .fillMaxWidth(0.5f)
-                            ) {
-                                Text(
-                                    modifier = Modifier
-                                        .background(
-                                            ShimmerBrush(
-                                                targetValue = 1300f,
-                                                showShimmer = true
-                                            )
-                                        )
-                                        .fillMaxWidth(),
-                                    text = "",
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 14.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                                    textAlign = TextAlign.End
-                                )
-                            }
-                        }
-                    }
-
-                    Column {
-                        Row(
-                            modifier = Modifier
-                                .background(MaterialTheme.colorScheme.background)
-                                .clip(shape = RoundedCornerShape(15.dp))
-                                .fillMaxWidth(0.5f)
-                        ) {
-                            Text(
-                                modifier = Modifier
-                                    .background(
-                                        ShimmerBrush(
-                                            targetValue = 1300f,
-                                            showShimmer = true
-                                        )
-                                    )
-                                    .fillMaxWidth(),
-                                text = "",
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 14.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                                textAlign = TextAlign.End
-                            )
-                        }
-
-                        Row(
-                            modifier = Modifier
-                                .padding(top = 5.dp)
-                                .background(MaterialTheme.colorScheme.background)
-                                .clip(shape = RoundedCornerShape(15.dp))
-                                .fillMaxWidth(0.5f)
-                        ) {
-                            Text(
-                                modifier = Modifier
-                                    .background(
-                                        ShimmerBrush (
-                                            targetValue = 1300f,
-                                            showShimmer = true
-                                        )
-                                    )
-                                    .fillMaxWidth(),
-                                text = "",
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 14.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                                textAlign = TextAlign.End
-                            )
-                        }
-                    }
+                    Text(
+                        text = "",
+                        fontSize = MaterialTheme.typography.labelMedium.fontSize,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                        modifier = Modifier
+                            .clip(shape = RoundedCornerShape(12.dp))
+                            .defaultMinSize(minHeight = 20.dp, minWidth = 100.dp)
+                            .background(brush = ShimmerBrush(true, 800f))
+                    )
                 }
             }
         }
