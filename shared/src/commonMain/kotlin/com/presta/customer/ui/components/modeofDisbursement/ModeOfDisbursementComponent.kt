@@ -17,7 +17,7 @@ interface ModeOfDisbursementComponent {
     val loanName: String
     val loanPeriodUnit: String
     val correlationId: String
-
+    val loanOperation: String
     val authStore: AuthStore
     val authState: StateFlow<AuthStore.State>
     val modeOfDisbursementStore: ModeOfDisbursementStore
@@ -36,6 +36,8 @@ interface ModeOfDisbursementComponent {
         loanPeriodUnit: String,
         referencedLoanRefId: String?,
         currentTerm: Boolean,
+        loanOperation: String,
+
     )
     fun onBankSelected()
     fun onBackNavSelected()

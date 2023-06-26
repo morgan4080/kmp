@@ -51,6 +51,7 @@ class DefaultModeOfDisbursementComponent(
         loanPeriodUnit: String,
         referencedLoanRefId: String?,
         currentTerm: Boolean,
+        loanOperation:String
     ) -> Unit,
     private val onBankClicked: () -> Unit,
     private val onBackNavClicked: () -> Unit,
@@ -66,6 +67,7 @@ class DefaultModeOfDisbursementComponent(
     override val loanName: String,
     override val loanPeriodUnit: String,
     override val correlationId: String,
+    override val loanOperation: String,
 ) : ModeOfDisbursementComponent, ComponentContext by componentContext {
     override val authStore: AuthStore =
         instanceKeeper.getStore {
@@ -139,6 +141,7 @@ class DefaultModeOfDisbursementComponent(
         loanPeriodUnit: String,
         referencedLoanRefId: String?,
         currentTerm: Boolean,
+        loanOperation: String
         ) {
 
         onMpesaClicked(
@@ -152,7 +155,8 @@ class DefaultModeOfDisbursementComponent(
             LoanName,
             loanPeriodUnit,
             referencedLoanRefId,
-            currentTerm
+            currentTerm,
+            loanOperation
         )
 
     }

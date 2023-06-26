@@ -50,7 +50,8 @@ class DefaultLoanTopUpComponent(
         interest: Double,
         loanPeriodUnit: String,
         currentTerm: Boolean,
-        minLoanPeriod: Int
+        minLoanPeriod: Int,
+        loanOperation:String
     ) -> Unit,
     private val onBackNavClicked: () -> Unit,
     override val maxAmount: Double,
@@ -75,7 +76,8 @@ class DefaultLoanTopUpComponent(
         interest: Double,
         loanPeriodUnit: String,
         currentTerm: Boolean,
-        minLoanPeriod: Int
+        minLoanPeriod: Int,
+        loanOperation:String
     ) {
         onProceedClicked(
             referencedLoanRefId,
@@ -87,7 +89,8 @@ class DefaultLoanTopUpComponent(
             interest,
             loanPeriodUnit,
             currentTerm,
-            minLoanPeriod
+            minLoanPeriod,
+            loanOperation
         )
     }
 

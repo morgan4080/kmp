@@ -154,7 +154,8 @@ class DefaultRootLoansComponent(
                         maxLoanPeriod = loanPeriod,
                         loanPeriodUnit = loanPeriodUnit,
                         minLoanPeriod = minLoanPeriod,
-                        loanRefIds = loanRefIds
+                        loanRefIds = loanRefIds,
+                        loanOperation =""
                     )
                 )
             },
@@ -248,7 +249,7 @@ class DefaultRootLoansComponent(
     ): ModeOfDisbursementComponent =
         DefaultModeOfDisbursementComponent(
             componentContext = componentContext,
-            onMpesaClicked = { correlationId, refId, amount, fees, loanPeriod, loanType, interestRate, LoanName, loanPeriodUnit, referencedLoanRefId, currentTerm ->
+            onMpesaClicked = { correlationId, refId, amount, fees, loanPeriod, loanType, interestRate, LoanName, loanPeriodUnit, referencedLoanRefId, currentTerm,loanOperation ->
                 loansNavigation.push(
                     ConfigLoans.LoanConfirmation(
                         correlationId = correlationId,
@@ -260,7 +261,7 @@ class DefaultRootLoansComponent(
                         interestRate = interestRate,
                         loanName = LoanName,
                         loanPeriodUnit = loanPeriodUnit,
-                        loanOperation = "loan",
+                        loanOperation = loanOperation,
                         referencedLoanRefId = referencedLoanRefId,
                         currentTerm = currentTerm
                     )
@@ -289,7 +290,8 @@ class DefaultRootLoansComponent(
             correlationId = config.correlationId,
             interestRate = config.interestRate,
             loanName =config.loanName ,
-            loanPeriodUnit = config.loanPeriodUnit
+            loanPeriodUnit = config.loanPeriodUnit,
+            loanOperation = config.loanOperation
         )
 
     private fun processingTransactionComponent(
@@ -349,7 +351,7 @@ class DefaultRootLoansComponent(
     ): LoanTopUpComponent =
         DefaultLoanTopUpComponent(
             componentContext = componentContext,
-            onProceedClicked = {referencedLoanRefId, refId, amount, maxLoanPeriod, loanType, LoanName, interest, loanPeriodUnit, currentTerm, minLoanPeriod ->
+            onProceedClicked = {referencedLoanRefId, refId, amount, maxLoanPeriod, loanType, LoanName, interest, loanPeriodUnit, currentTerm, minLoanPeriod,loanOperation ->
                 loansNavigation.push(
                     ConfigLoans.DisbursementMethod(
                         referencedLoanRefId = referencedLoanRefId,
@@ -361,7 +363,7 @@ class DefaultRootLoansComponent(
                         enteredAmount = 0.00,
                         loanName = LoanName,
                         loanPeriodUnit = loanPeriodUnit,
-                        loanOperation = "topUp",
+                        loanOperation = loanOperation,
                         currentTerm = currentTerm,
                         fees = 0.0,
                         correlationId = "",
@@ -381,7 +383,7 @@ class DefaultRootLoansComponent(
             interestRate = config.InterestRate,
             maxLoanPeriod = config.maxLoanPeriod,
             loanPeriodUnit = config.loanPeriodUnit,
-            loanOperation = "topUp",
+            loanOperation = config.loanOperation,
             referencedLoanRefId = config.referencedLoanRefId,
             minLoanPeriod = config.minLoanPeriod,
             loanRefIds = config.loanRefIds
@@ -460,7 +462,8 @@ class DefaultRootLoansComponent(
             val maxLoanPeriod: Int,
             val loanPeriodUnit: String,
             val minLoanPeriod: Int,
-            val loanRefIds: String
+            val loanRefIds: String,
+            val loanOperation: String,
 
         ) : ConfigLoans()
 

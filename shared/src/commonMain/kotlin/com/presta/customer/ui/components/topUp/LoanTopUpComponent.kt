@@ -30,7 +30,9 @@ interface LoanTopUpComponent {
         interest: Double,
         loanPeriodUnit: String,
         currentTerm:Boolean,
-        minLoanPeriod:Int
+        minLoanPeriod:Int,
+        loanOperation:String
+
     )
 
     fun onBackNavSelected()

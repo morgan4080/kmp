@@ -77,6 +77,7 @@ fun LoanTopUpContent(
     val newTermText = "New Term"
     val radioOptions = listOf(currentTermText, newTermText)
     var isIconPresent by remember { mutableStateOf(false) }
+    val loanOperation="topUp"
 
     val (selectedOption: Int, onOptionSelected: (Int) -> Unit) = remember {
         mutableStateOf(
@@ -473,7 +474,8 @@ fun LoanTopUpContent(
                                     component.interestRate,
                                     component.loanPeriodUnit,
                                     currentTerm,
-                                    component.minLoanPeriod
+                                    component.minLoanPeriod,
+                                    loanOperation = loanOperation
                                 )
                             }, enabled = amount.text != "" && !isError && (selectedOption > -1))
                         }

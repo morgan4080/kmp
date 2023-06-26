@@ -44,7 +44,7 @@ class DefaultSpecificLoansComponent(
         Interest: Double,
         loanPeriodUnit: String,
         referencedLoanRefId: String?,
-        currentTerm: Boolean
+        currentTerm: Boolean,
     ) -> Unit,
     private val onBackNavClicked: () -> Unit,
     refId: String,

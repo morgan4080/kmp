@@ -81,7 +81,8 @@ fun ModeOfDisbursementContent(
                             LoanName = component.loanName,
                             loanPeriodUnit =component.loanPeriodUnit ,
                             referencedLoanRefId = component.referencedLoanRefId,
-                            currentTerm =component.currentTerm
+                            currentTerm =component.currentTerm,
+                            loanOperation =component.loanOperation
                         )
                     })
                 }
