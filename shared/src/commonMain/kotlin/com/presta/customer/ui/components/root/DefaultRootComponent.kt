@@ -124,6 +124,14 @@ class DefaultRootComponent(
                 navigation.push(Config.Welcome(context = OnBoardingContext.LOGIN))
             },
             navigateToAuth = { memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext, pinStatus ->
+                println("::::::NAVIGATING:::::::")
+                println(memberRefId)
+                println(phoneNumber)
+                println(isTermsAccepted)
+                println(isActive)
+                println(onBoardingContext)
+                println(pinStatus)
+                println("::::::NAVIGATED:::::::")
                 navigation.replaceAll(Config.Auth(
                     memberRefId = memberRefId,
                     phoneNumber = phoneNumber,
@@ -402,7 +410,7 @@ class DefaultRootComponent(
         @Parcelize
         data class PayRegistrationFee(val amount: Double, val correlationId: String) :Config()
         @Parcelize
-        data class ProcessingTransaction(val correlationId: String, val amount: Double,val mode: PaymentTypes) :Config()
+        data class ProcessingTransaction(val correlationId: String, val amount: Double, val mode: PaymentTypes) :Config()
         @Parcelize
         data class ProcessingLoanLoanDisbursement(val correlationId: String, val amount: Double, val fees: Double) : Config()
     }

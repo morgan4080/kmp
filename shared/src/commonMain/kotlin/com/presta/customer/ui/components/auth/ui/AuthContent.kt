@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.outlined.Backspace
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -57,7 +56,6 @@ import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.Contexts
-import com.presta.customer.ui.components.onBoarding.store.IdentifierTypes
 import com.presta.customer.ui.components.onBoarding.store.OnBoardingStore
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
@@ -110,7 +108,7 @@ fun AuthContent(
 
     LaunchedEffect(state.pinStatus) {
         if (
-            state.pinStatus == PinStatus.SET
+            state.pinStatus == PinStatus.SET && onBoardingState.member?.authenticationInfo?.pinStatus == PinStatus.SET
         ) {
             onEvent(AuthStore.Intent.UpdateContext(
                 context = Contexts.LOGIN,
@@ -205,15 +203,6 @@ fun AuthContent(
             platform.showToast("Login Successful!")
             navigate()
         }
-
-        if (state.phoneNumber !== null) {
-            onOnBoardingEvent(OnBoardingStore.Intent.GetMemberDetails(
-                token = "",
-                memberIdentifier = state.phoneNumber,
-                identifierType = IdentifierTypes.PHONE_NUMBER,
-                tenantId = OrganisationModel.organisation.tenant_id
-            ))
-        }
     }
 
 
@@ -232,6 +221,7 @@ fun AuthContent(
             onOnBoardingEvent(OnBoardingStore.Intent.UpdateError(null))
 
             if (state.pinStatus !== PinStatus.SET) {
+                println("::::::::WTH BOY::::::")
                 onEvent(
                     AuthStore.Intent.UpdateContext(
                         context = Contexts.CREATE_PIN,
@@ -265,6 +255,7 @@ fun AuthContent(
                     "Please Contact admin to reset your pin"
                 )
             } else {
+                println("::::::::WTH BOY::::::")
                 onEvent(AuthStore.Intent.UpdateContext(
                     context = Contexts.CREATE_PIN,
                     title = "Create pin code",

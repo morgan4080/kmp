@@ -1,7 +1,6 @@
 package com.presta.customer.ui.components.auth.store
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.core.store.Store
@@ -13,13 +12,10 @@ import com.presta.customer.network.authDevice.model.PrestaLogInResponse
 import com.presta.customer.network.authDevice.model.RefreshTokenResponse
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.prestaDispatchers
-import com.presta.customer.ui.components.root.DefaultRootComponent
-import com.presta.customer.ui.components.root.RootComponent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import org.koin.core.parameter.parametersOf
 
 internal class AuthStoreFactory(
     private val storeFactory: StoreFactory,

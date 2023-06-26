@@ -9,8 +9,11 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.Platform
 import com.presta.customer.network.onBoarding.model.PinStatus
+import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
+import com.presta.customer.ui.components.auth.store.Contexts
+import com.presta.customer.ui.components.onBoarding.store.IdentifierTypes
 import com.presta.customer.ui.components.onBoarding.store.OnBoardingStore
 import com.presta.customer.ui.components.onBoarding.store.OnBoardingStoreFactory
 import com.presta.customer.ui.components.profile.coroutineScope
@@ -20,6 +23,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.coroutines.CoroutineContext
@@ -47,7 +51,7 @@ class DefaultAuthComponent(
 
     override val platform by inject<Platform>()
 
-    override val authStore =
+    override var authStore =
         instanceKeeper.getStore {
             AuthStoreFactory(
                 storeFactory = storeFactory,
@@ -86,4 +90,43 @@ class DefaultAuthComponent(
     }
 
     private val scope = coroutineScope(mainContext + SupervisorJob())
+
+    init {
+        scope.launch {
+            state.collect {
+                if (it.phoneNumber !== null) {
+                    onOnBoardingEvent(OnBoardingStore.Intent.GetMemberDetails(
+                        token = "",
+                        memberIdentifier = it.phoneNumber,
+                        identifierType = IdentifierTypes.PHONE_NUMBER,
+                        tenantId = OrganisationModel.organisation.tenant_id
+                    ))
+                }
+            }
+        }
+
+        scope.launch {
+            onBoardingState.collect {
+                if (it.member?.authenticationInfo?.pinStatus == PinStatus.SET) {
+                    onEvent(AuthStore.Intent.UpdateContext(
+                        context = Contexts.LOGIN,
+                        title = "Enter pin code to login",
+                        label = "Login to Presta Customer using the following pin code",
+                        pinCreated = true,
+                        pinConfirmed = true,
+                        error = null
+                    ))
+                } else {
+                    AuthStore.Intent.UpdateContext(
+                        context = Contexts.CREATE_PIN,
+                        title = "Create pin code",
+                        label = "You'll be able to login to Presta Customer using the following pin code",
+                        pinCreated = false,
+                        pinConfirmed = false,
+                        error = null
+                    )
+                }
+            }
+        }
+    }
 }
