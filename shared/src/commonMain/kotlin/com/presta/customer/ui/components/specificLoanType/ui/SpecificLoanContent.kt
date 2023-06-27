@@ -30,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -275,21 +274,19 @@ fun SpecificLoaContent(
                             onClickContainer = {
 
                                 if (amount.text !== "" && desiredPeriod.text !== "") {
-                                    state.prestaShortTermLoanProductById?.interestRate?.let {
-                                        state.prestaShortTermLoanProductById.maxTerm?.let { it1 ->
-                                            component.onConfirmSelected(
-                                                state.prestaShortTermLoanProductById.refId.toString(),
-                                                amount.text.toDouble(),
-                                                desiredPeriod.text.toInt(),
-                                                loanType = LoanType._NORMAL_LOAN,
-                                                state.prestaShortTermLoanProductById.name.toString(),
-                                                it,
-                                                state.prestaShortTermLoanProductById.loanPeriodUnit.toString(),
-                                                it1,
-                                                referencedLoanRefId =referencedLoanRefId,
-                                                currentTerm = currentTerm
-                                            )
-                                        }
+                                    if (state.prestaShortTermLoanProductById !== null) {
+                                        component.onConfirmSelected(
+                                            state.prestaShortTermLoanProductById.refId.toString(),
+                                            amount.text.toDouble(),
+                                            desiredPeriod.text.toInt(),
+                                            loanType = LoanType._NORMAL_LOAN,
+                                            state.prestaShortTermLoanProductById.name.toString(),
+                                            if (state.prestaShortTermLoanProductById.interestRate !== null) state.prestaShortTermLoanProductById.interestRate else 0.0,
+                                            state.prestaShortTermLoanProductById.loanPeriodUnit.toString(),
+                                            if (state.prestaShortTermLoanProductById.maxTerm !== null) state.prestaShortTermLoanProductById.maxTerm else 1,
+                                            referencedLoanRefId =referencedLoanRefId,
+                                            currentTerm = currentTerm
+                                        )
                                     }
                                 }
 
