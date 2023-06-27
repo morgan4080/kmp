@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.Platform
 import com.presta.customer.network.shortTermLoans.model.PrestaLoanEligibilityResponse
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
@@ -107,6 +108,11 @@ fun ShortTermProductList(
                                     if (shortTermProduct.interestRate != null) "Interest " + shortTermProduct.interestRate.toString() + "%" else "",
                                     onClickContainer = {
                                         val loanName = shortTermProduct.name
+                                        // check eligibility for selected loan
+                                        if (eligibilityResponse !== null && shortTermProduct.minAmount !== null && eligibilityResponse.amountAvailable < shortTermProduct.minAmount) {
+                                            component.platform.showToast("Not eligible for $loanName")
+                                            return@ProductSelectionCard
+                                        }
                                         component.onProductSelected(
                                             shortTermProduct.refId.toString(),
                                             loanName,
