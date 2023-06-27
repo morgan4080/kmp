@@ -354,9 +354,9 @@ fun AuthContent(
                                 lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
                                 textAlign = TextAlign.Center
                             ),
-                            onValueChange = {
-                                if (it.length <= maxChar) {
-                                    pinCharList[index] = it
+                            onValueChange = { value ->
+                                if (value.length <= maxChar) {
+                                    pinCharList[index] = value
                                 }
                             },
                             enabled = false,
@@ -389,10 +389,10 @@ fun AuthContent(
                         .height(70.dp)
                         .alpha(0.0f),
                     value = pinInput,
-                    onValueChange = {
-                        if (it.length <= maxChar) {
-                            setupPinCharacters(it)
-                            pinInput = it
+                    onValueChange = { value ->
+                        if (value.length <= maxChar) {
+                            setupPinCharacters(value)
+                            pinInput = value
                         }
                     },
                     enabled = false,
