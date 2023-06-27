@@ -231,9 +231,7 @@ fun AuthContent(
     ) {
 
         if (onBoardingState.error !== null) {
-            snackbarHostState.showSnackbar(
-                onBoardingState.error
-            )
+            platform.showToast(onBoardingState.error)
 
             clearPinCharacters()
 
@@ -254,24 +252,14 @@ fun AuthContent(
         }
 
         if (state.error !== null) {
-            if (state.pinStatus == PinStatus.SET) {
-                snackbarHostState.showSnackbar(
-                    state.error
-                )
-            } else {
-                snackbarHostState.showSnackbar(
-                    state.error
-                )
-            }
+            platform.showToast(state.error)
 
             clearPinCharacters()
 
             onEvent(AuthStore.Intent.UpdateError(null))
 
             if (state.pinStatus == PinStatus.SET) {
-                snackbarHostState.showSnackbar(
-                    "Please Contact admin to reset your pin"
-                )
+                platform.showToast("Please Contact admin to reset your pin")
             } else {
                 onEvent(AuthStore.Intent.UpdateContext(
                     context = Contexts.CREATE_PIN,

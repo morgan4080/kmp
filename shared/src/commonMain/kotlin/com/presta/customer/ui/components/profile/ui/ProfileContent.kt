@@ -142,8 +142,8 @@ fun ProfileContent(
     }
 
     val balancesMap: MutableMap<String, Double?> = mutableMapOf(
-        "Total Savings Amount" to null,
-        "Total Loan Balance" to null
+        "Total Loan Balance" to null,
+        "Total Savings Amount" to null
     )
 
     if (state.savingsBalances !== null ) {
