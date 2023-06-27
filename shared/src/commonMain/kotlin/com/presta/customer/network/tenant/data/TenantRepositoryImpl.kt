@@ -10,7 +10,7 @@ class TenantRepositoryImpl : TenantRepository,KoinComponent {
     override suspend fun getClientById(searchTerm: String): Result<PrestaTenantResponse> {
         return try {
             val response = tenantClient.getTenantById(
-           searchTerm = searchTerm
+                searchTerm = searchTerm
             )
             Result.success(response)
         } catch (e: Exception) {

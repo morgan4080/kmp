@@ -144,7 +144,7 @@ class DefaultPayLoanComponent(
                     if ( OrganisationModel.organisation.tenant_id!=null){
                         onAuthEvent(
                             AuthStore.Intent.RefreshToken(
-                                tenantId = OrganisationModel.organisation.tenant_id,
+                                tenantId = OrganisationModel.organisation.tenant_id!!,
                                 refId = state.cachedMemberData.refId
                             )
                         )

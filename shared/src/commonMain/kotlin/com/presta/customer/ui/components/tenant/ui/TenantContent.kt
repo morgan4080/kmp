@@ -48,12 +48,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.moriatsushi.insetsx.ExperimentalSoftwareKeyboardApi
-import com.moriatsushi.insetsx.imePadding
 import com.presta.customer.MR
 import com.presta.customer.SharedStatus
-import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
 import com.presta.customer.ui.components.tenant.TenantComponent
 import com.presta.customer.ui.components.tenant.store.TenantStore
 import com.presta.customer.ui.composables.ActionButton
@@ -62,20 +59,16 @@ import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSoftwareKeyboardApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TenantContent(
     component: TenantComponent,
     connectivityStatus: SharedStatus?,
     onTenantEvent: (TenantStore.Intent) -> Unit,
     state: TenantStore.State,
-    ) {
-    val model by component.model.subscribeAsState()
+) {
     val snackBarHostState = remember { SnackbarHostState() }
     val focusRequester = remember { FocusRequester() }
-    var tenantId by remember { mutableStateOf(TextFieldValue()) }
-    val pattern = remember { Regex("^\\d+\$") }
-    val emptyTenantId by remember { mutableStateOf(TextFieldValue()) }
     var isError by remember { mutableStateOf(false) }
 
     LaunchedEffect(connectivityStatus) {
@@ -91,6 +84,13 @@ fun TenantContent(
             }
         }
     }
+
+    LaunchedEffect(state.tenantData) {
+        if (state.tenantData !== null) {
+            component.onSubmitClicked(state.tenantData.tenantId)
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxHeight(1f)
             .padding(LocalSafeArea.current),
@@ -131,122 +131,115 @@ fun TenantContent(
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                 )
             }
-//                if (authState.isLoading || authState.cachedMemberData?.session_id !== "" || connectivityStatus == null || !authState.isOnline) {
-//                    CircularProgressIndicator(
-//                        modifier = Modifier.size(25.dp).padding(end = 2.dp),
-//                        color = MaterialTheme.colorScheme.onSurface
-//                    )
-//                }
-            Row(
+            Column (
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 31.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .shadow(0.5.dp, RoundedCornerShape(10.dp))
-                        .background(
-                            color = MaterialTheme.colorScheme.inverseOnSurface,
-                            shape = RoundedCornerShape(10.dp)
-                        ),
-                ) {
-                    BasicTextField(
+                listOf(state.tenantField).map { inputMethod ->
+                    Column(
                         modifier = Modifier
-                            .focusRequester(focusRequester)
-                            .height(65.dp)
-                            .imePadding()
-                            .padding(top = 20.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
-                            .absoluteOffset(y = 2.dp),
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text
-                        ),
-                        value = tenantId,
-                        onValueChange = {
-                            //validate  id   from server
-                           tenantId=it
+                            .fillMaxWidth()
+                            .shadow(0.5.dp, RoundedCornerShape(10.dp))
+                            .background(
+                                color = MaterialTheme.colorScheme.inverseOnSurface,
+                                shape = RoundedCornerShape(10.dp)
+                            ),
+                    ) {
+                        BasicTextField(
+                            modifier = Modifier
+                                .focusRequester(focusRequester)
+                                .height(65.dp)
+                                .padding(top = 20.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                                .absoluteOffset(y = 2.dp),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                            value = inputMethod.value,
+                            onValueChange = {
+                                onTenantEvent(TenantStore.Intent.UpdateField(it))
+                            },
+                            singleLine = true,
+                            textStyle = TextStyle(
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
+                                fontSize = 13.sp,
+                                fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
+                                letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
+                                lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                                fontFamily = MaterialTheme.typography.bodySmall.fontFamily
+                            ),
+                            decorationBox = { innerTextField ->
 
-                        },
-                        singleLine = true,
-                        textStyle = TextStyle(
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
-                            fontSize = 13.sp,
-                            fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
-                            letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
-                            lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
-                            fontFamily = MaterialTheme.typography.bodySmall.fontFamily
-                        ),
-                        decorationBox = { innerTextField ->
-
-                            if (tenantId.text.isEmpty()
-                            ) {
-                                Text(
-                                    modifier = Modifier.alpha(.3f),
-                                    text = "Enter Tenant Id",
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-                            }
-
-                            AnimatedVisibility(
-                                visible = tenantId.text.isNotEmpty(),
-                                modifier = Modifier.absoluteOffset(y = -(16).dp),
-                                enter = fadeIn() + expandVertically(),
-                                exit = fadeOut() + shrinkVertically(),
-                            ) {
-                                Text(
-                                    text = "Enter Tenant Id",
-                                    color = primaryColor,
-                                    style = MaterialTheme.typography.labelSmall,
-                                    fontSize = 11.sp
-                                )
-                            }
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
+                                if (inputMethod.value.text.isEmpty()
                                 ) {
-
-                                    innerTextField()
+                                    Text(
+                                        modifier = Modifier.alpha(.3f),
+                                        text = inputMethod.inputLabel,
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
                                 }
 
                                 AnimatedVisibility(
-                                    visible = tenantId.text.isNotEmpty(),
+                                    visible = inputMethod.value.text.isNotEmpty(),
+                                    modifier = Modifier.absoluteOffset(y = -(16).dp),
                                     enter = fadeIn() + expandVertically(),
                                     exit = fadeOut() + shrinkVertically(),
                                 ) {
-
-                                    IconButton(
-                                        modifier = Modifier.size(18.dp),
-                                        onClick = { tenantId = emptyTenantId },
-                                        content = {
-                                            Icon(
-                                                modifier = Modifier.alpha(0.4f),
-                                                imageVector = Icons.Filled.Cancel,
-                                                contentDescription = null,
-                                                tint = actionButtonColor
-                                            )
-                                        }
+                                    Text(
+                                        text = inputMethod.inputLabel,
+                                        color = primaryColor,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontSize = 11.sp
                                     )
                                 }
-                            }
-                        }
-                    )
-                }
-            }
-            if (isError) {
-                Text(
-                    modifier = Modifier.padding(top = 10.dp, start = 5.dp),
-                    text = "Enter a  valid Tenant id" ,
-                    style = MaterialTheme.typography.bodySmall,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                    color = Color.Red
-                )
 
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+
+                                        innerTextField()
+                                    }
+
+                                    AnimatedVisibility(
+                                        visible = inputMethod.value.text.isNotEmpty(),
+                                        enter = fadeIn() + expandVertically(),
+                                        exit = fadeOut() + shrinkVertically(),
+                                    ) {
+
+                                        IconButton(
+                                            modifier = Modifier.size(18.dp),
+                                            onClick = { onTenantEvent(TenantStore.Intent.UpdateField(TextFieldValue())) },
+                                            content = {
+                                                Icon(
+                                                    modifier = Modifier.alpha(0.4f),
+                                                    imageVector = Icons.Filled.Cancel,
+                                                    contentDescription = null,
+                                                    tint = actionButtonColor
+                                                )
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        )
+                    }
+
+                    if (inputMethod.errorMessage !== "") {
+                        Text(
+                            modifier = Modifier.padding(10.dp),
+                            text = inputMethod.errorMessage,
+                            fontSize = 10.sp,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                            color = Color.Red
+                        )
+                    }
+                }
             }
             Spacer(modifier = Modifier.weight(1f))
             Row(
@@ -257,21 +250,13 @@ fun TenantContent(
 
                 ActionButton(
                     "Submit", onClickContainer = {
-                        //  component.onSignInClicked()
-                        //proceed to Register//Login
-                        //submit  tenant id and validate
-                        // if validated proceed to register
-
                         onTenantEvent(TenantStore.Intent.GetClientById(
-                            searchTerm = tenantId.text
+                            searchTerm = state.tenantField.value.text
                         ))
-                        if (state.prestaTenantById?.tenantId ==null){
-                            isError=true
-
-                        }
-
+                        isError = state.error != null
                     },
-                    enabled = tenantId.text != ""
+                    loading = state.isLoading,
+                    enabled = state.tenantField.value.text != ""
                 )
             }
         }

@@ -102,7 +102,7 @@ fun OnBoardingContent(
                     token = "",
                     memberIdentifier = "${state.country.code}${phoneNumber.text}",
                     identifierType = IdentifierTypes.PHONE_NUMBER,
-                    tenantId = OrganisationModel.organisation.tenant_id
+                    tenantId = OrganisationModel.organisation.tenant_id!!
                 ))
             }
         } else {
@@ -124,7 +124,7 @@ fun OnBoardingContent(
                         token = "",
                         memberIdentifier = "${state.country.code}${phoneNumber.text}",
                         identifierType = IdentifierTypes.PHONE_NUMBER,
-                        tenantId = OrganisationModel.organisation.tenant_id
+                        tenantId = OrganisationModel.organisation.tenant_id!!
                     )
                 )
             }

@@ -5,6 +5,7 @@ import com.presta.customer.network.authDevice.client.PrestaAuthClient
 import com.presta.customer.network.authDevice.model.PrestaCheckAuthUserResponse
 import com.presta.customer.network.authDevice.model.PrestaLogInResponse
 import com.presta.customer.network.authDevice.model.RefreshTokenResponse
+import com.presta.customer.organisation.OrganisationModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -39,6 +40,7 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
                 phoneNumber = phoneNumber,
                 expires_in = response.expires_in,
                 refresh_expires_in = response.refresh_expires_in,
+                tenantId
             )
 
             Result.success(response)
@@ -52,7 +54,7 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
         }
     }
 
-    override suspend fun updateAuthToken(tenantId: String?, refId: String): Result<RefreshTokenResponse> {
+    override suspend fun updateAuthToken(tenantId: String, refId: String): Result<RefreshTokenResponse> {
         return try {
 
             var refreshToken = ""
@@ -72,7 +74,8 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
                 response.session_id,
                 response.expires_in,
                 response.refresh_expires_in,
-                refId
+                refId,
+                tenantId
             )
 
             Result.success(response)
@@ -96,6 +99,7 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
         var phoneNumber = ""
         var registrationFees = 0.0
         var registrationFeeStatus = "NOT_PAID"
+        var tenantId = OrganisationModel.organisation.tenant_id
 
         userAuthDao.selectUserAuthCredentials().map {
             accessToken = it.access_token
@@ -107,6 +111,7 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
             registrationFees = it.registrationFees
             registrationFeeStatus = it.registrationFeeStatus
             phoneNumber = it.phoneNumber
+            tenantId = if (it.tenant_id != "") it.tenant_id else tenantId
         }
 
         return AuthRepository.ResponseTransform(
@@ -119,6 +124,7 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
             registrationFees = registrationFees,
             registrationFeeStatus = registrationFeeStatus,
             phoneNumber = phoneNumber,
+            tenantId = tenantId
         )
     }
 

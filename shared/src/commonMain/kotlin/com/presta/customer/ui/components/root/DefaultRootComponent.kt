@@ -85,7 +85,7 @@ class DefaultRootComponent(
 
     private fun createChild(config: Config, componentContext: ComponentContext): RootComponent.Child =
         when (config) {
-            is Config.Tenant -> RootComponent.Child.TenantChild(tenantComponent(componentContext))
+            is Config.Tenant -> RootComponent.Child.TenantChild(tenantComponent(componentContext, config))
             is Config.Splash -> RootComponent.Child.SplashChild(splashComponent(componentContext))
             is Config.Welcome -> RootComponent.Child.WelcomeChild(welcomeComponent(componentContext, config))
             is Config.OnBoarding -> RootComponent.Child.OnboardingChild(onBoardingComponent(componentContext, config))
@@ -116,17 +116,19 @@ class DefaultRootComponent(
             }
         )
 
-    private fun tenantComponent(componentContext: ComponentContext): TenantComponent =
+    private fun tenantComponent(componentContext: ComponentContext, config: Config.Tenant): TenantComponent =
         DefaultTenantComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
+            onBoardingContext = config.onBoardingContext,
             onSubmit = { onBoardingContext, tenantId ->
                 navigation.push(Config.OnBoarding(
                     onBoardingContext = onBoardingContext,
                     tenantId = tenantId
                 ))
             },
+
         )
 
     private fun splashComponent(componentContext: ComponentContext): SplashComponent =
@@ -157,15 +159,16 @@ class DefaultRootComponent(
             componentContext = componentContext,
             onBoardingContext = config.context,
             onGetStartedSelected = {
-                if (OrganisationModel.organisation.tenant_id !== null) {
+
+                if (OrganisationModel.organisation.sandbox) {
                     navigation.push(
-                        Config.OnBoarding(
+                        Config.Tenant(
                             onBoardingContext = it
                         )
                     )
                 } else {
                     navigation.push(
-                        Config.Tenant(
+                        Config.OnBoarding(
                             onBoardingContext = it
                         )
                     )

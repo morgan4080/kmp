@@ -1,6 +1,8 @@
 package com.presta.customer.ui.components.auth.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.outlined.Backspace
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -54,7 +55,6 @@ import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.Platform
 import com.presta.customer.network.onBoarding.model.PinStatus
-import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.Contexts
 import com.presta.customer.ui.components.onBoarding.store.IdentifierTypes
@@ -123,7 +123,7 @@ fun AuthContent(
         }
     }
 
-    LaunchedEffect(pinInput.length, state.phoneNumber, onBoardingState.member) {
+    LaunchedEffect(pinInput.length, state.phoneNumber, onBoardingState.member, state.cachedMemberData) {
         if (
             pinInput.length == maxChar &&
             state.phoneNumber != null &&
@@ -148,14 +148,13 @@ fun AuthContent(
 
                     if (pinToConfirm == pinInput && onBoardingState.member.refId !== null) {
 
-                        if (OrganisationModel.organisation.tenant_id!=null){
+                        if (state.cachedMemberData !== null && state.cachedMemberData.tenantId !== "") {
                             onOnBoardingEvent(OnBoardingStore.Intent.UpdateMember(
                                 token = "",
                                 memberRefId = onBoardingState.member.refId,
                                 pinConfirmation = pinInput,
-                                tenantId = OrganisationModel.organisation.tenant_id
+                                tenantId = state.cachedMemberData.tenantId
                             ))
-
                         }
                     } else {
                         onEvent(AuthStore.Intent.UpdateContext(
@@ -172,13 +171,11 @@ fun AuthContent(
                 }
                 Contexts.LOGIN -> {
                     if (onBoardingState.member.refId !== null && onBoardingState.member.registrationFeeInfo !== null) {
-
-                        if (OrganisationModel.organisation.tenant_id!=null){
-
+                        if (state.cachedMemberData !== null && state.cachedMemberData.tenantId !== "") {
                             onEvent(AuthStore.Intent.LoginUser(
                                 phoneNumber = state.phoneNumber,
                                 pin = pinInput,
-                                tenantId = OrganisationModel.organisation.tenant_id,
+                                tenantId = state.cachedMemberData.tenantId,
                                 refId = onBoardingState.member.refId,
                                 registrationFees = onBoardingState.member.registrationFeeInfo.registrationFees,
                                 registrationFeeStatus = onBoardingState.member.registrationFeeInfo.registrationFeeStatus.toString()
@@ -208,7 +205,7 @@ fun AuthContent(
     }
 
 
-    LaunchedEffect(state.phoneNumber, state.loginResponse) {
+    LaunchedEffect(state.phoneNumber, state.loginResponse, state.cachedMemberData) {
         if (state.loginResponse !== null && state.phoneNumber != null) {
             inputEnabled = false
             platform.showToast("Login Successful!")
@@ -216,13 +213,13 @@ fun AuthContent(
         }
 
         if (state.phoneNumber !== null) {
-            if ( OrganisationModel.organisation.tenant_id!=null){
+            if (state.cachedMemberData !== null && state.cachedMemberData.tenantId !== "") {
 
                 onOnBoardingEvent(OnBoardingStore.Intent.GetMemberDetails(
                     token = "",
                     memberIdentifier = state.phoneNumber,
                     identifierType = IdentifierTypes.PHONE_NUMBER,
-                    tenantId = OrganisationModel.organisation.tenant_id
+                    tenantId = state.cachedMemberData.tenantId
                 ))
 
             }
@@ -299,135 +296,132 @@ fun AuthContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .padding(
-                    vertical = 30.dp
-                ),
-            verticalArrangement = Arrangement.SpaceBetween
+                .padding(it)
         ) {
-            Column {
-                Row (
-                    modifier = Modifier
-                        .padding(
-                            horizontal = 16.dp)
-                ) {
-                    Text(
-                        text = state.title,
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                        fontSize = 20.0.sp
-                    )
-                }
+            Row (
+                modifier = Modifier
+                    .padding(top = 30.dp, start = 16.dp, end = 16.dp)
+            ) {
+                Text(
+                    text = state.title,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                    fontSize = 20.0.sp
+                )
+            }
 
-                Row (
-                    modifier = Modifier
-                        .padding(
-                            horizontal = 16.dp)
-                ) {
-                    Text(
-                        text = state.label,
-                        style = MaterialTheme.typography.bodySmall,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                    )
-                }
+            Row (
+                modifier = Modifier
+                    .padding(
+                        horizontal = 16.dp)
+            ) {
+                Text(
+                    text = state.label,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                )
+            }
 
-                Row(
-                    modifier = Modifier
-                        .padding(top = 35.dp)
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    for ((index, _) in state.inputs.withIndex()) {
-                        Column (modifier = Modifier
-                            .weight(0.2f),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-                            BasicTextField(
-                                modifier = Modifier
-                                    .shadow(1.dp, RoundedCornerShape(10.dp))
-                                    .align(Alignment.CenterHorizontally)
-                                    .fillMaxWidth(0.88f)
-                                    .height(70.dp)
-                                    .background(
-                                        color = MaterialTheme.colorScheme.inverseOnSurface,
-                                        shape = RoundedCornerShape(10.dp)
-                                    ),
-                                visualTransformation = if (state.pinStatus == PinStatus.SET) PasswordVisualTransformation('\u2731') else VisualTransformation.None,
-                                value = pinCharList[index],
-                                textStyle = TextStyle(
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                                    fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
-                                    fontSize = MaterialTheme.typography.headlineLarge.fontSize,
-                                    fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
-                                    letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
-                                    lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
-                                    textAlign = TextAlign.Center
+            Row(
+                modifier = Modifier
+                    .padding(top = 35.dp)
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                for ((index, _) in state.inputs.withIndex()) {
+                    Column (modifier = Modifier
+                        .weight(0.2f),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        BasicTextField(
+                            modifier = Modifier
+                                .shadow(1.dp, RoundedCornerShape(10.dp))
+                                .align(Alignment.CenterHorizontally)
+                                .fillMaxWidth(0.88f)
+                                .height(70.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.inverseOnSurface,
+                                    shape = RoundedCornerShape(10.dp)
                                 ),
-                                onValueChange = {
-                                    if (it.length <= maxChar) {
-                                        pinCharList[index] = it
-                                    }
-                                },
-                                enabled = false,
-                                singleLine = true,
-                                decorationBox = { innerTextField ->
-                                    Box (
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        innerTextField()
-                                    }
+                            visualTransformation = if (state.pinStatus == PinStatus.SET) PasswordVisualTransformation('\u2731') else VisualTransformation.None,
+                            value = pinCharList[index],
+                            textStyle = TextStyle(
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
+                                fontSize = MaterialTheme.typography.headlineLarge.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+                                letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
+                                lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                                textAlign = TextAlign.Center
+                            ),
+                            onValueChange = {
+                                if (it.length <= maxChar) {
+                                    pinCharList[index] = it
                                 }
-                            )
-                        }
-                    }
-                }
-                Row (
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth()
-                        .absoluteOffset(y = -(70).dp),
-                ) {
-                    BasicTextField(
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number
-                        ),
-                        modifier = Modifier
-                            .focusRequester(focusRequester)
-                            .fillMaxWidth()
-                            .height(70.dp)
-                            .alpha(0.0f),
-                        value = pinInput,
-                        onValueChange = {
-                            if (it.length <= maxChar) {
-                                setupPinCharacters(it)
-                                pinInput = it
+                            },
+                            enabled = false,
+                            singleLine = true,
+                            decorationBox = { innerTextField ->
+                                Box (
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    innerTextField()
+                                }
                             }
-                        },
-                        enabled = false,
-                        singleLine = true,
-                        decorationBox = { innerTextField ->
-                            innerTextField()
-                        }
-                    )
-                }
-
-                Row (
-                    modifier = Modifier
-                        .padding(top = 25.dp)
-                        .padding(horizontal = 16.dp)
-                        .absoluteOffset(y = -(50).dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(25.dp).padding(end = 2.dp).alpha(if (state.isLoading || onBoardingState.isLoading || !inputEnabled) 1f else 0.0f),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                        )
+                    }
                 }
             }
 
-            Column (modifier = Modifier.absoluteOffset(y = -(30).dp)) {
+            Row (
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
+                    .absoluteOffset(y = -(70).dp),
+            ) {
+                BasicTextField(
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number
+                    ),
+                    modifier = Modifier
+                        .focusRequester(focusRequester)
+                        .fillMaxWidth()
+                        .height(70.dp)
+                        .alpha(0.0f),
+                    value = pinInput,
+                    onValueChange = {
+                        if (it.length <= maxChar) {
+                            setupPinCharacters(it)
+                            pinInput = it
+                        }
+                    },
+                    enabled = false,
+                    singleLine = true,
+                    decorationBox = { innerTextField ->
+                        innerTextField()
+                    }
+                )
+            }
+
+            Row (
+                modifier = Modifier
+                    .padding(top = 25.dp)
+                    .padding(horizontal = 16.dp)
+                    .absoluteOffset(y = -(50).dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(25.dp).padding(end = 2.dp).alpha(if (state.isLoading || onBoardingState.isLoading || !inputEnabled) 1f else 0.0f),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            Row  (
+                modifier = Modifier.absoluteOffset(y = -(50).dp),
+            ) {
                 LazyVerticalGrid(
                     modifier = Modifier
                         .fillMaxWidth()

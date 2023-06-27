@@ -84,7 +84,7 @@ fun BankDisbursementScreen(component: BankDisbursementComponent) {
 
                 //Select  banks  from the pop up
                 if (launchPopUp) {
-                    Popup() {
+                    Popup {
                         // Composable to select The bank
                         Column(
                             modifier = Modifier

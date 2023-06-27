@@ -120,7 +120,7 @@ fun OtpContent(
                     OtpStore.Intent.RequestOTP(
                         token = "",
                         phoneNumber = state.phone_number,
-                        tenantId = OrganisationModel.organisation.tenant_id
+                        tenantId = OrganisationModel.organisation.tenant_id!!
                     )
                 )
             }
@@ -151,7 +151,7 @@ fun OtpContent(
                     token = "",
                     requestMapper = state.otpRequestData.requestMapper,
                     otp = otpInput,
-                    tenantId = OrganisationModel.organisation.tenant_id
+                    tenantId = OrganisationModel.organisation.tenant_id!!
                 ))
             }
 
@@ -320,7 +320,7 @@ fun OtpContent(
                                     onEvent(OtpStore.Intent.RequestOTP(
                                         token = "",
                                         phoneNumber = state.phone_number,
-                                        tenantId = OrganisationModel.organisation.tenant_id
+                                        tenantId = OrganisationModel.organisation.tenant_id!!
                                     ))
                                 }
                             }

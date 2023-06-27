@@ -86,4 +86,8 @@ class DefaultAuthComponent(
     }
 
     private val scope = coroutineScope(mainContext + SupervisorJob())
+
+    init {
+        onEvent(AuthStore.Intent.GetCachedMemberData)
+    }
 }

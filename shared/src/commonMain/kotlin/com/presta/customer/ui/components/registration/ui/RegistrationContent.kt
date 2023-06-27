@@ -121,7 +121,7 @@ fun RegistrationContent(
                     phoneNumber = state.phoneNumber,
                     idNumber = state.idNumber.value.text,
                     tocsAccepted = state.isTermsAccepted,
-                    tenantId = OrganisationModel.organisation.tenant_id
+                    tenantId = OrganisationModel.organisation.tenant_id!!
                 ))
             }
 

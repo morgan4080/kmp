@@ -7,7 +7,7 @@ import com.presta.customer.network.onBoarding.model.RegistrationFeeStatus
 
 interface AuthRepository {
     suspend fun loginUser(phoneNumber: String, pin: String, tenantId: String, refId: String, registrationFees: Double, registrationFeeStatus: String): Result<PrestaLogInResponse>
-    suspend fun updateAuthToken(tenantId: String?, refId: String): Result<RefreshTokenResponse>
+    suspend fun updateAuthToken(tenantId: String, refId: String): Result<RefreshTokenResponse>
     suspend fun checkAuthenticatedUser(token: String): Result<PrestaCheckAuthUserResponse>
     suspend fun getCachedUserData(): ResponseTransform
     suspend fun logOutUser(): LogOutResponse
@@ -25,6 +25,7 @@ interface AuthRepository {
         val registrationFeeStatus: String,
         val phoneNumber: String,
         val expires_in: Long,
-        val refresh_expires_in: Long
+        val refresh_expires_in: Long,
+        val tenantId: String
     )
 }

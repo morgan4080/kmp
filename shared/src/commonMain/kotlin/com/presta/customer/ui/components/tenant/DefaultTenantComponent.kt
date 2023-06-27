@@ -9,6 +9,8 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.presta.customer.MR
+import com.presta.customer.organisation.Organisation
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.profile.coroutineScope
 import com.presta.customer.ui.components.root.DefaultRootComponent
@@ -19,6 +21,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineScope {
@@ -34,8 +37,8 @@ class DefaultTenantComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
+    override val onBoardingContext: DefaultRootComponent.OnBoardingContext,
     private val onSubmit: (onBoardingContext: DefaultRootComponent.OnBoardingContext, tenantId: String) -> Unit,
-
 ): TenantComponent, ComponentContext by componentContext {
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
@@ -60,8 +63,23 @@ class DefaultTenantComponent(
         tenantStore.accept(event)
     }
 
-    override fun onSubmitClicked() {
-       //onSubmit()
+    override fun onSubmitClicked(tenantId: String) {
+        onSubmit(onBoardingContext, tenantId)
     }
-
+    init {
+        scope.launch {
+            tenantState.collect {
+                if (it.tenantData !== null && it.tenantData.alias !== null) {
+                    OrganisationModel.loadOrganisation(
+                        Organisation(
+                            it.tenantData.alias,
+                            it.tenantData.tenantId,
+                            MR.images.prestalogo,
+                            true
+                        )
+                    )
+                }
+            }
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.presta.customer.ui.components.tenant.store
 
+import androidx.compose.ui.text.input.TextFieldValue
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
@@ -33,8 +34,9 @@ class TenantStoreFactory(
 
     private sealed class Msg {
         data class TenantsLoading(val isLoading: Boolean = true) : Msg()
+        data class UpdateInputValue(val value: TextFieldValue) : Msg()
 
-        data class TenantsByIdLoaded(val tenantById: PrestaTenantResponse) :
+        data class TenantsByIdLoaded(val tenantData: PrestaTenantResponse) :
             Msg()
 
         data class TenantsFailed(val error: String?) : Msg()
@@ -42,7 +44,7 @@ class TenantStoreFactory(
 
 
     private inner class ExecutorImpl :
-        CoroutineExecutor<TenantStore.Intent, Unit, TenantStore.State, TenantStoreFactory.Msg, Nothing>(
+        CoroutineExecutor<TenantStore.Intent, Unit, TenantStore.State, Msg, Nothing>(
             prestaDispatchers.main
         ) {
         override fun executeAction(action: Unit, getState: () -> TenantStore.State) {
@@ -56,6 +58,7 @@ class TenantStoreFactory(
                 is TenantStore.Intent.GetClientById -> getCustomerById(
                     searchTerm = intent.searchTerm
                 )
+                is TenantStore.Intent.UpdateField -> dispatch(Msg.UpdateInputValue(intent.value))
             }
         private var getCustomerBYIdJob: Job? = null
 
@@ -84,8 +87,18 @@ class TenantStoreFactory(
         override fun TenantStore.State.reduce(msg: Msg): TenantStore.State =
             when (msg) {
                 is Msg.TenantsLoading -> copy(isLoading = msg.isLoading)
-                is Msg.TenantsFailed -> copy(error = msg.error)
-                is Msg.TenantsByIdLoaded -> copy(prestaTenantById = msg.tenantById)
+                is Msg.TenantsFailed -> copy(
+                    error = msg.error,
+                    tenantField = tenantField.copy(
+                        errorMessage = "Invalid Tenant ID"
+                    )
+                )
+                is Msg.UpdateInputValue -> copy(
+                    tenantField = tenantField.copy(
+                        value = msg.value
+                    )
+                )
+                is Msg.TenantsByIdLoaded -> copy(tenantData = msg.tenantData)
             }
     }
 }

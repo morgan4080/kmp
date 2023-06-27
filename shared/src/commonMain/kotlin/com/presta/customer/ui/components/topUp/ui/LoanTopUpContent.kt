@@ -390,13 +390,12 @@ fun LoanTopUpContent(
                                                     text = "Proceed",
                                                     color = Color.White,
                                                     fontSize = 11.sp,
-                                                    modifier = Modifier
-                                                        .padding(
-                                                            top = 5.dp,
-                                                            bottom = 5.dp,
-                                                            start = 20.dp,
-                                                            end = 20.dp
-                                                        )
+                                                    modifier = Modifier.padding(
+                                                        top = 5.dp,
+                                                        bottom = 5.dp,
+                                                        start = 20.dp,
+                                                        end = 20.dp
+                                                    )
                                                 )
                                             }
                                         }

@@ -22,6 +22,7 @@ data class CachedMemberData(
     val registrationFees: Double,
     val registrationFeeStatus: String,
     val phoneNumber: String,
+    val tenantId: String,
 )
 interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
     sealed class Intent {

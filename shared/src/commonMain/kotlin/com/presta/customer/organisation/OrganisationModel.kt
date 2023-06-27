@@ -1,13 +1,20 @@
 package com.presta.customer.organisation
 
 import com.presta.customer.MR
+import kotlin.native.concurrent.ThreadLocal
 
 class OrganisationModel {
+    @ThreadLocal
     companion object Data {
-        val organisation: Organisation = Organisation (
-            "MK Consulting",
-            null,
-            MR.images.mklogo
+        var organisation: Organisation = Organisation (
+            "Presta Customer",
+            "t10007",
+            MR.images.prestalogo
         )
+
+        fun  loadOrganisation(org: Organisation) {
+            organisation = org
+        }
     }
+
 }

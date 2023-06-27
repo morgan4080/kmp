@@ -97,7 +97,7 @@ fun SplashScreen(component: SplashComponent, connectivityStatus: SharedStatus?) 
                         Image(
                             painter = painter,
                             contentDescription = "Logo",
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
                         )
                     }
                     Row (

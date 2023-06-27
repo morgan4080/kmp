@@ -60,7 +60,7 @@ internal class AuthStoreFactory(
         data class CheckAuthenticatedUserLoaded(val authUserResponse: PrestaCheckAuthUserResponse): Msg()
         data class AuthFailed(val error: String?) : Msg()
 
-        data class CachedMemberData(val accessToken: String, val refreshToken: String, val refId: String, val session_id: String, val registrationFees: Double, val registrationFeeStatus: String, val phoneNumber: String, val expires_in: Long, val refresh_expires_in: Long): Msg()
+        data class CachedMemberData(val accessToken: String, val refreshToken: String, val refId: String, val session_id: String, val registrationFees: Double, val registrationFeeStatus: String, val phoneNumber: String, val expires_in: Long, val refresh_expires_in: Long, val tenantId: String): Msg()
     }
 
     private inner class ExecutorImpl : CoroutineExecutor<AuthStore.Intent, Unit, AuthStore.State, Msg, Nothing>(
@@ -166,6 +166,7 @@ internal class AuthStoreFactory(
                     phoneNumber = response.phoneNumber,
                     expires_in = response.expires_in,
                     refresh_expires_in = response.refresh_expires_in,
+                    tenantId = response.tenantId
                 ))
             }
         }
@@ -247,6 +248,7 @@ internal class AuthStoreFactory(
                     phoneNumber = msg.phoneNumber,
                     expires_in = msg.expires_in,
                     refresh_expires_in = msg.refresh_expires_in,
+                    tenantId = msg.tenantId
                 ))
                 is Msg.ClearAuthDetails -> copy(
                     loginResponse = null,

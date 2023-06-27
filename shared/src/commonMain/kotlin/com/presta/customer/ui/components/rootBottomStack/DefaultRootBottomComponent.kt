@@ -216,7 +216,7 @@ class DefaultRootBottomComponent(
 
                         val flow = poller.poll(
                             state.cachedMemberData.expires_in * 100,
-                            OrganisationModel.organisation.tenant_id,
+                            OrganisationModel.organisation.tenant_id!!,
                             state.cachedMemberData.refId
                         )
 
