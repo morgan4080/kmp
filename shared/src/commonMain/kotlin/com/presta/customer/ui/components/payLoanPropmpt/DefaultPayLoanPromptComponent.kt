@@ -93,11 +93,12 @@ class DefaultPayLoanPromptComponent(
         scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
-                    onAuthEvent(AuthStore.Intent.RefreshToken(
-                        tenantId = OrganisationModel.organisation.tenant_id,
-                        refId = state.cachedMemberData.refId
-                    ))
-
+                    if (OrganisationModel.organisation.tenant_id!=null){
+                        onAuthEvent(AuthStore.Intent.RefreshToken(
+                            tenantId = OrganisationModel.organisation.tenant_id,
+                            refId = state.cachedMemberData.refId
+                        ))
+                    }
                     val flow = poller.poll(2_000L, state.cachedMemberData.accessToken, correlationId)
 
                     flow.collect {

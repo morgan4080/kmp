@@ -14,6 +14,7 @@ import com.presta.customer.ui.components.processingTransaction.ProcessingTransac
 import com.presta.customer.ui.components.registration.RegistrationComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
 import com.presta.customer.ui.components.splash.SplashComponent
+import com.presta.customer.ui.components.tenant.TenantComponent
 import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
 import com.presta.customer.ui.components.welcome.WelcomeComponent
 
@@ -22,6 +23,7 @@ interface RootComponent {
     val childStack: Value<ChildStack<*, Child>>
 
     sealed class Child {
+        class TenantChild(val component: TenantComponent) : Child()
         class SplashChild(val component: SplashComponent) : Child()
         class WelcomeChild(val component: WelcomeComponent) : Child()
         class OnboardingChild(val component: OnBoardingComponent) : Child()

@@ -8,6 +8,7 @@ import com.presta.customer.network.payments.client.PrestaPaymentsClient
 import com.presta.customer.network.profile.client.PrestaProfileClient
 import com.presta.customer.network.registration.client.PrestaRegistrationClient
 import com.presta.customer.network.shortTermLoans.client.PrestaShortTermLoansClient
+import com.presta.customer.network.tenant.client.PrestaTenantClient
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -22,5 +23,6 @@ val networkModule: (enableLogging: Boolean) -> Module get() = { enableLogging ->
         single { PrestaShortTermLoansClient(httpClient = get()) }
         single { PrestaPaymentsClient(httpClient = get()) }
         single { PrestaLoanRequestClient(httpClient = get()) }
+        single { PrestaTenantClient(httpClient = get()) }
     }
 }

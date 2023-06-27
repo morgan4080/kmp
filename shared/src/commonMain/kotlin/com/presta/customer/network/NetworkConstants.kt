@@ -83,7 +83,8 @@ object NetworkConstants {
     object PrestaGetLoanById {
         const val route = applicationV1BaseUrl + "loans"
     }
-
-
+    object PrestaGetTenantById {
+        const val route = applicationV2BaseUrl + "tenants-query/search"
+    }
 
 }

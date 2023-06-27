@@ -40,7 +40,7 @@ class PrestaAuthClient(
     }
     suspend fun updateAuthToken(
         refreshToken: String,
-        tenantId: String
+        tenantId: String?
     ): RefreshTokenResponse {
         return authErrorHandler {
             httpClient.post(NetworkConstants.PrestaRefreshToken.route) {
@@ -51,7 +51,9 @@ class PrestaAuthClient(
                     )
                 )
                 url {
-                    parameters.append("tenantId", tenantId)
+                    if (tenantId != null) {
+                        parameters.append("tenantId", tenantId)
+                    }
                 }
             }
         }

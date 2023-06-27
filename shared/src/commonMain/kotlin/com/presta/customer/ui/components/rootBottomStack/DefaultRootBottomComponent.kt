@@ -212,17 +212,20 @@ class DefaultRootBottomComponent(
         scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
-                    val flow = poller.poll(
-                        state.cachedMemberData.expires_in * 100,
-                        OrganisationModel.organisation.tenant_id,
-                        state.cachedMemberData.refId
-                    )
+                    if ( OrganisationModel.organisation.tenant_id!=null){
 
-                    flow.collect {
-                        it.onSuccess { response ->
-                            onAuthEvent(AuthStore.Intent.UpdateRefreshToken(response))
-                        }.onFailure { error ->
-                            onAuthEvent(AuthStore.Intent.UpdateError(error.message))
+                        val flow = poller.poll(
+                            state.cachedMemberData.expires_in * 100,
+                            OrganisationModel.organisation.tenant_id,
+                            state.cachedMemberData.refId
+                        )
+
+                        flow.collect {
+                            it.onSuccess { response ->
+                                onAuthEvent(AuthStore.Intent.UpdateRefreshToken(response))
+                            }.onFailure { error ->
+                                onAuthEvent(AuthStore.Intent.UpdateError(error.message))
+                            }
                         }
                     }
                 }

@@ -115,13 +115,15 @@ fun OtpContent(
         if (
             state.phone_number !== null
         ) {
-            onEvent(
-                OtpStore.Intent.RequestOTP(
-                    token = "",
-                    phoneNumber = state.phone_number,
-                    tenantId = OrganisationModel.organisation.tenant_id
+            if ( OrganisationModel.organisation.tenant_id!=null){
+                onEvent(
+                    OtpStore.Intent.RequestOTP(
+                        token = "",
+                        phoneNumber = state.phone_number,
+                        tenantId = OrganisationModel.organisation.tenant_id
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -144,12 +146,15 @@ fun OtpContent(
 
     LaunchedEffect(otpInput) {
         if (state.otpRequestData !== null && otpInput.length == maxChar) {
-            onEvent(OtpStore.Intent.VerifyOTP(
-                token = "",
-                requestMapper = state.otpRequestData.requestMapper,
-                otp = otpInput,
-                tenantId = OrganisationModel.organisation.tenant_id
-            ))
+            if (OrganisationModel.organisation.tenant_id!=null){
+                onEvent(OtpStore.Intent.VerifyOTP(
+                    token = "",
+                    requestMapper = state.otpRequestData.requestMapper,
+                    otp = otpInput,
+                    tenantId = OrganisationModel.organisation.tenant_id
+                ))
+            }
+
         }
     }
 
@@ -310,12 +315,14 @@ fun OtpContent(
                 ) {
                     Text(
                         modifier = Modifier.clickable {
-                            if (state.phone_number !== null) {
-                                onEvent(OtpStore.Intent.RequestOTP(
-                                    token = "",
-                                    phoneNumber = state.phone_number,
-                                    tenantId = OrganisationModel.organisation.tenant_id
-                                ))
+                            if (OrganisationModel.organisation.tenant_id!=null){
+                                if (state.phone_number !== null) {
+                                    onEvent(OtpStore.Intent.RequestOTP(
+                                        token = "",
+                                        phoneNumber = state.phone_number,
+                                        tenantId = OrganisationModel.organisation.tenant_id
+                                    ))
+                                }
                             }
                         },
                         textAlign = TextAlign.Center,

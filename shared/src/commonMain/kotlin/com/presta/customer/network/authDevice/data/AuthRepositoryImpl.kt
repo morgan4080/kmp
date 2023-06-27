@@ -52,7 +52,7 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
         }
     }
 
-    override suspend fun updateAuthToken(tenantId: String, refId: String): Result<RefreshTokenResponse> {
+    override suspend fun updateAuthToken(tenantId: String?, refId: String): Result<RefreshTokenResponse> {
         return try {
 
             var refreshToken = ""

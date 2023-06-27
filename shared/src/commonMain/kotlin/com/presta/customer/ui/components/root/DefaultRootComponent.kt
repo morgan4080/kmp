@@ -18,6 +18,7 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.network.payments.model.PaymentStatuses
+import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.prestaDispatchers
 import com.presta.customer.ui.components.auth.AuthComponent
 import com.presta.customer.ui.components.auth.DefaultAuthComponent
@@ -44,6 +45,8 @@ import com.presta.customer.ui.components.rootBottomStack.DefaultRootBottomCompon
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
 import com.presta.customer.ui.components.splash.DefaultSplashComponent
 import com.presta.customer.ui.components.splash.SplashComponent
+import com.presta.customer.ui.components.tenant.DefaultTenantComponent
+import com.presta.customer.ui.components.tenant.TenantComponent
 import com.presta.customer.ui.components.transactionHistory.DefaultTransactionHistoryComponent
 import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
 import com.presta.customer.ui.components.welcome.DefaultWelcomeComponent
@@ -82,6 +85,7 @@ class DefaultRootComponent(
 
     private fun createChild(config: Config, componentContext: ComponentContext): RootComponent.Child =
         when (config) {
+            is Config.Tenant -> RootComponent.Child.TenantChild(tenantComponent(componentContext))
             is Config.Splash -> RootComponent.Child.SplashChild(splashComponent(componentContext))
             is Config.Welcome -> RootComponent.Child.WelcomeChild(welcomeComponent(componentContext, config))
             is Config.OnBoarding -> RootComponent.Child.OnboardingChild(onBoardingComponent(componentContext, config))
@@ -112,6 +116,19 @@ class DefaultRootComponent(
             }
         )
 
+    private fun tenantComponent(componentContext: ComponentContext): TenantComponent =
+        DefaultTenantComponent(
+            componentContext = componentContext,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            onSubmit = { onBoardingContext, tenantId ->
+                navigation.push(Config.OnBoarding(
+                    onBoardingContext = onBoardingContext,
+                    tenantId = tenantId
+                ))
+            },
+        )
+
     private fun splashComponent(componentContext: ComponentContext): SplashComponent =
         DefaultSplashComponent(
             componentContext = componentContext,
@@ -140,11 +157,19 @@ class DefaultRootComponent(
             componentContext = componentContext,
             onBoardingContext = config.context,
             onGetStartedSelected = {
-                navigation.push(
-                    Config.OnBoarding(
-                        onBoardingContext = it
+                if (OrganisationModel.organisation.tenant_id !== null) {
+                    navigation.push(
+                        Config.OnBoarding(
+                            onBoardingContext = it
+                        )
                     )
-                )
+                } else {
+                    navigation.push(
+                        Config.Tenant(
+                            onBoardingContext = it
+                        )
+                    )
+                }
             },
         )
 
@@ -153,6 +178,7 @@ class DefaultRootComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
             onBoardingContext = config.onBoardingContext,
+            tenantId = config.tenantId,
             onPush = { memberRefId, phoneNumber, isActive, isTermsAccepted, onBoardingContext, pinStatus ->
                  navigation.push(
                      Config.OTP(
@@ -378,11 +404,13 @@ class DefaultRootComponent(
 
     private sealed class Config : Parcelable {
         @Parcelize
+        data class Tenant(val onBoardingContext: OnBoardingContext) : Config()
+        @Parcelize
         object Splash : Config()
         @Parcelize
         data class Welcome (val context: OnBoardingContext) : Config()
         @Parcelize
-        data class OnBoarding (val onBoardingContext: OnBoardingContext) : Config()
+        data class OnBoarding (val onBoardingContext: OnBoardingContext, val tenantId: String? = null) : Config()
         @Parcelize
         data class OTP (val memberRefId: String?, val onBoardingContext: OnBoardingContext, val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean, val pinStatus: PinStatus?) : Config()
         @Parcelize

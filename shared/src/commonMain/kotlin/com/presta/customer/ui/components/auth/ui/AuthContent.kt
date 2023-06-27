@@ -147,12 +147,16 @@ fun AuthContent(
                 Contexts.CONFIRM_PIN -> {
 
                     if (pinToConfirm == pinInput && onBoardingState.member.refId !== null) {
-                        onOnBoardingEvent(OnBoardingStore.Intent.UpdateMember(
-                            token = "",
-                            memberRefId = onBoardingState.member.refId,
-                            pinConfirmation = pinInput,
-                            tenantId = OrganisationModel.organisation.tenant_id
-                        ))
+
+                        if (OrganisationModel.organisation.tenant_id!=null){
+                            onOnBoardingEvent(OnBoardingStore.Intent.UpdateMember(
+                                token = "",
+                                memberRefId = onBoardingState.member.refId,
+                                pinConfirmation = pinInput,
+                                tenantId = OrganisationModel.organisation.tenant_id
+                            ))
+
+                        }
                     } else {
                         onEvent(AuthStore.Intent.UpdateContext(
                             context = Contexts.CREATE_PIN,
@@ -168,14 +172,19 @@ fun AuthContent(
                 }
                 Contexts.LOGIN -> {
                     if (onBoardingState.member.refId !== null && onBoardingState.member.registrationFeeInfo !== null) {
-                        onEvent(AuthStore.Intent.LoginUser(
-                            phoneNumber = state.phoneNumber,
-                            pin = pinInput,
-                            tenantId = OrganisationModel.organisation.tenant_id,
-                            refId = onBoardingState.member.refId,
-                            registrationFees = onBoardingState.member.registrationFeeInfo.registrationFees,
-                            registrationFeeStatus = onBoardingState.member.registrationFeeInfo.registrationFeeStatus.toString()
-                        ))
+
+                        if (OrganisationModel.organisation.tenant_id!=null){
+
+                            onEvent(AuthStore.Intent.LoginUser(
+                                phoneNumber = state.phoneNumber,
+                                pin = pinInput,
+                                tenantId = OrganisationModel.organisation.tenant_id,
+                                refId = onBoardingState.member.refId,
+                                registrationFees = onBoardingState.member.registrationFeeInfo.registrationFees,
+                                registrationFeeStatus = onBoardingState.member.registrationFeeInfo.registrationFeeStatus.toString()
+                            ))
+                        }
+
                     }
                     clearPinCharacters()
                 }
@@ -207,12 +216,16 @@ fun AuthContent(
         }
 
         if (state.phoneNumber !== null) {
-            onOnBoardingEvent(OnBoardingStore.Intent.GetMemberDetails(
-                token = "",
-                memberIdentifier = state.phoneNumber,
-                identifierType = IdentifierTypes.PHONE_NUMBER,
-                tenantId = OrganisationModel.organisation.tenant_id
-            ))
+            if ( OrganisationModel.organisation.tenant_id!=null){
+
+                onOnBoardingEvent(OnBoardingStore.Intent.GetMemberDetails(
+                    token = "",
+                    memberIdentifier = state.phoneNumber,
+                    identifierType = IdentifierTypes.PHONE_NUMBER,
+                    tenantId = OrganisationModel.organisation.tenant_id
+                ))
+
+            }
         }
     }
 

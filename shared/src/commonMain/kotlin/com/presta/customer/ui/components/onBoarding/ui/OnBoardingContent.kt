@@ -97,12 +97,14 @@ fun OnBoardingContent(
 
         if (isPhoneNumber(phoneNumber.text)) {
             onEvent(OnBoardingStore.Intent.UpdateError(null))
-            onEvent(OnBoardingStore.Intent.GetMemberDetails(
-                token = "",
-                memberIdentifier = "${state.country.code}${phoneNumber.text}",
-                identifierType = IdentifierTypes.PHONE_NUMBER,
-                tenantId = OrganisationModel.organisation.tenant_id
-            ))
+            if (OrganisationModel.organisation.tenant_id !== null) {
+                onEvent(OnBoardingStore.Intent.GetMemberDetails(
+                    token = "",
+                    memberIdentifier = "${state.country.code}${phoneNumber.text}",
+                    identifierType = IdentifierTypes.PHONE_NUMBER,
+                    tenantId = OrganisationModel.organisation.tenant_id
+                ))
+            }
         } else {
             onEvent(OnBoardingStore.Intent.UpdateError("Please enter a valid phone number"))
         }
@@ -116,12 +118,16 @@ fun OnBoardingContent(
 
         if (isPhoneNumber(phoneNumber.text)) {
             onEvent(OnBoardingStore.Intent.UpdateError(null))
-            onEvent(OnBoardingStore.Intent.GetMemberDetails(
-                token = "",
-                memberIdentifier = "${state.country.code}${phoneNumber.text}",
-                identifierType = IdentifierTypes.PHONE_NUMBER,
-                tenantId = OrganisationModel.organisation.tenant_id
-            ))
+            if (OrganisationModel.organisation.tenant_id !== null) {
+                onEvent(
+                    OnBoardingStore.Intent.GetMemberDetails(
+                        token = "",
+                        memberIdentifier = "${state.country.code}${phoneNumber.text}",
+                        identifierType = IdentifierTypes.PHONE_NUMBER,
+                        tenantId = OrganisationModel.organisation.tenant_id
+                    )
+                )
+            }
         } else {
             onEvent(OnBoardingStore.Intent.UpdateError("Please enter a valid phone number"))
         }

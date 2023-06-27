@@ -96,18 +96,4 @@ class PrestaShortTermLoansClient(
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
