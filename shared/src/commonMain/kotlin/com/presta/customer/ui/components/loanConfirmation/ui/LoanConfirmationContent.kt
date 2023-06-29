@@ -26,7 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-//import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.Popup
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.loanConfirmation.LoanConfirmationComponent
 import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStore
@@ -98,7 +98,7 @@ fun LoanConfirmationContent(
             }
         }
         if (launchPopUp) {
-            /*Popup {
+            Popup {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -197,7 +197,7 @@ fun LoanConfirmationContent(
                         }
                     }
                 }
-            }*/
+            }
         }
     }
 }

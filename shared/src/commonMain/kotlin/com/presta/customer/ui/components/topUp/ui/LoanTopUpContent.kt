@@ -41,7 +41,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-//import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.ui.components.profile.store.ProfileStore
@@ -288,7 +288,7 @@ fun LoanTopUpContent(
                             }
                         }
                         if (launchPopUp) {
-                            /*Popup {
+                            Popup {
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -401,7 +401,7 @@ fun LoanTopUpContent(
                                         }
                                     }
                                 }
-                            }*/
+                            }
                         }
 
                         Text(
