@@ -27,7 +27,7 @@ val DarkGray400 = Color(0xFF3e4047)
 
 val Gray400 = Color(0xFF595C61)
 
-val primaryColor = Color(0xFFf2525a)
+val primaryColor = Color(0xFF459aab)
 
 val textColorBlur = Color(0xFF95989A)
 

@@ -259,7 +259,7 @@ fun AuthContent(
             onEvent(AuthStore.Intent.UpdateError(null))
 
             if (state.pinStatus == PinStatus.SET) {
-                platform.showToast("Please Contact admin to reset your pin")
+                platform.showToast("Please Contact Admin")
             } else {
                 onEvent(AuthStore.Intent.UpdateContext(
                     context = Contexts.CREATE_PIN,
