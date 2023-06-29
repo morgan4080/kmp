@@ -94,13 +94,17 @@ fun OnBoardingContent(
     val snackbarHostState = remember { SnackbarHostState() }
 
     val annotatedString = buildAnnotatedString {
-        append("Accept to ")
+        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+            append("Accept to ")
+        }
         pushStringAnnotation(tag = "terms", annotation =  "https://support.presta.co.ke/portal/en/kb/articles/privacy-policy")
         withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
             append("Terms & Conditions ")
         }
         pop()
-        append(" and ")
+        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+            append("and ")
+        }
         pushStringAnnotation(tag = "policy", annotation = "https://lending.presta.co.ke/kopesha/legal/presta-privacy-policy.html")
         withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
             append("Privacy Policy")
