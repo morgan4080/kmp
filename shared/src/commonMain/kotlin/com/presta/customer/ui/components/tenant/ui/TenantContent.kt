@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.AppContext
 import com.presta.customer.MR
+import com.presta.customer.Platform
 import com.presta.customer.SharedStatus
 import com.presta.customer.ui.components.tenant.TenantComponent
 import com.presta.customer.ui.components.tenant.store.TenantStore
@@ -71,12 +72,13 @@ fun TenantContent(
     component: TenantComponent,
     connectivityStatus: SharedStatus?,
     onTenantEvent: (TenantStore.Intent) -> Unit,
-    state: TenantStore.State,
+    state: TenantStore.State
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
     val focusRequester = remember { FocusRequester() }
     var isError by remember { mutableStateOf(false) }
-     val context: AppContext
+
+
 
     LaunchedEffect(connectivityStatus) {
         if (connectivityStatus !== null) {
@@ -237,10 +239,11 @@ fun TenantContent(
                         )
                     }
 
+
                     Text(modifier = Modifier
                         .padding(top = 22.dp)
                         .clickable {
-                           // component.platform.openUrl("https://stackoverflow.com/questions/45958744/in-kotlin-how-do-i-open-a-link-in-new-window")
+                            component.platform.openUrl("https://support.presta.co.ke/portal/en/kb/articles/how-to-access-account-tenant-id")
 
                         },
                         text = "What is tenant ID?",

@@ -29,6 +29,7 @@ interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
         data class LoginUser(val phoneNumber: String, val pin: String, val tenantId: String, val refId: String, val registrationFees: Double, val registrationFeeStatus: String): Intent()
         data class  RefreshToken(val tenantId: String, val refId: String): Intent()
         object GetCachedMemberData: Intent()
+        object UpdateLoading: Intent()
         data class CheckAuthenticatedUser(val token: String): Intent()
         data class UpdateError(val error: String?): Intent()
         data class UpdateContext(val context: Contexts, val title: String, val label: String, val pinCreated: Boolean, val pinConfirmed: Boolean, val error: String?): Intent()

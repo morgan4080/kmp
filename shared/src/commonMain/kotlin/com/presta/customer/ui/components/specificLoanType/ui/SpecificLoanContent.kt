@@ -118,7 +118,7 @@ fun SpecificLoaContent(
                         TextInputContainer(
                             "Enter the desired amount",
                             "",
-                            inputType = InputTypes.NUMBER,
+                            inputType = InputTypes.NUMBER
                         ) {
                             val inputValue: Double? = TextFieldValue(it).text.toDoubleOrNull()
                             if (inputValue != null) {
@@ -166,12 +166,13 @@ fun SpecificLoaContent(
                                 .height(65.dp)
                                 .padding(top = 20.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
                                 .absoluteOffset(y = 2.dp),
+                            enabled = state.prestaShortTermLoanProductById !== null && state.prestaShortTermLoanProductById.maxTerm != state.prestaShortTermLoanProductById.minTerm,
                             keyboardOptions = KeyboardOptions(keyboardType =KeyboardType.Number
                             ),
                             value = desiredPeriod,
                             onValueChange = {
                                 if (it.text.isEmpty() || it.text.matches(pattern)) {
-                                    desiredPeriod= it
+                                    desiredPeriod = it
                                 }
                             },
                             singleLine = true,

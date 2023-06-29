@@ -1,6 +1,7 @@
 package com.presta.customer.ui.components.splash
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.Lifecycle
@@ -19,6 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -68,38 +70,55 @@ class DefaultSplashComponent(
 
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
-    init {
-        onEvent(AuthStore.Intent.GetCachedMemberData)
-
-        scope.launch {
-            authState.collect { state ->
-                if (state.cachedMemberData !== null && state.cachedMemberData.accessToken !== "") {
-                    if (
-                        state.authUserResponse == null &&
-                        state.cachedMemberData.accessToken !== "" &&
-                        state.cachedMemberData.refId !== "" &&
-                        state.cachedMemberData.phoneNumber !== ""
-                    ) {
-                        if (state.isOnline) {
-                            navigateToAuth(
-                                state.cachedMemberData.refId,
-                                state.cachedMemberData.phoneNumber,
-                                true,
-                                true,
-                                DefaultRootComponent.OnBoardingContext.LOGIN,
-                                PinStatus.SET
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     override fun onSignUpClicked() {
         onSignUp()
     }
     override fun onSignInClicked() {
         onSignIn()
+    }
+
+    init {
+        onEvent(AuthStore.Intent.GetCachedMemberData)
+
+        lifecycle.subscribe(
+            object : Lifecycle.Callbacks {
+                override fun onResume() {
+                    super.onResume()
+                    scope.launch {
+                        authState.collect { state ->
+                            if (state.cachedMemberData !== null && state.cachedMemberData.accessToken !== "") {
+                                if (
+                                    state.authUserResponse == null &&
+                                    state.cachedMemberData.accessToken !== "" &&
+                                    state.cachedMemberData.refId !== "" &&
+                                    state.cachedMemberData.phoneNumber !== ""
+                                ) {
+                                    if (state.isOnline) {
+                                        navigateToAuth(
+                                            state.cachedMemberData.refId,
+                                            state.cachedMemberData.phoneNumber,
+                                            true,
+                                            true,
+                                            DefaultRootComponent.OnBoardingContext.LOGIN,
+                                            PinStatus.SET
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    scope.launch {
+                        authState.collect { state ->
+                            if (state.isOnline) {
+                                onEvent(AuthStore.Intent.UpdateLoading)
+                                delay(3000)
+                                onSignInClicked()
+                                this.cancel()
+                            }
+                        }
+                    }
+                }
+            }
+        )
     }
 }

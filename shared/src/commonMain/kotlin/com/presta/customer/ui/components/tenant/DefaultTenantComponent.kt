@@ -9,6 +9,7 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.presta.customer.AppContext
 import com.presta.customer.MR
 import com.presta.customer.Platform
 import com.presta.customer.organisation.Organisation
@@ -42,6 +43,7 @@ class DefaultTenantComponent(
     mainContext: CoroutineContext,
     override val onBoardingContext: DefaultRootComponent.OnBoardingContext,
     private val onSubmit: (onBoardingContext: DefaultRootComponent.OnBoardingContext, tenantId: String) -> Unit,
+
 ): TenantComponent, ComponentContext by componentContext, KoinComponent {
     private val scope = coroutineScope(mainContext + SupervisorJob())
 

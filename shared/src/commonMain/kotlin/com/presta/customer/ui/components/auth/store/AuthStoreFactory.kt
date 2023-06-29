@@ -91,6 +91,7 @@ internal class AuthStoreFactory(
                 is AuthStore.Intent.LogOutUser -> logOutUser()
                 is AuthStore.Intent.UpdateOnlineState -> dispatch(Msg.ConnectivityFulfilled(isOnline = intent.isOnline))
                 is AuthStore.Intent.UpdateRefreshToken -> dispatch(Msg.RefreshFulfilled(refreshResponse = intent.refreshResponse))
+                is AuthStore.Intent.UpdateLoading -> dispatch(Msg.AuthLoading())
             }
 
         private var loginUserJob: Job? = null

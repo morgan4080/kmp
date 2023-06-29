@@ -26,7 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
+//import androidx.compose.ui.window.Popup
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.loanConfirmation.LoanConfirmationComponent
 import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStore
@@ -75,7 +75,7 @@ fun LoanConfirmationContent(
             //action Button
 
             item {
-                Row(modifier = Modifier.padding(top = 30.dp, bottom = 150.dp)) {
+                Row(modifier = Modifier.padding(top = 30.dp, bottom = 20.dp)) {
                     ActionButton("Confirm", onClickContainer = {
                         launchPopUp = true
                     }, loading = state.isLoading || authState.isLoading)
@@ -98,7 +98,7 @@ fun LoanConfirmationContent(
             }
         }
         if (launchPopUp) {
-            Popup {
+            /*Popup {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -197,7 +197,7 @@ fun LoanConfirmationContent(
                         }
                     }
                 }
-            }
+            }*/
         }
     }
 }

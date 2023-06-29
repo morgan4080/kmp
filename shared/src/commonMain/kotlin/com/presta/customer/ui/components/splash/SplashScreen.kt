@@ -76,96 +76,77 @@ fun SplashScreen(component: SplashComponent, connectivityStatus: SharedStatus?) 
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column (modifier = Modifier
-                .fillMaxHeight(0.95f),
-                verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.CenterHorizontally
+            Row (
+                modifier = Modifier.padding(bottom = 33.dp),
+                horizontalArrangement = Arrangement.Center
             ) {
-                Column (
+                Image(
+                    painter = painterResource(model.organisation.logo),
+                    contentDescription = "Logo",
                     modifier = Modifier
-                        .fillMaxHeight(0.55f)
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.Bottom,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row (
-                        modifier = Modifier.padding(bottom = 33.dp),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        val painter: Painter = painterResource(model.organisation.logo)
-
-                        Image(
-                            painter = painter,
-                            contentDescription = "Logo",
-                            modifier = Modifier
-                        )
-                    }
-                    Row (
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-
-                        Text(
-                            modifier = Modifier.alpha(0.8f),
-                            text = model.organisation.tenant_name.uppercase(),
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
-                        )
-                    }
-                }
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    if (authState.isLoading || authState.cachedMemberData?.session_id !== "" || connectivityStatus == null || !authState.isOnline) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(25.dp).padding(end = 2.dp),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    } else {
-                        Row (
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            Button(
-                                modifier = Modifier.width(150.dp)
-                                    .border(
-                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                                        shape = RoundedCornerShape(size = 12.dp)
-                                    ),
-                                shape = RoundedCornerShape(size = 12.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color.Transparent,
-                                    contentColor = MaterialTheme.colorScheme.primary
-                                ),
-                                onClick = {
-                                    component.onSignInClicked()
-                                }
-                            ) {
-                                Text(
-                                    text = "Login",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
-                                )
-                            }
-                            Button(
-                                modifier = Modifier.width(150.dp),
-                                shape = RoundedCornerShape(size = 12.dp),
-                                onClick = {
-                                    component.onSignUpClicked()
-                                }
-                            ) {
-                                Text(
-                                    text = "Sign Up",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
-                                )
-                            }
-                        }
-                    }
-                }
+                )
             }
+            Row (
+                modifier = Modifier.alpha(if (authState.isLoading || authState.cachedMemberData?.session_id !== "" || connectivityStatus == null || !authState.isOnline)  1f else 0f),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(25.dp).padding(end = 2.dp),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            /*Column(
+                   modifier = Modifier
+                       .fillMaxWidth(),
+                   horizontalAlignment = Alignment.CenterHorizontally
+               ) {
+                   if (authState.isLoading || authState.cachedMemberData?.session_id !== "" || connectivityStatus == null || !authState.isOnline) {
+                       CircularProgressIndicator(
+                           modifier = Modifier.size(25.dp).padding(end = 2.dp),
+                           color = MaterialTheme.colorScheme.onSurface
+                       )
+                   } else {
+                       Row (
+                           modifier = Modifier.fillMaxWidth(),
+                           horizontalArrangement = Arrangement.SpaceBetween,
+                       ) {
+                           Button(
+                               modifier = Modifier.width(150.dp)
+                                   .border(
+                                       border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                                       shape = RoundedCornerShape(size = 12.dp)
+                                   ),
+                               shape = RoundedCornerShape(size = 12.dp),
+                               colors = ButtonDefaults.buttonColors(
+                                   containerColor = Color.Transparent,
+                                   contentColor = MaterialTheme.colorScheme.primary
+                               ),
+                               onClick = {
+                                   component.onSignInClicked()
+                               }
+                           ) {
+                               Text(
+                                   text = "Login",
+                                   style = MaterialTheme.typography.bodyLarge,
+                                   fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                               )
+                           }
+                           Button(
+                               modifier = Modifier.width(150.dp),
+                               shape = RoundedCornerShape(size = 12.dp),
+                               onClick = {
+                                   component.onSignUpClicked()
+                               }
+                           ) {
+                               Text(
+                                   text = "Sign Up",
+                                   style = MaterialTheme.typography.bodyLarge,
+                                   fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                               )
+                           }
+                       }
+                   }
+               }*/
         }
     }
 }

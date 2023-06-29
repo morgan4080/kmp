@@ -1,9 +1,6 @@
 package com.presta.customer.ui.components.onBoarding.ui
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
@@ -37,12 +35,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.network.onBoarding.model.PinStatus
+import com.presta.customer.network.onBoarding.model.SelfRegistrationStatus
 import com.presta.customer.organisation.OrganisationModel
+import com.presta.customer.ui.components.onBoarding.OnBoardingComponent
 import com.presta.customer.ui.components.onBoarding.store.IdentifierTypes
 import com.presta.customer.ui.components.onBoarding.store.InputFields
 import com.presta.customer.ui.components.onBoarding.store.OnBoardingStore
@@ -71,7 +74,9 @@ fun OnBoardingContent(
         isActive: Boolean,
         onBoardingContext: DefaultRootComponent.OnBoardingContext,
         pinStatus: PinStatus?
-    ) -> Unit
+    ) -> Unit,
+    component: OnBoardingComponent
+
 ) {
     val scaffoldState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -88,23 +93,35 @@ fun OnBoardingContent(
     val kc = LocalSoftwareKeyboardController.current
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val annotatedString = buildAnnotatedString {
+        append("Accept to ")
+        pushStringAnnotation(tag = "terms", annotation =  "https://support.presta.co.ke/portal/en/kb/articles/privacy-policy")
+        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+            append("Terms & Conditions ")
+        }
+        pop()
+        append(" and ")
+        pushStringAnnotation(tag = "policy", annotation = "https://lending.presta.co.ke/kopesha/legal/presta-privacy-policy.html")
+        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+            append("Privacy Policy")
+        }
+        pop()
+    }
+
     fun startLoginJourney() {
         if (!termsAccepted) {
             onEvent(OnBoardingStore.Intent.UpdateError("Kindly accept terms"))
             return
         }
 
-
         if (isPhoneNumber(phoneNumber.text)) {
             onEvent(OnBoardingStore.Intent.UpdateError(null))
-            if (OrganisationModel.organisation.tenant_id !== null) {
-                onEvent(OnBoardingStore.Intent.GetMemberDetails(
-                    token = "",
-                    memberIdentifier = "${state.country.code}${phoneNumber.text}",
-                    identifierType = IdentifierTypes.PHONE_NUMBER,
-                    tenantId = OrganisationModel.organisation.tenant_id!!
-                ))
-            }
+            onEvent(OnBoardingStore.Intent.GetMemberDetails(
+                token = "",
+                memberIdentifier = "${state.country.code}${phoneNumber.text}",
+                identifierType = IdentifierTypes.PHONE_NUMBER,
+                tenantId = OrganisationModel.organisation.tenant_id
+            ))
         } else {
             onEvent(OnBoardingStore.Intent.UpdateError("Please enter a valid phone number"))
         }
@@ -118,16 +135,14 @@ fun OnBoardingContent(
 
         if (isPhoneNumber(phoneNumber.text)) {
             onEvent(OnBoardingStore.Intent.UpdateError(null))
-            if (OrganisationModel.organisation.tenant_id !== null) {
-                onEvent(
-                    OnBoardingStore.Intent.GetMemberDetails(
-                        token = "",
-                        memberIdentifier = "${state.country.code}${phoneNumber.text}",
-                        identifierType = IdentifierTypes.PHONE_NUMBER,
-                        tenantId = OrganisationModel.organisation.tenant_id!!
-                    )
+            onEvent(
+                OnBoardingStore.Intent.GetMemberDetails(
+                    token = "",
+                    memberIdentifier = "${state.country.code}${phoneNumber.text}",
+                    identifierType = IdentifierTypes.PHONE_NUMBER,
+                    tenantId = OrganisationModel.organisation.tenant_id
                 )
-            }
+            )
         } else {
             onEvent(OnBoardingStore.Intent.UpdateError("Please enter a valid phone number"))
         }
@@ -146,18 +161,25 @@ fun OnBoardingContent(
             onEvent(OnBoardingStore.Intent.ClearMember(null))
         }
     }
-
-
     LaunchedEffect(state.member) {
         if (state.member !== null && state.member.refId == null && !startRegistration) {
-            snackbarHostState.showSnackbar(
-                "User not registered"
-            )
+            startRegistration = when (state.member.accountInfo.selfRegistrationStatus) {
+                SelfRegistrationStatus.ENABLED -> {
+                    snackbarHostState.showSnackbar(
+                        "User not registered, starting registration process."
+                    )
+                    true
+                }
 
-            startRegistration = true
+                SelfRegistrationStatus.DISABLED -> {
+                    snackbarHostState.showSnackbar(
+                        "User not registered"
+                    )
+                    false
+                }
+            }
         }
     }
-
     if (
         startRegistration &&
         isPhoneNumber(phoneNumber.text) &&
@@ -177,9 +199,6 @@ fun OnBoardingContent(
             onEvent(OnBoardingStore.Intent.ClearMember(null))
         }
     }
-
-
-
     ModalBottomSheetLayout(
         modifier = Modifier.padding(LocalSafeArea.current),
         sheetShape = RoundedCornerShape(
@@ -279,9 +298,6 @@ fun OnBoardingContent(
                                         callingCode = state.country.code,
                                         inputType = InputTypes.PHONE,
                                         callback = {
-                                            /*scope.launch {
-                                                listState.animateScrollToItem(5)
-                                            }*/
                                             if (!isPhoneNumber(it) && it.isNotEmpty()) {
                                                 onEvent(OnBoardingStore.Intent.UpdateError("Please enter a valid phone number"))
                                             } else {
@@ -317,15 +333,17 @@ fun OnBoardingContent(
                                 onEvent(OnBoardingStore.Intent.UpdateError(null))
                             }
                         )
-                        Text(
-                            modifier = Modifier.clickable {
-                                termsAccepted = !termsAccepted
-                                onEvent(OnBoardingStore.Intent.UpdateError(null))
-                            },
-                            text = "Accept to Terms & Conditions and Privacy Policy.",
-                            style = MaterialTheme.typography.bodySmall,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                        )
+                        ClickableText(text = annotatedString, style = MaterialTheme.typography.bodySmall, onClick = { offset ->
+                            annotatedString.getStringAnnotations(tag = "terms", start = offset, end = offset).firstOrNull()?.let {
+                                //Test  the logged url
+                                component.platform.openUrl("https://support.presta.co.ke/portal/en/kb/articles/privacy-policy")
+                            }
+                            annotatedString.getStringAnnotations(tag = "policy", start = offset, end = offset).firstOrNull()?.let {
+                                component.platform.openUrl("https://lending.presta.co.ke/kopesha/legal/presta-privacy-policy.html")
+                            }
+                            onEvent(OnBoardingStore.Intent.UpdateError(null))
+
+                        })
                     }
                 }
                 item {

@@ -188,7 +188,7 @@ fun HomeCardListItem(
                                     showShimmer = totalLoans == null
                                 ),
                                 shape = RoundedCornerShape(12.dp)
-                            ).defaultMinSize(150.dp),
+                            ).defaultMinSize(20.dp),
                             text = if (totalLoans !== null)
                                        "$totalLoans"
                                    else

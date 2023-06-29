@@ -51,7 +51,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
+//import androidx.compose.ui.window.Popup
 import androidx.compose.ui.zIndex
 import com.presta.customer.MR
 import com.presta.customer.network.loanRequest.model.LoanApplicationStatus
@@ -282,7 +282,7 @@ fun PendingApprovalsContent(
         }
 
         selectedLoan?.let { pendingLoan ->
-            Popup {
+            /*Popup {
                 Column (
                     modifier = Modifier
                         .fillMaxWidth()
@@ -383,7 +383,7 @@ fun PendingApprovalsContent(
                         }
                     }
                 }
-            }
+            }*/
         }
     }
 }
