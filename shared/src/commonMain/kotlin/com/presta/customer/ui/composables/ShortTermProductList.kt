@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.Platform
+import com.presta.customer.network.shortTermLoans.model.LoanPeriodUnit
 import com.presta.customer.network.shortTermLoans.model.PrestaLoanEligibilityResponse
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
@@ -52,10 +53,8 @@ fun ShortTermProductList(
     onEvent: (ShortTermLoansStore.Intent) -> Unit,
     eligibilityResponse: PrestaLoanEligibilityResponse?
 ) {
-
     var refreshing by remember { mutableStateOf(false) }
     val refreshScope = rememberCoroutineScope()
-
     fun refresh() = refreshScope.launch {
         refreshing = true
         authState.cachedMemberData?.let {
@@ -105,7 +104,8 @@ fun ShortTermProductList(
                                     .padding(top = 10.dp)
                             ) {
                                 ProductSelectionCard(shortTermProduct.name!!,
-                                    if (shortTermProduct.interestRate != null) "Interest " + shortTermProduct.interestRate.toString() + "%" else "",
+
+                                  description =   if (shortTermProduct.interestRate != null) "Interest ${shortTermProduct.interestRate}%/"+ shortTermProduct.interestPeriodCycle else "",
                                     onClickContainer = {
                                         val loanName = shortTermProduct.name
                                         // check eligibility for selected loan
@@ -150,9 +150,7 @@ fun ShortTermProductList(
                                 ) {
                                 }
                             }
-
                         }
-
                     }
                 }
                 item {

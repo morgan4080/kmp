@@ -12,4 +12,5 @@ expect class Platform(context: AppContext) {
     fun showToast(text: String, duration: Durations = Durations.LONG)
     fun startSmsRetriever()
     fun getAppSignatures(): String
+    fun openUrl(urls: String)
 }

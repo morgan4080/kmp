@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import androidx.compose.ui.window.Popup
 import com.presta.customer.network.profile.model.LoanBreakDown
+import com.presta.customer.ui.components.pendingApprovals.ui.LoanDetailsRow
 import com.presta.customer.ui.components.profile.store.ProfileStore
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.InputTypes
@@ -304,7 +305,7 @@ fun MoreDetails(
                     ) {
                         loanDetailsMap.map { detail ->
                             item {
-                                disbursementDetailsRow(detail.key, detail.value)
+                                LoanDetailsRow(detail.key, detail.value,)
                             }
                         }
                     }
@@ -312,7 +313,8 @@ fun MoreDetails(
                     Row(modifier = Modifier
                         .fillMaxWidth().padding(top = 14.dp, bottom = 7.dp)
                     ) {
-                        Text(text = "Loan schedule",
+                        Text(
+                            text = "Loan schedule",
                             style = MaterialTheme.typography.labelLarge,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                         )
@@ -343,12 +345,14 @@ fun MoreDetails(
                                 ) {
                                     Column {
                                         Text(
+                                            modifier = Modifier.align(Alignment.Start),
                                             text = "${localDateTime.dayOfMonth} ${localDateTime.month}",
                                             fontSize = MaterialTheme.typography.labelSmall.fontSize,
                                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                         )
 
                                         Text(
+                                            modifier = Modifier.align(Alignment.Start),
                                             text = "${localDateTime.time}",
                                             fontSize = MaterialTheme.typography.labelSmall.fontSize,
                                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
@@ -357,12 +361,14 @@ fun MoreDetails(
 
                                     Column {
                                         Text(
+                                            modifier = Modifier.align(Alignment.End),
                                             text = formatMoney(schedule.balance),
                                             fontSize = MaterialTheme.typography.labelMedium.fontSize,
                                             fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                                         )
 
                                         Text(
+                                            modifier = Modifier.align(Alignment.End),
                                             text = schedule.status,
                                             fontSize = MaterialTheme.typography.labelSmall.fontSize,
                                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
@@ -373,9 +379,7 @@ fun MoreDetails(
                             }
                         }
                     }
-
                 }
-
                 Row(
                     modifier = Modifier
                         .padding(top = 20.dp)

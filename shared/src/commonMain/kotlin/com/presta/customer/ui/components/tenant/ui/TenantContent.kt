@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -43,12 +45,16 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.moriatsushi.insetsx.ExperimentalSoftwareKeyboardApi
+import com.presta.customer.AppContext
 import com.presta.customer.MR
 import com.presta.customer.SharedStatus
 import com.presta.customer.ui.components.tenant.TenantComponent
@@ -70,6 +76,7 @@ fun TenantContent(
     val snackBarHostState = remember { SnackbarHostState() }
     val focusRequester = remember { FocusRequester() }
     var isError by remember { mutableStateOf(false) }
+     val context: AppContext
 
     LaunchedEffect(connectivityStatus) {
         if (connectivityStatus !== null) {
@@ -80,17 +87,14 @@ fun TenantContent(
                         duration = SnackbarDuration.Short
                     )
                 }
-                // component.onEvent(AuthStore.Intent.UpdateOnlineState(it))
             }
         }
     }
-
     LaunchedEffect(state.tenantData) {
         if (state.tenantData !== null) {
             component.onSubmitClicked(state.tenantData.tenantId)
         }
     }
-
     Scaffold(
         modifier = Modifier.fillMaxHeight(1f)
             .padding(LocalSafeArea.current),
@@ -119,19 +123,18 @@ fun TenantContent(
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                 )
             }
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 17.dp)
             ) {
                 Text(
-                    text = "Kindly note that your organization's Account No. on your web account, under the account Profile section, serves as your tenant ID.",
+                    text = "Kindly note that your organization's Account No. on your web account, under the  Profile section, serves as your tenant ID.",
                     fontSize = 13.sp,
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                 )
             }
-            Column (
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 31.dp)
@@ -192,7 +195,6 @@ fun TenantContent(
                                     )
                                 }
 
-
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalAlignment = Alignment.CenterVertically,
@@ -213,7 +215,13 @@ fun TenantContent(
 
                                         IconButton(
                                             modifier = Modifier.size(18.dp),
-                                            onClick = { onTenantEvent(TenantStore.Intent.UpdateField(TextFieldValue())) },
+                                            onClick = {
+                                                onTenantEvent(
+                                                    TenantStore.Intent.UpdateField(
+                                                        TextFieldValue()
+                                                    )
+                                                )
+                                            },
                                             content = {
                                                 Icon(
                                                     modifier = Modifier.alpha(0.4f),
@@ -228,6 +236,19 @@ fun TenantContent(
                             }
                         )
                     }
+
+                    Text(modifier = Modifier
+                        .padding(top = 22.dp)
+                        .clickable {
+                           // component.platform.openUrl("https://stackoverflow.com/questions/45958744/in-kotlin-how-do-i-open-a-link-in-new-window")
+
+                        },
+                        text = "What is tenant ID?",
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        color = actionButtonColor,
+                        fontSize = 12.sp,
+                        textDecoration = TextDecoration.Underline
+                    )
 
                     if (inputMethod.errorMessage !== "") {
                         Text(
@@ -247,12 +268,13 @@ fun TenantContent(
                     .fillMaxWidth()
                     .padding(bottom = 70.dp),
             ) {
-
                 ActionButton(
                     "Submit", onClickContainer = {
-                        onTenantEvent(TenantStore.Intent.GetClientById(
-                            searchTerm = state.tenantField.value.text
-                        ))
+                        onTenantEvent(
+                            TenantStore.Intent.GetClientById(
+                                searchTerm = state.tenantField.value.text
+                            )
+                        )
                         isError = state.error != null
                     },
                     loading = state.isLoading,

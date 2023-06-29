@@ -12,10 +12,21 @@ data class PrestaShortTermProductsListResponse @OptIn(ExperimentalSerializationA
     @EncodeDefault val interestPeriodCycle: String?=null,
     @EncodeDefault val isInterestGraduated: Boolean?=null,
     @EncodeDefault val daysAvailable: String?=null,
-    @EncodeDefault val loanPeriodUnit: String?=null,
+    @EncodeDefault val loanPeriodUnit: LoanPeriodUnit?=null,
     @EncodeDefault val minTerm: Int?=null,
     @EncodeDefault val maxTerm: Int?=null,
     @EncodeDefault val minAmount: Double?=null,
     @EncodeDefault val maxAmount: Double?=null
 )
+
+//Todo
+enum class LoanPeriodUnit {
+    DAYS,
+    WEEKS,
+    MONTHS,
+    YEARS
+}
+
+
+
 

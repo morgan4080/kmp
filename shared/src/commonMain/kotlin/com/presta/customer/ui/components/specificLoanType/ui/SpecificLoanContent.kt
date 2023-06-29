@@ -82,8 +82,7 @@ fun SpecificLoaContent(
     val focusRequester = remember { FocusRequester() }
     var desiredPeriod by remember { mutableStateOf(TextFieldValue()) }
     val emptyDesiredPeriod by remember { mutableStateOf(TextFieldValue()) }
-
-            if (allowedMaxTerm!=null ){
+    if (allowedMaxTerm!=null ){
                 desiredPeriod = TextFieldValue(allowedMaxTerm.toString())
             }
 
@@ -186,12 +185,11 @@ fun SpecificLoaContent(
                                 fontFamily = MaterialTheme.typography.bodySmall.fontFamily
                             ),
                             decorationBox = { innerTextField ->
-
                                 if (desiredPeriod.text.isEmpty()
                                 ) {
                                     Text(
                                         modifier = Modifier.alpha(.3f),
-                                        text = "Enter desired loan term",
+                                        text = if (state.prestaShortTermLoanProductById?.loanPeriodUnit!=null)"Enter desired loan term(${state.prestaShortTermLoanProductById.loanPeriodUnit})" else "",
                                         style = MaterialTheme.typography.bodySmall
                                     )
                                 }
@@ -203,7 +201,7 @@ fun SpecificLoaContent(
                                     exit = fadeOut() + shrinkVertically(),
                                 ) {
                                     Text(
-                                        text = "Enter Desired loan Term",
+                                        text = if (state.prestaShortTermLoanProductById?.loanPeriodUnit!=null)"Enter desired loan term(${state.prestaShortTermLoanProductById.loanPeriodUnit})" else "",
                                         color = primaryColor,
                                         style = MaterialTheme.typography.labelSmall,
                                         fontSize = 11.sp

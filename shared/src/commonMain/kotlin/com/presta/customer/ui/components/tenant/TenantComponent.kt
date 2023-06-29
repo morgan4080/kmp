@@ -1,12 +1,14 @@
 package com.presta.customer.ui.components.tenant
 
 import com.arkivanov.decompose.value.Value
+import com.presta.customer.Platform
 import com.presta.customer.organisation.Organisation
 import com.presta.customer.ui.components.root.DefaultRootComponent
 import com.presta.customer.ui.components.tenant.store.TenantStore
 import kotlinx.coroutines.flow.StateFlow
 
 interface TenantComponent {
+    val platform: Platform
 
     val tenantStore : TenantStore
 

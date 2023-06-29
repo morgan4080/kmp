@@ -29,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,7 +39,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -46,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.primaryColor
+import kotlinx.coroutines.delay
 
 enum class InputTypes {
     STRING,
@@ -69,6 +75,9 @@ fun TextInputContainer(
     callback: (userInput: String) -> Unit = {},
 ) {
     var userInput by remember { mutableStateOf(TextFieldValue()) }
+    val focusRequester = remember { FocusRequester() }
+    val inputService = LocalTextInputService.current
+    val focus = remember { mutableStateOf(false) }
 
     if (inputValue.isNotEmpty() ) {
         userInput = TextFieldValue(inputValue)
@@ -88,6 +97,15 @@ fun TextInputContainer(
         BasicTextField(
             modifier = Modifier
                 .height(65.dp)
+                .focusRequester(focusRequester)
+                .onFocusChanged {
+                    if (focus.value != it.isFocused) {
+                        focus.value = it.isFocused
+                        if (!it.isFocused) {
+                            inputService?.hideSoftwareKeyboard()
+                        }
+                    }
+                }
                 .padding(top = 20.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
                 .absoluteOffset(y = 2.dp),
             keyboardOptions = KeyboardOptions(keyboardType =
@@ -222,5 +240,11 @@ fun TextInputContainer(
                 }
             }
         )
+
+        LaunchedEffect("") {
+            delay(300)
+            inputService?.showSoftwareKeyboard()
+            focusRequester.requestFocus()
+        }
     }
 }

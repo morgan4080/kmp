@@ -142,7 +142,8 @@ fun DisbursementDetailsContainer(
 
 @Composable
 fun disbursementDetailsRow(
-    label: String, data: String?,
+    label: String,
+    data: String?,
     modeOfDisbursementState: ModeOfDisbursementStore.State? = null
 ) {
     Row(

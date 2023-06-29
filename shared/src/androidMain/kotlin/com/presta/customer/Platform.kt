@@ -10,7 +10,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.pm.Signature
+import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import android.widget.Toast
@@ -22,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -68,6 +71,17 @@ actual class Platform actual constructor(
                 Durations.LONG -> Toast.LENGTH_LONG
             }
         ).show()
+    }
+
+
+
+    actual fun openUrl(urls: String) {
+        val uris = Uri.parse(urls)
+        val intents = Intent(Intent.ACTION_VIEW, uris)
+        val b = Bundle()
+        b.putBoolean("new_window", true)
+        intents.putExtras(b)
+        context.startActivity(intents)
     }
     actual fun startSmsRetriever() {
         val client = SmsRetriever.getClient(context)
@@ -390,3 +404,6 @@ class BiometricAuthenticator(
         this.fragmentManager = (context as FragmentActivity).supportFragmentManager
     }
 }
+
+
+
