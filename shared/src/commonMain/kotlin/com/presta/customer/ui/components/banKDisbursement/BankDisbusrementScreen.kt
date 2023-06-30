@@ -59,13 +59,10 @@ fun BankDisbursementScreen(
     component: BankDisbursementComponent
 ) {
     val modeOfDisbursementState by component.modeOfDisbursementState.collectAsState()
-
     var launchPopUp by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableStateOf(-1) }
     var  accountName by remember { mutableStateOf(TextFieldValue()) }
     var  accountNumber by remember { mutableStateOf(TextFieldValue()) }
-
-
 
     var selectedBank by remember { mutableStateOf<PrestaBanksResponse?>(null) }
 
@@ -78,92 +75,100 @@ fun BankDisbursementScreen(
             })
         }
     ) {
-        Column(
-            modifier = Modifier
-                .padding(it)
-                .padding(start = 16.dp, end = 16.dp)
-                .background(color = MaterialTheme.colorScheme.background)
-                .fillMaxHeight()
-        ) {
-            Text(
-                modifier = Modifier,
-                text = "Add Bank",
-                fontSize = 14.sp,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
-            )
-            Spacer(
-                modifier = Modifier
-                    .padding(top = 25.dp)
-            )
+        LazyColumn(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()){
+            item {
+                Column(
+                    modifier = Modifier
+                        .padding(it)
+                        .padding(start = 16.dp, end = 16.dp)
+                        .background(color = MaterialTheme.colorScheme.background)
+                        .fillMaxHeight()
+                ) {
+                    Text(
+                        modifier = Modifier,
+                        text = "Add Bank",
+                        fontSize = 14.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                    )
+                    Spacer(
+                        modifier = Modifier
+                            .padding(top = 25.dp)
+                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        TextInputContainer(
+                            label = "Account Name",
+                            inputValue ="",
+                            inputType = InputTypes.STRING
+                        ){
+                            val inputValue: String = TextFieldValue(it).text
+                            if (inputValue != "") {
+                                accountName = TextFieldValue(it)
+                            }else{
+                                accountName=TextFieldValue()
+                            }
+                        }
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp)
+                    ) {
+                        (if (selectedBank !== null) {
+                            selectedBank?.name
+                        } else {
+                            "Select Bank"
+                        })?.let { it1 ->
+                            ProductSelectionCard2(it1, onClickContainer = {
+                                launchPopUp=true
+                            })
+                        }
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillParentMaxHeight(0.4f)
+                            .padding(top = 10.dp)
+                    ) {
+                        TextInputContainer(
+                            label = "Account No",
+                            inputValue = "",
+                            inputType = InputTypes.NUMBER
+                        ){
+                            val inputValue: String = TextFieldValue(it).text
+                            if (inputValue != "") {
+                                accountNumber = TextFieldValue(it)
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                TextInputContainer(
-                    label = "Account Name",
-                    inputValue = "",
-                    inputType = InputTypes.STRING
-                ){
-                    val inputValue: String = TextFieldValue(it).text
-                    if (inputValue != "") {
-                        accountName = TextFieldValue(it)
-
+                            }else{
+                                accountNumber=TextFieldValue()
+                            }
+                        }
                     }
 
-                }
-
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp)
-            ) {
-                (if (selectedBank !== null) {
-                    selectedBank?.name
-                } else {
-                    "Select Bank"
-                })?.let { it1 ->
-                    ProductSelectionCard2(it1, onClickContainer = {
-                        launchPopUp=true
-                    })
-                }
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp)
-            ) {
-                TextInputContainer(
-                    label = "Account No",
-                    inputValue = "",
-                    inputType = InputTypes.NUMBER
-                ){
-                    val inputValue: String = TextFieldValue(it).text
-                    if (inputValue != "") {
-                        accountNumber = TextFieldValue(it)
-
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 250.dp)
+                    ) {
+                        ActionButton("Save", onClickContainer = {
+                            selectedBank?.let { bank ->
+                                component.onConfirmSelected(bank, accountName.text, accountNumber.text)
+                            }
+                        }, enabled = selectedBank !== null && accountName.text!= "" && accountNumber.text!= "" , loading = modeOfDisbursementState.isLoading)
                     }
                 }
             }
-            Spacer(
-                modifier = Modifier.weight(1f)
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 100.dp)
-            ) {
-                ActionButton("Save", onClickContainer = {
-                    selectedBank?.let { bank ->
-                        component.onConfirmSelected(bank, accountName.text, accountNumber.text)
-                    }
-                }, enabled = selectedBank !== null && accountName.text!= "" && accountNumber.text!= "", loading = modeOfDisbursementState.isLoading)
+
+            item {
+                Spacer(modifier = Modifier.padding(bottom = 70.dp))
             }
         }
         if (launchPopUp) {
             Popup {
-                // Composable to select The bank
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -209,7 +214,6 @@ fun BankDisbursementScreen(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                 ) {
-
                                     LazyColumn(
                                         modifier = Modifier
                                             .wrapContentHeight()

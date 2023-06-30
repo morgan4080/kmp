@@ -266,7 +266,7 @@ fun SpecificLoaContent(
                 item {
                     Row(
                         modifier = Modifier
-                            .padding(top = 30.dp, bottom = 400.dp)
+                            .padding(top = 50.dp, bottom = 400.dp)
                     ) {
                         ActionButton(
                             "Confirm",
