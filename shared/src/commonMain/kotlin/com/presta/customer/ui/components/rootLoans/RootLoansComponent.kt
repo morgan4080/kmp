@@ -7,6 +7,7 @@ import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.presta.customer.ui.components.banKDisbursement.BankDisbursementComponent
+import com.presta.customer.ui.components.customerBanks.CustomerBanksComponent
 import com.presta.customer.ui.components.loanConfirmation.LoanConfirmationComponent
 import com.presta.customer.ui.components.longTermLoans.LongTermLoansComponent
 import com.presta.customer.ui.components.modeofDisbursement.ModeOfDisbursementComponent
@@ -37,5 +38,6 @@ interface RootLoansComponent {
         class SuccessfulTransactionChild(val component: SuccessfulTransactionComponent) : ChildLoans()
         class FailedTransactionChild(val component: FailedTransactionComponent) : ChildLoans()
         class LoanTopUpChild(val component: LoanTopUpComponent) : ChildLoans()
+        class CustomerBanksChild(val component: CustomerBanksComponent) : ChildLoans()
     }
 }

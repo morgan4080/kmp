@@ -20,6 +20,8 @@ import com.presta.customer.prestaDispatchers
 import com.presta.customer.ui.components.applyLoan.DefaultApplyLoanComponent
 import com.presta.customer.ui.components.banKDisbursement.BankDisbursementComponent
 import com.presta.customer.ui.components.banKDisbursement.DefaultBankDisbursementComponent
+import com.presta.customer.ui.components.customerBanks.CustomerBanksComponent
+import com.presta.customer.ui.components.customerBanks.DefaultCustomerBanksComponent
 import com.presta.customer.ui.components.failedTransaction.DefaultFailedTransactionComponent
 import com.presta.customer.ui.components.loanConfirmation.DefaultLoanConfirmationComponent
 import com.presta.customer.ui.components.loanConfirmation.LoanConfirmationComponent
@@ -112,7 +114,24 @@ class DefaultRootLoansComponent(
             loanTopUpComponent(componentContext, config)
         )
 
+        is ConfigLoans.CustomerBanks -> RootLoansComponent.ChildLoans.CustomerBanksChild(
+            customerBanks(componentContext, config)
+        )
+
     }
+
+    private fun customerBanks(componentContext: ComponentContext, config: ConfigLoans.CustomerBanks): CustomerBanksComponent =
+        DefaultCustomerBanksComponent(
+            componentContext = componentContext,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            proceed = {
+
+            },
+            pop = {
+                loansNavigation.pop()
+            }
+        )
 
     private fun applyLoanComponent(componentContext: ComponentContext): ApplyLoanComponent =
         DefaultApplyLoanComponent(
@@ -470,6 +489,8 @@ class DefaultRootLoansComponent(
 
         ) : ConfigLoans()
 
+        @Parcelize
+        object CustomerBanks: ConfigLoans()
     }
 
     init {
