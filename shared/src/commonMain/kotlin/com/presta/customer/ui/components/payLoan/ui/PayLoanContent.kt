@@ -43,8 +43,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.presta.customer.MR
 import androidx.compose.ui.window.Popup
+import com.presta.customer.MR
 import com.presta.customer.network.profile.model.LoanBreakDown
 import com.presta.customer.ui.components.pendingApprovals.ui.LoanDetailsRow
 import com.presta.customer.ui.components.profile.store.ProfileStore
@@ -54,7 +54,6 @@ import com.presta.customer.ui.composables.LoanStatusContainer
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.Paginator
 import com.presta.customer.ui.composables.TextInputContainer
-import com.presta.customer.ui.composables.disbursementDetailsRow
 import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.helpers.formatMoney
 import com.presta.customer.ui.theme.backArrowColor

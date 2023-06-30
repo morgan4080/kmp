@@ -4,14 +4,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Timelapse
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -22,14 +20,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
+import androidx.compose.ui.unit.sp
+import com.presta.customer.MR
 import com.presta.customer.ui.helpers.LocalSafeArea
+import dev.icerock.moko.resources.compose.fontFamilyResource
+import dev.icerock.moko.resources.compose.painterResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,7 +43,7 @@ fun SignScreen(component: SignComponent) {
 
                         },
 
-                    ) {
+                        ) {
                         Icon(
                             Icons.Rounded.ArrowBackIosNew,
                             contentDescription = null,
@@ -58,42 +57,54 @@ fun SignScreen(component: SignComponent) {
             )
         },
         modifier = Modifier.padding(LocalSafeArea.current)
-    ) {  paddingValue ->
+    ) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .padding(paddingValue)
                 .fillMaxSize()
         ) {
 
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(horizontal = 20.dp)
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp)
             ) {
-                Text(
-                    text = "Coming Soon",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.displayMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = "This feature is not implemented yet :D",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleMedium,
-                )
 
-                Spacer(Modifier.height(20.dp))
-
-                Image(
-                    Icons.Outlined.Timelapse,
-                    contentDescription = "Coming Soon",
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground),
-                    modifier = Modifier.size(100.dp),
-                )
+                Row(modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center){
+                    val imageModifier = Modifier
+                        .size(200.dp)
+                    Image(
+                        painter = painterResource(MR.images.coming_soon),
+                        contentDescription = "coming soon",
+                        contentScale = ContentScale.Fit,
+                        modifier = imageModifier
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Coming Soon",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 20.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                    )
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        modifier = Modifier.padding(start = 41.dp, end = 41.dp, top = 13.dp),
+                        text = "This new feature will enable you to Guarantee & sign loan forms from anywhere, anytime",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 13.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    )
+                }
             }
-
         }
     }
 }

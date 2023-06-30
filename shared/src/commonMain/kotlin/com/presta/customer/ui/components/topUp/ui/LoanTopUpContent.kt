@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectableGroup
@@ -52,12 +51,10 @@ import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.OptionsSelectionContainer
 import com.presta.customer.ui.composables.TextInputContainer
-import com.presta.customer.ui.helpers.formatDDMMYY
 import com.presta.customer.ui.helpers.formatMoney
 import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.backArrowColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
-import kotlinx.datetime.LocalDateTime
 
 
 @OptIn(ExperimentalMaterial3Api::class)
