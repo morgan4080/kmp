@@ -85,138 +85,131 @@ fun PayLoanContent(
                 hostState = snackBarHostState,
                 modifier = Modifier.padding(bottom = 80.dp)
             )
+        },
+        topBar = {
+            NavigateBackTopBar("Pay Loan", onClickContainer = {
+                onBack()
+            })
         }
     ) {
-        Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(start = 16.dp, end = 16.dp)
+                .padding(it)
+                .background(color = MaterialTheme.colorScheme.background)
+        ) {
+            Text(
+                modifier = Modifier.padding(start = 10.dp),
+                text = "Your Active Loans",
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = 14.sp,
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+            )
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                NavigateBackTopBar("Pay Loan", onClickContainer = {
-                    onBack()
-                })
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-                    .padding(start = 16.dp, end = 16.dp)
-                    .background(color = MaterialTheme.colorScheme.background)
-            ) {
-
-                Text(
-                    modifier = Modifier.padding(start = 10.dp),
-                    text = "Your Active Loans",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = 14.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
-                )
-
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    state = stateLazyRow0,
-                    flingBehavior = rememberSnapFlingBehavior(
-                        lazyListState = stateLazyRow0
-                    ),
-                    content = {
-                        if (state.loansBalances == null) {
-                            items(1) {
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                state = stateLazyRow0,
+                flingBehavior = rememberSnapFlingBehavior(
+                    lazyListState = stateLazyRow0
+                ),
+                content = {
+                    if (state.loansBalances == null) {
+                        items(1) {
+                            Box(
+                                modifier = Modifier.fillParentMaxWidth()
+                            ) {
+                                LoanStatusContainer(
+                                    totalAmount = null,
+                                    amountDue = null,
+                                    dueDate = null,
+                                    loanType = null,
+                                    loanStatus = null,
+                                    loansCount = null,
+                                    loanIndex = null
+                                )
+                            }
+                        }
+                    } else {
+                        state.loansBalances.loanBreakDown.map {
+                            item {
                                 Box(
                                     modifier = Modifier.fillParentMaxWidth()
                                 ) {
                                     LoanStatusContainer(
-                                        totalAmount = null,
-                                        amountDue = null,
-                                        dueDate = null,
-                                        loanType = null,
-                                        loanStatus = null,
-                                        loansCount = null,
-                                        loanIndex = null
+                                        totalAmount = it.totalBalance,
+                                        amountDue = it.amountDue,
+                                        dueDate = it.dueDate,
+                                        loanType = it.loanType,
+                                        loanStatus = it.loanStatus,
+                                        loansCount = state.loansBalances.loanCount,
+                                        loanIndex = stateLazyRow0.firstVisibleItemIndex + 1
                                     )
-                                }
-                            }
-                        } else {
-                            state.loansBalances.loanBreakDown.map {
-                                item {
-                                    Box(
-                                        modifier = Modifier.fillParentMaxWidth()
-                                    ) {
-                                        LoanStatusContainer(
-                                            totalAmount = it.totalBalance,
-                                            amountDue = it.amountDue,
-                                            dueDate = it.dueDate,
-                                            loanType = it.loanType,
-                                            loanStatus = it.loanStatus,
-                                            loansCount = state.loansBalances.loanCount,
-                                            loanIndex = stateLazyRow0.firstVisibleItemIndex + 1
-                                        )
-                                    }
                                 }
                             }
                         }
                     }
+                }
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp)
+            ) {
+                Paginator(if (state.loansBalances !== null) state.loansBalances.loanBreakDown.size else 1, stateLazyRow0.firstVisibleItemIndex)
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp)
+            ) {
+
+                TextInputContainer("Desired Amount","", inputType = InputTypes.NUMBER, callback = {
+                    amount = TextFieldValue(it)
+                })
+
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 35.dp)
+            ) {
+                ActionButton("Pay Now", onClickContainer = {
+                    if (amount.text !== "" && state.loansBalances !== null && state.loansBalances.loanBreakDown.isNotEmpty()) {
+                        onPaySelected(amount.text, state.loansBalances.loanBreakDown[stateLazyRow0.firstVisibleItemIndex])
+                    }
+                }, enabled = (amount.text !== "" && state.loansBalances !== null && state.loansBalances.loanBreakDown.isNotEmpty()))
+            }
+
+            Card(
+                onClick = {
+                    launchPopUp = !launchPopUp
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.5.dp),
+                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background)
+            ) {
+                Text(
+                    "View more details",
+                    fontSize = 12.sp,
+                    textDecoration = TextDecoration.Underline,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    color = backArrowColor,
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                 )
+            }
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp)
-                ) {
-                    Paginator(if (state.loansBalances !== null) state.loansBalances.loanBreakDown.size else 1, stateLazyRow0.firstVisibleItemIndex)
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp)
-                ) {
-
-                    TextInputContainer("Desired Amount","", inputType = InputTypes.NUMBER, callback = {
-                        amount = TextFieldValue(it)
-                    })
-
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 35.dp)
-                ) {
-                    ActionButton("Pay Now", onClickContainer = {
-                        if (amount.text !== "" && state.loansBalances !== null && state.loansBalances.loanBreakDown.isNotEmpty()) {
-                            onPaySelected(amount.text, state.loansBalances.loanBreakDown[stateLazyRow0.firstVisibleItemIndex])
-                        }
-                    }, enabled = (amount.text !== "" && state.loansBalances !== null && state.loansBalances.loanBreakDown.isNotEmpty()))
-                }
-
-                Card(
-                    onClick = {
-                        launchPopUp = !launchPopUp
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 24.5.dp),
-                    colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background)
-                ) {
-                    Text(
-                        "View more details",
-                        fontSize = 12.sp,
-                        textDecoration = TextDecoration.Underline,
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        color = backArrowColor,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                    )
-                }
-
-                if (launchPopUp && state.loansBalances !== null && state.loansBalances.loanBreakDown.isNotEmpty()) {
-                    MoreDetails(
-                        loanBreakDown = state.loansBalances.loanBreakDown[stateLazyRow0.firstVisibleItemIndex],
-                        dismiss = {launchPopUp = !launchPopUp}
-                    )
-                }
+            if (launchPopUp && state.loansBalances !== null && state.loansBalances.loanBreakDown.isNotEmpty()) {
+                MoreDetails(
+                    loanBreakDown = state.loansBalances.loanBreakDown[stateLazyRow0.firstVisibleItemIndex],
+                    dismiss = {launchPopUp = !launchPopUp}
+                )
             }
         }
     }

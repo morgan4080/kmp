@@ -1,12 +1,14 @@
 package com.presta.customer.ui.components.onBoarding.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,7 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -225,19 +226,22 @@ fun OnBoardingContent(
             ) {
                 item {
                     Row (
-                        modifier = Modifier.fillMaxWidth()
-                            .fillParentMaxHeight(0.15f),
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        val painter: Painter = painterResource(state.organisation.logo)
-
-                        Image(
-                            painter = painter,
-                            contentDescription = "Logo",
-                            modifier = Modifier
-                                .fillMaxWidth(0.66f)
-                        )
+                        when(isSystemInDarkTheme()) {
+                            false -> Image(
+                                painter = painterResource(state.organisation.logo),
+                                contentDescription = "Logo",
+                                modifier = Modifier.size(150.dp)
+                            )
+                            true -> Image(
+                                painter = painterResource(state.organisation.logodark),
+                                contentDescription = "Logo",
+                                modifier = Modifier.size(150.dp)
+                            )
+                        }
                     }
                 }
                 item {

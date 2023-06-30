@@ -1,5 +1,6 @@
 package com.presta.customer.ui
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
@@ -31,13 +32,20 @@ import com.presta.customer.ui.components.welcome.WelcomeScreen
 fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
 
     val windowInsetsController = rememberWindowInsetsController()
+    val isDark = isSystemInDarkTheme()
     LaunchedEffect(Unit) {
-        // Hide the status bars
-        windowInsetsController?.setIsStatusBarsVisible(false)
-        // Hide the navigation bars
-        windowInsetsController?.setIsNavigationBarsVisible(false)
-        // Change an options for behavior when system bars are hidden
-        windowInsetsController?.setSystemBarsBehavior(SystemBarsBehavior.Immersive)
+        windowInsetsController?.apply {
+            // Hide the status bars
+            setIsStatusBarsVisible(true)
+            // Hide the navigation bars
+            setIsNavigationBarsVisible(false)
+            // Change an options for behavior when system bars are hidden
+            setSystemBarsBehavior(SystemBarsBehavior.Immersive)
+            // The status bars icon + content will change to a light color
+            setStatusBarContentColor(dark = isDark)
+            // The navigation bars icons will change to a light color (android only)
+            setNavigationBarsContentColor(dark = isDark)
+        }
     }
     Children(
         stack = component.childStack,

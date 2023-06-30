@@ -116,41 +116,7 @@ class DefaultLoanConfirmationComponent(
                             token = state.cachedMemberData.accessToken
                         )
                     )
-                    onEvent(
-                        ShortTermLoansStore.Intent.GetPrestaShortTermProductList(
-                            token = state.cachedMemberData.accessToken,
-                            refId = state.cachedMemberData.refId
-                        )
-                    )
-
-                    onEvent(
-                        ShortTermLoansStore.Intent.GetPrestaShortTermProductById(
-                            token = state.cachedMemberData.accessToken,
-                            loanId = refId,
-                        )
-                    )
                 }
-            }
-        }
-    }
-
-    private var refreshTokenScopeJob: Job? = null
-    private fun refreshToken() {
-        if (refreshTokenScopeJob?.isActive == true) return
-        refreshTokenScopeJob = scope.launch {
-            authState.collect { state ->
-                if (state.cachedMemberData !== null) {
-
-                    if (OrganisationModel.organisation.tenant_id!=null){
-                        onAuthEvent(
-                            AuthStore.Intent.RefreshToken(
-                                tenantId = OrganisationModel.organisation.tenant_id!!,
-                                refId = state.cachedMemberData.refId
-                            )
-                        )
-                    }
-                }
-                this.cancel()
             }
         }
     }
@@ -203,7 +169,6 @@ class DefaultLoanConfirmationComponent(
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         checkAuthenticatedUser()
-        refreshToken()
     }
 
     init {

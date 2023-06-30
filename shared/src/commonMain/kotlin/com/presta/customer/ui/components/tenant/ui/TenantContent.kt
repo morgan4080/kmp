@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -54,6 +55,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.moriatsushi.insetsx.systemBars
 import com.presta.customer.AppContext
 import com.presta.customer.MR
 import com.presta.customer.Platform
@@ -106,6 +108,7 @@ fun TenantContent(
                 hostState = snackBarHostState
             )
         },
+        contentWindowInsets = WindowInsets.systemBars
     ) {
         Column(
             modifier = Modifier
@@ -117,23 +120,23 @@ fun TenantContent(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 70.dp)
+                    .padding(top = 30.dp)
             ) {
                 Text(
                     text = "Key in your Organization tenant id",
-                    fontSize = 20.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                    fontSize = 20.0.sp
                 )
             }
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 17.dp)
             ) {
                 Text(
                     text = "Kindly note that your organization's Account No. on your web account, under the  Profile section, serves as your tenant ID.",
-                    fontSize = 13.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                    style = MaterialTheme.typography.bodySmall,
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                 )
             }
             Column(
