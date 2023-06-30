@@ -9,7 +9,8 @@ class OrganisationModel {
         var organisation: Organisation = Organisation (
             "Presta Customer",
             "t10007",
-            MR.images.prestalogo
+            MR.images.prestalogo,
+            MR.images.prestalogodark
         )
 
         fun  loadOrganisation(org: Organisation) {

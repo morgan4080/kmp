@@ -1,5 +1,6 @@
 package com.presta.customer.ui.components.welcome
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
@@ -80,9 +81,9 @@ fun WelcomeScreen(
 
                             Row (modifier = Modifier.padding(top = 50.dp)) {
                                 val painter: Painter = painterResource(
-                                    when(MaterialTheme.colorScheme.background == Color(0xFFF7F7F7)) {
-                                        true -> item.imageLight
-                                        false -> item.imageDark
+                                    when(isSystemInDarkTheme()) {
+                                        true -> item.imageDark
+                                        false -> item.imageLight
                                     }
                                 )
 

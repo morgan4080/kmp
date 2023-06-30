@@ -9,7 +9,6 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
-import com.presta.customer.AppContext
 import com.presta.customer.MR
 import com.presta.customer.Platform
 import com.presta.customer.organisation.Organisation
@@ -75,12 +74,13 @@ class DefaultTenantComponent(
     init {
         scope.launch {
             tenantState.collect {
-                if (it.tenantData !== null && it.tenantData.alias !== null) {
+                if (it.tenantData !== null) {
                     OrganisationModel.loadOrganisation(
                         Organisation(
                             it.tenantData.alias,
                             it.tenantData.tenantId,
                             MR.images.prestalogo,
+                            MR.images.prestalogodark,
                             true
                         )
                     )
