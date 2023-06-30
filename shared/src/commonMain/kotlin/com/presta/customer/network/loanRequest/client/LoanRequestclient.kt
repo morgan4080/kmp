@@ -180,7 +180,7 @@ class PrestaLoanRequestClient(
         customerRefId: String
     ): List<PrestaCustomerBanksResponse> {
         return loanRequestErrorHandler {
-            httpClient.get(NetworkConstants.PrestaGetBanks.route) {
+            httpClient.get(NetworkConstants.PrestaGetBankAccounts.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
@@ -206,7 +206,7 @@ class PrestaLoanRequestClient(
             userRefId = customerRefId,
         )
         return loanRequestErrorHandler {
-            httpClient.post(NetworkConstants.PrestaGetBanks.route) {
+            httpClient.post(NetworkConstants.PrestaGetBankAccounts.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 contentType(ContentType.Application.Json)
                 setBody(
@@ -223,11 +223,11 @@ class PrestaLoanRequestClient(
         bankAccountRefId: String
     ): PrestaCustomerBankDeletedResponse {
         return loanRequestErrorHandler {
-            httpClient.delete(NetworkConstants.PrestaGetBanks.route) {
+            httpClient.delete(NetworkConstants.PrestaGetBankAccounts.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 contentType(ContentType.Application.Json)
                 url {
-
+                    parameters.append("bankAccountRefId", bankAccountRefId)
                 }
             }
         }
