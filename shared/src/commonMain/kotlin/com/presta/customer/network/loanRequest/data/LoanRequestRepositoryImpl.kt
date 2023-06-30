@@ -6,6 +6,10 @@ import com.presta.customer.network.loanRequest.model.LoanApplicationStatus
 import com.presta.customer.network.loanRequest.model.LoanQuotationResponse
 import com.presta.customer.network.loanRequest.model.LoanRequestResponse
 import com.presta.customer.network.loanRequest.model.LoanType
+import com.presta.customer.network.loanRequest.model.PrestaBanksResponse
+import com.presta.customer.network.loanRequest.model.PrestaCustomerBankCreatedResponse
+import com.presta.customer.network.loanRequest.model.PrestaCustomerBankDeletedResponse
+import com.presta.customer.network.loanRequest.model.PrestaCustomerBanksResponse
 import com.presta.customer.network.loanRequest.model.PrestaLoanApplicationStatusResponse
 import com.presta.customer.network.loanRequest.model.PrestaLoanPollingResponse
 import org.koin.core.component.KoinComponent
@@ -109,6 +113,71 @@ class LoanRequestRepositoryImpl : LoanRequestRepository,KoinComponent {
                 token,
                 customerRefId,
                 applicationStatus
+            )
+            Result.success(response)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getAllBanks(token: String): Result<List<PrestaBanksResponse>> {
+        return try {
+            val response = loanRequestClient.getAllBanks(
+                token
+            )
+            Result.success(response)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getCustomerBanks(token: String, customerRefId: String): Result<List<PrestaCustomerBanksResponse>> {
+        return try {
+            val response = loanRequestClient.getCustomerBanks(
+                token,
+                customerRefId
+            )
+            Result.success(response)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun createCustomerBanks(
+        token: String,
+        customerRefId: String,
+        accountNumber: String,
+        accountName: String,
+        paybillName: String,
+        paybillNumber: String
+    ): Result<PrestaCustomerBankCreatedResponse> {
+        return try {
+            val response = loanRequestClient.createCustomerBanks(
+                token,
+                customerRefId,
+                accountNumber,
+                accountName,
+                paybillName,
+                paybillNumber
+            )
+            Result.success(response)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun deleteCustomerBank(
+        token: String,
+        bankAccountRefId: String
+    ): Result<PrestaCustomerBankDeletedResponse> {
+        return try {
+            val response = loanRequestClient.deleteCustomerBank(
+                token,
+                bankAccountRefId
             )
             Result.success(response)
         } catch (e: Exception) {

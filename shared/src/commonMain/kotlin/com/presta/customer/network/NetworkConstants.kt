@@ -80,6 +80,10 @@ object NetworkConstants {
     object PrestaGetPendingApplications {
         const val route = applicationV2BaseUrl + "loans"
     }
+
+    object PrestaGetBanks {
+        const val route = applicationV2BaseUrl + "banks"
+    }
     object PrestaGetLoanById {
         const val route = applicationV1BaseUrl + "loans"
     }

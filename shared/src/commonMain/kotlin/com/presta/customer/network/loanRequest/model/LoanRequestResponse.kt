@@ -157,4 +157,37 @@ data class PrestaLoanApplicationStatusResponse @OptIn(ExperimentalSerializationA
     val repaymentAmount: Double
 )
 
+@Serializable
+data class PrestaBanksResponse(
+    val refId: String,
+    val name: String,
+    val payBillNumber: String
+)
+@Serializable
+data class PrestaCustomerBanksResponse(
+    val refId: String,
+    val accountName: String,
+    val accountNumber: String,
+    val paybillName: String,
+    val payBillNumber: String,
+)
+
+@Serializable
+data class PrestaCustomerBankCreatedResponse(
+    val accountName: String,
+    val accountNumber: String,
+    val paybillName: String,
+    val payBillNumber: String,
+    val userRefId: String
+)
+
+@Serializable
+data class PrestaCustomerBankDeletedResponse(
+    val accountName: String,
+    val accountNumber: String,
+    val paybillName: String,
+    val payBillNumber: String,
+    val userRefId: String
+)
+
 

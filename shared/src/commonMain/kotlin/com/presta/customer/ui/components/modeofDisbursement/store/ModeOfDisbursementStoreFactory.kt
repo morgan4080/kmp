@@ -10,6 +10,10 @@ import com.presta.customer.network.loanRequest.model.DisbursementMethod
 import com.presta.customer.network.loanRequest.model.LoanApplicationStatus
 import com.presta.customer.network.loanRequest.model.LoanQuotationResponse
 import com.presta.customer.network.loanRequest.model.LoanType
+import com.presta.customer.network.loanRequest.model.PrestaBanksResponse
+import com.presta.customer.network.loanRequest.model.PrestaCustomerBankCreatedResponse
+import com.presta.customer.network.loanRequest.model.PrestaCustomerBankDeletedResponse
+import com.presta.customer.network.loanRequest.model.PrestaCustomerBanksResponse
 import com.presta.customer.network.loanRequest.model.PrestaLoanApplicationStatusResponse
 import com.presta.customer.prestaDispatchers
 import kotlinx.coroutines.Job
@@ -38,6 +42,10 @@ class ModeOfDisbursementStoreFactory(
         data class LoanRequestFailedFailed(val error: String?) : Msg()
         data class LoanQuotationDataLoaded(val loanQuotationResponse: LoanQuotationResponse ) :Msg()
         data class PendingLoanDataLoaded(val loans: List<PrestaLoanApplicationStatusResponse>) :Msg()
+        data class AllBanksLoaded(val banks: List<PrestaBanksResponse>) :Msg()
+        data class CustomerBanksLoaded(val customerBanks: List<PrestaCustomerBanksResponse>) :Msg()
+        data class CustomerBanksDeleted(val customerBankDeletedResponse: PrestaCustomerBankDeletedResponse) :Msg()
+        data class CustomerBanksCreated(val customerBankCreatedResponse: PrestaCustomerBankCreatedResponse) :Msg()
     }
 
     private inner class ExecutorImpl : CoroutineExecutor<ModeOfDisbursementStore.Intent, Unit, ModeOfDisbursementStore.State, Msg, Nothing>(
@@ -82,6 +90,29 @@ class ModeOfDisbursementStoreFactory(
                     token = intent.token,
                     customerRefId = intent.customerRefId,
                     applicationStatus = intent.applicationStatus
+                )
+
+                is ModeOfDisbursementStore.Intent.GetAllBanks -> getAllBanks(
+                    token = intent.token
+                )
+
+                is ModeOfDisbursementStore.Intent.GetCustomerBanks -> getCustomerBanks(
+                    token = intent.token,
+                    customerRefId = intent.customerRefId
+                )
+
+                is ModeOfDisbursementStore.Intent.CreateCustomerBanks -> createCustomerBanks(
+                    token = intent.token,
+                    customerRefId = intent.customerRefId,
+                    accountNumber = intent.accountNumber,
+                    accountName = intent.accountName,
+                    paybillName = intent.paybillName,
+                    paybillNumber = intent.paybillNumber,
+                )
+
+                is ModeOfDisbursementStore.Intent.DeleteCustomerBank -> deleteCustomerBank(
+                    token = intent.token,
+                    bankAccountRefId = intent.bankAccountRefId
                 )
             }
         private var requestLoanJob: Job? = null
@@ -188,6 +219,96 @@ class ModeOfDisbursementStoreFactory(
                 }
             }
         }
+        private var getAllBanksJob: Job? = null
+        private fun getAllBanks(
+            token: String
+        ) {
+            if (getAllBanksJob?.isActive == true) return
+            dispatch(Msg.LoanRequestsLoading(true))
+
+            getAllBanksJob = scope.launch {
+                loanRequestRepository.getAllBanks(
+                    token
+                ).onSuccess { response ->
+                    dispatch(Msg.AllBanksLoaded(response))
+                    dispatch(Msg.LoanRequestsLoading(false))
+                }.onFailure { e ->
+                    dispatch(Msg.LoanRequestFailedFailed(e.message))
+                    dispatch(Msg.LoanRequestsLoading(false))
+                }
+            }
+        }
+        private var getCustomerBanksJob: Job? = null
+        private fun getCustomerBanks(
+            token: String,
+            customerRefId: String
+        ) {
+            if (getCustomerBanksJob?.isActive == true) return
+            dispatch(Msg.LoanRequestsLoading(true))
+
+            getCustomerBanksJob = scope.launch {
+                loanRequestRepository.getCustomerBanks(
+                    token,
+                    customerRefId
+                ).onSuccess { response ->
+                    dispatch(Msg.CustomerBanksLoaded(response))
+                    dispatch(Msg.LoanRequestsLoading(false))
+                }.onFailure { e ->
+                    dispatch(Msg.LoanRequestFailedFailed(e.message))
+                    dispatch(Msg.LoanRequestsLoading(false))
+                }
+            }
+        }
+        private var createCustomerBanksJob: Job? = null
+        private fun createCustomerBanks(
+            token: String,
+            customerRefId: String,
+            accountNumber: String,
+            accountName: String,
+            paybillName: String,
+            paybillNumber: String
+        ) {
+            if (createCustomerBanksJob?.isActive == true) return
+            dispatch(Msg.LoanRequestsLoading(true))
+
+            createCustomerBanksJob = scope.launch {
+                loanRequestRepository.createCustomerBanks(
+                    token,
+                    customerRefId,
+                    accountNumber,
+                    accountName,
+                    paybillName,
+                    paybillNumber
+                ).onSuccess { response ->
+                    dispatch(Msg.CustomerBanksCreated(response))
+                    dispatch(Msg.LoanRequestsLoading(false))
+                }.onFailure { e ->
+                    dispatch(Msg.LoanRequestFailedFailed(e.message))
+                    dispatch(Msg.LoanRequestsLoading(false))
+                }
+            }
+        }
+        private var deleteCustomerBanksJob: Job? = null
+        private fun deleteCustomerBank(
+            token: String,
+            bankAccountRefId: String
+        ) {
+            if (deleteCustomerBanksJob?.isActive == true) return
+            dispatch(Msg.LoanRequestsLoading(true))
+
+            deleteCustomerBanksJob = scope.launch {
+                loanRequestRepository.deleteCustomerBank(
+                    token,
+                    bankAccountRefId
+                ).onSuccess { response ->
+                    dispatch(Msg.CustomerBanksDeleted(response))
+                    dispatch(Msg.LoanRequestsLoading(false))
+                }.onFailure { e ->
+                    dispatch(Msg.LoanRequestFailedFailed(e.message))
+                    dispatch(Msg.LoanRequestsLoading(false))
+                }
+            }
+        }
     }
 
     private object ReducerImpl : Reducer<ModeOfDisbursementStore.State, Msg> {
@@ -198,6 +319,10 @@ class ModeOfDisbursementStoreFactory(
                 is Msg.PendingLoanDataLoaded-> copy  (loans = msg.loans)
                 is Msg.LoanRequestsLoading -> copy(isLoading = msg.isLoading)
                 is Msg.LoanRequestFailedFailed -> copy(error = msg.error)
+                is Msg.AllBanksLoaded -> copy(banks = msg.banks)
+                is Msg.CustomerBanksLoaded -> copy(customerBanks = msg.customerBanks)
+                is Msg.CustomerBanksDeleted -> copy(customerBankDeletedResponse = msg.customerBankDeletedResponse)
+                is Msg.CustomerBanksCreated -> copy(customerBankCreatedResponse = msg.customerBankCreatedResponse)
             }
     }
 }

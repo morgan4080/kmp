@@ -25,6 +25,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -81,26 +82,23 @@ fun LoanTopUpContent(
             -1
         )
     }
-
-    Surface(
+    Scaffold(
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.background)
             .fillMaxHeight(),
-        color = MaterialTheme.colorScheme.background
+        topBar = {
+            NavigateBackTopBar("Topup", onClickContainer = {
+                component.onBackNavSelected()
+            })
+        }
     ) {
         Column(
             modifier = Modifier
                 .background(color = MaterialTheme.colorScheme.background)
                 .fillMaxWidth()
+                .padding(it)
                 .fillMaxHeight()
         ) {
-            Row(modifier = Modifier.fillMaxWidth()) {
 
-                NavigateBackTopBar("Topup", onClickContainer = {
-                    component.onBackNavSelected()
-
-                })
-            }
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -415,7 +413,6 @@ fun LoanTopUpContent(
                                 .padding(top = 6.dp)
                         ) {
                             //Throw Error if amount exceed desired min or max
-
                             TextInputContainer(
                                 "Desired Amount",
                                 "",

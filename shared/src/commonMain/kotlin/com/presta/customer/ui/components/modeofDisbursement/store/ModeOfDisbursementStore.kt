@@ -5,6 +5,10 @@ import com.presta.customer.network.loanRequest.model.DisbursementMethod
 import com.presta.customer.network.loanRequest.model.LoanApplicationStatus
 import com.presta.customer.network.loanRequest.model.LoanQuotationResponse
 import com.presta.customer.network.loanRequest.model.LoanType
+import com.presta.customer.network.loanRequest.model.PrestaBanksResponse
+import com.presta.customer.network.loanRequest.model.PrestaCustomerBankCreatedResponse
+import com.presta.customer.network.loanRequest.model.PrestaCustomerBankDeletedResponse
+import com.presta.customer.network.loanRequest.model.PrestaCustomerBanksResponse
 import com.presta.customer.network.loanRequest.model.PrestaLoanApplicationStatusResponse
 
 interface ModeOfDisbursementStore : Store<ModeOfDisbursementStore.Intent, ModeOfDisbursementStore.State, Nothing> {
@@ -44,12 +48,34 @@ interface ModeOfDisbursementStore : Store<ModeOfDisbursementStore.Intent, ModeOf
             val customerRefId: String,
             val applicationStatus: List<LoanApplicationStatus>
         ): Intent()
+
+        data class GetAllBanks(
+            val token: String
+        ): Intent()
+
+        data class GetCustomerBanks(val token: String, val customerRefId: String): Intent()
+        data class CreateCustomerBanks(
+            val token: String,
+            val customerRefId: String,
+            val accountNumber: String,
+            val accountName: String,
+            val paybillName: String,
+            val paybillNumber: String
+        ): Intent()
+        data class DeleteCustomerBank(
+            val token: String,
+            val bankAccountRefId: String
+        ): Intent()
     }
     data class State(
         val isLoading: Boolean = false,
         val error: String? = null,
         val requestId: String? = null,
         val prestaLoanQuotation: LoanQuotationResponse? = null,
-        val loans: List<PrestaLoanApplicationStatusResponse> = listOf()
+        val loans: List<PrestaLoanApplicationStatusResponse> = listOf(),
+        val banks: List<PrestaBanksResponse> = listOf(),
+        val customerBanks: List<PrestaCustomerBanksResponse> = listOf(),
+        val customerBankCreatedResponse: PrestaCustomerBankCreatedResponse? = null,
+        val customerBankDeletedResponse: PrestaCustomerBankDeletedResponse? = null
     )
 }

@@ -30,8 +30,6 @@ fun ModeOfDisbursementContent(
     onEvent: (ModeOfDisbursementStore.Intent) -> Unit,
     onAuthEvent: (AuthStore.Intent) -> Unit,
     ) {
-
-
     Surface(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background),
@@ -47,7 +45,6 @@ fun ModeOfDisbursementContent(
                 })
 
             }
-
             Column(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                     .background(color = MaterialTheme.colorScheme.background)
@@ -86,10 +83,9 @@ fun ModeOfDisbursementContent(
                         )
                     })
                 }
-
                 Row(modifier = Modifier.fillMaxWidth().padding(top = 11.dp)) {
                     ProductSelectionCard2("Bank", onClickContainer = {
-//                        component.onBankSelected()
+                      component.onBankSelected()
                     })
                 }
             }
