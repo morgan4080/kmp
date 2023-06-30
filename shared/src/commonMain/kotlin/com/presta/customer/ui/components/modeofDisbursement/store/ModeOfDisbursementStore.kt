@@ -66,6 +66,8 @@ interface ModeOfDisbursementStore : Store<ModeOfDisbursementStore.Intent, ModeOf
             val token: String,
             val bankAccountRefId: String
         ): Intent()
+
+        object ClearCreatedResponse: Intent()
     }
     data class State(
         val isLoading: Boolean = false,

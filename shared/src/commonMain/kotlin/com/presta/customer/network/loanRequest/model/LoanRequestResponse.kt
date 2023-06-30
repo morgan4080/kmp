@@ -164,6 +164,10 @@ data class PrestaBanksResponse(
     val payBillNumber: String
 )
 @Serializable
+data class AllBanksContent(
+    val content: List<PrestaBanksResponse>
+)
+@Serializable
 data class PrestaCustomerBanksResponse(
     val refId: String,
     val accountName: String,

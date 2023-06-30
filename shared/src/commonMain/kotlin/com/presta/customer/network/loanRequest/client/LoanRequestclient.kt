@@ -2,6 +2,7 @@ package com.presta.customer.network.loanRequest.client
 
 import com.presta.customer.network.NetworkConstants
 import com.presta.customer.network.loanRequest.errorHandler.loanRequestErrorHandler
+import com.presta.customer.network.loanRequest.model.AllBanksContent
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
 import com.presta.customer.network.loanRequest.model.LoanApplicationStatus
 import com.presta.customer.network.loanRequest.model.LoanQuotationResponse
@@ -160,7 +161,7 @@ class PrestaLoanRequestClient(
     }
     suspend fun getAllBanks(
         token: String
-    ): List<PrestaBanksResponse> {
+    ): AllBanksContent {
         return loanRequestErrorHandler {
             httpClient.get(NetworkConstants.PrestaGetBanks.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")

@@ -331,7 +331,10 @@ class DefaultRootLoansComponent(
             },
             onBackNavClicked = {
                 loansNavigation.pop()
-            })
+            },
+            mainContext = prestaDispatchers.main,
+            storeFactory = storeFactory
+        )
 
     private fun successfulTransactionComponent(componentContext: ComponentContext): SuccessfulTransactionComponent =
         DefaultSuccessfulTransactionComponent(

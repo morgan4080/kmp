@@ -46,6 +46,7 @@ class ModeOfDisbursementStoreFactory(
         data class CustomerBanksLoaded(val customerBanks: List<PrestaCustomerBanksResponse>) :Msg()
         data class CustomerBanksDeleted(val customerBankDeletedResponse: PrestaCustomerBankDeletedResponse) :Msg()
         data class CustomerBanksCreated(val customerBankCreatedResponse: PrestaCustomerBankCreatedResponse) :Msg()
+        object ClearBankCreatedResponse: Msg()
     }
 
     private inner class ExecutorImpl : CoroutineExecutor<ModeOfDisbursementStore.Intent, Unit, ModeOfDisbursementStore.State, Msg, Nothing>(
@@ -114,6 +115,8 @@ class ModeOfDisbursementStoreFactory(
                     token = intent.token,
                     bankAccountRefId = intent.bankAccountRefId
                 )
+
+                is ModeOfDisbursementStore.Intent.ClearCreatedResponse -> dispatch(Msg.ClearBankCreatedResponse)
             }
         private var requestLoanJob: Job? = null
         private fun requestLoan(
@@ -323,6 +326,7 @@ class ModeOfDisbursementStoreFactory(
                 is Msg.CustomerBanksLoaded -> copy(customerBanks = msg.customerBanks)
                 is Msg.CustomerBanksDeleted -> copy(customerBankDeletedResponse = msg.customerBankDeletedResponse)
                 is Msg.CustomerBanksCreated -> copy(customerBankCreatedResponse = msg.customerBankCreatedResponse)
+                is Msg.ClearBankCreatedResponse -> copy(customerBankCreatedResponse = null)
             }
     }
 }

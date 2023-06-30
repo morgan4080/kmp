@@ -29,6 +29,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,14 +38,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
+import com.presta.customer.network.loanRequest.model.PrestaBanksResponse
 import com.presta.customer.ui.composables.ActionButton
+import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.ProductSelectionCard2
+import com.presta.customer.ui.composables.TextInputContainer
 import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
@@ -53,8 +58,17 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 fun BankDisbursementScreen(
     component: BankDisbursementComponent
 ) {
+    val modeOfDisbursementState by component.modeOfDisbursementState.collectAsState()
+
     var launchPopUp by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableStateOf(-1) }
+    var  accountName by remember { mutableStateOf(TextFieldValue()) }
+    var  accountNumber by remember { mutableStateOf(TextFieldValue()) }
+
+
+
+    var selectedBank by remember { mutableStateOf<PrestaBanksResponse?>(null) }
+
     Scaffold(
         modifier = Modifier,
         topBar = {
@@ -73,7 +87,7 @@ fun BankDisbursementScreen(
         ) {
             Text(
                 modifier = Modifier,
-                text = "Select Disbursement Method",
+                text = "Add Bank",
                 fontSize = 14.sp,
                 fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
             )
@@ -86,12 +100,18 @@ fun BankDisbursementScreen(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                ProductSelectionCard2("Select Bank", onClickContainer = {
-                    //Business  Logic
-                    //banK details pop up card
-                    launchPopUp = true
+                TextInputContainer(
+                    label = "Account Name",
+                    inputValue = "",
+                    inputType = InputTypes.STRING
+                ){
+                    val inputValue: String = TextFieldValue(it).text
+                    if (inputValue != "") {
+                        accountName = TextFieldValue(it)
 
-                })
+                    }
+
+                }
 
             }
             Row(
@@ -99,20 +119,48 @@ fun BankDisbursementScreen(
                     .fillMaxWidth()
                     .padding(top = 10.dp)
             ) {
-                ProductSelectionCard2("Account Number", onClickContainer = {
-                    //Business  Logic
-                })
+                (if (selectedBank !== null) {
+                    selectedBank?.name
+                } else {
+                    "Select Bank"
+                })?.let { it1 ->
+                    ProductSelectionCard2(it1, onClickContainer = {
+                        launchPopUp=true
+                    })
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp)
+            ) {
+                TextInputContainer(
+                    label = "Account No",
+                    inputValue = "",
+                    inputType = InputTypes.NUMBER
+                ){
+                    val inputValue: String = TextFieldValue(it).text
+                    if (inputValue != "") {
+                        accountNumber = TextFieldValue(it)
+
+                    }
+                }
             }
             Spacer(
-                modifier = Modifier
-                    .padding(top = 60.dp)
+                modifier = Modifier.weight(1f)
             )
-            ActionButton("Proceed", onClickContainer = {
-                component.onConfirmSelected()
-
-            })
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 100.dp)
+            ) {
+                ActionButton("Save", onClickContainer = {
+                    selectedBank?.let { bank ->
+                        component.onConfirmSelected(bank, accountName.text, accountNumber.text)
+                    }
+                }, enabled = selectedBank !== null && accountName.text!= "" && accountNumber.text!= "", loading = modeOfDisbursementState.isLoading)
+            }
         }
-
         if (launchPopUp) {
             Popup {
                 // Composable to select The bank
@@ -130,7 +178,7 @@ fun BankDisbursementScreen(
                             .padding(
                                 start = 26.dp,
                                 end = 26.dp,
-                                top = 5.dp,
+                                top = 40.dp,
                                 bottom = 90.dp
                             ),
                         colors = CardDefaults
@@ -166,30 +214,29 @@ fun BankDisbursementScreen(
                                         modifier = Modifier
                                             .wrapContentHeight()
                                     ) {
+                                        modeOfDisbursementState.banks.mapIndexed { index, bank ->
+                                            item {
+                                                Row(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                                                        .padding(
+                                                            top = 10.dp,
+                                                            start = 16.dp,
+                                                            end = 16.dp
+                                                        )
+                                                ) {
+                                                    SelectBankView(
+                                                        Index = index,
+                                                        selected = selectedIndex == index,
+                                                        onClick = { index: Int ->
+                                                            selectedIndex = if (selectedIndex == index) -1 else index
 
-                                        items(7) {
-                                            Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .background(color = MaterialTheme.colorScheme.inverseOnSurface)
-                                                    .padding(
-                                                        top = 10.dp,
-                                                        start = 16.dp,
-                                                        end = 16.dp
+                                                            selectedBank = bank
+                                                        },
+                                                        label = bank.name
                                                     )
-                                            ) {
-                                                SelectBankView(
-                                                    Index =   1,
-                                                    selected = selectedIndex == 1,
-                                                    onClick = { index: Int ->
-                                                        selectedIndex =
-                                                            if (selectedIndex == index) -1 else index
-//                                                                if (!enabled) {
-//                                                                    enabled = true
-//                                                                }
-                                                    },
-                                                    label = "Kcb"
-                                                )
+                                                }
                                             }
                                         }
                                     }
@@ -282,7 +329,7 @@ fun SelectBankView(
     ) {
         Box(
             modifier = Modifier
-                .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                .background(color = MaterialTheme.colorScheme.background)
         ) {
             Row(
                 modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
@@ -294,7 +341,8 @@ fun SelectBankView(
 
                     Text(
                         text = label,
-                        modifier = Modifier.padding(start = 15.dp),
+                        modifier = Modifier
+                            .padding(start = 15.dp),
                         fontSize = 12.sp,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                     )
@@ -307,7 +355,6 @@ fun SelectBankView(
                         )
                     }
                 }
-
                 Row {
                     //Created a Custom checkBox
                     Spacer(modifier = Modifier.weight(1f))

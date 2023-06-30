@@ -126,7 +126,7 @@ class LoanRequestRepositoryImpl : LoanRequestRepository,KoinComponent {
             val response = loanRequestClient.getAllBanks(
                 token
             )
-            Result.success(response)
+            Result.success(response.content)
         } catch (e: Exception) {
             e.printStackTrace()
             Result.failure(e)
