@@ -10,7 +10,6 @@ import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.network.loanRequest.model.DisbursementMethod
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.onBoarding.model.PinStatus
-import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStore
@@ -57,6 +56,8 @@ class DefaultLoanConfirmationComponent(
     override val loanType: LoanType,
     override val referencedLoanRefId: String?,
     override val currentTerm: Boolean,
+    override val modeOfDisbursement: DisbursementMethod,
+    override val accountRefId: String?,
 ) : LoanConfirmationComponent, ComponentContext by componentContext {
     override val authStore: AuthStore =
         instanceKeeper.getStore {
@@ -139,8 +140,11 @@ class DefaultLoanConfirmationComponent(
                             amount = amount.toInt(),
                             currentTerm = currentTerm,
                             customerRefId = state.cachedMemberData.refId,
-                            disbursementAccountReference = state.cachedMemberData.phoneNumber,
-                            disbursementMethod = DisbursementMethod.MOBILEMONEY,
+                            disbursementAccountReference = when(modeOfDisbursement) {
+                                DisbursementMethod.MOBILEMONEY ->  state.cachedMemberData.phoneNumber
+                                DisbursementMethod.BANK -> if (accountRefId !== null) accountRefId else ""
+                            }, // either account refId or mobile number
+                            disbursementMethod = modeOfDisbursement,
                             loanPeriod = loanPeriod,
                             loanType = loanType,
                             productRefId = refId,
@@ -181,9 +185,12 @@ class DefaultLoanConfirmationComponent(
                             amount = amount.toInt(),
                             currentTerm = currentTerm,
                             customerRefId = state.cachedMemberData.refId,
-                            disbursementAccountReference = state.cachedMemberData.phoneNumber,
-                            disbursementMethod = DisbursementMethod.MOBILEMONEY,
-                            loanPeriod = loanPeriod.toInt(),
+                            disbursementAccountReference = when(modeOfDisbursement) {
+                                DisbursementMethod.MOBILEMONEY ->  state.cachedMemberData.phoneNumber
+                                DisbursementMethod.BANK -> if (accountRefId !== null) accountRefId else ""
+                            },
+                            disbursementMethod = modeOfDisbursement,
+                            loanPeriod = loanPeriod,
                             loanType = loanType,
                             productRefId = refId,
                             referencedLoanRefId = referencedLoanRefId,

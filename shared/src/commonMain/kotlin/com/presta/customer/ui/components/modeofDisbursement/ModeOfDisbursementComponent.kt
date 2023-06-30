@@ -39,7 +39,20 @@ interface ModeOfDisbursementComponent {
         loanOperation: String,
 
     )
-    fun onBankSelected()
+    fun onBankSelected(
+        correlationId: String,
+        refId: String,
+        amount: Double,
+        fees: Double,
+        loanPeriod: Int,
+        loanType: LoanType,
+        interestRate: Double,
+        LoanName: String,
+        loanPeriodUnit: String,
+        referencedLoanRefId: String?,
+        currentTerm: Boolean,
+        loanOperation: String
+    )
     fun onBackNavSelected()
     fun successFulTransaction()
 

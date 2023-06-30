@@ -85,7 +85,20 @@ fun ModeOfDisbursementContent(
                 }
                 Row(modifier = Modifier.fillMaxWidth().padding(top = 11.dp)) {
                     ProductSelectionCard2("Bank", onClickContainer = {
-                      component.onBankSelected()
+                          component.onBankSelected(
+                              correlationId = component.correlationId,
+                              refId = component.refId,
+                              amount = component.amount,
+                              fees =   component.fees,
+                              loanPeriod = component.loanPeriod,
+                              loanType = component.loanType,
+                              interestRate = component.interestRate,
+                              LoanName = component.loanName,
+                              loanPeriodUnit =component.loanPeriodUnit ,
+                              referencedLoanRefId = component.referencedLoanRefId,
+                              currentTerm =component.currentTerm,
+                              loanOperation =component.loanOperation
+                          )
                     })
                 }
             }

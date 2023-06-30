@@ -33,8 +33,6 @@ fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineSc
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
 
-/*correlationId, refId, amount, fees, loanPeriod, loanType, interestRate, LoanName, loanPeriodUnit, referencedLoanRefId, currentTerm*/
-
 class DefaultModeOfDisbursementComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
@@ -53,7 +51,20 @@ class DefaultModeOfDisbursementComponent(
         currentTerm: Boolean,
         loanOperation:String
     ) -> Unit,
-    private val onBankClicked: () -> Unit,
+    private val onBankClicked: (
+        correlationId: String,
+        refId: String,
+        amount: Double,
+        fees: Double,
+        loanPeriod: Int,
+        loanType: LoanType,
+        interestRate: Double,
+        LoanName: String,
+        loanPeriodUnit: String,
+        referencedLoanRefId: String?,
+        currentTerm: Boolean,
+        loanOperation:String
+    ) -> Unit,
     private val onBackNavClicked: () -> Unit,
     private val TransactionSuccessful: () -> Unit,
     override val refId: String,
@@ -106,29 +117,6 @@ class DefaultModeOfDisbursementComponent(
 
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
-    private var refreshTokenJob: Job? = null
-    private fun refreshToken() {
-        if (refreshTokenJob?.isActive == true) return
-
-        refreshTokenJob = scope.launch {
-            authState.collect { state ->
-                println(state.cachedMemberData)
-                if (state.cachedMemberData !== null) {
-                    onAuthEvent(
-                        AuthStore.Intent.RefreshToken(
-                            tenantId = OrganisationModel.organisation.tenant_id,
-                            refId = state.cachedMemberData.refId
-                        )
-                    )
-                }
-                this.cancel()
-            }
-        }
-    }
-    private var authUserScopeJob: Job? = null
-
-    private var loanRequestScopeJob: Job? = null
-
     override fun onMpesaSelected(
         correlationId: String,
         refId: String,
@@ -142,7 +130,7 @@ class DefaultModeOfDisbursementComponent(
         referencedLoanRefId: String?,
         currentTerm: Boolean,
         loanOperation: String
-        ) {
+    ) {
 
         onMpesaClicked(
             correlationId,
@@ -163,8 +151,34 @@ class DefaultModeOfDisbursementComponent(
 
 
 
-    override fun onBankSelected() {
-        onBankClicked()
+    override fun onBankSelected(
+        correlationId: String,
+        refId: String,
+        amount: Double,
+        fees: Double,
+        loanPeriod: Int,
+        loanType: LoanType,
+        interestRate: Double,
+        LoanName: String,
+        loanPeriodUnit: String,
+        referencedLoanRefId: String?,
+        currentTerm: Boolean,
+        loanOperation: String
+    ) {
+        onBankClicked(
+            correlationId,
+            refId,
+            amount,
+            fees,
+            loanPeriod,
+            loanType,
+            interestRate,
+            LoanName,
+            loanPeriodUnit,
+            referencedLoanRefId,
+            currentTerm,
+            loanOperation
+        )
     }
 
     override fun onBackNavSelected() {
@@ -177,7 +191,5 @@ class DefaultModeOfDisbursementComponent(
 
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
-        refreshToken()
     }
-
 }

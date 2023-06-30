@@ -12,7 +12,6 @@ import com.presta.customer.network.loanRequest.model.LoanQuotationResponse
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.loanRequest.model.PrestaBanksResponse
 import com.presta.customer.network.loanRequest.model.PrestaCustomerBankCreatedResponse
-import com.presta.customer.network.loanRequest.model.PrestaCustomerBankDeletedResponse
 import com.presta.customer.network.loanRequest.model.PrestaCustomerBanksResponse
 import com.presta.customer.network.loanRequest.model.PrestaLoanApplicationStatusResponse
 import com.presta.customer.prestaDispatchers
@@ -44,7 +43,7 @@ class ModeOfDisbursementStoreFactory(
         data class PendingLoanDataLoaded(val loans: List<PrestaLoanApplicationStatusResponse>) :Msg()
         data class AllBanksLoaded(val banks: List<PrestaBanksResponse>) :Msg()
         data class CustomerBanksLoaded(val customerBanks: List<PrestaCustomerBanksResponse>) :Msg()
-        data class CustomerBanksDeleted(val customerBankDeletedResponse: PrestaCustomerBankDeletedResponse) :Msg()
+        data class CustomerBanksDeleted(val customerBankDeletedResponse: String) :Msg()
         data class CustomerBanksCreated(val customerBankCreatedResponse: PrestaCustomerBankCreatedResponse) :Msg()
         object ClearBankCreatedResponse: Msg()
     }

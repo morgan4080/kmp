@@ -8,9 +8,7 @@ import com.presta.customer.network.loanRequest.model.LoanApplicationStatus
 import com.presta.customer.network.loanRequest.model.LoanQuotationResponse
 import com.presta.customer.network.loanRequest.model.LoanRequestResponse
 import com.presta.customer.network.loanRequest.model.LoanType
-import com.presta.customer.network.loanRequest.model.PrestaBanksResponse
 import com.presta.customer.network.loanRequest.model.PrestaCustomerBankCreatedResponse
-import com.presta.customer.network.loanRequest.model.PrestaCustomerBankDeletedResponse
 import com.presta.customer.network.loanRequest.model.PrestaCustomerBanksResponse
 import com.presta.customer.network.loanRequest.model.PrestaLoanApplicationStatusResponse
 import com.presta.customer.network.loanRequest.model.PrestaLoanPollingResponse
@@ -199,19 +197,18 @@ class PrestaLoanRequestClient(
         paybillName: String,
         paybillNumber: String
     ): PrestaCustomerBankCreatedResponse {
-        val payload = CustomerBank(
-            accountNumber = accountNumber,
-            accountName = accountName,
-            paybillName = paybillName,
-            paybillNumber = paybillNumber,
-            userRefId = customerRefId,
-        )
         return loanRequestErrorHandler {
             httpClient.post(NetworkConstants.PrestaGetBankAccounts.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 contentType(ContentType.Application.Json)
                 setBody(
-                    payload
+                    CustomerBank(
+                        accountNumber = accountNumber,
+                        accountName = accountName,
+                        paybillName = paybillName,
+                        paybillNumber = paybillNumber,
+                        userRefId = customerRefId,
+                    )
                 )
                 url {
                     parameters.append("customerRefId", customerRefId)
@@ -222,14 +219,11 @@ class PrestaLoanRequestClient(
     suspend fun deleteCustomerBank(
         token: String,
         bankAccountRefId: String
-    ): PrestaCustomerBankDeletedResponse {
+    ): String {
         return loanRequestErrorHandler {
-            httpClient.delete(NetworkConstants.PrestaGetBankAccounts.route) {
+            httpClient.delete("${NetworkConstants.PrestaGetBankAccounts.route}/${bankAccountRefId}") {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 contentType(ContentType.Application.Json)
-                url {
-                    parameters.append("bankAccountRefId", bankAccountRefId)
-                }
             }
         }
     }

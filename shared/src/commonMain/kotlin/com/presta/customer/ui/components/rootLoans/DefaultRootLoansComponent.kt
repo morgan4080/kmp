@@ -14,6 +14,7 @@ import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.presta.customer.network.loanRequest.model.DisbursementMethod
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.payments.model.PaymentStatuses
 import com.presta.customer.prestaDispatchers
@@ -125,11 +126,31 @@ class DefaultRootLoansComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
-            proceed = {
-
+            proceed = { account ->
+                loansNavigation.push(
+                    ConfigLoans.LoanConfirmation(
+                        correlationId = config.correlationId,
+                        refId = config.refId,
+                        amount = config.amount,
+                        fees = config.fees,
+                        loanPeriod = config.loanPeriod,
+                        loanType = config.loanType,
+                        interestRate = config.interestRate,
+                        loanName = config.loanName,
+                        loanPeriodUnit = config.loanPeriodUnit,
+                        loanOperation = config.loanOperation,
+                        referencedLoanRefId = config.referencedLoanRefId,
+                        currentTerm = config.currentTerm,
+                        modeOfDisbursement = DisbursementMethod.BANK,
+                        accountRefId = account.refId
+                    )
+                )
             },
             pop = {
                 loansNavigation.pop()
+            },
+            addBank = {
+                loansNavigation.push(ConfigLoans.BankDisbursement)
             }
         )
 
@@ -259,7 +280,9 @@ class DefaultRootLoansComponent(
             loanOperation = config.loanOperation,
             loanType = config.loanType,
             referencedLoanRefId = config.referencedLoanRefId,
-            currentTerm = config.currentTerm
+            currentTerm = config.currentTerm,
+            modeOfDisbursement = config.modeOfDisbursement,
+            accountRefId = config.accountRefId
         )
 
     private fun modeOfDisbursementComponent(
@@ -286,9 +309,22 @@ class DefaultRootLoansComponent(
                     )
                 )
             },
-            onBankClicked = {
+            onBankClicked = { correlationId, refId, amount, fees, loanPeriod, loanType, interestRate, LoanName, loanPeriodUnit, referencedLoanRefId, currentTerm,loanOperation ->
                 //navigate to  BankDisbursement Screen
-                loansNavigation.push(ConfigLoans.BankDisbursement)
+                loansNavigation.push(ConfigLoans.CustomerBanks(
+                    correlationId = correlationId,
+                    refId = refId,
+                    amount = amount,
+                    fees = fees,
+                    loanPeriod = loanPeriod,
+                    loanType = loanType,
+                    interestRate = interestRate,
+                    loanName = LoanName,
+                    loanPeriodUnit = loanPeriodUnit,
+                    loanOperation = loanOperation,
+                    referencedLoanRefId = referencedLoanRefId,
+                    currentTerm = currentTerm
+                ))
 
             },
             onBackNavClicked = {
@@ -346,7 +382,7 @@ class DefaultRootLoansComponent(
         DefaultBankDisbursementComponent(
             componentContext = componentContext,
             onConfirmClicked = {
-                loansNavigation.push(ConfigLoans.SuccessfulTransaction)
+                loansNavigation.pop()
             },
             onBackNavClicked = {
                 loansNavigation.pop()
@@ -441,7 +477,9 @@ class DefaultRootLoansComponent(
             val loanPeriodUnit: String,
             val loanOperation: String,
             val referencedLoanRefId: String?,
-            val currentTerm:Boolean
+            val currentTerm:Boolean,
+            val modeOfDisbursement: com.presta.customer.network.loanRequest.model.DisbursementMethod = com.presta.customer.network.loanRequest.model.DisbursementMethod.MOBILEMONEY,
+            val accountRefId: String? = null
         ) : ConfigLoans()
 
         @Parcelize
@@ -490,7 +528,20 @@ class DefaultRootLoansComponent(
         ) : ConfigLoans()
 
         @Parcelize
-        object CustomerBanks: ConfigLoans()
+        data class CustomerBanks(
+            val correlationId: String,
+            val refId: String,
+            val amount: Double,
+            val fees: Double,
+            val loanPeriod: Int,
+            val loanType: LoanType,
+            val interestRate: Double,
+            val loanName: String,
+            val loanPeriodUnit: String,
+            val loanOperation: String,
+            val referencedLoanRefId: String?,
+            val currentTerm:Boolean
+        ): ConfigLoans()
     }
 
     init {

@@ -7,6 +7,7 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.presta.customer.network.loanRequest.model.PrestaCustomerBanksResponse
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
@@ -33,8 +34,9 @@ class DefaultCustomerBanksComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
-    val proceed: () -> Unit,
-    val pop: () -> Unit
+    val proceed: (account: PrestaCustomerBanksResponse) -> Unit,
+    val pop: () -> Unit,
+    val addBank: () -> Unit
 ): CustomerBanksComponent, ComponentContext by componentContext {
     private val scope = coroutineScope(mainContext + SupervisorJob())
     override val authStore: AuthStore =
@@ -71,24 +73,38 @@ class DefaultCustomerBanksComponent(
         modeOfDisbursementStore.accept(event)
     }
 
-    override fun onProceed() {
-        proceed()
+    override fun onProceed(account: PrestaCustomerBanksResponse) {
+        proceed(account)
     }
 
     override fun onBackNavSelected() {
         pop()
     }
 
+    override fun addBankSelected() {
+        addBank()
+    }
+
     init {
-        scope.launch {
-            authState.collect { state ->
-                if (state.cachedMemberData !== null) {
-                    onModeOfDisbursementEvent(ModeOfDisbursementStore.Intent.GetCustomerBanks(
-                        token = state.cachedMemberData.accessToken,
-                        customerRefId = state.cachedMemberData.refId
-                    ))
+        lifecycle.subscribe(
+            object : Lifecycle.Callbacks {
+                override fun onResume() {
+                    onAuthEvent(AuthStore.Intent.GetCachedMemberData)
+
+                    scope.launch {
+                        authState.collect { state ->
+                            if (state.cachedMemberData !== null) {
+                                onModeOfDisbursementEvent(ModeOfDisbursementStore.Intent.GetCustomerBanks(
+                                    token = state.cachedMemberData.accessToken,
+                                    customerRefId = state.cachedMemberData.refId
+                                ))
+                            }
+                        }
+                    }
+
+                    super.onResume()
                 }
             }
-        }
+        )
     }
 }

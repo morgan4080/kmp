@@ -7,7 +7,6 @@ import com.presta.customer.network.loanRequest.model.LoanQuotationResponse
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.loanRequest.model.PrestaBanksResponse
 import com.presta.customer.network.loanRequest.model.PrestaCustomerBankCreatedResponse
-import com.presta.customer.network.loanRequest.model.PrestaCustomerBankDeletedResponse
 import com.presta.customer.network.loanRequest.model.PrestaCustomerBanksResponse
 import com.presta.customer.network.loanRequest.model.PrestaLoanApplicationStatusResponse
 
@@ -78,6 +77,6 @@ interface ModeOfDisbursementStore : Store<ModeOfDisbursementStore.Intent, ModeOf
         val banks: List<PrestaBanksResponse> = listOf(),
         val customerBanks: List<PrestaCustomerBanksResponse> = listOf(),
         val customerBankCreatedResponse: PrestaCustomerBankCreatedResponse? = null,
-        val customerBankDeletedResponse: PrestaCustomerBankDeletedResponse? = null
+        val customerBankDeletedResponse: String? = null
     )
 }

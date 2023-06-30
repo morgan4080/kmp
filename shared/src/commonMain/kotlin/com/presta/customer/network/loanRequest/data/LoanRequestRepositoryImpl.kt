@@ -8,7 +8,6 @@ import com.presta.customer.network.loanRequest.model.LoanRequestResponse
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.loanRequest.model.PrestaBanksResponse
 import com.presta.customer.network.loanRequest.model.PrestaCustomerBankCreatedResponse
-import com.presta.customer.network.loanRequest.model.PrestaCustomerBankDeletedResponse
 import com.presta.customer.network.loanRequest.model.PrestaCustomerBanksResponse
 import com.presta.customer.network.loanRequest.model.PrestaLoanApplicationStatusResponse
 import com.presta.customer.network.loanRequest.model.PrestaLoanPollingResponse
@@ -173,7 +172,7 @@ class LoanRequestRepositoryImpl : LoanRequestRepository,KoinComponent {
     override suspend fun deleteCustomerBank(
         token: String,
         bankAccountRefId: String
-    ): Result<PrestaCustomerBankDeletedResponse> {
+    ): Result<String> {
         return try {
             val response = loanRequestClient.deleteCustomerBank(
                 token,

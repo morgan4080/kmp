@@ -36,7 +36,6 @@ class DefaultBankDisbursementComponent(
     mainContext: CoroutineContext,
     private val onConfirmClicked: () -> Unit,
     private val onBackNavClicked: () -> Unit,
-
 ) : BankDisbursementComponent,ComponentContext by componentContext{
 
     private val scope = coroutineScope(mainContext + SupervisorJob())

@@ -167,13 +167,14 @@ data class PrestaBanksResponse(
 data class AllBanksContent(
     val content: List<PrestaBanksResponse>
 )
+
 @Serializable
 data class PrestaCustomerBanksResponse(
     val refId: String,
     val accountName: String,
     val accountNumber: String,
     val paybillName: String,
-    val payBillNumber: String,
+    val paybillNumber: String
 )
 
 @Serializable
@@ -181,17 +182,7 @@ data class PrestaCustomerBankCreatedResponse(
     val accountName: String,
     val accountNumber: String,
     val paybillName: String,
-    val payBillNumber: String,
-    val userRefId: String
-)
-
-@Serializable
-data class PrestaCustomerBankDeletedResponse(
-    val accountName: String,
-    val accountNumber: String,
-    val paybillName: String,
-    val payBillNumber: String,
-    val userRefId: String
+    val paybillNumber: String
 )
 
 

@@ -421,7 +421,7 @@ fun ProfileContent(
                                                                 imageVector = item1.icon,
                                                                 modifier = Modifier.size(30.dp),
                                                                 contentDescription = null,
-                                                                tint = MaterialTheme.colorScheme.inverseOnSurface
+                                                                tint = MaterialTheme.colorScheme.onBackground
                                                             )
                                                         }
                                                     )
