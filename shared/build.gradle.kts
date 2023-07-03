@@ -8,6 +8,9 @@ plugins {
     id("kotlin-parcelize")
     id("dev.icerock.mobile.multiplatform-resources")
     id("app.cash.sqldelight")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
+
 }
 
 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
@@ -132,6 +135,10 @@ kotlin {
                 implementation("com.google.android.gms:play-services-auth-api-phone:18.0.1")
 
                 implementation("androidx.biometric:biometric:1.2.0-alpha05")
+                //Firebase
+                implementation ("com.google.firebase:firebase-bom:32.1.1")
+                implementation ("com.google.firebase:firebase-analytics-ktx")
+                implementation ("com.google.firebase:firebase-crashlytics-ktx")
             }
         }
 
@@ -181,6 +188,10 @@ android {
         jvmToolchain(11)
     }
 }
+dependencies {
+    implementation("com.google.firebase:firebase-crashlytics-ktx:18.3.7")
+    implementation("com.google.firebase:firebase-analytics-ktx:21.3.0")
+}
 
 sqldelight {
     databases {
@@ -189,3 +200,5 @@ sqldelight {
         }
     }
 }
+
+
