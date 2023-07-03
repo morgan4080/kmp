@@ -61,8 +61,11 @@ fun BankDisbursementScreen(
     val modeOfDisbursementState by component.modeOfDisbursementState.collectAsState()
     var launchPopUp by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableStateOf(-1) }
-    var  accountName by remember { mutableStateOf(TextFieldValue()) }
-    var  accountNumber by remember { mutableStateOf(TextFieldValue()) }
+    var  accountName by remember { mutableStateOf(TextFieldValue("")) }
+    var  accountNumber by remember { mutableStateOf(TextFieldValue("")) }
+    val pattern = remember { Regex("^\\d+\$") }
+    val regexPattern = remember {Regex("^[a-zA-Z0-9]+$")  }
+
 
     var selectedBank by remember { mutableStateOf<PrestaBanksResponse?>(null) }
 
@@ -102,11 +105,11 @@ fun BankDisbursementScreen(
                     ) {
                         TextInputContainer(
                             label = "Account Name",
-                            inputValue ="",
+                            inputValue = "",
                             inputType = InputTypes.STRING
                         ){
                             val inputValue: String = TextFieldValue(it).text
-                            if (inputValue != "") {
+                            if (inputValue.isNotEmpty()) {
                                 accountName = TextFieldValue(it)
                             }else{
                                 accountName=TextFieldValue()
@@ -140,7 +143,7 @@ fun BankDisbursementScreen(
                             inputType = InputTypes.NUMBER
                         ){
                             val inputValue: String = TextFieldValue(it).text
-                            if (inputValue != "") {
+                            if (inputValue.isNotEmpty() && inputValue.matches(pattern)) {
                                 accountNumber = TextFieldValue(it)
 
                             }else{
@@ -158,7 +161,7 @@ fun BankDisbursementScreen(
                             selectedBank?.let { bank ->
                                 component.onConfirmSelected(bank, accountName.text, accountNumber.text)
                             }
-                        }, enabled = selectedBank !== null && accountName.text!= "" && accountNumber.text!= "" , loading = modeOfDisbursementState.isLoading)
+                        }, enabled = selectedBank !== null && accountName.text.isNotEmpty() && accountNumber.text.isNotEmpty() , loading = modeOfDisbursementState.isLoading)
                     }
                 }
             }
