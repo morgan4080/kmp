@@ -82,13 +82,14 @@ fun  ApplyLoanScreen(component: ApplyLoanComponent, innerPadding: PaddingValues)
                             .padding(top=10.dp)){
                             ProductSelectionCard2("Long Term Loan",
                                 onClickContainer = {
+
                                     //Coming soon
                                     //Show a  snack Bar
-                                    scope.launch {
-                                        snackbarHostState.showSnackbar(
-                                            "Coming Soon"
-                                        )
-                                    }
+//                                    scope.launch {
+//                                        snackbarHostState.showSnackbar(
+//                                            "Coming Soon"
+//                                        )
+//                                    }
 
                                 }
                             )

@@ -5,7 +5,6 @@ buildscript {
         classpath(deps.parcelizeDarwin.gradlePlug)
         classpath(deps.moko.resources.generator)
         classpath(deps.kotlin.kotlinGradlePlug)
-        classpath("com.android.tools.build:gradle")
         classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.6")
         classpath("com.android.tools.build:gradle:8.0.2")
         classpath(deps.analytics.firebase)
