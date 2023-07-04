@@ -149,6 +149,14 @@ class DefaultShortTermLoansComponent(
                     )
 
                     onEvent(
+                        ShortTermLoansStore.Intent.GetPrestaLoanEligibilityStatus(
+                            token = state.cachedMemberData.accessToken,
+                            session_id = state.cachedMemberData.session_id,
+                            customerRefId = state.cachedMemberData.refId
+                        )
+                    )
+
+                    onEvent(
                         ShortTermLoansStore.Intent.GetPrestaShortTermProductList(
                             token = state.cachedMemberData.accessToken,
                             refId = state.cachedMemberData.refId
@@ -160,14 +168,6 @@ class DefaultShortTermLoansComponent(
                             token = state.cachedMemberData.accessToken,
                             session_id = state.cachedMemberData.session_id,
                             refId = state.cachedMemberData.refId
-                        )
-                    )
-
-                    onEvent(
-                        ShortTermLoansStore.Intent.GetPrestaLoanEligibilityStatus(
-                            token = state.cachedMemberData.accessToken,
-                            session_id = state.cachedMemberData.session_id,
-                            customerRefId = state.cachedMemberData.refId
                         )
                     )
                 }

@@ -96,6 +96,10 @@ class DefaultAuthComponent(
 
         scope.launch {
             state.collect {
+                if (it.error !== null) {
+                    platform.showToast(it.error)
+                    onEvent(AuthStore.Intent.UpdateError(null))
+                }
                 if (it.phoneNumber !== null) {
                     onOnBoardingEvent(OnBoardingStore.Intent.GetMemberDetails(
                         token = "",
@@ -109,6 +113,10 @@ class DefaultAuthComponent(
 
         scope.launch {
             onBoardingState.collect {
+                if (it.error !== null) {
+                    platform.showToast(it.error)
+                    onOnBoardingEvent(OnBoardingStore.Intent.UpdateError(null))
+                }
                 if (it.member?.authenticationInfo?.pinStatus == PinStatus.SET) {
                     onEvent(AuthStore.Intent.UpdateContext(
                         context = Contexts.LOGIN,

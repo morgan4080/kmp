@@ -13,12 +13,14 @@ import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -56,6 +58,7 @@ import com.presta.customer.ui.composables.Paginator
 import com.presta.customer.ui.composables.TextInputContainer
 import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.helpers.formatMoney
+import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.backArrowColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.datetime.LocalDateTime
@@ -78,7 +81,6 @@ fun PayLoanContent(
     Scaffold (
         modifier = Modifier
             .padding(LocalSafeArea.current)
-            .background(color = MaterialTheme.colorScheme.background)
             .fillMaxHeight(),
         snackbarHost = {
             SnackbarHost(
@@ -92,124 +94,183 @@ fun PayLoanContent(
             })
         }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .padding(start = 16.dp, end = 16.dp)
-                .padding(it)
-                .background(color = MaterialTheme.colorScheme.background)
-        ) {
-            Text(
-                modifier = Modifier.padding(start = 10.dp),
-                text = "Your Active Loans",
-                color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 14.sp,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
-            )
+        if (state.loansBalances !== null && state.loansBalances.loanBreakDown.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .padding(start = 16.dp, end = 16.dp)
+                    .padding(it)
+            ) {
+                Text(
+                    modifier = Modifier.padding(start = 10.dp),
+                    text = "Your Active Loans",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 14.sp,
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                )
 
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                state = stateLazyRow0,
-                flingBehavior = rememberSnapFlingBehavior(
-                    lazyListState = stateLazyRow0
-                ),
-                content = {
-                    if (state.loansBalances == null) {
-                        items(1) {
-                            Box(
-                                modifier = Modifier.fillParentMaxWidth()
-                            ) {
-                                LoanStatusContainer(
-                                    totalAmount = null,
-                                    amountDue = null,
-                                    dueDate = null,
-                                    loanType = null,
-                                    loanStatus = null,
-                                    loansCount = null,
-                                    loanIndex = null
-                                )
-                            }
-                        }
-                    } else {
-                        state.loansBalances.loanBreakDown.map {
-                            item {
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    state = stateLazyRow0,
+                    flingBehavior = rememberSnapFlingBehavior(
+                        lazyListState = stateLazyRow0
+                    ),
+                    content = {
+                        if (state.isLoading) {
+                            items(1) {
                                 Box(
                                     modifier = Modifier.fillParentMaxWidth()
                                 ) {
                                     LoanStatusContainer(
-                                        totalAmount = it.totalBalance,
-                                        amountDue = it.amountDue,
-                                        dueDate = it.dueDate,
-                                        loanType = it.loanType,
-                                        loanStatus = it.loanStatus,
-                                        loansCount = state.loansBalances.loanCount,
-                                        loanIndex = stateLazyRow0.firstVisibleItemIndex + 1
+                                        totalAmount = null,
+                                        amountDue = null,
+                                        dueDate = null,
+                                        loanType = null,
+                                        loanStatus = null,
+                                        loansCount = null,
+                                        loanIndex = null
                                     )
+                                }
+                            }
+                        } else {
+                            state.loansBalances.loanBreakDown.map {
+                                item {
+                                    Box(
+                                        modifier = Modifier.fillParentMaxWidth()
+                                    ) {
+                                        LoanStatusContainer(
+                                            totalAmount = it.totalBalance,
+                                            amountDue = it.amountDue,
+                                            dueDate = it.dueDate,
+                                            loanType = it.loanType,
+                                            loanStatus = it.loanStatus,
+                                            loansCount = state.loansBalances.loanCount,
+                                            loanIndex = stateLazyRow0.firstVisibleItemIndex + 1
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp)
+                ) {
+                    Paginator(state.loansBalances.loanBreakDown.size, stateLazyRow0.firstVisibleItemIndex)
                 }
-            )
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp)
-            ) {
-                Paginator(if (state.loansBalances !== null) state.loansBalances.loanBreakDown.size else 1, stateLazyRow0.firstVisibleItemIndex)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp)
+                ) {
+
+                    TextInputContainer("Desired Amount","", inputType = InputTypes.NUMBER, callback = { str ->
+                        amount = TextFieldValue(str)
+                    })
+
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 35.dp)
+                ) {
+                    ActionButton("Pay Now", onClickContainer = {
+                        if (amount.text !== "" && state.loansBalances.loanBreakDown.isNotEmpty()) {
+                            onPaySelected(amount.text, state.loansBalances.loanBreakDown[stateLazyRow0.firstVisibleItemIndex])
+                        }
+                    }, enabled = (amount.text !== "" && state.loansBalances.loanBreakDown.isNotEmpty()))
+                }
+
+                Card(
+                    onClick = {
+                        launchPopUp = !launchPopUp
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.5.dp),
+                    colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background)
+                ) {
+                    Text(
+                        "View more details",
+                        fontSize = 12.sp,
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        color = backArrowColor,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                    )
+                }
+
+                if (launchPopUp && state.loansBalances.loanBreakDown.isNotEmpty()) {
+                    MoreDetails(
+                        loanBreakDown = state.loansBalances.loanBreakDown[stateLazyRow0.firstVisibleItemIndex],
+                        dismiss = {launchPopUp = !launchPopUp}
+                    )
+                }
             }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp)
-            ) {
-
-                TextInputContainer("Desired Amount","", inputType = InputTypes.NUMBER, callback = {
-                    amount = TextFieldValue(it)
-                })
-
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 35.dp)
-            ) {
-                ActionButton("Pay Now", onClickContainer = {
-                    if (amount.text !== "" && state.loansBalances !== null && state.loansBalances.loanBreakDown.isNotEmpty()) {
-                        onPaySelected(amount.text, state.loansBalances.loanBreakDown[stateLazyRow0.firstVisibleItemIndex])
+        } else {
+            if (state.isLoading) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.7f)
+                        .padding(start = 16.dp, end = 16.dp)
+                        .padding(it)
+                ) {
+                    Box {
+                        LoanStatusContainer(
+                            totalAmount = null,
+                            amountDue = null,
+                            dueDate = null,
+                            loanType = null,
+                            loanStatus = null,
+                            loansCount = null,
+                            loanIndex = null
+                        )
                     }
-                }, enabled = (amount.text !== "" && state.loansBalances !== null && state.loansBalances.loanBreakDown.isNotEmpty()))
-            }
-
-            Card(
-                onClick = {
-                    launchPopUp = !launchPopUp
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.5.dp),
-                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background)
-            ) {
-                Text(
-                    "View more details",
-                    fontSize = 12.sp,
-                    textDecoration = TextDecoration.Underline,
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    color = backArrowColor,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                )
-            }
-
-            if (launchPopUp && state.loansBalances !== null && state.loansBalances.loanBreakDown.isNotEmpty()) {
-                MoreDetails(
-                    loanBreakDown = state.loansBalances.loanBreakDown[stateLazyRow0.firstVisibleItemIndex],
-                    dismiss = {launchPopUp = !launchPopUp}
-                )
+                }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.7f)
+                        .padding(start = 16.dp, end = 16.dp)
+                        .padding(it),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(150.dp),
+                            imageVector = Icons.Filled.ChatBubble,
+                            contentDescription = null,
+                            tint = actionButtonColor
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(top = 25.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "You do not have any unpaid loans",
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                            textAlign = TextAlign.Center,
+                            lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
+                        )
+                    }
+                }
             }
         }
     }
@@ -297,7 +358,7 @@ fun MoreDetails(
                     ) {
                         loanDetailsMap.map { detail ->
                             item {
-                                LoanDetailsRow(detail.key, detail.value,)
+                                LoanDetailsRow(detail.key, detail.value)
                             }
                         }
                     }

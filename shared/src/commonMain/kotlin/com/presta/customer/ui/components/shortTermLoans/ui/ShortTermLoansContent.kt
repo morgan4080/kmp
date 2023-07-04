@@ -68,20 +68,21 @@ fun ShortTermLoansContent(
     innerPadding: PaddingValues,
     reloadModels: () -> Unit,
 ) {
-    val tabs = listOf("Product", "Top Up")
+    var tabs = listOf ("Product", "Top Up")
     var tabIndex by remember { mutableStateOf(0) }
 
     LaunchedEffect(state.prestaLoanEligibilityStatus) {
         if (state.prestaLoanEligibilityStatus !== null) {
-            println(state.prestaLoanEligibilityStatus.loanType)
-            if (
-                !state.prestaLoanEligibilityStatus.isEligible &&
-                !state.prestaLoanEligibilityStatus.isEligibleForNormalLoanAndTopup
-            ) {
-                tabIndex = 3
-            }
             if (state.prestaLoanEligibilityStatus.loanType == LoanType._TOP_UP) {
-                tabIndex = 4
+                tabs = listOf("Top Up")
+                tabIndex = 1
+            } else {
+                if (
+                    !state.prestaLoanEligibilityStatus.isEligible &&
+                    !state.prestaLoanEligibilityStatus.isEligibleForNormalLoanAndTopup
+                ) {
+                    tabIndex = 2
+                }
             }
         }
     }
@@ -91,16 +92,20 @@ fun ShortTermLoansContent(
 
     fun refresh() = refreshScope.launch {
         refreshing = true
-        reloadModels()
         authState.cachedMemberData?.let {
+            ShortTermLoansStore.Intent.GetPrestaLoanEligibilityStatus(
+                token = it.accessToken,
+                session_id = it.session_id,
+                customerRefId = it.refId
+            )
             ShortTermLoansStore.Intent.GetPrestaShortTermProductList(
                 it.accessToken,
-                authState.cachedMemberData.refId
+                it.refId
             )
-            ShortTermLoansStore.Intent.GetPrestaLoanEligibilityStatus(
-                token = authState.cachedMemberData.accessToken,
-                session_id = authState.cachedMemberData.session_id,
-                customerRefId = authState.cachedMemberData.refId
+            ShortTermLoansStore.Intent.GetPrestaShortTermTopUpList(
+                token = it.accessToken,
+                session_id = it.session_id,
+                refId = it.refId
             )
         }?.let { onEvent.invoke(it) }
         delay(1500)
@@ -126,8 +131,10 @@ fun ShortTermLoansContent(
             .padding(horizontal = 16.dp)
         ) {
             if (
+                tabs.isNotEmpty() &&
+                !state.isLoading &&
                 state.prestaLoanEligibilityStatus !== null &&
-                tabIndex <= 2
+                tabIndex != 2
             ) {
                 TabRow(selectedTabIndex = tabIndex,
                     containerColor = Color.White.copy(alpha = 0.5f),
@@ -135,9 +142,7 @@ fun ShortTermLoansContent(
                         .clip(shape = RoundedCornerShape(29.dp))
                         .background(Color.Gray.copy(alpha = 0.5f)),
                     indicator = {},
-                    divider = {
-
-                    }
+                    divider = {}
                 ) {
                     tabs.forEachIndexed { index, title ->
                         Row(modifier = Modifier
@@ -171,19 +176,37 @@ fun ShortTermLoansContent(
                         }
                     }
                 }
-
+            }
+            if (
+                !state.isLoading &&
+                state.prestaLoanEligibilityStatus !== null
+            ) {
                 when (tabIndex) {
-                    0 -> ShortTermProductList(component,state,authState,onEvent, state.prestaLoanEligibilityStatus)
-                    1 -> ShortTermTopUpList(component,state, state.prestaLoanEligibilityStatus,authState, onEvent)
-                    3 -> {
-                        Column (
+                    0 -> ShortTermProductList(
+                        component,
+                        state,
+                        authState,
+                        onEvent,
+                        state.prestaLoanEligibilityStatus
+                    )
+
+                    1 -> ShortTermTopUpList(
+                        component,
+                        state,
+                        state.prestaLoanEligibilityStatus,
+                        authState,
+                        onEvent
+                    )
+
+                    2 -> {
+                        Column(
                             modifier = Modifier
                                 .fillMaxHeight(0.7f)
                                 .fillMaxWidth(),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Row (
+                            Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Center
                             ) {
@@ -197,8 +220,9 @@ fun ShortTermLoansContent(
                             Box(modifier = Modifier.pullRefresh(refreshState)) {
                                 LazyColumn {
                                     item {
-                                        Row (
-                                            modifier = Modifier.fillMaxWidth(0.8f).padding(top = 25.dp),
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(0.8f)
+                                                .padding(top = 25.dp),
                                             horizontalArrangement = Arrangement.Center
                                         ) {
                                             Text(
@@ -210,11 +234,11 @@ fun ShortTermLoansContent(
                                                 lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
                                             )
                                         }
-                                        Row (
+                                        Row(
                                             modifier = Modifier.fillMaxWidth(0.8f),
                                             horizontalArrangement = Arrangement.Center
                                         ) {
-                                            Text (
+                                            Text(
                                                 text = state.prestaLoanEligibilityStatus.description,
                                                 color = actionButtonColor,
                                                 style = MaterialTheme.typography.headlineSmall,
@@ -235,13 +259,14 @@ fun ShortTermLoansContent(
                             }
                         }
                     }
-                    4 -> ShortTermTopUpList(component,state, state.prestaLoanEligibilityStatus,authState, onEvent)
                 }
-            } else if (state.prestaLoanEligibilityStatus == null) {
+            }
+
+            if (state.isLoading) {
                 listOf(1,2,3,4,5,6,7,8).map {
                     Row(modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp)
+                        .padding(top = 16.dp)
                     ) {
                         ElevatedCard(
                             modifier = Modifier

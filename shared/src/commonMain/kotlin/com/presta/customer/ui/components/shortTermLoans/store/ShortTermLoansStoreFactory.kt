@@ -92,7 +92,7 @@ class ShortTermLoansStoreFactory(
 
             }
 
-        //Get ShortTermLoansProducts
+
         private var getShortTermProductListJob: Job? = null
 
         private fun getShortTermProductList(
@@ -108,8 +108,6 @@ class ShortTermLoansStoreFactory(
                     token = token,
                     memberRefId = refId
                 ).onSuccess { response ->
-                    println(":::::::::getShortTermProductListData")
-                    println(response)
                     dispatch(Msg.ShortTermLoansProductsListLoaded(response))
                 }.onFailure { e ->
                     dispatch(Msg.ShortTermLoansFailed(e.message))
@@ -157,8 +155,7 @@ class ShortTermLoansStoreFactory(
 
         ) {
             if (getShortTermTopUpListJob?.isActive == true) return
-
-            dispatch(Msg.ShortTermLoansLoading())
+            dispatch(Msg.ShortTermLoansLoading(true))
 
             getShortTermTopUpListJob = scope.launch {
                 shortTermLoansRepository.getShortTermTopUpListData(
@@ -166,20 +163,15 @@ class ShortTermLoansStoreFactory(
                     session_id = session_id,
                     memberRefId = refId
                 ).onSuccess { response ->
-                    println("getShortTermToPUpListData::::::Loaded")
-                    println(response)
                     dispatch(Msg.ShortTermTopUpListLoaded(response))
                 }.onFailure { e ->
                     dispatch(Msg.ShortTermLoansFailed(e.message))
-                    //Test
-                    println("An error occured:::::::;;; ")
                 }
 
                 dispatch(Msg.ShortTermLoansLoading(false))
             }
         }
 
-        //Get loan Eligibility  Status
         private var getLoanEligibiltyJob: Job? = null
         private fun getLoanEligibilityStatus(
             token: String,
@@ -196,14 +188,12 @@ class ShortTermLoansStoreFactory(
                     session_id = session_id,
                     customerRefId = customerRefId
                 ).onSuccess { response ->
-                    println("LoanEligibility Data :::::Loaded")
-                    println(response)
                     dispatch(Msg.LoanEligibilityStatusLoaded(response))
                 }.onFailure { e ->
                     dispatch(Msg.ShortTermLoansFailed(e.message))
-                    //Test
-                    println("An error occured loading Loan Elijibility:::::::;;; ")
                 }
+
+                dispatch(Msg.ShortTermLoansLoading(false))
 
             }
 
@@ -224,8 +214,6 @@ class ShortTermLoansStoreFactory(
                     token = token,
                     loanId = loanRefId
                 ).onSuccess { response ->
-                    println(":::::::::LoanProductByIdLoaded")
-                    println(response)
                     dispatch(Msg.LoanProductByIdLoaded(response))
                 }.onFailure { e ->
                     dispatch(Msg.ShortTermLoansFailed(e.message))

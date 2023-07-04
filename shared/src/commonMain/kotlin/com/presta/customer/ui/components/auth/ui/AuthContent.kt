@@ -229,13 +229,8 @@ fun AuthContent(
         state.error,
         onBoardingState.error
     ) {
-
         if (onBoardingState.error !== null) {
-            platform.showToast(onBoardingState.error)
-
             clearPinCharacters()
-
-            onOnBoardingEvent(OnBoardingStore.Intent.UpdateError(null))
 
             if (state.pinStatus !== PinStatus.SET) {
                 onEvent(
@@ -252,11 +247,8 @@ fun AuthContent(
         }
 
         if (state.error !== null) {
-            platform.showToast(state.error)
 
             clearPinCharacters()
-
-            onEvent(AuthStore.Intent.UpdateError(null))
 
             if (state.pinStatus == PinStatus.SET) {
                 platform.showToast("Please Contact Admin")
@@ -306,6 +298,23 @@ fun AuthContent(
                     style = MaterialTheme.typography.bodySmall,
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                 )
+            }
+
+            state.error?.let { it1 ->
+                Row(
+                    modifier = Modifier
+                        .padding(
+                            horizontal = 16.dp
+                        )
+                ) {
+                    Text(
+                        text = it1,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        textAlign = TextAlign.Center,
+                        color = Color.Red
+                    )
+                }
             }
 
             Row(

@@ -270,7 +270,6 @@ class ModeOfDisbursementStoreFactory(
             paybillName: String,
             paybillNumber: String
         ) {
-            if (createCustomerBanksJob?.isActive == true) return
             dispatch(Msg.LoanRequestsLoading(true))
 
             createCustomerBanksJob = scope.launch {
@@ -304,11 +303,12 @@ class ModeOfDisbursementStoreFactory(
                     bankAccountRefId
                 ).onSuccess { response ->
                     dispatch(Msg.CustomerBanksDeleted(response))
-                    dispatch(Msg.LoanRequestsLoading(false))
+                    getCustomerBanks(token, bankAccountRefId)
                 }.onFailure { e ->
                     dispatch(Msg.LoanRequestFailedFailed(e.message))
-                    dispatch(Msg.LoanRequestsLoading(false))
                 }
+
+                dispatch(Msg.LoanRequestsLoading(false))
             }
         }
     }

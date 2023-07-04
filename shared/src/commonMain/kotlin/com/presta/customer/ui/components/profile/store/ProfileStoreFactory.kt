@@ -95,6 +95,7 @@ class ProfileStoreFactory(
                 }.onFailure { e ->
                     dispatch(Msg.ProfileFailed(e.message))
                 }
+                dispatch(Msg.ProfileLoading(false))
             }
         }
 
@@ -120,6 +121,8 @@ class ProfileStoreFactory(
                 }.onFailure { e ->
                     dispatch(Msg.ProfileFailed(e.message))
                 }
+
+                dispatch(Msg.ProfileLoading(false))
             }
         }
         //Get Transaction mapping
@@ -141,6 +144,8 @@ class ProfileStoreFactory(
                 }.onFailure { e ->
                     dispatch(Msg.ProfileFailed(e.message))
                 }
+
+                dispatch(Msg.ProfileLoading(false))
             }
         }
 

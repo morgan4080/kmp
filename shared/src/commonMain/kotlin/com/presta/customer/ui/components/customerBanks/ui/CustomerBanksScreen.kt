@@ -1,7 +1,9 @@
 package com.presta.customer.ui.components.customerBanks.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,7 +41,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -142,7 +143,7 @@ fun CustomerBanksScreen(
 
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                text = "Bank Disbursement",
+                text = "Bank Accounts",
                 fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                 fontSize = 14.sp
             )
@@ -156,7 +157,7 @@ fun CustomerBanksScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(
-                                    top = 10.dp
+                                    vertical = 7.dp
                                 )
                         ) {
                             SelectAccountView(
@@ -176,11 +177,6 @@ fun CustomerBanksScreen(
                                         component.onModeOfDisbursementEvent(ModeOfDisbursementStore.Intent.DeleteCustomerBank(
                                             cachedMemberData.accessToken,
                                             account.refId
-                                        ))
-
-                                        component.onModeOfDisbursementEvent(ModeOfDisbursementStore.Intent.GetCustomerBanks(
-                                            token = cachedMemberData.accessToken,
-                                            customerRefId = cachedMemberData.refId
                                         ))
                                     }
                                 },
@@ -237,86 +233,87 @@ fun SelectAccountView(
             onClick.invoke(Index)
         }
     ) {
-        Row(
-            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row {
-                Spacer(modifier = Modifier.padding(end = 15.dp))
-                Card(
-                    modifier = Modifier
-                        .clip(shape = CircleShape),
-                    elevation = CardDefaults.cardElevation(0.dp)
-                ) {
-                    Box(
+        Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.inverseOnSurface)) {
+            Row(
+                modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row {
+                    Spacer(modifier = Modifier.padding(end = 15.dp))
+                    Card(
                         modifier = Modifier
-                            .size(19.dp)
-                            .background(if (selected) actionButtonColor else MaterialTheme.colorScheme.background)
-                            .clickable {
-                                //onClickContainer(mode)
-                                onClick.invoke(Index)
-                            },
-                        contentAlignment = Alignment.Center
+                            .clip(shape = CircleShape)
+                            .border(
+                                border = BorderStroke(0.2.dp, MaterialTheme.colorScheme.outline),
+                                shape = CircleShape
+                            ),
+                        elevation = CardDefaults.cardElevation(0.dp)
                     ) {
-                        if (selected)
-                            Icon(
-                                Icons.Default.Check,
-                                contentDescription = "Check Box",
-                                tint = Color.White,
-                                modifier = Modifier.padding(1.dp)
-                            )
+                        Box(
+                            modifier = Modifier
+                                .size(19.dp)
+                                .background(if (selected) actionButtonColor else MaterialTheme.colorScheme.background)
+                                .clickable {
+                                    onClick.invoke(Index)
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (selected) {
+                                Icon(
+                                    Icons.Default.Check,
+                                    contentDescription = "Check Box",
+                                    tint = Color.White,
+                                    modifier = Modifier.padding(1.dp)
+                                )
+                            }
+                        }
                     }
                 }
-            }
 
-            Column {
+                Column {
 
-                Text(
-                    text = label,
-                    modifier = Modifier
-                        .padding(start = 15.dp),
-                    fontSize = 12.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                )
-
-                if (description != null) {
                     Text(
-                        text = description,
-                        modifier = Modifier.padding(start = 15.dp),
-                        fontSize = 10.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                        text = label,
+                        modifier = Modifier
+                            .padding(start = 15.dp),
+                        fontSize = 12.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                     )
-                }
-            }
 
-            Row {
-                //Created a Custom checkBox
-                Spacer(modifier = Modifier.weight(1f))
-                Card(
-                    modifier = Modifier
-                        .clip(shape = CircleShape),
-                    elevation = CardDefaults.cardElevation(0.dp)
-                ) {
+                    if (description != null) {
+                        Text(
+                            text = description,
+                            modifier = Modifier.padding(start = 15.dp),
+                            fontSize = 10.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                        )
+                    }
+                }
+
+                Row {
+                    //Created a Custom checkBox
+                    Spacer(modifier = Modifier.weight(1f))
                     Box(
                         modifier = Modifier
                             .size(19.dp)
                             .clickable {
-                                // delete account
                                 deleteAccount()
                             },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            modifier = Modifier.alpha(0.4f),
+                            modifier = Modifier,
                             imageVector = Icons.Filled.Cancel,
                             contentDescription = null,
-                            tint = actionButtonColor
+                            tint = actionButtonColor.copy(
+                                alpha = 0.4f
+                            )
                         )
                     }
-                }
 
-                Spacer(modifier = Modifier.padding(end = 15.dp))
+                    Spacer(modifier = Modifier.padding(end = 15.dp))
+                }
             }
         }
     }
