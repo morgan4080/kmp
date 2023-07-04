@@ -215,7 +215,7 @@ fun OnBoardingContent(
     ) {
         Scaffold (
             snackbarHost = {
-                SnackbarHost(snackbarHostState)
+                SnackbarHost(modifier = Modifier, hostState = snackbarHostState)
             }
         ) {
             LazyColumn (

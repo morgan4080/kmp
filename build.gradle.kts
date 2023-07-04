@@ -5,6 +5,7 @@ buildscript {
         classpath(deps.parcelizeDarwin.gradlePlug)
         classpath(deps.moko.resources.generator)
         classpath(deps.kotlin.kotlinGradlePlug)
+        classpath("com.android.tools.build:gradle:8.0.2")
     }
 }
 

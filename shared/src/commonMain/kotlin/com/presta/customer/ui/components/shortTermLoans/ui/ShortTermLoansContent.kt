@@ -1,11 +1,13 @@
 package com.presta.customer.ui.components.shortTermLoans.ui
 
+import ShimmerBrush
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,11 +22,11 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -82,11 +84,6 @@ fun ShortTermLoansContent(
                 tabIndex = 4
             }
         }
-        println("Eligibility")
-        println(state.prestaLoanEligibilityStatus)
-        println("Eligibility Condition")
-        println(state.prestaLoanEligibilityStatus !== null &&
-                state.prestaLoanEligibilityStatus.isEligible)
     }
 
     var refreshing by remember { mutableStateOf(false) }
@@ -111,7 +108,7 @@ fun ShortTermLoansContent(
 
     }
 
-    val refreshState = rememberPullRefreshState(refreshing, ::refresh,)
+    val refreshState = rememberPullRefreshState(refreshing, ::refresh)
 
     Scaffold(
         modifier = Modifier
@@ -123,161 +120,147 @@ fun ShortTermLoansContent(
         }
     ) { paddingValues ->
         Column(modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.background)
             .fillMaxWidth()
             .fillMaxHeight()
             .padding(paddingValues)
+            .padding(horizontal = 16.dp)
         ) {
-            Column(modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp)
-                .background(color = MaterialTheme.colorScheme.background)
+            if (
+                state.prestaLoanEligibilityStatus !== null &&
+                tabIndex <= 2
             ) {
-                Column(modifier = Modifier
-                    .fillMaxWidth()
+                TabRow(selectedTabIndex = tabIndex,
+                    containerColor = Color.White.copy(alpha = 0.5f),
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(29.dp))
+                        .background(Color.Gray.copy(alpha = 0.5f)),
+                    indicator = {},
+                    divider = {
+
+                    }
                 ) {
-                    if (
-                        state.prestaLoanEligibilityStatus !== null &&
-                        state.prestaLoanEligibilityStatus.isEligible &&
-                        tabIndex <= 2
-                    ) {
-                        TabRow(selectedTabIndex = tabIndex,
-                            containerColor = Color.White.copy(alpha = 0.5f),
-                            modifier = Modifier
-                                .clip(shape = RoundedCornerShape(29.dp))
-                                .background(Color.Gray.copy(alpha = 0.5f)),
-                            indicator = {},
-                            divider = {
-
-                            }
+                    tabs.forEachIndexed { index, title ->
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(shape = RoundedCornerShape(70.dp))
                         ) {
-                            tabs.forEachIndexed { index, title ->
-                                Row(modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(shape = RoundedCornerShape(70.dp))
-                                ) {
-                                    Card(
-                                        shape = RoundedCornerShape(70.dp),
-                                        colors = CardDefaults.cardColors(containerColor = if (tabIndex == index) Color.White else Color.Transparent),
-                                        modifier = Modifier
-                                            .padding(1.5.dp)
-                                    ) {
+                            Card(
+                                shape = RoundedCornerShape(70.dp),
+                                colors = CardDefaults.cardColors(containerColor = if (tabIndex == index) Color.White else Color.Transparent),
+                                modifier = Modifier
+                                    .padding(1.5.dp)
+                            ) {
 
-                                        Tab(text = {
-                                            Text(text = title,
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
-                                                fontSize = 12.sp
-                                            )
-                                        },
-                                            selected = tabIndex == index,
-                                            onClick = {
-                                                tabIndex = index
-                                            },
-                                            modifier = Modifier
-                                                .clip(shape= RoundedCornerShape(topStart = 70.dp, topEnd = 70.dp, bottomStart = 70.dp, bottomEnd = 70.dp))
-                                                .background(color = if (tabIndex == index) Color.White.copy(alpha = 0.3f) else Color.White.copy(alpha = 0.1f)),
-                                            selectedContentColor = Color.Black,
-                                            unselectedContentColor = Color.DarkGray
-                                        )
-                                    }
-                                }
+                                Tab(text = {
+                                    Text(text = title,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                        fontSize = 12.sp
+                                    )
+                                },
+                                    selected = tabIndex == index,
+                                    onClick = {
+                                        tabIndex = index
+                                    },
+                                    modifier = Modifier
+                                        .clip(shape= RoundedCornerShape(topStart = 70.dp, topEnd = 70.dp, bottomStart = 70.dp, bottomEnd = 70.dp))
+                                        .background(color = if (tabIndex == index) Color.White.copy(alpha = 0.3f) else Color.White.copy(alpha = 0.1f)),
+                                    selectedContentColor = Color.Black,
+                                    unselectedContentColor = Color.DarkGray
+                                )
                             }
                         }
                     }
-                    when (tabIndex) {
-                        0 -> ShortTermProductList(component,state,authState,onEvent, state.prestaLoanEligibilityStatus)
-                        1 -> ShortTermTopUpList(component,state, state.prestaLoanEligibilityStatus,authState, onEvent)
-                        3 -> {
-                            Column (
-                                modifier = Modifier
-                                    .fillMaxHeight(0.7f)
-                                    .fillMaxWidth(),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Row (
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    Icon(
-                                        modifier = Modifier.size(150.dp),
-                                        imageVector = Icons.Filled.ChatBubble,
-                                        contentDescription = null,
-                                        tint = actionButtonColor
-                                    )
-                                }
-                                Box(modifier = Modifier.pullRefresh(refreshState)) {
-                                    LazyColumn {
-                                        item {
-                                            Row (
-                                                modifier = Modifier.fillMaxWidth(0.8f).padding(top = 25.dp),
-                                                horizontalArrangement = Arrangement.Center
-                                            ) {
-                                                Text(
-                                                    text = "It seems you are not eligible to borrow, reason:",
-                                                    color = MaterialTheme.colorScheme.onBackground,
-                                                    style = MaterialTheme.typography.headlineSmall,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                                                    textAlign = TextAlign.Center,
-                                                    lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
-                                                )
-                                            }
-                                            Row (
-                                                modifier = Modifier.fillMaxWidth(0.8f),
-                                                horizontalArrangement = Arrangement.Center
-                                            ) {
-                                                Text (
-                                                    text = if (state.prestaLoanEligibilityStatus !== null) state.prestaLoanEligibilityStatus.description else "",
-                                                    color = actionButtonColor,
-                                                    style = MaterialTheme.typography.headlineSmall,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                                                    textAlign = TextAlign.Center,
-                                                    lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
-                                                )
-                                            }
-                                        }
+                }
 
-                                        item {
-                                            if (
-                                                state.error !== null || authState.error !== null
-                                            ) {
-                                                Row (
-                                                    modifier = Modifier.fillMaxWidth(0.8f).padding(top = 20.dp),
-                                                    horizontalArrangement = Arrangement.Center
-                                                ) {
-                                                    Column(
-                                                        modifier = Modifier
-                                                            .clip(shape = RoundedCornerShape(10.dp))
-                                                            .background(color = MaterialTheme.colorScheme.inverseOnSurface)
-                                                            .padding(16.dp)
-                                                    ) {
-                                                        state.error?.let { txt ->
-                                                            Text(
-                                                                style = MaterialTheme.typography.labelSmall,
-                                                                text = txt
-                                                            )
-                                                        }
-                                                        authState.error?.let { txt ->
-                                                            Text(
-                                                                style = MaterialTheme.typography.labelSmall,
-                                                                text = txt
-                                                            )
-                                                        }
-                                                    }
-                                                }
-                                            }
+                when (tabIndex) {
+                    0 -> ShortTermProductList(component,state,authState,onEvent, state.prestaLoanEligibilityStatus)
+                    1 -> ShortTermTopUpList(component,state, state.prestaLoanEligibilityStatus,authState, onEvent)
+                    3 -> {
+                        Column (
+                            modifier = Modifier
+                                .fillMaxHeight(0.7f)
+                                .fillMaxWidth(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Row (
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(150.dp),
+                                    imageVector = Icons.Filled.ChatBubble,
+                                    contentDescription = null,
+                                    tint = actionButtonColor
+                                )
+                            }
+                            Box(modifier = Modifier.pullRefresh(refreshState)) {
+                                LazyColumn {
+                                    item {
+                                        Row (
+                                            modifier = Modifier.fillMaxWidth(0.8f).padding(top = 25.dp),
+                                            horizontalArrangement = Arrangement.Center
+                                        ) {
+                                            Text(
+                                                text = "It seems you are not eligible to borrow, reason:",
+                                                color = MaterialTheme.colorScheme.onBackground,
+                                                style = MaterialTheme.typography.headlineSmall,
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                                                textAlign = TextAlign.Center,
+                                                lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
+                                            )
+                                        }
+                                        Row (
+                                            modifier = Modifier.fillMaxWidth(0.8f),
+                                            horizontalArrangement = Arrangement.Center
+                                        ) {
+                                            Text (
+                                                text = state.prestaLoanEligibilityStatus.description,
+                                                color = actionButtonColor,
+                                                style = MaterialTheme.typography.headlineSmall,
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                                textAlign = TextAlign.Center,
+                                                lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
+                                            )
                                         }
                                     }
-
-                                    PullRefreshIndicator(
-                                        refreshing,
-                                        refreshState,
-                                        Modifier.align(Alignment.TopCenter),
-                                        contentColor = actionButtonColor
-                                    )
                                 }
+
+                                PullRefreshIndicator(
+                                    refreshing,
+                                    refreshState,
+                                    Modifier.align(Alignment.TopCenter),
+                                    contentColor = actionButtonColor
+                                )
                             }
                         }
-                        4 -> ShortTermTopUpList(component,state, state.prestaLoanEligibilityStatus,authState, onEvent)
+                    }
+                    4 -> ShortTermTopUpList(component,state, state.prestaLoanEligibilityStatus,authState, onEvent)
+                }
+            } else if (state.prestaLoanEligibilityStatus == null) {
+                listOf(1,2,3,4,5,6,7,8).map {
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                    ) {
+                        ElevatedCard(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(color = MaterialTheme.colorScheme.background),
+                            colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .defaultMinSize(40.dp, 40.dp)
+                                    .background(
+                                        ShimmerBrush(
+                                            targetValue = 1300f,
+                                            showShimmer = true
+                                        )
+                                    )
+                                    .fillMaxWidth()
+                            )
+                        }
                     }
                 }
             }
