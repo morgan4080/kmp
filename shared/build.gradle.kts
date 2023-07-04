@@ -8,8 +8,8 @@ plugins {
     id("kotlin-parcelize")
     id("dev.icerock.mobile.multiplatform-resources")
     id("app.cash.sqldelight")
-    id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+   // id("com.google.gms.google-services")
 
 }
 
@@ -110,6 +110,7 @@ kotlin {
                 implementation("com.github.ln-12:multiplatform-connectivity-status:1.2.0")
                 api("io.github.qdsfdhvh:image-loader:1.4.1")
                 implementation("com.moriatsushi.insetsx:insetsx:0.1.0-alpha07")
+
             }
         }
 
@@ -130,15 +131,15 @@ kotlin {
                 // Koin
                 implementation(deps.koin.android)
 
-                implementation("com.google.android.gms:play-services-auth:20.5.0")
+                implementation("com.google.android.gms:play-services-auth:20.6.0")
 
                 implementation("com.google.android.gms:play-services-auth-api-phone:18.0.1")
 
                 implementation("androidx.biometric:biometric:1.2.0-alpha05")
                 //Firebase
                 implementation ("com.google.firebase:firebase-bom:32.1.1")
-                implementation ("com.google.firebase:firebase-analytics-ktx")
-                implementation ("com.google.firebase:firebase-crashlytics-ktx")
+                implementation (deps.analytics.firebase)
+                implementation (deps.crashlytics.firebase)
             }
         }
 
@@ -181,16 +182,12 @@ android {
         targetSdk = (findProperty("android.targetSdk") as String).toInt()
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlin {
-        jvmToolchain(11)
+        jvmToolchain(17)
     }
-}
-dependencies {
-    implementation("com.google.firebase:firebase-crashlytics-ktx:18.3.7")
-    implementation("com.google.firebase:firebase-analytics-ktx:21.3.0")
 }
 
 sqldelight {
