@@ -339,8 +339,6 @@ fun LoanTopUpContent(
                     horizontalArrangement = Arrangement.Center
                 ) {
 
-
-
                     ActionButton("Proceed", onClickContainer = {
                         component.onProceedSelected(
                             component.referencedLoanRefId,
