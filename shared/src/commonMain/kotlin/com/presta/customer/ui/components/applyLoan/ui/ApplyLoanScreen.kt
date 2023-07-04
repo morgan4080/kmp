@@ -89,7 +89,6 @@ fun  ApplyLoanScreen(component: ApplyLoanComponent, innerPadding: PaddingValues)
                                             "Coming Soon"
                                         )
                                     }
-
                                 }
                             )
                         }
