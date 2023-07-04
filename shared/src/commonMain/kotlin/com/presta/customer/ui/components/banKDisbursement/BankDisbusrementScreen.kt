@@ -109,7 +109,7 @@ fun BankDisbursementScreen(
                             inputType = InputTypes.STRING
                         ){
                             val inputValue: String = TextFieldValue(it).text
-                            if (inputValue.isNotEmpty()) {
+                            if (inputValue.isNotEmpty() && inputValue.matches(regexPattern)) {
                                 accountName = TextFieldValue(it)
                             }else{
                                 accountName=TextFieldValue()

@@ -3,7 +3,9 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.compose")
     id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
+    id( "com.google.firebase.crashlytics")
+
+
 }
 
 kotlin {
@@ -13,6 +15,7 @@ kotlin {
             dependencies {
                 implementation(project(":shared"))
                 implementation(deps.decompose)
+
                 with(deps.koin) {
                     api(android)
                 }
@@ -20,6 +23,12 @@ kotlin {
         }
     }
 }
+
+
+
+
+
+
 
 android {
     compileSdk = (findProperty("android.compileSdk") as String).toInt()
@@ -35,17 +44,10 @@ android {
         versionName = "1.0"
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlin {
-        jvmToolchain(11)
+        jvmToolchain(17)
     }
-}
-dependencies {
-
-    implementation("com.google.firebase:firebase-crashlytics:18.3.2")
-    implementation("com.google.firebase:firebase-analytics:21.2.0")
-    implementation("com.google.firebase:firebase-crashlytics-ktx:18.3.7")
-    implementation("com.google.firebase:firebase-analytics-ktx:21.3.0")
 }
