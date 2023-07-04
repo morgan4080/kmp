@@ -8,6 +8,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.withContext
 import com.presta.customer.prestaDispatchers
+import io.ktor.client.statement.request
 
 suspend inline fun <reified T> shortTermLoansErrorHandler(
     crossinline response: suspend () -> HttpResponse
@@ -24,7 +25,7 @@ suspend inline fun <reified T> shortTermLoansErrorHandler(
         in 400..499 -> throw ShortTermLoansExceptions(ShortTermLoansError.ClientError, null)
         500 -> {
             val data: Message = result.body()
-            throw ShortTermLoansExceptions(ShortTermLoansError.ServerError, data.message)
+            throw ShortTermLoansExceptions(ShortTermLoansError.ServerError, "${data.message}: \n ${result.request.url}")
         }
         else -> throw ShortTermLoansExceptions(ShortTermLoansError.UnknownError, null)
     }

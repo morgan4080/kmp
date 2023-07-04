@@ -8,6 +8,8 @@ import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import com.presta.customer.prestaDispatchers
+import io.ktor.client.statement.request
+
 @Serializable
 data class ConfigResponse(val timestamp: String, val code: Int, val message: String)
 suspend inline fun <reified T> onBoardingErrorHandler(
@@ -24,11 +26,11 @@ suspend inline fun <reified T> onBoardingErrorHandler(
         in 200..299 -> Unit
         in 400..499 -> {
             val data: ConfigResponse = result.body()
-            throw OnBoardingException(OnBoardingError.ClientError, data.message)
+            throw OnBoardingException(OnBoardingError.ClientError, "${data.message}: \n ${result.request.url}")
         }
         500 -> {
             val data: ConfigResponse = result.body()
-            throw OnBoardingException(OnBoardingError.ServerError, data.message)
+            throw OnBoardingException(OnBoardingError.ServerError, "${data.message}: \n ${result.request.url}")
         }
         else -> throw OnBoardingException(OnBoardingError.UnknownError, null)
     }

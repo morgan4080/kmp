@@ -11,6 +11,7 @@ import com.presta.customer.di.initKoin
 import com.presta.customer.ui.components.root.DefaultRootComponent
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.stopKoin
+import org.koin.core.error.KoinAppAlreadyStartedException
 
 class MainActivity : AppCompatActivity() {
     private var currentActivity: Activity? = null
@@ -33,11 +34,15 @@ class MainActivity : AppCompatActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
-        initKoin(
-            // add to build configuration, false in prod
-            enableNetworkLogs = true
-        ) {
-            androidContext(applicationContext)
+        try {
+            initKoin(
+                // add to build configuration, false in prod
+                enableNetworkLogs = true
+            ) {
+                androidContext(applicationContext)
+            }
+        } catch (e: KoinAppAlreadyStartedException) {
+            e.printStackTrace()
         }
 
         val root = DefaultRootComponent(
@@ -51,16 +56,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-        super.onResume()
         connectivityStatus?.start()
         setCurrentActivity(this)
+        super.onResume()
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         if (currentActivity == this) {
             currentActivity = null
         }
         stopKoin()
+        super.onDestroy()
     }
 }

@@ -8,6 +8,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.withContext
 import com.presta.customer.prestaDispatchers
+import io.ktor.client.statement.request
 
 suspend inline fun <reified T> profileErrorHandler(
     crossinline response: suspend () -> HttpResponse
@@ -23,7 +24,7 @@ suspend inline fun <reified T> profileErrorHandler(
         in 400..499 -> throw ProfileException(ProfileError.ClientError, null)
         500 -> {
             val data: Message = result.body()
-            throw ProfileException(ProfileError.ServerError, data.message)
+            throw ProfileException(ProfileError.ServerError, "${data.message}: \n ${result.request.url}")
         }
         else -> throw ProfileException(ProfileError.UnknownError, null)
     }

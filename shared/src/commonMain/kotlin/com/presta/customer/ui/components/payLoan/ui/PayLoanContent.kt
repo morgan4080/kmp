@@ -215,27 +215,7 @@ fun PayLoanContent(
                 }
             }
         } else {
-            if (state.isLoading) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.7f)
-                        .padding(start = 16.dp, end = 16.dp)
-                        .padding(it)
-                ) {
-                    Box {
-                        LoanStatusContainer(
-                            totalAmount = null,
-                            amountDue = null,
-                            dueDate = null,
-                            loanType = null,
-                            loanStatus = null,
-                            loansCount = null,
-                            loanIndex = null
-                        )
-                    }
-                }
-            } else {
+            if (!state.isLoading) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

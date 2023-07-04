@@ -6,6 +6,7 @@ import com.presta.customer.network.tenant.errors.TenantsError
 import com.presta.customer.prestaDispatchers
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.request
 import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.withContext
 
@@ -23,7 +24,7 @@ suspend inline fun <reified T> tenantErrorHandler(
         in 400..499 -> throw TenantExceptions(TenantsError.ClientError, null)
         500 -> {
             val data: Message = result.body()
-            throw TenantExceptions(TenantsError.ServerError, data.message)
+            throw TenantExceptions(TenantsError.ServerError, "${data.message}: \n ${result.request.url}")
         }
         else -> throw TenantExceptions(TenantsError.UnknownError, null)
     }

@@ -143,14 +143,6 @@ class DefaultRootComponent(
                 navigation.push(Config.Welcome(context = OnBoardingContext.LOGIN))
             },
             navigateToAuth = { memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext, pinStatus ->
-                println("::::::NAVIGATING:::::::")
-                println(memberRefId)
-                println(phoneNumber)
-                println(isTermsAccepted)
-                println(isActive)
-                println(onBoardingContext)
-                println(pinStatus)
-                println("::::::NAVIGATED:::::::")
                 navigation.replaceAll(Config.Auth(
                     memberRefId = memberRefId,
                     phoneNumber = phoneNumber,

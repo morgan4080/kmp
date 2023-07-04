@@ -8,6 +8,7 @@ import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import com.presta.customer.prestaDispatchers
+import io.ktor.client.statement.request
 
 /*{
     "timestamp":"29-05-2023 02:43:43",
@@ -37,7 +38,7 @@ suspend inline fun <reified T> registrationErrorHandler(
         in 400..499 -> throw RegistrationException(RegistrationError.ClientError, null)
         500 -> {
             val data: RegistrationResponse = result.body()
-            throw RegistrationException(RegistrationError.ServerError, data.message)
+            throw RegistrationException(RegistrationError.ServerError, "${data.message}: \n ${result.request.url}")
         }
         else -> throw RegistrationException(RegistrationError.UnknownError, null)
     }
