@@ -49,7 +49,8 @@ fun SignScreen(component: SignComponent) {
                         painter = painterResource(MR.images.coming_soon),
                         contentDescription = "coming soon",
                         contentScale = ContentScale.Fit,
-                        modifier = imageModifier
+                        modifier = imageModifier,
+                        alignment = Alignment.Center
                     )
                 }
                 Row(
@@ -57,20 +58,37 @@ fun SignScreen(component: SignComponent) {
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(
+                    Text(modifier = Modifier
+                        .padding(start = 40.dp, end = 40.dp),
                         text = "Coming Soon",
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 20.sp,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                     )
                 }
-                Row(
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        modifier = Modifier.padding(start = 41.dp, end = 41.dp, top = 13.dp),
-                        text = "This new feature will enable you to Guarantee & sign loan forms from anywhere, anytime",
+                    Text(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 40.dp, end = 40.dp),
+                        text = "This new feature will enable you to",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 13.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    )
+                    Text(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 60.dp, end = 60.dp),
+                        text = "Guarantee & sign loan forms ",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 13.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    )
+                    Text(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 75.dp, end = 75.dp),
+                        text = "from anywhere, anytime",
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 13.sp,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),

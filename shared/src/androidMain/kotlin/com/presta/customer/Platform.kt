@@ -24,6 +24,11 @@ import androidx.fragment.app.FragmentManager
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.crashlytics.ktx.setCustomKeys
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
@@ -48,7 +53,6 @@ data class LocalAuthenticationResult (
     val warning: String?
 )
 
-
 actual class Platform actual constructor(
     private val context: AppContext
 ) {
@@ -68,6 +72,7 @@ actual class Platform actual constructor(
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
         context.startActivity(intent)
     }
+
     actual fun startSmsRetriever() {
         val client = SmsRetriever.getClient(context)
         client.startSmsRetriever()
