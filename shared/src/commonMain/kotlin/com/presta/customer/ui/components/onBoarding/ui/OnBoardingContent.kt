@@ -21,6 +21,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -106,7 +107,7 @@ fun OnBoardingContent(
         withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
             append("and ")
         }
-        pushStringAnnotation(tag = "policy", annotation = "https://lending.presta.co.ke/kopesha/legal/presta-privacy-policy.html")
+        pushStringAnnotation(tag = "policy", annotation = "https://support.presta.co.ke/portal/en/kb/articles/privacy-policy")
         withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
             append("Privacy Policy")
         }
@@ -121,6 +122,7 @@ fun OnBoardingContent(
 
         if (isPhoneNumber(phoneNumber.text)) {
             onEvent(OnBoardingStore.Intent.UpdateError(null))
+            onEvent(OnBoardingStore.Intent.ClearMember(null))
             onEvent(OnBoardingStore.Intent.GetMemberDetails(
                 token = "",
                 memberIdentifier = "${state.country.code}${phoneNumber.text}",
@@ -171,14 +173,18 @@ fun OnBoardingContent(
             startRegistration = when (state.member.accountInfo.selfRegistrationStatus) {
                 SelfRegistrationStatus.ENABLED -> {
                     snackbarHostState.showSnackbar(
-                        "User not registered, starting registration process."
+                        message = "User not registered, starting registration process.",
+                        duration = SnackbarDuration.Long,
+                        withDismissAction = true
                     )
                     true
                 }
 
                 SelfRegistrationStatus.DISABLED -> {
                     snackbarHostState.showSnackbar(
-                        "User not registered"
+                        message = "User not registered",
+                        duration = SnackbarDuration.Long,
+                        withDismissAction = true
                     )
                     false
                 }
@@ -215,7 +221,7 @@ fun OnBoardingContent(
     ) {
         Scaffold (
             snackbarHost = {
-                SnackbarHost(modifier = Modifier, hostState = snackbarHostState)
+                SnackbarHost(modifier = Modifier.padding(bottom = 500.dp), hostState = snackbarHostState)
             }
         ) {
             LazyColumn (
@@ -347,7 +353,7 @@ fun OnBoardingContent(
                                 component.platform.openUrl("https://support.presta.co.ke/portal/en/kb/articles/privacy-policy")
                             }
                             annotatedString.getStringAnnotations(tag = "policy", start = offset, end = offset).firstOrNull()?.let {
-                                component.platform.openUrl("https://lending.presta.co.ke/kopesha/legal/presta-privacy-policy.html")
+                                component.platform.openUrl("https://support.presta.co.ke/portal/en/kb/articles/privacy-policy")
                             }
                             onEvent(OnBoardingStore.Intent.UpdateError(null))
 
@@ -358,8 +364,12 @@ fun OnBoardingContent(
                     Row {
                         ActionButton("Submit", onClickContainer = {
                             when(state.onBoardingContext) {
-                                DefaultRootComponent.OnBoardingContext.REGISTRATION -> startRegistrationJourney()
-                                DefaultRootComponent.OnBoardingContext.LOGIN -> startLoginJourney()
+                                DefaultRootComponent.OnBoardingContext.REGISTRATION -> {
+                                    startRegistrationJourney()
+                                }
+                                DefaultRootComponent.OnBoardingContext.LOGIN -> {
+                                    startLoginJourney()
+                                }
                             }
                         }, loading = state.isLoading)
                     }

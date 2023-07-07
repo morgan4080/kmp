@@ -30,9 +30,11 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
+import com.presta.customer.MR
 import com.presta.customer.ui.components.profile.ui.ProfileScreen
 import com.presta.customer.ui.components.sign.SignScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,8 +63,8 @@ fun RootBottomScreen(component: RootBottomComponent) {
                             Text(
                                 text = screens[0],
                                 color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.ProfileChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Light,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
@@ -76,8 +78,8 @@ fun RootBottomScreen(component: RootBottomComponent) {
                             Text(
                                 text = screens[1],
                                 color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.RootLoansChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Light,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
@@ -91,8 +93,8 @@ fun RootBottomScreen(component: RootBottomComponent) {
                             Text(
                                 text = screens[2],
                                 color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.RootSavingsChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Light,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
@@ -106,8 +108,8 @@ fun RootBottomScreen(component: RootBottomComponent) {
                             Text(
                                 text = screens[3],
                                 color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.SignChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Light,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
