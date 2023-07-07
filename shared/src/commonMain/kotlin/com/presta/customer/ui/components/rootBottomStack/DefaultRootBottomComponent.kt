@@ -66,6 +66,7 @@ class DefaultRootBottomComponent(
         amount: Double,
         mode: PaymentTypes
     ) -> Unit,
+
     var processLoanState: (state: ProcessLoanDisbursement?) -> Unit,
     backTopProfile: Boolean = false
 ) : RootBottomComponent, ComponentContext by componentContext, KoinComponent {
@@ -167,6 +168,9 @@ class DefaultRootBottomComponent(
     }
 
     override fun onSignTabClicked() {
+        //navigate To sign app
+
+
         navigationBottomStackNavigation.bringToFront(ConfigBottom.Sign)
     }
 
