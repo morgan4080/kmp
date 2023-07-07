@@ -7,7 +7,7 @@ class OrganisationModel {
     @ThreadLocal
     companion object Data {
         var organisation: Organisation = Organisation (
-            "Presta Customer",
+            "mobiflex",
             "t10007",
             MR.images.prestalogo,
             MR.images.prestalogodark

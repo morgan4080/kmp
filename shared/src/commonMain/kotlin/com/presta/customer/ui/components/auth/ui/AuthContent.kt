@@ -186,8 +186,6 @@ fun AuthContent(
             }
         }
     }
-
-
     LaunchedEffect(onBoardingState.updateMemberResponse) {
         if (onBoardingState.updateMemberResponse !== null) {
             platform.showToast("Pin Created Successfully!")
@@ -201,8 +199,6 @@ fun AuthContent(
             ))
         }
     }
-
-
     LaunchedEffect(state.phoneNumber, state.loginResponse, state.cachedMemberData) {
         if (state.loginResponse !== null && state.phoneNumber != null) {
             inputEnabled = false
@@ -223,8 +219,6 @@ fun AuthContent(
             }
         }
     }
-
-
     LaunchedEffect(
         state.error,
         onBoardingState.error

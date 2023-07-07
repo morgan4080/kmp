@@ -113,6 +113,20 @@ class DefaultAuthComponent(
 
     init {
         scope.launch {
+            state.collect {
+                if (it.cachedMemberData?.tenantId!== null) {
+                    onTenantEvent(
+                        TenantStore.Intent.GetClientById(
+                            searchTerm =it.cachedMemberData.tenantId
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    init {
+        scope.launch {
             tenantState.collect {
                 if (it.tenantData !== null) {
                     OrganisationModel.loadOrganisation(
