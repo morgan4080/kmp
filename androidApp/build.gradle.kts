@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.fir.scopes.debugCollectOverrides
+
 plugins {
     kotlin("multiplatform")
     id("com.android.application")
@@ -15,7 +17,6 @@ kotlin {
             dependencies {
                 implementation(project(":shared"))
                 implementation(deps.decompose)
-
                 with(deps.koin) {
                     api(android)
                 }

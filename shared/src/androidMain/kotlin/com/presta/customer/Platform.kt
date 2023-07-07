@@ -53,6 +53,7 @@ data class LocalAuthenticationResult (
     val warning: String?
 )
 
+
 actual class Platform actual constructor(
     private val context: AppContext
 ) {
@@ -73,6 +74,10 @@ actual class Platform actual constructor(
         context.startActivity(intent)
     }
 
+    actual  fun logErrorsToFirebase(Error: Exception){
+        //Firebase.crashlytics.log(Error)
+        FirebaseCrashlytics.getInstance().recordException(Error)
+    }
     actual fun startSmsRetriever() {
         val client = SmsRetriever.getClient(context)
         client.startSmsRetriever()

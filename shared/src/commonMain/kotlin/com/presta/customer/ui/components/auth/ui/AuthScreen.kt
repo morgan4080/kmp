@@ -10,6 +10,7 @@ fun AuthScreen(component: AuthComponent) {
     val state by component.state.collectAsState()
 
     val onBoardingState by component.onBoardingState.collectAsState()
+    val  tenantState by component.tenantState.collectAsState()
 
     AuthContent(
         state = state,
@@ -17,6 +18,6 @@ fun AuthScreen(component: AuthComponent) {
         onEvent = component::onEvent,
         onOnBoardingEvent = component::onOnBoardingEvent,
         navigate = component::navigate,
-        platform = component.platform
+        platform = component.platform,
     )
 }

@@ -5,6 +5,7 @@ import com.presta.customer.network.authDevice.model.PrestaCheckAuthUserResponse
 import com.presta.customer.network.authDevice.model.PrestaLogInResponse
 import com.presta.customer.network.authDevice.model.RefreshTokenResponse
 import com.presta.customer.network.onBoarding.model.PinStatus
+import com.presta.customer.organisation.OrganisationModel
 
 data class InputMethod(val value: String)
 enum class Contexts {
@@ -54,7 +55,9 @@ interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
         val pinConfirmed: Boolean = false,
         val pinCreated: Boolean = false,
         val context: Contexts = Contexts.CREATE_PIN,
-        val label: String = "You'll be able to login to Presta Customer using the following pin code",
+        //This is checked when the app logs itself out
+        //user sees a brief instance  of this label
+        val label: String = "You'll be able to login to "+OrganisationModel.organisation.tenant_name+" using the following pin code",
         val title: String = "Create pin code",
         val inputs: List<InputMethod> = listOf(
             InputMethod(

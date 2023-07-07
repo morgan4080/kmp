@@ -134,7 +134,7 @@ fun TenantContent(
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = "Kindly note that your organization's Account No. on your web account, under the  Profile section, serves as your tenant ID.",
+                    text = "Kindly note that your organization account number or account name serves as your tenant ID.",
                     style = MaterialTheme.typography.bodySmall,
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                 )
@@ -249,7 +249,7 @@ fun TenantContent(
                             component.platform.openUrl("https://support.presta.co.ke/portal/en/kb/articles/how-to-access-account-tenant-id")
 
                         },
-                        text = "What is tenant ID?",
+                        text = "How to get tenant ID?",
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
                         color = actionButtonColor,
                         fontSize = 12.sp,

@@ -113,7 +113,7 @@ fun AuthContent(
             onEvent(AuthStore.Intent.UpdateContext(
                 context = Contexts.LOGIN,
                 title = "Enter pin code to login",
-                label = "Login to Presta Customer using the following pin code",
+                label = if (state.authUserResponse?.companyName!=null ) "Login to" + state.authUserResponse.companyName + "App using the following pin code" else "",
                 pinCreated = true,
                 pinConfirmed = true,
                 error = null
@@ -194,7 +194,7 @@ fun AuthContent(
             onEvent(AuthStore.Intent.UpdateContext(
                 context = Contexts.LOGIN,
                 title = "Enter pin code to login",
-                label = "Login to Presta Customer using the following pin code",
+                label = "Login to" +state.authUserResponse?.companyName+"App using the following pin code",
                 pinCreated = true,
                 pinConfirmed = true,
                 error = null

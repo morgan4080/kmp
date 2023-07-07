@@ -64,9 +64,7 @@ fun BankDisbursementScreen(
     var  accountName by remember { mutableStateOf(TextFieldValue("")) }
     var  accountNumber by remember { mutableStateOf(TextFieldValue("")) }
     val pattern = remember { Regex("^\\d+\$") }
-    val regexPattern = remember {Regex("^[a-zA-Z0-9]+$")  }
-
-
+    val regexPattern = remember { Regex("^[\\p{L}\\d ]+$") }
     var selectedBank by remember { mutableStateOf<PrestaBanksResponse?>(null) }
 
     Scaffold(

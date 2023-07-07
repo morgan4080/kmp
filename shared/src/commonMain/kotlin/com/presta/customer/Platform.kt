@@ -13,6 +13,6 @@ expect class Platform(context: AppContext) {
     fun startSmsRetriever()
     fun getAppSignatures(): String
     fun openUrl(url: String)
-
+    fun logErrorsToFirebase(Error: Exception)
 
 }

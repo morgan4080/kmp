@@ -7,8 +7,10 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.presta.customer.MR
 import com.presta.customer.Platform
 import com.presta.customer.network.onBoarding.model.PinStatus
+import com.presta.customer.organisation.Organisation
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
@@ -18,6 +20,8 @@ import com.presta.customer.ui.components.onBoarding.store.OnBoardingStore
 import com.presta.customer.ui.components.onBoarding.store.OnBoardingStoreFactory
 import com.presta.customer.ui.components.profile.coroutineScope
 import com.presta.customer.ui.components.root.DefaultRootComponent
+import com.presta.customer.ui.components.tenant.store.TenantStore
+import com.presta.customer.ui.components.tenant.store.TenantStoreFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
@@ -48,7 +52,6 @@ class DefaultAuthComponent(
     onBoardingContext: DefaultRootComponent.OnBoardingContext,
     private val onLogin: () -> Unit,
 ): AuthComponent, ComponentContext by componentContext, KoinComponent {
-
     override val platform by inject<Platform>()
 
     override val authStore =
@@ -85,6 +88,23 @@ class DefaultAuthComponent(
         onBoardingStore.accept(event)
     }
 
+    override val tenantStore: TenantStore =
+        instanceKeeper.getStore {
+            TenantStoreFactory(
+                storeFactory = storeFactory,
+                componentContext = componentContext,
+            ) .create()
+        }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val tenantState: StateFlow<TenantStore.State> = tenantStore.stateFlow
+
+    override fun onTenantEvent(event: TenantStore.Intent) {
+        tenantStore.accept(event)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val authState: StateFlow<AuthStore.State> = authStore.stateFlow
+
     override fun navigate() {
         onLogin()
     }
@@ -92,8 +112,25 @@ class DefaultAuthComponent(
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
     init {
-        onEvent(AuthStore.Intent.GetCachedMemberData)
+        scope.launch {
+            tenantState.collect {
+                if (it.tenantData !== null) {
+                    OrganisationModel.loadOrganisation(
+                        Organisation(
+                            it.tenantData.alias,
+                            it.tenantData.tenantId,
+                            MR.images.prestalogo,
+                            MR.images.prestalogodark,
+                            true
+                        )
+                    )
+                }
+            }
+        }
+    }
 
+    init {
+        onEvent(AuthStore.Intent.GetCachedMemberData)
         scope.launch {
             state.collect {
                 if (it.error !== null) {
@@ -110,27 +147,23 @@ class DefaultAuthComponent(
                 }
             }
         }
-
         scope.launch {
             onBoardingState.collect {
-                if (it.error !== null) {
-                    platform.showToast(it.error)
-                    onOnBoardingEvent(OnBoardingStore.Intent.UpdateError(null))
-                }
                 if (it.member?.authenticationInfo?.pinStatus == PinStatus.SET) {
                     onEvent(AuthStore.Intent.UpdateContext(
                         context = Contexts.LOGIN,
                         title = "Enter pin code to login",
-                        label = "Login to Presta Customer using the following pin code",
+                        label = if (OrganisationModel.organisation.tenant_name!="")"Login to "+OrganisationModel.organisation.tenant_name+ " App using the following pin code" else "",
                         pinCreated = true,
                         pinConfirmed = true,
                         error = null
                     ))
+
                 } else {
                     AuthStore.Intent.UpdateContext(
                         context = Contexts.CREATE_PIN,
                         title = "Create pin code",
-                        label = "You'll be able to login to Presta Customer using the following pin code",
+                        label =if (OrganisationModel.organisation.tenant_name!="") "You'll be able to login to "+OrganisationModel.organisation.tenant_name+"using the following pin code" else "",
                         pinCreated = false,
                         pinConfirmed = false,
                         error = null
