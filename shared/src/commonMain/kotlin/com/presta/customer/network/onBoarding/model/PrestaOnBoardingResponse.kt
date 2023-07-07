@@ -36,6 +36,7 @@ enum class InvitationStatus {
 
 @Serializable
 data class AuthenticationInfoData @OptIn(ExperimentalSerializationApi::class) constructor(
+    // TODO: CHECK FOR STATUS UNDEFINED
     val status: AuthenticationStatus,
     @EncodeDefault val pinStatus: PinStatus? = null,
     @EncodeDefault val invitationStatus: InvitationStatus? = null
