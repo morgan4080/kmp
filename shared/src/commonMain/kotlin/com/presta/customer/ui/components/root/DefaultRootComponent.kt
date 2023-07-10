@@ -41,6 +41,8 @@ import com.presta.customer.ui.components.processingTransaction.ProcessingTransac
 import com.presta.customer.ui.components.profile.coroutineScope
 import com.presta.customer.ui.components.registration.DefaultRegistrationComponent
 import com.presta.customer.ui.components.registration.RegistrationComponent
+import com.presta.customer.ui.components.rootBottomSign.DefaultRootBottomSignComponent
+import com.presta.customer.ui.components.rootBottomSign.RootBottomSignComponent
 import com.presta.customer.ui.components.rootBottomStack.DefaultRootBottomComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
 import com.presta.customer.ui.components.splash.DefaultSplashComponent
@@ -104,6 +106,7 @@ class DefaultRootComponent(
             is Config.LoanPendingApprovals ->  RootComponent.Child.LoanPendingApprovalsChild(
                 loansPendingApprovalComponent(componentContext)
             )
+            is Config.SignApp-> RootComponent.Child.SignAppChild(signApplication(componentContext))
         }
 
     private fun loansPendingApprovalComponent(componentContext: ComponentContext): LoanPendingApprovalsComponent =
@@ -310,7 +313,11 @@ class DefaultRootComponent(
                     }
                 }
             },
-            backTopProfile = config.backTopProfile
+            backTopProfile = config.backTopProfile,
+            gotoSignApp = {
+              //navigate to Sign App
+                navigation.push(Config.SignApp)
+            }
         )
 
     private fun allTransactionHistory(componentContext: ComponentContext): TransactionHistoryComponent =
@@ -400,6 +407,47 @@ class DefaultRootComponent(
             }
         )
 
+    private fun signApplication(componentContext: ComponentContext):RootBottomSignComponent =
+        DefaultRootBottomSignComponent(
+            componentContext = componentContext,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            gotoAllTransactions = {
+                navigation.push(Config.AllTransactions)
+            },
+            gotToPendingApprovals = {
+                navigation.push(Config.LoanPendingApprovals)
+            },
+            logoutToSplash = {
+                println("::::::should logout here::::::")
+                scope.launch {
+                    if (it) {
+                        navigation.replaceAll(Config.Splash)
+                    }
+                }
+            },
+            gotoPayLoans = {
+                navigation.bringToFront(Config.PayLoan)
+            },
+            gotoPayRegistrationFees = { correlationId, amount ->
+                navigation.bringToFront(Config.ProcessingTransaction(amount = amount, correlationId = correlationId, mode = PaymentTypes.MEMBERSHIPFEES))
+            },
+            processTransaction = {correlationId, amount, mode ->
+                navigation.bringToFront(Config.ProcessingTransaction(correlationId, amount, mode))
+            },
+            processLoanState = {
+                scope.launch {
+                    if (it !== null) {
+                        navigation.bringToFront(Config.ProcessingLoanLoanDisbursement(
+                            it.correlationId,
+                            it.amount,
+                            it.fees
+                        ))
+                    }
+                }
+            }
+
+        )
     enum class OnBoardingContext {
         LOGIN,
         REGISTRATION
@@ -422,6 +470,8 @@ class DefaultRootComponent(
         data class Register(val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean, val onBoardingContext: OnBoardingContext, val pinStatus: PinStatus?) : Config()
         @Parcelize
         object AllTransactions : Config()
+        @Parcelize
+        object SignApp : Config()
         @Parcelize
         object LoanPendingApprovals : Config()
         @Parcelize

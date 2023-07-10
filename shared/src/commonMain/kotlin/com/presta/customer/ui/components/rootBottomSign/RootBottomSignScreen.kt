@@ -1,6 +1,5 @@
 package com.presta.customer.ui.components.rootBottomSign
 
-import GetIconForScreen
 import RootLoansScreen
 import RootSavingsScreen
 import androidx.compose.animation.AnimatedVisibility
@@ -30,22 +29,23 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
-import com.presta.customer.ui.components.profile.ui.ProfileScreen
-import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
 import com.presta.customer.ui.components.sign.SignScreen
+import com.presta.customer.ui.components.signAppRequest.SignRequestScreen
+import com.presta.customer.ui.composables.GetIconForSignScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
+import com.presta.customer.ui.signAppHome.SignHomeScreen
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RootBottomSignScreen(component: RootBottomComponent) {
+fun RootBottomSignScreen(component: RootBottomSignComponent) {
     val childStackBottom by component.childStackBottom.subscribeAsState()
     val activeComponentStackBottom = childStackBottom.active.instance
 
     Scaffold (
         modifier = Modifier.padding(LocalSafeArea.current),
         bottomBar = {
-            val screens = listOf("Home", "Loans", "Savings", "Sign", "Account")
+            val screens = listOf("Home", "Request", "Setting", "Lms")
 
             AnimatedVisibility(true) {
                 BottomAppBar (
@@ -56,63 +56,63 @@ fun RootBottomSignScreen(component: RootBottomComponent) {
                 ) {
                     NavigationBarItem (
                         icon = {
-                            Icon(imageVector = GetIconForScreen(screens[0]), contentDescription = null, modifier = Modifier.size(27.dp))
+                            Icon(imageVector = GetIconForSignScreen(screens[0]), contentDescription = null, modifier = Modifier.size(27.dp))
                         },
                         label = {
                             Text(
                                 text = screens[0],
-                                color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.ProfileChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                                color= if (activeComponentStackBottom is RootBottomSignComponent.ChildBottom.ProfileChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Light,
                                 modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
-                        selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.ProfileChild,
+                        selected = activeComponentStackBottom is RootBottomSignComponent.ChildBottom.ProfileChild,
                         onClick = component::onProfileTabClicked,
                         colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.primary, indicatorColor = MaterialTheme.colorScheme.background, unselectedIconColor = MaterialTheme.colorScheme.outline)
                     )
                     NavigationBarItem (
-                        icon = { Icon(imageVector = GetIconForScreen(screens[1]), contentDescription = null, modifier = Modifier.size(27.dp)) },
+                        icon = { Icon(imageVector = GetIconForSignScreen(screens[1]), contentDescription = null, modifier = Modifier.size(27.dp)) },
                         label = {
                             Text(
                                 text = screens[1],
-                                color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.RootLoansChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                                color= if (activeComponentStackBottom is RootBottomSignComponent.ChildBottom.RequestChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Light,
                                 modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
-                        selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.RootLoansChild,
+                        selected = activeComponentStackBottom is RootBottomSignComponent.ChildBottom.RequestChild,
                         onClick = component::onLoanTabClicked,
                         colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.primary, indicatorColor = MaterialTheme.colorScheme.background, unselectedIconColor = MaterialTheme.colorScheme.outline)
                     )
                     NavigationBarItem (
-                        icon = { Icon(imageVector = GetIconForScreen(screens[2]), contentDescription = null, modifier = Modifier.size(27.dp)) },
+                        icon = { Icon(imageVector = GetIconForSignScreen(screens[2]), contentDescription = null, modifier = Modifier.size(27.dp)) },
                         label = {
                             Text(
                                 text = screens[2],
-                                color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.RootSavingsChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                                color= if (activeComponentStackBottom is RootBottomSignComponent.ChildBottom.RootSavingsChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Light,
                                 modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
-                        selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.RootSavingsChild,
+                        selected = activeComponentStackBottom is RootBottomSignComponent.ChildBottom.RootSavingsChild,
                         onClick = component::onSavingsTabClicked,
                         colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.primary, indicatorColor = MaterialTheme.colorScheme.background, unselectedIconColor = MaterialTheme.colorScheme.outline)
                     )
                     NavigationBarItem (
-                        icon = { Icon(imageVector = GetIconForScreen(screens[3]), contentDescription = null, modifier = Modifier.size(27.dp)) },
+                        icon = { Icon(imageVector = GetIconForSignScreen(screens[3]), contentDescription = null, modifier = Modifier.size(27.dp)) },
                         label = {
                             Text(
                                 text = screens[3],
-                                color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.SignChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                                color= if (activeComponentStackBottom is RootBottomSignComponent.ChildBottom.SignChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Light,
                                 modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
-                        selected = activeComponentStackBottom is RootBottomComponent.ChildBottom.SignChild,
+                        selected = activeComponentStackBottom is RootBottomSignComponent.ChildBottom.SignChild,
                         onClick = component::onSignTabClicked,
                         colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.primary, indicatorColor = MaterialTheme.colorScheme.background, unselectedIconColor = MaterialTheme.colorScheme.outline)
                     )
@@ -125,23 +125,23 @@ fun RootBottomSignScreen(component: RootBottomComponent) {
                 animation = stackAnimation(fade() + scale()),
             ) {
                 when (val childX = it.instance) {
-                    is RootBottomComponent.ChildBottom.ProfileChild -> ProfileScreen(childX.component, innerPadding)
-                    is RootBottomComponent.ChildBottom.RootLoansChild -> RootLoansScreen(childX.component)
-                    is RootBottomComponent.ChildBottom.RootSavingsChild-> RootSavingsScreen(childX.component)
-                    is RootBottomComponent.ChildBottom.SignChild -> SignScreen(childX.component)
+                    is RootBottomSignComponent.ChildBottom.ProfileChild -> SignHomeScreen(childX.component)
+                    is RootBottomSignComponent.ChildBottom.RequestChild -> SignRequestScreen(childX.component)
+                    is RootBottomSignComponent.ChildBottom.RootSavingsChild-> RootSavingsScreen(childX.component)
+                    is RootBottomSignComponent.ChildBottom.SignChild -> SignScreen(childX.component)
                 }
             }
         }
     )
 }
 
-private val RootBottomComponent.ChildBottom.index: Int
+private val RootBottomSignComponent.ChildBottom.index: Int
     get() =
         when (this) {
-            is RootBottomComponent.ChildBottom.ProfileChild -> 0
-            is RootBottomComponent.ChildBottom.RootLoansChild -> 1
-            is RootBottomComponent.ChildBottom.RootSavingsChild  -> 2
-            is RootBottomComponent.ChildBottom.SignChild -> 3
+            is RootBottomSignComponent.ChildBottom.ProfileChild -> 0
+            is RootBottomSignComponent.ChildBottom.RequestChild -> 1
+            is RootBottomSignComponent.ChildBottom.RootSavingsChild  -> 2
+            is RootBottomSignComponent.ChildBottom.SignChild -> 3
         }
 
 @Suppress("OPT_IN_USAGE")

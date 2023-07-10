@@ -26,7 +26,6 @@ import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.profile.DefaultProfileComponent
 import com.presta.customer.ui.components.profile.ProfileComponent
 import com.presta.customer.ui.components.profile.coroutineScope
-import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
 import com.presta.customer.ui.components.rootLoans.DefaultRootLoansComponent
 import com.presta.customer.ui.components.rootLoans.ProcessLoanDisbursement
 import com.presta.customer.ui.components.rootLoans.RootLoansComponent
@@ -34,6 +33,10 @@ import com.presta.customer.ui.components.rootSavings.DefaultRootSavingsComponent
 import com.presta.customer.ui.components.rootSavings.RootSavingsComponent
 import com.presta.customer.ui.components.sign.DefaultSignComponent
 import com.presta.customer.ui.components.sign.SignComponent
+import com.presta.customer.ui.components.signAppRequest.DefaultSignRequestComponent
+import com.presta.customer.ui.components.signAppRequest.SignRequestComponent
+import com.presta.customer.ui.signAppHome.DefaultSignHomeComponent
+import com.presta.customer.ui.signAppHome.SignHomeComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -69,7 +72,7 @@ class DefaultRootBottomSignComponent(
     ) -> Unit,
     var processLoanState: (state: ProcessLoanDisbursement?) -> Unit,
     backTopProfile: Boolean = false
-) : RootBottomComponent, ComponentContext by componentContext, KoinComponent {
+) : RootBottomSignComponent, ComponentContext by componentContext, KoinComponent {
     private val authRepository by inject<AuthRepository>()
 
     private val navigationBottomStackNavigation = StackNavigation<ConfigBottom>()
@@ -83,42 +86,23 @@ class DefaultRootBottomSignComponent(
             key = "authStack"
         )
 
-    override val childStackBottom: Value<ChildStack<*, RootBottomComponent.ChildBottom>> = _childStackBottom
+    override val childStackBottom: Value<ChildStack<*, RootBottomSignComponent.ChildBottom>> = _childStackBottom
 
-    private fun createChildBottom(config: ConfigBottom, componentContext: ComponentContext): RootBottomComponent.ChildBottom =
+    private fun createChildBottom(config: ConfigBottom, componentContext: ComponentContext): RootBottomSignComponent.ChildBottom =
         when (config) {
-            is ConfigBottom.Profile -> RootBottomComponent.ChildBottom.ProfileChild(profileComponent(componentContext))
-            is ConfigBottom.RootLoans -> RootBottomComponent.ChildBottom.RootLoansChild(rootLoansComponent(componentContext))
-            is ConfigBottom.RootSavings -> RootBottomComponent.ChildBottom.RootSavingsChild(rootSavingsComponent(componentContext))
-            is ConfigBottom.Sign -> RootBottomComponent.ChildBottom.SignChild(signComponent(componentContext))
+            is ConfigBottom.Profile -> RootBottomSignComponent.ChildBottom.ProfileChild(profileComponent(componentContext))
+            is ConfigBottom.RootLoans -> RootBottomSignComponent.ChildBottom.RequestChild(requestComponent(componentContext))
+            is ConfigBottom.RootSavings -> RootBottomSignComponent.ChildBottom.RootSavingsChild(rootSavingsComponent(componentContext))
+            is ConfigBottom.Sign -> RootBottomSignComponent.ChildBottom.SignChild(signComponent(componentContext))
         }
 
-    private fun profileComponent(componentContext: ComponentContext): ProfileComponent =
-        DefaultProfileComponent(
+    private fun profileComponent(componentContext: ComponentContext): SignHomeComponent =
+        DefaultSignHomeComponent(
             componentContext = componentContext,
-            storeFactory = storeFactory,
-            mainContext = prestaDispatchers.main,
-            gotoAllTransactions = {
-                gotoAllTransactions()
-            },
-            logoutToSplash = {
-                logoutToSplash(true)
-            },
-            gotoSavings = {
-                navigationBottomStackNavigation.bringToFront(ConfigBottom.RootSavings)
-            },
-            gotoLoans = {
-                navigationBottomStackNavigation.bringToFront(ConfigBottom.RootLoans)
-            },
-            gotoPayLoans = {
-                gotoPayLoans()
-            },
-            goToPendingApproval = {
-                gotToPendingApprovals()
-            },
-            onConfirmClicked = { correlationId, amount ->
-                gotoPayRegistrationFees(correlationId, amount)
+            onSelected = {
+
             }
+
         )
 
     private fun rootLoansComponent(componentContext: ComponentContext): RootLoansComponent =
@@ -153,6 +137,15 @@ class DefaultRootBottomSignComponent(
             onSelected = {
 
             }
+        )
+
+    private fun requestComponent(componentContext: ComponentContext): SignRequestComponent=
+        DefaultSignRequestComponent(
+            componentContext = componentContext,
+            onSelected = {
+
+            }
+
         )
 
     override fun onProfileTabClicked() {

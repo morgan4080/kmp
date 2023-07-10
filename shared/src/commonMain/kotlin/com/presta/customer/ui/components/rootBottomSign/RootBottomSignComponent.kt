@@ -7,10 +7,11 @@ import com.presta.customer.ui.components.profile.ProfileComponent
 import com.presta.customer.ui.components.rootLoans.RootLoansComponent
 import com.presta.customer.ui.components.rootSavings.RootSavingsComponent
 import com.presta.customer.ui.components.sign.SignComponent
+import com.presta.customer.ui.components.signAppRequest.SignRequestComponent
+import com.presta.customer.ui.signAppHome.SignHomeComponent
 import kotlinx.coroutines.flow.StateFlow
 
 interface RootBottomSignComponent {
-
 
     val childStackBottom: Value<ChildStack<*, ChildBottom>>
 
@@ -26,8 +27,8 @@ interface RootBottomSignComponent {
     fun onAuthEvent(event: AuthStore.Intent)
 
     sealed class ChildBottom {
-        class ProfileChild(val component: ProfileComponent) : ChildBottom()
-        class RootLoansChild(val component: RootLoansComponent) : ChildBottom()
+        class ProfileChild(val component: SignHomeComponent) : ChildBottom()
+        class RequestChild(val component: SignRequestComponent) : ChildBottom()
         class RootSavingsChild(val component: RootSavingsComponent) : ChildBottom()
         class SignChild(val component: SignComponent) : ChildBottom()
     }

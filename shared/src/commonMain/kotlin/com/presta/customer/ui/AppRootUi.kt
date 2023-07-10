@@ -22,6 +22,7 @@ import com.presta.customer.ui.components.processLoanDisbursement.ui.ProcessLoanD
 import com.presta.customer.ui.components.processingTransaction.ui.ProcessingTransactionScreen
 import com.presta.customer.ui.components.registration.ui.RegistrationScreen
 import com.presta.customer.ui.components.root.RootComponent
+import com.presta.customer.ui.components.rootBottomSign.RootBottomSignScreen
 import com.presta.customer.ui.components.rootBottomStack.RootBottomScreen
 import com.presta.customer.ui.components.splash.SplashScreen
 import com.presta.customer.ui.components.tenant.ui.TenantScreen
@@ -67,6 +68,7 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
             is RootComponent.Child.ProcessingTransactionChild-> ProcessingTransactionScreen(child.component)
             is RootComponent.Child.ProcessingLoanDisbursementChild-> ProcessLoanDisbursementScreen(child.component)
             is RootComponent.Child.LoanPendingApprovalsChild-> PendingApprovalsScreen(child.component)
+            is RootComponent.Child.SignAppChild-> RootBottomSignScreen(child.component)
         }
     }
 }

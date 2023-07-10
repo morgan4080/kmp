@@ -66,7 +66,7 @@ class DefaultRootBottomComponent(
         amount: Double,
         mode: PaymentTypes
     ) -> Unit,
-
+    val gotoSignApp: () -> Unit,
     var processLoanState: (state: ProcessLoanDisbursement?) -> Unit,
     backTopProfile: Boolean = false
 ) : RootBottomComponent, ComponentContext by componentContext, KoinComponent {
@@ -169,9 +169,8 @@ class DefaultRootBottomComponent(
 
     override fun onSignTabClicked() {
         //navigate To sign app
-
-
-        navigationBottomStackNavigation.bringToFront(ConfigBottom.Sign)
+        gotoSignApp()
+       // navigationBottomStackNavigation.bringToFront(ConfigBottom.Sign)
     }
 
     private sealed class ConfigBottom : Parcelable {
