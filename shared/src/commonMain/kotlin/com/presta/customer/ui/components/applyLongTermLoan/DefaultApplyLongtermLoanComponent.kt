@@ -1,11 +1,11 @@
-package com.presta.customer.ui.signAppHome
+package com.presta.customer.ui.components.applyLongTermLoan
 
 import com.arkivanov.decompose.ComponentContext
 
-class DefaultSignHomeComponent (
+class DefaultApplyLongtermLoanComponent (
     componentContext: ComponentContext,
     private val onItemClicked: () -> Unit,
-): SignHomeComponent, ComponentContext by componentContext {
+): ApplyLongTermLoanComponent, ComponentContext by componentContext {
     override fun onSelected() {
         onItemClicked()
     }

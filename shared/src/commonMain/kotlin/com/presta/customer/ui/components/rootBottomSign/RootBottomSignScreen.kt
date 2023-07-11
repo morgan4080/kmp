@@ -1,7 +1,6 @@
 package com.presta.customer.ui.components.rootBottomSign
 
-import RootLoansScreen
-import RootSavingsScreen
+import RootSignHomeScreen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.absoluteOffset
@@ -33,7 +32,7 @@ import com.presta.customer.ui.components.sign.SignScreen
 import com.presta.customer.ui.components.signAppRequest.SignRequestScreen
 import com.presta.customer.ui.composables.GetIconForSignScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
-import com.presta.customer.ui.signAppHome.SignHomeScreen
+import com.presta.customer.ui.signAppSettings.SignSettingsScreen
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,13 +90,13 @@ fun RootBottomSignScreen(component: RootBottomSignComponent) {
                         label = {
                             Text(
                                 text = screens[2],
-                                color= if (activeComponentStackBottom is RootBottomSignComponent.ChildBottom.RootSavingsChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                                color= if (activeComponentStackBottom is RootBottomSignComponent.ChildBottom.SettingsChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Light,
                                 modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
-                        selected = activeComponentStackBottom is RootBottomSignComponent.ChildBottom.RootSavingsChild,
+                        selected = activeComponentStackBottom is RootBottomSignComponent.ChildBottom.SettingsChild,
                         onClick = component::onSavingsTabClicked,
                         colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.primary, indicatorColor = MaterialTheme.colorScheme.background, unselectedIconColor = MaterialTheme.colorScheme.outline)
                     )
@@ -125,9 +124,9 @@ fun RootBottomSignScreen(component: RootBottomSignComponent) {
                 animation = stackAnimation(fade() + scale()),
             ) {
                 when (val childX = it.instance) {
-                    is RootBottomSignComponent.ChildBottom.ProfileChild -> SignHomeScreen(childX.component)
+                    is RootBottomSignComponent.ChildBottom.ProfileChild -> RootSignHomeScreen(childX.component)
                     is RootBottomSignComponent.ChildBottom.RequestChild -> SignRequestScreen(childX.component)
-                    is RootBottomSignComponent.ChildBottom.RootSavingsChild-> RootSavingsScreen(childX.component)
+                    is RootBottomSignComponent.ChildBottom.SettingsChild-> SignSettingsScreen(childX.component)
                     is RootBottomSignComponent.ChildBottom.SignChild -> SignScreen(childX.component)
                 }
             }
@@ -140,7 +139,7 @@ private val RootBottomSignComponent.ChildBottom.index: Int
         when (this) {
             is RootBottomSignComponent.ChildBottom.ProfileChild -> 0
             is RootBottomSignComponent.ChildBottom.RequestChild -> 1
-            is RootBottomSignComponent.ChildBottom.RootSavingsChild  -> 2
+            is RootBottomSignComponent.ChildBottom.SettingsChild  -> 2
             is RootBottomSignComponent.ChildBottom.SignChild -> 3
         }
 

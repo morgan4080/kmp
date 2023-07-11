@@ -19,24 +19,23 @@ import com.presta.customer.network.authDevice.data.AuthRepository
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.organisation.OrganisationModel
-import com.presta.customer.prestaDispatchers
 import com.presta.customer.ui.components.auth.poller.AuthPoller
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
-import com.presta.customer.ui.components.profile.DefaultProfileComponent
-import com.presta.customer.ui.components.profile.ProfileComponent
 import com.presta.customer.ui.components.profile.coroutineScope
 import com.presta.customer.ui.components.rootLoans.DefaultRootLoansComponent
 import com.presta.customer.ui.components.rootLoans.ProcessLoanDisbursement
 import com.presta.customer.ui.components.rootLoans.RootLoansComponent
-import com.presta.customer.ui.components.rootSavings.DefaultRootSavingsComponent
-import com.presta.customer.ui.components.rootSavings.RootSavingsComponent
+import com.presta.customer.ui.components.rootSignHome.DefaultRootSignHomeComponent
+import com.presta.customer.ui.components.rootSignHome.RootSignHomeComponent
 import com.presta.customer.ui.components.sign.DefaultSignComponent
 import com.presta.customer.ui.components.sign.SignComponent
 import com.presta.customer.ui.components.signAppRequest.DefaultSignRequestComponent
 import com.presta.customer.ui.components.signAppRequest.SignRequestComponent
 import com.presta.customer.ui.signAppHome.DefaultSignHomeComponent
 import com.presta.customer.ui.signAppHome.SignHomeComponent
+import com.presta.customer.ui.signAppSettings.DefaultSignSettingsComponent
+import com.presta.customer.ui.signAppSettings.SignSettingsComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -90,16 +89,16 @@ class DefaultRootBottomSignComponent(
 
     private fun createChildBottom(config: ConfigBottom, componentContext: ComponentContext): RootBottomSignComponent.ChildBottom =
         when (config) {
-            is ConfigBottom.Profile -> RootBottomSignComponent.ChildBottom.ProfileChild(profileComponent(componentContext))
+            is ConfigBottom.Profile -> RootBottomSignComponent.ChildBottom.ProfileChild(rootSignHomeComponent(componentContext))
             is ConfigBottom.RootLoans -> RootBottomSignComponent.ChildBottom.RequestChild(requestComponent(componentContext))
-            is ConfigBottom.RootSavings -> RootBottomSignComponent.ChildBottom.RootSavingsChild(rootSavingsComponent(componentContext))
+            is ConfigBottom.RootSavings -> RootBottomSignComponent.ChildBottom.SettingsChild(settingsComponent(componentContext))
             is ConfigBottom.Sign -> RootBottomSignComponent.ChildBottom.SignChild(signComponent(componentContext))
         }
 
     private fun profileComponent(componentContext: ComponentContext): SignHomeComponent =
         DefaultSignHomeComponent(
             componentContext = componentContext,
-            onSelected = {
+            onItemClicked = {
 
             }
 
@@ -120,8 +119,8 @@ class DefaultRootBottomSignComponent(
             }
         )
 
-    private fun rootSavingsComponent(componentContext: ComponentContext): RootSavingsComponent =
-        DefaultRootSavingsComponent(
+    private fun rootSignHomeComponent(componentContext: ComponentContext): RootSignHomeComponent =
+        DefaultRootSignHomeComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
             pop = {
@@ -141,6 +140,14 @@ class DefaultRootBottomSignComponent(
 
     private fun requestComponent(componentContext: ComponentContext): SignRequestComponent=
         DefaultSignRequestComponent(
+            componentContext = componentContext,
+            onSelected = {
+
+            }
+
+        )
+    private fun settingsComponent(componentContext: ComponentContext): SignSettingsComponent=
+        DefaultSignSettingsComponent(
             componentContext = componentContext,
             onSelected = {
 

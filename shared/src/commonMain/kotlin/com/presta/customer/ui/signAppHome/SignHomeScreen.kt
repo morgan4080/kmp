@@ -15,11 +15,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Apps
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Assignment
 import androidx.compose.material.icons.outlined.Grade
 import androidx.compose.material.icons.outlined.Shield
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
@@ -44,8 +42,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.presta.customer.MR
 import com.presta.customer.ui.composables.SignProductSelection
 import com.presta.customer.ui.helpers.LocalSafeArea
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -118,23 +118,34 @@ fun SignHomeScreen(component: SignHomeComponent) {
                                     .padding(10.dp)
                             ) {
                                 Column(modifier = Modifier.fillMaxWidth()) {
-                                    Text(text = "GOOD AFTERNOON")
-                                    Text(text = "MURUNGI  MUTUGI")
-                                    Text(text = "55432")
+                                    Text(text = "GOOD AFTERNOON",
+                                        fontSize = 14.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    )
+                                    Text(text = "MURUNGI  MUTUGI",
+                                        fontSize = 14.sp,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular))
+                                    Text(text = "55432",
+                                        fontSize = 14.sp,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular))
                                     Row(modifier = Modifier.fillMaxWidth()) {
                                         Spacer(modifier = Modifier.weight(1f))
-                                        Text(text = "Share Amount ")
+                                        Text(text = "Share Amount ",
+                                            fontSize = 14.sp,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular))
                                     }
                                     Row(modifier = Modifier.fillMaxWidth()) {
                                         Spacer(modifier = Modifier.weight(1f))
-                                        Text(text = "20,000.00 ")
+                                        Text(text = "20,000.00 ",
+                                            fontSize = 14.sp,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular))
                                     }
                                     Divider(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(top = 20.dp),
                                         thickness = 2.dp,
-                                        color = Color.Gray
+                                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
                                     )
                                     Row(
                                         modifier = Modifier
@@ -142,8 +153,12 @@ fun SignHomeScreen(component: SignHomeComponent) {
                                             .padding(top = 10.dp),
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-                                        Text("Loan Requests")
-                                        Text("See All")
+                                        Text("Loan Requests",
+                                            fontSize = 14.sp,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular))
+                                        Text("See All",
+                                            fontSize = 14.sp,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular))
 
                                     }
                                     Row(
@@ -194,6 +209,7 @@ fun SignHomeScreen(component: SignHomeComponent) {
                             label1 = "Apply for a loan",
                             label2 = "Create a loan Request",
                             onClickContainer = {
+                                component.onSelected()
 
                             },
                         backgroundColor = MaterialTheme.colorScheme.primary,
