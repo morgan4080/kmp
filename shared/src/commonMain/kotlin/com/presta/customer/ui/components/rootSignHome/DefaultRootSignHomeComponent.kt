@@ -13,11 +13,14 @@ import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.presta.customer.network.payments.data.PaymentTypes
-import com.presta.customer.prestaDispatchers
-import com.presta.customer.ui.components.addSavings.AddSavingsComponent
-import com.presta.customer.ui.components.addSavings.DefaultAddSavingsComponent
 import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComponent
 import com.presta.customer.ui.components.applyLongTermLoan.DefaultApplyLongtermLoanComponent
+import com.presta.customer.ui.components.longTermLoanDetails.DefaultLongTermLoanDetailsComponent
+import com.presta.customer.ui.components.longTermLoanDetails.LongTermLoanDetailsComponent
+import com.presta.customer.ui.components.rootSavings.DefaultRootSavingsComponent
+import com.presta.customer.ui.components.rootSavings.RootSavingsComponent
+import com.presta.customer.ui.components.savingsTransactionHistory.DefaultSavingsTransactionHistoryComponent
+import com.presta.customer.ui.components.savingsTransactionHistory.SavingsTransactionHistoryComponent
 import com.presta.customer.ui.signAppHome.DefaultSignHomeComponent
 import com.presta.customer.ui.signAppHome.SignHomeComponent
 
@@ -30,31 +33,38 @@ class DefaultRootSignHomeComponent(
         amount: Double,
         mode: PaymentTypes
     ) -> Unit,
+    private val onApplyLoanClicked: () -> Unit = {}
 ): RootSignHomeComponent, ComponentContext by componentContext {
-    private val signHomeNavigation = StackNavigation<ConfigSavings>()
+    private val signHomeNavigation = StackNavigation<ConfigSignHome>()
 
     private val _childSignHomeStack =
         childStack(
             source = signHomeNavigation,
-            initialConfiguration = ConfigSavings.SavingsHome,
+            initialConfiguration = ConfigSignHome.SavingsHome,
             handleBackButton = true,
             childFactory = ::createSavingsChild,
             key = "signHomeStack"
         )
 
     override val childSignHomeStack: Value<ChildStack<*, RootSignHomeComponent.ChildHomeSign>> = _childSignHomeStack
+    override fun applyLongTermLoan() {
+       onApplyLoanClicked()
+    }
 
-    private fun createSavingsChild(config: ConfigSavings, componentContext: ComponentContext): RootSignHomeComponent.ChildHomeSign =
+    private fun createSavingsChild(config: ConfigSignHome, componentContext: ComponentContext): RootSignHomeComponent.ChildHomeSign =
         when (config) {
-            is ConfigSavings.SavingsHome -> RootSignHomeComponent.ChildHomeSign.SignHomeChild(
+            is ConfigSignHome.SavingsHome -> RootSignHomeComponent.ChildHomeSign.SignHomeChild(
                 signHomeComponent(componentContext)
             )
-            is ConfigSavings.AddSavings -> RootSignHomeComponent.ChildHomeSign.AddSavingsChild(
-                addSavingsComponent(componentContext, config)
+            is ConfigSignHome.SavingsTransactionHistory -> RootSignHomeComponent.ChildHomeSign.TransactionHistoryChild(
+                savingsTransactionHistoryComponent(componentContext)
             )
-            is ConfigSavings.ApplyLongTermLoans -> RootSignHomeComponent.ChildHomeSign.ApplyLongTermLoansChild(
-                applyLongTermLoanComponent(componentContext)
-            )
+//            is ConfigSignHome.ApplyLongTermLoans -> RootSignHomeComponent.ChildHomeSign.ApplyLongTermLoansChild(
+//                applyLongTermLoanComponent(componentContext)
+//            )
+//            is ConfigSignHome.LongTermLoanDetails -> RootSignHomeComponent.ChildHomeSign.LongTermLoanDetailsChild(
+//                longTermLoanDetailsComponent(componentContext)
+//            )
 
         }
 
@@ -62,44 +72,51 @@ class DefaultRootSignHomeComponent(
         DefaultSignHomeComponent(
             componentContext = componentContext,
             onItemClicked = {
-                signHomeNavigation.push(ConfigSavings.ApplyLongTermLoans)
+           //signHomeNavigation.push(ConfigSignHome.SavingsTransactionHistory)
+               onApplyLoanClicked()
             }
 
         )
 
-    private fun addSavingsComponent(componentContext: ComponentContext, config: ConfigSavings.AddSavings): AddSavingsComponent =
-        DefaultAddSavingsComponent(
-           componentContext = componentContext,
-            storeFactory = storeFactory,
-            mainContext = prestaDispatchers.main,
-            sharePrice = config.sharePrice,
-            onConfirmClicked = {correlationId, amount, mode ->
-                processTransaction(correlationId, amount, mode)
-            },
-            onBackNavClicked = {
-                signHomeNavigation.pop()
-            }
-        )
-
-    private fun applyLongTermLoanComponent(componentContext: ComponentContext): ApplyLongTermLoanComponent =
-        DefaultApplyLongtermLoanComponent(
+//    private fun applyLongTermLoanComponent(componentContext: ComponentContext): ApplyLongTermLoanComponent =
+//        DefaultApplyLongtermLoanComponent(
+//            componentContext = componentContext,
+//            onItemClicked = {
+//                signHomeNavigation.pop()
+//
+//            },
+//            onProductClicked = {
+//                signHomeNavigation.push(ConfigSignHome.LongTermLoanDetails)
+//            }
+//        )
+    private fun longTermLoanDetailsComponent(componentContext: ComponentContext): LongTermLoanDetailsComponent =
+        DefaultLongTermLoanDetailsComponent(
             componentContext = componentContext,
             onItemClicked = {
+                signHomeNavigation.pop()
+
+            },
+            onProductClicked = {
 
             }
-
+        )
+    private fun savingsTransactionHistoryComponent(componentContext: ComponentContext): SavingsTransactionHistoryComponent =
+        DefaultSavingsTransactionHistoryComponent(
+            componentContext = componentContext
         )
 
 
-    private sealed class ConfigSavings : Parcelable {
+    private sealed class ConfigSignHome : Parcelable {
         @Parcelize
-        object SavingsHome: ConfigSavings()
+        object SavingsHome: ConfigSignHome()
 
-        @Parcelize
-        data class AddSavings(val sharePrice: Double): ConfigSavings()
-
-        @Parcelize
-        object ApplyLongTermLoans: ConfigSavings()
+//        @Parcelize
+//         object LongTermLoanDetails: ConfigSignHome()
+//
+//        @Parcelize
+//        object ApplyLongTermLoans: ConfigSignHome()
+ @Parcelize
+ object SavingsTransactionHistory:ConfigSignHome()
 
     }
 
@@ -108,7 +125,7 @@ class DefaultRootSignHomeComponent(
             object : Lifecycle.Callbacks {
                 override fun onResume() {
                     super.onResume()
-                    signHomeNavigation.replaceAll(ConfigSavings.SavingsHome)
+                    signHomeNavigation.replaceAll(ConfigSignHome.SavingsHome)
                 }
             }
         )

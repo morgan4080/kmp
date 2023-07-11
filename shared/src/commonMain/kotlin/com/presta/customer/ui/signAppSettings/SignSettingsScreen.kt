@@ -628,7 +628,7 @@ fun SignSettingsScreen(component: SignSettingsComponent) {
                        }
                        Row(modifier = Modifier
                            .fillMaxWidth()
-                           .padding(top = 30.dp)){
+                           .padding(top = 20.dp)){
                            ActionButton(label = "SUBMIT", onClickContainer = {
 
                            })

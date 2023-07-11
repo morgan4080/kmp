@@ -287,7 +287,7 @@ fun CircularProgressBarWithText(
         CircularProgressIndicator(
             progress = 1f,
             strokeWidth = strokeWidth,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.outline,
             modifier = Modifier.align(Alignment.Center)
         )
         CircularProgressIndicator(
@@ -300,7 +300,7 @@ fun CircularProgressBarWithText(
         Text(
             text = text,
             modifier = Modifier.align(Alignment.Center),
-            style = TextStyle(fontSize = 14.sp, color = Color.Black)
+            style = TextStyle(fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground)
         )
     }
 }

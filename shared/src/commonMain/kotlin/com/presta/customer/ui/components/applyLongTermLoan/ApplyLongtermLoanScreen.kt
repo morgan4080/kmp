@@ -1,5 +1,7 @@
 package com.presta.customer.ui.components.applyLongTermLoan
 
+import ProductSelectionCard
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,25 +17,49 @@ import com.presta.customer.ui.helpers.LocalSafeArea
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ApplyLongTermLoanScreen(component: ApplyLongTermLoanComponent) {
-    Scaffold(
-        modifier = Modifier.padding(LocalSafeArea.current),
-        topBar = {
-          NavigateBackTopBar("Apply Loan", onClickContainer = {
+    Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
+        NavigateBackTopBar("Select Loan Product", onClickContainer = {
+            component.onBackNavClicked()
 
-          })
-        },
-        content = { innerPadding ->
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp)
-            ) {
-
-                item {
-                    Spacer(modifier = Modifier.padding(bottom = 100.dp))
-                }
-            }
         })
+    }, content = { innerPadding ->
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp)
+        ) {
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(innerPadding)
+                ) {
+                    ProductSelectionCard("Normal  Loan",
+                        description = "Interest 12 %",
+                        onClickContainer = {
+                            component.onProductSelected()
+
+                        })
+                }
+
+            }
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp)
+                ) {
+                    ProductSelectionCard("Fosa Loans",
+                        description = "Interest 14.5 %",
+                        onClickContainer = {
+
+                        })
+                }
+
+            }
+            item {
+                Spacer(modifier = Modifier.padding(bottom = 100.dp))
+            }
+        }
+    })
 
 }
 

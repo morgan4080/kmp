@@ -11,6 +11,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stac
 import com.moriatsushi.insetsx.SystemBarsBehavior
 import com.moriatsushi.insetsx.rememberWindowInsetsController
 import com.presta.customer.SharedStatus
+import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanScreen
 import com.presta.customer.ui.components.auth.ui.AuthScreen
 import com.presta.customer.ui.components.onBoarding.ui.OnBoardingScreen
 import com.presta.customer.ui.components.otp.ui.OtpScreen
@@ -62,6 +63,7 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
             is RootComponent.Child.AuthChild -> AuthScreen(child.component)
             is RootComponent.Child.AllTransactionsChild -> TransactionHistoryScreen(child.component)
             is RootComponent.Child.RootBottomChild -> RootBottomScreen(child.component)
+            is RootComponent.Child.RootBottomSignChild -> RootBottomSignScreen(child.component)
             is RootComponent.Child.PayLoanChild-> PayLoanScreen(child.component)
             is RootComponent.Child.PayLoanPromptChild-> PayLoanPromptScreen(child.component)
             is RootComponent.Child.PayRegistrationFeeChild-> PayRegistrationFeeScreen(child.component)
@@ -69,6 +71,7 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
             is RootComponent.Child.ProcessingLoanDisbursementChild-> ProcessLoanDisbursementScreen(child.component)
             is RootComponent.Child.LoanPendingApprovalsChild-> PendingApprovalsScreen(child.component)
             is RootComponent.Child.SignAppChild-> RootBottomSignScreen(child.component)
+            is RootComponent.Child.ApplyLongtermLoanChild -> ApplyLongTermLoanScreen(child.component)
         }
     }
 }

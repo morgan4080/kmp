@@ -1,6 +1,6 @@
 package com.presta.customer.ui.components.root
 
-import com.arkivanov.decompose.ComponentContext
+import  com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.bringToFront
@@ -20,6 +20,8 @@ import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.network.payments.model.PaymentStatuses
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.prestaDispatchers
+import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComponent
+import com.presta.customer.ui.components.applyLongTermLoan.DefaultApplyLongtermLoanComponent
 import com.presta.customer.ui.components.auth.AuthComponent
 import com.presta.customer.ui.components.auth.DefaultAuthComponent
 import com.presta.customer.ui.components.onBoarding.DefaultOnboardingComponent
@@ -107,6 +109,8 @@ class DefaultRootComponent(
                 loansPendingApprovalComponent(componentContext)
             )
             is Config.SignApp-> RootComponent.Child.SignAppChild(signApplication(componentContext))
+            is Config.RootBottomSign -> RootComponent.Child.RootBottomSignChild(rootBottomSignComponent(componentContext, config))
+            is Config.ApplyLongTermLoans -> RootComponent.Child.ApplyLongtermLoanChild(applyLongTermLoanComponent(componentContext))
         }
 
     private fun loansPendingApprovalComponent(componentContext: ComponentContext): LoanPendingApprovalsComponent =
@@ -319,6 +323,58 @@ class DefaultRootComponent(
                 navigation.push(Config.SignApp)
             }
         )
+    private fun rootBottomSignComponent(componentContext: ComponentContext, config: Config.RootBottomSign): RootBottomSignComponent =
+        DefaultRootBottomSignComponent(
+            componentContext = componentContext,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            gotoAllTransactions = {
+                navigation.push(Config.AllTransactions)
+            },
+            gotToPendingApprovals = {
+                navigation.push(Config.LoanPendingApprovals)
+            },
+            logoutToSplash = {
+                println("::::::should logout here::::::")
+                scope.launch {
+                    if (it) {
+                        navigation.replaceAll(Config.Splash)
+                    }
+                }
+            },
+            gotoPayLoans = {
+                navigation.bringToFront(Config.PayLoan)
+            },
+            gotoPayRegistrationFees = { correlationId, amount ->
+                navigation.bringToFront(Config.ProcessingTransaction(amount = amount, correlationId = correlationId, mode = PaymentTypes.MEMBERSHIPFEES))
+            },
+            processTransaction = {correlationId, amount, mode ->
+                navigation.bringToFront(Config.ProcessingTransaction(correlationId, amount, mode))
+            },
+            processLoanState = {
+                scope.launch {
+                    if (it !== null) {
+                        navigation.bringToFront(Config.ProcessingLoanLoanDisbursement(
+                            it.correlationId,
+                            it.amount,
+                            it.fees
+                        ))
+                    }
+                }
+            },
+            backTopProfile = config.backTopProfile,
+            gotoApplyAllLoans = {
+                //Go to Apply all loans outside the scope
+                navigation.push(Config.AllTransactions)
+
+
+
+            }
+//            gotoSignApp = {
+//                //navigate to Sign App
+//                navigation.push(Config.SignApp)
+//            }
+        )
 
     private fun allTransactionHistory(componentContext: ComponentContext): TransactionHistoryComponent =
         DefaultTransactionHistoryComponent(
@@ -327,6 +383,19 @@ class DefaultRootComponent(
             storeFactory = storeFactory,
             onPop = {
                 navigation.pop()
+            }
+        )
+        private fun applyLongTermLoanComponent(componentContext: ComponentContext): ApplyLongTermLoanComponent =
+        DefaultApplyLongtermLoanComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                //signHomeNavigation.pop()
+                            navigation.push(Config.AllTransactions)
+
+            },
+            onProductClicked = {
+               // signHomeNavigation.push(ConfigSignHome.LongTermLoanDetails)
+
             }
         )
 
@@ -445,6 +514,11 @@ class DefaultRootComponent(
                         ))
                     }
                 }
+            },
+            gotoApplyAllLoans = {
+                //navigate to all  loan outside  bottom scope
+                navigation.push(Config.AllTransactions)
+
             }
 
         )
@@ -477,6 +551,8 @@ class DefaultRootComponent(
         @Parcelize
         data class RootBottom(val backTopProfile: Boolean) : Config()
         @Parcelize
+        data class RootBottomSign(val backTopProfile: Boolean) : Config()
+        @Parcelize
         object PayLoan :Config()
         @Parcelize
         data class PayLoanPrompt(val amount: String, val correlationId: String) :Config()
@@ -486,6 +562,8 @@ class DefaultRootComponent(
         data class ProcessingTransaction(val correlationId: String, val amount: Double, val mode: PaymentTypes) :Config()
         @Parcelize
         data class ProcessingLoanLoanDisbursement(val correlationId: String, val amount: Double, val fees: Double) : Config()
+        @Parcelize
+        object ApplyLongTermLoans : Config()
     }
 
     init {

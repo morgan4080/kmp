@@ -69,6 +69,7 @@ class DefaultRootBottomSignComponent(
         amount: Double,
         mode: PaymentTypes
     ) -> Unit,
+    val gotoApplyAllLoans: () -> Unit,
     var processLoanState: (state: ProcessLoanDisbursement?) -> Unit,
     backTopProfile: Boolean = false
 ) : RootBottomSignComponent, ComponentContext by componentContext, KoinComponent {
@@ -128,6 +129,12 @@ class DefaultRootBottomSignComponent(
             },
             processTransaction = { correlationId, amount, mode ->
                 processTransaction(correlationId, amount, mode)
+            },
+            onApplyLoanClicked = {
+                //go to component outside root Bottom
+                gotoApplyAllLoans()
+
+
             }
         )
     private fun signComponent(componentContext: ComponentContext): SignComponent =
@@ -180,6 +187,7 @@ class DefaultRootBottomSignComponent(
         object RootSavings : ConfigBottom()
         @Parcelize
         object Sign : ConfigBottom()
+
     }
 
     override val authStore =

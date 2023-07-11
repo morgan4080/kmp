@@ -2,6 +2,7 @@ package com.presta.customer.ui.components.root
 
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
+import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComponent
 import com.presta.customer.ui.components.auth.AuthComponent
 import com.presta.customer.ui.components.onBoarding.OnBoardingComponent
 import com.presta.customer.ui.components.otp.OtpComponent
@@ -33,6 +34,7 @@ interface RootComponent {
         class AuthChild(val component: AuthComponent) : Child()
         class AllTransactionsChild(val component: TransactionHistoryComponent) : Child()
         class RootBottomChild(val component: RootBottomComponent) : Child()
+        class RootBottomSignChild(val component: RootBottomSignComponent) : Child()
         class PayLoanChild(val component: PayLoanComponent) :Child()
         class PayLoanPromptChild(val component: PayLoanPromptComponent) : Child()
         class PayRegistrationFeeChild(val component: PayRegistrationFeeComponent) : Child()
@@ -40,5 +42,6 @@ interface RootComponent {
         class ProcessingLoanDisbursementChild(val component: ProcessLoanDisbursementComponent) : Child()
         class LoanPendingApprovalsChild(val component: LoanPendingApprovalsComponent) : Child()
         class SignAppChild(val component: RootBottomSignComponent) : Child()
+        class ApplyLongtermLoanChild(val component: ApplyLongTermLoanComponent) : Child()
     }
 }
