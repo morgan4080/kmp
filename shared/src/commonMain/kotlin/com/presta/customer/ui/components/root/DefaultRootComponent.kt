@@ -109,7 +109,7 @@ class DefaultRootComponent(
                 loansPendingApprovalComponent(componentContext)
             )
             is Config.SignApp-> RootComponent.Child.SignAppChild(signApplication(componentContext))
-            is Config.RootBottomSign -> RootComponent.Child.RootBottomSignChild(rootBottomSignComponent(componentContext, config))
+           // is Config.RootBottomSign -> RootComponent.Child.RootBottomSignChild(rootBottomSignComponent(componentContext, config))
             is Config.ApplyLongTermLoans -> RootComponent.Child.ApplyLongtermLoanChild(applyLongTermLoanComponent(componentContext))
         }
 
@@ -323,58 +323,58 @@ class DefaultRootComponent(
                 navigation.push(Config.SignApp)
             }
         )
-    private fun rootBottomSignComponent(componentContext: ComponentContext, config: Config.RootBottomSign): RootBottomSignComponent =
-        DefaultRootBottomSignComponent(
-            componentContext = componentContext,
-            storeFactory = storeFactory,
-            mainContext = prestaDispatchers.main,
-            gotoAllTransactions = {
-                navigation.push(Config.AllTransactions)
-            },
-            gotToPendingApprovals = {
-                navigation.push(Config.LoanPendingApprovals)
-            },
-            logoutToSplash = {
-                println("::::::should logout here::::::")
-                scope.launch {
-                    if (it) {
-                        navigation.replaceAll(Config.Splash)
-                    }
-                }
-            },
-            gotoPayLoans = {
-                navigation.bringToFront(Config.PayLoan)
-            },
-            gotoPayRegistrationFees = { correlationId, amount ->
-                navigation.bringToFront(Config.ProcessingTransaction(amount = amount, correlationId = correlationId, mode = PaymentTypes.MEMBERSHIPFEES))
-            },
-            processTransaction = {correlationId, amount, mode ->
-                navigation.bringToFront(Config.ProcessingTransaction(correlationId, amount, mode))
-            },
-            processLoanState = {
-                scope.launch {
-                    if (it !== null) {
-                        navigation.bringToFront(Config.ProcessingLoanLoanDisbursement(
-                            it.correlationId,
-                            it.amount,
-                            it.fees
-                        ))
-                    }
-                }
-            },
-            backTopProfile = config.backTopProfile,
-            gotoApplyAllLoans = {
-                //Go to Apply all loans outside the scope
-                navigation.push(Config.AllTransactions)
-
-
-
-            }
-//            gotoSignApp = {
-//                //navigate to Sign App
-//                navigation.push(Config.SignApp)
+//    private fun rootBottomSignComponent(componentContext: ComponentContext, config: Config.RootBottomSign): RootBottomSignComponent =
+//        DefaultRootBottomSignComponent(
+//            componentContext = componentContext,
+//            storeFactory = storeFactory,
+//            mainContext = prestaDispatchers.main,
+//            gotoAllTransactions = {
+//                navigation.push(Config.AllTransactions)
+//            },
+//            gotToPendingApprovals = {
+//                navigation.push(Config.LoanPendingApprovals)
+//            },
+//            logoutToSplash = {
+//                println("::::::should logout here::::::")
+//                scope.launch {
+//                    if (it) {
+//                        navigation.replaceAll(Config.Splash)
+//                    }
+//                }
+//            },
+//            gotoPayLoans = {
+//                navigation.bringToFront(Config.PayLoan)
+//            },
+//            gotoPayRegistrationFees = { correlationId, amount ->
+//                navigation.bringToFront(Config.ProcessingTransaction(amount = amount, correlationId = correlationId, mode = PaymentTypes.MEMBERSHIPFEES))
+//            },
+//            processTransaction = {correlationId, amount, mode ->
+//                navigation.bringToFront(Config.ProcessingTransaction(correlationId, amount, mode))
+//            },
+//            processLoanState = {
+//                scope.launch {
+//                    if (it !== null) {
+//                        navigation.bringToFront(Config.ProcessingLoanLoanDisbursement(
+//                            it.correlationId,
+//                            it.amount,
+//                            it.fees
+//                        ))
+//                    }
+//                }
+//            },
+//            backTopProfile = config.backTopProfile,
+//            gotoApplyAllLoans = {
+//                //Go to Apply all loans outside the scope
+//              //  navigation.push(Config.ApplyLongTermLoans)
+//
+//
+//
 //            }
-        )
+////            gotoSignApp = {
+////                //navigate to Sign App
+////                navigation.push(Config.SignApp)
+////            }
+//        )
 
     private fun allTransactionHistory(componentContext: ComponentContext): TransactionHistoryComponent =
         DefaultTransactionHistoryComponent(
@@ -390,7 +390,7 @@ class DefaultRootComponent(
             componentContext = componentContext,
             onItemClicked = {
                 //signHomeNavigation.pop()
-                            navigation.push(Config.AllTransactions)
+                           // navigation.push(Config.AllTransactions)
 
             },
             onProductClicked = {
@@ -517,7 +517,7 @@ class DefaultRootComponent(
             },
             gotoApplyAllLoans = {
                 //navigate to all  loan outside  bottom scope
-                navigation.push(Config.AllTransactions)
+                navigation.push(Config.ApplyLongTermLoans)
 
             }
 
@@ -550,8 +550,8 @@ class DefaultRootComponent(
         object LoanPendingApprovals : Config()
         @Parcelize
         data class RootBottom(val backTopProfile: Boolean) : Config()
-        @Parcelize
-        data class RootBottomSign(val backTopProfile: Boolean) : Config()
+//        @Parcelize
+//        data class RootBottomSign(val backTopProfile: Boolean) : Config()
         @Parcelize
         object PayLoan :Config()
         @Parcelize
