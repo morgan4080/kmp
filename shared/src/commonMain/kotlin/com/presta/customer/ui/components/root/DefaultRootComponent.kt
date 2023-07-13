@@ -24,6 +24,8 @@ import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComp
 import com.presta.customer.ui.components.applyLongTermLoan.DefaultApplyLongtermLoanComponent
 import com.presta.customer.ui.components.auth.AuthComponent
 import com.presta.customer.ui.components.auth.DefaultAuthComponent
+import com.presta.customer.ui.components.longTermLoanDetails.DefaultLongTermLoanDetailsComponent
+import com.presta.customer.ui.components.longTermLoanDetails.LongTermLoanDetailsComponent
 import com.presta.customer.ui.components.onBoarding.DefaultOnboardingComponent
 import com.presta.customer.ui.components.onBoarding.OnBoardingComponent
 import com.presta.customer.ui.components.otp.DefaultOtpComponent
@@ -69,6 +71,7 @@ fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineSc
 
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
+
 class DefaultRootComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
@@ -76,71 +79,67 @@ class DefaultRootComponent(
 
     private val navigation = StackNavigation<Config>()
 
-    private val _childStack =
-        childStack(
-            source = navigation,
-            initialConfiguration = Config.Splash,
-            handleBackButton = true,
-            childFactory = ::createChild,
-            key = "onboardingStack"
-        )
+    private val _childStack = childStack(
+        source = navigation,
+        initialConfiguration = Config.Splash,
+        handleBackButton = true,
+        childFactory = ::createChild,
+        key = "onboardingStack"
+    )
 
     override val childStack: Value<ChildStack<*, RootComponent.Child>> = _childStack
 
-    private fun createChild(config: Config, componentContext: ComponentContext): RootComponent.Child =
-        when (config) {
-            is Config.Tenant -> RootComponent.Child.TenantChild(tenantComponent(componentContext, config))
-            is Config.Splash -> RootComponent.Child.SplashChild(splashComponent(componentContext))
-            is Config.Welcome -> RootComponent.Child.WelcomeChild(welcomeComponent(componentContext, config))
-            is Config.OnBoarding -> RootComponent.Child.OnboardingChild(onBoardingComponent(componentContext, config))
-            is Config.OTP -> RootComponent.Child.OTPChild(otpComponent(componentContext, config))
-            is Config.Register -> RootComponent.Child.RegisterChild(registerComponent(componentContext, config))
-            is Config.Auth -> RootComponent.Child.AuthChild(authComponent(componentContext, config))
-            is Config.RootBottom -> RootComponent.Child.RootBottomChild(rootBottomComponent(componentContext, config))
-            is Config.AllTransactions -> RootComponent.Child.AllTransactionsChild(allTransactionHistory(componentContext))
-            is Config.PayLoanPrompt->RootComponent.Child.PayLoanPromptChild(payLoanPromptComponent(componentContext, config))
-            is Config.PayRegistrationFee->RootComponent.Child.PayRegistrationFeeChild(payRegistrationFeeComponent(componentContext, config))
-            is Config.PayLoan->RootComponent.Child.PayLoanChild(payLoanComponent(componentContext))
-            is Config.ProcessingTransaction->RootComponent.Child.ProcessingTransactionChild(processingTransactionComponent(componentContext, config))
-            is Config.ProcessingLoanLoanDisbursement -> RootComponent.Child.ProcessingLoanDisbursementChild(
-                processingLoanLoanDisbursementComponent(componentContext, config)
-            )
-            is Config.LoanPendingApprovals ->  RootComponent.Child.LoanPendingApprovalsChild(
-                loansPendingApprovalComponent(componentContext)
-            )
-            is Config.SignApp-> RootComponent.Child.SignAppChild(signApplication(componentContext))
-           // is Config.RootBottomSign -> RootComponent.Child.RootBottomSignChild(rootBottomSignComponent(componentContext, config))
-            is Config.ApplyLongTermLoans -> RootComponent.Child.ApplyLongtermLoanChild(applyLongTermLoanComponent(componentContext))
-        }
+    private fun createChild(
+        config: Config, componentContext: ComponentContext
+    ): RootComponent.Child = when (config) {
+        is Config.Tenant -> RootComponent.Child.TenantChild(tenantComponent(componentContext, config)
+        )
+        is Config.Splash -> RootComponent.Child.SplashChild(splashComponent(componentContext))
+        is Config.Welcome -> RootComponent.Child.WelcomeChild(welcomeComponent(componentContext, config))
+        is Config.OnBoarding -> RootComponent.Child.OnboardingChild(onBoardingComponent(componentContext, config))
+        is Config.OTP -> RootComponent.Child.OTPChild(otpComponent(componentContext, config))
+        is Config.Register -> RootComponent.Child.RegisterChild(registerComponent(componentContext, config))
+        is Config.Auth -> RootComponent.Child.AuthChild(authComponent(componentContext, config))
+        is Config.RootBottom -> RootComponent.Child.RootBottomChild(rootBottomComponent(componentContext, config))
+        is Config.AllTransactions -> RootComponent.Child.AllTransactionsChild(allTransactionHistory(componentContext))
+        is Config.PayLoanPrompt -> RootComponent.Child.PayLoanPromptChild(payLoanPromptComponent(componentContext, config))
+        is Config.PayRegistrationFee -> RootComponent.Child.PayRegistrationFeeChild(payRegistrationFeeComponent(componentContext, config))
+        is Config.PayLoan -> RootComponent.Child.PayLoanChild(payLoanComponent(componentContext))
+        is Config.ProcessingTransaction -> RootComponent.Child.ProcessingTransactionChild(processingTransactionComponent(componentContext, config))
+        is Config.ProcessingLoanLoanDisbursement -> RootComponent.Child.ProcessingLoanDisbursementChild(processingLoanLoanDisbursementComponent(componentContext, config))
+        is Config.LoanPendingApprovals -> RootComponent.Child.LoanPendingApprovalsChild(loansPendingApprovalComponent(componentContext))
+        is Config.SignApp -> RootComponent.Child.SignAppChild(signApplication(componentContext))
+        is Config.ApplyLongTermLoans -> RootComponent.Child.ApplyLongtermLoanChild(applyLongTermLoanComponent(componentContext))
+        is Config.LongTermLoanDetails -> RootComponent.Child.LongTermLoanDetailsChild(longTermLoanDetailsComponent(componentContext))
+    }
 
     private fun loansPendingApprovalComponent(componentContext: ComponentContext): LoanPendingApprovalsComponent =
-        DefaultLoanPendingApprovalsComponent(
-            componentContext = componentContext,
+        DefaultLoanPendingApprovalsComponent(componentContext = componentContext,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
             onBack = {
                 navigation.pop()
-            }
-        )
+            })
 
-    private fun tenantComponent(componentContext: ComponentContext, config: Config.Tenant): TenantComponent =
-        DefaultTenantComponent(
-            componentContext = componentContext,
-            storeFactory = storeFactory,
-            mainContext = prestaDispatchers.main,
-            onBoardingContext = config.onBoardingContext,
-            onSubmit = { onBoardingContext, tenantId ->
-                navigation.push(Config.OnBoarding(
-                    onBoardingContext = onBoardingContext,
-                    tenantId = tenantId
-                ))
-            },
+    private fun tenantComponent(
+        componentContext: ComponentContext, config: Config.Tenant
+    ): TenantComponent = DefaultTenantComponent(
+        componentContext = componentContext,
+        storeFactory = storeFactory,
+        mainContext = prestaDispatchers.main,
+        onBoardingContext = config.onBoardingContext,
+        onSubmit = { onBoardingContext, tenantId ->
+            navigation.push(
+                Config.OnBoarding(
+                    onBoardingContext = onBoardingContext, tenantId = tenantId
+                )
+            )
+        },
 
         )
 
     private fun splashComponent(componentContext: ComponentContext): SplashComponent =
-        DefaultSplashComponent(
-            componentContext = componentContext,
+        DefaultSplashComponent(componentContext = componentContext,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
             onSignUp = {
@@ -150,58 +149,61 @@ class DefaultRootComponent(
                 navigation.push(Config.Welcome(context = OnBoardingContext.LOGIN))
             },
             navigateToAuth = { memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext, pinStatus ->
-                navigation.replaceAll(Config.Auth(
-                    memberRefId = memberRefId,
-                    phoneNumber = phoneNumber,
-                    isTermsAccepted = isTermsAccepted,
-                    isActive = isActive,
-                    onBoardingContext = onBoardingContext,
-                    pinStatus = pinStatus
-                ))
+                navigation.replaceAll(
+                    Config.Auth(
+                        memberRefId = memberRefId,
+                        phoneNumber = phoneNumber,
+                        isTermsAccepted = isTermsAccepted,
+                        isActive = isActive,
+                        onBoardingContext = onBoardingContext,
+                        pinStatus = pinStatus
+                    )
+                )
+            })
+
+    private fun welcomeComponent(
+        componentContext: ComponentContext, config: Config.Welcome
+    ): WelcomeComponent = DefaultWelcomeComponent(
+        componentContext = componentContext,
+        onBoardingContext = config.context,
+        onGetStartedSelected = {
+
+            if (OrganisationModel.organisation.sandbox) {
+                navigation.push(
+                    Config.Tenant(
+                        onBoardingContext = it
+                    )
+                )
+            } else {
+                navigation.push(
+                    Config.OnBoarding(
+                        onBoardingContext = it
+                    )
+                )
             }
-        )
+        },
+    )
 
-    private fun welcomeComponent(componentContext: ComponentContext, config: Config.Welcome): WelcomeComponent =
-        DefaultWelcomeComponent(
-            componentContext = componentContext,
-            onBoardingContext = config.context,
-            onGetStartedSelected = {
-
-                if (OrganisationModel.organisation.sandbox) {
-                    navigation.push(
-                        Config.Tenant(
-                            onBoardingContext = it
-                        )
-                    )
-                } else {
-                    navigation.push(
-                        Config.OnBoarding(
-                            onBoardingContext = it
-                        )
-                    )
-                }
-            },
-        )
-
-    private fun onBoardingComponent(componentContext: ComponentContext, config: Config.OnBoarding): OnBoardingComponent =
-        DefaultOnboardingComponent(
-            componentContext = componentContext,
-            storeFactory = storeFactory,
-            onBoardingContext = config.onBoardingContext,
-            tenantId = config.tenantId,
-            onPush = { memberRefId, phoneNumber, isActive, isTermsAccepted, onBoardingContext, pinStatus ->
-                 navigation.push(
-                     Config.OTP(
-                         memberRefId = memberRefId,
-                         onBoardingContext = onBoardingContext,
-                         phoneNumber = phoneNumber,
-                         isActive = isActive,
-                         isTermsAccepted = isTermsAccepted,
-                         pinStatus = pinStatus
-                    )
-                 )
-            },
-        )
+    private fun onBoardingComponent(
+        componentContext: ComponentContext, config: Config.OnBoarding
+    ): OnBoardingComponent = DefaultOnboardingComponent(
+        componentContext = componentContext,
+        storeFactory = storeFactory,
+        onBoardingContext = config.onBoardingContext,
+        tenantId = config.tenantId,
+        onPush = { memberRefId, phoneNumber, isActive, isTermsAccepted, onBoardingContext, pinStatus ->
+            navigation.push(
+                Config.OTP(
+                    memberRefId = memberRefId,
+                    onBoardingContext = onBoardingContext,
+                    phoneNumber = phoneNumber,
+                    isActive = isActive,
+                    isTermsAccepted = isTermsAccepted,
+                    pinStatus = pinStatus
+                )
+            )
+        },
+    )
 
     private fun otpComponent(componentContext: ComponentContext, config: Config.OTP): OtpComponent =
         DefaultOtpComponent(
@@ -240,208 +242,153 @@ class DefaultRootComponent(
             }
         }
 
-    private fun registerComponent(componentContext: ComponentContext, config: Config.Register): RegistrationComponent =
-        DefaultRegistrationComponent(
-            componentContext = componentContext,
-            storeFactory = storeFactory,
-            phoneNumber = config.phoneNumber,
-            isTermsAccepted = config.isTermsAccepted,
-            isActive = config.isActive,
-            pinStatus = config.pinStatus,
-            onBoardingContext = config.onBoardingContext,
-            onRegistered = { memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext, pinStatus ->
-                navigation.push(Config.Auth(
+    private fun registerComponent(
+        componentContext: ComponentContext, config: Config.Register
+    ): RegistrationComponent = DefaultRegistrationComponent(componentContext = componentContext,
+        storeFactory = storeFactory,
+        phoneNumber = config.phoneNumber,
+        isTermsAccepted = config.isTermsAccepted,
+        isActive = config.isActive,
+        pinStatus = config.pinStatus,
+        onBoardingContext = config.onBoardingContext,
+        onRegistered = { memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext, pinStatus ->
+            navigation.push(
+                Config.Auth(
                     memberRefId = memberRefId,
                     phoneNumber = phoneNumber,
                     isTermsAccepted = isTermsAccepted,
                     isActive = isActive,
                     onBoardingContext = onBoardingContext,
                     pinStatus = pinStatus
-                ))
-            }
-        )
+                )
+            )
+        })
 
-    private fun authComponent(componentContext: ComponentContext, config: Config.Auth): AuthComponent =
-        DefaultAuthComponent(
-            componentContext = componentContext,
-            storeFactory = storeFactory,
-            mainContext = prestaDispatchers.main,
-            phoneNumber = config.phoneNumber,
-            isTermsAccepted = config.isTermsAccepted,
-            isActive = config.isActive,
-            pinStatus = config.pinStatus,
-            onBoardingContext = config.onBoardingContext,
-            onLogin = {
-                navigation.replaceAll(Config.RootBottom(false))
-            }
-        )
+    private fun authComponent(
+        componentContext: ComponentContext, config: Config.Auth
+    ): AuthComponent = DefaultAuthComponent(componentContext = componentContext,
+        storeFactory = storeFactory,
+        mainContext = prestaDispatchers.main,
+        phoneNumber = config.phoneNumber,
+        isTermsAccepted = config.isTermsAccepted,
+        isActive = config.isActive,
+        pinStatus = config.pinStatus,
+        onBoardingContext = config.onBoardingContext,
+        onLogin = {
+            navigation.replaceAll(Config.RootBottom(false))
+        })
 
     val scope = coroutineScope(prestaDispatchers.main + SupervisorJob())
 
-    private fun rootBottomComponent(componentContext: ComponentContext, config: Config.RootBottom): RootBottomComponent =
-        DefaultRootBottomComponent(
-            componentContext = componentContext,
-            storeFactory = storeFactory,
-            mainContext = prestaDispatchers.main,
-            gotoAllTransactions = {
-                navigation.push(Config.AllTransactions)
-            },
-            gotToPendingApprovals = {
-                navigation.push(Config.LoanPendingApprovals)
-            },
-            logoutToSplash = {
-                println("::::::should logout here::::::")
-                scope.launch {
-                    if (it) {
-                        navigation.replaceAll(Config.Splash)
-                    }
+    private fun rootBottomComponent(
+        componentContext: ComponentContext, config: Config.RootBottom
+    ): RootBottomComponent = DefaultRootBottomComponent(componentContext = componentContext,
+        storeFactory = storeFactory,
+        mainContext = prestaDispatchers.main,
+        gotoAllTransactions = {
+            navigation.push(Config.AllTransactions)
+        },
+        gotToPendingApprovals = {
+            navigation.push(Config.LoanPendingApprovals)
+        },
+        logoutToSplash = {
+            println("::::::should logout here::::::")
+            scope.launch {
+                if (it) {
+                    navigation.replaceAll(Config.Splash)
                 }
-            },
-            gotoPayLoans = {
-                navigation.bringToFront(Config.PayLoan)
-            },
-            gotoPayRegistrationFees = { correlationId, amount ->
-                navigation.bringToFront(Config.ProcessingTransaction(amount = amount, correlationId = correlationId, mode = PaymentTypes.MEMBERSHIPFEES))
-            },
-            processTransaction = {correlationId, amount, mode ->
-                navigation.bringToFront(Config.ProcessingTransaction(correlationId, amount, mode))
-            },
-            processLoanState = {
-                scope.launch {
-                    if (it !== null) {
-                        navigation.bringToFront(Config.ProcessingLoanLoanDisbursement(
-                            it.correlationId,
-                            it.amount,
-                            it.fees
-                        ))
-                    }
-                }
-            },
-            backTopProfile = config.backTopProfile,
-            gotoSignApp = {
-              //navigate to Sign App
-                navigation.push(Config.SignApp)
             }
-        )
-//    private fun rootBottomSignComponent(componentContext: ComponentContext, config: Config.RootBottomSign): RootBottomSignComponent =
-//        DefaultRootBottomSignComponent(
-//            componentContext = componentContext,
-//            storeFactory = storeFactory,
-//            mainContext = prestaDispatchers.main,
-//            gotoAllTransactions = {
-//                navigation.push(Config.AllTransactions)
-//            },
-//            gotToPendingApprovals = {
-//                navigation.push(Config.LoanPendingApprovals)
-//            },
-//            logoutToSplash = {
-//                println("::::::should logout here::::::")
-//                scope.launch {
-//                    if (it) {
-//                        navigation.replaceAll(Config.Splash)
-//                    }
-//                }
-//            },
-//            gotoPayLoans = {
-//                navigation.bringToFront(Config.PayLoan)
-//            },
-//            gotoPayRegistrationFees = { correlationId, amount ->
-//                navigation.bringToFront(Config.ProcessingTransaction(amount = amount, correlationId = correlationId, mode = PaymentTypes.MEMBERSHIPFEES))
-//            },
-//            processTransaction = {correlationId, amount, mode ->
-//                navigation.bringToFront(Config.ProcessingTransaction(correlationId, amount, mode))
-//            },
-//            processLoanState = {
-//                scope.launch {
-//                    if (it !== null) {
-//                        navigation.bringToFront(Config.ProcessingLoanLoanDisbursement(
-//                            it.correlationId,
-//                            it.amount,
-//                            it.fees
-//                        ))
-//                    }
-//                }
-//            },
-//            backTopProfile = config.backTopProfile,
-//            gotoApplyAllLoans = {
-//                //Go to Apply all loans outside the scope
-//              //  navigation.push(Config.ApplyLongTermLoans)
-//
-//
-//
-//            }
-////            gotoSignApp = {
-////                //navigate to Sign App
-////                navigation.push(Config.SignApp)
-////            }
-//        )
+        },
+        gotoPayLoans = {
+            navigation.bringToFront(Config.PayLoan)
+        },
+        gotoPayRegistrationFees = { correlationId, amount ->
+            navigation.bringToFront(
+                Config.ProcessingTransaction(
+                    amount = amount,
+                    correlationId = correlationId,
+                    mode = PaymentTypes.MEMBERSHIPFEES
+                )
+            )
+        },
+        processTransaction = { correlationId, amount, mode ->
+            navigation.bringToFront(Config.ProcessingTransaction(correlationId, amount, mode))
+        },
+        processLoanState = {
+            scope.launch {
+                if (it !== null) {
+                    navigation.bringToFront(
+                        Config.ProcessingLoanLoanDisbursement(
+                            it.correlationId, it.amount, it.fees
+                        )
+                    )
+                }
+            }
+        },
+        backTopProfile = config.backTopProfile,
+        gotoSignApp = {
+            //navigate to Sign App
+            navigation.push(Config.SignApp)
+        })
 
     private fun allTransactionHistory(componentContext: ComponentContext): TransactionHistoryComponent =
-        DefaultTransactionHistoryComponent(
-            componentContext = componentContext,
+        DefaultTransactionHistoryComponent(componentContext = componentContext,
             mainContext = prestaDispatchers.main,
             storeFactory = storeFactory,
             onPop = {
                 navigation.pop()
-            }
-        )
-        private fun applyLongTermLoanComponent(componentContext: ComponentContext): ApplyLongTermLoanComponent =
-        DefaultApplyLongtermLoanComponent(
-            componentContext = componentContext,
-            onItemClicked = {
-                //signHomeNavigation.pop()
-                           // navigation.push(Config.AllTransactions)
+            })
 
-            },
-            onProductClicked = {
-               // signHomeNavigation.push(ConfigSignHome.LongTermLoanDetails)
-
-            }
-        )
 
     private fun payLoanComponent(componentContext: ComponentContext): PayLoanComponent =
-        DefaultPayLoanComponent(
-            storeFactory = storeFactory,
+        DefaultPayLoanComponent(storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
             componentContext = componentContext,
             onPayClicked = { amount, correlationId ->
-                navigation.push(Config.ProcessingTransaction(amount = amount.toDouble(), correlationId = correlationId, mode = PaymentTypes.LOAN))
+                navigation.push(
+                    Config.ProcessingTransaction(
+                        amount = amount.toDouble(),
+                        correlationId = correlationId,
+                        mode = PaymentTypes.LOAN
+                    )
+                )
             },
             onPop = {
                 navigation.pop()
+            })
+
+    private fun payLoanPromptComponent(
+        componentContext: ComponentContext, config: Config.PayLoanPrompt
+    ): PayLoanPromptComponent = DefaultPayLoanPromptComponent(componentContext = componentContext,
+        storeFactory = storeFactory,
+        mainContext = prestaDispatchers.main,
+        amount = config.amount,
+        correlationId = config.correlationId,
+        navigateToCompleteFailure = { paymentStatus ->
+            if (paymentStatus == PaymentStatuses.COMPLETED) {
+                println("navigate to success")
             }
-        )
-    private fun payLoanPromptComponent(componentContext: ComponentContext, config: Config.PayLoanPrompt): PayLoanPromptComponent =
-        DefaultPayLoanPromptComponent(
-            componentContext = componentContext,
+        })
+
+    private fun payRegistrationFeeComponent(
+        componentContext: ComponentContext, config: Config.PayRegistrationFee
+    ): PayRegistrationFeeComponent =
+        DefaultPayRegistrationFeeComponent(componentContext = componentContext,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
             amount = config.amount,
             correlationId = config.correlationId,
-            navigateToCompleteFailure =  { paymentStatus ->
+            navigateToCompleteFailure = { paymentStatus ->
                 if (paymentStatus == PaymentStatuses.COMPLETED) {
                     println("navigate to success")
                 }
-            }
-        )
-    private fun payRegistrationFeeComponent(componentContext: ComponentContext, config: Config.PayRegistrationFee): PayRegistrationFeeComponent =
-        DefaultPayRegistrationFeeComponent(
-            componentContext = componentContext,
-            storeFactory = storeFactory,
-            mainContext = prestaDispatchers.main,
-            amount = config.amount,
-            correlationId = config.correlationId,
-            navigateToCompleteFailure =  { paymentStatus ->
-                if (paymentStatus == PaymentStatuses.COMPLETED) {
-                    println("navigate to success")
-                }
-            }
-        )
+            })
 
 
-    private fun processingTransactionComponent(componentContext: ComponentContext, config: Config.ProcessingTransaction): ProcessingTransactionComponent =
-        DefaultProcessingTransactionComponent(
-            componentContext = componentContext,
+    private fun processingTransactionComponent(
+        componentContext: ComponentContext, config: Config.ProcessingTransaction
+    ): ProcessingTransactionComponent =
+        DefaultProcessingTransactionComponent(componentContext = componentContext,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
             correlationId = config.correlationId,
@@ -456,16 +403,13 @@ class DefaultRootComponent(
             },
             navigateToProfile = {
                 navigation.replaceAll(Config.RootBottom(false))
-            }
-        )
+            })
 
 
     private fun processingLoanLoanDisbursementComponent(
-        componentContext: ComponentContext,
-        config: Config.ProcessingLoanLoanDisbursement
+        componentContext: ComponentContext, config: Config.ProcessingLoanLoanDisbursement
     ): ProcessLoanDisbursementComponent =
-        DefaultProcessLoanDisbursementComponent(
-            storeFactory = storeFactory,
+        DefaultProcessLoanDisbursementComponent(storeFactory = storeFactory,
             componentContext = componentContext,
             requestId = config.correlationId,
             amount = config.amount,
@@ -473,12 +417,10 @@ class DefaultRootComponent(
             fees = config.fees,
             navigateToCompleteFailure = {
                 navigation.replaceAll(Config.RootBottom(true))
-            }
-        )
+            })
 
-    private fun signApplication(componentContext: ComponentContext):RootBottomSignComponent =
-        DefaultRootBottomSignComponent(
-            componentContext = componentContext,
+    private fun signApplication(componentContext: ComponentContext): RootBottomSignComponent =
+        DefaultRootBottomSignComponent(componentContext = componentContext,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
             gotoAllTransactions = {
@@ -499,81 +441,148 @@ class DefaultRootComponent(
                 navigation.bringToFront(Config.PayLoan)
             },
             gotoPayRegistrationFees = { correlationId, amount ->
-                navigation.bringToFront(Config.ProcessingTransaction(amount = amount, correlationId = correlationId, mode = PaymentTypes.MEMBERSHIPFEES))
+                navigation.bringToFront(
+                    Config.ProcessingTransaction(
+                        amount = amount,
+                        correlationId = correlationId,
+                        mode = PaymentTypes.MEMBERSHIPFEES
+                    )
+                )
             },
-            processTransaction = {correlationId, amount, mode ->
+            processTransaction = { correlationId, amount, mode ->
                 navigation.bringToFront(Config.ProcessingTransaction(correlationId, amount, mode))
             },
             processLoanState = {
                 scope.launch {
                     if (it !== null) {
-                        navigation.bringToFront(Config.ProcessingLoanLoanDisbursement(
-                            it.correlationId,
-                            it.amount,
-                            it.fees
-                        ))
+                        navigation.bringToFront(
+                            Config.ProcessingLoanLoanDisbursement(
+                                it.correlationId, it.amount, it.fees
+                            )
+                        )
                     }
                 }
             },
             gotoApplyAllLoans = {
                 //navigate to all  loan outside  bottom scope
                 navigation.push(Config.ApplyLongTermLoans)
-
             }
 
         )
+
+    private fun applyLongTermLoanComponent(componentContext: ComponentContext): ApplyLongTermLoanComponent =
+        DefaultApplyLongtermLoanComponent(componentContext = componentContext, onItemClicked = {
+            navigation.pop()
+
+        }, onProductClicked = {
+            navigation.push(Config.LongTermLoanDetails)
+
+        })
+
+    private fun longTermLoanDetailsComponent(componentContext: ComponentContext): LongTermLoanDetailsComponent =
+        DefaultLongTermLoanDetailsComponent(componentContext = componentContext, onItemClicked = {
+            //signHomeNavigation.pop()
+            navigation.pop()
+
+        }, onProductClicked = {
+
+        })
+
     enum class OnBoardingContext {
-        LOGIN,
-        REGISTRATION
+        LOGIN, REGISTRATION
     }
 
     private sealed class Config : Parcelable {
         @Parcelize
         data class Tenant(val onBoardingContext: OnBoardingContext) : Config()
+
         @Parcelize
         object Splash : Config()
+
         @Parcelize
-        data class Welcome (val context: OnBoardingContext) : Config()
+        data class Welcome(val context: OnBoardingContext) : Config()
+
         @Parcelize
-        data class OnBoarding (val onBoardingContext: OnBoardingContext, val tenantId: String? = null) : Config()
+        data class OnBoarding(
+            val onBoardingContext: OnBoardingContext, val tenantId: String? = null
+        ) : Config()
+
         @Parcelize
-        data class OTP (val memberRefId: String?, val onBoardingContext: OnBoardingContext, val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean, val pinStatus: PinStatus?) : Config()
+        data class OTP(
+            val memberRefId: String?,
+            val onBoardingContext: OnBoardingContext,
+            val phoneNumber: String,
+            val isActive: Boolean,
+            val isTermsAccepted: Boolean,
+            val pinStatus: PinStatus?
+        ) : Config()
+
         @Parcelize
-        data class Auth(val memberRefId: String?, val phoneNumber: String, val isTermsAccepted: Boolean, val isActive: Boolean, val onBoardingContext: OnBoardingContext, val pinStatus: PinStatus?) : Config()
+        data class Auth(
+            val memberRefId: String?,
+            val phoneNumber: String,
+            val isTermsAccepted: Boolean,
+            val isActive: Boolean,
+            val onBoardingContext: OnBoardingContext,
+            val pinStatus: PinStatus?
+        ) : Config()
+
         @Parcelize
-        data class Register(val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean, val onBoardingContext: OnBoardingContext, val pinStatus: PinStatus?) : Config()
+        data class Register(
+            val phoneNumber: String,
+            val isActive: Boolean,
+            val isTermsAccepted: Boolean,
+            val onBoardingContext: OnBoardingContext,
+            val pinStatus: PinStatus?
+        ) : Config()
+
         @Parcelize
         object AllTransactions : Config()
+
         @Parcelize
         object SignApp : Config()
+
         @Parcelize
         object LoanPendingApprovals : Config()
+
         @Parcelize
         data class RootBottom(val backTopProfile: Boolean) : Config()
-//        @Parcelize
+
+        //        @Parcelize
 //        data class RootBottomSign(val backTopProfile: Boolean) : Config()
         @Parcelize
-        object PayLoan :Config()
+        object PayLoan : Config()
+
         @Parcelize
-        data class PayLoanPrompt(val amount: String, val correlationId: String) :Config()
+        data class PayLoanPrompt(val amount: String, val correlationId: String) : Config()
+
         @Parcelize
-        data class PayRegistrationFee(val amount: Double, val correlationId: String) :Config()
+        data class PayRegistrationFee(val amount: Double, val correlationId: String) : Config()
+
         @Parcelize
-        data class ProcessingTransaction(val correlationId: String, val amount: Double, val mode: PaymentTypes) :Config()
+        data class ProcessingTransaction(
+            val correlationId: String, val amount: Double, val mode: PaymentTypes
+        ) : Config()
+
         @Parcelize
-        data class ProcessingLoanLoanDisbursement(val correlationId: String, val amount: Double, val fees: Double) : Config()
+        data class ProcessingLoanLoanDisbursement(
+            val correlationId: String, val amount: Double, val fees: Double
+        ) : Config()
+
         @Parcelize
         object ApplyLongTermLoans : Config()
+
+        @Parcelize
+        object LongTermLoanDetails : Config()
+
     }
 
     init {
-        lifecycle.subscribe(
-            object : Lifecycle.Callbacks {
-                override fun onResume() {
-                    super.onResume()
-                    navigation.replaceAll(Config.Splash)
-                }
+        lifecycle.subscribe(object : Lifecycle.Callbacks {
+            override fun onResume() {
+                super.onResume()
+                navigation.replaceAll(Config.Splash)
             }
-        )
+        })
     }
 }

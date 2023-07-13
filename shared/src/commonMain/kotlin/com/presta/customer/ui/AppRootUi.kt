@@ -13,6 +13,7 @@ import com.moriatsushi.insetsx.rememberWindowInsetsController
 import com.presta.customer.SharedStatus
 import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanScreen
 import com.presta.customer.ui.components.auth.ui.AuthScreen
+import com.presta.customer.ui.components.longTermLoanDetails.LongTermLoanDetailsScreen
 import com.presta.customer.ui.components.onBoarding.ui.OnBoardingScreen
 import com.presta.customer.ui.components.otp.ui.OtpScreen
 import com.presta.customer.ui.components.payLoan.ui.PayLoanScreen
@@ -72,6 +73,7 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
             is RootComponent.Child.LoanPendingApprovalsChild-> PendingApprovalsScreen(child.component)
             is RootComponent.Child.SignAppChild-> RootBottomSignScreen(child.component)
             is RootComponent.Child.ApplyLongtermLoanChild -> ApplyLongTermLoanScreen(child.component)
+            is RootComponent.Child.LongTermLoanDetailsChild -> LongTermLoanDetailsScreen(child.component)
         }
     }
 }
