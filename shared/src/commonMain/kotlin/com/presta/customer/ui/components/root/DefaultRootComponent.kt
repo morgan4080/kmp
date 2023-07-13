@@ -20,6 +20,8 @@ import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.network.payments.model.PaymentStatuses
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.prestaDispatchers
+import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
+import com.presta.customer.ui.components.addGuarantors.DefaultAddGuarantorsComponent
 import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComponent
 import com.presta.customer.ui.components.applyLongTermLoan.DefaultApplyLongtermLoanComponent
 import com.presta.customer.ui.components.auth.AuthComponent
@@ -49,6 +51,8 @@ import com.presta.customer.ui.components.rootBottomSign.DefaultRootBottomSignCom
 import com.presta.customer.ui.components.rootBottomSign.RootBottomSignComponent
 import com.presta.customer.ui.components.rootBottomStack.DefaultRootBottomComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
+import com.presta.customer.ui.components.selectLoanPurpose.DefaultSelectLoanPurposeComponent
+import com.presta.customer.ui.components.selectLoanPurpose.SelectLoanPurposeComponent
 import com.presta.customer.ui.components.splash.DefaultSplashComponent
 import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.tenant.DefaultTenantComponent
@@ -111,6 +115,9 @@ class DefaultRootComponent(
         is Config.SignApp -> RootComponent.Child.SignAppChild(signApplication(componentContext))
         is Config.ApplyLongTermLoans -> RootComponent.Child.ApplyLongtermLoanChild(applyLongTermLoanComponent(componentContext))
         is Config.LongTermLoanDetails -> RootComponent.Child.LongTermLoanDetailsChild(longTermLoanDetailsComponent(componentContext))
+        is Config.SelectLoanPurpose -> RootComponent.Child.SelectLoanPurposeChild(selectLoanPurposeComponent(componentContext))
+        is Config.AddGuarantors -> RootComponent.Child.AddGuarantorsChild(addGuarantorsComponent(componentContext))
+
     }
 
     private fun loansPendingApprovalComponent(componentContext: ComponentContext): LoanPendingApprovalsComponent =
@@ -484,7 +491,28 @@ class DefaultRootComponent(
             //signHomeNavigation.pop()
             navigation.pop()
 
+        }, onConfirmClicked = {
+            //navigate  to select Loan Details
+            navigation.push(Config.SelectLoanPurpose)
+
+        })
+    private fun selectLoanPurposeComponent(componentContext: ComponentContext): SelectLoanPurposeComponent =
+        DefaultSelectLoanPurposeComponent(componentContext = componentContext, onItemClicked = {
+            //signHomeNavigation.pop()
+            navigation.pop()
+
+        }, onContinueClicked = {
+            //Navigate to add Guarantors
+            navigation.push(Config.AddGuarantors)
+
+        })
+    private fun addGuarantorsComponent(componentContext: ComponentContext): AddGuarantorsComponent =
+        DefaultAddGuarantorsComponent(componentContext = componentContext, onItemClicked = {
+            //signHomeNavigation.pop()
+            navigation.pop()
+
         }, onProductClicked = {
+            //Navigate
 
         })
 
@@ -574,6 +602,10 @@ class DefaultRootComponent(
 
         @Parcelize
         object LongTermLoanDetails : Config()
+        @Parcelize
+        object SelectLoanPurpose : Config()
+        @Parcelize
+        object AddGuarantors : Config()
 
     }
 

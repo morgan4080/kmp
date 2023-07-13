@@ -2,6 +2,7 @@ package com.presta.customer.ui.components.root
 
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
+import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
 import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComponent
 import com.presta.customer.ui.components.auth.AuthComponent
 import com.presta.customer.ui.components.longTermLoanDetails.LongTermLoanDetailsComponent
@@ -16,6 +17,7 @@ import com.presta.customer.ui.components.processingTransaction.ProcessingTransac
 import com.presta.customer.ui.components.registration.RegistrationComponent
 import com.presta.customer.ui.components.rootBottomSign.RootBottomSignComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
+import com.presta.customer.ui.components.selectLoanPurpose.SelectLoanPurposeComponent
 import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.tenant.TenantComponent
 import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
@@ -45,6 +47,9 @@ interface RootComponent {
         class SignAppChild(val component: RootBottomSignComponent) : Child()
         class ApplyLongtermLoanChild(val component: ApplyLongTermLoanComponent) : Child()
         class LongTermLoanDetailsChild(val component: LongTermLoanDetailsComponent): Child()
+        class SelectLoanPurposeChild(val component: SelectLoanPurposeComponent): Child()
+        class AddGuarantorsChild(val component: AddGuarantorsComponent): Child()
+
 
     }
 }

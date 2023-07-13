@@ -11,6 +11,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stac
 import com.moriatsushi.insetsx.SystemBarsBehavior
 import com.moriatsushi.insetsx.rememberWindowInsetsController
 import com.presta.customer.SharedStatus
+import com.presta.customer.ui.components.addGuarantors.AddGuarantorsScreen
 import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanScreen
 import com.presta.customer.ui.components.auth.ui.AuthScreen
 import com.presta.customer.ui.components.longTermLoanDetails.LongTermLoanDetailsScreen
@@ -26,6 +27,7 @@ import com.presta.customer.ui.components.registration.ui.RegistrationScreen
 import com.presta.customer.ui.components.root.RootComponent
 import com.presta.customer.ui.components.rootBottomSign.RootBottomSignScreen
 import com.presta.customer.ui.components.rootBottomStack.RootBottomScreen
+import com.presta.customer.ui.components.selectLoanPurpose.SelectLoanPurposeScreen
 import com.presta.customer.ui.components.splash.SplashScreen
 import com.presta.customer.ui.components.tenant.ui.TenantScreen
 import com.presta.customer.ui.components.transactionHistory.ui.TransactionHistoryScreen
@@ -74,6 +76,8 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
             is RootComponent.Child.SignAppChild-> RootBottomSignScreen(child.component)
             is RootComponent.Child.ApplyLongtermLoanChild -> ApplyLongTermLoanScreen(child.component)
             is RootComponent.Child.LongTermLoanDetailsChild -> LongTermLoanDetailsScreen(child.component)
+            is RootComponent.Child.SelectLoanPurposeChild-> SelectLoanPurposeScreen(child.component)
+            is RootComponent.Child.AddGuarantorsChild-> AddGuarantorsScreen(child.component)
         }
     }
 }

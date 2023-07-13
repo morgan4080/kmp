@@ -5,14 +5,14 @@ import com.arkivanov.decompose.ComponentContext
 class DefaultLongTermLoanDetailsComponent (
     componentContext: ComponentContext,
     private val onItemClicked: () -> Unit,
-    private val onProductClicked: () -> Unit,
+    private val onConfirmClicked: () -> Unit,
 
 ): LongTermLoanDetailsComponent, ComponentContext by componentContext {
     override fun onBackNavClicked() {
         onItemClicked()
     }
 
-    override fun onProductClicked() {
-        onProductClicked()
+    override fun onConfirmSelected() {
+        onConfirmClicked()
     }
 }
