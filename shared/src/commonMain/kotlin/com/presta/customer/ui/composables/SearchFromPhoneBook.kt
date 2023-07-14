@@ -17,9 +17,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -79,7 +86,8 @@ fun SearchFromPhoneBook(
     ) {
         BasicTextField(
             modifier = Modifier
-                .height(45.dp)
+                .height(55.dp)
+                .wrapContentWidth()
                 .focusRequester(focusRequester)
                 .onFocusChanged {
                     if (focus.value != it.isFocused) {
@@ -89,7 +97,7 @@ fun SearchFromPhoneBook(
                         }
                     }
                 }
-               .padding(top = 10.dp, bottom = 16.dp, start = 5.dp, end = 5.dp)
+                .padding(top = 20.dp, bottom = 16.dp, start = 5.dp, end = 5.dp)
                 .absoluteOffset(y = 2.dp),
             keyboardOptions = KeyboardOptions(keyboardType =
             when (inputType) {
@@ -122,7 +130,7 @@ fun SearchFromPhoneBook(
             decorationBox = { innerTextField ->
                 if (userInput.text.isEmpty() && callingCode == null) {
                     Text(
-                        modifier = Modifier.alpha(.3f).padding(start = if (icon !== null) 30.dp else 0.dp, top = if (icon !== null) 5.dp else 0.dp),
+                        modifier = Modifier.padding(start = if (icon !== null) 20.dp else 0.dp, top = if (icon !== null) 5.dp else 0.dp),
                         text = label,
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -140,6 +148,8 @@ fun SearchFromPhoneBook(
                         fontSize = 11.sp
                     )
                 }
+
+
                 Row (
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.Bottom,
@@ -148,6 +158,37 @@ fun SearchFromPhoneBook(
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
+                        if (imageUrl !== null) {
+                            AsyncImage(
+                                imageUrl,
+                                "Country Flag",
+                                modifier = Modifier.size(22.dp)
+                            )
+                            Spacer(modifier = Modifier.width(width = 8.dp))
+                        }
+
+                        if (callingCode !== null) {
+                            Text(
+                                modifier = Modifier.padding(end = 10.dp),
+                                text = "+$callingCode",
+                                style = TextStyle(
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
+                                    fontSize = 13.sp,
+                                    fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
+                                    letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
+                                    lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                                    fontFamily = MaterialTheme.typography.bodySmall.fontFamily
+                                )
+                            )
+
+                            Divider(
+                                color = MaterialTheme.colorScheme.onBackground,
+                                modifier = Modifier.padding(end = 10.dp)
+                                    .height(15.dp)
+                                    .width(1.dp)
+                            )
+                        }
 
                         if (icon !== null) {
                             Icon(
@@ -162,7 +203,23 @@ fun SearchFromPhoneBook(
 
                         innerTextField()
                     }
-
+                    if (callingCode !== null || icon !== null) {
+                        IconButton(
+                            modifier = Modifier.size(18.dp),
+                            onClick = {
+                                userInput = TextFieldValue()
+                                if (enabled) callback(userInput.text)
+                            },
+                            content = {
+                                Icon(
+                                    modifier = Modifier.alpha(0.4f),
+                                    imageVector = Icons.Filled.Cancel,
+                                    contentDescription = null,
+                                    tint = actionButtonColor
+                                )
+                            }
+                        )
+                    }
                 }
             }
         )
