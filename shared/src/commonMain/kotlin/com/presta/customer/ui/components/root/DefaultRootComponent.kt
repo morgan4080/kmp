@@ -96,27 +96,89 @@ class DefaultRootComponent(
     private fun createChild(
         config: Config, componentContext: ComponentContext
     ): RootComponent.Child = when (config) {
-        is Config.Tenant -> RootComponent.Child.TenantChild(tenantComponent(componentContext, config)
+        is Config.Tenant -> RootComponent.Child.TenantChild(
+            tenantComponent(componentContext, config)
         )
+
         is Config.Splash -> RootComponent.Child.SplashChild(splashComponent(componentContext))
-        is Config.Welcome -> RootComponent.Child.WelcomeChild(welcomeComponent(componentContext, config))
-        is Config.OnBoarding -> RootComponent.Child.OnboardingChild(onBoardingComponent(componentContext, config))
+        is Config.Welcome -> RootComponent.Child.WelcomeChild(
+            welcomeComponent(
+                componentContext,
+                config
+            )
+        )
+
+        is Config.OnBoarding -> RootComponent.Child.OnboardingChild(
+            onBoardingComponent(
+                componentContext,
+                config
+            )
+        )
+
         is Config.OTP -> RootComponent.Child.OTPChild(otpComponent(componentContext, config))
-        is Config.Register -> RootComponent.Child.RegisterChild(registerComponent(componentContext, config))
+        is Config.Register -> RootComponent.Child.RegisterChild(
+            registerComponent(
+                componentContext,
+                config
+            )
+        )
+
         is Config.Auth -> RootComponent.Child.AuthChild(authComponent(componentContext, config))
-        is Config.RootBottom -> RootComponent.Child.RootBottomChild(rootBottomComponent(componentContext, config))
-        is Config.AllTransactions -> RootComponent.Child.AllTransactionsChild(allTransactionHistory(componentContext))
-        is Config.PayLoanPrompt -> RootComponent.Child.PayLoanPromptChild(payLoanPromptComponent(componentContext, config))
-        is Config.PayRegistrationFee -> RootComponent.Child.PayRegistrationFeeChild(payRegistrationFeeComponent(componentContext, config))
+        is Config.RootBottom -> RootComponent.Child.RootBottomChild(
+            rootBottomComponent(
+                componentContext,
+                config
+            )
+        )
+
+        is Config.AllTransactions -> RootComponent.Child.AllTransactionsChild(
+            allTransactionHistory(
+                componentContext
+            )
+        )
+
+        is Config.PayLoanPrompt -> RootComponent.Child.PayLoanPromptChild(
+            payLoanPromptComponent(
+                componentContext,
+                config
+            )
+        )
+
+        is Config.PayRegistrationFee -> RootComponent.Child.PayRegistrationFeeChild(
+            payRegistrationFeeComponent(componentContext, config)
+        )
+
         is Config.PayLoan -> RootComponent.Child.PayLoanChild(payLoanComponent(componentContext))
-        is Config.ProcessingTransaction -> RootComponent.Child.ProcessingTransactionChild(processingTransactionComponent(componentContext, config))
-        is Config.ProcessingLoanLoanDisbursement -> RootComponent.Child.ProcessingLoanDisbursementChild(processingLoanLoanDisbursementComponent(componentContext, config))
-        is Config.LoanPendingApprovals -> RootComponent.Child.LoanPendingApprovalsChild(loansPendingApprovalComponent(componentContext))
+        is Config.ProcessingTransaction -> RootComponent.Child.ProcessingTransactionChild(
+            processingTransactionComponent(componentContext, config)
+        )
+
+        is Config.ProcessingLoanLoanDisbursement -> RootComponent.Child.ProcessingLoanDisbursementChild(
+            processingLoanLoanDisbursementComponent(componentContext, config)
+        )
+
+        is Config.LoanPendingApprovals -> RootComponent.Child.LoanPendingApprovalsChild(
+            loansPendingApprovalComponent(componentContext)
+        )
+
         is Config.SignApp -> RootComponent.Child.SignAppChild(signApplication(componentContext))
-        is Config.ApplyLongTermLoans -> RootComponent.Child.ApplyLongtermLoanChild(applyLongTermLoanComponent(componentContext))
-        is Config.LongTermLoanDetails -> RootComponent.Child.LongTermLoanDetailsChild(longTermLoanDetailsComponent(componentContext))
-        is Config.SelectLoanPurpose -> RootComponent.Child.SelectLoanPurposeChild(selectLoanPurposeComponent(componentContext))
-        is Config.AddGuarantors -> RootComponent.Child.AddGuarantorsChild(addGuarantorsComponent(componentContext))
+        is Config.ApplyLongTermLoans -> RootComponent.Child.ApplyLongtermLoanChild(
+            applyLongTermLoanComponent(componentContext)
+        )
+
+        is Config.LongTermLoanDetails -> RootComponent.Child.LongTermLoanDetailsChild(
+            longTermLoanDetailsComponent(componentContext)
+        )
+
+        is Config.SelectLoanPurpose -> RootComponent.Child.SelectLoanPurposeChild(
+            selectLoanPurposeComponent(componentContext)
+        )
+
+        is Config.AddGuarantors -> RootComponent.Child.AddGuarantorsChild(
+            addGuarantorsComponent(
+                componentContext
+            )
+        )
 
     }
 
@@ -391,7 +453,6 @@ class DefaultRootComponent(
                 }
             })
 
-
     private fun processingTransactionComponent(
         componentContext: ComponentContext, config: Config.ProcessingTransaction
     ): ProcessingTransactionComponent =
@@ -496,6 +557,7 @@ class DefaultRootComponent(
             navigation.push(Config.SelectLoanPurpose)
 
         })
+
     private fun selectLoanPurposeComponent(componentContext: ComponentContext): SelectLoanPurposeComponent =
         DefaultSelectLoanPurposeComponent(componentContext = componentContext, onItemClicked = {
             //signHomeNavigation.pop()
@@ -506,6 +568,7 @@ class DefaultRootComponent(
             navigation.push(Config.AddGuarantors)
 
         })
+
     private fun addGuarantorsComponent(componentContext: ComponentContext): AddGuarantorsComponent =
         DefaultAddGuarantorsComponent(componentContext = componentContext, onItemClicked = {
             //signHomeNavigation.pop()
@@ -602,8 +665,10 @@ class DefaultRootComponent(
 
         @Parcelize
         object LongTermLoanDetails : Config()
+
         @Parcelize
         object SelectLoanPurpose : Config()
+
         @Parcelize
         object AddGuarantors : Config()
 

@@ -49,6 +49,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -74,8 +76,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
 import com.presta.customer.ui.composables.ActionButton
+import com.presta.customer.ui.composables.EmployedDetails
 import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.NavigateBackTopBar
+import com.presta.customer.ui.composables.SelfEmployedDetails
 import com.presta.customer.ui.composables.TextInputContainer
 import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.theme.actionButtonColor
@@ -94,8 +98,6 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
     var selectedIndex by remember { mutableStateOf(-1) }
     var skipHalfExpanded by remember { mutableStateOf(false) }
     var continueClicked by remember { mutableStateOf(false) }
-
-
     val state = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Expanded,
         skipHalfExpanded = skipHalfExpanded
@@ -106,7 +108,40 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         sheetContent = {
             if (continueClicked) {
-                Text("Loan Details")
+                var tabs = listOf ("Employed", "Business/Self Employed")
+                var tabIndex by remember { mutableStateOf(0) }
+                Column(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                        .fillMaxHeight()
+                ) {
+                    TabRow(selectedTabIndex = tabIndex,
+                        modifier = Modifier,
+                    ) {
+                        tabs.forEachIndexed { index, title ->
+                                    Tab(text = {
+                                        Text(text = title,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                            fontSize = 12.sp
+                                        )
+                                    },
+                                        selected = tabIndex == index,
+                                        onClick = {
+                                            tabIndex = index
+                                        },
+                                        modifier = Modifier,
+                                        selectedContentColor = Color.Black,
+                                        unselectedContentColor = Color.DarkGray
+                                    )
+                        }
+                    }
+                    when(tabIndex){
+                        0-> EmployedDetails()
+                        1-> SelfEmployedDetails()
+                    }
+
+                }
 
 
             } else {
