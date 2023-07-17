@@ -108,7 +108,7 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         sheetContent = {
             if (continueClicked) {
-                var tabs = listOf ("Employed", "Business/Self Employed")
+                var tabs = listOf("Employed", "Business/Self Employed")
                 var tabIndex by remember { mutableStateOf(0) }
                 Column(
                     modifier = Modifier
@@ -116,29 +116,32 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
                         .padding(horizontal = 16.dp, vertical = 10.dp)
                         .fillMaxHeight()
                 ) {
-                    TabRow(selectedTabIndex = tabIndex,
+                    TabRow(
+                        selectedTabIndex = tabIndex,
                         modifier = Modifier,
                     ) {
                         tabs.forEachIndexed { index, title ->
-                                    Tab(text = {
-                                        Text(text = title,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
-                                            fontSize = 12.sp
-                                        )
-                                    },
-                                        selected = tabIndex == index,
-                                        onClick = {
-                                            tabIndex = index
-                                        },
-                                        modifier = Modifier,
-                                        selectedContentColor = Color.Black,
-                                        unselectedContentColor = Color.DarkGray
+                            Tab(
+                                text = {
+                                    Text(
+                                        text = title,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                        fontSize = 12.sp
                                     )
+                                },
+                                selected = tabIndex == index,
+                                onClick = {
+                                    tabIndex = index
+                                },
+                                modifier = Modifier,
+                                selectedContentColor = Color.Black,
+                                unselectedContentColor = Color.DarkGray
+                            )
                         }
                     }
-                    when(tabIndex){
-                        0-> EmployedDetails()
-                        1-> SelfEmployedDetails()
+                    when (tabIndex) {
+                        0 -> EmployedDetails()
+                        1 -> SelfEmployedDetails()
                     }
 
                 }
@@ -480,7 +483,7 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
                             //launch Bottom sheet with  Loan details
                             //whe details  are submited  Continue to confirm the Details
                             continueClicked = true
-                          //  scope.launch { state.show() }
+                            //  scope.launch { state.show() }
                             //Navigate to confirmation
                             component.onContinueSelected()
 
