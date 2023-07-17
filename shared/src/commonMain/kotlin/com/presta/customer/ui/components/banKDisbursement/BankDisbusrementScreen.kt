@@ -91,7 +91,7 @@ fun BankDisbursementScreen(
                         modifier = Modifier,
                         text = "Add Bank",
                         fontSize = 14.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                     )
                     Spacer(
                         modifier = Modifier
@@ -200,7 +200,7 @@ fun BankDisbursementScreen(
                                 "Select Bank",
                                 modifier = Modifier
                                     .padding(start = 16.dp, top = 17.dp),
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium),
                                 fontSize = 14.sp,
                             )
                             Text(
@@ -208,7 +208,7 @@ fun BankDisbursementScreen(
                                 modifier = Modifier
                                     .padding(start = 16.dp),
                                 fontSize = 10.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular)
                             )
                             Column(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.8f)) {
                                 Column(
@@ -278,7 +278,7 @@ fun BankDisbursementScreen(
                                     fontSize = 11.sp,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.align(Alignment.CenterVertically),
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular)
                                 )
 
                             }
@@ -302,7 +302,7 @@ fun BankDisbursementScreen(
                                     fontSize = 11.sp,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.align(Alignment.CenterVertically),
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular)
 
                                 )
                             }
@@ -349,7 +349,7 @@ fun SelectBankView(
                         modifier = Modifier
                             .padding(start = 15.dp),
                         fontSize = 12.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular)
                     )
 
                     if (description != null) {

@@ -91,7 +91,7 @@ fun SavingsContent(
                     text = "Savings Overview",
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 14.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                 )
 
                 CurrentSavingsContainer(
@@ -108,7 +108,7 @@ fun SavingsContent(
                         text = "Transactions",
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 14.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                     )
                 }
 

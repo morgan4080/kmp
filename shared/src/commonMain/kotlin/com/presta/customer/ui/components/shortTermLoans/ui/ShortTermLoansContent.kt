@@ -158,7 +158,7 @@ fun ShortTermLoansContent(
 
                                 Tab(text = {
                                     Text(text = title,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium),
                                         fontSize = 12.sp
                                     )
                                 },
@@ -229,7 +229,7 @@ fun ShortTermLoansContent(
                                                 text = "It seems you are not eligible to borrow, reason:",
                                                 color = MaterialTheme.colorScheme.onBackground,
                                                 style = MaterialTheme.typography.headlineSmall,
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                                                fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold),
                                                 textAlign = TextAlign.Center,
                                                 lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
                                             )
@@ -242,7 +242,7 @@ fun ShortTermLoansContent(
                                                 text = state.prestaLoanEligibilityStatus.description,
                                                 color = actionButtonColor,
                                                 style = MaterialTheme.typography.headlineSmall,
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                                fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
                                                 textAlign = TextAlign.Center,
                                                 lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
                                             )

@@ -107,7 +107,7 @@ fun PayLoanContent(
                     text = "Your Active Loans",
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 14.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                 )
 
                 LazyRow(
@@ -203,7 +203,7 @@ fun PayLoanContent(
                         textDecoration = TextDecoration.Underline,
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                         color = backArrowColor,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
                     )
                 }
 
@@ -245,7 +245,7 @@ fun PayLoanContent(
                             text = "You do not have any unpaid loans",
                             color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.headlineSmall,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold),
                             textAlign = TextAlign.Center,
                             lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
                         )
@@ -293,7 +293,7 @@ fun MoreDetails(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(text = "Loan Details",
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium),
                             fontSize = 14.sp
                         )
                         Icon(
@@ -311,7 +311,7 @@ fun MoreDetails(
                             .padding(vertical = 7.dp),
                         text = "Balance: KES ${formatMoney(loanBreakDown.totalBalance)}",
                         fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold),
                     )
 
                     val loanDetailsMap: MutableMap<String, String?> = mutableMapOf(
@@ -349,7 +349,7 @@ fun MoreDetails(
                         Text(
                             text = "Loan schedule",
                             style = MaterialTheme.typography.labelLarge,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold)
                         )
 
                     }
@@ -381,14 +381,14 @@ fun MoreDetails(
                                             modifier = Modifier.align(Alignment.Start),
                                             text = "${localDateTime.dayOfMonth} ${localDateTime.month}",
                                             fontSize = MaterialTheme.typography.labelSmall.fontSize,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular)
                                         )
 
                                         Text(
                                             modifier = Modifier.align(Alignment.Start),
                                             text = "${localDateTime.time}",
                                             fontSize = MaterialTheme.typography.labelSmall.fontSize,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular)
                                         )
                                     }
 
@@ -397,14 +397,14 @@ fun MoreDetails(
                                             modifier = Modifier.align(Alignment.End),
                                             text = formatMoney(schedule.balance),
                                             fontSize = MaterialTheme.typography.labelMedium.fontSize,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold)
                                         )
 
                                         Text(
                                             modifier = Modifier.align(Alignment.End),
                                             text = schedule.status,
                                             fontSize = MaterialTheme.typography.labelSmall.fontSize,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular),
                                             textAlign = TextAlign.End
                                         )
                                     }

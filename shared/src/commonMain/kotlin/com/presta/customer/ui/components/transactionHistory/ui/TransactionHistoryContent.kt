@@ -175,7 +175,7 @@ fun TransactionHistoryContent(
                                 Text(
                                     text = it.value,
                                     fontSize = 12.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular),
                                     color = if (pagerState.currentPage == it.key.toInt()) Color.White else MaterialTheme.colorScheme.onBackground,
                                     textAlign = TextAlign.Center
                                 )
@@ -216,7 +216,7 @@ fun TransactionHistoryContent(
                                             "${tabs["${pagerState.currentPage}"]}"
                                         } else "",
                                         fontSize = 14.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                                     )
                                 }
                             }

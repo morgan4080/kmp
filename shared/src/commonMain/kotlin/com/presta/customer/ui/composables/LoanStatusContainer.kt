@@ -76,7 +76,7 @@ fun LoanStatusContainer(
                                 ).defaultMinSize(160.dp),
                                 text = if (loanType !== null) loanType else "",
                                 fontSize = 12.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
                             )
 
                             Text(
@@ -89,7 +89,7 @@ fun LoanStatusContainer(
                                 ).defaultMinSize(30.dp),
                                 text = if (loanIndex !== null && loansCount !== null)  "$loanIndex of $loansCount" else "",
                                 fontSize = 12.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
                             )
                         }
 
@@ -111,7 +111,7 @@ fun LoanStatusContainer(
                             ).defaultMinSize(130.dp),
                             text = if (totalAmount !== null) "KES $totalAmount" else "",
                             fontSize = 20.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold)
                         )
 
                         Text (
@@ -124,7 +124,7 @@ fun LoanStatusContainer(
                             ).defaultMinSize(80.dp),
                             text = if (loanStatus !== null) "($loanStatus)" else "",
                             fontSize = 12.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                         )
                     }
 
@@ -139,7 +139,7 @@ fun LoanStatusContainer(
                             Text(
                                 text = "Amount Due",
                                 fontSize = 10.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
                             )
 
                             Text(
@@ -153,7 +153,7 @@ fun LoanStatusContainer(
                                 text = if (amountDue !== null) "KES $amountDue" else "",
                                 color = MaterialTheme.colorScheme.error,
                                 fontSize = 12.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                                fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                             )
                         }
                         Column(modifier = Modifier.padding(start = 29.dp)) {
@@ -161,7 +161,7 @@ fun LoanStatusContainer(
                             Text(
                                 text = "Due Date",
                                 fontSize = 10.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
                             )
 
                             Text(
@@ -174,7 +174,7 @@ fun LoanStatusContainer(
                                 ).defaultMinSize(80.dp),
                                 text = if (dueDate !== null) formatDate(dueDate) else "",
                                 fontSize = 12.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                                fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                             )
                         }
                     }

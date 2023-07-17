@@ -70,7 +70,7 @@ fun ProcessingTransactionContent(
                         text = "Phone Number ${authState.cachedMemberData?.phoneNumber}",
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 14.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                     )
 
                 }
@@ -155,7 +155,7 @@ fun ProcessingTransactionContent(
                                     text = "TRANSACTION SUCCESSFUL!",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 22.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold),
                                     textAlign = TextAlign.Center,
                                     lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
                                 )
@@ -169,7 +169,7 @@ fun ProcessingTransactionContent(
                                     text = "You paid KES ${formatMoney(amount)} to ${OrganisationModel.organisation.tenant_name}",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 14.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium),
                                     textAlign = TextAlign.Center
                                 )
                             }
@@ -182,7 +182,7 @@ fun ProcessingTransactionContent(
                                     text = "Your transaction ${if (state.paymentStatus !== null) "status is ${state.paymentStatus.status}" else "failed"}!",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 20.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold),
                                     textAlign = TextAlign.Center,
                                     lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
                                 )
@@ -209,7 +209,7 @@ fun ProcessingTransactionContent(
                                 Text(
                                     text = "Done",
                                     style = MaterialTheme.typography.bodyLarge,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold)
                                 )
                             }
                         } else {
@@ -234,7 +234,7 @@ fun ProcessingTransactionContent(
                                 Text(
                                     text = "Close",
                                     style = MaterialTheme.typography.bodyLarge,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold)
                                 )
                             }
                             Button(
@@ -247,7 +247,7 @@ fun ProcessingTransactionContent(
                                 Text(
                                     text = "Retry",
                                     style = MaterialTheme.typography.bodyLarge,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold)
                                 )
                             }
                         }

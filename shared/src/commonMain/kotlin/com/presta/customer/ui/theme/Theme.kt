@@ -62,7 +62,7 @@ fun AppTheme(
         DarkColorScheme
     }
 
-    val medium: FontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+    val medium: FontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
 
     MaterialTheme(
         colorScheme = colors,

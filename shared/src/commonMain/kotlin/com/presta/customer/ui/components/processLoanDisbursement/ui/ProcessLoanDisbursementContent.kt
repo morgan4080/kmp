@@ -120,7 +120,7 @@ fun ProcessLoanDisbursementContent(
                         },
                         fontSize = 4.em,
                         modifier = Modifier.padding(top = 29.dp),
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold)
                     )
                 } else if (state.loanAppraisalStatus !== null) {
                     Text(
@@ -132,14 +132,14 @@ fun ProcessLoanDisbursementContent(
                         },
                         fontSize = 4.em,
                         modifier = Modifier.padding(top = 29.dp),
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold)
                     )
                 } else {
                     Text(
                         "APPLICATION RECEIVED!",
                         fontSize = 4.em,
                         modifier = Modifier.padding(top = 29.dp),
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold)
                     )
                 }
 
@@ -158,7 +158,7 @@ fun ProcessLoanDisbursementContent(
                             },
                             fontSize = 14.sp,
                             textAlign = TextAlign.Center,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                         )
                     } else if (state.loanAppraisalStatus !== null) {
                         Text(
@@ -170,14 +170,14 @@ fun ProcessLoanDisbursementContent(
                             },
                             fontSize = 14.sp,
                             textAlign = TextAlign.Center,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                         )
                     } else {
                         Text(
                             text = "Loan Request of Kes ${formatMoney(amount)} has been received",
                             fontSize = 14.sp,
                             textAlign = TextAlign.Center,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                         )
                     }
                 }
@@ -191,7 +191,7 @@ fun ProcessLoanDisbursementContent(
                             text = "Transaction ID: " + state.transactionId,
                             fontSize = 14.sp,
                             textAlign = TextAlign.Center,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                         )
                     }
                 }

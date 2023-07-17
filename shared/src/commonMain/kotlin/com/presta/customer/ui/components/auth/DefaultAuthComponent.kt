@@ -133,8 +133,8 @@ class DefaultAuthComponent(
                         Organisation(
                             it.tenantData.alias,
                             it.tenantData.tenantId,
-                            MR.images.prestalogo,
-                            MR.images.prestalogodark,
+                            MR.images.logo,
+                            MR.images.logodark,
                             true
                         )
                     )

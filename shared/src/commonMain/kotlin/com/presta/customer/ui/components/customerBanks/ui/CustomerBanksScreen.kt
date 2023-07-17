@@ -92,7 +92,7 @@ fun CustomerBanksScreen(
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 text = "Bank Disbursement",
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium),
                 fontSize = 14.sp
             )
 
@@ -135,7 +135,7 @@ fun CustomerBanksScreen(
                             text = tabData.label,
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 12.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
                         )
                     }
                 }
@@ -144,7 +144,7 @@ fun CustomerBanksScreen(
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 text = "Bank Accounts",
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium),
                 fontSize = 14.sp
             )
 
@@ -278,7 +278,7 @@ fun SelectAccountView(
                         modifier = Modifier
                             .padding(start = 15.dp),
                         fontSize = 12.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold)
                     )
 
                     if (description != null) {
@@ -286,7 +286,7 @@ fun SelectAccountView(
                             text = description,
                             modifier = Modifier.padding(start = 15.dp),
                             fontSize = 10.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
                         )
                     }
                 }

@@ -80,7 +80,7 @@ fun ShortTermTopUpList(
                 text = if (eligibilityResponse !== null && eligibilityResponse.isEligible) "Select loan to topup" else   "",
                 modifier = Modifier.padding(top = 22.dp),
                 fontSize = 14.sp,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
             )
 
             val refreshState = rememberPullRefreshState(refreshing, ::refresh,)
@@ -249,18 +249,18 @@ fun TopUpListView(
                         text = name,
                         fontSize = 14.sp,
                         color= MaterialTheme.colorScheme.onBackground,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                     )
                     Row {
                         Text(
                             text =  formatMoney(minAmount),
                             fontSize = 10.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular)
                         )
                         Text(
                             text = " - " + formatMoney(maxAmount),
                             fontSize = 10.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular)
                         )
                     }
                 }
@@ -272,7 +272,7 @@ fun TopUpListView(
                                 .align(Alignment.End),
                             text ="Bal. KES "+ formatMoney(balance.toDouble()) ,
                             fontSize = 12.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
                             color = MaterialTheme.colorScheme.onBackground
                         )
                         Text(
@@ -280,7 +280,7 @@ fun TopUpListView(
 //                            color = if (isOverdue(daysAvailable)) Color.Red else MaterialTheme.colorScheme.onBackground,
                             text =  daysAvailable,
                             fontSize = 10.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular)
                         )
                     }
                     Spacer(modifier = Modifier.padding(end = 15.dp))

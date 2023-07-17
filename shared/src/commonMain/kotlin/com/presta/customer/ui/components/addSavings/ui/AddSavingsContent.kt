@@ -146,7 +146,7 @@ fun AddSavingsContent(
                     text = "Enter Savings Details",
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 14.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                 )
 
                 LazyColumn {

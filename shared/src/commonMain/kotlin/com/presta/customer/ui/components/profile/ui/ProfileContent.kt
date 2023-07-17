@@ -207,7 +207,7 @@ fun ProfileContent(
                             ) {
                                 Text(
                                     text = "Activate  Account",
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium),
                                     fontSize = 14.sp
                                 )
                                 Icon(
@@ -228,7 +228,7 @@ fun ProfileContent(
                                 Text(
                                     text = "Welcome to ${if (authState.authUserResponse !== null) authState.authUserResponse.companyName else ""}," +
                                             " please pay a registration fee of KSH ${if (authState.cachedMemberData !== null) authState.cachedMemberData.registrationFees else ""} to activate your account",
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.light),
                                     fontSize = 12.sp
                                 )
 
@@ -374,7 +374,7 @@ fun ProfileContent(
                                             text = "Quick Links",
                                             color = MaterialTheme.colorScheme.onBackground,
                                             fontSize = 18.sp,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold)
                                         )
                                     }
                                 }
@@ -431,14 +431,14 @@ fun ProfileContent(
                                                         text = item1.labelTop,
                                                         color = MaterialTheme.colorScheme.onBackground,
                                                         fontSize = 12.sp,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
                                                     )
 
                                                     Text(
                                                         text = item1.labelBottom,
                                                         color = MaterialTheme.colorScheme.onBackground,
                                                         fontSize = 12.sp,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
                                                     )
                                                 }
                                             }
@@ -457,7 +457,7 @@ fun ProfileContent(
                                             text = "Transactions",
                                             color = MaterialTheme.colorScheme.onBackground,
                                             fontSize = 18.sp,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold)
                                         )
 
                                         Row (
@@ -471,7 +471,7 @@ fun ProfileContent(
                                                 textAlign = TextAlign.Center,
                                                 color = backArrowColor,
                                                 fontSize = 12.sp,
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                                fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium),
                                                 style = MaterialTheme.typography.headlineSmall
                                             )
 

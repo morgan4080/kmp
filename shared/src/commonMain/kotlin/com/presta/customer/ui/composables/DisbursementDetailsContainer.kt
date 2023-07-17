@@ -57,7 +57,7 @@ fun DisbursementDetailsContainer(
                     Text(
                         text = if(modeOfDisbursementState.prestaLoanQuotation!=null) "Disbursement Amount " else "",
                         fontSize = MaterialTheme.typography.bodySmall.fontSize,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light),
                                 modifier = Modifier
                                 .clip(shape = RoundedCornerShape(12.dp))
                             .defaultMinSize(minHeight = 20.dp, minWidth = 150.dp)
@@ -80,7 +80,7 @@ fun DisbursementDetailsContainer(
                                 text = "",
                                 fontSize = MaterialTheme.typography.labelMedium.fontSize,
                                 color = MaterialTheme.colorScheme.onBackground,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
                                 modifier = Modifier
                                     .clip(shape = RoundedCornerShape(12.dp))
                                     .defaultMinSize(minHeight = 10.dp, minWidth = 100.dp)
@@ -94,7 +94,7 @@ fun DisbursementDetailsContainer(
                             text = "Kes " + formatMoney(component.amount),
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = MaterialTheme.typography.headlineSmall.fontSize,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold)
                         )
                     }
                 }
@@ -162,7 +162,7 @@ fun disbursementDetailsRow(
                 Text(
                     text = "",
                     fontSize = MaterialTheme.typography.labelSmall.fontSize,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.light),
                     modifier = Modifier
                         .clip(shape = RoundedCornerShape(12.dp))
                         .defaultMinSize(minHeight = 20.dp, minWidth = 150.dp)
@@ -173,7 +173,7 @@ fun disbursementDetailsRow(
                     text = "",
                     fontSize = MaterialTheme.typography.labelMedium.fontSize,
                     color = MaterialTheme.colorScheme.onBackground,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
                     modifier = Modifier
                         .clip(shape = RoundedCornerShape(12.dp))
                         .defaultMinSize(minHeight = 20.dp, minWidth = 100.dp)
@@ -186,14 +186,14 @@ fun disbursementDetailsRow(
             Text(
                 text = label,
                 fontSize = MaterialTheme.typography.labelSmall.fontSize,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
             )
 
             Text(
                 text = data ?: "",
                 fontSize = MaterialTheme.typography.labelMedium.fontSize,
                 color = MaterialTheme.colorScheme.onBackground,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold)
             )
         }
     }

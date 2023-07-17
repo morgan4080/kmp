@@ -20,7 +20,7 @@ fun LoansTransactionHistory() {
         Row(modifier = Modifier.padding(top = 20.dp)) {
             Text(text = "Loans",
             fontSize = 14.sp,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
             )
         }
 

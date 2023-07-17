@@ -80,7 +80,7 @@ fun SuccessfulTransactionScreen(component: SuccessfulTransactionComponent) {
                     fontSize = 20.sp,
                     modifier = Modifier
                         .padding(top = 29.dp),
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold)
                 )
 
                 Row(modifier = Modifier
@@ -93,7 +93,7 @@ fun SuccessfulTransactionScreen(component: SuccessfulTransactionComponent) {
                     Text(
                         text = "Loan topup of Kes 30,000 transferred to Mpesa No. 0724123456",
                         fontSize = 14.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
 
                     )
 
@@ -118,7 +118,7 @@ fun SuccessfulTransactionScreen(component: SuccessfulTransactionComponent) {
                     Text(
                         text = "+ Share Receipt",
                         fontSize = 10.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium),
 
                         modifier = Modifier
                             .padding(

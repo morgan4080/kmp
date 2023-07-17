@@ -109,7 +109,7 @@ fun CountriesSearch(
                 text = "Select a country",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium),
                 textAlign = TextAlign.Center
             )
         }

@@ -83,7 +83,7 @@ fun HomeCardListItem(
                     Text(
                         text = name,
                         color= MaterialTheme.colorScheme.outline,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light),
                         style = MaterialTheme.typography.bodyMedium
                     )
 
@@ -121,7 +121,7 @@ fun HomeCardListItem(
                                     " KES"
                         } else "",
                         color= MaterialTheme.colorScheme.onBackground,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold),
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
@@ -133,14 +133,14 @@ fun HomeCardListItem(
                         text = if (name == "Total Savings Amount") "Last Savings" else "Status",
                         color = MaterialTheme.colorScheme.outline,
                         style = MaterialTheme.typography.bodySmall,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
                     )
                     if (name == "Total Loan Balance") {
                         Text(
                             text = "Loans",
                             color = MaterialTheme.colorScheme.outline,
                             style = MaterialTheme.typography.bodySmall,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
                         )
                     }
                 }
@@ -162,7 +162,7 @@ fun HomeCardListItem(
                             else "",
                             color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.labelLarge,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold)
                         )
                     }
 
@@ -178,7 +178,7 @@ fun HomeCardListItem(
                             text = if (loanStatus !== null) loanStatus else "",
                             color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.labelLarge,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold)
                         )
 
                         Text(
@@ -195,7 +195,7 @@ fun HomeCardListItem(
                                        "",
                             color= MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.labelLarge,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
                             textAlign = TextAlign.End
                         )
                     }
@@ -213,7 +213,7 @@ fun HomeCardListItem(
                                     text = "Loan Balances",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 15.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                                 )
 
                                 Row (
@@ -229,7 +229,7 @@ fun HomeCardListItem(
                                         textAlign = TextAlign.Center,
                                         color = backArrowColor,
                                         fontSize = 12.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium),
                                         style = MaterialTheme.typography.headlineSmall
                                     )
 
@@ -253,7 +253,7 @@ fun HomeCardListItem(
                                         text = breakdown.loanType,
                                         color = MaterialTheme.colorScheme.onBackground,
                                         fontSize = 14.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular),
                                         textAlign = TextAlign.End
                                     )
 
@@ -261,7 +261,7 @@ fun HomeCardListItem(
                                         text = breakdown.totalBalance.toString(),
                                         color = MaterialTheme.colorScheme.onBackground,
                                         fontSize = 14.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
                                         textAlign = TextAlign.End
                                     )
                                 }
@@ -278,7 +278,7 @@ fun HomeCardListItem(
                                     text = "Savings Balances",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 15.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                                 )
 
                                 Row (
@@ -294,7 +294,7 @@ fun HomeCardListItem(
                                         textAlign = TextAlign.Center,
                                         color = backArrowColor,
                                         fontSize = 12.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium),
                                         style = MaterialTheme.typography.headlineSmall
                                     )
 
@@ -317,7 +317,7 @@ fun HomeCardListItem(
                                     text = "Current Savings",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 14.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular),
                                     textAlign = TextAlign.End
                                 )
 
@@ -332,7 +332,7 @@ fun HomeCardListItem(
                                     text = if (savingsBalance !== null) formatMoney(savingsBalance) else "",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 14.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
                                     textAlign = TextAlign.End
                                 )
                             }
@@ -346,7 +346,7 @@ fun HomeCardListItem(
                                     text = "Current Shares",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 14.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular),
                                     textAlign = TextAlign.End
                                 )
 
@@ -361,7 +361,7 @@ fun HomeCardListItem(
                                     text = if (sharesBalance !== null) formatMoney(sharesBalance) else "",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 14.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
                                     textAlign = TextAlign.End
                                 )
                             }

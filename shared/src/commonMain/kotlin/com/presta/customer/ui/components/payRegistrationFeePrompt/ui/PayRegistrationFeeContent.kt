@@ -50,7 +50,7 @@ fun PayRegistrationFeeContent(
                 text = "Phone Number ${authState.cachedMemberData?.phoneNumber}",
                 color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 14.sp,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
             )
 
         }
@@ -64,7 +64,7 @@ fun PayRegistrationFeeContent(
                 text = "KSH ${formatMoney(amount)}",
                 color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 14.sp,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
             )
         }
 
@@ -96,7 +96,7 @@ fun PayRegistrationFeeContent(
             Text(
                 text = "Your transaction is ${if (state.paymentStatus !== null) state.paymentStatus.status else "....."}",
                 fontSize = 14.sp,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium),
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onBackground
             )

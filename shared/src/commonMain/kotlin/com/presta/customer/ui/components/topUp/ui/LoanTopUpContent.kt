@@ -143,7 +143,7 @@ fun LoanTopUpContent(
                                     Text(
                                         modifier = Modifier,
                                         text =if (state.prestaLoanProductById?.offer?.maturityDate != null) "Current  loan" else "",
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
                                     )
                                 }
                                 Row(
@@ -157,7 +157,7 @@ fun LoanTopUpContent(
                                             state.prestaLoanProductById.offer.totalAmount
                                         ) else "",
                                         color = MaterialTheme.colorScheme.onBackground, // #002C56
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold),
                                         modifier = Modifier
                                             .clip(shape = RoundedCornerShape(12.dp))
                                             .defaultMinSize(
@@ -182,7 +182,7 @@ fun LoanTopUpContent(
                                     Text(
                                         text = if (state.prestaLoanProductById?.offer?.maturityDate != null)component.loanName  else "",
                                         fontSize = 14.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light),
                                         modifier = Modifier
                                             .clip(shape = RoundedCornerShape(12.dp))
                                             .defaultMinSize(
@@ -222,7 +222,7 @@ fun LoanTopUpContent(
                                         ,
                                         text = if (state.prestaLoanProductById != null) "Due: " +  state.prestaLoanProductById.offer?.maturityDate.toString().take(10) else " ",
                                         fontSize = 12.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                                     )
                                 }
                             }
@@ -235,7 +235,7 @@ fun LoanTopUpContent(
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Select Loan Term",
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular),
                         modifier = Modifier.padding(top = 10.dp),
                         fontSize = 14.sp
                     )
@@ -282,7 +282,7 @@ fun LoanTopUpContent(
                     modifier = Modifier,
                     text = "Top up amount",
                     color = MaterialTheme.colorScheme.onBackground,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular),
                     fontSize = 14.sp
                 )
             }
@@ -324,7 +324,7 @@ fun LoanTopUpContent(
                         modifier = Modifier.padding(top = 10.dp, start = 5.dp),
                         text = if (state.prestaLoanEligibilityStatus !== null) "min value Ksh $allowedMinAmount max value Ksh ${state.prestaLoanEligibilityStatus.amountAvailable}" else "",
                         style = MaterialTheme.typography.bodySmall,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light),
                         color = Color.Red
                     )
                 }
@@ -517,7 +517,7 @@ fun SelectOptionsCheckBox(
                         text = text,
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onBackground,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
                     )
                 }
 

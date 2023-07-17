@@ -77,7 +77,7 @@ fun OptionsSelectionContainer(
                         text = label,
                         modifier = Modifier.padding(start = 15.dp),
                         fontSize = 12.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular)
                     )
 
                     if (description != null) {

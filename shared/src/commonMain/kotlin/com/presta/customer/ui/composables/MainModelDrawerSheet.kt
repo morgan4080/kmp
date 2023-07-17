@@ -80,7 +80,7 @@ internal fun MainModalDrawerSheet(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(text = "User Details",
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium),
                         fontSize = 14.sp
                     )
                 }
@@ -93,13 +93,13 @@ internal fun MainModalDrawerSheet(
                     Text(
                         text = "Full Name",
                         fontSize = MaterialTheme.typography.labelMedium.fontSize,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold)
                     )
                     Spacer(modifier = Modifier.padding(end = 15.dp))
                     Text(
                         text = if (authState.authUserResponse !== null) authState.authUserResponse.firstName + " " + authState.authUserResponse.lastName else "",
                         fontSize = MaterialTheme.typography.labelSmall.fontSize,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular)
                     )
                 }
             }

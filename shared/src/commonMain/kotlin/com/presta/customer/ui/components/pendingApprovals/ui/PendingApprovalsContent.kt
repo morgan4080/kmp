@@ -116,7 +116,7 @@ fun PendingApprovalsContent(
                 text = if (modeOfDisbursementState.loans.isNotEmpty()) "Loans pending approval" else "",
                 color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 14.sp,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
             )
 
             Box (modifier = Modifier
@@ -161,14 +161,14 @@ fun PendingApprovalsContent(
                                                             .fillMaxWidth(0.4F),
                                                         fontSize = 14.sp,
                                                         color = MaterialTheme.colorScheme.onBackground,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                                                     )
 
                                                     Text(
                                                         text = formatDate(pendingLoan.applicationDate),
                                                         modifier = Modifier.padding(start = 15.dp),
                                                         fontSize = 10.sp,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
                                                     )
                                                 }
 
@@ -180,7 +180,7 @@ fun PendingApprovalsContent(
                                                                 .align(Alignment.End),
                                                             fontSize = 14.sp,
                                                             color = MaterialTheme.colorScheme.onBackground,
-                                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                                                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold)
                                                         )
 
                                                         Text(
@@ -194,7 +194,7 @@ fun PendingApprovalsContent(
                                                             modifier = Modifier.padding(start = 15.dp)
                                                                 .align(Alignment.End),
                                                             fontSize = 10.sp,
-                                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.light),
                                                             color = Color.Red
                                                         )
                                                     }
@@ -323,7 +323,7 @@ fun PendingApprovalsContent(
                                     Text(
                                         text = "Disbursement Amount ",
                                         fontSize = MaterialTheme.typography.bodySmall.fontSize,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
                                     )
                                 }
                                 Row(
@@ -335,7 +335,7 @@ fun PendingApprovalsContent(
                                         text = "KES "+ formatMoney(pendingLoan.amount) ,
                                         color = MaterialTheme.colorScheme.onBackground,
                                         fontSize = MaterialTheme.typography.headlineSmall.fontSize,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold),
                                     )
                                 }
 
@@ -375,7 +375,7 @@ fun PendingApprovalsContent(
                                         Text(
                                             text = "Dismiss",
                                             style = MaterialTheme.typography.bodyLarge,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold)
                                         )
                                     }
                                 }
@@ -402,14 +402,14 @@ fun LoanDetailsRow(
         Text(
             text = label,
             fontSize = MaterialTheme.typography.labelSmall.fontSize,
-            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+            fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
         )
 
         Text(
             text = data ?: "",
             fontSize = MaterialTheme.typography.labelMedium.fontSize,
             color = MaterialTheme.colorScheme.onBackground,
-            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold)
         )
     }
 }

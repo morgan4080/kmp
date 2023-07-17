@@ -215,7 +215,7 @@ fun OtpContent(
                     Text(
                         text = state.title,
                         style = MaterialTheme.typography.headlineSmall,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
                         fontSize = 20.0.sp
                     )
                 }
@@ -225,7 +225,7 @@ fun OtpContent(
                     Text(
                         text = "${state.label}${if (state.phone_number != null) " to ${state.phone_number}" else ""}",
                         style = MaterialTheme.typography.bodySmall,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
                     )
                 }
                 Row(
@@ -252,7 +252,7 @@ fun OtpContent(
                                 value = otpCharList[index],
                                 textStyle = TextStyle(
                                     color = MaterialTheme.colorScheme.onBackground,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
                                     fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
                                     fontSize = MaterialTheme.typography.headlineLarge.fontSize,
                                     fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
@@ -329,7 +329,7 @@ fun OtpContent(
                         textDecoration = TextDecoration.Underline,
                         text = "Resend verification code",
                         style = MaterialTheme.typography.titleSmall,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
                     )
                 }
 
@@ -411,7 +411,7 @@ fun OtpContent(
                                         textAlign = TextAlign.Center,
                                         text = it.toString(),
                                         style = TextStyle(
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
                                             fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
                                             fontSize = MaterialTheme.typography.headlineLarge.fontSize,
                                             fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,

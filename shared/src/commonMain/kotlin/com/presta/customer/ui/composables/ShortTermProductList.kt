@@ -80,7 +80,7 @@ fun ShortTermProductList(
             text = if (eligibilityResponse !== null && eligibilityResponse.isEligible)"Select Loan Product" else   "",
             modifier = Modifier.padding(top = 22.dp),
             fontSize = 14.sp,
-            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+            fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
         )
         
         val refreshState = rememberPullRefreshState(refreshing, ::refresh,)

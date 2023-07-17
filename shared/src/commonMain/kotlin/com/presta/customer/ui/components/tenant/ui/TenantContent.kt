@@ -125,7 +125,7 @@ fun TenantContent(
                 Text(
                     text = "Key in your Organization tenant id",
                     style = MaterialTheme.typography.headlineSmall,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
                     fontSize = 20.0.sp
                 )
             }
@@ -136,7 +136,7 @@ fun TenantContent(
                 Text(
                     text = "Kindly note that your organization account number or account name serves as your tenant ID.",
                     style = MaterialTheme.typography.bodySmall,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
                 )
             }
             Column(
@@ -250,7 +250,7 @@ fun TenantContent(
 
                         },
                         text = "How to get tenant ID?",
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular),
                         color = actionButtonColor,
                         fontSize = 12.sp,
                         textDecoration = TextDecoration.Underline
@@ -262,7 +262,7 @@ fun TenantContent(
                             text = inputMethod.errorMessage,
                             fontSize = 10.sp,
                             style = MaterialTheme.typography.bodyMedium,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular),
                             color = Color.Red
                         )
                     }

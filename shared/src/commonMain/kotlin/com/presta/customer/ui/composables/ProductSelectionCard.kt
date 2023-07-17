@@ -36,7 +36,7 @@ fun  ProductSelectionCard(label: String, description: String? = null, onClickCon
                         modifier = Modifier.padding(start = 15.dp),
                         fontSize = 14.sp,
                         color= MaterialTheme.colorScheme.onBackground,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
                     )
 
                     if (description != null) {
@@ -44,7 +44,7 @@ fun  ProductSelectionCard(label: String, description: String? = null, onClickCon
                             text = description,
                             modifier = Modifier.padding(start = 15.dp),
                             fontSize = 10.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular)
                         )
                     }
 

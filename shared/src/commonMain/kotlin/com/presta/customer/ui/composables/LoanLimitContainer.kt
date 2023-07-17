@@ -55,7 +55,7 @@ fun LoanLimitContainer(state: ShortTermLoansStore.State) {
                 ) {
                     Text(
                         text = "Loan  Limit",
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light),
                         fontSize = 16.sp
 
                     )
@@ -71,7 +71,7 @@ fun LoanLimitContainer(state: ShortTermLoansStore.State) {
                         else "",
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 16.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold),
                         modifier = Modifier
                             .clip(shape = RoundedCornerShape(12.dp))
                             .defaultMinSize(minHeight = 20.dp, minWidth = 200.dp)
@@ -86,7 +86,7 @@ fun LoanLimitContainer(state: ShortTermLoansStore.State) {
                     Column() {
                         Text(
                             text = "Interest",
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light), // #002C56
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.light), // #002C56
                             fontSize = 10.sp
                         )
 
@@ -94,7 +94,7 @@ fun LoanLimitContainer(state: ShortTermLoansStore.State) {
                             text =if(state.prestaShortTermLoanProductById?.interestRate!=null) state.prestaShortTermLoanProductById.interestRate.toString() +"%" else "",
                             color = MaterialTheme.colorScheme.onBackground, // #002C56
                             fontSize = 12.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
                             modifier = Modifier
                                 .clip(shape = RoundedCornerShape(12.dp))
                                 .defaultMinSize(minHeight = 20.dp, minWidth = 70.dp)
@@ -106,7 +106,7 @@ fun LoanLimitContainer(state: ShortTermLoansStore.State) {
                     Column() {
                         Text(
                             text = "Max loan  Period",
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light), // #002C56
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.light), // #002C56
                             fontSize = 10.sp
                         )
 
@@ -115,7 +115,7 @@ fun LoanLimitContainer(state: ShortTermLoansStore.State) {
                                     state.prestaShortTermLoanProductById?.loanPeriodUnit else "",
                             color = MaterialTheme.colorScheme.onBackground, // #002C56
                             fontSize = 12.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
                             modifier = Modifier
                                 .clip(shape = RoundedCornerShape(12.dp))
                                 .defaultMinSize(minHeight = 20.dp, minWidth = 70.dp)

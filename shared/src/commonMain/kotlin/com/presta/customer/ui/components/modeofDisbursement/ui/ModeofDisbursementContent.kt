@@ -54,7 +54,7 @@ fun ModeOfDisbursementContent(
                 Text(
                     modifier = Modifier,
                     text = "Select Disbursement Method",
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium),
                     fontSize = 14.sp,
 
                     )

@@ -63,7 +63,7 @@ fun SignScreen(component: SignComponent) {
                         text = "Coming Soon",
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 20.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold),
                     )
                 }
                 Column(
@@ -75,7 +75,7 @@ fun SignScreen(component: SignComponent) {
                         text = "This new feature will enable you to",
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 13.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular),
                     )
                     Text(modifier = Modifier
                         .fillMaxWidth()
@@ -83,7 +83,7 @@ fun SignScreen(component: SignComponent) {
                         text = "Guarantee & sign loan forms ",
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 13.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular),
                     )
                     Text(modifier = Modifier
                         .fillMaxWidth()
@@ -91,7 +91,7 @@ fun SignScreen(component: SignComponent) {
                         text = "from anywhere, anytime",
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 13.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular),
                     )
                 }
             }

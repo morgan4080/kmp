@@ -186,7 +186,7 @@ fun RegistrationContent(
                                 letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
                                 fontFamily = MaterialTheme.typography.bodySmall.fontFamily
                             ),
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
                             fontSize = 20.0.sp
                         )
                     }
@@ -201,7 +201,7 @@ fun RegistrationContent(
                             modifier = Modifier.alpha(0.5f).fillMaxWidth(0.9f),
                             text = state.label,
                             style = MaterialTheme.typography.bodyMedium,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular)
                         )
                     }
                 }
@@ -324,7 +324,7 @@ fun RegistrationContent(
                                 text = inputMethod.errorMessage,
                                 fontSize = 10.sp,
                                 style = MaterialTheme.typography.bodyMedium,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular),
                                 color = Color.Red
                             )
                         }

@@ -33,6 +33,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1089876341664:android:dded3365243b221a012ac5",
+        "android_client_info": {
+          "package_name": "com.presta.customer.codo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1089876341664-nlm0k8gncgvqpvvhaiho7disc6eo5tbt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-G7QPgnDVv8skfWCuShCQXL8tLpeKmSg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1089876341664-nlm0k8gncgvqpvvhaiho7disc6eo5tbt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

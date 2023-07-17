@@ -221,7 +221,7 @@ fun OnBoardingContent(
     ) {
         Scaffold (
             snackbarHost = {
-                SnackbarHost(modifier = Modifier.padding(bottom = 500.dp), hostState = snackbarHostState)
+                SnackbarHost(modifier = Modifier.padding(bottom = 300.dp), hostState = snackbarHostState)
             }
         ) {
             LazyColumn (
@@ -255,7 +255,7 @@ fun OnBoardingContent(
                         Text(
                             text = state.title,
                             style = MaterialTheme.typography.headlineSmall,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
                             fontSize = 20.0.sp
                         )
                     }
@@ -270,7 +270,7 @@ fun OnBoardingContent(
                             else
                                 "sign up",
                             style = MaterialTheme.typography.bodySmall,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
                         )
                     }
                 }
@@ -327,7 +327,7 @@ fun OnBoardingContent(
                                         modifier = Modifier.padding(top = 10.dp, start = 5.dp),
                                         text = it,
                                         style = MaterialTheme.typography.bodySmall,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light),
                                         color = Color.Red
                                     )
                                 }
