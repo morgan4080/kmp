@@ -20,7 +20,7 @@ kotlin {
 //    iosSimulatorArm64()
 
     cocoapods {
-        version = "1.0.0"
+        version = "1.0.1"
         summary = "Presta Customer Shared Module"
         homepage = "Link to the Shared Module homepage"
         ios.deploymentTarget = "14.1"

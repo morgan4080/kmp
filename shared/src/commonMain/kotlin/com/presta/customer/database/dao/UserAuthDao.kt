@@ -1,5 +1,6 @@
 package com.presta.customer.database.dao
 
+import androidx.compose.foundation.layout.RowScope
 import com.presta.customer.database.PrestaCustomerDatabase
 import kotlinx.coroutines.withContext
 import com.presta.customer.prestaDispatchers
@@ -11,7 +12,13 @@ class UserAuthDao(
     private val query get() = prestaCustomerDatabase.userAuthEntityQueries
 
     suspend fun selectUserAuthCredentials() = withContext(prestaDispatchers.io) {
-        query.getUserAuthCredentials().executeAsList()
+        try {
+            query.getUserAuthCredentials().executeAsList()
+        } catch (e: Exception) {
+            e.printStackTrace()
+
+            listOf()
+        }
     }
 
     suspend fun removeUserAuthCredentials() = withContext(prestaDispatchers.io) {
