@@ -32,7 +32,7 @@ import com.presta.customer.ui.components.sign.SignScreen
 import com.presta.customer.ui.components.signAppRequest.SignRequestScreen
 import com.presta.customer.ui.composables.GetIconForSignScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
-import com.presta.customer.ui.signAppSettings.SignSettingsScreen
+import com.presta.customer.ui.components.signAppSettings.SignSettingsScreen
 
 
 @OptIn(ExperimentalMaterial3Api::class)

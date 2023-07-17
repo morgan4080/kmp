@@ -1,4 +1,4 @@
-package com.presta.customer.ui.signAppSettings
+package com.presta.customer.ui.components.signAppSettings
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue

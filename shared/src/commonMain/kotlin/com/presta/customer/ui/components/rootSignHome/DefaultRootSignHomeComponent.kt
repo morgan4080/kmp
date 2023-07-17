@@ -13,8 +13,8 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.ui.components.savingsTransactionHistory.DefaultSavingsTransactionHistoryComponent
 import com.presta.customer.ui.components.savingsTransactionHistory.SavingsTransactionHistoryComponent
-import com.presta.customer.ui.signAppHome.DefaultSignHomeComponent
-import com.presta.customer.ui.signAppHome.SignHomeComponent
+import com.presta.customer.ui.components.signAppHome.DefaultSignHomeComponent
+import com.presta.customer.ui.components.signAppHome.SignHomeComponent
 
 class DefaultRootSignHomeComponent(
     componentContext: ComponentContext,
@@ -25,7 +25,10 @@ class DefaultRootSignHomeComponent(
         amount: Double,
         mode: PaymentTypes
     ) -> Unit,
-    private val onApplyLoanClicked: () -> Unit = {}
+    private val onApplyLoanClicked: () -> Unit = {},
+    private val onGuarantorshipRequestsClicked: () -> Unit = {},
+    private val onFavouriteGuarantorsClicked: () -> Unit = {},
+    private val onWitnessRequestClicked: () -> Unit = {}
 ) : RootSignHomeComponent, ComponentContext by componentContext {
     private val signHomeNavigation = StackNavigation<ConfigSignHome>()
 
@@ -63,9 +66,18 @@ class DefaultRootSignHomeComponent(
     private fun signHomeComponent(componentContext: ComponentContext): SignHomeComponent =
         DefaultSignHomeComponent(
             componentContext = componentContext,
-            onItemClicked = {
-                //signHomeNavigation.push(ConfigSignHome.SavingsTransactionHistory)
+            onApplyLoanClicked ={
                 onApplyLoanClicked()
+            },
+            onGuarantorshipRequestsClicked = {
+                onGuarantorshipRequestsClicked()
+            },
+            onFavouriteGuarantorsClicked = {
+                onFavouriteGuarantorsClicked()
+
+            },
+            witnessRequestClicked = {
+                onWitnessRequestClicked()
             }
 
         )

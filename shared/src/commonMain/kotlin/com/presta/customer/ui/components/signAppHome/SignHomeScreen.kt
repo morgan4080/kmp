@@ -1,4 +1,4 @@
-package com.presta.customer.ui.signAppHome
+package com.presta.customer.ui.components.signAppHome
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -118,27 +118,36 @@ fun SignHomeScreen(component: SignHomeComponent) {
                                     .padding(10.dp)
                             ) {
                                 Column(modifier = Modifier.fillMaxWidth()) {
-                                    Text(text = "GOOD AFTERNOON",
+                                    Text(
+                                        text = "GOOD AFTERNOON",
                                         fontSize = 14.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                     )
-                                    Text(text = "MURUNGI  MUTUGI",
+                                    Text(
+                                        text = "MURUNGI  MUTUGI",
                                         fontSize = 14.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular))
-                                    Text(text = "55432",
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    )
+                                    Text(
+                                        text = "55432",
                                         fontSize = 14.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular))
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    )
                                     Row(modifier = Modifier.fillMaxWidth()) {
                                         Spacer(modifier = Modifier.weight(1f))
-                                        Text(text = "Share Amount ",
+                                        Text(
+                                            text = "Share Amount ",
                                             fontSize = 14.sp,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular))
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                        )
                                     }
                                     Row(modifier = Modifier.fillMaxWidth()) {
                                         Spacer(modifier = Modifier.weight(1f))
-                                        Text(text = "20,000.00 ",
+                                        Text(
+                                            text = "20,000.00 ",
                                             fontSize = 14.sp,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular))
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                        )
                                     }
                                     Divider(
                                         modifier = Modifier
@@ -153,12 +162,16 @@ fun SignHomeScreen(component: SignHomeComponent) {
                                             .padding(top = 10.dp),
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-                                        Text("Loan Requests",
+                                        Text(
+                                            "Loan Requests",
                                             fontSize = 14.sp,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular))
-                                        Text("See All",
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                        )
+                                        Text(
+                                            "See All",
                                             fontSize = 14.sp,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular))
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                        )
 
                                     }
                                     Row(
@@ -209,11 +222,11 @@ fun SignHomeScreen(component: SignHomeComponent) {
                             label1 = "Apply for a loan",
                             label2 = "Create a loan Request",
                             onClickContainer = {
-                                component.onSelected()
+                                component.onApplyLoanSelected()
 
                             },
-                        backgroundColor = MaterialTheme.colorScheme.primary,
-                        textColor =  MaterialTheme.colorScheme.background,
+                            backgroundColor = MaterialTheme.colorScheme.primary,
+                            textColor = MaterialTheme.colorScheme.background,
                             iconTint = MaterialTheme.colorScheme.background
                         )
                     }
@@ -227,11 +240,14 @@ fun SignHomeScreen(component: SignHomeComponent) {
                             label1 = "Guarantorship requests ",
                             label2 = "View guarantorship requets",
                             onClickContainer = {
+                                //navigate to view requests
+                                component.guarantorshipRequestsSelected()
 
                             },
-                        backgroundColor =MaterialTheme.colorScheme.inverseOnSurface ,
-                        textColor = MaterialTheme.colorScheme.onBackground,
-                        iconTint = MaterialTheme.colorScheme.primary)
+                            backgroundColor = MaterialTheme.colorScheme.inverseOnSurface,
+                            textColor = MaterialTheme.colorScheme.onBackground,
+                            iconTint = MaterialTheme.colorScheme.primary
+                        )
                     }
                     Row(
                         modifier = Modifier
@@ -243,11 +259,14 @@ fun SignHomeScreen(component: SignHomeComponent) {
                             label1 = "Favorite guarantors",
                             label2 = "View  and edit your favourite guarantors",
                             onClickContainer = {
+                                //navigate to favourite guarantors
+                                component.favouriteGuarantorsSelected()
 
                             },
-                        backgroundColor = MaterialTheme.colorScheme.inverseOnSurface,
+                            backgroundColor = MaterialTheme.colorScheme.inverseOnSurface,
                             textColor = MaterialTheme.colorScheme.onBackground,
-                        iconTint = MaterialTheme.colorScheme.primary)
+                            iconTint = MaterialTheme.colorScheme.primary
+                        )
                     }
                     Row(
                         modifier = Modifier
@@ -259,11 +278,13 @@ fun SignHomeScreen(component: SignHomeComponent) {
                             label1 = "Witness request",
                             label2 = "View witness requests",
                             onClickContainer = {
+                                component.witnessRequestSelected()
 
                             },
-                        backgroundColor = MaterialTheme.colorScheme.inverseOnSurface,
+                            backgroundColor = MaterialTheme.colorScheme.inverseOnSurface,
                             textColor = MaterialTheme.colorScheme.onBackground,
-                        iconTint = MaterialTheme.colorScheme.primary)
+                            iconTint = MaterialTheme.colorScheme.primary
+                        )
                     }
                 }
                 item {

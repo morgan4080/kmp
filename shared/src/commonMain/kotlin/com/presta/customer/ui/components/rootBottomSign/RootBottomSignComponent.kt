@@ -9,8 +9,8 @@ import com.presta.customer.ui.components.rootSavings.RootSavingsComponent
 import com.presta.customer.ui.components.rootSignHome.RootSignHomeComponent
 import com.presta.customer.ui.components.sign.SignComponent
 import com.presta.customer.ui.components.signAppRequest.SignRequestComponent
-import com.presta.customer.ui.signAppHome.SignHomeComponent
-import com.presta.customer.ui.signAppSettings.SignSettingsComponent
+import com.presta.customer.ui.components.signAppHome.SignHomeComponent
+import com.presta.customer.ui.components.signAppSettings.SignSettingsComponent
 import kotlinx.coroutines.flow.StateFlow
 
 interface RootBottomSignComponent {

@@ -14,6 +14,8 @@ import com.presta.customer.SharedStatus
 import com.presta.customer.ui.components.addGuarantors.AddGuarantorsScreen
 import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanScreen
 import com.presta.customer.ui.components.auth.ui.AuthScreen
+import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGaurantorsScreen
+import com.presta.customer.ui.components.guarantorshipRequests.GuarantorshipRequestScreen
 import com.presta.customer.ui.components.longTermLoanDetails.LongTermLoanDetailsScreen
 import com.presta.customer.ui.components.onBoarding.ui.OnBoardingScreen
 import com.presta.customer.ui.components.otp.ui.OtpScreen
@@ -32,6 +34,7 @@ import com.presta.customer.ui.components.splash.SplashScreen
 import com.presta.customer.ui.components.tenant.ui.TenantScreen
 import com.presta.customer.ui.components.transactionHistory.ui.TransactionHistoryScreen
 import com.presta.customer.ui.components.welcome.WelcomeScreen
+import com.presta.customer.ui.components.witnessRequests.WitnessRequestScreen
 
 @Composable
 fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
@@ -78,6 +81,9 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
             is RootComponent.Child.LongTermLoanDetailsChild -> LongTermLoanDetailsScreen(child.component)
             is RootComponent.Child.SelectLoanPurposeChild-> SelectLoanPurposeScreen(child.component)
             is RootComponent.Child.AddGuarantorsChild-> AddGuarantorsScreen(child.component)
+            is RootComponent.Child.GuarantorshipRequestChild -> GuarantorshipRequestScreen(child.component)
+            is RootComponent.Child.FavouriteGuarantorsChild-> FavouriteGaurantorsScreen(child.component)
+            is RootComponent.Child.WitnessRequestChild-> WitnessRequestScreen(child.component)
         }
     }
 }

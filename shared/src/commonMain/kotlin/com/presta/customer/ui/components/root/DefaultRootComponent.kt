@@ -26,6 +26,10 @@ import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComp
 import com.presta.customer.ui.components.applyLongTermLoan.DefaultApplyLongtermLoanComponent
 import com.presta.customer.ui.components.auth.AuthComponent
 import com.presta.customer.ui.components.auth.DefaultAuthComponent
+import com.presta.customer.ui.components.favouriteGuarantors.DefaultFavouriteGuarantorsComponent
+import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGuarantorsComponent
+import com.presta.customer.ui.components.guarantorshipRequests.DefaultGuarantorshipRequestComponent
+import com.presta.customer.ui.components.guarantorshipRequests.GuarantorshipRequestComponent
 import com.presta.customer.ui.components.longTermLoanDetails.DefaultLongTermLoanDetailsComponent
 import com.presta.customer.ui.components.longTermLoanDetails.LongTermLoanDetailsComponent
 import com.presta.customer.ui.components.onBoarding.DefaultOnboardingComponent
@@ -61,6 +65,8 @@ import com.presta.customer.ui.components.transactionHistory.DefaultTransactionHi
 import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
 import com.presta.customer.ui.components.welcome.DefaultWelcomeComponent
 import com.presta.customer.ui.components.welcome.WelcomeComponent
+import com.presta.customer.ui.components.witnessRequests.DefaultWitnessRequestComponent
+import com.presta.customer.ui.components.witnessRequests.WitnessRequestComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -178,6 +184,17 @@ class DefaultRootComponent(
             addGuarantorsComponent(
                 componentContext
             )
+        )
+
+        is Config.GuarantorshipRequest -> RootComponent.Child.GuarantorshipRequestChild(
+            guarantorshipRequestComponent(componentContext)
+        )
+
+        is Config.FavouriteGuarantors -> RootComponent.Child.FavouriteGuarantorsChild(
+            favouriteGuarantorsComponent(componentContext)
+        )
+        is Config.WitnessRequests-> RootComponent.Child.WitnessRequestChild(
+            witnessRequestComponent(componentContext)
         )
 
     }
@@ -491,51 +508,20 @@ class DefaultRootComponent(
         DefaultRootBottomSignComponent(componentContext = componentContext,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
-            gotoAllTransactions = {
-                navigation.push(Config.AllTransactions)
-            },
-            gotToPendingApprovals = {
-                navigation.push(Config.LoanPendingApprovals)
-            },
-            logoutToSplash = {
-                println("::::::should logout here::::::")
-                scope.launch {
-                    if (it) {
-                        navigation.replaceAll(Config.Splash)
-                    }
-                }
-            },
-            gotoPayLoans = {
-                navigation.bringToFront(Config.PayLoan)
-            },
-            gotoPayRegistrationFees = { correlationId, amount ->
-                navigation.bringToFront(
-                    Config.ProcessingTransaction(
-                        amount = amount,
-                        correlationId = correlationId,
-                        mode = PaymentTypes.MEMBERSHIPFEES
-                    )
-                )
-            },
-            processTransaction = { correlationId, amount, mode ->
-                navigation.bringToFront(Config.ProcessingTransaction(correlationId, amount, mode))
-            },
-            processLoanState = {
-                scope.launch {
-                    if (it !== null) {
-                        navigation.bringToFront(
-                            Config.ProcessingLoanLoanDisbursement(
-                                it.correlationId, it.amount, it.fees
-                            )
-                        )
-                    }
-                }
-            },
             gotoApplyAllLoans = {
-                //navigate to all  loan outside  bottom scope
+                //navigate to all  loans outside  bottom scope
                 navigation.push(Config.ApplyLongTermLoans)
-            }
+            },
+            gotoGuarantorshipRequests = {
+                navigation.push(Config.GuarantorshipRequest)
+            },
+            gotoFavouriteGuarantors = {
+                navigation.push(Config.FavouriteGuarantors)
 
+            },
+            gotoWitnessRequests = {
+                navigation.push(Config.WitnessRequests)
+            }
         )
 
     private fun applyLongTermLoanComponent(componentContext: ComponentContext): ApplyLongTermLoanComponent =
@@ -576,6 +562,32 @@ class DefaultRootComponent(
 
         }, onProductClicked = {
             //Navigate
+
+        })
+
+    private fun guarantorshipRequestComponent(componentContext: ComponentContext): GuarantorshipRequestComponent =
+        DefaultGuarantorshipRequestComponent(componentContext = componentContext, onItemClicked = {
+            navigation.pop()
+
+        }, onProductClicked = {
+            navigation.push(Config.LongTermLoanDetails)
+
+        })
+
+    private fun favouriteGuarantorsComponent(componentContext: ComponentContext): FavouriteGuarantorsComponent =
+        DefaultFavouriteGuarantorsComponent(componentContext = componentContext, onItemClicked = {
+            navigation.pop()
+
+        }, onProductClicked = {
+            navigation.push(Config.LongTermLoanDetails)
+
+        })
+    private fun witnessRequestComponent(componentContext: ComponentContext): WitnessRequestComponent =
+        DefaultWitnessRequestComponent(componentContext = componentContext, onItemClicked = {
+            navigation.pop()
+
+        }, onProductClicked = {
+            navigation.push(Config.LongTermLoanDetails)
 
         })
 
@@ -672,6 +684,14 @@ class DefaultRootComponent(
         @Parcelize
         object AddGuarantors : Config()
 
+        @Parcelize
+        object GuarantorshipRequest : Config()
+
+        @Parcelize
+        object FavouriteGuarantors : Config()
+
+        @Parcelize
+        object WitnessRequests : Config()
     }
 
     init {

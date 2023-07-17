@@ -5,6 +5,8 @@ import com.arkivanov.decompose.value.Value
 import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
 import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComponent
 import com.presta.customer.ui.components.auth.AuthComponent
+import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGuarantorsComponent
+import com.presta.customer.ui.components.guarantorshipRequests.GuarantorshipRequestComponent
 import com.presta.customer.ui.components.longTermLoanDetails.LongTermLoanDetailsComponent
 import com.presta.customer.ui.components.onBoarding.OnBoardingComponent
 import com.presta.customer.ui.components.otp.OtpComponent
@@ -22,6 +24,7 @@ import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.tenant.TenantComponent
 import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
 import com.presta.customer.ui.components.welcome.WelcomeComponent
+import com.presta.customer.ui.components.witnessRequests.WitnessRequestComponent
 
 interface RootComponent {
 
@@ -49,7 +52,8 @@ interface RootComponent {
         class LongTermLoanDetailsChild(val component: LongTermLoanDetailsComponent): Child()
         class SelectLoanPurposeChild(val component: SelectLoanPurposeComponent): Child()
         class AddGuarantorsChild(val component: AddGuarantorsComponent): Child()
-
-
+        class GuarantorshipRequestChild(val component: GuarantorshipRequestComponent): Child()
+        class FavouriteGuarantorsChild(val component: FavouriteGuarantorsComponent): Child()
+        class WitnessRequestChild(val component: WitnessRequestComponent): Child()
     }
 }

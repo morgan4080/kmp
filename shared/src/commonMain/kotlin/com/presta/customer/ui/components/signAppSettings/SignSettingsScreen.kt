@@ -1,4 +1,4 @@
-package com.presta.customer.ui.signAppSettings
+package com.presta.customer.ui.components.signAppSettings
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically

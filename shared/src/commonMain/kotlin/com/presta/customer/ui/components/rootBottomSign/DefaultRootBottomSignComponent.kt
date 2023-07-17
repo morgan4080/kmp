@@ -30,8 +30,8 @@ import com.presta.customer.ui.components.sign.DefaultSignComponent
 import com.presta.customer.ui.components.sign.SignComponent
 import com.presta.customer.ui.components.signAppRequest.DefaultSignRequestComponent
 import com.presta.customer.ui.components.signAppRequest.SignRequestComponent
-import com.presta.customer.ui.signAppSettings.DefaultSignSettingsComponent
-import com.presta.customer.ui.signAppSettings.SignSettingsComponent
+import com.presta.customer.ui.components.signAppSettings.DefaultSignSettingsComponent
+import com.presta.customer.ui.components.signAppSettings.SignSettingsComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -55,18 +55,10 @@ class DefaultRootBottomSignComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
     val mainContext: CoroutineDispatcher,
-    val logoutToSplash: (state: Boolean) -> Unit = {},
-    val gotoAllTransactions: () -> Unit,
-    val gotToPendingApprovals: () -> Unit,
-    val gotoPayLoans: () -> Unit,
-    val gotoPayRegistrationFees: (correlationId: String, amount: Double) -> Unit,
-    val processTransaction: (
-        correlationId: String,
-        amount: Double,
-        mode: PaymentTypes
-    ) -> Unit,
     val gotoApplyAllLoans: () -> Unit,
-    var processLoanState: (state: ProcessLoanDisbursement?) -> Unit,
+    val gotoGuarantorshipRequests: () -> Unit,
+    val gotoFavouriteGuarantors: () -> Unit,
+    val gotoWitnessRequests: () -> Unit,
     backTopProfile: Boolean = false
 ) : RootBottomSignComponent, ComponentContext by componentContext, KoinComponent {
     private val authRepository by inject<AuthRepository>()
@@ -100,13 +92,20 @@ class DefaultRootBottomSignComponent(
                 navigationBottomStackNavigation.pop()
             },
             processTransaction = { correlationId, amount, mode ->
-                processTransaction(correlationId, amount, mode)
+               // processTransaction(correlationId, amount, mode)
             },
             onApplyLoanClicked = {
                 //go to component outside root Bottom
                 gotoApplyAllLoans()
-
-
+            },
+            onGuarantorshipRequestsClicked = {
+                gotoGuarantorshipRequests()
+            },
+            onFavouriteGuarantorsClicked = {
+                gotoFavouriteGuarantors()
+            },
+            onWitnessRequestClicked = {
+                gotoWitnessRequests()
             }
         )
     private fun signComponent(componentContext: ComponentContext): SignComponent =
@@ -125,7 +124,7 @@ class DefaultRootBottomSignComponent(
             }
 
         )
-    private fun settingsComponent(componentContext: ComponentContext): SignSettingsComponent=
+    private fun settingsComponent(componentContext: ComponentContext): SignSettingsComponent =
         DefaultSignSettingsComponent(
             componentContext = componentContext,
             onSelected = {
