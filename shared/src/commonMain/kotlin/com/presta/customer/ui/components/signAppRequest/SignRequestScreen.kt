@@ -54,10 +54,10 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun SignRequestScreen(component: SignRequestComponent) {
-    var skipHalfExpanded by remember { mutableStateOf(false) }
+    var skipHalfExpanded by remember { mutableStateOf(true) }
     var showExpanded by remember { mutableStateOf(false) }//for the Animated Visibility
     val state = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Expanded,
+        initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = skipHalfExpanded
     )
     val scope = rememberCoroutineScope()

@@ -96,7 +96,7 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
     var firstName by remember { mutableStateOf(TextFieldValue()) }
     val emptyTextContainer by remember { mutableStateOf(TextFieldValue()) }
     var selectedIndex by remember { mutableStateOf(-1) }
-    var skipHalfExpanded by remember { mutableStateOf(false) }
+    var skipHalfExpanded by remember { mutableStateOf(true) }
     var continueClicked by remember { mutableStateOf(false) }
     val state = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Expanded,
@@ -636,7 +636,6 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
         })
     }
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectGuarantorsView(
@@ -721,7 +720,6 @@ fun SelectGuarantorsView(
         }
     }
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GuarantorsDetailsView(

@@ -89,10 +89,10 @@ fun SelectLoanPurposeScreen(component: SelectLoanPurposeComponent) {
                                     ) {
                                         Column(
                                             modifier = Modifier.padding(
-                                                top = 10.dp,
+                                                top = 5.dp,
                                                 start = 16.dp,
                                                 end = 16.dp,
-                                                bottom = 10.dp,
+                                                bottom = 5.dp,
                                             )
                                         ) {
                                             Row(
@@ -128,129 +128,38 @@ fun SelectLoanPurposeScreen(component: SelectLoanPurposeComponent) {
                                                         )
                                                     }
                                                 )
-                                            }
-                                            AnimatedVisibility(showExpanded) {
-                                                Column() {
-
-                                                    SelectSubProductCheckBox(
-                                                        index = 0,
-                                                        text = "Tea",
-                                                        isSelectedOption = selectedOption == 0,
-                                                        onSelectOption = {
-                                                            if (it == selectedOption) {
-                                                                onOptionSelected(-1)
-                                                            } else {
-                                                                onOptionSelected(it)
-                                                            }
-                                                        },
-                                                    )
-                                                    SelectSubProductCheckBox(
-                                                        index = 0,
-                                                        text = "Tea",
-                                                        isSelectedOption = selectedOption == 0,
-                                                        onSelectOption = {
-                                                            if (it == selectedOption) {
-                                                                onOptionSelected(-1)
-                                                            } else {
-                                                                onOptionSelected(it)
-                                                            }
-                                                        },
-                                                    )
-                                                }
                                             }
                                         }
                                     }
                                 }
-                                ElevatedCard(
-                                    modifier = Modifier
-                                        .absolutePadding(
-                                            left = 2.dp,
-                                            right = 2.dp,
-                                            top = 5.dp,
-                                            bottom = 5.dp
-                                        ),
-                                    onClick = {
-                                        showExpanded = !showExpanded
+                                //expand
+                                AnimatedVisibility(showExpanded) {
+                                    Column() {
 
-                                    },
-                                    shape = RoundedCornerShape(20.dp)
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .background(MaterialTheme.colorScheme.background)
-                                    ) {
-                                        Column(
-                                            modifier = Modifier.padding(
-                                                top = 10.dp,
-                                                start = 16.dp,
-                                                end = 16.dp,
-                                                bottom = 10.dp,
-                                            )
-                                        ) {
-                                            Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth(),
-                                                verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.SpaceBetween,
-                                            ) {
-                                                Text(
-                                                    text = "Crop Farming",
-                                                    color = MaterialTheme.colorScheme.outline,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                                    style = MaterialTheme.typography.bodyMedium
-                                                )
-
-                                                IconButton(
-                                                    modifier = Modifier
-                                                        .clip(CircleShape)
-                                                        .background(color = MaterialTheme.colorScheme.background)
-                                                        .size(20.dp),
-                                                    onClick = {
-                                                        showExpanded = !showExpanded
-                                                    },
-                                                    content = {
-                                                        Icon(
-                                                            imageVector = Icons.Filled.PlayArrow,
-                                                            modifier = if (showExpanded) Modifier.size(
-                                                                25.dp
-                                                            )
-                                                                .rotate(90F) else Modifier.size(25.dp),
-                                                            contentDescription = null,
-                                                            tint = MaterialTheme.colorScheme.primary
-                                                        )
-                                                    }
-                                                )
-                                            }
-                                            AnimatedVisibility(showExpanded) {
-                                                Column() {
-
-                                                    SelectSubProductCheckBox(
-                                                        index = 0,
-                                                        text = "Tea",
-                                                        isSelectedOption = selectedOption == 0,
-                                                        onSelectOption = {
-                                                            if (it == selectedOption) {
-                                                                onOptionSelected(-1)
-                                                            } else {
-                                                                onOptionSelected(it)
-                                                            }
-                                                        },
-                                                    )
-                                                    SelectSubProductCheckBox(
-                                                        index = 0,
-                                                        text = "Tea",
-                                                        isSelectedOption = selectedOption == 0,
-                                                        onSelectOption = {
-                                                            if (it == selectedOption) {
-                                                                onOptionSelected(-1)
-                                                            } else {
-                                                                onOptionSelected(it)
-                                                            }
-                                                        },
-                                                    )
+                                        SelectSubProductCheckBox(
+                                            index = 0,
+                                            text = "Tea",
+                                            isSelectedOption = selectedOption == 0,
+                                            onSelectOption = {
+                                                if (it == selectedOption) {
+                                                    onOptionSelected(-1)
+                                                } else {
+                                                    onOptionSelected(it)
                                                 }
-                                            }
-                                        }
+                                            },
+                                        )
+                                        SelectSubProductCheckBox(
+                                            index = 0,
+                                            text = "Tea",
+                                            isSelectedOption = selectedOption == 0,
+                                            onSelectOption = {
+                                                if (it == selectedOption) {
+                                                    onOptionSelected(-1)
+                                                } else {
+                                                    onOptionSelected(it)
+                                                }
+                                            },
+                                        )
                                     }
                                 }
                             }
