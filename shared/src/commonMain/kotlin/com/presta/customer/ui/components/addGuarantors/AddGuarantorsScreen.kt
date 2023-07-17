@@ -478,8 +478,12 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
                     ActionButton(
                         label = "Continue", onClickContainer = {
                             //launch Bottom sheet with  Loan details
+                            //whe details  are submited  Continue to confirm the Details
                             continueClicked = true
-                            scope.launch { state.show() }
+                          //  scope.launch { state.show() }
+                            //Navigate to confirmation
+                            component.onContinueSelected()
+
                         }, enabled = true
                     )
                 }

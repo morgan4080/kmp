@@ -30,6 +30,8 @@ import com.presta.customer.ui.components.favouriteGuarantors.DefaultFavouriteGua
 import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGuarantorsComponent
 import com.presta.customer.ui.components.guarantorshipRequests.DefaultGuarantorshipRequestComponent
 import com.presta.customer.ui.components.guarantorshipRequests.GuarantorshipRequestComponent
+import com.presta.customer.ui.components.longTermLoanConfirmation.DefaultLongTermLoanConfirmationComponent
+import com.presta.customer.ui.components.longTermLoanConfirmation.LongTermLoanConfirmationComponent
 import com.presta.customer.ui.components.longTermLoanDetails.DefaultLongTermLoanDetailsComponent
 import com.presta.customer.ui.components.longTermLoanDetails.LongTermLoanDetailsComponent
 import com.presta.customer.ui.components.onBoarding.DefaultOnboardingComponent
@@ -195,6 +197,9 @@ class DefaultRootComponent(
         )
         is Config.WitnessRequests-> RootComponent.Child.WitnessRequestChild(
             witnessRequestComponent(componentContext)
+        )
+        is Config.LongTermLoanConfirmation-> RootComponent.Child.LongTermLoanConfirmationChild(
+            longTermLoanConfirmationComponent(componentContext)
         )
 
     }
@@ -560,8 +565,9 @@ class DefaultRootComponent(
             //signHomeNavigation.pop()
             navigation.pop()
 
-        }, onProductClicked = {
-            //Navigate
+        }, onContinueClicked = {
+            //Navigate to confirm
+            navigation.push(Config.LongTermLoanConfirmation)
 
         })
 
@@ -584,6 +590,14 @@ class DefaultRootComponent(
         })
     private fun witnessRequestComponent(componentContext: ComponentContext): WitnessRequestComponent =
         DefaultWitnessRequestComponent(componentContext = componentContext, onItemClicked = {
+            navigation.pop()
+
+        }, onProductClicked = {
+            navigation.push(Config.LongTermLoanDetails)
+
+        })
+    private fun longTermLoanConfirmationComponent(componentContext: ComponentContext): LongTermLoanConfirmationComponent =
+        DefaultLongTermLoanConfirmationComponent(componentContext = componentContext, onItemClicked = {
             navigation.pop()
 
         }, onProductClicked = {
@@ -692,6 +706,8 @@ class DefaultRootComponent(
 
         @Parcelize
         object WitnessRequests : Config()
+        @Parcelize
+        object LongTermLoanConfirmation: Config()
     }
 
     init {

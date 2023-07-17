@@ -199,8 +199,7 @@ fun SignRequestScreen(component: SignRequestComponent) {
                     }
                 }
             }
-        },
-        modifier = Modifier.padding(top = 20.dp)
+        }
     ) {
         Scaffold(
             modifier = Modifier.padding(LocalSafeArea.current),

@@ -7,6 +7,7 @@ import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComp
 import com.presta.customer.ui.components.auth.AuthComponent
 import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGuarantorsComponent
 import com.presta.customer.ui.components.guarantorshipRequests.GuarantorshipRequestComponent
+import com.presta.customer.ui.components.longTermLoanConfirmation.LongTermLoanConfirmationComponent
 import com.presta.customer.ui.components.longTermLoanDetails.LongTermLoanDetailsComponent
 import com.presta.customer.ui.components.onBoarding.OnBoardingComponent
 import com.presta.customer.ui.components.otp.OtpComponent
@@ -29,7 +30,6 @@ import com.presta.customer.ui.components.witnessRequests.WitnessRequestComponent
 interface RootComponent {
 
     val childStack: Value<ChildStack<*, Child>>
-
     sealed class Child {
         class TenantChild(val component: TenantComponent) : Child()
         class SplashChild(val component: SplashComponent) : Child()
@@ -55,5 +55,6 @@ interface RootComponent {
         class GuarantorshipRequestChild(val component: GuarantorshipRequestComponent): Child()
         class FavouriteGuarantorsChild(val component: FavouriteGuarantorsComponent): Child()
         class WitnessRequestChild(val component: WitnessRequestComponent): Child()
+        class LongTermLoanConfirmationChild(val component: LongTermLoanConfirmationComponent): Child()
     }
 }
