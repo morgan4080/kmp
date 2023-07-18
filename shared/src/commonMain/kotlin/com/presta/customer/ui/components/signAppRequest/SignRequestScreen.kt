@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
@@ -214,7 +216,6 @@ fun SignRequestScreen(component: SignRequestComponent) {
                         .fillMaxWidth()
                         .padding(start = 16.dp, end = 16.dp)
                 ) {
-
                     item {
                         ElevatedCard(
                             modifier = Modifier
@@ -227,87 +228,107 @@ fun SignRequestScreen(component: SignRequestComponent) {
                         ) {
                             Row(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(color = MaterialTheme.colorScheme.inverseOnSurface),
-
-                                ) {
-                                Column() {
-                                    Row(modifier = Modifier.fillMaxWidth()) {
-                                        Box(
-                                            modifier = Modifier.clip(
-                                                shape = RoundedCornerShape(
-                                                    bottomEnd = 20.dp
-                                                )
+                                    .wrapContentHeight()
+                                    .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .clip(
+                                            shape = RoundedCornerShape(
+                                                bottomEnd = 20.dp
                                             )
+                                        )
+                                        .background(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
+                                        .fillMaxHeight()
+                                ) {
+                                    Column(
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier
+                                            .padding(15.dp)
+                                            .fillParentMaxHeight(0.13f)
+
+                                    ) {
+                                        Icon(
+                                            Icons.Filled.Done,
+                                            contentDescription = "completed",
+                                            modifier = Modifier.clip(shape = CircleShape)
+                                                .background(color = MaterialTheme.colorScheme.primary),
+                                            tint = MaterialTheme.colorScheme.background
+                                        )
+                                        Text(
+                                            "Completed",
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                            fontSize = 13.sp
+                                        )
+                                    }
+                                }
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .fillMaxHeight()
+                                        .background(color = MaterialTheme.colorScheme.inverseOnSurface),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Column(
+                                        modifier = Modifier
+                                            .padding(start = 10.dp)
+                                            .fillMaxHeight()
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.End
                                         ) {
-                                            Box(
-                                                contentAlignment = Alignment.Center,
-                                                modifier = Modifier
-                                                    .background(color = MaterialTheme.colorScheme.outline)
-                                            ) {
-                                                Column(
-                                                    verticalArrangement = Arrangement.Center,
-                                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                                    modifier = Modifier.padding(15.dp)
-                                                ) {
-                                                    Icon(
-                                                        Icons.Filled.Done,
-                                                        contentDescription = "completed",
-                                                        modifier = Modifier.clip(shape = CircleShape)
-                                                            .background(color = MaterialTheme.colorScheme.primary),
-                                                        tint = MaterialTheme.colorScheme.background
-                                                    )
-                                                    Text(
-                                                        "Completed",
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                                        fontSize = 13.sp
-                                                    )
-                                                }
-                                            }
+                                            Text(
+                                                "APPLICANT SIGNED",
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                                fontSize = 13.sp,
+                                                modifier = Modifier.padding(end = 10.dp)
+
+                                            )
                                         }
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
 
-                                        Column(modifier = Modifier.padding(start = 10.dp)) {
-
-                                            Row(
-                                                modifier = Modifier.fillMaxWidth(),
-                                                horizontalArrangement = Arrangement.End
-                                            ) {
+                                            Column() {
                                                 Text(
-                                                    "APPLICANT SIGNED",
+                                                    "Normal",
                                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                                    fontSize = 13.sp,
-                                                    modifier = Modifier.padding(end = 10.dp)
-
+                                                    fontSize = 12.sp
+                                                )
+                                                Text(
+                                                    "Loan",
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                                    fontSize = 12.sp
                                                 )
                                             }
-                                            Row(
-                                                modifier = Modifier.fillMaxWidth(),
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-
-                                                Column() {
-                                                    Text(
-                                                        "Normal",
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                                        fontSize = 12.sp
-                                                    )
-                                                    Text(
-                                                        "Loan",
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                                        fontSize = 12.sp
-                                                    )
-
-                                                }
-
-                                                Spacer(modifier = Modifier.weight(1f))
-
+                                            Spacer(modifier = Modifier.weight(1f))
+                                            Column() {
                                                 Text(
-                                                    text = "ksh. 12000.00",
+                                                    text = "ksh. 12000000.00",
                                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                                     fontSize = 12.sp,
                                                     modifier = Modifier.padding(end = 10.dp)
                                                 )
                                             }
+                                        }
+
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(top = 16.dp),
+                                            horizontalArrangement = Arrangement.End,
+                                            verticalAlignment = Alignment.Bottom
+                                        ) {
+                                            Text(
+                                                "27/04/2023 08:32",
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                                fontSize = 10.sp,
+                                                modifier = Modifier.padding(end = 10.dp)
+                                            )
                                         }
                                     }
                                 }

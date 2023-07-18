@@ -18,9 +18,9 @@ interface RootBottomSignComponent {
     val childStackBottom: Value<ChildStack<*, ChildBottom>>
 
     fun onProfileTabClicked()
-    fun onLoanTabClicked()
-    fun onSavingsTabClicked()
-    fun onSignTabClicked()
+    fun onRequestTabClicked()
+    fun onSettingsTabClicked()
+    fun onLmsTabClicked()
 
     val authStore: AuthStore
 
@@ -32,7 +32,7 @@ interface RootBottomSignComponent {
         class ProfileChild(val component: RootSignHomeComponent) : ChildBottom()
         class RequestChild(val component: SignRequestComponent) : ChildBottom()
         class SettingsChild(val component: SignSettingsComponent) : ChildBottom()
-        class SignChild(val component: SignComponent) : ChildBottom()
+       // class SignChild(val component: SignComponent) : ChildBottom()
     }
     
     

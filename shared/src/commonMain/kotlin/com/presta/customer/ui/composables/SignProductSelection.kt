@@ -8,12 +8,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
@@ -67,13 +63,13 @@ fun SignProductSelection(
                     Column(modifier = Modifier.padding(start = 20.dp)) {
                         Text(
                                 label1,
-                                fontSize = 12.sp,
+                                fontSize = 14.sp,
                                 color = textColor,
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                             )
                         Text(
                                 label2,
-                                fontSize = 10.sp,
+                                fontSize = 11.sp,
                                 color =textColor,
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                             )

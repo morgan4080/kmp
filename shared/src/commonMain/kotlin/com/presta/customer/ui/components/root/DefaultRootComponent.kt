@@ -419,7 +419,10 @@ class DefaultRootComponent(
         backTopProfile = config.backTopProfile,
         gotoSignApp = {
             //navigate to Sign App
-            navigation.push(Config.SignApp)
+           // navigation.push(Config.SignApp)
+            //
+
+            navigation.bringToFront(Config.SignApp)
         })
 
     private fun allTransactionHistory(componentContext: ComponentContext): TransactionHistoryComponent =
@@ -526,6 +529,10 @@ class DefaultRootComponent(
             },
             gotoWitnessRequests = {
                 navigation.push(Config.WitnessRequests)
+            },
+            goBackToLMs = {
+                //navigate to  Lms
+                navigation.bringToFront(Config.RootBottom(backTopProfile = false))
             }
         )
 

@@ -462,7 +462,6 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
                             GuarantorsDetailsView(
                                 label = "details",
                                 onClick = {
-
                                 },
                                 selected = true,
                                 phoneNumber = "0796387377",
@@ -734,10 +733,9 @@ fun GuarantorsDetailsView(
         onClick = {
             //onClick.invoke(Index)
         },
-
         modifier = Modifier.fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.background)
-
+            .background(color = MaterialTheme.colorScheme.background),
+        elevation = CardDefaults.cardElevation(defaultElevation = 20.dp)
     ) {
         Box(
             modifier = Modifier

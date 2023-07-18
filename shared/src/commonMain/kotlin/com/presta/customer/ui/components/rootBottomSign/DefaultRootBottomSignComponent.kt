@@ -17,13 +17,11 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.network.authDevice.data.AuthRepository
 import com.presta.customer.network.onBoarding.model.PinStatus
-import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.poller.AuthPoller
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.profile.coroutineScope
-import com.presta.customer.ui.components.rootLoans.ProcessLoanDisbursement
 import com.presta.customer.ui.components.rootSignHome.DefaultRootSignHomeComponent
 import com.presta.customer.ui.components.rootSignHome.RootSignHomeComponent
 import com.presta.customer.ui.components.sign.DefaultSignComponent
@@ -59,6 +57,8 @@ class DefaultRootBottomSignComponent(
     val gotoGuarantorshipRequests: () -> Unit,
     val gotoFavouriteGuarantors: () -> Unit,
     val gotoWitnessRequests: () -> Unit,
+    val goBackToLMs: () -> Unit,
+
     backTopProfile: Boolean = false
 ) : RootBottomSignComponent, ComponentContext by componentContext, KoinComponent {
     private val authRepository by inject<AuthRepository>()
@@ -68,7 +68,7 @@ class DefaultRootBottomSignComponent(
     private val _childStackBottom =
         childStack(
             source = navigationBottomStackNavigation,
-            initialConfiguration = ConfigBottom.Profile,
+            initialConfiguration = ConfigBottom.SignProfile,
             handleBackButton = true,
             childFactory = ::createChildBottom,
             key = "authStack"
@@ -78,10 +78,10 @@ class DefaultRootBottomSignComponent(
 
     private fun createChildBottom(config: ConfigBottom, componentContext: ComponentContext): RootBottomSignComponent.ChildBottom =
         when (config) {
-            is ConfigBottom.Profile -> RootBottomSignComponent.ChildBottom.ProfileChild(rootSignHomeComponent(componentContext))
-            is ConfigBottom.RootLoans -> RootBottomSignComponent.ChildBottom.RequestChild(requestComponent(componentContext))
-            is ConfigBottom.RootSavings -> RootBottomSignComponent.ChildBottom.SettingsChild(settingsComponent(componentContext))
-            is ConfigBottom.Sign -> RootBottomSignComponent.ChildBottom.SignChild(signComponent(componentContext))
+            is ConfigBottom.SignProfile-> RootBottomSignComponent.ChildBottom.ProfileChild(rootSignHomeComponent(componentContext))
+            is ConfigBottom.Request-> RootBottomSignComponent.ChildBottom.RequestChild(requestComponent(componentContext))
+            is ConfigBottom.Settings -> RootBottomSignComponent.ChildBottom.SettingsChild(settingsComponent(componentContext))
+            //is ConfigBottom.Lms-> RootBottomSignComponent.ChildBottom.SignChild(signComponent(componentContext))
         }
 
     private fun rootSignHomeComponent(componentContext: ComponentContext): RootSignHomeComponent =
@@ -134,30 +134,30 @@ class DefaultRootBottomSignComponent(
         )
 
     override fun onProfileTabClicked() {
-        navigationBottomStackNavigation.bringToFront(ConfigBottom.Profile)
+        navigationBottomStackNavigation.bringToFront(ConfigBottom.SignProfile)
     }
 
-    override fun onLoanTabClicked() {
-        navigationBottomStackNavigation.bringToFront(ConfigBottom.RootLoans)
+    override fun onRequestTabClicked() {
+        navigationBottomStackNavigation.bringToFront(ConfigBottom.Request)
     }
 
-    override fun onSavingsTabClicked() {
-        navigationBottomStackNavigation.bringToFront(ConfigBottom.RootSavings)
+    override fun onSettingsTabClicked() {
+        navigationBottomStackNavigation.bringToFront(ConfigBottom.Settings)
     }
 
-    override fun onSignTabClicked() {
-        navigationBottomStackNavigation.bringToFront(ConfigBottom.Sign)
+    override fun onLmsTabClicked() {
+        goBackToLMs()
     }
 
     private sealed class ConfigBottom : Parcelable {
         @Parcelize
-        object Profile : ConfigBottom()
+        object SignProfile : ConfigBottom()
         @Parcelize
-        object RootLoans : ConfigBottom()
+        object Request : ConfigBottom()
         @Parcelize
-        object RootSavings : ConfigBottom()
-        @Parcelize
-        object Sign : ConfigBottom()
+        object Settings : ConfigBottom()
+//        @Parcelize
+//        object Lms: ConfigBottom()
 
     }
 
@@ -186,7 +186,7 @@ class DefaultRootBottomSignComponent(
 
     init {
         if (backTopProfile) {
-            navigationBottomStackNavigation.bringToFront(ConfigBottom.Profile)
+            navigationBottomStackNavigation.bringToFront(ConfigBottom.SignProfile)
         }
 
         scope.launch {

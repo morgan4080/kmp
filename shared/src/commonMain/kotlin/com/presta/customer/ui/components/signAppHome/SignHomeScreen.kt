@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.outlined.Assignment
 import androidx.compose.material.icons.outlined.Grade
 import androidx.compose.material.icons.outlined.Shield
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
@@ -105,8 +106,11 @@ fun SignHomeScreen(component: SignHomeComponent) {
                     ElevatedCard(
                         modifier = Modifier
                             .clip(RoundedCornerShape(size = 12.dp))
-                            .padding(innerPadding)
-
+                            .padding(innerPadding),
+//                        elevation = CardDefaults.cardElevation(
+//                            defaultElevation = 10.dp
+//                        ),
+                        colors =CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background)
                     ) {
                         Box(
                             modifier = Modifier
