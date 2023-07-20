@@ -4,8 +4,8 @@ object NetworkConstants {
     const val applicationV2BaseUrl = "https://lending.presta.co.ke/applications/api/v2/"
     const val accountsBaseUrl = "https://accounts.presta.co.ke/"
     const val applicationV1BaseUrl="https://lending.presta.co.ke/applications/api/v1/"
-
-
+    //E-Guarantorship APIs
+    const val EguarantorshipApplicationV1BaseUrl="https://eguarantorship-api.presta.co.ke/api/v1/"
     object PrestaAuthenticateUser {
         const val route = applicationV2BaseUrl + "authentication"
     }
@@ -93,5 +93,20 @@ object NetworkConstants {
     object PrestaGetTenantById {
         const val route = applicationV2BaseUrl + "tenants-query/search"
     }
+
+    //E-Guarantorship Apis
+    object PrestaGetTenantByPhoneNumber {
+        const val route = EguarantorshipApplicationV1BaseUrl + "members/search/by-phone"
+    }
+
+
+
+
+
+
+
+
+
+
 
 }

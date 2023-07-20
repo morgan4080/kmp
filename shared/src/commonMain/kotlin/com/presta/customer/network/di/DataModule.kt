@@ -16,6 +16,8 @@ import com.presta.customer.network.registration.data.RegistrationRepository
 import com.presta.customer.network.registration.data.RegistrationRepositoryImpl
 import com.presta.customer.network.shortTermLoans.data.ShortTermLoansRepository
 import com.presta.customer.network.shortTermLoans.data.ShortTermLoansRepositoryImpl
+import com.presta.customer.network.signHome.data.SignHomeRepository
+import com.presta.customer.network.signHome.data.SignHomeRepositoryImpl
 import com.presta.customer.network.tenant.data.TenantRepository
 import com.presta.customer.network.tenant.data.TenantRepositoryImpl
 import org.koin.dsl.module
@@ -30,4 +32,5 @@ val dataModule = module {
     single<ShortTermLoansRepository> { ShortTermLoansRepositoryImpl() }
     single<LoanRequestRepository>{ LoanRequestRepositoryImpl() }
     single<TenantRepository>{ TenantRepositoryImpl()}
+    single<SignHomeRepository>{ SignHomeRepositoryImpl()}
 }

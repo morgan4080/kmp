@@ -11,6 +11,7 @@ import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.presta.customer.network.payments.data.PaymentTypes
+import com.presta.customer.prestaDispatchers
 import com.presta.customer.ui.components.savingsTransactionHistory.DefaultSavingsTransactionHistoryComponent
 import com.presta.customer.ui.components.savingsTransactionHistory.SavingsTransactionHistoryComponent
 import com.presta.customer.ui.components.signAppHome.DefaultSignHomeComponent
@@ -78,8 +79,9 @@ class DefaultRootSignHomeComponent(
             },
             witnessRequestClicked = {
                 onWitnessRequestClicked()
-            }
-
+            },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
         )
 
     private fun savingsTransactionHistoryComponent(componentContext: ComponentContext): SavingsTransactionHistoryComponent =

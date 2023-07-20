@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,7 +38,10 @@ fun SignProductSelection(
     ElevatedCard(
         onClick = onClickContainer,
         modifier = Modifier
-            .clip(RoundedCornerShape(size = 12.dp))
+            .clip(RoundedCornerShape(size = 12.dp)),
+        elevation =  CardDefaults.cardElevation(
+            defaultElevation = 15.dp
+        )
     ) {
         Box(
             modifier = Modifier

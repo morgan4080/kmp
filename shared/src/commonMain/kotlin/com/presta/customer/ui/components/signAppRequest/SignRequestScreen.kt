@@ -23,6 +23,7 @@ import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ElevatedCard
@@ -86,7 +87,7 @@ fun SignRequestScreen(component: SignRequestComponent) {
                                 modifier = Modifier
                                     .padding(top = 5.dp)
                                     .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
+                                horizontalArrangement = Arrangement.End
                             ) {
                                 Icon(
                                     Icons.Filled.Cancel,
@@ -222,6 +223,7 @@ fun SignRequestScreen(component: SignRequestComponent) {
                                 .fillMaxWidth()
                                 .padding(innerPadding)
                                 .background(color = MaterialTheme.colorScheme.background),
+                            shape = RoundedCornerShape(size = 25.dp),
                             onClick = {
                                 scope.launch { state.show() }
                             }
@@ -250,16 +252,18 @@ fun SignRequestScreen(component: SignRequestComponent) {
 
                                     ) {
                                         Icon(
-                                            Icons.Filled.Done,
+                                            Icons.Filled.DoneAll,
                                             contentDescription = "completed",
                                             modifier = Modifier.clip(shape = CircleShape)
-                                                .background(color = MaterialTheme.colorScheme.primary),
+                                                .background(color = MaterialTheme.colorScheme.secondary)
+                                                .padding(5.dp),
                                             tint = MaterialTheme.colorScheme.background
                                         )
                                         Text(
                                             "Completed",
                                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                            fontSize = 13.sp
+                                            fontSize = 13.sp,
+                                            modifier = Modifier.padding(top = 10.dp)
                                         )
                                     }
                                 }
@@ -283,13 +287,14 @@ fun SignRequestScreen(component: SignRequestComponent) {
                                                 "APPLICANT SIGNED",
                                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                                 fontSize = 13.sp,
-                                                modifier = Modifier.padding(end = 10.dp)
-
+                                                modifier = Modifier.padding(end = 15.dp, top = 5.dp),
+                                                color =MaterialTheme.colorScheme.secondary
                                             )
                                         }
                                         Row(
                                             modifier = Modifier
-                                                .fillMaxWidth(),
+                                                .fillMaxWidth()
+                                                .padding(top = 10.dp),
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
 
@@ -311,7 +316,7 @@ fun SignRequestScreen(component: SignRequestComponent) {
                                                     text = "ksh. 12000000.00",
                                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                                     fontSize = 12.sp,
-                                                    modifier = Modifier.padding(end = 10.dp)
+                                                    modifier = Modifier.padding(end = 15.dp)
                                                 )
                                             }
                                         }
@@ -319,7 +324,8 @@ fun SignRequestScreen(component: SignRequestComponent) {
                                         Row(
                                             modifier = Modifier
                                                 .fillMaxWidth()
-                                                .padding(top = 16.dp),
+                                                .fillMaxHeight()
+                                                .padding(top = 20.dp),
                                             horizontalArrangement = Arrangement.End,
                                             verticalAlignment = Alignment.Bottom
                                         ) {
@@ -327,7 +333,7 @@ fun SignRequestScreen(component: SignRequestComponent) {
                                                 "27/04/2023 08:32",
                                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                                 fontSize = 10.sp,
-                                                modifier = Modifier.padding(end = 10.dp)
+                                                modifier = Modifier.padding(end = 15.dp)
                                             )
                                         }
                                     }

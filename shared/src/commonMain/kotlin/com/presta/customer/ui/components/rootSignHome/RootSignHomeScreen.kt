@@ -13,7 +13,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.presta.customer.ui.components.rootSignHome.RootSignHomeComponent
 import com.presta.customer.ui.components.savingsTransactionHistory.SavingsTransactionHistoryScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
-import com.presta.customer.ui.components.signAppHome.SignHomeScreen
+import com.presta.customer.ui.components.signAppHome.ui.SignHomeScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

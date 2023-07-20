@@ -1,5 +1,6 @@
-package com.presta.customer.ui.components.signAppHome
+package com.presta.customer.ui.components.signAppHome.ui
 
+import ShimmerBrush
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -44,13 +46,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.presta.customer.MR
+import com.presta.customer.ui.components.signAppHome.SignHomeComponent
+import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.SignProductSelection
 import com.presta.customer.ui.helpers.LocalSafeArea
+import com.presta.customer.ui.helpers.formatMoney
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignHomeScreen(component: SignHomeComponent) {
+fun  SignHomeContent(
+    component: SignHomeComponent,
+    state: SignHomeStore.State,
+){
     val progressPercentage = 0.75f // Example progress percentage
     var progress by remember { mutableStateOf(0.5f) }
     val progress2 = remember { mutableStateOf(0.75f) }
@@ -107,10 +115,7 @@ fun SignHomeScreen(component: SignHomeComponent) {
                         modifier = Modifier
                             .clip(RoundedCornerShape(size = 12.dp))
                             .padding(innerPadding),
-//                        elevation = CardDefaults.cardElevation(
-//                            defaultElevation = 10.dp
-//                        ),
-                        colors =CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background)
+                        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background)
                     ) {
                         Box(
                             modifier = Modifier
@@ -128,12 +133,29 @@ fun SignHomeScreen(component: SignHomeComponent) {
                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                     )
                                     Text(
-                                        text = "MURUNGI  MUTUGI",
+                                        modifier = Modifier.background(
+                                            brush = ShimmerBrush(
+                                                targetValue = 1300f,
+                                                showShimmer = state.prestaTenantById?.fullName == null
+                                            ),
+                                            shape = RoundedCornerShape(12.dp)
+                                        ).defaultMinSize(150.dp),
+                                        text = if ( state.prestaTenantById?.fullName !== null) state.prestaTenantById.fullName.uppercase() else "",
+                                        color = MaterialTheme.colorScheme.onBackground,
                                         fontSize = 14.sp,
                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                     )
                                     Text(
-                                        text = "55432",
+                                        modifier = Modifier
+                                            .padding(top = 2.dp)
+                                            .background(
+                                            brush = ShimmerBrush(
+                                                targetValue = 1300f,
+                                                showShimmer = state.prestaTenantById?.fullName == null
+                                            ),
+                                            shape = RoundedCornerShape(12.dp)
+                                        ).defaultMinSize(150.dp),
+                                        text = if ( state.prestaTenantById?.memberNumber !== null) state.prestaTenantById.memberNumber else "",
                                         fontSize = 14.sp,
                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                     )
@@ -148,9 +170,23 @@ fun SignHomeScreen(component: SignHomeComponent) {
                                     Row(modifier = Modifier.fillMaxWidth()) {
                                         Spacer(modifier = Modifier.weight(1f))
                                         Text(
-                                            text = "20,000.00 ",
-                                            fontSize = 14.sp,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                            modifier = Modifier
+                                                .padding(top = 2.dp)
+                                                .background(
+                                                    brush = ShimmerBrush(
+                                                        targetValue = 1300f,
+                                                        showShimmer = state.prestaTenantById?.totalShares == null
+                                                    ),
+                                                    shape = RoundedCornerShape(12.dp)
+                                                ).defaultMinSize(50.dp),
+                                            text = if ( state.prestaTenantById?.totalShares!== null) "${
+                                                formatMoney(
+                                                    state.prestaTenantById.totalShares
+                                                )
+                                            } KES" else "",
+                                            color = MaterialTheme.colorScheme.onBackground,
+                                            fontSize = 20.sp,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
                                         )
                                     }
                                     Divider(
@@ -158,7 +194,7 @@ fun SignHomeScreen(component: SignHomeComponent) {
                                             .fillMaxWidth()
                                             .padding(top = 20.dp),
                                         thickness = 2.dp,
-                                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+                                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
                                     )
                                     Row(
                                         modifier = Modifier
@@ -174,7 +210,8 @@ fun SignHomeScreen(component: SignHomeComponent) {
                                         Text(
                                             "See All",
                                             fontSize = 14.sp,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                            color = MaterialTheme.colorScheme.primary
                                         )
 
                                     }
@@ -297,8 +334,8 @@ fun SignHomeScreen(component: SignHomeComponent) {
             }
         })
 
-}
 
+}
 @Composable
 fun CircularProgressBarWithText(
     progress: Float,
@@ -312,7 +349,7 @@ fun CircularProgressBarWithText(
         CircularProgressIndicator(
             progress = 1f,
             strokeWidth = strokeWidth,
-            color = MaterialTheme.colorScheme.outline,
+            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
             modifier = Modifier.align(Alignment.Center)
         )
         CircularProgressIndicator(
@@ -325,23 +362,7 @@ fun CircularProgressBarWithText(
         Text(
             text = text,
             modifier = Modifier.align(Alignment.Center),
-            style = TextStyle(fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground)
+            style = TextStyle(fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
         )
     }
 }
-
-//Button(onClick = { progress += 0.1f }) {
-//    Text("Increase Progress")
-//}
-
-
-
-
-
-
-
-
-
-
-
-
