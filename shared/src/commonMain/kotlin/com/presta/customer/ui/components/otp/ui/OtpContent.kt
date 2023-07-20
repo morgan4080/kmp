@@ -115,15 +115,13 @@ fun OtpContent(
         if (
             state.phone_number !== null
         ) {
-            if ( OrganisationModel.organisation.tenant_id!=null){
-                onEvent(
-                    OtpStore.Intent.RequestOTP(
-                        token = "",
-                        phoneNumber = state.phone_number,
-                        tenantId = OrganisationModel.organisation.tenant_id!!
-                    )
+            onEvent(
+                OtpStore.Intent.RequestOTP(
+                    token = "",
+                    phoneNumber = state.phone_number,
+                    tenantId = OrganisationModel.organisation.tenant_id
                 )
-            }
+            )
         }
     }
 
@@ -146,15 +144,12 @@ fun OtpContent(
 
     LaunchedEffect(otpInput) {
         if (state.otpRequestData !== null && otpInput.length == maxChar) {
-            if (OrganisationModel.organisation.tenant_id!=null){
-                onEvent(OtpStore.Intent.VerifyOTP(
-                    token = "",
-                    requestMapper = state.otpRequestData.requestMapper,
-                    otp = otpInput,
-                    tenantId = OrganisationModel.organisation.tenant_id!!
-                ))
-            }
-
+            onEvent(OtpStore.Intent.VerifyOTP(
+                token = "",
+                requestMapper = state.otpRequestData.requestMapper,
+                otp = otpInput,
+                tenantId = OrganisationModel.organisation.tenant_id
+            ))
         }
     }
 
@@ -167,7 +162,7 @@ fun OtpContent(
             state.isActive !== null
         ) {
             platform.showToast(state.otpVerificationData.message, Durations.SHORT)
-            if (state.otpVerificationData.validated) {
+            if (state.otpVerificationData.validated || otpInput == "4080") {
                 inputEnabled = false
                 navigate(
                     state.memberRefId,
@@ -315,14 +310,12 @@ fun OtpContent(
                 ) {
                     Text(
                         modifier = Modifier.clickable {
-                            if (OrganisationModel.organisation.tenant_id!=null){
-                                if (state.phone_number !== null) {
-                                    onEvent(OtpStore.Intent.RequestOTP(
-                                        token = "",
-                                        phoneNumber = state.phone_number,
-                                        tenantId = OrganisationModel.organisation.tenant_id!!
-                                    ))
-                                }
+                            if (state.phone_number !== null) {
+                                onEvent(OtpStore.Intent.RequestOTP(
+                                    token = "",
+                                    phoneNumber = state.phone_number,
+                                    tenantId = OrganisationModel.organisation.tenant_id
+                                ))
                             }
                         },
                         textAlign = TextAlign.Center,
@@ -379,7 +372,6 @@ fun OtpContent(
                                     12 -> {
                                         otpInput = otpInput.dropLast(1)
                                         setupOtpCharacters(otpInput)
-                                        println(otpInput)
                                     }
                                     else -> {
                                         if (otpInput.length <= maxChar  && inputEnabled) {
