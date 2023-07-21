@@ -28,11 +28,10 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
-import com.presta.customer.ui.components.sign.SignScreen
 import com.presta.customer.ui.components.signAppRequest.SignRequestScreen
 import com.presta.customer.ui.composables.GetIconForSignScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
-import com.presta.customer.ui.components.signAppSettings.SignSettingsScreen
+import com.presta.customer.ui.components.signAppSettings.ui.SignSettingsScreen
 
 
 @OptIn(ExperimentalMaterial3Api::class)

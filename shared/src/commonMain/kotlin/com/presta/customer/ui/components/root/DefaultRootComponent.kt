@@ -195,10 +195,12 @@ class DefaultRootComponent(
         is Config.FavouriteGuarantors -> RootComponent.Child.FavouriteGuarantorsChild(
             favouriteGuarantorsComponent(componentContext)
         )
-        is Config.WitnessRequests-> RootComponent.Child.WitnessRequestChild(
+
+        is Config.WitnessRequests -> RootComponent.Child.WitnessRequestChild(
             witnessRequestComponent(componentContext)
         )
-        is Config.LongTermLoanConfirmation-> RootComponent.Child.LongTermLoanConfirmationChild(
+
+        is Config.LongTermLoanConfirmation -> RootComponent.Child.LongTermLoanConfirmationChild(
             longTermLoanConfirmationComponent(componentContext)
         )
 
@@ -419,7 +421,7 @@ class DefaultRootComponent(
         backTopProfile = config.backTopProfile,
         gotoSignApp = {
             //navigate to Sign App
-           // navigation.push(Config.SignApp)
+            // navigation.push(Config.SignApp)
             //
 
             navigation.bringToFront(Config.SignApp)
@@ -537,13 +539,19 @@ class DefaultRootComponent(
         )
 
     private fun applyLongTermLoanComponent(componentContext: ComponentContext): ApplyLongTermLoanComponent =
-        DefaultApplyLongtermLoanComponent(componentContext = componentContext, onItemClicked = {
-            navigation.pop()
+        DefaultApplyLongtermLoanComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
 
-        }, onProductClicked = {
-            navigation.push(Config.LongTermLoanDetails)
+            },
+            onProductClicked = {
+                navigation.push(Config.LongTermLoanDetails)
 
-        })
+            },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+        )
 
     private fun longTermLoanDetailsComponent(componentContext: ComponentContext): LongTermLoanDetailsComponent =
         DefaultLongTermLoanDetailsComponent(componentContext = componentContext, onItemClicked = {
@@ -595,6 +603,7 @@ class DefaultRootComponent(
             navigation.push(Config.LongTermLoanDetails)
 
         })
+
     private fun witnessRequestComponent(componentContext: ComponentContext): WitnessRequestComponent =
         DefaultWitnessRequestComponent(componentContext = componentContext, onItemClicked = {
             navigation.pop()
@@ -603,14 +612,18 @@ class DefaultRootComponent(
             navigation.push(Config.LongTermLoanDetails)
 
         })
+
     private fun longTermLoanConfirmationComponent(componentContext: ComponentContext): LongTermLoanConfirmationComponent =
-        DefaultLongTermLoanConfirmationComponent(componentContext = componentContext, onItemClicked = {
-            navigation.pop()
+        DefaultLongTermLoanConfirmationComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
 
-        }, onProductClicked = {
-            navigation.push(Config.LongTermLoanDetails)
+            },
+            onProductClicked = {
+                navigation.push(Config.LongTermLoanDetails)
 
-        })
+            })
 
     enum class OnBoardingContext {
         LOGIN, REGISTRATION
@@ -713,8 +726,9 @@ class DefaultRootComponent(
 
         @Parcelize
         object WitnessRequests : Config()
+
         @Parcelize
-        object LongTermLoanConfirmation: Config()
+        object LongTermLoanConfirmation : Config()
     }
 
     init {

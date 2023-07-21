@@ -98,15 +98,8 @@ object NetworkConstants {
     object PrestaGetTenantByPhoneNumber {
         const val route = EguarantorshipApplicationV1BaseUrl + "members/search/by-phone"
     }
-
-
-
-
-
-
-
-
-
-
+    object PrestaGetLongTermLoansProducts {
+        const val route = EguarantorshipApplicationV1BaseUrl + "loans-products"
+    }
 
 }

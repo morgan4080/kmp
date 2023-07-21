@@ -18,6 +18,7 @@ import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.network.authDevice.data.AuthRepository
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
+import com.presta.customer.prestaDispatchers
 import com.presta.customer.ui.components.auth.poller.AuthPoller
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
@@ -129,8 +130,9 @@ class DefaultRootBottomSignComponent(
             componentContext = componentContext,
             onSelected = {
 
-            }
-
+            },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
         )
 
     override fun onProfileTabClicked() {

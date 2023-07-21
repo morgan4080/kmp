@@ -10,10 +10,8 @@ interface SignHomeComponent {
     fun favouriteGuarantorsSelected()
     fun witnessRequestSelected()
     val authStore: AuthStore
-
     val authState: StateFlow<AuthStore.State>
     fun onAuthEvent(event: AuthStore.Intent)
-
     fun onEvent(event: SignHomeStore.Intent)
     val  sigHomeStore: SignHomeStore
     val signHomeState: StateFlow<SignHomeStore.State>

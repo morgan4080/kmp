@@ -1,4 +1,4 @@
-package com.presta.customer.ui.components.applyLongTermLoan
+package com.presta.customer.ui.components.applyLongTermLoan.ui
 
 import ProductSelectionCard
 import androidx.compose.foundation.layout.Row
@@ -11,12 +11,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComponent
+import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ApplyLongTermLoanScreen(component: ApplyLongTermLoanComponent) {
+fun  ApplyLongTermLoansContent(
+    component: ApplyLongTermLoanComponent,
+    state: ApplyLongTermLoansStore.State){
+
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Select Loan Product", onClickContainer = {
             component.onBackNavClicked()
@@ -62,16 +67,3 @@ fun ApplyLongTermLoanScreen(component: ApplyLongTermLoanComponent) {
     })
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

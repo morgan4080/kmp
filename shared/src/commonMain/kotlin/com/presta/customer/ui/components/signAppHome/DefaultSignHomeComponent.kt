@@ -26,8 +26,6 @@ class DefaultSignHomeComponent (
     private val onFavouriteGuarantorsClicked: () -> Unit,
     private val witnessRequestClicked: () -> Unit,
 ): SignHomeComponent, ComponentContext by componentContext {
-
-
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
     override val authStore: AuthStore =
