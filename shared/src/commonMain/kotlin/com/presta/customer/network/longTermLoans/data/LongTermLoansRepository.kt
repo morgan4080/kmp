@@ -5,5 +5,5 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProduc
 interface LongTermLoansRepository {
     suspend fun getLonTermLoansData(
         token: String
-    ): Result<List<PrestaLongTermLoansProductResponse>>
+    ): Result<PrestaLongTermLoansProductResponse>
 }

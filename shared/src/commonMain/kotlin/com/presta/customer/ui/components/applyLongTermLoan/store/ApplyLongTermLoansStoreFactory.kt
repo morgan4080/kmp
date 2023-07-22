@@ -30,7 +30,7 @@ class ApplyLongTermLoansStoreFactory(
 
     private sealed class Msg {
         data class LongTermLoansLoading (val isLoading: Boolean = true) : Msg()
-        data class LongTermLoansLoaded(val longTermLoansLoaded:List<PrestaLongTermLoansProductResponse>) :
+        data class LongTermLoansLoaded(val longTermLoansLoaded:PrestaLongTermLoansProductResponse) :
             Msg()
 
         data class LongTermLoansFailed(val error: String?) : Msg()
@@ -70,8 +70,11 @@ class ApplyLongTermLoansStoreFactory(
                     token = token
                 ).onSuccess { response ->
                     dispatch(Msg.LongTermLoansLoaded(response))
+                   println("Load Success")
+
                 }.onFailure { e ->
                     dispatch(Msg.LongTermLoansFailed(e.message))
+                   println("Load failed")
                 }
 
                 dispatch(Msg.LongTermLoansLoading(false))

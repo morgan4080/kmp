@@ -15,7 +15,7 @@ class PrestaLongTermLoansClient(
 ){
     suspend fun getLongTermLoansData (
         token: String,
-    ): List<PrestaLongTermLoansProductResponse> {
+    ): PrestaLongTermLoansProductResponse {
         return longTermLoansErrorHandler {
             httpClient.get(NetworkConstants.PrestaGetLongTermLoansProducts.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")

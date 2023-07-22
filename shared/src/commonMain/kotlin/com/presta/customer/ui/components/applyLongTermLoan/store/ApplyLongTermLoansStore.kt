@@ -10,6 +10,6 @@ interface ApplyLongTermLoansStore : Store<ApplyLongTermLoansStore.Intent, ApplyL
     data class State(
         val isLoading: Boolean = false,
         val error: String? = null,
-        val prestaLongTermLoanProducts: List<PrestaLongTermLoansProductResponse>? = null
+        val prestaLongTermLoanProducts: PrestaLongTermLoansProductResponse? = null
     )
 }

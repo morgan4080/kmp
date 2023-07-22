@@ -9,7 +9,7 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
     private val prestaLongTermLoansClient by inject<PrestaLongTermLoansClient>()
     override suspend fun getLonTermLoansData(
         token: String
-    ): Result<List<PrestaLongTermLoansProductResponse>> {
+    ): Result<PrestaLongTermLoansProductResponse> {
         return try {
             val response = prestaLongTermLoansClient.getLongTermLoansData(
                 token = token
