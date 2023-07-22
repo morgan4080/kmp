@@ -72,7 +72,7 @@ fun SignSettingsContent(
     onEvent: (SignHomeStore.Intent) -> Unit,
 ){
     val dataTest=state.prestaTenantById?.firstName
-    var firstName by remember { mutableStateOf(TextFieldValue(dataTest.toString())) }
+    var firstName by remember { mutableStateOf(TextFieldValue()) }
     var lastName by remember { mutableStateOf(TextFieldValue("Mutugi")) }
     var phoneNumber by remember { mutableStateOf(TextFieldValue("0796387377")) }
     var idNumber by remember { mutableStateOf(TextFieldValue("29955745 ")) }
@@ -80,6 +80,10 @@ fun SignSettingsContent(
     val focusRequester = remember { FocusRequester() }
     val emptyTextContainer by remember { mutableStateOf(TextFieldValue()) }
     var checked by remember { mutableStateOf(false) }
+    val name =state.prestaTenantById?.firstName
+    if (name!=null ){
+        firstName = TextFieldValue(name.toString())
+    }
 
     Scaffold(
         modifier = Modifier.padding(LocalSafeArea.current),
@@ -138,9 +142,20 @@ fun SignSettingsContent(
                                 .padding(innerPadding)
                         ) {
                             LiveTextContainer(
-                                userInput = state.prestaTenantById?.firstName ?: "",
+                                userInput =   firstName.text ,
                                 label = "First Name"
-                            )
+                            ){
+                                val inputValue: String = TextFieldValue(it).text
+                                if (inputValue != "") {
+                                    if ( TextFieldValue(it).text !== "")
+                                    {
+                                        firstName = TextFieldValue(it)
+
+                                    } else {
+
+                                    }
+                                }
+                            }
                         }
                         Row(
                             modifier = Modifier

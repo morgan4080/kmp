@@ -26,73 +26,77 @@ import com.presta.customer.ui.helpers.LocalSafeArea
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun  ApplyLongTermLoansContent(
+fun ApplyLongTermLoansContent(
     component: ApplyLongTermLoanComponent,
-    state: ApplyLongTermLoansStore.State){
-
+    state: ApplyLongTermLoansStore.State
+) {
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
-        NavigateBackTopBar("Select Loan Product", onClickContainer = {
+        NavigateBackTopBar("Select Loan Product",
+            onClickContainer = {
             component.onBackNavClicked()
         })
     }, content = { innerPadding ->
-       Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp)){
-           LazyColumn(
-               modifier = Modifier.fillMaxWidth().padding(innerPadding)
-           ) {
+        Column(modifier = Modifier
+            .padding(start = 16.dp, end = 16.dp)) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(innerPadding)
+            ) {
 
-               if (state.prestaLongTermLoanProducts?.total== null) {
-                   items(6) {
+                if (state.prestaLongTermLoanProducts?.total == null) {
+                    items(6) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp, bottom = 10.dp)
+                                .background(color = MaterialTheme.colorScheme.background),
+                        ) {
+                            ElevatedCard(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(color = MaterialTheme.colorScheme.background),
+                                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .defaultMinSize(40.dp, 40.dp)
+                                        .background(
+                                            ShimmerBrush(
+                                                targetValue = 1300f,
+                                                showShimmer = true
+                                            )
+                                        )
+                                        .fillMaxWidth()
+                                ) {
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    state.prestaLongTermLoanProducts.list?.map { loanData ->
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 10.dp)
+                            ) {
+                                ProductSelectionCard(loanData.name.toString(),
+                                    description = loanData.interestRate.toString(),
+                                    onClickContainer = {
+                                        component.onProductSelected()
 
-                       Row(modifier = Modifier
-                           .fillMaxWidth()
-                           .padding(top = 10.dp, bottom = 10.dp)
-                           .background(color = MaterialTheme.colorScheme.background),){
-                           ElevatedCard(
-                               modifier = Modifier
-                                   .fillMaxWidth()
-                                   .background(color = MaterialTheme.colorScheme.background),
-                               colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
-                           ) {
-                               Box(
-                                   modifier = Modifier
-                                       .defaultMinSize(40.dp, 40.dp)
-                                       .background(
-                                           ShimmerBrush(
-                                               targetValue = 1300f,
-                                               showShimmer = true
-                                           )
-                                       )
-                                       .fillMaxWidth()
-                               ) {
-                               }
-                           }
-                       }
-                   }
-               }else{
-                   state.prestaLongTermLoanProducts.list?.map { loanData->
-                       item {
-                           Row(
-                               modifier = Modifier
-                                   .fillMaxWidth()
-                                   .padding(top = 10.dp)
-                           ) {
-                               ProductSelectionCard(loanData.name.toString(),
-                                   description = loanData.interestRate.toString(),
-                                   onClickContainer = {
-                                       component.onProductSelected()
+                                    })
+                            }
+                        }
+                    }
+                }
+                item {
+                    Spacer(modifier = Modifier.padding(bottom = 100.dp))
+                }
+            }
 
-                                   })
-                           }
-                       }
-                   }
-               }
-
-               item {
-                   Spacer(modifier = Modifier.padding(bottom = 100.dp))
-               }
-           }
-
-       }
+        }
 
     })
 

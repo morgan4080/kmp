@@ -46,7 +46,7 @@ import com.presta.customer.ui.theme.primaryColor
 fun LiveTextContainer(
     userInput: String,
     label:String,
-    callback: (userInput: String) -> Unit = {}
+    callback: (userInput: String) -> Unit = {},
 ) {
     val focusRequester = remember { FocusRequester() }
     val emptyTextContainer by remember { mutableStateOf(TextFieldValue()) }
