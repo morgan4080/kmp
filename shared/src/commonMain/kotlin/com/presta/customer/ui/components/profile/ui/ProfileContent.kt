@@ -115,6 +115,9 @@ fun ProfileContent(
     logout: () -> Unit,
     reloadModels: () -> Unit,
 ) {
+    println(":::::::CUSTOMER REF ID:::::::::::")
+    println(authState.cachedMemberData?.refId)
+
     val stateLazyRow0 = rememberLazyListState()
 
     val scope = rememberCoroutineScope()

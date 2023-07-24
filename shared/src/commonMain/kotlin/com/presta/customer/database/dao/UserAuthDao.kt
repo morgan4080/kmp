@@ -1,8 +1,11 @@
 package com.presta.customer.database.dao
 
+import androidx.compose.foundation.layout.RowScope
 import com.presta.customer.database.PrestaCustomerDatabase
 import kotlinx.coroutines.withContext
 import com.presta.customer.prestaDispatchers
+import comprestacustomer.UserAuthEntity
+import kotlinx.coroutines.delay
 
 class UserAuthDao(
     private val prestaCustomerDatabase: PrestaCustomerDatabase
@@ -11,7 +14,13 @@ class UserAuthDao(
     private val query get() = prestaCustomerDatabase.userAuthEntityQueries
 
     suspend fun selectUserAuthCredentials() = withContext(prestaDispatchers.io) {
-        query.getUserAuthCredentials().executeAsList()
+        try {
+            query.getUserAuthCredentials().executeAsList()
+        } catch (e: Exception) {
+            e.printStackTrace()
+
+            listOf()
+        }
     }
 
     suspend fun removeUserAuthCredentials() = withContext(prestaDispatchers.io) {
@@ -35,7 +44,7 @@ class UserAuthDao(
     suspend fun insert(access_token: String, refresh_token: String, refId: String, session_id: String, registrationFees: Double, registrationFeeStatus: String, phoneNumber: String, expires_in: Long, refresh_expires_in: Long, tenant_id: String) = withContext(
         prestaDispatchers.io
     ) {
-        query.insert(
+        val data = UserAuthEntity(
             access_token = access_token,
             refresh_token = refresh_token,
             refId = refId,
@@ -47,5 +56,7 @@ class UserAuthDao(
             refresh_expires_in = refresh_expires_in,
             tenant_id = tenant_id
         )
+
+        query.insertOrReplaceFullObject(data)
     }
 }

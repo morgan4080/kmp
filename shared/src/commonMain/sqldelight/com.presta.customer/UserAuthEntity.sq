@@ -15,9 +15,9 @@ getUserAuthCredentials:
 SELECT *
 FROM userAuthEntity;
 
-insert:
+insertOrReplaceFullObject:
 INSERT OR REPLACE INTO userAuthEntity(refId, session_id, access_token, refresh_token, registrationFees, registrationFeeStatus, phoneNumber, expires_in, refresh_expires_in, tenant_id)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES ?;
 
 updateAccessToken:
 UPDATE userAuthEntity SET access_token = :access_token, refresh_token = :refresh_token, session_id = :session_id , expires_in = :expires_in, refresh_expires_in = :refresh_expires_in, tenant_id = :tenant_id  WHERE refId = :refId;

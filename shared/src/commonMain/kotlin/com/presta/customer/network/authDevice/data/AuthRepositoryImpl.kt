@@ -40,7 +40,7 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
                 phoneNumber = phoneNumber,
                 expires_in = response.expires_in,
                 refresh_expires_in = response.refresh_expires_in,
-                tenantId
+                tenant_id = tenantId
             )
 
             Result.success(response)
