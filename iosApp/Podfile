@@ -4,5 +4,6 @@ platform :ios, '14.1'
 install! 'cocoapods', :deterministic_uuids => false
 
 target 'iosApp' do
+  pod 'Reachability'
   pod 'shared', :path => '../shared'
 end

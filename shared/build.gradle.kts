@@ -17,7 +17,6 @@ plugins {
 kotlin {
     android()
     ios()
-//    iosSimulatorArm64()
 
     cocoapods {
         version = "1.0.1"
@@ -143,8 +142,6 @@ kotlin {
             }
         }
 
-//        val iosSimulatorArm64Main by getting
-
         val iosMain by getting {
             dependencies {
                 // Ktor
@@ -159,7 +156,6 @@ kotlin {
             }
 
             dependsOn(commonMain)
-//            iosSimulatorArm64Main.dependsOn(this)
         }
 
         multiplatformResources {
