@@ -2,10 +2,6 @@ package com.presta.customer
 
 import kotlinx.coroutines.flow.MutableStateFlow
 
-enum class Durations {
-    SHORT, LONG
-}
-
 actual class Platform actual constructor(context: AppContext) {
     actual val platformName: String = "iOS"
 
@@ -16,5 +12,8 @@ actual class Platform actual constructor(context: AppContext) {
         return "IOS24520"
     }
     actual fun openUrl(url: String) {
+    }
+
+    actual fun logErrorsToFirebase(Error: Exception) {
     }
 }
