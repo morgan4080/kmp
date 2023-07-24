@@ -112,20 +112,35 @@ class DefaultAuthComponent(
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
     init {
+        onEvent(AuthStore.Intent.GetCachedMemberData)
+
         scope.launch {
             state.collect {
+                if (it.error !== null) {
+                    platform.showToast(it.error)
+                    onEvent(AuthStore.Intent.UpdateError(null))
+                }
                 if (it.cachedMemberData?.tenantId!== null) {
                     onTenantEvent(
                         TenantStore.Intent.GetClientById(
-                            searchTerm =it.cachedMemberData.tenantId
+                            searchTerm = it.cachedMemberData.tenantId
                         )
                     )
+
+                    if (it.phoneNumber !== null) {
+                        onOnBoardingEvent(
+                            OnBoardingStore.Intent.GetMemberDetails(
+                                token = "",
+                                memberIdentifier = it.phoneNumber,
+                                identifierType = IdentifierTypes.PHONE_NUMBER,
+                                tenantId = it.cachedMemberData.tenantId
+                            )
+                        )
+                    }
                 }
             }
         }
-    }
 
-    init {
         scope.launch {
             tenantState.collect {
                 if (it.tenantData !== null) {
@@ -141,26 +156,7 @@ class DefaultAuthComponent(
                 }
             }
         }
-    }
 
-    init {
-        onEvent(AuthStore.Intent.GetCachedMemberData)
-        scope.launch {
-            state.collect {
-                if (it.error !== null) {
-                    platform.showToast(it.error)
-                    onEvent(AuthStore.Intent.UpdateError(null))
-                }
-                if (it.phoneNumber !== null) {
-                    onOnBoardingEvent(OnBoardingStore.Intent.GetMemberDetails(
-                        token = "",
-                        memberIdentifier = it.phoneNumber,
-                        identifierType = IdentifierTypes.PHONE_NUMBER,
-                        tenantId = OrganisationModel.organisation.tenant_id
-                    ))
-                }
-            }
-        }
         scope.launch {
             onBoardingState.collect {
                 if (it.member?.authenticationInfo?.pinStatus == PinStatus.SET) {

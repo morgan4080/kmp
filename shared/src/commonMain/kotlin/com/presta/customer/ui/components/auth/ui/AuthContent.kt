@@ -71,6 +71,8 @@ fun AuthContent(
     navigate: () -> Unit,
     platform: Platform
 ) {
+    println("::::::onboarding member state::::::")
+    println(onBoardingState)
     val focusRequester = remember { FocusRequester() }
 
     val snackbarHostState = remember { SnackbarHostState() }
