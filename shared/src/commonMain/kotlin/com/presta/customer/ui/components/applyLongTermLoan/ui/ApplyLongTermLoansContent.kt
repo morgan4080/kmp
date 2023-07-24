@@ -84,7 +84,9 @@ fun ApplyLongTermLoansContent(
                                 ProductSelectionCard(loanData.name.toString(),
                                     description = loanData.interestRate.toString(),
                                     onClickContainer = {
-                                        component.onProductSelected()
+                                        loanData.refId?.let { component.onProductSelected(loanRefId = it) }
+                                        println("Loan ReFid:::::")
+                                        println(loanData.refId)
 
                                     })
                             }

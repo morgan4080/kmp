@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PrestaLongTermLoansProductResponse @OptIn(ExperimentalSerializationApi::class) constructor(
-    @EncodeDefault val list: List<LongtermLoanResponse>?=null,
+    @EncodeDefault val list: List<LongTermLoanResponse>?=null,
     @EncodeDefault val total: Int?=null
 )

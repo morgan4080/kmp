@@ -141,18 +141,21 @@ fun SignSettingsContent(
                                 .fillMaxWidth()
                                 .padding(innerPadding)
                         ) {
-                            LiveTextContainer(
-                                userInput =   firstName.text ,
-                                label = "First Name"
-                            ){
-                                val inputValue: String = TextFieldValue(it).text
-                                if (inputValue != "") {
-                                    if ( TextFieldValue(it).text !== "")
-                                    {
-                                        firstName = TextFieldValue(it)
 
-                                    } else {
+                            if (state.prestaTenantById?.firstName!=null){
+                                LiveTextContainer(
+                                    userInput =  state.prestaTenantById.firstName ,
+                                    label = "First Name"
+                                ){
+                                    val inputValue: String = TextFieldValue(it).text
+                                    if (inputValue != "") {
+                                        if ( TextFieldValue(it).text !== "")
+                                        {
+                                            firstName = TextFieldValue(it)
 
+                                        } else {
+
+                                        }
                                     }
                                 }
                             }

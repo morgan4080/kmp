@@ -17,7 +17,7 @@ import com.presta.customer.ui.components.auth.ui.AuthScreen
 import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGaurantorsScreen
 import com.presta.customer.ui.components.guarantorshipRequests.GuarantorshipRequestScreen
 import com.presta.customer.ui.components.longTermLoanConfirmation.LongTermLoanConfirmationScreen
-import com.presta.customer.ui.components.longTermLoanDetails.LongTermLoanDetailsScreen
+import com.presta.customer.ui.components.longTermLoanDetails.ui.LongTermLoanDetailsScreen
 import com.presta.customer.ui.components.onBoarding.ui.OnBoardingScreen
 import com.presta.customer.ui.components.otp.ui.OtpScreen
 import com.presta.customer.ui.components.payLoan.ui.PayLoanScreen
@@ -30,7 +30,7 @@ import com.presta.customer.ui.components.registration.ui.RegistrationScreen
 import com.presta.customer.ui.components.root.RootComponent
 import com.presta.customer.ui.components.rootBottomSign.RootBottomSignScreen
 import com.presta.customer.ui.components.rootBottomStack.RootBottomScreen
-import com.presta.customer.ui.components.selectLoanPurpose.SelectLoanPurposeScreen
+import com.presta.customer.ui.components.selectLoanPurpose.ui.SelectLoanPurposeScreen
 import com.presta.customer.ui.components.splash.SplashScreen
 import com.presta.customer.ui.components.tenant.ui.TenantScreen
 import com.presta.customer.ui.components.transactionHistory.ui.TransactionHistoryScreen

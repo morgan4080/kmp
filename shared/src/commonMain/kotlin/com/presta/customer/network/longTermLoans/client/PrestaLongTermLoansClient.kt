@@ -2,6 +2,8 @@ package com.presta.customer.network.longTermLoans.client
 
 import com.presta.customer.network.NetworkConstants
 import com.presta.customer.network.longTermLoans.errorHandler.longTermLoansErrorHandler
+import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
+import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -29,4 +31,28 @@ class PrestaLongTermLoansClient(
             }
         }
     }
+    suspend fun getLongTermProductLoanById(
+        token: String,
+        loanRefId: String,
+    ): LongTermLoanResponse {
+        return longTermLoansErrorHandler {
+            httpClient.get("${NetworkConstants.PrestaGetLongTermLoansProducts.route}/${loanRefId}") {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+            }
+        }
+    }
+    suspend fun getLoanCategories (
+        token: String,
+    ):List<PrestaLongTermLoanCategoriesResponse> {
+        return longTermLoansErrorHandler {
+            httpClient.get(NetworkConstants.PrestaGetLoanCategories.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+            }
+        }
+    }
+
 }

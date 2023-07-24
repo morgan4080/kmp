@@ -1,5 +1,6 @@
-package com.presta.customer.ui.components.longTermLoanDetails
+package com.presta.customer.ui.components.longTermLoanDetails.ui
 
+import ShimmerBrush
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -45,6 +47,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
+import com.presta.customer.ui.components.longTermLoanDetails.LongTermLoanDetailsComponent
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.NavigateBackTopBar
@@ -56,7 +60,10 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LongTermLoanDetailsScreen(component: LongTermLoanDetailsComponent) {
+fun LongTermLoanDetailsContent(
+    component: LongTermLoanDetailsComponent,
+    state: ApplyLongTermLoansStore.State
+) {
     val focusRequester = remember { FocusRequester() }
     var desiredPeriod by remember { mutableStateOf(TextFieldValue()) }
     val emptyDesiredPeriod by remember { mutableStateOf(TextFieldValue()) }
@@ -64,12 +71,12 @@ fun LongTermLoanDetailsScreen(component: LongTermLoanDetailsComponent) {
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Enter Loan Details", onClickContainer = {
             component.onBackNavClicked()
-
         })
     }, content = { innerPadding ->
         LazyColumn(
             modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp)
         ) {
+
             item {
                 Column(
                     modifier = Modifier
@@ -77,25 +84,47 @@ fun LongTermLoanDetailsScreen(component: LongTermLoanDetailsComponent) {
                         .padding(innerPadding)
                 ) {
                     Text(
-                        "Normal Loan",
+                        modifier = Modifier.background(
+                            brush = ShimmerBrush(
+                                targetValue = 1300f,
+                                showShimmer = state.prestaLongTermLoanProductById?.name == null
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ).defaultMinSize(150.dp),
+                        text = if (state.prestaLongTermLoanProductById?.name !== null) state.prestaLongTermLoanProductById.name else "",
+                        color = MaterialTheme.colorScheme.primary,
                         fontSize = 14.sp,
-                        modifier = Modifier
-                            .padding(top = 10.dp),
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
                     )
                     Text(
-                        "Interest 12%",
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(top = 10.dp),
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        modifier = Modifier.background(
+                            brush = ShimmerBrush(
+                                targetValue = 1300f,
+                                showShimmer = state.prestaLongTermLoanProductById?.interestRate == null
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ).defaultMinSize(150.dp)
+                            .padding(top = 10.dp),
+                        text = if (state.prestaLongTermLoanProductById?.interestRate !== null)"Interest Rate " + state.prestaLongTermLoanProductById.interestRate.toString() +"%" else "",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 12.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                     )
                     Text(
-                        "Max Period 96(Months)",
-                        modifier = Modifier
+                        modifier = Modifier.background(
+                            brush = ShimmerBrush(
+                                targetValue = 1300f,
+                                showShimmer = state.prestaLongTermLoanProductById?.maxperiod == null
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ).defaultMinSize(150.dp)
                             .padding(top = 10.dp),
-                        fontSize = 14.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        text = if (state.prestaLongTermLoanProductById?.maxperiod !== null)"Max Period "+  state.prestaLongTermLoanProductById.maxperiod.toString()+ "(Months)" else "",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 12.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                     )
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -136,7 +165,7 @@ fun LongTermLoanDetailsScreen(component: LongTermLoanDetailsComponent) {
                                         end = 16.dp
                                     )
                                     .absoluteOffset(y = 2.dp),
-                                enabled = false,
+                                enabled = true,
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number
                                 ),
@@ -200,7 +229,9 @@ fun LongTermLoanDetailsScreen(component: LongTermLoanDetailsComponent) {
 
                                             IconButton(
                                                 modifier = Modifier.size(18.dp),
-                                                onClick = { desiredPeriod = emptyDesiredPeriod },
+                                                onClick = {
+                                                    desiredPeriod = emptyDesiredPeriod
+                                                },
                                                 content = {
                                                     Icon(
                                                         modifier = Modifier.alpha(0.4f),
@@ -219,8 +250,9 @@ fun LongTermLoanDetailsScreen(component: LongTermLoanDetailsComponent) {
                     Text(
                         "Select Desired Period (EG 1-96 Months)",
                         fontSize = 14.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
-                        modifier = Modifier.padding(top = 10.dp)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        modifier = Modifier.padding(top = 10.dp),
+                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
                     )
                     Row(
                         modifier = Modifier
@@ -228,8 +260,7 @@ fun LongTermLoanDetailsScreen(component: LongTermLoanDetailsComponent) {
                             .padding(top = 40.dp)
                     ) {
                         ActionButton(label = "Confirm", onClickContainer = {
-                            component.onConfirmSelected()
-
+                             component.onConfirmSelected()
                         }, enabled = true)
 
                     }
@@ -248,22 +279,14 @@ fun LongTermLoanDetailsScreen(component: LongTermLoanDetailsComponent) {
                     }
                 }
             }
+
+
+
             item {
                 Spacer(modifier = Modifier.padding(bottom = 100.dp))
             }
         }
     })
+
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

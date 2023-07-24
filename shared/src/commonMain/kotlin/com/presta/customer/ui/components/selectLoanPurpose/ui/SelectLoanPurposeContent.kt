@@ -1,4 +1,4 @@
-package com.presta.customer.ui.components.selectLoanPurpose
+package com.presta.customer.ui.components.selectLoanPurpose.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -37,6 +37,8 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
+import com.presta.customer.ui.components.selectLoanPurpose.SelectLoanPurposeComponent
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.LoanPurposeProductSelectionCard
 import com.presta.customer.ui.composables.NavigateBackTopBar
@@ -45,7 +47,10 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectLoanPurposeScreen(component: SelectLoanPurposeComponent) {
+fun SelectLoanPurposeContent(
+    component: SelectLoanPurposeComponent,
+    state: ApplyLongTermLoansStore.State
+) {
     var showExpanded by remember { mutableStateOf(false) }
     val height = 0.2f
     val (selectedOption: Int, onOptionSelected: (Int) -> Unit) = remember {
@@ -211,16 +216,3 @@ fun SelectSubProductCheckBox(
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

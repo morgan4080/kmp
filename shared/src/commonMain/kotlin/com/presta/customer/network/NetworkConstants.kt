@@ -101,5 +101,7 @@ object NetworkConstants {
     object PrestaGetLongTermLoansProducts {
         const val route = EguarantorshipApplicationV1BaseUrl + "loans-products"
     }
-
+    object PrestaGetLoanCategories {
+        const val route = EguarantorshipApplicationV1BaseUrl + "core-banking/sasra-code"
+    }
 }

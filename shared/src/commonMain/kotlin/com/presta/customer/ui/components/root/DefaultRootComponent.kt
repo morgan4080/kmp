@@ -57,6 +57,7 @@ import com.presta.customer.ui.components.rootBottomSign.DefaultRootBottomSignCom
 import com.presta.customer.ui.components.rootBottomSign.RootBottomSignComponent
 import com.presta.customer.ui.components.rootBottomStack.DefaultRootBottomComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
+import com.presta.customer.ui.components.rootLoans.DefaultRootLoansComponent
 import com.presta.customer.ui.components.selectLoanPurpose.DefaultSelectLoanPurposeComponent
 import com.presta.customer.ui.components.selectLoanPurpose.SelectLoanPurposeComponent
 import com.presta.customer.ui.components.splash.DefaultSplashComponent
@@ -175,7 +176,7 @@ class DefaultRootComponent(
         )
 
         is Config.LongTermLoanDetails -> RootComponent.Child.LongTermLoanDetailsChild(
-            longTermLoanDetailsComponent(componentContext)
+            longTermLoanDetailsComponent(componentContext, config)
         )
 
         is Config.SelectLoanPurpose -> RootComponent.Child.SelectLoanPurposeChild(
@@ -545,35 +546,46 @@ class DefaultRootComponent(
                 navigation.pop()
 
             },
-            onProductClicked = {
-                navigation.push(Config.LongTermLoanDetails)
+            onProductClicked = { loanRefid ->
+                navigation.push(Config.LongTermLoanDetails(loanRefId = loanRefid))
 
             },
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
         )
 
-    private fun longTermLoanDetailsComponent(componentContext: ComponentContext): LongTermLoanDetailsComponent =
-        DefaultLongTermLoanDetailsComponent(componentContext = componentContext, onItemClicked = {
-            //signHomeNavigation.pop()
-            navigation.pop()
-
-        }, onConfirmClicked = {
-            //navigate  to select Loan Details
-            navigation.push(Config.SelectLoanPurpose)
-
-        })
+    private fun longTermLoanDetailsComponent(
+        componentContext: ComponentContext,
+        config: Config.LongTermLoanDetails
+    ): LongTermLoanDetailsComponent =
+        DefaultLongTermLoanDetailsComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
+            },
+            onConfirmClicked = {
+                //navigate  to select Loan Details
+                navigation.push(Config.SelectLoanPurpose)
+            },
+            loanRefId = config.loanRefId,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+        )
 
     private fun selectLoanPurposeComponent(componentContext: ComponentContext): SelectLoanPurposeComponent =
-        DefaultSelectLoanPurposeComponent(componentContext = componentContext, onItemClicked = {
-            //signHomeNavigation.pop()
-            navigation.pop()
-
-        }, onContinueClicked = {
-            //Navigate to add Guarantors
-            navigation.push(Config.AddGuarantors)
-
-        })
+        DefaultSelectLoanPurposeComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                //signHomeNavigation.pop()
+                navigation.pop()
+            },
+            onContinueClicked = {
+                //Navigate to add Guarantors
+                navigation.push(Config.AddGuarantors)
+            },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+        )
 
     private fun addGuarantorsComponent(componentContext: ComponentContext): AddGuarantorsComponent =
         DefaultAddGuarantorsComponent(componentContext = componentContext, onItemClicked = {
@@ -591,7 +603,7 @@ class DefaultRootComponent(
             navigation.pop()
 
         }, onProductClicked = {
-            navigation.push(Config.LongTermLoanDetails)
+            // navigation.push(Config.LongTermLoanDetails)
 
         })
 
@@ -600,7 +612,7 @@ class DefaultRootComponent(
             navigation.pop()
 
         }, onProductClicked = {
-            navigation.push(Config.LongTermLoanDetails)
+            // navigation.push(Config.LongTermLoanDetails)
 
         })
 
@@ -609,7 +621,7 @@ class DefaultRootComponent(
             navigation.pop()
 
         }, onProductClicked = {
-            navigation.push(Config.LongTermLoanDetails)
+            //  navigation.push(Config.LongTermLoanDetails)
 
         })
 
@@ -621,7 +633,7 @@ class DefaultRootComponent(
 
             },
             onProductClicked = {
-                navigation.push(Config.LongTermLoanDetails)
+                //navigation.push(Config.LongTermLoanDetails)
 
             })
 
@@ -710,7 +722,9 @@ class DefaultRootComponent(
         object ApplyLongTermLoans : Config()
 
         @Parcelize
-        object LongTermLoanDetails : Config()
+        data class LongTermLoanDetails(
+            val loanRefId: String,
+        ) : Config()
 
         @Parcelize
         object SelectLoanPurpose : Config()

@@ -1,6 +1,8 @@
 package com.presta.customer.network.longTermLoans.data
 
 import com.presta.customer.network.longTermLoans.client.PrestaLongTermLoansClient
+import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
+import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -21,5 +23,37 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
             Result.failure(e)
         }
 
+    }
+
+    override suspend fun getLongTermProductLoanById(
+        token: String,
+        loanRefId: String
+    ): Result<LongTermLoanResponse> {
+        return try {
+            val response = prestaLongTermLoansClient.getLongTermProductLoanById(
+                token = token,
+                loanRefId = loanRefId
+            )
+            Result.success(response)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getLonTermLoansCategoriesData(
+        token: String
+    ): Result<List<PrestaLongTermLoanCategoriesResponse>> {
+        return try {
+            val response = prestaLongTermLoansClient.getLoanCategories(
+                token = token
+            )
+            Result.success(response)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
     }
 }
