@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,17 +61,29 @@ fun SelectLoanPurposeContent(
 ) {
     var showExpanded by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableStateOf(-1) }
+    var parentId by remember { mutableStateOf("") }
     val height = 0.2f
     val (selectedOption: Int, onOptionSelected: (Int) -> Unit) = remember {
         mutableStateOf(-1)
     }
-    authState.cachedMemberData?.let {
-        ApplyLongTermLoansStore.Intent.GetLongTermLoansProductsSubCategories(
-            token = it.accessToken,
-            parent = "1000"
-        )
-    }?.let { onEvent.invoke(it) }
-
+    val list = arrayListOf<String>()
+    if (parentId != "") {
+        LaunchedEffect(
+            authState.cachedMemberData,
+            parentId
+        ) {
+            authState.cachedMemberData?.let {
+                ApplyLongTermLoansStore.Intent.GetLongTermLoansProductsSubCategories(
+                    token = it.accessToken,
+                    parent = parentId
+                )
+            }?.let {
+                onEvent(
+                    it
+                )
+            }
+        }
+    }
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Select Loan Purpose", onClickContainer = {
             component.onBackNavClicked()
@@ -122,80 +135,21 @@ fun SelectLoanPurposeContent(
                                 modifier = Modifier
                             ) {
                                 LoanPurposeProductSelectionCard(
-                                    categories.name, myLazyColumn = {
+                                    categories.name,
+                                    myLazyColumn = {
                                         Column() {
-                                            ElevatedCard(
-                                                modifier = Modifier
-                                                    .absolutePadding(
-                                                        left = 2.dp,
-                                                        right = 2.dp,
-                                                        top = 5.dp,
-                                                        bottom = 5.dp
-                                                    ),
-                                                onClick = {
-                                                    showExpanded = !showExpanded
-
-                                                },
-                                                shape = RoundedCornerShape(20.dp),
-                                                elevation = CardDefaults.elevatedCardElevation(
-                                                    defaultElevation = 30.dp
-                                                ),
-                                            ) {
-                                                Box(
-                                                    modifier = Modifier
-                                                        .background(MaterialTheme.colorScheme.background)
-                                                ) {
-                                                    Column(
-                                                        modifier = Modifier.padding(
-                                                            top = 5.dp,
-                                                            start = 16.dp,
-                                                            end = 16.dp,
-                                                            bottom = 5.dp,
-                                                        )
-                                                    ) {
-                                                        Row(
-                                                            modifier = Modifier
-                                                                .fillMaxWidth(),
-                                                            verticalAlignment = Alignment.CenterVertically,
-                                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                                        ) {
-                                                            Text(
-                                                                text = "Crop Farming",
-                                                                color = MaterialTheme.colorScheme.outline,
-                                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                                                style = MaterialTheme.typography.bodyMedium
-                                                            )
-
-                                                            IconButton(
-                                                                modifier = Modifier
-                                                                    .clip(CircleShape)
-                                                                    .background(color = MaterialTheme.colorScheme.background)
-                                                                    .size(20.dp),
-                                                                onClick = {
-                                                                    showExpanded = !showExpanded
-                                                                },
-                                                                content = {
-                                                                    Icon(
-                                                                        imageVector = Icons.Filled.PlayArrow,
-                                                                        modifier = if (showExpanded) Modifier.size(
-                                                                            25.dp
-                                                                        )
-                                                                            .rotate(90F) else Modifier.size(
-                                                                            25.dp
-                                                                        ),
-                                                                        contentDescription = null,
-                                                                        tint = MaterialTheme.colorScheme.primary
-                                                                    )
-                                                                }
-                                                            )
-                                                        }
+                                            state.prestaLongTermLoanProductsSubCategories.map { loanSubCategory ->
+                                                SelectLoanSubCategoryCard(
+                                                    label = loanSubCategory.name,
+                                                    index = 0,
+                                                    onClick = {
+                                                        showExpanded = !showExpanded
                                                     }
-                                                }
+                                                )
                                             }
                                             //expand
                                             AnimatedVisibility(showExpanded) {
                                                 Column() {
-
                                                     SelectSubProductCheckBox(
                                                         index = 0,
                                                         text = "Tea",
@@ -227,8 +181,16 @@ fun SelectLoanPurposeContent(
                                     index = topIndex,
                                     onClick = { index: Int ->
                                         selectedIndex = if (selectedIndex == topIndex) -1 else index
+                                        if (selectedIndex == topIndex) {
+                                            list.clear()
+                                            list.add(state.prestaLongTermLoanProductsCategories[selectedIndex].code)
+                                            parentId = list[0]
+                                            println("Test output")
+                                            println(parentId)
+
+                                        }
                                     },
-                                    expandContent = selectedIndex == topIndex
+                                    expandContent = selectedIndex == topIndex,
                                 )
                             }
                         }
@@ -246,8 +208,84 @@ fun SelectLoanPurposeContent(
         }
     })
 }
-// Note -only one  category can  be  selected at a time
-// only one  checkbox in the category can be selected at a time
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SelectLoanSubCategoryCard(
+    label: String,
+    index: Int,
+    onClick: (Int) -> Unit,
+) {
+    var showExpanded by remember { mutableStateOf(false) }
+    ElevatedCard(
+        modifier = Modifier
+            .absolutePadding(
+                left = 2.dp,
+                right = 2.dp,
+                top = 5.dp,
+                bottom = 5.dp
+            ),
+        onClick = {
+            onClick.invoke(index)
+            showExpanded = !showExpanded
+
+        },
+        shape = RoundedCornerShape(20.dp),
+        elevation = CardDefaults.elevatedCardElevation(
+            defaultElevation = 30.dp
+        ),
+    ) {
+        Box(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            Column(
+                modifier = Modifier.padding(
+                    top = 5.dp,
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 5.dp,
+                )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        text = label,
+                        color = MaterialTheme.colorScheme.outline,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+
+                    IconButton(
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(color = MaterialTheme.colorScheme.background)
+                            .size(20.dp),
+                        onClick = {
+                            showExpanded = !showExpanded
+                        },
+                        content = {
+                            Icon(
+                                imageVector = Icons.Filled.PlayArrow,
+                                modifier = if (showExpanded) Modifier.size(
+                                    25.dp
+                                )
+                                    .rotate(90F) else Modifier.size(
+                                    25.dp
+                                ),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun SelectSubProductCheckBox(

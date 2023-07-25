@@ -43,7 +43,7 @@ fun LoanPurposeProductSelectionCard(
     myLazyColumn: @Composable () -> Unit,
     index: Int,
     onClick: (Int) -> Unit,
-    expandContent: Boolean
+    expandContent: Boolean,
 ) {
     var showExpanded by remember { mutableStateOf(false) }
     ElevatedCard(
@@ -53,7 +53,7 @@ fun LoanPurposeProductSelectionCard(
             .absolutePadding(left = 2.dp, right = 2.dp, top = 5.dp, bottom = 5.dp),
         colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface),
         onClick = {
-            onClick.invoke(index)
+                onClick.invoke(index)
             showExpanded = !showExpanded
         }
     ) {

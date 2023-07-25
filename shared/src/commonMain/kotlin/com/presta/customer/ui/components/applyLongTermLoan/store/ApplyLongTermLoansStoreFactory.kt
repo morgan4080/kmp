@@ -46,7 +46,7 @@ class ApplyLongTermLoansStoreFactory(
     }
 
     private inner class ExecutorImpl :
-        CoroutineExecutor<ApplyLongTermLoansStore.Intent, Unit, ApplyLongTermLoansStore.State, ApplyLongTermLoansStoreFactory.Msg, Nothing>(
+        CoroutineExecutor<ApplyLongTermLoansStore.Intent, Unit, ApplyLongTermLoansStore.State, Msg, Nothing>(
             prestaDispatchers.main
         ) {
         override fun executeAction(action: Unit, getState: () -> ApplyLongTermLoansStore.State) {
