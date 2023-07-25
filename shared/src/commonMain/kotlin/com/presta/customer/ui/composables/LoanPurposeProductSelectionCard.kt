@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -38,16 +39,20 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 @Composable
 fun LoanPurposeProductSelectionCard(
     label: String,
-    myLazyColumn: @Composable () -> Unit
+    myLazyColumn: @Composable () -> Unit,
+    index: Int,
+    onClick: (Int) -> Unit,
+    expandContent:Boolean
 ) {
     var showExpanded by remember { mutableStateOf(false) }
     ElevatedCard(
         modifier = Modifier
             .clip(RoundedCornerShape(size = 12.dp))
+            //.padding(bottom = 10.dp)
             .absolutePadding(left = 2.dp, right = 2.dp, top = 5.dp, bottom = 5.dp),
+        colors = CardDefaults.elevatedCardColors(containerColor =MaterialTheme.colorScheme.inverseOnSurface ),
         onClick = {
-            showExpanded = !showExpanded
-
+            onClick.invoke(index)
         }
     ) {
         Box(
@@ -55,7 +60,8 @@ fun LoanPurposeProductSelectionCard(
                 .background(MaterialTheme.colorScheme.inverseOnSurface)
         ) {
             Column(
-                modifier = Modifier.padding(
+                modifier = Modifier
+                    .padding(
                     top = 20.dp,
                     start = 16.dp,
                     end = 16.dp,
@@ -94,7 +100,7 @@ fun LoanPurposeProductSelectionCard(
                         }
                     )
                 }
-                AnimatedVisibility(showExpanded) {
+                AnimatedVisibility(expandContent) {
                     myLazyColumn()
                 }
             }

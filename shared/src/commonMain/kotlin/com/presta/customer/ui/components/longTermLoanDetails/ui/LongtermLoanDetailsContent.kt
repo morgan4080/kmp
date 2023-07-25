@@ -97,7 +97,9 @@ fun LongTermLoanDetailsContent(
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
                     )
                     Text(
-                        modifier = Modifier.background(
+                        modifier = Modifier
+                            .padding(top = 2.dp)
+                            .background(
                             brush = ShimmerBrush(
                                 targetValue = 1300f,
                                 showShimmer = state.prestaLongTermLoanProductById?.interestRate == null
@@ -111,7 +113,9 @@ fun LongTermLoanDetailsContent(
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                     )
                     Text(
-                        modifier = Modifier.background(
+                        modifier = Modifier
+                            .padding(top = 2.dp)
+                            .background(
                             brush = ShimmerBrush(
                                 targetValue = 1300f,
                                 showShimmer = state.prestaLongTermLoanProductById?.maxperiod == null

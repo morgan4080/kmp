@@ -1,5 +1,6 @@
 package com.presta.customer.ui.components.selectLoanPurpose.ui
 
+import ShimmerBrush
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -7,7 +8,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absolutePadding
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,6 +56,7 @@ fun SelectLoanPurposeContent(
     state: ApplyLongTermLoansStore.State
 ) {
     var showExpanded by remember { mutableStateOf(false) }
+    var selectedIndex by remember { mutableStateOf(-1) }
     val height = 0.2f
     val (selectedOption: Int, onOptionSelected: (Int) -> Unit) = remember {
         mutableStateOf(-1)
@@ -66,113 +71,163 @@ fun SelectLoanPurposeContent(
                 .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp)
         ) {
-            LazyColumn(modifier = Modifier.fillMaxHeight(0.9f)) {
-                item {
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                    ) {
-                        LoanPurposeProductSelectionCard("Agriculture", myLazyColumn = {
-                            Column() {
-                                ElevatedCard(
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxHeight(0.9f)
+                    .padding(innerPadding)
+            ) {
+                if (state.prestaLongTermLoanProductsCategories.isEmpty()) {
+                    items(8) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp, bottom = 10.dp)
+                                .background(color = MaterialTheme.colorScheme.background),
+                        ) {
+                            ElevatedCard(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(color = MaterialTheme.colorScheme.background),
+                                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
+                            ) {
+                                Box(
                                     modifier = Modifier
-                                        .absolutePadding(
-                                            left = 2.dp,
-                                            right = 2.dp,
-                                            top = 5.dp,
-                                            bottom = 5.dp
-                                        ),
-                                    onClick = {
-                                        showExpanded = !showExpanded
-
-                                    },
-                                    shape = RoundedCornerShape(20.dp)
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .background(MaterialTheme.colorScheme.background)
-                                    ) {
-                                        Column(
-                                            modifier = Modifier.padding(
-                                                top = 5.dp,
-                                                start = 16.dp,
-                                                end = 16.dp,
-                                                bottom = 5.dp,
+                                        .defaultMinSize(40.dp, 40.dp)
+                                        .background(
+                                            ShimmerBrush(
+                                                targetValue = 1300f,
+                                                showShimmer = true
                                             )
-                                        ) {
-                                            Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth(),
-                                                verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.SpaceBetween,
-                                            ) {
-                                                Text(
-                                                    text = "Crop Farming",
-                                                    color = MaterialTheme.colorScheme.outline,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                                    style = MaterialTheme.typography.bodyMedium
-                                                )
-
-                                                IconButton(
-                                                    modifier = Modifier
-                                                        .clip(CircleShape)
-                                                        .background(color = MaterialTheme.colorScheme.background)
-                                                        .size(20.dp),
-                                                    onClick = {
-                                                        showExpanded = !showExpanded
-                                                    },
-                                                    content = {
-                                                        Icon(
-                                                            imageVector = Icons.Filled.PlayArrow,
-                                                            modifier = if (showExpanded) Modifier.size(
-                                                                25.dp
-                                                            )
-                                                                .rotate(90F) else Modifier.size(25.dp),
-                                                            contentDescription = null,
-                                                            tint = MaterialTheme.colorScheme.primary
-                                                        )
-                                                    }
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                                //expand
-                                AnimatedVisibility(showExpanded) {
-                                    Column() {
-
-                                        SelectSubProductCheckBox(
-                                            index = 0,
-                                            text = "Tea",
-                                            isSelectedOption = selectedOption == 0,
-                                            onSelectOption = {
-                                                if (it == selectedOption) {
-                                                    onOptionSelected(-1)
-                                                } else {
-                                                    onOptionSelected(it)
-                                                }
-                                            },
                                         )
-                                        SelectSubProductCheckBox(
-                                            index = 0,
-                                            text = "Tea",
-                                            isSelectedOption = selectedOption == 0,
-                                            onSelectOption = {
-                                                if (it == selectedOption) {
-                                                    onOptionSelected(-1)
-                                                } else {
-                                                    onOptionSelected(it)
-                                                }
-                                            },
-                                        )
-                                    }
+                                        .fillMaxWidth()
+                                ) {
                                 }
                             }
-                        })
+                        }
+                    }
+                } else {
+                    state.prestaLongTermLoanProductsCategories.mapIndexed() { topIndex, categories ->
+                        item {
+                            Column(
+                                modifier = Modifier
+                            ) {
+                                LoanPurposeProductSelectionCard(
+                                    categories.name, myLazyColumn = {
+                                        Column() {
+                                            ElevatedCard(
+                                                modifier = Modifier
+                                                    .absolutePadding(
+                                                        left = 2.dp,
+                                                        right = 2.dp,
+                                                        top = 5.dp,
+                                                        bottom = 5.dp
+                                                    ),
+                                                onClick = {
+                                                    showExpanded = !showExpanded
+
+                                                },
+                                                shape = RoundedCornerShape(20.dp),
+                                                elevation = CardDefaults.elevatedCardElevation(
+                                                    defaultElevation = 30.dp
+                                                ),
+                                            ) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .background(MaterialTheme.colorScheme.background)
+                                                ) {
+                                                    Column(
+                                                        modifier = Modifier.padding(
+                                                            top = 5.dp,
+                                                            start = 16.dp,
+                                                            end = 16.dp,
+                                                            bottom = 5.dp,
+                                                        )
+                                                    ) {
+                                                        Row(
+                                                            modifier = Modifier
+                                                                .fillMaxWidth(),
+                                                            verticalAlignment = Alignment.CenterVertically,
+                                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                                        ) {
+                                                            Text(
+                                                                text = "Crop Farming",
+                                                                color = MaterialTheme.colorScheme.outline,
+                                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                                                style = MaterialTheme.typography.bodyMedium
+                                                            )
+
+                                                            IconButton(
+                                                                modifier = Modifier
+                                                                    .clip(CircleShape)
+                                                                    .background(color = MaterialTheme.colorScheme.background)
+                                                                    .size(20.dp),
+                                                                onClick = {
+                                                                    showExpanded = !showExpanded
+                                                                },
+                                                                content = {
+                                                                    Icon(
+                                                                        imageVector = Icons.Filled.PlayArrow,
+                                                                        modifier = if (showExpanded) Modifier.size(
+                                                                            25.dp
+                                                                        )
+                                                                            .rotate(90F) else Modifier.size(
+                                                                            25.dp
+                                                                        ),
+                                                                        contentDescription = null,
+                                                                        tint = MaterialTheme.colorScheme.primary
+                                                                    )
+                                                                }
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            //expand
+                                            AnimatedVisibility(showExpanded) {
+                                                Column() {
+
+                                                    SelectSubProductCheckBox(
+                                                        index = 0,
+                                                        text = "Tea",
+                                                        isSelectedOption = selectedOption == 0,
+                                                        onSelectOption = {
+                                                            if (it == selectedOption) {
+                                                                onOptionSelected(-1)
+                                                            } else {
+                                                                onOptionSelected(it)
+                                                            }
+                                                        },
+                                                    )
+                                                    SelectSubProductCheckBox(
+                                                        index = 0,
+                                                        text = "Tea",
+                                                        isSelectedOption = selectedOption == 0,
+                                                        onSelectOption = {
+                                                            if (it == selectedOption) {
+                                                                onOptionSelected(-1)
+                                                            } else {
+                                                                onOptionSelected(it)
+                                                            }
+                                                        },
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    },
+                                    index = topIndex,
+                                    onClick = { index: Int ->
+                                        selectedIndex = if (selectedIndex == topIndex) -1 else index
+                                    },
+                                    expandContent = selectedIndex == topIndex
+                                )
+                            }
+                        }
                     }
                 }
+                item {
+                    Spacer(modifier = Modifier.padding(bottom = 100.dp))
+                }
             }
-            //Spacer(modifier = Modifier.padding(bottom = 100.dp))
             Row(modifier = Modifier.fillMaxWidth()) {
                 ActionButton(label = "Continue", onClickContainer = {
                     component.onContinueSelected()
@@ -181,6 +236,8 @@ fun SelectLoanPurposeContent(
         }
     })
 }
+// Note -only one  category can  be  selected at a time
+// only one  checkbox in the category can be selected at a time
 
 @Composable
 fun SelectSubProductCheckBox(
