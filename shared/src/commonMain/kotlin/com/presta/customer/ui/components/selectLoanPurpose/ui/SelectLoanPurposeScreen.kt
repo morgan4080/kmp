@@ -13,7 +13,9 @@ fun SelectLoanPurposeScreen(
     val  applyLongTermLoansState by component.applyLongTermLoansState.collectAsState()
     SelectLoanPurposeContent(
         component = component,
-        state = applyLongTermLoansState
+        state = applyLongTermLoansState,
+        authState = authState,
+        onEvent = component::onEvent
     )
 }
 

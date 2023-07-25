@@ -2,14 +2,15 @@ package com.presta.customer.ui.composables
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -42,7 +43,7 @@ fun LoanPurposeProductSelectionCard(
     myLazyColumn: @Composable () -> Unit,
     index: Int,
     onClick: (Int) -> Unit,
-    expandContent:Boolean
+    expandContent: Boolean
 ) {
     var showExpanded by remember { mutableStateOf(false) }
     ElevatedCard(
@@ -50,55 +51,66 @@ fun LoanPurposeProductSelectionCard(
             .clip(RoundedCornerShape(size = 12.dp))
             //.padding(bottom = 10.dp)
             .absolutePadding(left = 2.dp, right = 2.dp, top = 5.dp, bottom = 5.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor =MaterialTheme.colorScheme.inverseOnSurface ),
+        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface),
         onClick = {
             onClick.invoke(index)
+            showExpanded = !showExpanded
         }
     ) {
         Box(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.inverseOnSurface)
+                .wrapContentHeight()
         ) {
             Column(
                 modifier = Modifier
                     .padding(
-                    top = 20.dp,
-                    start = 16.dp,
-                    end = 16.dp,
-                    bottom = 20.dp,
-                )
+                        top = 20.dp,
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 20.dp,
+                    )
+                    .wrapContentHeight()
             ) {
-                Row(
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
                 ) {
-                    Text(
-                        text = label,
-                        color = MaterialTheme.colorScheme.outline,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                    Row(modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = label,
+                            color = MaterialTheme.colorScheme.outline,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier
+                                .fillMaxWidth(0.8f)
+                                .padding(end = 5.dp)
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        IconButton(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(Color(0xFFE5F1F5))
+                                .size(30.dp),
+                            onClick = {
+                                showExpanded = !showExpanded
+                                onClick.invoke(index)
+                            },
+                            content = {
+                                Icon(
+                                    imageVector = Icons.Filled.KeyboardArrowRight,
+                                    modifier = if (showExpanded) Modifier.size(25.dp)
+                                        .rotate(90F) else Modifier.size(25.dp),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        )
+                    }
 
-                    IconButton(
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .background(Color(0xFFE5F1F5))
-                            .size(30.dp),
-                        onClick = {
-                            showExpanded = !showExpanded
-                        },
-                        content = {
-                            Icon(
-                                imageVector = Icons.Filled.KeyboardArrowRight,
-                                modifier = if (showExpanded) Modifier.size(25.dp)
-                                    .rotate(90F) else Modifier.size(25.dp),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    )
                 }
                 AnimatedVisibility(expandContent) {
                     myLazyColumn()

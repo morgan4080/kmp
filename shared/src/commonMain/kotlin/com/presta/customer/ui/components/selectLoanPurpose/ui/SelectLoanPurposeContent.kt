@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
+import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.selectLoanPurpose.SelectLoanPurposeComponent
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.LoanPurposeProductSelectionCard
@@ -53,7 +54,9 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 @Composable
 fun SelectLoanPurposeContent(
     component: SelectLoanPurposeComponent,
-    state: ApplyLongTermLoansStore.State
+    state: ApplyLongTermLoansStore.State,
+    authState: AuthStore.State,
+    onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
 ) {
     var showExpanded by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableStateOf(-1) }
@@ -61,6 +64,13 @@ fun SelectLoanPurposeContent(
     val (selectedOption: Int, onOptionSelected: (Int) -> Unit) = remember {
         mutableStateOf(-1)
     }
+    authState.cachedMemberData?.let {
+        ApplyLongTermLoansStore.Intent.GetLongTermLoansProductsSubCategories(
+            token = it.accessToken,
+            parent = "1000"
+        )
+    }?.let { onEvent.invoke(it) }
+
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Select Loan Purpose", onClickContainer = {
             component.onBackNavClicked()

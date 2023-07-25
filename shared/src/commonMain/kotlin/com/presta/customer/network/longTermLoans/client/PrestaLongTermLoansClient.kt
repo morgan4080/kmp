@@ -4,6 +4,7 @@ import com.presta.customer.network.NetworkConstants
 import com.presta.customer.network.longTermLoans.errorHandler.longTermLoansErrorHandler
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
+import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -14,8 +15,8 @@ import io.ktor.http.contentType
 
 class PrestaLongTermLoansClient(
     private val httpClient: HttpClient
-){
-    suspend fun getLongTermLoansData (
+) {
+    suspend fun getLongTermLoansData(
         token: String,
     ): PrestaLongTermLoansProductResponse {
         return longTermLoansErrorHandler {
@@ -31,6 +32,7 @@ class PrestaLongTermLoansClient(
             }
         }
     }
+
     suspend fun getLongTermProductLoanById(
         token: String,
         loanRefId: String,
@@ -43,9 +45,10 @@ class PrestaLongTermLoansClient(
             }
         }
     }
-    suspend fun getLoanCategories (
+
+    suspend fun getLoanCategories(
         token: String,
-    ):List<PrestaLongTermLoanCategoriesResponse> {
+    ): List<PrestaLongTermLoanCategoriesResponse> {
         return longTermLoansErrorHandler {
             httpClient.get(NetworkConstants.PrestaGetLoanCategories.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")
@@ -55,4 +58,19 @@ class PrestaLongTermLoansClient(
         }
     }
 
+    suspend fun getLoanSubCategories(
+        token: String,
+        parent: String
+    ): List<PrestaLongTermLoanSubCategories> {
+        return longTermLoansErrorHandler {
+            httpClient.get(NetworkConstants.PrestaGetLoanCategories.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+                url {
+                    parameters.append("parent", parent)
+                }
+            }
+        }
+    }
 }

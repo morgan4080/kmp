@@ -8,6 +8,7 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.longTermLoans.data.LongTermLoansRepository
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
+import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
 import com.presta.customer.prestaDispatchers
 import kotlinx.coroutines.Job
@@ -38,6 +39,8 @@ class ApplyLongTermLoansStoreFactory(
             Msg()
         data class LongTermLoansCategoriesLoaded(val longTermLoansLoaded:List<PrestaLongTermLoanCategoriesResponse> = listOf()) :
             Msg()
+        data class LongTermLoansSubCategoriesLoaded(val longTermLoansSubCategoryLoaded:List<PrestaLongTermLoanSubCategories> = listOf()) :
+            Msg()
 
         data class LongTermLoansFailed(val error: String?) : Msg()
     }
@@ -64,7 +67,11 @@ class ApplyLongTermLoansStoreFactory(
                     loanRefId = intent.loanRefId
                 )
                 is ApplyLongTermLoansStore.Intent.GetLongTermLoansProductsCategories->getPrestalongTermLoanProductsCategories(
-                    token = intent.token
+                    token = intent.token,
+                )
+                is ApplyLongTermLoansStore.Intent.GetLongTermLoansProductsSubCategories->getPrestalongTermLoanProductsSubCategories(
+                    token = intent.token,
+                    parent = intent.parent
                 )
 
             }
@@ -130,7 +137,7 @@ class ApplyLongTermLoansStoreFactory(
             dispatch(Msg.LongTermLoansLoading())
 
             getPrestaLongTermLoansProductsCategoriesJob= scope.launch {
-                longTermLoansRepository.getLonTermLoansCategoriesData(
+                longTermLoansRepository.getLongTermLoansCategoriesData(
                     token = token
                 ).onSuccess { response ->
                     dispatch(Msg.LongTermLoansCategoriesLoaded(response))
@@ -139,6 +146,33 @@ class ApplyLongTermLoansStoreFactory(
                 }.onFailure { e ->
                     dispatch(Msg.LongTermLoansFailed(e.message))
                     println("Load Categories  failed")
+                }
+
+                dispatch(Msg.LongTermLoansLoading(false))
+            }
+        }
+
+        private var getPrestaLongTermLoansProductsSubCategoriesJob: Job? = null
+
+        private fun getPrestalongTermLoanProductsSubCategories(
+            token: String,
+            parent:String
+        ) {
+            if (getPrestaLongTermLoansProductsSubCategoriesJob?.isActive == true) return
+
+            dispatch(Msg.LongTermLoansLoading())
+
+            getPrestaLongTermLoansProductsSubCategoriesJob= scope.launch {
+                longTermLoansRepository.getLongTermLoanSubCategoriesData(
+                    token = token,
+                    parent = parent
+                ).onSuccess { response ->
+                    dispatch(Msg.LongTermLoansSubCategoriesLoaded(response))
+                    println("Load SubCategories Success")
+
+                }.onFailure { e ->
+                    dispatch(Msg.LongTermLoansFailed(e.message))
+                    println("Load SubCategories  failed")
                 }
 
                 dispatch(Msg.LongTermLoansLoading(false))
@@ -155,7 +189,7 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.LongTermLoansLoaded -> copy(prestaLongTermLoanProducts= msg.longTermLoansLoaded)
                 is Msg.LongTermLoansBydLoaded->copy(prestaLongTermLoanProductById=msg.longTermLoansByIdLoaded)
                 is Msg.LongTermLoansCategoriesLoaded->copy(prestaLongTermLoanProductsCategories=msg.longTermLoansLoaded)
-
+                is Msg.LongTermLoansSubCategoriesLoaded->copy(prestaLongTermLoanProductsSubCategories=msg.longTermLoansSubCategoryLoaded)
             }
     }
 
