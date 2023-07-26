@@ -33,11 +33,13 @@ fun ApplyLongTermLoansContent(
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Select Loan Product",
             onClickContainer = {
-            component.onBackNavClicked()
-        })
+                component.onBackNavClicked()
+            })
     }, content = { innerPadding ->
-        Column(modifier = Modifier
-            .padding(start = 16.dp, end = 16.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp)
+        ) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()

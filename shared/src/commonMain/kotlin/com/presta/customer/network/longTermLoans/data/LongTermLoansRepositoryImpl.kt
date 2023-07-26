@@ -4,6 +4,7 @@ import com.presta.customer.network.longTermLoans.client.PrestaLongTermLoansClien
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
+import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -25,7 +26,6 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
         }
 
     }
-
     override suspend fun getLongTermProductLoanById(
         token: String,
         loanRefId: String
@@ -66,6 +66,25 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
             val response = prestaLongTermLoansClient.getLoanSubCategories(
                 token = token,
                 parent=parent
+            )
+            Result.success(response)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getLongTermLoanSubCategoriesChildrenData(
+        token: String,
+        parent: String,
+        child: String
+    ): Result<List<PrestaLongTermLoanSubCategoriesChildren>> {
+        return try {
+            val response = prestaLongTermLoansClient.getLoanSubCategoriesChildren(
+                token = token,
+                parent=parent,
+                child = child
             )
             Result.success(response)
 

@@ -102,7 +102,7 @@ fun LoanPurposeProductSelectionCard(
                             content = {
                                 Icon(
                                     imageVector = Icons.Filled.KeyboardArrowRight,
-                                    modifier = if (showExpanded) Modifier.size(25.dp)
+                                    modifier = if (expandContent) Modifier.size(25.dp)
                                         .rotate(90F) else Modifier.size(25.dp),
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.primary

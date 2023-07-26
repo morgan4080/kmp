@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -59,14 +60,14 @@ fun SelectLoanPurposeContent(
     authState: AuthStore.State,
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
 ) {
-    var showExpanded by remember { mutableStateOf(false) }
-    var selectedIndex by remember { mutableStateOf(-1) }
+    var selectedCategoryIndex by remember { mutableStateOf(-1) }
+    var selectedSubCategoryIndex by remember { mutableStateOf(-1) }
+    var selectedSubCategoryChildrenIndex by remember { mutableStateOf(-1) }
     var parentId by remember { mutableStateOf("") }
-    val height = 0.2f
+    var childId by remember { mutableStateOf("") }
     val (selectedOption: Int, onOptionSelected: (Int) -> Unit) = remember {
         mutableStateOf(-1)
     }
-    val list = arrayListOf<String>()
     if (parentId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -77,6 +78,28 @@ fun SelectLoanPurposeContent(
                     token = it.accessToken,
                     parent = parentId
                 )
+
+            }?.let {
+                onEvent(
+                    it
+                )
+            }
+        }
+    }
+
+    if (parentId != "" && childId != "") {
+        LaunchedEffect(
+            authState.cachedMemberData,
+            parentId,
+            childId
+        ) {
+            authState.cachedMemberData?.let {
+                ApplyLongTermLoansStore.Intent.GetLongTermLoansProductsSubCategoriesChildren(
+                    token = it.accessToken,
+                    parent = parentId,
+                    child = childId
+                )
+
             }?.let {
                 onEvent(
                     it
@@ -138,41 +161,61 @@ fun SelectLoanPurposeContent(
                                     categories.name,
                                     myLazyColumn = {
                                         Column() {
-                                            state.prestaLongTermLoanProductsSubCategories.map { loanSubCategory ->
-                                                SelectLoanSubCategoryCard(
-                                                    label = loanSubCategory.name,
-                                                    index = 0,
-                                                    onClick = {
-                                                        showExpanded = !showExpanded
-                                                    }
-                                                )
-                                            }
-                                            //expand
-                                            AnimatedVisibility(showExpanded) {
-                                                Column() {
-                                                    SelectSubProductCheckBox(
-                                                        index = 0,
-                                                        text = "Tea",
-                                                        isSelectedOption = selectedOption == 0,
-                                                        onSelectOption = {
-                                                            if (it == selectedOption) {
-                                                                onOptionSelected(-1)
-                                                            } else {
-                                                                onOptionSelected(it)
-                                                            }
-                                                        },
+                                            if (state.isLoading) {
+                                                ElevatedCard(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(top = 10.dp, bottom = 10.dp)
+                                                        .background(color = MaterialTheme.colorScheme.inverseOnSurface),
+                                                    colors = CardDefaults.elevatedCardColors(
+                                                        containerColor = MaterialTheme.colorScheme.inverseOnSurface
                                                     )
-                                                    SelectSubProductCheckBox(
-                                                        index = 0,
-                                                        text = "Tea",
-                                                        isSelectedOption = selectedOption == 0,
-                                                        onSelectOption = {
-                                                            if (it == selectedOption) {
-                                                                onOptionSelected(-1)
-                                                            } else {
-                                                                onOptionSelected(it)
+                                                ) {
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .defaultMinSize(40.dp, 40.dp)
+                                                            .background(
+                                                                ShimmerBrush(
+                                                                    targetValue = 1300f,
+                                                                    showShimmer = true
+                                                                )
+                                                            )
+                                                            .fillMaxWidth()
+                                                    ) {
+                                                    }
+                                                }
+                                            } else {
+                                                state.prestaLongTermLoanProductsSubCategories.mapIndexed { subIndex, loanSubCategory ->
+                                                    SelectLoanSubCategoryCard(
+                                                        label = loanSubCategory.name,
+                                                        index = subIndex,
+                                                        onClick = { subCatsIndex: Int ->
+                                                            selectedSubCategoryIndex =
+                                                                if (selectedSubCategoryIndex == subIndex) -1 else subCatsIndex
+                                                            selectedSubCategoryChildrenIndex = -1
+                                                            if (selectedSubCategoryIndex == subIndex) {
+                                                                childId =
+                                                                    state.prestaLongTermLoanProductsSubCategories[selectedSubCategoryIndex].code
+                                                                println("Test  The  id")
+                                                                println(childId)
                                                             }
                                                         },
+                                                        expandContent = selectedSubCategoryIndex == subIndex,
+                                                        myLazyColumn = {
+                                                            Column() {
+                                                                state.prestaLongTermLoanProductsSubCategoriesChildren.mapIndexed { subCatChildIndex, loanSubcategoryChildren ->
+                                                                    SelectSubProductCheckBox(
+                                                                        index = subCatChildIndex,
+                                                                        label = loanSubcategoryChildren.name,
+                                                                        onSelectOption = { subCatsChildIndex: Int ->
+                                                                            selectedSubCategoryChildrenIndex =
+                                                                                if (selectedSubCategoryChildrenIndex == subCatsChildIndex) -1 else subCatChildIndex
+                                                                        },
+                                                                        isSelectedOption = selectedSubCategoryChildrenIndex == subCatChildIndex,
+                                                                    )
+                                                                }
+                                                            }
+                                                        }
                                                     )
                                                 }
                                             }
@@ -180,17 +223,15 @@ fun SelectLoanPurposeContent(
                                     },
                                     index = topIndex,
                                     onClick = { index: Int ->
-                                        selectedIndex = if (selectedIndex == topIndex) -1 else index
-                                        if (selectedIndex == topIndex) {
-                                            list.clear()
-                                            list.add(state.prestaLongTermLoanProductsCategories[selectedIndex].code)
-                                            parentId = list[0]
-                                            println("Test output")
-                                            println(parentId)
-
+                                        selectedCategoryIndex =
+                                            if (selectedCategoryIndex == topIndex) -1 else index
+                                        selectedSubCategoryIndex = -1
+                                        if (selectedCategoryIndex == topIndex) {
+                                            parentId =
+                                                state.prestaLongTermLoanProductsCategories[selectedCategoryIndex].code
                                         }
                                     },
-                                    expandContent = selectedIndex == topIndex,
+                                    expandContent = selectedCategoryIndex == topIndex,
                                 )
                             }
                         }
@@ -208,91 +249,104 @@ fun SelectLoanPurposeContent(
         }
     })
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectLoanSubCategoryCard(
     label: String,
     index: Int,
     onClick: (Int) -> Unit,
+    expandContent: Boolean,
+    myLazyColumn: @Composable () -> Unit
 ) {
     var showExpanded by remember { mutableStateOf(false) }
-    ElevatedCard(
-        modifier = Modifier
-            .absolutePadding(
-                left = 2.dp,
-                right = 2.dp,
-                top = 5.dp,
-                bottom = 5.dp
-            ),
-        onClick = {
-            onClick.invoke(index)
-            showExpanded = !showExpanded
-
-        },
-        shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.elevatedCardElevation(
-            defaultElevation = 30.dp
-        ),
-    ) {
-        Box(
+    Column() {
+        ElevatedCard(
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            Column(
-                modifier = Modifier.padding(
+                .absolutePadding(
+                    left = 2.dp,
+                    right = 2.dp,
                     top = 5.dp,
-                    start = 16.dp,
-                    end = 16.dp,
-                    bottom = 5.dp,
-                )
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Text(
-                        text = label,
-                        color = MaterialTheme.colorScheme.outline,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                    bottom = 5.dp
+                ),
+            onClick = {
+                onClick.invoke(index)
+                showExpanded = !showExpanded
 
-                    IconButton(
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .background(color = MaterialTheme.colorScheme.background)
-                            .size(20.dp),
-                        onClick = {
-                            showExpanded = !showExpanded
-                        },
-                        content = {
-                            Icon(
-                                imageVector = Icons.Filled.PlayArrow,
-                                modifier = if (showExpanded) Modifier.size(
-                                    25.dp
-                                )
-                                    .rotate(90F) else Modifier.size(
-                                    25.dp
-                                ),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
+            },
+            shape = RoundedCornerShape(20.dp),
+            elevation = CardDefaults.elevatedCardElevation(
+                defaultElevation = 30.dp
+            ),
+        ) {
+            Box(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                Column(
+                    modifier = Modifier.padding(
+                        top = 5.dp,
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 5.dp,
                     )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text(
+                            text = label,
+                            color = MaterialTheme.colorScheme.outline,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier
+                                .fillMaxWidth(0.9f)
+                                .padding(end = 5.dp)
+                        )
+
+                        IconButton(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(color = MaterialTheme.colorScheme.background)
+                                .size(20.dp),
+                            onClick = {
+                                showExpanded = !showExpanded
+                            },
+                            content = {
+                                Icon(
+                                    imageVector = Icons.Filled.PlayArrow,
+                                    modifier = if (expandContent) Modifier.size(
+                                        25.dp
+                                    )
+                                        .rotate(90F) else Modifier.size(
+                                        25.dp
+                                    ),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        )
+                    }
                 }
             }
         }
+        //Expanded Content
+        AnimatedVisibility(expandContent) {
+            myLazyColumn()
+        }
+
     }
 }
 
 @Composable
 fun SelectSubProductCheckBox(
     index: Int,
-    text: String,
-    isSelectedOption: Boolean,
+    label: String,
     onSelectOption: (Int) -> Unit,
+    isSelectedOption: Boolean,
 ) {
     Box(modifier = Modifier
         .background(color = MaterialTheme.colorScheme.inverseOnSurface)
@@ -312,7 +366,7 @@ fun SelectSubProductCheckBox(
             )
             Column {
                 Text(
-                    text = text,
+                    text = label,
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onBackground,
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.light)

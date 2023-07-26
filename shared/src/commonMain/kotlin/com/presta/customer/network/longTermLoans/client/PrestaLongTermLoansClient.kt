@@ -5,6 +5,7 @@ import com.presta.customer.network.longTermLoans.errorHandler.longTermLoansError
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
+import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -69,6 +70,24 @@ class PrestaLongTermLoansClient(
                 contentType(ContentType.Application.Json)
                 url {
                     parameters.append("parent", parent)
+                }
+            }
+        }
+    }
+
+    suspend fun getLoanSubCategoriesChildren(
+        token: String,
+        parent: String,
+        child: String
+    ): List<PrestaLongTermLoanSubCategoriesChildren> {
+        return longTermLoansErrorHandler {
+            httpClient.get(NetworkConstants.PrestaGetLoanCategories.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+                url {
+                    parameters.append("parent", parent)
+                    parameters.append("child", child)
                 }
             }
         }
