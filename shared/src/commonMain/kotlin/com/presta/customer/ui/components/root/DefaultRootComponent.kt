@@ -3,6 +3,7 @@ package com.presta.customer.ui.components.root
 import  com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.active
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
@@ -424,7 +425,6 @@ class DefaultRootComponent(
             //navigate to Sign App
             // navigation.push(Config.SignApp)
             //
-
             navigation.bringToFront(Config.SignApp)
         })
 
@@ -435,7 +435,6 @@ class DefaultRootComponent(
             onPop = {
                 navigation.pop()
             })
-
 
     private fun payLoanComponent(componentContext: ComponentContext): PayLoanComponent =
         DefaultPayLoanComponent(storeFactory = storeFactory,
@@ -696,9 +695,6 @@ class DefaultRootComponent(
 
         @Parcelize
         data class RootBottom(val backTopProfile: Boolean) : Config()
-
-        //        @Parcelize
-//        data class RootBottomSign(val backTopProfile: Boolean) : Config()
         @Parcelize
         object PayLoan : Config()
 
@@ -748,8 +744,16 @@ class DefaultRootComponent(
     init {
         lifecycle.subscribe(object : Lifecycle.Callbacks {
             override fun onResume() {
-                super.onResume()
-                navigation.replaceAll(Config.Splash)
+                when (childStack.active.configuration) {
+                    is Config.AddGuarantors -> {
+                        super.onResume()
+                    }
+                    else -> {
+                        super.onResume()
+                        navigation.replaceAll(Config.Splash)
+                    }
+
+                }
             }
         })
     }

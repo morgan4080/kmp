@@ -1,6 +1,8 @@
 package com.presta.customer
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.KeyguardManager
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -9,14 +11,17 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.pm.Signature
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
+import android.provider.ContactsContract
 import android.util.Base64
 import android.util.Log
 import android.widget.Toast
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -24,11 +29,7 @@ import androidx.fragment.app.FragmentManager
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.crashlytics.ktx.setCustomKeys
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
@@ -42,23 +43,25 @@ enum class AuthenticationType {
     FACIAL_RECOGNITION,
     IRIS
 }
+
 enum class SecurityLevel {
     NONE,
     SECRET,
     BIOMETRIC
 }
-data class LocalAuthenticationResult (
+
+data class LocalAuthenticationResult(
     val success: Boolean,
     val error: String?,
     val warning: String?
 )
-
 
 actual class Platform actual constructor(
     private val context: AppContext
 ) {
     actual val platformName: String = "Android"
     actual val otpCode = MutableStateFlow("")
+    private val READ_CONTACTS_PERMISSION_REQUEST = 123
     actual fun showToast(text: String, duration: Durations) {
         Toast.makeText(
             context, text, when (duration) {
@@ -74,14 +77,45 @@ actual class Platform actual constructor(
         context.startActivity(intent)
     }
 
-    actual  fun logErrorsToFirebase(Error: Exception){
+    @SuppressLint("Range")
+    actual fun getContact(): List<Contact> {
+        //open library
+//        val intent = Intent(Intent.ACTION_VIEW)
+//        intent.type = ContactsContract.Contacts.CONTENT_TYPE
+//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//        context.startActivity(intent)
+        val contactsList = mutableListOf<Contact>()
+        val contentResolver = context.contentResolver
+        val cursor: Cursor? = contentResolver.query(
+            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+            null,
+            null,
+            null,
+            null
+        )
+        cursor?.use {
+            while (it.moveToNext()) {
+                val name =
+                    it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
+                val phoneNumber =
+                    it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+                contactsList.add(Contact(name, phoneNumber))
+            }
+        }
+        return contactsList
+    }
+
+
+    actual fun logErrorsToFirebase(Error: Exception) {
         //Firebase.crashlytics.log(Error)
         FirebaseCrashlytics.getInstance().recordException(Error)
     }
+
     actual fun startSmsRetriever() {
         val client = SmsRetriever.getClient(context)
         client.startSmsRetriever()
     }
+
     private val smsBroadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (SmsRetriever.SMS_RETRIEVED_ACTION == intent.action) {
@@ -95,10 +129,13 @@ actual class Platform actual constructor(
                             StringBuilder().apply {
                                 append(appMessage)
                                 toString().also { otp ->
-                                    otpCode.value = otp.substringAfterLast("is:").replace(": ", "").trim().substring(0, 4)
+                                    otpCode.value =
+                                        otp.substringAfterLast("is:").replace(": ", "").trim()
+                                            .substring(0, 4)
                                 }
                             }
                         }
+
                         CommonStatusCodes.TIMEOUT -> {
                             Log.d("App SMS", "TimeOut")
                         }
@@ -107,6 +144,7 @@ actual class Platform actual constructor(
             }
         }
     }
+
     actual fun getAppSignatures(): String {
         val helper = AppSignatureHelper(context)
         val hash = mutableStateOf("")
@@ -116,6 +154,7 @@ actual class Platform actual constructor(
         }
         return hash.value
     }
+
     init {
         val intentFilter = IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION)
         context.registerReceiver(
@@ -127,9 +166,10 @@ actual class Platform actual constructor(
     }
 }
 
+
 class AppSignatureHelper(
     context: AppContext
-): ContextWrapper(context) {
+) : ContextWrapper(context) {
     private val tag = AppSignatureHelper::class.java.simpleName
     private val hashType = "SHA-256"
     private val numHashedBytes = 9
@@ -157,6 +197,7 @@ class AppSignatureHelper(
         }
         return appCodes
     }
+
     private fun hash(packageName: String, signature: String): String? {
         val appInfo = "$packageName $signature"
         try {

@@ -18,7 +18,8 @@ fun initKoin(enableNetworkLogs: Boolean = false, appDeclaration: KoinAppDeclarat
             dataModule,
             componentModule,
             module {
-                    factory { Platform(get()) }
+                    factory { Platform(get())}
+
             }
         )
     }

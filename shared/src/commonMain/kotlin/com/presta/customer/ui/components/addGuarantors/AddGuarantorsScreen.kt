@@ -91,6 +91,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
+
+
     var launchPopUp by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var firstName by remember { mutableStateOf(TextFieldValue()) }
@@ -399,7 +401,16 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
                                         .size(25.dp),
                                     onClick = {
                                         //open contacts Library
-
+//                                        component.platform.requestReadContactsPermission{isGranted->
+//                                            if (isGranted) {
+//                                                component.platform.getContact().map {contacts ->
+//                                                    println(contacts.name)
+//                                                }
+//                                            }else{
+//
+//                                            }
+//                                        }
+                                        component.platform.getContact()
                                     },
                                     content = {
                                         Icon(
@@ -489,7 +500,7 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
                         }, enabled = true
                     )
                 }
-                //PoP Up
+                //Select Guarantor Option Pop UP
                 if (launchPopUp) {
                     Popup {
                         Column(
@@ -635,6 +646,7 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
         })
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectGuarantorsView(
@@ -719,6 +731,7 @@ fun SelectGuarantorsView(
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GuarantorsDetailsView(

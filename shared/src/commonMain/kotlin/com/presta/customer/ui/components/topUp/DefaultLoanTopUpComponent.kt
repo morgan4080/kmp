@@ -51,7 +51,7 @@ class DefaultLoanTopUpComponent(
         loanPeriodUnit: String,
         currentTerm: Boolean,
         minLoanPeriod: Int,
-        loanOperation:String
+        loanOperation: String
     ) -> Unit,
     private val onBackNavClicked: () -> Unit,
     override val maxAmount: Double,
@@ -77,7 +77,7 @@ class DefaultLoanTopUpComponent(
         loanPeriodUnit: String,
         currentTerm: Boolean,
         minLoanPeriod: Int,
-        loanOperation:String
+        loanOperation: String
     ) {
         onProceedClicked(
             referencedLoanRefId,
@@ -203,7 +203,7 @@ class DefaultLoanTopUpComponent(
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
 
-                    if (OrganisationModel.organisation.tenant_id!=null){
+                    if (OrganisationModel.organisation.tenant_id != null) {
                         onAuthEvent(
                             AuthStore.Intent.RefreshToken(
                                 tenantId = OrganisationModel.organisation.tenant_id!!,

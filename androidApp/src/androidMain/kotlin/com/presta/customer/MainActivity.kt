@@ -1,6 +1,7 @@
 package com.presta.customer
 
 import android.app.Activity
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -28,6 +29,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
+
         setCurrentActivity(this)
 
         connectivityStatus = SharedStatus(this)
@@ -52,6 +55,23 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             MainView(root, connectivityStatus)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode ==  123) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // The user granted the permission, you can now access contacts
+                // Call your contacts handler and get contacts
+            } else {
+                // The user denied the permission, handle this situation as needed
+                // For example, show a message explaining why contacts cannot be accessed
+            }
         }
     }
 
