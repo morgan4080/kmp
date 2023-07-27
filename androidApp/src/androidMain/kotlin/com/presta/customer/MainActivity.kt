@@ -1,6 +1,7 @@
 package com.presta.customer
 
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -31,6 +32,8 @@ class MainActivity : AppCompatActivity() {
         const val READ_CONTACTS_PERMISSION_REQUEST_CODE = 123
     }
 
+    private val contactPicker = AndroidContactPicker(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkContactsPermission()
@@ -59,6 +62,21 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             MainView(root, connectivityStatus)
+        }
+    }
+
+    private fun pickContact() {
+        contactPicker.pickContact { name, phoneNumber ->
+            // Use the 'name' and 'phoneNumber' here as needed
+        }
+    }
+
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        contactPicker.handleActivityResult(requestCode, resultCode, data) { name, phoneNumber ->
+            // Use the 'name' and 'phoneNumber' here as needed
         }
     }
 
@@ -92,7 +110,6 @@ class MainActivity : AppCompatActivity() {
             println("No contacts found.")
         }
     }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,

@@ -595,7 +595,10 @@ class DefaultRootComponent(
             //Navigate to confirm
             navigation.push(Config.LongTermLoanConfirmation)
 
-        })
+        },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+        )
 
     private fun guarantorshipRequestComponent(componentContext: ComponentContext): GuarantorshipRequestComponent =
         DefaultGuarantorshipRequestComponent(componentContext = componentContext, onItemClicked = {

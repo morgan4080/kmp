@@ -1,11 +1,8 @@
 package com.presta.customer
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.KeyguardManager
 import android.content.BroadcastReceiver
-import android.content.ContentResolver
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -22,7 +19,7 @@ import android.widget.Toast
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.runtime.mutableStateOf
-import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -62,7 +59,6 @@ actual class Platform actual constructor(
 ) {
     actual val platformName: String = "Android"
     actual val otpCode = MutableStateFlow("")
-    private val READ_CONTACTS_PERMISSION_REQUEST = 123
     actual fun showToast(text: String, duration: Durations) {
         Toast.makeText(
             context, text, when (duration) {
@@ -81,48 +77,42 @@ actual class Platform actual constructor(
     @SuppressLint("Range")
     actual fun getContact(): List<Contact> {
         //open library
-//        val intent = Intent(Intent.ACTION_VIEW)
-//        intent.type = ContactsContract.Contacts.CONTENT_TYPE
-//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//        context.startActivity(intent)
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = ContactsContract.Contacts.CONTENT_TYPE
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        intent.data
+        context.startActivity(intent)
         val contactList = mutableListOf<Contact>()
-
-        // Check if the app has the necessary permission
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.READ_CONTACTS
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            val contentResolver: ContentResolver = context.contentResolver
-            val cursor: Cursor? = contentResolver.query(
-                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                null,
-                null,
-                null,
-                null
-            )
-
-            cursor?.use {
-                while (it.moveToNext()) {
-                    val name =
-                        it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
-                    val phoneNumber =
-                        it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-                    contactList.add(Contact(name, phoneNumber))
-                }
+        val contacts = mutableListOf<Contact>()
+        val cursor: Cursor? = context.contentResolver.query(
+            ContactsContract.Contacts.CONTENT_URI,
+            null,
+            null,
+            null,
+            null
+        )
+        if (cursor != null && cursor.moveToFirst()) {
+            cursor.use {
+                val columnIndex = cursor.getColumnIndexOrThrow("display_name")
+                val data = cursor.getString(columnIndex)
+//                    val displayName = cursor.getString(it.getColumnIndex(data))
+//                    val phoneNumber = cursor.getString(cursor.getColumnIndex(data))
+                val displayName = data[0].toString()
+                val phoneNumber = data[0].toString()
+                contacts.add(Contact(displayName, phoneNumber))
+                // Use 'data' here as needed
             }
-
-            cursor?.close()
         } else {
-            // If the permission is not granted, request it
-            ActivityCompat.requestPermissions(
-                context as Activity,
-                arrayOf(Manifest.permission.READ_CONTACTS),
-                READ_CONTACTS_PERMISSION_REQUEST_CODE
-            )
+            // Handle the case when the cursor is empty or null
         }
-
-        return contactList
+//        cursor?.use {
+//            while (it.moveToNext()) {
+//                val displayName = it.getString(it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+//                val phoneNumber = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+//                contacts.add(Contact(displayName,phoneNumber))
+//            }
+//        }
+        return contacts
     }
 
     companion object {
@@ -167,7 +157,6 @@ actual class Platform actual constructor(
             }
         }
     }
-
     actual fun getAppSignatures(): String {
         val helper = AppSignatureHelper(context)
         val hash = mutableStateOf("")

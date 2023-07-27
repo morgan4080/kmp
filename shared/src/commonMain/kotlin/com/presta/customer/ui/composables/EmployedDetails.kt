@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -12,56 +13,62 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
+import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 
 @Composable
-fun EmployedDetails() {
+fun EmployedDetails(
+    state: ApplyLongTermLoansStore.State,
+    authState: AuthStore.State,
+    onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
+    signHomeState: SignHomeStore.State,
+    onProfileEvent: (SignHomeStore.Intent) -> Unit,
+    onClickContainer: () -> Unit
+) {
     var lastName by remember { mutableStateOf(TextFieldValue()) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 20.dp)) {
-            LiveTextContainer(
-                userInput = "Presta",
-                label = "Employer"
-            ){
-                val inputValue: String = TextFieldValue(it).text
-                if (inputValue != "") {
-                    if ( TextFieldValue(it).text !== "")
-                    {
-                        lastName = TextFieldValue(it)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp)
+        ) {
+            signHomeState.prestaTenantById?.let {
+                LiveTextContainer(
+                    userInput = it.firstName,
+                    label = "firstname"
+                ) {
+                    val inputValue: String = TextFieldValue(it).text
+                    if (inputValue != "") {
+                        if (TextFieldValue(it).text !== "") {
+                            lastName = TextFieldValue(it)
 
-                    } else {
+                        } else {
 
+                        }
                     }
                 }
             }
         }
         Row(modifier = Modifier.fillMaxWidth()) {
-            LiveTextContainer(
-                userInput = "200",
-                label = "Employment Number"
-            )
+            signHomeState.prestaTenantById?.let {
+                LiveTextContainer(
+                    userInput = it.memberNumber,
+                    label = "Employment Number"
+                )
+            }
         }
-        Row(modifier = Modifier.fillMaxWidth()) {
-            LiveTextContainer(
-                userInput = "200",
-                label = "Gross Salary"
-            )
-        }
-        Row(modifier = Modifier.fillMaxWidth()) {
-            LiveTextContainer(
-                userInput = "200",
-                label = "Net Salary"
-            )
-        }
-        Row(modifier = Modifier.fillMaxWidth()) {
-            LiveTextContainer(
-                userInput = "200",
-                label = "KRA Pin"
-            )
+        signHomeState.prestaTenantById?.details?.map { it ->
+            Row(modifier = Modifier.fillMaxWidth()) {
+                LiveTextContainer(
+                    userInput = it.value.value,
+                    label = it.key
+                )
+            }
         }
         Row(
             modifier = Modifier
@@ -69,10 +76,8 @@ fun EmployedDetails() {
                 .padding(top = 40.dp)
         ) {
             ActionButton(
-                label = "Submit", onClickContainer = {
-                    println("Name is :::::::")
-                    println(lastName.text)
-                },
+                label = "Submit",
+                onClickContainer = onClickContainer,
                 enabled = true
             )
         }

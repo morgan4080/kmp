@@ -7,6 +7,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCate
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
 
+
 interface ApplyLongTermLoansStore :
     Store<ApplyLongTermLoansStore.Intent, ApplyLongTermLoansStore.State, Nothing> {
     sealed class Intent {
@@ -15,6 +16,7 @@ interface ApplyLongTermLoansStore :
         data class GetLongTermLoansProductsCategories(val token: String) : Intent()
         data class GetLongTermLoansProductsSubCategories(val token: String, val parent: String) :
             Intent()
+
         data class GetLongTermLoansProductsSubCategoriesChildren(
             val token: String,
             val parent: String,
@@ -29,6 +31,9 @@ interface ApplyLongTermLoansStore :
         val prestaLongTermLoanProductById: LongTermLoanResponse? = null,
         val prestaLongTermLoanProductsCategories: List<PrestaLongTermLoanCategoriesResponse> = emptyList(),
         val prestaLongTermLoanProductsSubCategories: List<PrestaLongTermLoanSubCategories> = emptyList(),
-       val prestaLongTermLoanProductsSubCategoriesChildren: List<PrestaLongTermLoanSubCategoriesChildren> = emptyList(),
+        val prestaLongTermLoanProductsSubCategoriesChildren: List<PrestaLongTermLoanSubCategoriesChildren> = emptyList(),
+        val memberNo: String = "By Member No",
+        val phoneNo: String = "By Phone No",
+        val selfGuarantee: String="Self Guarantee",
     )
 }

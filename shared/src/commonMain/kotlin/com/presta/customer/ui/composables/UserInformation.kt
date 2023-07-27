@@ -31,7 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
-import com.presta.customer.ui.components.addGuarantors.SelectGuarantorsView
+import com.presta.customer.ui.components.addGuarantors.ui.SelectGuarantorsView
 import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import androidx.compose.ui.window.Popup

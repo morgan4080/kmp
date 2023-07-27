@@ -11,7 +11,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stac
 import com.moriatsushi.insetsx.SystemBarsBehavior
 import com.moriatsushi.insetsx.rememberWindowInsetsController
 import com.presta.customer.SharedStatus
-import com.presta.customer.ui.components.addGuarantors.AddGuarantorsScreen
+import com.presta.customer.ui.components.addGuarantors.ui.AddGuarantorsScreen
 import com.presta.customer.ui.components.applyLongTermLoan.ui.ApplyLongTermLoanScreen
 import com.presta.customer.ui.components.auth.ui.AuthScreen
 import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGaurantorsScreen

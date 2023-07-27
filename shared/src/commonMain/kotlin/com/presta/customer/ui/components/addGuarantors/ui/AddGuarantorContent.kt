@@ -1,4 +1,4 @@
-package com.presta.customer.ui.components.addGuarantors
+package com.presta.customer.ui.components.addGuarantors.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -73,10 +73,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
-import com.presta.customer.ContactsUtils
-import com.presta.customer.CustomContext
 import com.presta.customer.MR
+import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.EmployedDetails
 import com.presta.customer.ui.composables.InputTypes
@@ -89,15 +87,22 @@ import com.presta.customer.ui.theme.backArrowColor
 import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.launch
+import androidx.compose.ui.window.Popup
+import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
+import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
-
-   val contacts=ContactsUtils(CustomContext())
-    contacts.getContactList()
-
-
+fun AddGuarantorContent(
+    component: AddGuarantorsComponent,
+    state: ApplyLongTermLoansStore.State,
+    authState: AuthStore.State,
+    onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
+    signHomeState: SignHomeStore.State,
+    onProfileEvent: (SignHomeStore.Intent) -> Unit,
+) {
     var launchPopUp by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var firstName by remember { mutableStateOf(TextFieldValue()) }
@@ -105,16 +110,20 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
     var selectedIndex by remember { mutableStateOf(-1) }
     var skipHalfExpanded by remember { mutableStateOf(true) }
     var continueClicked by remember { mutableStateOf(false) }
-    val state = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Expanded,
+    var guarantorOption by remember { mutableStateOf("") }
+    var launchCheckSelfAndEmPloyedPopUp by remember { mutableStateOf(false) }
+    var launchCheckSelf by remember { mutableStateOf(false) }
+    var allConditionsChecked by remember { mutableStateOf(false) }
+    val modalBottomSheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = skipHalfExpanded
     )
     val scope = rememberCoroutineScope()
     ModalBottomSheetLayout(
-        sheetState = state,
+        sheetState = modalBottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         sheetContent = {
-            if (continueClicked) {
+            if (launchCheckSelfAndEmPloyedPopUp) {
                 var tabs = listOf("Employed", "Business/Self Employed")
                 var tabIndex by remember { mutableStateOf(0) }
                 Column(
@@ -147,14 +156,22 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
                         }
                     }
                     when (tabIndex) {
-                        0 -> EmployedDetails()
+                        0 -> EmployedDetails(
+                            state,
+                            authState,
+                            onEvent,
+                            signHomeState,
+                            onProfileEvent,
+                            onClickContainer = {
+                                allConditionsChecked=true
+                            }
+                        )
+
                         1 -> SelfEmployedDetails()
                     }
 
                 }
-
-
-            } else {
+            } else if (launchCheckSelf) {
                 Column(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.background)
@@ -174,7 +191,7 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
                                 contentDescription = "Cancel  Arrow",
                                 tint = backArrowColor,
                                 modifier = Modifier.clickable {
-                                    scope.launch { state.hide() }
+                                    scope.launch { modalBottomSheetState.hide() }
                                 }
                             )
                         }
@@ -406,21 +423,11 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
                                         .size(25.dp),
                                     onClick = {
 
-
                                         //open contacts Library
-//                                        component.platform.requestReadContactsPermission{isGranted->
-//                                            if (isGranted) {
-//                                                component.platform.getContact().map {contacts ->
-//                                                    println(contacts.name)
-//                                                }
-//                                            }else{
-//
-//                                            }
-//                                        }
-//                                        component.platform.getContact().map {
-//                                            it.phoneNumber
-//                                        }
-                                        contacts.getContactList()
+                                        component.platform.getContact().map { contact ->
+                                            println("Test Contact")
+                                            println(contact.phoneNumber)
+                                        }
                                     },
                                     content = {
                                         Icon(
@@ -451,44 +458,50 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
                         .fillMaxWidth()
                         .fillMaxHeight(0.8f)
                 ) {
-                    item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 30.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Error,
-                                modifier = Modifier,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                            Text(
-                                "Add Guarantors using phone number or member number on the above text input",
-                                fontSize = 12.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
-                                modifier = Modifier.padding(start = 10.dp)
-                            )
+
+                    if (guarantorOption == "") {
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 30.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Error,
+                                    modifier = Modifier,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    "Add Guarantors using phone number or member number on the above text input",
+                                    fontSize = 12.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                    modifier = Modifier.padding(start = 10.dp)
+                                )
+                            }
                         }
                     }
                     //Guarantors Details View
-                    item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 30.dp)
-                                .background(MaterialTheme.colorScheme.background)
-                        ) {
-                            GuarantorsDetailsView(
-                                label = "details",
-                                onClick = {
-                                },
-                                selected = true,
-                                phoneNumber = "0796387377",
-                                memberNumber = "M224y",
-                                amount = 20.0
-                            )
+                    if (guarantorOption != "") {
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 30.dp)
+                                    .background(MaterialTheme.colorScheme.background)
+                            ) {
+
+                                GuarantorsDetailsView(
+                                    label = "details",
+                                    onClick = {
+                                    },
+                                    selected = true,
+                                    phoneNumber = "0796387377",
+                                    memberNumber = "M224y",
+                                    amount = 20.0
+                                )
+                            }
                         }
                     }
                 }
@@ -502,10 +515,11 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
                         label = "Continue", onClickContainer = {
                             //launch Bottom sheet with  Loan details
                             //whe details  are submited  Continue to confirm the Details
-                            continueClicked = true
-                            //  scope.launch { state.show() }
-                            //Navigate to confirmation
-                            component.onContinueSelected()
+                            //Execute Logics
+                           // continueClicked = true
+                            //scope.launch { modalBottomSheetState.show() }
+                           // launchCheckSelfAndEmPloyedPopUp = true
+                                component.onContinueSelected()
 
                         }, enabled = true
                     )
@@ -562,28 +576,37 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
                                                 modifier = Modifier
                                                     .wrapContentHeight()
                                             ) {
-                                                items(3) {
-                                                    Row(
-                                                        modifier = Modifier
-                                                            .fillMaxWidth()
-                                                            .background(color = MaterialTheme.colorScheme.inverseOnSurface)
-                                                            .padding(
-                                                                top = 10.dp,
-                                                                start = 16.dp,
-                                                                end = 16.dp
+                                                val guarantorList = arrayListOf<String>()
+                                                guarantorList.add(state.memberNo)
+                                                guarantorList.add(state.phoneNo)
+                                                guarantorList.add(state.selfGuarantee)
+                                                guarantorList.mapIndexed { guarantorIndex, guarantorOptions ->
+                                                    item {
+                                                        Row(
+                                                            modifier = Modifier
+                                                                .fillMaxWidth()
+                                                                .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                                                                .padding(
+                                                                    top = 10.dp,
+                                                                    start = 16.dp,
+                                                                    end = 16.dp
+                                                                )
+                                                        ) {
+                                                            SelectGuarantorsView(
+                                                                Index = guarantorIndex,
+                                                                selected = selectedIndex == guarantorIndex,
+                                                                onClick = { index: Int ->
+                                                                    selectedIndex =
+                                                                        if (selectedIndex == index) -1 else index
+                                                                    // selectedBank = bank
+                                                                    guarantorOption =
+                                                                        guarantorList[selectedIndex]
+                                                                    println("Test Guarantor")
+                                                                    println(guarantorOption)
+                                                                },
+                                                                label = guarantorOptions
                                                             )
-                                                    ) {
-                                                        SelectGuarantorsView(
-                                                            Index = 0,
-                                                            selected = selectedIndex == 0,
-                                                            onClick = { index: Int ->
-                                                                selectedIndex =
-                                                                    if (selectedIndex == index) -1 else index
-
-                                                                // selectedBank = bank
-                                                            },
-                                                            label = "By phone No"
-                                                        )
+                                                        }
                                                     }
                                                 }
                                             }
@@ -656,6 +679,7 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
         })
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -871,17 +895,3 @@ fun GuarantorsDetailsView(
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

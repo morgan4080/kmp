@@ -3,18 +3,19 @@ package com.presta.customer
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentResolver
+import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.provider.ContactsContract
 import androidx.core.app.ActivityCompat
 
-actual class ContactsUtils actual constructor(private val context: CustomContext) {
+actual class ContactsUtils actual constructor(private val context: Any) {
     @SuppressLint("Range")
    actual fun getContactList(): List<Contact> {
         val contactList = mutableListOf<Contact>()
         // Check if the app has the necessary permission
         if (ActivityCompat.checkSelfPermission(
-                context,
+                context as Context,
                 "android.permission.READ_CONTACTS"
             ) == PackageManager.PERMISSION_GRANTED
         ) {
@@ -26,7 +27,6 @@ actual class ContactsUtils actual constructor(private val context: CustomContext
                 null,
                 null
             )
-
             cursor?.use {
                 while (it.moveToNext()) {
                     val name =

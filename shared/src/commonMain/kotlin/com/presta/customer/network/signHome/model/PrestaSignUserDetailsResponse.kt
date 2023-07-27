@@ -1,6 +1,7 @@
 package com.presta.customer.network.signHome.model
 
 import kotlinx.serialization.Serializable
+
 @Serializable
 data class PrestaSignUserDetailsResponse constructor(
     val isTermsAccepted: Boolean,
@@ -19,4 +20,5 @@ data class PrestaSignUserDetailsResponse constructor(
     val committedAmount: Double,
     val availableAmount: Double,
     val memberStatus: String,
+    val details: Map<String,Details>
 )
