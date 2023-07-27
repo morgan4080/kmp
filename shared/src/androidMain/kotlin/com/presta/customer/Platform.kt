@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.KeyguardManager
 import android.content.BroadcastReceiver
+import android.content.ContentResolver
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -84,27 +85,49 @@ actual class Platform actual constructor(
 //        intent.type = ContactsContract.Contacts.CONTENT_TYPE
 //        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 //        context.startActivity(intent)
-        val contactsList = mutableListOf<Contact>()
-        val contentResolver = context.contentResolver
-        val cursor: Cursor? = contentResolver.query(
-            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-            null,
-            null,
-            null,
-            null
-        )
-        cursor?.use {
-            while (it.moveToNext()) {
-                val name =
-                    it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
-                val phoneNumber =
-                    it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-                contactsList.add(Contact(name, phoneNumber))
+        val contactList = mutableListOf<Contact>()
+
+        // Check if the app has the necessary permission
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_CONTACTS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            val contentResolver: ContentResolver = context.contentResolver
+            val cursor: Cursor? = contentResolver.query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+            )
+
+            cursor?.use {
+                while (it.moveToNext()) {
+                    val name =
+                        it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
+                    val phoneNumber =
+                        it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+                    contactList.add(Contact(name, phoneNumber))
+                }
             }
+
+            cursor?.close()
+        } else {
+            // If the permission is not granted, request it
+            ActivityCompat.requestPermissions(
+                context as Activity,
+                arrayOf(Manifest.permission.READ_CONTACTS),
+                READ_CONTACTS_PERMISSION_REQUEST_CODE
+            )
         }
-        return contactsList
+
+        return contactList
     }
 
+    companion object {
+        const val READ_CONTACTS_PERMISSION_REQUEST_CODE = 123
+    }
 
     actual fun logErrorsToFirebase(Error: Exception) {
         //Firebase.crashlytics.log(Error)

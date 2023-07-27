@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.view.WindowCompat
 import com.arkivanov.decompose.defaultComponentContext
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
@@ -26,10 +27,13 @@ class MainActivity : AppCompatActivity() {
 
     private var connectivityStatus: SharedStatus? = null
 
+    companion object {
+        const val READ_CONTACTS_PERMISSION_REQUEST_CODE = 123
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
+        checkContactsPermission()
 
         setCurrentActivity(this)
 
@@ -58,20 +62,54 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkContactsPermission() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                "android.permission.READ_CONTACTS"
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            // Permission is already granted, read contacts
+            readContacts()
+        } else {
+            // Permission is not granted, request the permission
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf("android.permission.READ_CONTACTS"),
+                READ_CONTACTS_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    private fun readContacts() {
+        val contactsUtils = ContactsUtils(this)
+        val contactList = contactsUtils.getContactList()
+
+        if (contactList.isNotEmpty()) {
+            for (contact in contactList) {
+                println("Contact name: ${contact.name}, Phone number: ${contact.phoneNumber}")
+            }
+        } else {
+            println("No contacts found.")
+        }
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode ==  123) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // The user granted the permission, you can now access contacts
-                // Call your contacts handler and get contacts
-            } else {
-                // The user denied the permission, handle this situation as needed
-                // For example, show a message explaining why contacts cannot be accessed
+        when (requestCode) {
+            READ_CONTACTS_PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission is granted, read contacts
+                    readContacts()
+                } else {
+                    // Permission is denied, handle accordingly (e.g., show a message)
+                    println("Permission denied. Cannot read contacts.")
+                }
             }
+            // Handle other permission request results if needed
         }
     }
 

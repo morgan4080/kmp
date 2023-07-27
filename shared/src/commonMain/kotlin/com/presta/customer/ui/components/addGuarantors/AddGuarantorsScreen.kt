@@ -74,6 +74,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import com.presta.customer.ContactsUtils
+import com.presta.customer.CustomContext
 import com.presta.customer.MR
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.EmployedDetails
@@ -91,6 +93,9 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
+
+   val contacts=ContactsUtils(CustomContext())
+    contacts.getContactList()
 
 
     var launchPopUp by remember { mutableStateOf(false) }
@@ -400,6 +405,8 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
                                         .background(Color(0xFFE5F1F5))
                                         .size(25.dp),
                                     onClick = {
+
+
                                         //open contacts Library
 //                                        component.platform.requestReadContactsPermission{isGranted->
 //                                            if (isGranted) {
@@ -410,7 +417,10 @@ fun AddGuarantorsScreen(component: AddGuarantorsComponent) {
 //
 //                                            }
 //                                        }
-                                        component.platform.getContact()
+//                                        component.platform.getContact().map {
+//                                            it.phoneNumber
+//                                        }
+                                        contacts.getContactList()
                                     },
                                     content = {
                                         Icon(
