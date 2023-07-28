@@ -1,4 +1,4 @@
-package com.presta.customer.ui.components.longTermLoanConfirmation
+package com.presta.customer.ui.components.longTermLoanConfirmation.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -24,6 +24,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.ui.components.longTermLoanConfirmation.LongTermLoanConfirmationComponent
+import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.LoanInformation
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.UserInformation
@@ -32,13 +34,15 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LongTermLoanConfirmationScreen(component: LongTermLoanConfirmationComponent) {
+fun LongTermLoanConfirmationContent(
+    component: LongTermLoanConfirmationComponent,
+    signProfileState: SignHomeStore.State,
+) {
     var tabs = listOf("User Information", "Loan Information")
     var tabIndex by remember { mutableStateOf(0) }
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Confirmation", onClickContainer = {
             component.onBackNavClicked()
-
         })
     }, content = { innerPadding ->
         Column(
@@ -105,23 +109,10 @@ fun LongTermLoanConfirmationScreen(component: LongTermLoanConfirmationComponent)
                     }
                 }
                 when (tabIndex) {
-                    0 -> UserInformation()
+                    0 -> UserInformation(signProfileState)
                     1 -> LoanInformation()
                 }
             }
         }
     })
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

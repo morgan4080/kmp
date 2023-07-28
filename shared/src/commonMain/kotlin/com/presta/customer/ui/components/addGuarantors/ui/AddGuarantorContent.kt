@@ -92,7 +92,6 @@ import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLo
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 
-
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AddGuarantorContent(
@@ -164,6 +163,7 @@ fun AddGuarantorContent(
                             onProfileEvent,
                             onClickContainer = {
                                 allConditionsChecked=true
+                                scope.launch { modalBottomSheetState.hide()}
                             }
                         )
 
@@ -517,9 +517,13 @@ fun AddGuarantorContent(
                             //whe details  are submited  Continue to confirm the Details
                             //Execute Logics
                            // continueClicked = true
-                            //scope.launch { modalBottomSheetState.show() }
-                           // launchCheckSelfAndEmPloyedPopUp = true
+                            scope.launch { modalBottomSheetState.show() }
+                            launchCheckSelfAndEmPloyedPopUp = true
+                            if (allConditionsChecked){
                                 component.onContinueSelected()
+                                launchCheckSelfAndEmPloyedPopUp = false
+                                scope.launch { modalBottomSheetState.hide()}
+                            }
 
                         }, enabled = true
                     )

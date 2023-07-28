@@ -16,7 +16,7 @@ import com.presta.customer.ui.components.applyLongTermLoan.ui.ApplyLongTermLoanS
 import com.presta.customer.ui.components.auth.ui.AuthScreen
 import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGaurantorsScreen
 import com.presta.customer.ui.components.guarantorshipRequests.GuarantorshipRequestScreen
-import com.presta.customer.ui.components.longTermLoanConfirmation.LongTermLoanConfirmationScreen
+import com.presta.customer.ui.components.longTermLoanConfirmation.ui.LongTermLoanConfirmationScreen
 import com.presta.customer.ui.components.longTermLoanDetails.ui.LongTermLoanDetailsScreen
 import com.presta.customer.ui.components.onBoarding.ui.OnBoardingScreen
 import com.presta.customer.ui.components.otp.ui.OtpScreen

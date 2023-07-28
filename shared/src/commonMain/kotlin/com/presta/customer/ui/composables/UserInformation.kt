@@ -1,11 +1,14 @@
 package com.presta.customer.ui.composables
 
+import ShimmerBrush
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,95 +38,136 @@ import com.presta.customer.ui.components.addGuarantors.ui.SelectGuarantorsView
 import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import androidx.compose.ui.window.Popup
+import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 
 @Composable
-fun UserInformation() {
+fun UserInformation(
+    signProfileState: SignHomeStore.State
+) {
     var selectedIndex by remember { mutableStateOf(-1) }
     var launchDisbursementModePopUp by remember { mutableStateOf(false) }
     var launchPaymentModePopUp by remember { mutableStateOf(false) }
+    var lastName by remember { mutableStateOf(TextFieldValue()) }
 
     Column(modifier = Modifier.padding(top = 20.dp)) {
-        var lastName by remember { mutableStateOf(TextFieldValue()) }
-        LazyColumn(){
-            item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
+        LazyColumn() {
+            if (signProfileState.prestaTenantById?.firstName == null) {
+                items(6) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .padding(bottom = 10.dp, start = 16.dp, end = 16.dp)
+                            .background(color = MaterialTheme.colorScheme.background),
                     ) {
-                        LiveTextContainer(
-                            userInput = "Murungi",
-                            label = "first Name"
+                        ElevatedCard(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(color = MaterialTheme.colorScheme.background),
+                            colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                         ) {
-                            val inputValue: String = TextFieldValue(it).text
-                            if (inputValue != "") {
-                                if (TextFieldValue(it).text !== "") {
-                                    lastName = TextFieldValue(it)
-
-                                } else {
-
-                                }
+                            Box(
+                                modifier = Modifier
+                                    .defaultMinSize(40.dp, 40.dp)
+                                    .background(
+                                        ShimmerBrush(
+                                            targetValue = 1300f,
+                                            showShimmer = true
+                                        )
+                                    )
+                                    .fillMaxWidth()
+                            ) {
                             }
                         }
                     }
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        LiveTextContainer(
-                            userInput = "Mutugi",
-                            label = "last name"
-                        )
-                    }
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        LiveTextContainer(
-                            userInput = "200",
-                            label = "ID number"
-                        )
-                    }
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        LiveTextContainer(
-                            userInput = "0796387377",
-                            label = "Phone Number"
-                        )
-                    }
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        LiveTextContainer(
-                            userInput = "morganmurungi@live.com",
-                            label = "email"
-                        )
-                    }
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp)) {
-                        ModeSelectionCard(label = "Disbursement Mode", onClickContainer = {
-                            //launch POP Up
-                            launchDisbursementModePopUp=true
-
-
-                        })
-                    }
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp)) {
-                        ModeSelectionCard(label = "Repayment Mode", onClickContainer = {
-                            //launch POP Up
-                            launchPaymentModePopUp=true
-                        })
-                    }
-
-                    Row(
+                }
+            } else {
+                lastName=TextFieldValue(signProfileState.prestaTenantById.firstName)
+                item {
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 40.dp)
                     ) {
-                        ActionButton(
-                            label = "Submit  Loan Request", onClickContainer = {
-                                println("Name is :::::::")
-                                println(lastName.text)
-                            },
-                            enabled = true
-                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            LiveTextContainer(
+                                userInput = lastName.text,
+                                label = "first Name"
+                            ) {
+                                val inputValue: String = TextFieldValue(it).text
+                                lastName = TextFieldValue(it)
+//                                if (inputValue != "") {
+//                                    if (TextFieldValue(it).text !== "") {
+//                                        lastName = TextFieldValue(it)
+//
+//                                    } else {
+//
+//                                    }
+//                                }
+                            }
+                        }
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            LiveTextContainer(
+                                userInput = signProfileState.prestaTenantById.lastName,
+                                label = "last name"
+                            )
+                        }
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            LiveTextContainer(
+                                userInput =  signProfileState.prestaTenantById.idNumber,
+                                label = "ID number"
+                            )
+                        }
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            LiveTextContainer(
+                                userInput = signProfileState.prestaTenantById.phoneNumber,
+                                label = "Phone Number"
+                            )
+                        }
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            LiveTextContainer(
+                                userInput = signProfileState.prestaTenantById.email,
+                                label = "email"
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp)
+                        ) {
+                            ModeSelectionCard(label = "Disbursement Mode", onClickContainer = {
+                                //launch POP Up
+                                launchDisbursementModePopUp = true
+
+
+                            })
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp)
+                        ) {
+                            ModeSelectionCard(label = "Repayment Mode", onClickContainer = {
+                                //launch POP Up
+                                launchPaymentModePopUp = true
+                            })
+                        }
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 40.dp)
+                        ) {
+                            ActionButton(
+                                label = "Submit  Loan Request", onClickContainer = {
+                                    //submit The loan request
+                                    println("Name is :::::::")
+                                    println(lastName.text)
+                                },
+                                enabled = true
+                            )
+                        }
                     }
                 }
             }

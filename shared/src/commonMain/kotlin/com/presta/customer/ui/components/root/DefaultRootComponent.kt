@@ -587,15 +587,18 @@ class DefaultRootComponent(
         )
 
     private fun addGuarantorsComponent(componentContext: ComponentContext): AddGuarantorsComponent =
-        DefaultAddGuarantorsComponent(componentContext = componentContext, onItemClicked = {
-            //signHomeNavigation.pop()
-            navigation.pop()
+        DefaultAddGuarantorsComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                //signHomeNavigation.pop()
+                navigation.pop()
 
-        }, onContinueClicked = {
-            //Navigate to confirm
-            navigation.push(Config.LongTermLoanConfirmation)
+            },
+            onContinueClicked = {
+                //Navigate to confirm
+                navigation.push(Config.LongTermLoanConfirmation)
 
-        },
+            },
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
         )
@@ -606,7 +609,6 @@ class DefaultRootComponent(
 
         }, onProductClicked = {
             // navigation.push(Config.LongTermLoanDetails)
-
         })
 
     private fun favouriteGuarantorsComponent(componentContext: ComponentContext): FavouriteGuarantorsComponent =
@@ -615,7 +617,6 @@ class DefaultRootComponent(
 
         }, onProductClicked = {
             // navigation.push(Config.LongTermLoanDetails)
-
         })
 
     private fun witnessRequestComponent(componentContext: ComponentContext): WitnessRequestComponent =
@@ -624,7 +625,6 @@ class DefaultRootComponent(
 
         }, onProductClicked = {
             //  navigation.push(Config.LongTermLoanDetails)
-
         })
 
     private fun longTermLoanConfirmationComponent(componentContext: ComponentContext): LongTermLoanConfirmationComponent =
@@ -632,12 +632,13 @@ class DefaultRootComponent(
             componentContext = componentContext,
             onItemClicked = {
                 navigation.pop()
-
             },
             onProductClicked = {
                 //navigation.push(Config.LongTermLoanDetails)
-
-            })
+            },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+        )
 
     enum class OnBoardingContext {
         LOGIN, REGISTRATION
@@ -698,6 +699,7 @@ class DefaultRootComponent(
 
         @Parcelize
         data class RootBottom(val backTopProfile: Boolean) : Config()
+
         @Parcelize
         object PayLoan : Config()
 
@@ -751,6 +753,7 @@ class DefaultRootComponent(
                     is Config.AddGuarantors -> {
                         super.onResume()
                     }
+
                     else -> {
                         super.onResume()
                         navigation.replaceAll(Config.Splash)
