@@ -128,10 +128,8 @@ fun AddGuarantorContent(
     val emptyTextContainer by remember { mutableStateOf(TextFieldValue()) }
     var selectedIndex by remember { mutableStateOf(-1) }
     var skipHalfExpanded by remember { mutableStateOf(true) }
-    var continueClicked by remember { mutableStateOf(false) }
     var guarantorOption by remember { mutableStateOf("") }
     var launchCheckSelfAndEmPloyedPopUp by remember { mutableStateOf(false) }
-    var launchCheckSelf by remember { mutableStateOf(false) }
     var allConditionsChecked by remember { mutableStateOf(false) }
     var searchGuarantorByMemberNumber by remember { mutableStateOf(false) }
     val modalBottomSheetState = rememberModalBottomSheetState(
@@ -141,6 +139,8 @@ fun AddGuarantorContent(
     var memberNumber by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
     val snackBarScope = rememberCoroutineScope()
+    var launchAddAmountToGuarantee by remember { mutableStateOf(false) }
+    var guarantor by remember { mutableStateOf("") }
     if (memberNumber != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -159,6 +159,13 @@ fun AddGuarantorContent(
             }
         }
     }
+    if (memberNumber != "") {
+        LaunchedEffect(memberNumber) {
+            guarantor = signHomeState.prestaTenantByMemberNumber?.firstName.toString()
+
+        }
+    }
+
     val scope = rememberCoroutineScope()
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
@@ -213,7 +220,7 @@ fun AddGuarantorContent(
                     }
 
                 }
-            } else if (signHomeState.prestaTenantByMemberNumber != null) {
+            } else if (launchAddAmountToGuarantee && signHomeState.prestaTenantByMemberNumber?.firstName != null) {
                 Column(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.background)
@@ -244,7 +251,7 @@ fun AddGuarantorContent(
                         ) {
                             //Guarantor  Morgan
                             Text(
-                                text = "Guarantor " + signHomeState.prestaTenantByMemberNumber.firstName,
+                                text = "Guarantor: " + signHomeState.prestaTenantByMemberNumber.firstName,
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 fontSize = 12.sp
                             )
@@ -280,6 +287,8 @@ fun AddGuarantorContent(
                                 .padding(top = 50.dp, bottom = 50.dp)
                         ) {
                             ActionButton("SUBMIT", onClickContainer = {
+
+                                scope.launch { modalBottomSheetState.hide() }
 
                             }, enabled = true)
                         }
@@ -609,18 +618,21 @@ fun AddGuarantorContent(
                                 //whe details  are submited  Continue to confirm the Details
                                 //Execute Logics
                                 // continueClicked = true
+                                println("Test Guarantor")
+                                println(guarantor)
                                 if (searchGuarantorByMemberNumber && signHomeState.prestaTenantByMemberNumber?.firstName != null) {
                                     launchCheckSelfAndEmPloyedPopUp = false
+                                    launchAddAmountToGuarantee = true
                                     scope.launch { modalBottomSheetState.show() }
                                 } else {
                                     scope.launch { modalBottomSheetState.show() }
+                                    launchAddAmountToGuarantee = false
                                     launchCheckSelfAndEmPloyedPopUp = true
                                     if (allConditionsChecked) {
                                         component.onContinueSelected()
                                         launchCheckSelfAndEmPloyedPopUp = false
                                         scope.launch { modalBottomSheetState.hide() }
                                     }
-
                                 }
                             },
                             enabled = true
