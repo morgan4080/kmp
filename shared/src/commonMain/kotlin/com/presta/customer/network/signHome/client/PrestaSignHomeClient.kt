@@ -29,4 +29,19 @@ class PrestaSignHomeClient(
             }
         }
     }
+    suspend fun getTenantByMemberNumber(
+        token: String,
+        memberNumber: String,
+    ): PrestaSignUserDetailsResponse {
+        return signHomeErrorHandler {
+            httpClient.get("${NetworkConstants.PrestaGetTenantByMemberNumber.route}/${memberNumber}") {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+                url {
+                    parameters.append("memberNumber", memberNumber)
+                }
+            }
+        }
+    }
 }

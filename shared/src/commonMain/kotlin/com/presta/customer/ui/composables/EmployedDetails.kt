@@ -36,7 +36,7 @@ fun EmployedDetails(
                 .fillMaxWidth()
                 .padding(top = 20.dp)
         ) {
-            signHomeState.prestaTenantById?.let {
+            signHomeState.prestaTenantByPhoneNumber?.let {
                 LiveTextContainer(
                     userInput = it.firstName,
                     label = "firstname"
@@ -54,14 +54,14 @@ fun EmployedDetails(
             }
         }
         Row(modifier = Modifier.fillMaxWidth()) {
-            signHomeState.prestaTenantById?.let {
+            signHomeState.prestaTenantByPhoneNumber?.let {
                 LiveTextContainer(
                     userInput = it.memberNumber,
                     label = "Employment Number"
                 )
             }
         }
-        signHomeState.prestaTenantById?.details?.map { it ->
+        signHomeState.prestaTenantByPhoneNumber?.details?.map { it ->
             Row(modifier = Modifier.fillMaxWidth()) {
                 LiveTextContainer(
                     userInput = it.value.value,

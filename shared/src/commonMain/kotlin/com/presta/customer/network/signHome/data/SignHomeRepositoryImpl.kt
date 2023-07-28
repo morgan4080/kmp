@@ -24,4 +24,20 @@ class SignHomeRepositoryImpl : SignHomeRepository, KoinComponent {
             Result.failure(e)
         }
     }
+    override suspend fun getTenantByMemberNumber(
+        memberNumber: String,
+        token: String
+    ): Result<PrestaSignUserDetailsResponse> {
+        return try {
+            val response = prestaSignHomeClient.getTenantByMemberNumber(
+                token = token,
+                memberNumber = memberNumber
+            )
+            Result.success(response)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
 }

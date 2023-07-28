@@ -59,7 +59,7 @@ fun SignSettingsContent(
     authState: AuthStore.State,
     onEvent: (SignHomeStore.Intent) -> Unit,
 ) {
-    val dataTest = state.prestaTenantById?.firstName
+    val dataTest = state.prestaTenantByPhoneNumber?.firstName
     var firstName by remember { mutableStateOf(TextFieldValue()) }
     var lastName by remember { mutableStateOf(TextFieldValue("Mutugi")) }
     var phoneNumber by remember { mutableStateOf(TextFieldValue("0796387377")) }
@@ -68,7 +68,7 @@ fun SignSettingsContent(
     val focusRequester = remember { FocusRequester() }
     val emptyTextContainer by remember { mutableStateOf(TextFieldValue()) }
     var checked by remember { mutableStateOf(false) }
-    val name = state.prestaTenantById?.firstName
+    val name = state.prestaTenantByPhoneNumber?.firstName
     if (name != null) {
         firstName = TextFieldValue(name.toString())
     }
@@ -121,7 +121,7 @@ fun SignSettingsContent(
                     .padding(innerPadding)
             ) {
 
-                if (state.prestaTenantById?.firstName == null) {
+                if (state.prestaTenantByPhoneNumber?.firstName == null) {
                     items(6) {
                             Row(
                                 modifier = Modifier
@@ -166,7 +166,7 @@ fun SignSettingsContent(
                             ) {
 
                                 LiveTextContainer(
-                                    userInput = state.prestaTenantById.firstName,
+                                    userInput = state.prestaTenantByPhoneNumber.firstName,
                                     label = "First Name"
                                 ) {
                                     val inputValue: String = TextFieldValue(it).text
@@ -185,7 +185,7 @@ fun SignSettingsContent(
                                     .fillMaxWidth()
                             ) {
                                 LiveTextContainer(
-                                    userInput = state.prestaTenantById.lastName,
+                                    userInput = state.prestaTenantByPhoneNumber.lastName,
                                     label = "last Name "
                                 ) {
                                     val inputValue: String = TextFieldValue(it).text
@@ -204,7 +204,7 @@ fun SignSettingsContent(
                                     .fillMaxWidth()
                             ) {
                                 LiveTextContainer(
-                                    userInput = state.prestaTenantById.phoneNumber,
+                                    userInput = state.prestaTenantByPhoneNumber.phoneNumber,
                                     label = "Phone Number"
                                 ) {
                                     val inputValue: String = TextFieldValue(it).text
@@ -224,7 +224,7 @@ fun SignSettingsContent(
                                     .fillMaxWidth()
                             ) {
                                 LiveTextContainer(
-                                    userInput = state.prestaTenantById.idNumber,
+                                    userInput = state.prestaTenantByPhoneNumber.idNumber,
                                     label = "ID Number"
                                 ) {
                                     val inputValue: String = TextFieldValue(it).text
@@ -243,7 +243,7 @@ fun SignSettingsContent(
                                     .fillMaxWidth()
                             ) {
                                 LiveTextContainer(
-                                    userInput = state.prestaTenantById.email,
+                                    userInput = state.prestaTenantByPhoneNumber.email,
                                     label = "Email"
                                 ) {
                                     val inputValue: String = TextFieldValue(it).text

@@ -7,10 +7,13 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
 
     sealed class Intent {
         data class GetPrestaTenantByPhoneNumber(val token: String, val phoneNumber: String) : Intent()
+        data class GetPrestaTenantByMemberNumber(val token: String, val memberNumber: String) : Intent()
     }
     data class State(
         val isLoading: Boolean = false,
         val error: String? = null,
-        val prestaTenantById: PrestaSignUserDetailsResponse? = null
+        val prestaTenantByPhoneNumber: PrestaSignUserDetailsResponse? = null,
+        val prestaTenantByMemberNumber: PrestaSignUserDetailsResponse? = null
+
     )
 }

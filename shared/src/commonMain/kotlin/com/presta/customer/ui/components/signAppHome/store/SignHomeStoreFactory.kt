@@ -31,7 +31,10 @@ class SignHomeStoreFactory(
 
     private sealed class Msg {
         data class SignHomeLoading(val isLoading: Boolean = true) : Msg()
-        data class SignTenantByIdLoaded(val signTenantById: PrestaSignUserDetailsResponse) :
+        data class SignTenantByPhoneNumberLoaded(val signTenantById: PrestaSignUserDetailsResponse) :
+            Msg()
+
+        data class SignTenantByMemberNumberLoaded(val signTenantByMemberNumber: PrestaSignUserDetailsResponse) :
             Msg()
 
         data class SignHomeFailed(val error: String?) : Msg()
@@ -55,6 +58,11 @@ class SignHomeStoreFactory(
                     phoneNumber = intent.phoneNumber
                 )
 
+                is SignHomeStore.Intent.GetPrestaTenantByMemberNumber -> getPrestaTenantByMemberNumber(
+                    token = intent.token,
+                    memberNumber = intent.memberNumber
+                )
+
             }
 
         private var getPrestaTenantByPhoneNumberJob: Job? = null
@@ -72,7 +80,7 @@ class SignHomeStoreFactory(
                     token = token,
                     phoneNumber = phoneNumber
                 ).onSuccess { response ->
-                    dispatch(Msg.SignTenantByIdLoaded(response))
+                    dispatch(Msg.SignTenantByPhoneNumberLoaded(response))
                 }.onFailure { e ->
                     dispatch(Msg.SignHomeFailed(e.message))
                 }
@@ -80,16 +88,36 @@ class SignHomeStoreFactory(
                 dispatch(Msg.SignHomeLoading(false))
             }
         }
+        private var getPrestaTenantByMemberNumberJob: Job? = null
+        private fun getPrestaTenantByMemberNumber(
+            token: String,
+            memberNumber: String
+        ) {
+            if (getPrestaTenantByMemberNumberJob?.isActive == true) return
 
+            dispatch(Msg.SignHomeLoading())
+
+            getPrestaTenantByMemberNumberJob = scope.launch {
+                signHomeRepository.getTenantByMemberNumber(
+                    token = token,
+                    memberNumber = memberNumber
+                ).onSuccess { response ->
+                    dispatch(Msg.SignTenantByMemberNumberLoaded(response))
+                }.onFailure { e ->
+                    dispatch(Msg.SignHomeFailed(e.message))
+                }
+                dispatch(Msg.SignHomeLoading(false))
+            }
+        }
     }
-
     private object ReducerImpl :
         Reducer<SignHomeStore.State, Msg> {
         override fun SignHomeStore.State.reduce(msg: Msg): SignHomeStore.State =
             when (msg) {
                 is Msg.SignHomeLoading -> copy(isLoading = msg.isLoading)
                 is Msg.SignHomeFailed -> copy(error = msg.error)
-                is Msg.SignTenantByIdLoaded -> copy(prestaTenantById = msg.signTenantById)
+                is Msg.SignTenantByPhoneNumberLoaded -> copy(prestaTenantByPhoneNumber = msg.signTenantById)
+                is Msg.SignTenantByMemberNumberLoaded -> copy(prestaTenantByMemberNumber = msg.signTenantByMemberNumber)
 
             }
     }

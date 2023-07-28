@@ -51,7 +51,7 @@ fun UserInformation(
 
     Column(modifier = Modifier.padding(top = 20.dp)) {
         LazyColumn() {
-            if (signProfileState.prestaTenantById?.firstName == null) {
+            if (signProfileState.prestaTenantByPhoneNumber?.firstName == null) {
                 items(6) {
                     Row(
                         modifier = Modifier
@@ -81,7 +81,7 @@ fun UserInformation(
                     }
                 }
             } else {
-                lastName=TextFieldValue(signProfileState.prestaTenantById.firstName)
+                lastName=TextFieldValue(signProfileState.prestaTenantByPhoneNumber.firstName)
                 item {
                     Column(
                         modifier = Modifier
@@ -109,25 +109,25 @@ fun UserInformation(
                         }
                         Row(modifier = Modifier.fillMaxWidth()) {
                             LiveTextContainer(
-                                userInput = signProfileState.prestaTenantById.lastName,
+                                userInput = signProfileState.prestaTenantByPhoneNumber.lastName,
                                 label = "last name"
                             )
                         }
                         Row(modifier = Modifier.fillMaxWidth()) {
                             LiveTextContainer(
-                                userInput =  signProfileState.prestaTenantById.idNumber,
+                                userInput =  signProfileState.prestaTenantByPhoneNumber.idNumber,
                                 label = "ID number"
                             )
                         }
                         Row(modifier = Modifier.fillMaxWidth()) {
                             LiveTextContainer(
-                                userInput = signProfileState.prestaTenantById.phoneNumber,
+                                userInput = signProfileState.prestaTenantByPhoneNumber.phoneNumber,
                                 label = "Phone Number"
                             )
                         }
                         Row(modifier = Modifier.fillMaxWidth()) {
                             LiveTextContainer(
-                                userInput = signProfileState.prestaTenantById.email,
+                                userInput = signProfileState.prestaTenantByPhoneNumber.email,
                                 label = "email"
                             )
                         }

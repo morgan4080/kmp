@@ -8,4 +8,8 @@ interface SignHomeRepository {
         token: String
     ): Result<PrestaSignUserDetailsResponse>
 
+    suspend fun getTenantByMemberNumber(
+        memberNumber: String,
+        token: String
+    ): Result<PrestaSignUserDetailsResponse>
 }

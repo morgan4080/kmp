@@ -136,11 +136,11 @@ fun  SignHomeContent(
                                         modifier = Modifier.background(
                                             brush = ShimmerBrush(
                                                 targetValue = 1300f,
-                                                showShimmer = state.prestaTenantById?.fullName == null
+                                                showShimmer = state.prestaTenantByPhoneNumber?.fullName == null
                                             ),
                                             shape = RoundedCornerShape(12.dp)
                                         ).defaultMinSize(150.dp),
-                                        text = if ( state.prestaTenantById?.fullName !== null) state.prestaTenantById.fullName.uppercase() else "",
+                                        text = if ( state.prestaTenantByPhoneNumber?.fullName !== null) state.prestaTenantByPhoneNumber.fullName.uppercase() else "",
                                         color = MaterialTheme.colorScheme.onBackground,
                                         fontSize = 14.sp,
                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
@@ -151,11 +151,11 @@ fun  SignHomeContent(
                                             .background(
                                             brush = ShimmerBrush(
                                                 targetValue = 1300f,
-                                                showShimmer = state.prestaTenantById?.fullName == null
+                                                showShimmer = state.prestaTenantByPhoneNumber?.fullName == null
                                             ),
                                             shape = RoundedCornerShape(12.dp)
                                         ).defaultMinSize(150.dp),
-                                        text = if ( state.prestaTenantById?.memberNumber !== null) state.prestaTenantById.memberNumber else "",
+                                        text = if ( state.prestaTenantByPhoneNumber?.memberNumber !== null) state.prestaTenantByPhoneNumber.memberNumber else "",
                                         fontSize = 14.sp,
                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                     )
@@ -175,13 +175,13 @@ fun  SignHomeContent(
                                                 .background(
                                                     brush = ShimmerBrush(
                                                         targetValue = 1300f,
-                                                        showShimmer = state.prestaTenantById?.totalShares == null
+                                                        showShimmer = state.prestaTenantByPhoneNumber?.totalShares == null
                                                     ),
                                                     shape = RoundedCornerShape(12.dp)
                                                 ).defaultMinSize(50.dp),
-                                            text = if ( state.prestaTenantById?.totalShares!== null) "${
+                                            text = if ( state.prestaTenantByPhoneNumber?.totalShares!== null) "${
                                                 formatMoney(
-                                                    state.prestaTenantById.totalShares
+                                                    state.prestaTenantByPhoneNumber.totalShares
                                                 )
                                             } KES" else "",
                                             color = MaterialTheme.colorScheme.onBackground,
