@@ -141,6 +141,9 @@ fun AddGuarantorContent(
     val snackBarScope = rememberCoroutineScope()
     var launchAddAmountToGuarantee by remember { mutableStateOf(false) }
     var guarantor by remember { mutableStateOf("") }
+    var listing1 by remember { mutableStateOf("") }
+    var listing2 by remember { mutableStateOf("") }
+
     if (memberNumber != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -551,7 +554,7 @@ fun AddGuarantorContent(
                             .padding(top = 20.dp)
                     ) {
                         Text(
-                            "SELECTED GUARANTORS (REQUIRES 1 GUARANTOR)",
+                            "SELECTED GUARANTORS" + "(REQUIRES" + component.requiredGuarantors+ "GUARANTOR)",
                             fontSize = 12.sp
                         )
                     }
@@ -584,7 +587,14 @@ fun AddGuarantorContent(
                                 }
                             }
                         } else {
-                            if (guarantorOption == state.selfGuarantee) {
+                            if (guarantorOption == state.selfGuarantee || guarantorOption == state.memberNo) {
+
+                                if(signHomeState.prestaTenantByMemberNumber?.firstName!=null){
+                                    listing1=signHomeState.prestaTenantByMemberNumber.firstName
+                                    listing2=signHomeState.prestaTenantByMemberNumber.memberNumber
+                                }
+
+                                //mutable value of
                                 val guarantorListing = listOf(
                                     signHomeState.prestaTenantByPhoneNumber?.firstName?.let {
                                         signHomeState.prestaTenantByPhoneNumber.memberNumber.let { it1 ->
@@ -593,28 +603,32 @@ fun AddGuarantorContent(
                                             )
                                         }
                                     },
+                                    GuarantorData(listing1,listing2)
                                 )
+
                                 guarantorListing.map { person ->
-                                    item {
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(top = 30.dp)
-                                                .background(MaterialTheme.colorScheme.background)
-                                        ) {
-                                            //mutable value  of the text label
-                                            //The Details are either user details or the selected user
-                                            //some loans may require more than one guarantor
-                                            person?.let {
-                                                GuarantorsDetailsView(
-                                                    label = "Details",
-                                                    onClick = {
-                                                    },
-                                                    selected = true,
-                                                    phoneNumber = it.name,
-                                                    memberNumber = person.memberNum,
-                                                    amount = 20.0
-                                                )
+                                    if (person != null) {
+                                        if (person.name!="" &&  person.memberNum!=""){
+                                            item {
+                                                Row(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(top = 30.dp)
+                                                        .background(MaterialTheme.colorScheme.background)
+                                                ) {
+                                                    //mutable value  of the text label
+                                                    //The Details are either user details or the selected user
+                                                    //some loans may require more than one guarantor
+                                                    GuarantorsDetailsView(
+                                                        label = "Details",
+                                                        onClick = {
+                                                        },
+                                                        selected = true,
+                                                        phoneNumber = person.name,
+                                                        memberNumber = person.memberNum,
+                                                        amount = 20.0
+                                                    )
+                                                }
                                             }
                                         }
                                     }

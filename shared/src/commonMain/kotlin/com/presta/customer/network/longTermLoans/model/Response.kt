@@ -21,5 +21,4 @@ data class Response @OptIn(ExperimentalSerializationApi::class) constructor(
     val identifierType: String,
     val parallelLoans: Boolean,
     @EncodeDefault val details: Details? = null,
-
     )
