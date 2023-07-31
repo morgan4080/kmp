@@ -68,6 +68,9 @@ fun SelectLoanPurposeContent(
     val (selectedOption: Int, onOptionSelected: (Int) -> Unit) = remember {
         mutableStateOf(-1)
     }
+    var loanCategory by remember { mutableStateOf("") }
+    var loanPurpose by remember { mutableStateOf("") }
+    var loanPurposeCategory by remember { mutableStateOf("") }
     if (parentId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -196,8 +199,8 @@ fun SelectLoanPurposeContent(
                                                             if (selectedSubCategoryIndex == subIndex) {
                                                                 childId =
                                                                     state.prestaLongTermLoanProductsSubCategories[selectedSubCategoryIndex].code
-                                                                println("Test  The  id")
-                                                                println(childId)
+                                                                loanPurpose =
+                                                                    state.prestaLongTermLoanProductsSubCategories[selectedSubCategoryIndex].name
                                                             }
                                                         },
                                                         expandContent = selectedSubCategoryIndex == subIndex,
@@ -210,6 +213,13 @@ fun SelectLoanPurposeContent(
                                                                         onSelectOption = { subCatsChildIndex: Int ->
                                                                             selectedSubCategoryChildrenIndex =
                                                                                 if (selectedSubCategoryChildrenIndex == subCatsChildIndex) -1 else subCatChildIndex
+                                                                            if (selectedSubCategoryChildrenIndex > -1) {
+                                                                                if (selectedSubCategoryChildrenIndex == subCatChildIndex) {
+                                                                                    loanPurposeCategory =
+                                                                                        state.prestaLongTermLoanProductsSubCategoriesChildren[selectedSubCategoryChildrenIndex].name
+                                                                                }
+                                                                            }
+
                                                                         },
                                                                         isSelectedOption = selectedSubCategoryChildrenIndex == subCatChildIndex,
                                                                     )
@@ -229,6 +239,8 @@ fun SelectLoanPurposeContent(
                                         if (selectedCategoryIndex == topIndex) {
                                             parentId =
                                                 state.prestaLongTermLoanProductsCategories[selectedCategoryIndex].code
+                                            loanCategory =
+                                                state.prestaLongTermLoanProductsCategories[selectedCategoryIndex].name
                                         }
                                     },
                                     expandContent = selectedCategoryIndex == topIndex,
@@ -243,7 +255,17 @@ fun SelectLoanPurposeContent(
             }
             Row(modifier = Modifier.fillMaxWidth()) {
                 ActionButton(label = "Continue", onClickContainer = {
-                    component.onContinueSelected()
+                    component.onContinueSelected(
+                        loanRefId = component.loanRefId,
+                        loanType = component.loanType,
+                        desiredAmount = component.desiredAmount,
+                        loanPeriod = component.loanPeriod,
+                        requiredGuarantors = component.requiredGuarantors,
+                        loanCategory = loanCategory,
+                        loanPurpose = loanPurpose,
+                        loanPurposeCategory = loanPurposeCategory
+//                                loanCategory!="" && loanPurpose!="" && loanPurposeCategory!=""
+                    )
                 }, enabled = true)
             }
         }

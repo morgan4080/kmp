@@ -22,7 +22,21 @@ class DefaultSelectLoanPurposeComponent(
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     private val onItemClicked: () -> Unit,
-    private val onContinueClicked: () -> Unit
+    private val onContinueClicked: (
+        loanRefId: String,
+        loanType: String,
+        desiredAmount: Double,
+        loanPeriod: Int,
+        requiredGuarantors: Int,
+        loanCategory: String,
+        loanPurpose: String,
+        loanPurposeCategory: String,
+    ) -> Unit,
+    override val loanRefId: String,
+    override val loanType: String,
+    override val desiredAmount: Double,
+    override val loanPeriod: Int,
+    override val requiredGuarantors: Int
 ) : SelectLoanPurposeComponent, ComponentContext by componentContext {
 
     private val scope = coroutineScope(mainContext + SupervisorJob())
@@ -88,8 +102,26 @@ class DefaultSelectLoanPurposeComponent(
         onItemClicked()
     }
 
-    override fun onContinueSelected() {
-        onContinueClicked()
+    override fun onContinueSelected(
+        loanRefId: String,
+        loanType: String,
+        desiredAmount: Double,
+        loanPeriod: Int,
+        requiredGuarantors: Int,
+        loanCategory: String,
+        loanPurpose: String,
+        loanPurposeCategory: String,
+    ) {
+        onContinueClicked(
+            loanRefId,
+            loanType,
+            desiredAmount,
+            loanPeriod,
+            requiredGuarantors,
+            loanCategory,
+            loanPurpose,
+            loanPurposeCategory
+        )
     }
 
     init {

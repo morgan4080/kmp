@@ -58,7 +58,6 @@ import com.presta.customer.ui.components.rootBottomSign.DefaultRootBottomSignCom
 import com.presta.customer.ui.components.rootBottomSign.RootBottomSignComponent
 import com.presta.customer.ui.components.rootBottomStack.DefaultRootBottomComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
-import com.presta.customer.ui.components.rootLoans.DefaultRootLoansComponent
 import com.presta.customer.ui.components.selectLoanPurpose.DefaultSelectLoanPurposeComponent
 import com.presta.customer.ui.components.selectLoanPurpose.SelectLoanPurposeComponent
 import com.presta.customer.ui.components.splash.DefaultSplashComponent
@@ -181,12 +180,13 @@ class DefaultRootComponent(
         )
 
         is Config.SelectLoanPurpose -> RootComponent.Child.SelectLoanPurposeChild(
-            selectLoanPurposeComponent(componentContext)
+            selectLoanPurposeComponent(componentContext, config)
         )
 
         is Config.AddGuarantors -> RootComponent.Child.AddGuarantorsChild(
             addGuarantorsComponent(
-                componentContext
+                componentContext,
+                config
             )
         )
 
@@ -203,7 +203,7 @@ class DefaultRootComponent(
         )
 
         is Config.LongTermLoanConfirmation -> RootComponent.Child.LongTermLoanConfirmationChild(
-            longTermLoanConfirmationComponent(componentContext)
+            longTermLoanConfirmationComponent(componentContext,config)
         )
 
     }
@@ -422,9 +422,6 @@ class DefaultRootComponent(
         },
         backTopProfile = config.backTopProfile,
         gotoSignApp = {
-            //navigate to Sign App
-            // navigation.push(Config.SignApp)
-            //
             navigation.bringToFront(Config.SignApp)
         })
 
@@ -562,45 +559,91 @@ class DefaultRootComponent(
             onItemClicked = {
                 navigation.pop()
             },
-            onConfirmClicked = {
+            onConfirmClicked = { loanRefid, loanType, desireAmount, loanPeriod, requiredGuarantors ->
                 //navigate  to select Loan Details
-                navigation.push(Config.SelectLoanPurpose)
+                navigation.push(
+                    Config.SelectLoanPurpose(
+                        loanRefId = loanRefid,
+                        loanType = loanType,
+                        desiredAmount = desireAmount,
+                        loanPeriod = loanPeriod,
+                        requiredGuarantors = requiredGuarantors
+                    )
+                )
             },
             loanRefId = config.loanRefId,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
         )
 
-    private fun selectLoanPurposeComponent(componentContext: ComponentContext): SelectLoanPurposeComponent =
+    private fun selectLoanPurposeComponent(
+        componentContext: ComponentContext,
+        config: Config.SelectLoanPurpose
+    ): SelectLoanPurposeComponent =
         DefaultSelectLoanPurposeComponent(
             componentContext = componentContext,
             onItemClicked = {
                 //signHomeNavigation.pop()
                 navigation.pop()
             },
-            onContinueClicked = {
-                //Navigate to add Guarantors
-                navigation.push(Config.AddGuarantors)
+            onContinueClicked = { loanRefId, loanType, desiredAmount, loanPeriod, requiredGuarantors, loanCategory, loanPurpose, loanPurposeCategory ->
+                navigation.push(
+                    Config.AddGuarantors(
+                        loanRefId = loanRefId,
+                        loanType = loanType,
+                        desiredAmount = desiredAmount,
+                        loanPeriod = loanPeriod,
+                        requiredGuarantors = requiredGuarantors,
+                        loanCategory = loanCategory,
+                        loanPurpose = loanPurpose,
+                        loanPurposeCategory = loanPurposeCategory
+                    )
+                )
             },
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
+            loanRefId = config.loanRefId,
+            loanType = config.loanType,
+            desiredAmount = config.desiredAmount,
+            loanPeriod = config.loanPeriod,
+            requiredGuarantors = config.requiredGuarantors
         )
 
-    private fun addGuarantorsComponent(componentContext: ComponentContext): AddGuarantorsComponent =
+    private fun addGuarantorsComponent(
+        componentContext: ComponentContext,
+        config: Config.AddGuarantors
+    ): AddGuarantorsComponent =
         DefaultAddGuarantorsComponent(
             componentContext = componentContext,
             onItemClicked = {
                 //signHomeNavigation.pop()
                 navigation.pop()
-
             },
-            onContinueClicked = {
+            onContinueClicked = { loanRefId, loanType, desiredAmount, loanPeriod, requiredGuarantors, loanCategory, loanPurpose, loanPurposeCategory ->
                 //Navigate to confirm
-                navigation.push(Config.LongTermLoanConfirmation)
-
+                navigation.push(
+                    Config.LongTermLoanConfirmation(
+                        loanRefId = loanRefId,
+                        loanType = loanType,
+                        desiredAmount = desiredAmount,
+                        loanPeriod = loanPeriod,
+                        requiredGuarantors = requiredGuarantors,
+                        loanCategory = loanCategory,
+                        loanPurpose = loanPurpose,
+                        loanPurposeCategory = loanPurposeCategory
+                    )
+                )
             },
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
+            loanRefId = config.loanRefId,
+            loanType = config.loanType,
+            desiredAmount = config.desiredAmount,
+            loanPeriod = config.loanPeriod,
+            requiredGuarantors = config.requiredGuarantors,
+            loanCategory = config.loanCategory,
+            loanPurpose = config.loanPurpose,
+            loanPurposeCategory = config.loanPurposeCategory
         )
 
     private fun guarantorshipRequestComponent(componentContext: ComponentContext): GuarantorshipRequestComponent =
@@ -608,7 +651,6 @@ class DefaultRootComponent(
             navigation.pop()
 
         }, onProductClicked = {
-            // navigation.push(Config.LongTermLoanDetails)
         })
 
     private fun favouriteGuarantorsComponent(componentContext: ComponentContext): FavouriteGuarantorsComponent =
@@ -616,7 +658,6 @@ class DefaultRootComponent(
             navigation.pop()
 
         }, onProductClicked = {
-            // navigation.push(Config.LongTermLoanDetails)
         })
 
     private fun witnessRequestComponent(componentContext: ComponentContext): WitnessRequestComponent =
@@ -624,20 +665,29 @@ class DefaultRootComponent(
             navigation.pop()
 
         }, onProductClicked = {
-            //  navigation.push(Config.LongTermLoanDetails)
         })
 
-    private fun longTermLoanConfirmationComponent(componentContext: ComponentContext): LongTermLoanConfirmationComponent =
+    private fun longTermLoanConfirmationComponent(
+        componentContext: ComponentContext,
+        config: Config.LongTermLoanConfirmation
+    ): LongTermLoanConfirmationComponent =
         DefaultLongTermLoanConfirmationComponent(
             componentContext = componentContext,
             onItemClicked = {
                 navigation.pop()
             },
             onProductClicked = {
-                //navigation.push(Config.LongTermLoanDetails)
             },
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
+            loanRefId = config.loanRefId,
+            loanType = config.loanType,
+            desiredAmount = config.desiredAmount,
+            loanPeriod = config.loanPeriod,
+            requiredGuarantors = config.requiredGuarantors,
+            loanCategory = config.loanCategory,
+            loanPurpose = config.loanPurpose,
+            loanPurposeCategory = config.loanPurposeCategory
         )
 
     enum class OnBoardingContext {
@@ -728,10 +778,25 @@ class DefaultRootComponent(
         ) : Config()
 
         @Parcelize
-        object SelectLoanPurpose : Config()
+        data class SelectLoanPurpose(
+            val loanRefId: String,
+            val loanType: String,
+            val desiredAmount: Double,
+            val loanPeriod: Int,
+            val requiredGuarantors: Int,
+        ) : Config()
 
         @Parcelize
-        object AddGuarantors : Config()
+        data class AddGuarantors(
+            val loanRefId: String,
+            val loanType: String,
+            val desiredAmount: Double,
+            val loanPeriod: Int,
+            val requiredGuarantors: Int,
+            val loanCategory: String,
+            val loanPurpose: String,
+            val loanPurposeCategory: String,
+        ) : Config()
 
         @Parcelize
         object GuarantorshipRequest : Config()
@@ -743,7 +808,16 @@ class DefaultRootComponent(
         object WitnessRequests : Config()
 
         @Parcelize
-        object LongTermLoanConfirmation : Config()
+        data class LongTermLoanConfirmation(
+            val loanRefId: String,
+            val loanType: String,
+            val desiredAmount: Double,
+            val loanPeriod: Int,
+            val requiredGuarantors: Int,
+            val loanCategory: String,
+            val loanPurpose: String,
+            val loanPurposeCategory: String,
+        ) : Config()
     }
 
     init {
@@ -758,7 +832,6 @@ class DefaultRootComponent(
                         super.onResume()
                         navigation.replaceAll(Config.Splash)
                     }
-
                 }
             }
         })

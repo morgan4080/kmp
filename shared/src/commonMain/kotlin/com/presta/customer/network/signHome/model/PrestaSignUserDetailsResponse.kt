@@ -1,9 +1,11 @@
 package com.presta.customer.network.signHome.model
 
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PrestaSignUserDetailsResponse constructor(
+data class PrestaSignUserDetailsResponse @OptIn(ExperimentalSerializationApi::class) constructor(
     val isTermsAccepted: Boolean,
     val refId: String,
     val created: String,
@@ -20,5 +22,5 @@ data class PrestaSignUserDetailsResponse constructor(
     val committedAmount: Double,
     val availableAmount: Double,
     val memberStatus: String,
-    val details: Map<String,Details>
+    @EncodeDefault val details: Map<String,Details>?=null
 )

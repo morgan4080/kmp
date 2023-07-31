@@ -33,17 +33,29 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
 import com.presta.customer.ui.components.addGuarantors.ui.SelectGuarantorsView
+import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
-import androidx.compose.ui.window.Popup
-import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
+
+data class Disbursement_modes(
+    val name: String,
+    val value: String,
+    val selected: Boolean
+)
+data class Repayment_modes (
+    val name: String,
+    val value: String,
+    val selected: Boolean
+)
 
 @Composable
 fun UserInformation(
     signProfileState: SignHomeStore.State
 ) {
+
     var selectedIndex by remember { mutableStateOf(-1) }
     var launchDisbursementModePopUp by remember { mutableStateOf(false) }
     var launchPaymentModePopUp by remember { mutableStateOf(false) }
@@ -81,7 +93,7 @@ fun UserInformation(
                     }
                 }
             } else {
-                lastName=TextFieldValue(signProfileState.prestaTenantByPhoneNumber.firstName)
+                lastName = TextFieldValue(signProfileState.prestaTenantByPhoneNumber.firstName)
                 item {
                     Column(
                         modifier = Modifier
@@ -115,7 +127,7 @@ fun UserInformation(
                         }
                         Row(modifier = Modifier.fillMaxWidth()) {
                             LiveTextContainer(
-                                userInput =  signProfileState.prestaTenantByPhoneNumber.idNumber,
+                                userInput = signProfileState.prestaTenantByPhoneNumber.idNumber,
                                 label = "ID number"
                             )
                         }
@@ -174,6 +186,12 @@ fun UserInformation(
             //popup Disbursement mode
             item {
                 if (launchDisbursementModePopUp) {
+
+                    val disburementModeListing = listOf(
+                        Disbursement_modes("Cheques", "Cheques", selected = true),
+                        Disbursement_modes("My Account", "My Account", selected = true),
+                        Disbursement_modes("EFT","EFT",selected = true)
+                    )
                     Popup {
                         Column(
                             modifier = Modifier
@@ -224,29 +242,30 @@ fun UserInformation(
                                                 modifier = Modifier
                                                     .wrapContentHeight()
                                             ) {
-                                                items(3) {
-                                                    Row(
-                                                        modifier = Modifier
-                                                            .fillMaxWidth()
-                                                            .background(color = MaterialTheme.colorScheme.inverseOnSurface)
-                                                            .padding(
-                                                                top = 10.dp,
-                                                                start = 16.dp,
-                                                                end = 16.dp
-                                                            )
-                                                    ) {
-                                                        SelectGuarantorsView(
-                                                            Index = 0,
-                                                            selected = selectedIndex == 0,
-                                                            onClick = { index: Int ->
-                                                                selectedIndex =
-                                                                    if (selectedIndex == index) -1 else index
 
-                                                                // selectedBank = bank
-                                                            },
-                                                            label = "Cheque"
-                                                        )
+                                                disburementModeListing.mapIndexed { indexed,disbursementModes ->
+                                                    item {
+                                                        Row(
+                                                            modifier = Modifier
+                                                                .fillMaxWidth()
+                                                                .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                                                                .padding(
+                                                                    top = 10.dp,
+                                                                    start = 16.dp,
+                                                                    end = 16.dp
+                                                                )
+                                                        ) {
+                                                            SelectGuarantorsView(
+                                                                Index = indexed,
+                                                                selected = selectedIndex == indexed,
+                                                                onClick = { index: Int ->
+                                                                    selectedIndex = if (selectedIndex == index) -1 else index
+                                                                },
+                                                                label = disbursementModes.name
+                                                            )
+                                                        }
                                                     }
+
                                                 }
                                             }
                                         }
@@ -318,6 +337,11 @@ fun UserInformation(
             item {
                 //popup Repayment mode
                 if (launchPaymentModePopUp) {
+                    val repaymentmentModeListing = listOf(
+                        Repayment_modes("Check Off ", "Check Off", selected = true),
+                        Repayment_modes("Paybill", "Paybill", selected = true),
+                        Repayment_modes("Standing Order","Standing Order",selected = true)
+                    )
                     Popup {
                         Column(
                             modifier = Modifier
@@ -368,28 +392,30 @@ fun UserInformation(
                                                 modifier = Modifier
                                                     .wrapContentHeight()
                                             ) {
-                                                items(3) {
-                                                    Row(
-                                                        modifier = Modifier
-                                                            .fillMaxWidth()
-                                                            .background(color = MaterialTheme.colorScheme.inverseOnSurface)
-                                                            .padding(
-                                                                top = 10.dp,
-                                                                start = 16.dp,
-                                                                end = 16.dp
-                                                            )
-                                                    ) {
-                                                        SelectGuarantorsView(
-                                                            Index = 0,
-                                                            selected = selectedIndex == 0,
-                                                            onClick = { index: Int ->
-                                                                selectedIndex =
-                                                                    if (selectedIndex == index) -1 else index
 
-                                                                // selectedBank = bank
-                                                            },
-                                                            label = "Checkoff"
-                                                        )
+                                                repaymentmentModeListing.mapIndexed{indexedPay,repamentModes->
+                                                    item {
+                                                        Row(
+                                                            modifier = Modifier
+                                                                .fillMaxWidth()
+                                                                .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                                                                .padding(
+                                                                    top = 10.dp,
+                                                                    start = 16.dp,
+                                                                    end = 16.dp
+                                                                )
+                                                        ) {
+                                                            SelectGuarantorsView(
+                                                                Index = indexedPay,
+                                                                selected = selectedIndex == indexedPay,
+                                                                onClick = { index: Int ->
+                                                                    selectedIndex = if (selectedIndex == index) -1 else index
+
+                                                                    //Take the  values of the Selected mode of paymemt
+                                                                },
+                                                                label = repamentModes.name
+                                                            )
+                                                        }
                                                     }
                                                 }
                                             }

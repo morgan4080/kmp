@@ -17,15 +17,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-class DefaultLongTermLoanDetailsComponent (
+class DefaultLongTermLoanDetailsComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     private val onItemClicked: () -> Unit,
-    private val onConfirmClicked: () -> Unit,
+    private val onConfirmClicked: (
+        loanRefId: String,
+        loanType: String,
+        desiredAmount: Double,
+        loanPeriod: Int,
+        requiredGuarantors: Int
+    ) -> Unit,
     override val loanRefId: String
 
-): LongTermLoanDetailsComponent, ComponentContext by componentContext {
+) : LongTermLoanDetailsComponent, ComponentContext by componentContext {
 
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
@@ -50,6 +56,7 @@ class DefaultLongTermLoanDetailsComponent (
                 storeFactory = storeFactory
             ).create()
         }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     override val applyLongTermLoansState: StateFlow<ApplyLongTermLoansStore.State> =
         applyLongTermLoansStore.stateFlow
@@ -84,13 +91,27 @@ class DefaultLongTermLoanDetailsComponent (
             }
         }
     }
+
     override fun onBackNavClicked() {
         onItemClicked()
     }
 
-    override fun onConfirmSelected() {
-        onConfirmClicked()
+    override fun onConfirmSelected(
+        loanRefId: String,
+        loanType: String,
+        desiredAmount: Double,
+        loanPeriod: Int,
+        requiredGuarantors: Int
+    ) {
+        onConfirmClicked(
+            loanRefId,
+            loanType,
+            desiredAmount,
+            loanPeriod,
+            requiredGuarantors
+        )
     }
+
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         checkAuthenticatedUser()

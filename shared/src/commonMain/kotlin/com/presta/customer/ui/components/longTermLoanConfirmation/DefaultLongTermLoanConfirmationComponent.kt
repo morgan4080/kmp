@@ -22,7 +22,15 @@ class DefaultLongTermLoanConfirmationComponent(
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     private val onItemClicked: () -> Unit,
-    private val onProductClicked: () -> Unit
+    private val onProductClicked: () -> Unit,
+    override val loanRefId: String,
+    override val loanType: String,
+    override val desiredAmount: Double,
+    override val loanPeriod: Int,
+    override val requiredGuarantors: Int,
+    override val loanCategory: String,
+    override val loanPurpose: String,
+    override val loanPurposeCategory: String
 ) : LongTermLoanConfirmationComponent, ComponentContext by componentContext {
 
     private val scope = coroutineScope(mainContext + SupervisorJob())

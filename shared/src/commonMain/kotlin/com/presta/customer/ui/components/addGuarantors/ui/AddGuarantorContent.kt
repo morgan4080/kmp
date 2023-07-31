@@ -110,6 +110,8 @@ class SnackbarVisualsWithError(
         get() = SnackbarDuration.Short
 }
 
+data class GuarantorData(val name: String, val memberNum: String)
+
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AddGuarantorContent(
@@ -163,8 +165,11 @@ fun AddGuarantorContent(
 
         }
     }
-
     val scope = rememberCoroutineScope()
+
+    //Todo--Some  loans needs more than one guarantor
+    //get loan by The refid and check the  number of guarantors
+
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -506,7 +511,6 @@ fun AddGuarantorContent(
                                             .background(Color(0xFFE5F1F5))
                                             .size(25.dp),
                                         onClick = {
-
                                             snackBarScope.launch {
                                                 snackbarHostState.showSnackbar(
                                                     SnackbarVisualsWithError(
@@ -581,14 +585,16 @@ fun AddGuarantorContent(
                             }
                         } else {
                             if (guarantorOption == state.selfGuarantee) {
-                                val guarantorDetailslist = arrayListOf<String>()
-                                signHomeState.prestaTenantByPhoneNumber?.firstName?.let {
-                                    guarantorDetailslist.add(
-                                        it
-                                    )
-                                    guarantorDetailslist.add("second")
-                                }
-                                guarantorDetailslist.map { guarantorListing ->
+                                val guarantorListing = listOf(
+                                    signHomeState.prestaTenantByPhoneNumber?.firstName?.let {
+                                        signHomeState.prestaTenantByPhoneNumber.memberNumber.let { it1 ->
+                                            GuarantorData(
+                                                it, it1
+                                            )
+                                        }
+                                    },
+                                )
+                                guarantorListing.map { person ->
                                     item {
                                         Row(
                                             modifier = Modifier
@@ -596,18 +602,20 @@ fun AddGuarantorContent(
                                                 .padding(top = 30.dp)
                                                 .background(MaterialTheme.colorScheme.background)
                                         ) {
-                                            //muatable value  of the text label
+                                            //mutable value  of the text label
                                             //The Details are either user details or the selected user
                                             //some loans may require more than one guarantor
-                                            GuarantorsDetailsView(
-                                                label = guarantorListing,
-                                                onClick = {
-                                                },
-                                                selected = true,
-                                                phoneNumber = "0796387377",
-                                                memberNumber = "M224y",
-                                                amount = 20.0
-                                            )
+                                            person?.let {
+                                                GuarantorsDetailsView(
+                                                    label = "Details",
+                                                    onClick = {
+                                                    },
+                                                    selected = true,
+                                                    phoneNumber = it.name,
+                                                    memberNumber = person.memberNum,
+                                                    amount = 20.0
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -623,10 +631,6 @@ fun AddGuarantorContent(
                         ActionButton(
                             label = if (searchGuarantorByMemberNumber) "Search" else "Continue",
                             onClickContainer = {
-                                //launch Bottom sheet with  Loan details
-                                //whe details  are submited  Continue to confirm the Details
-                                //Execute Logics
-                                // continueClicked = true
                                 println("Test Guarantor")
                                 println(guarantor)
                                 if (searchGuarantorByMemberNumber && signHomeState.prestaTenantByMemberNumber?.firstName != null) {
@@ -638,7 +642,17 @@ fun AddGuarantorContent(
                                     launchAddAmountToGuarantee = false
                                     launchCheckSelfAndEmPloyedPopUp = true
                                     if (allConditionsChecked) {
-                                        component.onContinueSelected()
+                                        //Transfer Relevant Data to Confirm
+                                        component.onContinueSelected(
+                                            component.loanRefId,
+                                            component.loanType,
+                                            component.desiredAmount,
+                                            component.loanPeriod,
+                                            component.requiredGuarantors,
+                                            component.loanCategory,
+                                            component.loanPurpose,
+                                            component.loanPurposeCategory
+                                        )
                                         launchCheckSelfAndEmPloyedPopUp = false
                                         scope.launch { modalBottomSheetState.hide() }
                                     }
@@ -732,7 +746,6 @@ fun AddGuarantorContent(
                                                                     },
                                                                     label = guarantorOptions
                                                                 )
-
                                                             }
                                                         }
                                                     }

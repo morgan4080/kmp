@@ -8,18 +8,36 @@ import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import kotlinx.coroutines.flow.StateFlow
 
 interface AddGuarantorsComponent {
+    val loanRefId: String
+    val loanType: String
+    val desiredAmount: Double
+    val loanPeriod: Int
+    val requiredGuarantors: Int
+    val loanCategory: String
+    val loanPurposeCategory: String
+    val loanPurpose: String
     val platform: Platform
     val contactlist: ContactsUtils
     fun onBackNavClicked()
-    fun onContinueSelected()
+    fun onContinueSelected(
+        loanRefId: String,
+        loanType: String,
+        desiredAmount: Double,
+        loanPeriod: Int,
+        requiredGuarantors: Int,
+        loanCategory: String,
+        loanPurpose: String,
+        loanPurposeCategory: String,
+    )
+
     val authStore: AuthStore
     val authState: StateFlow<AuthStore.State>
     fun onAuthEvent(event: AuthStore.Intent)
     fun onEvent(event: ApplyLongTermLoansStore.Intent)
-    val  applyLongTermLoansStore : ApplyLongTermLoansStore
+    val applyLongTermLoansStore: ApplyLongTermLoansStore
     val applyLongTermLoansState: StateFlow<ApplyLongTermLoansStore.State>
     fun onProfileEvent(event: SignHomeStore.Intent)
-    val  sigHomeStore: SignHomeStore
+    val sigHomeStore: SignHomeStore
     val signHomeState: StateFlow<SignHomeStore.State>
 
 }

@@ -32,6 +32,7 @@ import com.presta.customer.ui.composables.UserInformation
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LongTermLoanConfirmationContent(
@@ -110,7 +111,7 @@ fun LongTermLoanConfirmationContent(
                 }
                 when (tabIndex) {
                     0 -> UserInformation(signProfileState)
-                    1 -> LoanInformation()
+                    1 -> LoanInformation(component)
                 }
             }
         }

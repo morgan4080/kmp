@@ -23,19 +23,31 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.coroutines.CoroutineContext
 
-class DefaultAddGuarantorsComponent (
+class DefaultAddGuarantorsComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     private val onItemClicked: () -> Unit,
-    private val onContinueClicked: () -> Unit,
-
-    ): AddGuarantorsComponent, ComponentContext by componentContext , KoinComponent {
-
-
-
+    private val onContinueClicked: (
+        loanRefId: String,
+        loanType: String,
+        desiredAmount: Double,
+        loanPeriod: Int,
+        requiredGuarantors: Int,
+        loanCategory: String,
+        loanPurpose: String,
+        loanPurposeCategory: String,
+    ) -> Unit,
+    override val loanRefId: String,
+    override val loanType: String,
+    override val desiredAmount: Double,
+    override val loanPeriod: Int,
+    override val requiredGuarantors: Int,
+    override val loanCategory: String,
+    override val loanPurpose: String,
+    override val loanPurposeCategory: String,
+) : AddGuarantorsComponent, ComponentContext by componentContext, KoinComponent {
     private val scope = coroutineScope(mainContext + SupervisorJob())
-
     override val authStore: AuthStore =
         instanceKeeper.getStore {
             AuthStoreFactory(
@@ -76,8 +88,9 @@ class DefaultAddGuarantorsComponent (
                 storeFactory = storeFactory
             ).create()
         }
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val  signHomeState: StateFlow<SignHomeStore.State> =
+    override val signHomeState: StateFlow<SignHomeStore.State> =
         sigHomeStore.stateFlow
 
     override fun onProfileEvent(event: SignHomeStore.Intent) {
@@ -109,14 +122,33 @@ class DefaultAddGuarantorsComponent (
     }
 
     override val platform by inject<Platform>()
-    override val contactlist by inject<ContactsUtils> ()
+    override val contactlist by inject<ContactsUtils>()
     override fun onBackNavClicked() {
         onItemClicked()
     }
-    override fun onContinueSelected() {
-      onContinueClicked()
-    }
 
+    override fun onContinueSelected(
+        loanRefId: String,
+        loanType: String,
+        desiredAmount: Double,
+        loanPeriod: Int,
+        requiredGuarantors: Int,
+        loanCategory: String,
+        loanPurpose: String,
+        loanPurposeCategory: String,
+
+        ) {
+        onContinueClicked(
+            loanRefId,
+            loanType,
+            desiredAmount,
+            loanPeriod,
+            requiredGuarantors,
+            loanCategory,
+            loanPurpose,
+            loanPurposeCategory
+        )
+    }
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         checkAuthenticatedUser()

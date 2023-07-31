@@ -12,29 +12,64 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.ui.components.longTermLoanConfirmation.LongTermLoanConfirmationComponent
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
-@Composable
-fun LoanInformation() {
-    LazyColumn(modifier = Modifier.padding(top = 20.dp)) {
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    "Loan Type",
-                    fontSize = 14.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                )
-                Text(
-                    "Normal Loan",
-                    fontSize = 14.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                )
-            }
+data class LoansData(val field: String, val value: String)
 
+@Composable
+fun LoanInformation(component: LongTermLoanConfirmationComponent) {
+    val loanDetailsListing = listOf(
+        LoansData(
+            field = "Loan Type",
+            value = component.loanType
+        ),
+        LoansData(
+            field = "Months",
+            value = component.loanPeriod.toString()
+        ),
+        LoansData(
+            field = "Amount",
+            value = component.desiredAmount.toString()
+        ),
+        LoansData(
+            field = "Cuarantors",
+            value = ""
+        ),
+        LoansData(
+            field = "Witness",
+            value = ""
+        ),
+        LoansData(
+            field = "Category",
+            value = component.loanCategory
+        ),
+        LoansData(
+            field = "Purpose",
+            value = component.loanPurpose + " :  " + component.loanPurposeCategory
+        )
+    )
+    LazyColumn(modifier = Modifier.padding(top = 20.dp)) {
+        loanDetailsListing.map { loanDetails ->
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        loanDetails.field,
+                        fontSize = 14.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                    )
+                    Text(
+                        loanDetails.value,
+                        fontSize = 14.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        maxLines = 5
+                    )
+                }
+            }
         }
         item {
             Spacer(modifier = Modifier.padding(bottom = 100.dp))

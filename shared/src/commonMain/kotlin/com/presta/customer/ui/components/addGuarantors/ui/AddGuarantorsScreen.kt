@@ -10,17 +10,16 @@ fun AddGuarantorsScreen(
     component: AddGuarantorsComponent
 ) {
     val authState by component.authState.collectAsState()
-    val  applyLongTermLoansState by component.applyLongTermLoansState.collectAsState()
-    val  profileState by component.signHomeState.collectAsState()
+    val applyLongTermLoansState by component.applyLongTermLoansState.collectAsState()
+    val profileState by component.signHomeState.collectAsState()
     AddGuarantorContent(
         component = component,
         state = applyLongTermLoansState,
         authState = authState,
         onEvent = component::onEvent,
         signHomeState = profileState,
-        onProfileEvent =component::onProfileEvent
+        onProfileEvent = component::onProfileEvent
     )
-
 
 
 }

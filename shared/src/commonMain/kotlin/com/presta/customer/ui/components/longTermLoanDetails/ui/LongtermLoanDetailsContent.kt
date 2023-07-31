@@ -68,6 +68,10 @@ fun LongTermLoanDetailsContent(
     var desiredPeriod by remember { mutableStateOf(TextFieldValue()) }
     val emptyDesiredPeriod by remember { mutableStateOf(TextFieldValue()) }
     val pattern = remember { Regex("^\\d+\$") }
+    var amount by remember {
+        mutableStateOf(TextFieldValue())
+    }
+    var isError by remember { mutableStateOf(false) }
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Enter Loan Details", onClickContainer = {
             component.onBackNavClicked()
@@ -100,14 +104,14 @@ fun LongTermLoanDetailsContent(
                         modifier = Modifier
                             .padding(top = 2.dp)
                             .background(
-                            brush = ShimmerBrush(
-                                targetValue = 1300f,
-                                showShimmer = state.prestaLongTermLoanProductById?.interestRate == null
-                            ),
-                            shape = RoundedCornerShape(12.dp)
-                        ).defaultMinSize(150.dp)
+                                brush = ShimmerBrush(
+                                    targetValue = 1300f,
+                                    showShimmer = state.prestaLongTermLoanProductById?.interestRate == null
+                                ),
+                                shape = RoundedCornerShape(12.dp)
+                            ).defaultMinSize(150.dp)
                             .padding(top = 10.dp),
-                        text = if (state.prestaLongTermLoanProductById?.interestRate !== null)"Interest Rate " + state.prestaLongTermLoanProductById.interestRate.toString() +"%" else "",
+                        text = if (state.prestaLongTermLoanProductById?.interestRate !== null) "Interest Rate " + state.prestaLongTermLoanProductById.interestRate.toString() + "%" else "",
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 12.sp,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
@@ -116,14 +120,14 @@ fun LongTermLoanDetailsContent(
                         modifier = Modifier
                             .padding(top = 2.dp)
                             .background(
-                            brush = ShimmerBrush(
-                                targetValue = 1300f,
-                                showShimmer = state.prestaLongTermLoanProductById?.maxperiod == null
-                            ),
-                            shape = RoundedCornerShape(12.dp)
-                        ).defaultMinSize(150.dp)
+                                brush = ShimmerBrush(
+                                    targetValue = 1300f,
+                                    showShimmer = state.prestaLongTermLoanProductById?.maxperiod == null
+                                ),
+                                shape = RoundedCornerShape(12.dp)
+                            ).defaultMinSize(150.dp)
                             .padding(top = 10.dp),
-                        text = if (state.prestaLongTermLoanProductById?.maxperiod !== null)"Max Period "+  state.prestaLongTermLoanProductById.maxperiod.toString()+ "(Months)" else "",
+                        text = if (state.prestaLongTermLoanProductById?.maxperiod !== null) "Max Period " + state.prestaLongTermLoanProductById.maxperiod.toString() + "(Months)" else "",
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 12.sp,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
@@ -135,15 +139,19 @@ fun LongTermLoanDetailsContent(
                             .padding(top = 20.dp)
                     ) {
                         TextInputContainer(
-                            "Desired amount",
+                            "Desired Amount",
                             "",
                             inputType = InputTypes.NUMBER
                         ) {
                             val inputValue: Double? = TextFieldValue(it).text.toDoubleOrNull()
                             if (inputValue != null) {
+                                if (TextFieldValue(it).text !== "") {
+                                    amount = TextFieldValue(it)
+                                    isError = false
 
-                            } else {
-
+                                } else {
+                                    isError = true
+                                }
                             }
                         }
                     }
@@ -264,8 +272,29 @@ fun LongTermLoanDetailsContent(
                             .padding(top = 40.dp)
                     ) {
                         ActionButton(label = "Confirm", onClickContainer = {
-                             component.onConfirmSelected()
-                        }, enabled = true)
+//                            loanRefId,
+//                            loanType,
+//                            desiredAmount,
+//                            loanPeriod
+                            if (state.prestaLongTermLoanProductById?.refId != null) {
+                                if (state.prestaLongTermLoanProductById.name != null) {
+                                    if (amount.text != "") {
+                                        if (desiredPeriod.text != "") {
+                                            if (state.prestaLongTermLoanProductById.requiredGuarantors !=null){
+                                                component.onConfirmSelected(
+                                                    loanRefId = state.prestaLongTermLoanProductById.refId,
+                                                    loanType = state.prestaLongTermLoanProductById.name,
+                                                    desiredAmount = amount.text.toDouble(),
+                                                    loanPeriod = desiredPeriod.text.toInt(),
+                                                    requiredGuarantors =state.prestaLongTermLoanProductById.requiredGuarantors.toInt()
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        }, enabled = amount.text!="" && desiredPeriod.text!="" )
 
                     }
                     Row(

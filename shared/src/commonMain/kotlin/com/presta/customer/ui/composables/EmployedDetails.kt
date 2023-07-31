@@ -63,10 +63,12 @@ fun EmployedDetails(
         }
         signHomeState.prestaTenantByPhoneNumber?.details?.map { it ->
             Row(modifier = Modifier.fillMaxWidth()) {
-                LiveTextContainer(
-                    userInput = it.value.value,
-                    label = it.key
-                )
+                it.value.value?.let { it1 ->
+                    LiveTextContainer(
+                        userInput = it1,
+                        label = it.key
+                    )
+                }
             }
         }
         Row(
