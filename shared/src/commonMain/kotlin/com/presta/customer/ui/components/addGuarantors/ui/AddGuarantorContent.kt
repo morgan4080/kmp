@@ -7,7 +7,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -58,7 +57,6 @@ import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -81,8 +79,12 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
 import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
+import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
+import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.EmployedDetails
 import com.presta.customer.ui.composables.InputTypes
@@ -95,10 +97,6 @@ import com.presta.customer.ui.theme.backArrowColor
 import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.launch
-import androidx.compose.ui.window.Popup
-import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
-import com.presta.customer.ui.components.auth.store.AuthStore
-import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 
 class SnackbarVisualsWithError(
     override val message: String,
@@ -581,26 +579,37 @@ fun AddGuarantorContent(
                                     )
                                 }
                             }
-                        }
-                        //Guarantors Details View
-                        if (guarantorOption != "") {
-                            item {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 30.dp)
-                                        .background(MaterialTheme.colorScheme.background)
-                                ) {
-
-                                    GuarantorsDetailsView(
-                                        label = "details",
-                                        onClick = {
-                                        },
-                                        selected = true,
-                                        phoneNumber = "0796387377",
-                                        memberNumber = "M224y",
-                                        amount = 20.0
+                        } else {
+                            if (guarantorOption == state.selfGuarantee) {
+                                val guarantorDetailslist = arrayListOf<String>()
+                                signHomeState.prestaTenantByPhoneNumber?.firstName?.let {
+                                    guarantorDetailslist.add(
+                                        it
                                     )
+                                    guarantorDetailslist.add("second")
+                                }
+                                guarantorDetailslist.map { guarantorListing ->
+                                    item {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(top = 30.dp)
+                                                .background(MaterialTheme.colorScheme.background)
+                                        ) {
+                                            //muatable value  of the text label
+                                            //The Details are either user details or the selected user
+                                            //some loans may require more than one guarantor
+                                            GuarantorsDetailsView(
+                                                label = guarantorListing,
+                                                onClick = {
+                                                },
+                                                selected = true,
+                                                phoneNumber = "0796387377",
+                                                memberNumber = "M224y",
+                                                amount = 20.0
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -714,16 +723,16 @@ fun AddGuarantorContent(
                                                                     onClick = { index: Int ->
                                                                         selectedIndex =
                                                                             if (selectedIndex == index) -1 else index
-                                                                        // selectedBank = bank
-                                                                        guarantorOption =
-                                                                            guarantorList[selectedIndex]
+                                                                        if (selectedIndex > -1) {
+                                                                            guarantorOption =
+                                                                                guarantorList[selectedIndex]
+                                                                        }
                                                                         searchGuarantorByMemberNumber =
                                                                             guarantorOption == state.memberNo || guarantorOption == state.phoneNo
-                                                                        println("Test Guarantor")
-                                                                        println(guarantorOption)
                                                                     },
                                                                     label = guarantorOptions
                                                                 )
+
                                                             }
                                                         }
                                                     }

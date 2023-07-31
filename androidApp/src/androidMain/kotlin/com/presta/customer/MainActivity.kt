@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
 
         if (contactList.isNotEmpty()) {
             for (contact in contactList) {
-                println("Contact name: ${contact.name}, Phone number: ${contact.phoneNumber}")
+                //println("Contact name: ${contact.name}, Phone number: ${contact.phoneNumber}")
             }
         } else {
             println("No contacts found.")
