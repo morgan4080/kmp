@@ -21,31 +21,31 @@ data class LoansData(val field: String, val value: String)
 fun LoanInformation(component: LongTermLoanConfirmationComponent) {
     val loanDetailsListing = listOf(
         LoansData(
-            field = "Loan Type",
+            field = "Loan Type:",
             value = component.loanType
         ),
         LoansData(
-            field = "Months",
+            field = "Months:",
             value = component.loanPeriod.toString()
         ),
         LoansData(
-            field = "Amount",
+            field = "Amount:",
             value = component.desiredAmount.toString()
         ),
         LoansData(
-            field = "Cuarantors",
+            field = "Cuarantors:",
             value = ""
         ),
         LoansData(
-            field = "Witness",
+            field = "Witness:",
             value = ""
         ),
         LoansData(
-            field = "Category",
+            field = "Category:",
             value = component.loanCategory
         ),
         LoansData(
-            field = "Purpose",
+            field = "Purpose:",
             value = component.loanPurpose + " :  " + component.loanPurposeCategory
         )
     )
@@ -60,13 +60,13 @@ fun LoanInformation(component: LongTermLoanConfirmationComponent) {
                     Text(
                         loanDetails.field,
                         fontSize = 14.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                        modifier = Modifier.fillMaxWidth(0.4f)
                     )
                     Text(
                         loanDetails.value,
                         fontSize = 14.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                        maxLines = 5
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                     )
                 }
             }

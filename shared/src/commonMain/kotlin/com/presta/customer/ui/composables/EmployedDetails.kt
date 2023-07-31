@@ -26,7 +26,6 @@ fun EmployedDetails(
     onClickContainer: () -> Unit
 ) {
     var lastName by remember { mutableStateOf(TextFieldValue()) }
-
     Column(
         modifier = Modifier
             .fillMaxWidth()

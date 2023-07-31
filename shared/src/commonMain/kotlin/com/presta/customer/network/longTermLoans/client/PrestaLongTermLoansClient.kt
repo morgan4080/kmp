@@ -2,6 +2,7 @@ package com.presta.customer.network.longTermLoans.client
 
 import com.presta.customer.network.NetworkConstants
 import com.presta.customer.network.longTermLoans.errorHandler.longTermLoansErrorHandler
+import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
@@ -89,6 +90,17 @@ class PrestaLongTermLoansClient(
                     parameters.append("parent", parent)
                     parameters.append("child", child)
                 }
+            }
+        }
+    }
+    suspend fun getClientSettings(
+        token: String,
+    ): ClientSettingsResponse {
+        return longTermLoansErrorHandler {
+            httpClient.get(NetworkConstants.PrestaGetClientSettings.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
             }
         }
     }
