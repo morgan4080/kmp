@@ -116,6 +116,11 @@ class DefaultAddGuarantorsComponent(
                             phoneNumber = state.cachedMemberData.phoneNumber
                         )
                     )
+                    onEvent(
+                        ApplyLongTermLoansStore.Intent.GetClientSettings(
+                            token = state.cachedMemberData.accessToken,
+                        )
+                    )
                 }
             }
         }

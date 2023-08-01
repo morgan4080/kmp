@@ -1,6 +1,7 @@
 package com.presta.customer.network.longTermLoans.data
 
 import com.presta.customer.network.longTermLoans.client.PrestaLongTermLoansClient
+import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
@@ -26,6 +27,7 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
         }
 
     }
+
     override suspend fun getLongTermProductLoanById(
         token: String,
         loanRefId: String
@@ -65,7 +67,7 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
         return try {
             val response = prestaLongTermLoansClient.getLoanSubCategories(
                 token = token,
-                parent=parent
+                parent = parent
             )
             Result.success(response)
 
@@ -83,8 +85,23 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
         return try {
             val response = prestaLongTermLoansClient.getLoanSubCategoriesChildren(
                 token = token,
-                parent=parent,
+                parent = parent,
                 child = child
+            )
+            Result.success(response)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getClientSettingsData(
+        token: String
+    ): Result<ClientSettingsResponse> {
+        return try {
+            val response = prestaLongTermLoansClient.getClientSettings(
+                token = token
             )
             Result.success(response)
 

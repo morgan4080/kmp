@@ -45,7 +45,8 @@ data class Disbursement_modes(
     val value: String,
     val selected: Boolean
 )
-data class Repayment_modes (
+
+data class Repayment_modes(
     val name: String,
     val value: String,
     val selected: Boolean
@@ -55,11 +56,14 @@ data class Repayment_modes (
 fun UserInformation(
     signProfileState: SignHomeStore.State
 ) {
-
     var selectedIndex by remember { mutableStateOf(-1) }
     var launchDisbursementModePopUp by remember { mutableStateOf(false) }
     var launchPaymentModePopUp by remember { mutableStateOf(false) }
     var lastName by remember { mutableStateOf(TextFieldValue()) }
+    var disbursementMode  by remember { mutableStateOf("") }
+    var repaymentMode  by remember { mutableStateOf("") }
+
+
 
     Column(modifier = Modifier.padding(top = 20.dp)) {
         LazyColumn() {
@@ -173,7 +177,11 @@ fun UserInformation(
                         ) {
                             ActionButton(
                                 label = "Submit  Loan Request", onClickContainer = {
+                                    //Submit  the loan Request and pass the required data
+                                    //Execute  Submit Loan Request Api- pass   the required data
                                     //submit The loan request
+
+
                                     println("Name is :::::::")
                                     println(lastName.text)
                                 },
@@ -190,7 +198,7 @@ fun UserInformation(
                     val disburementModeListing = listOf(
                         Disbursement_modes("Cheques", "Cheques", selected = true),
                         Disbursement_modes("My Account", "My Account", selected = true),
-                        Disbursement_modes("EFT","EFT",selected = true)
+                        Disbursement_modes("EFT", "EFT", selected = true)
                     )
                     Popup {
                         Column(
@@ -243,7 +251,7 @@ fun UserInformation(
                                                     .wrapContentHeight()
                                             ) {
 
-                                                disburementModeListing.mapIndexed { indexed,disbursementModes ->
+                                                disburementModeListing.mapIndexed { indexed, disbursementModes ->
                                                     item {
                                                         Row(
                                                             modifier = Modifier
@@ -260,6 +268,9 @@ fun UserInformation(
                                                                 selected = selectedIndex == indexed,
                                                                 onClick = { index: Int ->
                                                                     selectedIndex = if (selectedIndex == index) -1 else index
+                                                                    if (selectedIndex > -1) {
+                                                                        disbursementMode = disburementModeListing[selectedIndex].name
+                                                                    }
                                                                 },
                                                                 label = disbursementModes.name
                                                             )
@@ -340,7 +351,7 @@ fun UserInformation(
                     val repaymentmentModeListing = listOf(
                         Repayment_modes("Check Off ", "Check Off", selected = true),
                         Repayment_modes("Paybill", "Paybill", selected = true),
-                        Repayment_modes("Standing Order","Standing Order",selected = true)
+                        Repayment_modes("Standing Order", "Standing Order", selected = true)
                     )
                     Popup {
                         Column(
@@ -393,7 +404,7 @@ fun UserInformation(
                                                     .wrapContentHeight()
                                             ) {
 
-                                                repaymentmentModeListing.mapIndexed{indexedPay,repamentModes->
+                                                repaymentmentModeListing.mapIndexed { indexedPay, repamentModes ->
                                                     item {
                                                         Row(
                                                             modifier = Modifier
@@ -410,8 +421,9 @@ fun UserInformation(
                                                                 selected = selectedIndex == indexedPay,
                                                                 onClick = { index: Int ->
                                                                     selectedIndex = if (selectedIndex == index) -1 else index
-
-                                                                    //Take the  values of the Selected mode of paymemt
+                                                                    if (selectedIndex > -1) {
+                                                                        repaymentMode= repaymentmentModeListing[selectedIndex].name
+                                                                    }
                                                                 },
                                                                 label = repamentModes.name
                                                             )

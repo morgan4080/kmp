@@ -143,7 +143,8 @@ fun AddGuarantorContent(
     var guarantor by remember { mutableStateOf("") }
     var listing1 by remember { mutableStateOf("") }
     var listing2 by remember { mutableStateOf("") }
-
+    var listing3 by remember { mutableStateOf("") }
+    var businessLocation by remember { mutableStateOf(TextFieldValue()) }
     if (memberNumber != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -169,10 +170,9 @@ fun AddGuarantorContent(
         }
     }
     val scope = rememberCoroutineScope()
-
     //Todo--Some  loans needs more than one guarantor
     //get loan by The refid and check the  number of guarantors
-
+    //Check  whether the organisation support self Guarantee
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -222,9 +222,14 @@ fun AddGuarantorContent(
                             }
                         )
 
-                        1 -> SelfEmployedDetails()
-                    }
+                        1 -> SelfEmployedDetails(
+                            userdata = "",
+                            onValueChanged = { change ->
+                                listing3= change
 
+                            }
+                        )
+                    }
                 }
             } else if (launchAddAmountToGuarantee && signHomeState.prestaTenantByMemberNumber?.firstName != null) {
                 Column(
@@ -438,7 +443,7 @@ fun AddGuarantorContent(
                                         if (memberNumber == "") {
                                             Text(
                                                 modifier = Modifier.alpha(.3f),
-                                                text = "Search From Phonebook",
+                                                text = if (guarantorOption == state.memberNo) "Search Member Number" else "Search PhoneBook",
                                                 style = MaterialTheme.typography.bodySmall
                                             )
                                         }
@@ -450,7 +455,7 @@ fun AddGuarantorContent(
                                             exit = fadeOut() + shrinkVertically(),
                                         ) {
                                             Text(
-                                                text = "Search From Phonebook",
+                                                text = if (guarantorOption == state.memberNo) "Search Member Number" else "Search PhoneBook",
                                                 color = primaryColor,
                                                 style = MaterialTheme.typography.labelSmall,
                                                 fontSize = 11.sp
@@ -514,14 +519,9 @@ fun AddGuarantorContent(
                                             .background(Color(0xFFE5F1F5))
                                             .size(25.dp),
                                         onClick = {
-                                            snackBarScope.launch {
-                                                snackbarHostState.showSnackbar(
-                                                    SnackbarVisualsWithError(
-                                                        "Error loading Member",
-                                                        isError = true
-                                                    )
-                                                )
-                                            }
+                                            println("This is the listing 3 from "+listing3)
+                                            //println(receivedData)
+
 //                                            snackBarScope.launch {
 //                                                snackbarHostState.showSnackbar(
 //                                                    "member data"
@@ -554,7 +554,7 @@ fun AddGuarantorContent(
                             .padding(top = 20.dp)
                     ) {
                         Text(
-                            "SELECTED GUARANTORS" + "(REQUIRES" + component.requiredGuarantors+ "GUARANTOR)",
+                            "SELECTED GUARANTORS " + "(REQUIRES " + component.requiredGuarantors + " GUARANTOR)",
                             fontSize = 12.sp
                         )
                     }
@@ -588,10 +588,13 @@ fun AddGuarantorContent(
                             }
                         } else {
                             if (guarantorOption == state.selfGuarantee || guarantorOption == state.memberNo) {
+                                //Check  Whether self guarantee is allowed
+                                //Todo --add the selected guarantors  on a list based on the required number
 
-                                if(signHomeState.prestaTenantByMemberNumber?.firstName!=null){
-                                    listing1=signHomeState.prestaTenantByMemberNumber.firstName
-                                    listing2=signHomeState.prestaTenantByMemberNumber.memberNumber
+
+                                if (signHomeState.prestaTenantByMemberNumber?.firstName != null) {
+                                    listing1 = signHomeState.prestaTenantByMemberNumber.firstName
+                                    listing2 = signHomeState.prestaTenantByMemberNumber.memberNumber
                                 }
 
                                 //mutable value of
@@ -603,12 +606,11 @@ fun AddGuarantorContent(
                                             )
                                         }
                                     },
-                                    GuarantorData(listing1,listing2)
+                                    GuarantorData(listing1, listing2)
                                 )
-
                                 guarantorListing.map { person ->
                                     if (person != null) {
-                                        if (person.name!="" &&  person.memberNum!=""){
+                                        if (person.name != "" && person.memberNum != "") {
                                             item {
                                                 Row(
                                                     modifier = Modifier
@@ -619,6 +621,7 @@ fun AddGuarantorContent(
                                                     //mutable value  of the text label
                                                     //The Details are either user details or the selected user
                                                     //some loans may require more than one guarantor
+                                                    //Self Guaranteeing  may be disabled
                                                     GuarantorsDetailsView(
                                                         label = "Details",
                                                         onClick = {
@@ -645,8 +648,6 @@ fun AddGuarantorContent(
                         ActionButton(
                             label = if (searchGuarantorByMemberNumber) "Search" else "Continue",
                             onClickContainer = {
-                                println("Test Guarantor")
-                                println(guarantor)
                                 if (searchGuarantorByMemberNumber && signHomeState.prestaTenantByMemberNumber?.firstName != null) {
                                     launchCheckSelfAndEmPloyedPopUp = false
                                     launchAddAmountToGuarantee = true
@@ -669,6 +670,16 @@ fun AddGuarantorContent(
                                         )
                                         launchCheckSelfAndEmPloyedPopUp = false
                                         scope.launch { modalBottomSheetState.hide() }
+                                    }
+                                }
+                                if (signHomeState.prestaTenantByMemberNumber == null) {
+                                    snackBarScope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            SnackbarVisualsWithError(
+                                                "Error loading Member $memberNumber",
+                                                isError = true
+                                            )
+                                        )
                                     }
                                 }
                             },

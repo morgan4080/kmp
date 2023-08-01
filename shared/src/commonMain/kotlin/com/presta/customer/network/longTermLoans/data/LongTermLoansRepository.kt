@@ -1,5 +1,6 @@
 package com.presta.customer.network.longTermLoans.data
 
+import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
@@ -29,5 +30,8 @@ interface LongTermLoansRepository {
         parent: String,
         child: String
     ): Result<List<PrestaLongTermLoanSubCategoriesChildren>>
+    suspend fun getClientSettingsData(
+        token: String
+    ): Result<ClientSettingsResponse>
 
 }

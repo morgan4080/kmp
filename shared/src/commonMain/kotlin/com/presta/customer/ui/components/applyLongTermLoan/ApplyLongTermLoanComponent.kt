@@ -6,13 +6,11 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface ApplyLongTermLoanComponent {
     fun onBackNavClicked()
-    fun onProductSelected( loanRefId: String)
-
+    fun onProductSelected(loanRefId: String)
     val authStore: AuthStore
     val authState: StateFlow<AuthStore.State>
     fun onAuthEvent(event: AuthStore.Intent)
     fun onEvent(event: ApplyLongTermLoansStore.Intent)
-    val  applyLongTermLoansStore : ApplyLongTermLoansStore
+    val applyLongTermLoansStore: ApplyLongTermLoansStore
     val applyLongTermLoansState: StateFlow<ApplyLongTermLoansStore.State>
-
 }

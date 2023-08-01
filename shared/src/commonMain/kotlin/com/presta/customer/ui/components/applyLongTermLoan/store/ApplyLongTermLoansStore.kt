@@ -1,6 +1,7 @@
 package com.presta.customer.ui.components.applyLongTermLoan.store
 
 import com.arkivanov.mvikotlin.core.store.Store
+import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
@@ -21,9 +22,10 @@ interface ApplyLongTermLoansStore :
             val token: String,
             val parent: String,
             val child: String
-        ) :
-            Intent()
+        ) : Intent()
+        data class GetClientSettings(val token: String) : Intent()
     }
+
     data class State(
         val isLoading: Boolean = false,
         val error: String? = null,
@@ -32,8 +34,9 @@ interface ApplyLongTermLoansStore :
         val prestaLongTermLoanProductsCategories: List<PrestaLongTermLoanCategoriesResponse> = emptyList(),
         val prestaLongTermLoanProductsSubCategories: List<PrestaLongTermLoanSubCategories> = emptyList(),
         val prestaLongTermLoanProductsSubCategoriesChildren: List<PrestaLongTermLoanSubCategoriesChildren> = emptyList(),
+        val prestaClientSettings : ClientSettingsResponse? = null,
         val memberNo: String = "By Member No",
         val phoneNo: String = "By Phone No",
-        val selfGuarantee: String="Self Guarantee",
+        val selfGuarantee: String = "Self Guarantee",
     )
 }

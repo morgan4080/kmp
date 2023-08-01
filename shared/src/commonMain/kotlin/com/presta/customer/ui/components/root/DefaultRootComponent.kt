@@ -241,7 +241,10 @@ class DefaultRootComponent(
                 navigation.push(Config.Welcome(context = OnBoardingContext.REGISTRATION))
             },
             onSignIn = {
-                navigation.push(Config.Welcome(context = OnBoardingContext.LOGIN))
+                //Todo----Configuration Not Unique
+                println(":::::::::::::::::;kjkjkjkjkjkjkjkjkjkjkjkj:::::::::")
+                navigation.bringToFront(Config.Welcome(context = OnBoardingContext.LOGIN))
+//                navigation.push(Config.Welcome(context = OnBoardingContext.LOGIN))
             },
             navigateToAuth = { memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext, pinStatus ->
                 navigation.replaceAll(
@@ -264,6 +267,7 @@ class DefaultRootComponent(
         onGetStartedSelected = {
 
             if (OrganisationModel.organisation.sandbox) {
+                println(":::::::::::::::::;uuuuuuuuuuuuuuuuuuuuuuuuuu:::::::::")
                 navigation.push(
                     Config.Tenant(
                         onBoardingContext = it
@@ -321,7 +325,6 @@ class DefaultRootComponent(
                         pinStatus = pinStatus
                     )
                 )
-
                 OnBoardingContext.LOGIN -> {
                     if (memberRefId !== null) navigation.push(
                         Config.Auth(
@@ -336,7 +339,6 @@ class DefaultRootComponent(
                 }
             }
         }
-
     private fun registerComponent(
         componentContext: ComponentContext, config: Config.Register
     ): RegistrationComponent = DefaultRegistrationComponent(componentContext = componentContext,

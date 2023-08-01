@@ -1,5 +1,6 @@
 package com.presta.customer.network.longTermLoans.model
 
+import com.presta.customer.network.signHome.model.Details
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
@@ -20,5 +21,5 @@ data class Response @OptIn(ExperimentalSerializationApi::class) constructor(
     val notificationProvider: String,
     val identifierType: String,
     val parallelLoans: Boolean,
-    @EncodeDefault val details: Details? = null,
+    @EncodeDefault val details: Map<String, Details>?=null
     )

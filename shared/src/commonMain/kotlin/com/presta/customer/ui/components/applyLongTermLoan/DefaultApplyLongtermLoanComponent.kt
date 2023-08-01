@@ -17,13 +17,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-class DefaultApplyLongtermLoanComponent (
+class DefaultApplyLongtermLoanComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     private val onItemClicked: () -> Unit,
     private val onProductClicked: (loanRefId: String) -> Unit
-): ApplyLongTermLoanComponent, ComponentContext by componentContext {
+) : ApplyLongTermLoanComponent, ComponentContext by componentContext {
 
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
@@ -48,6 +48,7 @@ class DefaultApplyLongtermLoanComponent (
                 storeFactory = storeFactory
             ).create()
         }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     override val applyLongTermLoansState: StateFlow<ApplyLongTermLoansStore.State> =
         applyLongTermLoansStore.stateFlow
@@ -87,7 +88,7 @@ class DefaultApplyLongtermLoanComponent (
     }
 
     override fun onProductSelected(loanRefId: String) {
-      onProductClicked(loanRefId)
+        onProductClicked(loanRefId)
     }
 
     init {

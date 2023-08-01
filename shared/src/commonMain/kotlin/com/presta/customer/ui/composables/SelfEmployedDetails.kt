@@ -14,25 +14,32 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SelfEmployedDetails(){
-    var lastName by remember { mutableStateOf(TextFieldValue()) }
-    Column(modifier = Modifier
-        .fillMaxWidth()){
-        Row(modifier = Modifier
+fun SelfEmployedDetails(
+    userdata: String,
+    onValueChanged: (String) -> Unit
+) {
+    var businessData by remember { mutableStateOf(TextFieldValue(userdata)) }
+    Column(
+        modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 20.dp)) {
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp)
+        ) {
             LiveTextContainer(
-                userInput = "",
+                userInput = userdata,
                 label = "Business Location"
-            ){
+
+            ) {
                 val inputValue: String = TextFieldValue(it).text
                 if (inputValue != "") {
-                    if ( TextFieldValue(it).text !== "")
-                    {
-                        lastName = TextFieldValue(it)
-
+                    if (TextFieldValue(it).text !== "") {
+                        businessData = TextFieldValue(it)
+                        onValueChanged(it)
                     } else {
-
+                        //Throw error
                     }
                 }
             }
@@ -56,8 +63,8 @@ fun SelfEmployedDetails(){
         ) {
             ActionButton(
                 label = "Submit", onClickContainer = {
-                    println("Name is :::::::")
-                    println(lastName.text)
+                    //Suspend the  view
+
                 },
                 enabled = true
             )

@@ -6,6 +6,7 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.longTermLoans.data.LongTermLoansRepository
+import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
@@ -49,6 +50,9 @@ class ApplyLongTermLoansStoreFactory(
         data class LongTermLoansSubCategoriesChildrenLoaded(val longTermLoansSubCategoryChildrenLoaded: List<PrestaLongTermLoanSubCategoriesChildren> = listOf()) :
             Msg()
 
+        data class ClientSettingsLoaded(val clientSettingsLoaded: ClientSettingsResponse) :
+            Msg()
+
         data class LongTermLoansFailed(val error: String?) : Msg()
     }
 
@@ -88,6 +92,11 @@ class ApplyLongTermLoansStoreFactory(
                     token = intent.token,
                     parent = intent.parent,
                     child = intent.child
+                )
+
+                is ApplyLongTermLoansStore.Intent.GetClientSettings -> getClientSettings(
+                    token = intent.token
+
                 )
 
             }
@@ -223,6 +232,31 @@ class ApplyLongTermLoansStoreFactory(
             }
         }
 
+        private var getPrestaClientSettingsJob: Job? = null
+        private fun getClientSettings(
+            token: String
+        ) {
+            if (getPrestaLongTermLoansProductsJob?.isActive == true) return
+
+            dispatch(Msg.LongTermLoansLoading())
+
+            getPrestaLongTermLoansProductsJob = scope.launch {
+                longTermLoansRepository.getClientSettingsData(
+                    token = token
+                ).onSuccess { response ->
+                    dispatch(Msg.ClientSettingsLoaded(response))
+                    println("Load Success")
+
+                }.onFailure { e ->
+                    dispatch(Msg.LongTermLoansFailed(e.message))
+                    println("Load failed")
+                }
+
+                dispatch(Msg.LongTermLoansLoading(false))
+            }
+        }
+
+
     }
 
     private object ReducerImpl :
@@ -234,8 +268,14 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.LongTermLoansLoaded -> copy(prestaLongTermLoanProducts = msg.longTermLoansLoaded)
                 is Msg.LongTermLoansBydLoaded -> copy(prestaLongTermLoanProductById = msg.longTermLoansByIdLoaded)
                 is Msg.LongTermLoansCategoriesLoaded -> copy(prestaLongTermLoanProductsCategories = msg.longTermLoansLoaded)
-                is Msg.LongTermLoansSubCategoriesLoaded -> copy(prestaLongTermLoanProductsSubCategories = msg.longTermLoansSubCategoryLoaded)
-                is Msg.LongTermLoansSubCategoriesChildrenLoaded -> copy(prestaLongTermLoanProductsSubCategoriesChildren = msg.longTermLoansSubCategoryChildrenLoaded)
+                is Msg.LongTermLoansSubCategoriesLoaded -> copy(
+                    prestaLongTermLoanProductsSubCategories = msg.longTermLoansSubCategoryLoaded
+                )
+
+                is Msg.LongTermLoansSubCategoriesChildrenLoaded -> copy(
+                    prestaLongTermLoanProductsSubCategoriesChildren = msg.longTermLoansSubCategoryChildrenLoaded
+                )
+                is Msg.ClientSettingsLoaded -> copy(prestaClientSettings=msg.clientSettingsLoaded)
             }
     }
 
