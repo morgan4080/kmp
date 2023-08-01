@@ -28,8 +28,10 @@ interface AddGuarantorsComponent {
         loanCategory: String,
         loanPurpose: String,
         loanPurposeCategory: String,
+        businessType: String,
+        businessLocation: String,
+        kraPin: String
     )
-
     val authStore: AuthStore
     val authState: StateFlow<AuthStore.State>
     fun onAuthEvent(event: AuthStore.Intent)

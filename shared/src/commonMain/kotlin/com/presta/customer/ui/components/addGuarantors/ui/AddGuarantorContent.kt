@@ -223,6 +223,7 @@ fun AddGuarantorContent(
                                 scope.launch { modalBottomSheetState.hide() }
                             }
                         )
+
                         1 -> SelfEmployedDetails(
                             onValueChanged = { change ->
                                 businessLocationData = change
@@ -232,7 +233,7 @@ fun AddGuarantorContent(
                                 businessTypeData = businessType
                             },
                             onKRAPinChanged = { kraPin ->
-                                kraPinData=kraPin
+                                kraPinData = kraPin
                             }
                         )
                     }
@@ -674,7 +675,10 @@ fun AddGuarantorContent(
                                             component.requiredGuarantors,
                                             component.loanCategory,
                                             component.loanPurpose,
-                                            component.loanPurposeCategory
+                                            component.loanPurposeCategory,
+                                            businessType = "",
+                                            businessLocation = "",
+                                            kraPin = ""
                                         )
                                         launchCheckSelfAndEmPloyedPopUp = false
                                         scope.launch { modalBottomSheetState.hide() }

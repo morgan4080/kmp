@@ -141,6 +141,9 @@ class DefaultAddGuarantorsComponent(
         loanCategory: String,
         loanPurpose: String,
         loanPurposeCategory: String,
+        businessType: String,
+        businessLocation: String,
+        kraPin: String
 
         ) {
         onContinueClicked(
