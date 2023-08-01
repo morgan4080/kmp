@@ -15,10 +15,13 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SelfEmployedDetails(
-    userdata: String,
-    onValueChanged: (String) -> Unit
+    onValueChanged: (String) -> Unit,
+    onBusinessTypeChanged: (String) -> Unit,
+    onKRAPinChanged: (String) -> Unit,
 ) {
-    var businessData by remember { mutableStateOf(TextFieldValue(userdata)) }
+    var businessData by remember { mutableStateOf(TextFieldValue("data entered")) }
+    var businessType by remember { mutableStateOf(TextFieldValue("Whole sale")) }
+    var kraPin by remember { mutableStateOf(TextFieldValue("")) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -29,7 +32,7 @@ fun SelfEmployedDetails(
                 .padding(top = 20.dp)
         ) {
             LiveTextContainer(
-                userInput = userdata,
+                userInput = "Nairobi",
                 label = "Business Location"
 
             ) {
@@ -48,13 +51,33 @@ fun SelfEmployedDetails(
             LiveTextContainer(
                 userInput = "",
                 label = "Business Type"
-            )
+            ) {
+                val inputValue: String = TextFieldValue(it).text
+                if (inputValue != "") {
+                    if (TextFieldValue(it).text !== "") {
+                        businessType = TextFieldValue(it)
+                        onBusinessTypeChanged(it)
+                    } else {
+                        //Throw error
+                    }
+                }
+            }
         }
         Row(modifier = Modifier.fillMaxWidth()) {
             LiveTextContainer(
                 userInput = "12345",
                 label = "KRA pin"
-            )
+            ) {
+                val inputValue: String = TextFieldValue(it).text
+                if (inputValue != "") {
+                    if (TextFieldValue(it).text !== "") {
+                        kraPin = TextFieldValue(it)
+                        onKRAPinChanged(it)
+                    } else {
+                        //Throw error
+                    }
+                }
+            }
         }
         Row(
             modifier = Modifier
@@ -64,7 +87,9 @@ fun SelfEmployedDetails(
             ActionButton(
                 label = "Submit", onClickContainer = {
                     //Suspend the  view
-
+                    onValueChanged(businessData.text)
+                    onBusinessTypeChanged(businessType.text)
+                    onKRAPinChanged(kraPin.text)
                 },
                 enabled = true
             )

@@ -143,8 +143,9 @@ fun AddGuarantorContent(
     var guarantor by remember { mutableStateOf("") }
     var listing1 by remember { mutableStateOf("") }
     var listing2 by remember { mutableStateOf("") }
-    var listing3 by remember { mutableStateOf("") }
-    var businessLocation by remember { mutableStateOf(TextFieldValue()) }
+    var businessLocationData by remember { mutableStateOf("") }
+    var businessTypeData by remember { mutableStateOf("") }
+    var kraPinData by remember { mutableStateOf("") }
     if (memberNumber != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -209,6 +210,7 @@ fun AddGuarantorContent(
                             )
                         }
                     }
+                    //Created Custom Call back to get Data from  The  Child Composable
                     when (tabIndex) {
                         0 -> EmployedDetails(
                             state,
@@ -221,12 +223,16 @@ fun AddGuarantorContent(
                                 scope.launch { modalBottomSheetState.hide() }
                             }
                         )
-
                         1 -> SelfEmployedDetails(
-                            userdata = "",
                             onValueChanged = { change ->
-                                listing3= change
+                                businessLocationData = change
 
+                            },
+                            onBusinessTypeChanged = { businessType ->
+                                businessTypeData = businessType
+                            },
+                            onKRAPinChanged = { kraPin ->
+                                kraPinData=kraPin
                             }
                         )
                     }
@@ -519,7 +525,9 @@ fun AddGuarantorContent(
                                             .background(Color(0xFFE5F1F5))
                                             .size(25.dp),
                                         onClick = {
-                                            println("This is the listing 3 from "+listing3)
+                                            println("This is the listing 3 from  $businessLocationData")
+                                            println("This is the data   $businessTypeData")
+
                                             //println(receivedData)
 
 //                                            snackBarScope.launch {
