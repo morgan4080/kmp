@@ -146,6 +146,7 @@ fun AddGuarantorContent(
     var businessLocationData by remember { mutableStateOf("") }
     var businessTypeData by remember { mutableStateOf("") }
     var kraPinData by remember { mutableStateOf("") }
+    var employerName by remember { mutableStateOf("") }
     if (memberNumber != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -218,12 +219,19 @@ fun AddGuarantorContent(
                             onEvent,
                             signHomeState,
                             onProfileEvent,
-                            onClickContainer = {
+//                            onGrossSalaryChanged = { grossSalary ->
+//                                grossSalaryData=grossSalary
+//
+//                            },
+                            onClickSubmit = { multipleVariables ->
+                                println( multipleVariables.grossSalary)
+                                //test
+                                println("Test2fromfff" + multipleVariables.variable2)
+                                employerName=multipleVariables.variable2
                                 allConditionsChecked = true
                                 scope.launch { modalBottomSheetState.hide() }
                             }
                         )
-
                         1 -> SelfEmployedDetails(
                             onValueChanged = { change ->
                                 businessLocationData = change
@@ -528,7 +536,7 @@ fun AddGuarantorContent(
                                         onClick = {
                                             println("This is the listing 3 from  $businessLocationData")
                                             println("This is the data   $businessTypeData")
-
+                                            println("Employeer alias " + employerName)
                                             //println(receivedData)
 
 //                                            snackBarScope.launch {
@@ -676,9 +684,9 @@ fun AddGuarantorContent(
                                             component.loanCategory,
                                             component.loanPurpose,
                                             component.loanPurposeCategory,
-                                            businessType = "",
-                                            businessLocation = "",
-                                            kraPin = ""
+                                            businessType = businessTypeData,
+                                            businessLocation = businessLocationData,
+                                            kraPin = kraPinData
                                         )
                                         launchCheckSelfAndEmPloyedPopUp = false
                                         scope.launch { modalBottomSheetState.hide() }
@@ -728,7 +736,7 @@ fun AddGuarantorContent(
                                     ) {
 
                                         Text(
-                                            "0PTIONS",
+                                            "OPTIONS",
                                             modifier = Modifier
                                                 .padding(start = 16.dp, top = 17.dp),
                                             fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),

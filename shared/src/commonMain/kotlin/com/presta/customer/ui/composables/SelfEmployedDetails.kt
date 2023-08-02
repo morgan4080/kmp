@@ -18,7 +18,7 @@ fun SelfEmployedDetails(
     onBusinessTypeChanged: (String) -> Unit,
     onKRAPinChanged: (String) -> Unit,
 ) {
-    var businessData by remember { mutableStateOf(TextFieldValue("data entered")) }
+    var businessData by remember { mutableStateOf(TextFieldValue("Nairobi west")) }
     var businessType by remember { mutableStateOf(TextFieldValue("Whole sale")) }
     var kraPin by remember { mutableStateOf(TextFieldValue("")) }
     Column(
@@ -31,7 +31,7 @@ fun SelfEmployedDetails(
                 .padding(top = 20.dp)
         ) {
             LiveTextContainer(
-                userInput = "Nairobi",
+                userInput = businessData.text,
                 label = "Business Location"
 
             ) {

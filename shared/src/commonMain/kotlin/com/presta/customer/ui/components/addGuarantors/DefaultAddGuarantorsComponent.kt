@@ -37,6 +37,9 @@ class DefaultAddGuarantorsComponent(
         loanCategory: String,
         loanPurpose: String,
         loanPurposeCategory: String,
+        businessType: String,
+        businessLocation: String,
+        kraPin: String
     ) -> Unit,
     override val loanRefId: String,
     override val loanType: String,
@@ -154,7 +157,11 @@ class DefaultAddGuarantorsComponent(
             requiredGuarantors,
             loanCategory,
             loanPurpose,
-            loanPurposeCategory
+            loanPurposeCategory,
+            businessType,
+            businessLocation,
+            kraPin
+
         )
     }
     init {

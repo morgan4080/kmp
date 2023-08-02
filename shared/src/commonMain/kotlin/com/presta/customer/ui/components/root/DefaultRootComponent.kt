@@ -203,7 +203,7 @@ class DefaultRootComponent(
         )
 
         is Config.LongTermLoanConfirmation -> RootComponent.Child.LongTermLoanConfirmationChild(
-            longTermLoanConfirmationComponent(componentContext,config)
+            longTermLoanConfirmationComponent(componentContext, config)
         )
 
     }
@@ -325,6 +325,7 @@ class DefaultRootComponent(
                         pinStatus = pinStatus
                     )
                 )
+
                 OnBoardingContext.LOGIN -> {
                     if (memberRefId !== null) navigation.push(
                         Config.Auth(
@@ -339,6 +340,7 @@ class DefaultRootComponent(
                 }
             }
         }
+
     private fun registerComponent(
         componentContext: ComponentContext, config: Config.Register
     ): RegistrationComponent = DefaultRegistrationComponent(componentContext = componentContext,
@@ -621,7 +623,7 @@ class DefaultRootComponent(
                 //signHomeNavigation.pop()
                 navigation.pop()
             },
-            onContinueClicked = { loanRefId, loanType, desiredAmount, loanPeriod, requiredGuarantors, loanCategory, loanPurpose, loanPurposeCategory ->
+            onContinueClicked = { loanRefId, loanType, desiredAmount, loanPeriod, requiredGuarantors, loanCategory, loanPurpose, loanPurposeCategory, businessType, businessLocation, kraPin ->
                 //Navigate to confirm
                 navigation.push(
                     Config.LongTermLoanConfirmation(
@@ -632,7 +634,10 @@ class DefaultRootComponent(
                         requiredGuarantors = requiredGuarantors,
                         loanCategory = loanCategory,
                         loanPurpose = loanPurpose,
-                        loanPurposeCategory = loanPurposeCategory
+                        loanPurposeCategory = loanPurposeCategory,
+                        businessType = businessType,
+                        businessLocation=businessLocation,
+                        kraPin = kraPin
                     )
                 )
             },
@@ -794,7 +799,7 @@ class DefaultRootComponent(
             val loanType: String,
             val desiredAmount: Double,
             val loanPeriod: Int,
-            val requiredGuarantors: Int,
+            val  requiredGuarantors: Int,
             val loanCategory: String,
             val loanPurpose: String,
             val loanPurposeCategory: String,
@@ -819,6 +824,9 @@ class DefaultRootComponent(
             val loanCategory: String,
             val loanPurpose: String,
             val loanPurposeCategory: String,
+            val businessType: String,
+            val businessLocation: String,
+            val kraPin: String
         ) : Config()
     }
 
