@@ -46,37 +46,35 @@ fun EmployedDetails(
     var employmentNumber by remember { mutableStateOf("") }
     val liveName: String? = signHomeState.prestaTenantByPhoneNumber?.firstName
     val employeename by remember { mutableStateOf(TextFieldValue(liveName.toString())) }
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        if (signHomeState.prestaTenantByPhoneNumber?.refId==null) {
-            LazyColumn(){
-                items(6) {
-                    Row(
+        if (signHomeState.prestaTenantByPhoneNumber?.refId == null) {
+            items(6) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, bottom = 10.dp)
+                        .background(color = MaterialTheme.colorScheme.background),
+                ) {
+                    ElevatedCard(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 10.dp, bottom = 10.dp)
                             .background(color = MaterialTheme.colorScheme.background),
+                        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                     ) {
-                        ElevatedCard(
+                        Box(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .background(color = MaterialTheme.colorScheme.background),
-                            colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .defaultMinSize(40.dp, 40.dp)
-                                    .background(
-                                        ShimmerBrush(
-                                            targetValue = 1300f,
-                                            showShimmer = true
-                                        )
+                                .defaultMinSize(40.dp, 40.dp)
+                                .background(
+                                    ShimmerBrush(
+                                        targetValue = 1300f,
+                                        showShimmer = true
                                     )
-                                    .fillMaxWidth()
-                            ) {
-                            }
+                                )
+                                .fillMaxWidth()
+                        ) {
                         }
                     }
                 }
@@ -99,101 +97,122 @@ fun EmployedDetails(
                     employmentNumber = it.value.value.toString()
                 }
             }
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp)) {
-                LiveTextContainer(
-                    userInput = employer,
-                    label = "Employer"
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp)
                 ) {
-                    val inputValue: String = TextFieldValue(it).text
-                    if (inputValue != "") {
-                        if (TextFieldValue(it).text !== "") {
-                            grossSalary = TextFieldValue(it)
-                        } else {
-                            //Throw error
+                    LiveTextContainer(
+                        userInput = employer,
+                        label = "Employer"
+                    ) {
+                        val inputValue: String = TextFieldValue(it).text
+                        if (inputValue != "") {
+                            if (TextFieldValue(it).text !== "") {
+                                grossSalary = TextFieldValue(it)
+                            } else {
+                                //Throw error
+                            }
                         }
                     }
                 }
             }
-            Row(modifier = Modifier
-                .fillMaxWidth()) {
-                LiveTextContainer(
-                    userInput = employmentNumber,
-                    label = "Employment Number"
+            item {
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
                 ) {
-                    val inputValue: String = TextFieldValue(it).text
-                    if (inputValue != "") {
-                        if (TextFieldValue(it).text !== "") {
-                            grossSalary = TextFieldValue(it)
-                        } else {
-                            //Throw error
+                    LiveTextContainer(
+                        userInput = employmentNumber,
+                        label = "Employment Number"
+                    ) {
+                        val inputValue: String = TextFieldValue(it).text
+                        if (inputValue != "") {
+                            if (TextFieldValue(it).text !== "") {
+                                grossSalary = TextFieldValue(it)
+                            } else {
+                                //Throw error
+                            }
                         }
                     }
                 }
             }
-            Row(modifier = Modifier.fillMaxWidth()) {
-                LiveTextContainer(
-                    userInput = grossSalaryData,
-                    label = "Gross Salary"
-                ) {
-                    val inputValue: String = TextFieldValue(it).text
-                    if (inputValue != "") {
-                        if (TextFieldValue(it).text !== "") {
-                            grossSalary = TextFieldValue(it)
-                        } else {
-                            //Throw error
+            item {
+
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    LiveTextContainer(
+                        userInput = grossSalaryData,
+                        label = "Gross Salary"
+                    ) {
+                        val inputValue: String = TextFieldValue(it).text
+                        if (inputValue != "") {
+                            if (TextFieldValue(it).text !== "") {
+                                grossSalary = TextFieldValue(it)
+                            } else {
+                                //Throw error
+                            }
+                        }
+                    }
+
+                }
+            }
+            item {
+
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    LiveTextContainer(
+                        userInput = netSalary,
+                        label = "Net Salary"
+                    ) {
+                        val inputValue: String = TextFieldValue(it).text
+                        if (inputValue != "") {
+                            if (TextFieldValue(it).text !== "") {
+                                grossSalary = TextFieldValue(it)
+                            } else {
+                                //Throw error
+                            }
                         }
                     }
                 }
 
             }
-            Row(modifier = Modifier.fillMaxWidth()) {
-                LiveTextContainer(
-                    userInput = netSalary,
-                    label = "Net Salary"
-                ) {
-                    val inputValue: String = TextFieldValue(it).text
-                    if (inputValue != "") {
-                        if (TextFieldValue(it).text !== "") {
-                            grossSalary = TextFieldValue(it)
-                        } else {
-                            //Throw error
+            item {
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    LiveTextContainer(
+                        userInput = kraPin,
+                        label = "KRA Pin"
+                    ) {
+                        val inputValue: String = TextFieldValue(it).text
+                        if (inputValue != "") {
+                            if (TextFieldValue(it).text !== "") {
+                                grossSalary = TextFieldValue(it)
+                            } else {
+                                //Throw error
+                            }
                         }
                     }
                 }
+            }
+            item {
 
-            }
-            Row(modifier = Modifier.fillMaxWidth()) {
-                LiveTextContainer(
-                    userInput = kraPin,
-                    label = "KRA Pin"
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 40.dp)
                 ) {
-                    val inputValue: String = TextFieldValue(it).text
-                    if (inputValue != "") {
-                        if (TextFieldValue(it).text !== "") {
-                            grossSalary = TextFieldValue(it)
-                        } else {
-                            //Throw error
-                        }
-                    }
+                    val multipleVariables =
+                        MultipleVariables(grossSalary.text, employeename.text, true)
+                    ActionButton(
+                        label = "Submit",
+                        onClickContainer = {
+                            onClickSubmit(multipleVariables)
+                            println("test groos $grossSalaryData")
+                        },
+                        enabled = true
+                    )
                 }
             }
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 40.dp)
-        ) {
-            val multipleVariables = MultipleVariables(grossSalary.text, employeename.text, true)
-            ActionButton(
-                label = "Submit",
-                onClickContainer = {
-                    onClickSubmit(multipleVariables)
-                    println("test groos $grossSalaryData")
-                },
-                enabled = true
-            )
         }
     }
 }

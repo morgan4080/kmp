@@ -170,6 +170,34 @@ fun UserInformation(
                             })
                         }
 
+//                        {
+//                            "loanProductRefId": "string",
+//                            "loanAmount": 0,
+//                            "memberRefId": "string",
+//                            "details": {
+//                            "additionalProp1": {
+//                            "value": "string",
+//                            "type": "BOOLEAN"
+//                        },
+//                            "additionalProp2": {
+//                            "value": "string",
+//                            "type": "BOOLEAN"
+//                        },
+//                            "additionalProp3": {
+//                            "value": "string",
+//                            "type": "BOOLEAN"
+//                        }
+//                        },
+//                            "witnessRefId": "string",
+//                            "guarantorList": [
+//                            {
+//                                "memberRefId": "string",
+//                                "committedAmount": 0
+//                            }
+//                            ]
+//                        }
+//
+
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -180,6 +208,8 @@ fun UserInformation(
                                     //Submit  the loan Request and pass the required data
                                     //Execute  Submit Loan Request Api- pass   the required data
                                     //submit The loan request
+                                    //Pass the required Data
+
 
 
                                     println("Name is :::::::")

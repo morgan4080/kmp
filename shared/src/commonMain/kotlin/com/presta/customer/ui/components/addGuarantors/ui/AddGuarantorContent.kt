@@ -146,7 +146,16 @@ fun AddGuarantorContent(
     var businessLocationData by remember { mutableStateOf("") }
     var businessTypeData by remember { mutableStateOf("") }
     var kraPinData by remember { mutableStateOf("") }
+    //Added
     var employerName by remember { mutableStateOf("") }
+    var employer by remember { mutableStateOf("") }
+    var grossSalaryData by remember { mutableStateOf("") }
+    var netSalary by remember { mutableStateOf("") }
+    var kraPin by remember { mutableStateOf("") }
+    var employmentNumber by remember { mutableStateOf("") }
+    var businessLocation by remember { mutableStateOf("") }
+    var businessType by remember { mutableStateOf("") }
+
     if (memberNumber != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -171,6 +180,30 @@ fun AddGuarantorContent(
 
         }
     }
+    signHomeState.prestaTenantByPhoneNumber?.details?.map { it ->
+        if (it.key.contains("employer")) {
+            employer = it.value.value.toString()
+        }
+        if (it.key.contains("GROSS")) {
+            grossSalaryData = it.value.value.toString()
+        }
+        if (it.key.contains("net")) {
+            netSalary = it.value.value.toString()
+        }
+        if (it.key.contains("kra")) {
+            kraPin = it.value.value.toString()
+        }
+        if (it.key.contains("employment")) {
+            employmentNumber = it.value.value.toString()
+        }
+        if (it.key.contains("businessL")) {
+            businessLocation = it.value.value.toString()
+        }
+        if (it.key.contains("businessT")) {
+            businessType = it.value.value.toString()
+        }
+    }
+
     val scope = rememberCoroutineScope()
     //Todo--Some  loans needs more than one guarantor
     //get loan by The refid and check the  number of guarantors
@@ -224,16 +257,18 @@ fun AddGuarantorContent(
 //
 //                            },
                             onClickSubmit = { multipleVariables ->
-                                println( multipleVariables.grossSalary)
+                                println(multipleVariables.grossSalary)
                                 //test
                                 println("Test2fromfff" + multipleVariables.variable2)
-                                employerName=multipleVariables.variable2
+                                employerName = multipleVariables.variable2
                                 allConditionsChecked = true
                                 scope.launch { modalBottomSheetState.hide() }
                             }
                         )
+
                         1 -> SelfEmployedDetails(
-                            onValueChanged = { change ->
+                            signHomeState,
+                            onBusinessLocationChanged = { change ->
                                 businessLocationData = change
 
                             },
@@ -534,9 +569,14 @@ fun AddGuarantorContent(
                                             .background(Color(0xFFE5F1F5))
                                             .size(25.dp),
                                         onClick = {
-                                            println("This is the listing 3 from  $businessLocationData")
-                                            println("This is the data   $businessTypeData")
-                                            println("Employeer alias " + employerName)
+                                            //Test
+//                                            var businessLocationData by remember { mutableStateOf("") }
+//                                            var businessTypeData by remember { mutableStateOf("") }
+//                                            var kraPinData by remember { mutableStateOf("") }
+                                            println("Business Location " + businessLocationData)
+                                            println("Business Type " + businessTypeData)
+                                            println("kra Pin " + kraPinData)
+                                            println("Business Location" + businessLocation)
                                             //println(receivedData)
 
 //                                            snackBarScope.launch {
@@ -544,7 +584,6 @@ fun AddGuarantorContent(
 //                                                    "member data"
 //                                                )
 //                                            }
-
                                             //open contacts Library
 //                                        component.platform.getContact().map { contact ->
 //                                            println("Test Contact")
@@ -564,7 +603,6 @@ fun AddGuarantorContent(
                             }
                         }
                     }
-
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -607,7 +645,6 @@ fun AddGuarantorContent(
                             if (guarantorOption == state.selfGuarantee || guarantorOption == state.memberNo) {
                                 //Check  Whether self guarantee is allowed
                                 //Todo --add the selected guarantors  on a list based on the required number
-
 
                                 if (signHomeState.prestaTenantByMemberNumber?.firstName != null) {
                                     listing1 = signHomeState.prestaTenantByMemberNumber.firstName
