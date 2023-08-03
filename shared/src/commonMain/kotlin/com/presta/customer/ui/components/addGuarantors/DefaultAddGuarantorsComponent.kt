@@ -39,7 +39,13 @@ class DefaultAddGuarantorsComponent(
         loanPurposeCategory: String,
         businessType: String,
         businessLocation: String,
-        kraPin: String
+        kraPin: String,
+        employer: String,
+        employmentNumber: String,
+        grossSalary: Double,
+        netSalary: Double,
+        memberRefId: String,
+        guarantorList:ArrayList<String>
     ) -> Unit,
     override val loanRefId: String,
     override val loanType: String,
@@ -146,9 +152,14 @@ class DefaultAddGuarantorsComponent(
         loanPurposeCategory: String,
         businessType: String,
         businessLocation: String,
-        kraPin: String
-
-        ) {
+        kraPin: String,
+        employer: String,
+        employmentNumber: String,
+        grossSalary: Double,
+        netSalary: Double,
+        memberRefId: String,
+        guarantorList:ArrayList<String>
+    ) {
         onContinueClicked(
             loanRefId,
             loanType,
@@ -160,10 +171,16 @@ class DefaultAddGuarantorsComponent(
             loanPurposeCategory,
             businessType,
             businessLocation,
-            kraPin
-
+            kraPin,
+            employer,
+            employmentNumber,
+            grossSalary,
+            netSalary,
+            memberRefId,
+            guarantorList
         )
     }
+
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         checkAuthenticatedUser()

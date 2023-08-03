@@ -24,6 +24,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
+import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.longTermLoanConfirmation.LongTermLoanConfirmationComponent
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.LoanInformation
@@ -38,6 +40,8 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 fun LongTermLoanConfirmationContent(
     component: LongTermLoanConfirmationComponent,
     signProfileState: SignHomeStore.State,
+    authState: AuthStore.State,
+    onLongTermLoanEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
 ) {
     var tabs = listOf("User Information", "Loan Information")
     var tabIndex by remember { mutableStateOf(0) }
@@ -110,7 +114,7 @@ fun LongTermLoanConfirmationContent(
                     }
                 }
                 when (tabIndex) {
-                    0 -> UserInformation(signProfileState)
+                    0 -> UserInformation(component,authState,signProfileState,onLongTermLoanEvent)
                     1 -> LoanInformation(component)
                 }
             }

@@ -1,5 +1,6 @@
 package com.presta.customer.ui.components.longTermLoanConfirmation
 
+import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import kotlinx.coroutines.flow.StateFlow
@@ -13,6 +14,15 @@ interface LongTermLoanConfirmationComponent {
     val loanCategory: String
     val loanPurpose: String
     val loanPurposeCategory: String
+    val businessType: String
+    val businessLocation: String
+    val kraPin: String
+    val employer: String
+    val employmentNumber: String
+    val grossSalary: Double
+    val netSalary: Double
+    val memberRefId: String
+    val guarantorList: ArrayList<String>
     fun onBackNavClicked()
     fun onProductSelected(
 
@@ -23,5 +33,9 @@ interface LongTermLoanConfirmationComponent {
     fun onSignProfileEvent(event: SignHomeStore.Intent)
     val sigHomeStore: SignHomeStore
     val signHomeState: StateFlow<SignHomeStore.State>
+    //apply  loan
+    fun onEvent(event: ApplyLongTermLoansStore.Intent)
+    val applyLongTermLoansStore: ApplyLongTermLoansStore
+    val applyLongTermLoansState: StateFlow<ApplyLongTermLoansStore.State>
 
 }

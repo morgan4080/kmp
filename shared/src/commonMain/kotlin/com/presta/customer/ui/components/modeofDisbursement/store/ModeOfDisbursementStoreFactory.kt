@@ -35,7 +35,6 @@ class ModeOfDisbursementStoreFactory(
             ) {}
     private sealed class Msg {
         data class LoanRequestLoaded(val requestId:  String?) : Msg()
-
         data class LoanRequestsLoading(val isLoading: Boolean = true) : Msg()
 
         data class LoanRequestFailedFailed(val error: String?) : Msg()

@@ -35,7 +35,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
+import com.presta.customer.network.longTermLoans.client.DetailsData
+import com.presta.customer.network.longTermLoans.model.Guarantor
 import com.presta.customer.ui.components.addGuarantors.ui.SelectGuarantorsView
+import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
+import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.longTermLoanConfirmation.LongTermLoanConfirmationComponent
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
@@ -51,20 +56,25 @@ data class Repayment_modes(
     val value: String,
     val selected: Boolean
 )
-
 @Composable
 fun UserInformation(
-    signProfileState: SignHomeStore.State
+    component: LongTermLoanConfirmationComponent,
+    authState: AuthStore.State,
+    signProfileState: SignHomeStore.State,
+    onLongTermLoanEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
 ) {
     var selectedIndex by remember { mutableStateOf(-1) }
     var launchDisbursementModePopUp by remember { mutableStateOf(false) }
     var launchPaymentModePopUp by remember { mutableStateOf(false) }
     var lastName by remember { mutableStateOf(TextFieldValue()) }
-    var disbursementMode  by remember { mutableStateOf("") }
-    var repaymentMode  by remember { mutableStateOf("") }
-
-
-
+    var disbursementMode by remember { mutableStateOf("") }
+    var repaymentMode by remember { mutableStateOf("") }
+    val guarantorList = arrayListOf<Guarantor>()
+    guarantorList.add(Guarantor("", "200"))
+    guarantorList.add(Guarantor("", "400"))
+    val guarantorList3 = arrayListOf<DetailsData>()
+    //guarantorList3.add(details)
+    // val guarantorDetailsList = listOf(GuarantorDetails())
     Column(modifier = Modifier.padding(top = 20.dp)) {
         LazyColumn() {
             if (signProfileState.prestaTenantByPhoneNumber?.firstName == null) {
@@ -169,35 +179,6 @@ fun UserInformation(
                                 launchPaymentModePopUp = true
                             })
                         }
-
-//                        {
-//                            "loanProductRefId": "string",
-//                            "loanAmount": 0,
-//                            "memberRefId": "string",
-//                            "details": {
-//                            "additionalProp1": {
-//                            "value": "string",
-//                            "type": "BOOLEAN"
-//                        },
-//                            "additionalProp2": {
-//                            "value": "string",
-//                            "type": "BOOLEAN"
-//                        },
-//                            "additionalProp3": {
-//                            "value": "string",
-//                            "type": "BOOLEAN"
-//                        }
-//                        },
-//                            "witnessRefId": "string",
-//                            "guarantorList": [
-//                            {
-//                                "memberRefId": "string",
-//                                "committedAmount": 0
-//                            }
-//                            ]
-//                        }
-//
-
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -209,11 +190,46 @@ fun UserInformation(
                                     //Execute  Submit Loan Request Api- pass   the required data
                                     //submit The loan request
                                     //Pass the required Data
-
-
-
+                                    println("Data arrived " + component.loanType)
                                     println("Name is :::::::")
                                     println(lastName.text)
+                                    authState.cachedMemberData?.let {
+                                        ApplyLongTermLoansStore.Intent.RequestLongTermLoan(
+                                            token = it.accessToken,
+                                            details = DetailsData(
+                                                loan_purpose_1 = "Agriculture",
+                                                loan_purpose_2 = "Crop  Farming",
+                                                loan_purpose_3 = "Coffee",
+                                                loanPurposeCode = "1120",
+                                                loanPeriod = component.loanPeriod.toString(),
+                                                repayment_period = "4",
+                                                employer_name = component.employer,
+                                                employment_type = "aa",
+                                                employment_number = component.employmentNumber,
+                                                business_location = component.businessLocation,
+                                                business_type = component.businessType,
+                                                net_salary = component.netSalary.toString(),
+                                                gross_salary = component.grossSalary.toString(),
+                                                disbursement_mode = "Cheques",
+                                                repayment_mode = "Check Off",
+                                                loan_type = component.loanType,
+                                                kraPin = component.kraPin
+                                            ),
+                                            loanProductName = component.loanType,
+                                            loanProductRefId = component.loanRefId,
+                                            selfCommitment = 0.0,
+                                            loanAmount = component.desiredAmount,
+                                            memberRefId = component.memberRefId,
+                                            memberNumber = signProfileState.prestaTenantByPhoneNumber.memberNumber,
+                                            witnessRefId = "O1yMVEdh0kYzfYxi",
+                                            guarantorList = guarantorList,
+                                        )
+                                    }?.let {
+                                        onLongTermLoanEvent(
+                                            it
+                                        )
+                                    }
+
                                 },
                                 enabled = true
                             )
@@ -297,9 +313,11 @@ fun UserInformation(
                                                                 Index = indexed,
                                                                 selected = selectedIndex == indexed,
                                                                 onClick = { index: Int ->
-                                                                    selectedIndex = if (selectedIndex == index) -1 else index
+                                                                    selectedIndex =
+                                                                        if (selectedIndex == index) -1 else index
                                                                     if (selectedIndex > -1) {
-                                                                        disbursementMode = disburementModeListing[selectedIndex].name
+                                                                        disbursementMode =
+                                                                            disburementModeListing[selectedIndex].name
                                                                     }
                                                                 },
                                                                 label = disbursementModes.name
@@ -450,9 +468,11 @@ fun UserInformation(
                                                                 Index = indexedPay,
                                                                 selected = selectedIndex == indexedPay,
                                                                 onClick = { index: Int ->
-                                                                    selectedIndex = if (selectedIndex == index) -1 else index
+                                                                    selectedIndex =
+                                                                        if (selectedIndex == index) -1 else index
                                                                     if (selectedIndex > -1) {
-                                                                        repaymentMode= repaymentmentModeListing[selectedIndex].name
+                                                                        repaymentMode =
+                                                                            repaymentmentModeListing[selectedIndex].name
                                                                     }
                                                                 },
                                                                 label = repamentModes.name

@@ -30,7 +30,13 @@ interface AddGuarantorsComponent {
         loanPurposeCategory: String,
         businessType: String,
         businessLocation: String,
-        kraPin: String
+        kraPin: String,
+        employer: String,
+        employmentNumber: String,
+        grossSalary: Double,
+        netSalary:Double,
+        memberRefId:String,
+        guarantorList:ArrayList<String>
     )
     val authStore: AuthStore
     val authState: StateFlow<AuthStore.State>

@@ -5,8 +5,12 @@ import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
+import com.presta.customer.network.longTermLoans.client.DetailsData
 import com.presta.customer.network.longTermLoans.data.LongTermLoansRepository
 import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
+import com.presta.customer.network.longTermLoans.model.Details
+import com.presta.customer.network.longTermLoans.model.Guarantor
+import com.presta.customer.network.longTermLoans.model.LongTermLoanRequestResponse
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
@@ -51,6 +55,9 @@ class ApplyLongTermLoansStoreFactory(
             Msg()
 
         data class ClientSettingsLoaded(val clientSettingsLoaded: ClientSettingsResponse) :
+            Msg()
+
+        data class LongTermLoanRequestLoaded(val longTermLoanRequestResponse: LongTermLoanRequestResponse) :
             Msg()
 
         data class LongTermLoansFailed(val error: String?) : Msg()
@@ -99,6 +106,18 @@ class ApplyLongTermLoansStoreFactory(
 
                 )
 
+                is ApplyLongTermLoansStore.Intent.RequestLongTermLoan -> requestLongTermLoan(
+                    token = intent.token,
+                    details = intent.details,
+                    loanProductName = intent.loanProductName,
+                    loanProductRefId = intent.loanProductRefId,
+                    selfCommitment = intent.selfCommitment,
+                    loanAmount = intent.loanAmount,
+                    memberRefId = intent.memberRefId,
+                    memberNumber = intent.memberNumber,
+                    witnessRefId = intent.witnessRefId,
+                    guarantorList = intent.guarantorList,
+                )
             }
 
         private var getPrestaLongTermLoansProductsJob: Job? = null
@@ -236,11 +255,11 @@ class ApplyLongTermLoansStoreFactory(
         private fun getClientSettings(
             token: String
         ) {
-            if (getPrestaLongTermLoansProductsJob?.isActive == true) return
+            if (getPrestaClientSettingsJob?.isActive == true) return
 
             dispatch(Msg.LongTermLoansLoading())
 
-            getPrestaLongTermLoansProductsJob = scope.launch {
+            getPrestaClientSettingsJob = scope.launch {
                 longTermLoansRepository.getClientSettingsData(
                     token = token
                 ).onSuccess { response ->
@@ -256,9 +275,43 @@ class ApplyLongTermLoansStoreFactory(
             }
         }
 
-
+        private var requestLongTermLoanJob: Job? = null
+        private fun requestLongTermLoan(
+            token: String,
+            details: DetailsData,
+            loanProductName: String,
+            loanProductRefId: String,
+            selfCommitment: Double,
+            loanAmount: Double,
+            memberRefId: String,
+            memberNumber: String,
+            witnessRefId: String?,
+            guarantorList: ArrayList<Guarantor>,
+        ) {
+            if (requestLongTermLoanJob?.isActive == true) return
+            dispatch(Msg.LongTermLoansLoading())
+            requestLongTermLoanJob = scope.launch {
+                longTermLoansRepository.requestLongTermLoan(
+                    token,
+                    details,
+                    loanProductName,
+                    loanProductRefId,
+                    selfCommitment,
+                    loanAmount,
+                    memberRefId,
+                    memberNumber,
+                    witnessRefId,
+                    guarantorList,
+                ).onSuccess { response ->
+                    dispatch(Msg.LongTermLoanRequestLoaded(response))
+                    println("LongTerm Loan Request  Success Success")
+                }.onFailure { e ->
+                    dispatch(Msg.LongTermLoansFailed(e.message))
+                }
+                dispatch(Msg.LongTermLoansLoading(false))
+            }
+        }
     }
-
     private object ReducerImpl :
         Reducer<ApplyLongTermLoansStore.State, Msg> {
         override fun ApplyLongTermLoansStore.State.reduce(msg: Msg): ApplyLongTermLoansStore.State =
@@ -271,11 +324,11 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.LongTermLoansSubCategoriesLoaded -> copy(
                     prestaLongTermLoanProductsSubCategories = msg.longTermLoansSubCategoryLoaded
                 )
-
                 is Msg.LongTermLoansSubCategoriesChildrenLoaded -> copy(
                     prestaLongTermLoanProductsSubCategoriesChildren = msg.longTermLoansSubCategoryChildrenLoaded
                 )
-                is Msg.ClientSettingsLoaded -> copy(prestaClientSettings=msg.clientSettingsLoaded)
+                is Msg.ClientSettingsLoaded -> copy(prestaClientSettings = msg.clientSettingsLoaded)
+                is Msg.LongTermLoanRequestLoaded -> copy(prestaLongTermLoanRequestData = msg.longTermLoanRequestResponse)
             }
     }
 

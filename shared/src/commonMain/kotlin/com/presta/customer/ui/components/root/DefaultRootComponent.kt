@@ -623,7 +623,23 @@ class DefaultRootComponent(
                 //signHomeNavigation.pop()
                 navigation.pop()
             },
-            onContinueClicked = { loanRefId, loanType, desiredAmount, loanPeriod, requiredGuarantors, loanCategory, loanPurpose, loanPurposeCategory, businessType, businessLocation, kraPin ->
+            onContinueClicked = { loanRefId,
+                                  loanType,
+                                  desiredAmount,
+                                  loanPeriod,
+                                  requiredGuarantors,
+                                  loanCategory,
+                                  loanPurpose,
+                                  loanPurposeCategory,
+                                  businessType,
+                                  businessLocation,
+                                  kraPin,
+                                  employer,
+                                  employmentNumber,
+                                  grossSalary,
+                                  netSalary,
+                                  memberRefId,
+                                  guarantorList ->
                 //Navigate to confirm
                 navigation.push(
                     Config.LongTermLoanConfirmation(
@@ -636,8 +652,14 @@ class DefaultRootComponent(
                         loanPurpose = loanPurpose,
                         loanPurposeCategory = loanPurposeCategory,
                         businessType = businessType,
-                        businessLocation=businessLocation,
-                        kraPin = kraPin
+                        businessLocation = businessLocation,
+                        kraPin = kraPin,
+                        employer = employer,
+                        employmentNumber = employmentNumber,
+                        grossSalary = grossSalary,
+                        netSalary = netSalary,
+                        memberRefId = memberRefId,
+                        guarantorList = guarantorList
                     )
                 )
             },
@@ -694,7 +716,16 @@ class DefaultRootComponent(
             requiredGuarantors = config.requiredGuarantors,
             loanCategory = config.loanCategory,
             loanPurpose = config.loanPurpose,
-            loanPurposeCategory = config.loanPurposeCategory
+            loanPurposeCategory = config.loanPurposeCategory,
+            businessType = config.businessType,
+            businessLocation = config.businessLocation,
+            kraPin = config.kraPin,
+            employer = config.employer,
+            employmentNumber = config.employmentNumber,
+            grossSalary = config.grossSalary,
+            netSalary = config.netSalary,
+            memberRefId = config.memberRefId,
+            guarantorList = config.guarantorList
         )
 
     enum class OnBoardingContext {
@@ -799,7 +830,7 @@ class DefaultRootComponent(
             val loanType: String,
             val desiredAmount: Double,
             val loanPeriod: Int,
-            val  requiredGuarantors: Int,
+            val requiredGuarantors: Int,
             val loanCategory: String,
             val loanPurpose: String,
             val loanPurposeCategory: String,
@@ -826,7 +857,13 @@ class DefaultRootComponent(
             val loanPurposeCategory: String,
             val businessType: String,
             val businessLocation: String,
-            val kraPin: String
+            val kraPin: String,
+            val employer: String,
+            val employmentNumber: String,
+            val grossSalary: Double,
+            val netSalary: Double,
+            val memberRefId: String,
+            val guarantorList: ArrayList<String>
         ) : Config()
     }
 

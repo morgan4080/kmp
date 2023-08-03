@@ -1,12 +1,16 @@
 package com.presta.customer.network.longTermLoans.data
 
+import com.presta.customer.network.longTermLoans.client.DetailsData
 import com.presta.customer.network.longTermLoans.client.PrestaLongTermLoansClient
 import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
+import com.presta.customer.network.longTermLoans.model.Guarantor
+import com.presta.customer.network.longTermLoans.model.LongTermLoanRequestResponse
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
+import com.presta.customer.network.signHome.model.Details
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -27,7 +31,6 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
         }
 
     }
-
     override suspend fun getLongTermProductLoanById(
         token: String,
         loanRefId: String
@@ -76,7 +79,6 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
             Result.failure(e)
         }
     }
-
     override suspend fun getLongTermLoanSubCategoriesChildrenData(
         token: String,
         parent: String,
@@ -105,6 +107,39 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
             )
             Result.success(response)
 
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+
+    override suspend fun requestLongTermLoan(
+        token: String,
+        details: DetailsData,
+        loanProductName: String,
+        loanProductRefId: String,
+        selfCommitment: Double,
+        loanAmount: Double,
+        memberRefId: String,
+        memberNumber: String,
+        witnessRefId: String?,
+        guarantorList: ArrayList<Guarantor>,
+    ): Result<LongTermLoanRequestResponse> {
+        return try {
+            val response = prestaLongTermLoansClient.sendLongTermLoanRequest(
+                token = token,
+                details = details,
+                loanProductName = loanProductName,
+                loanProductRefId = loanProductRefId,
+                selfCommitment = selfCommitment,
+                loanAmount = loanAmount,
+                memberRefId = memberRefId,
+                memberNumber = memberNumber,
+                witnessRefId = witnessRefId,
+                guarantorList = guarantorList,
+            )
+            Result.success(response)
         } catch (e: Exception) {
             e.printStackTrace()
             Result.failure(e)

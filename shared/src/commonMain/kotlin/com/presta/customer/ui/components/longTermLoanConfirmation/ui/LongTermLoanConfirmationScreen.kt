@@ -13,7 +13,9 @@ fun LongTermLoanConfirmationScreen(
     val  signHomeStateState by component.signHomeState.collectAsState()
     LongTermLoanConfirmationContent(
         component = component,
-        signProfileState = signHomeStateState
+        signProfileState = signHomeStateState,
+        authState = authState,
+        onLongTermLoanEvent = component::onEvent
     )
 
 }

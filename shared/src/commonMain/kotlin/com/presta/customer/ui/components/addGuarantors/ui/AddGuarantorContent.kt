@@ -149,12 +149,13 @@ fun AddGuarantorContent(
     //Added
     var employerName by remember { mutableStateOf("") }
     var employer by remember { mutableStateOf("") }
-    var grossSalaryData by remember { mutableStateOf("") }
+    var grossSalary by remember { mutableStateOf("") }
     var netSalary by remember { mutableStateOf("") }
     var kraPin by remember { mutableStateOf("") }
     var employmentNumber by remember { mutableStateOf("") }
     var businessLocation by remember { mutableStateOf("") }
     var businessType by remember { mutableStateOf("") }
+    val guarantorData = arrayListOf<String>()
 
     if (memberNumber != "") {
         LaunchedEffect(
@@ -185,7 +186,7 @@ fun AddGuarantorContent(
             employer = it.value.value.toString()
         }
         if (it.key.contains("GROSS")) {
-            grossSalaryData = it.value.value.toString()
+            grossSalary = it.value.value.toString()
         }
         if (it.key.contains("net")) {
             netSalary = it.value.value.toString()
@@ -203,7 +204,6 @@ fun AddGuarantorContent(
             businessType = it.value.value.toString()
         }
     }
-
     val scope = rememberCoroutineScope()
     //Todo--Some  loans needs more than one guarantor
     //get loan by The refid and check the  number of guarantors
@@ -672,10 +672,12 @@ fun AddGuarantorContent(
                                                         .padding(top = 30.dp)
                                                         .background(MaterialTheme.colorScheme.background)
                                                 ) {
+                                                    //Todo-----
                                                     //mutable value  of the text label
                                                     //The Details are either user details or the selected user
                                                     //some loans may require more than one guarantor
                                                     //Self Guaranteeing  may be disabled
+                                                    //for the gurantorlist -take memberRefid and the commited amount
                                                     GuarantorsDetailsView(
                                                         label = "Details",
                                                         onClick = {
@@ -693,7 +695,6 @@ fun AddGuarantorContent(
                             }
                         }
                     }
-                    //Action Button
                     Row(
                         modifier = Modifier
                             .padding(top = 30.dp)
@@ -711,20 +712,27 @@ fun AddGuarantorContent(
                                     launchAddAmountToGuarantee = false
                                     launchCheckSelfAndEmPloyedPopUp = true
                                     if (allConditionsChecked) {
-                                        //Transfer Relevant Data to Confirm
-                                        component.onContinueSelected(
-                                            component.loanRefId,
-                                            component.loanType,
-                                            component.desiredAmount,
-                                            component.loanPeriod,
-                                            component.requiredGuarantors,
-                                            component.loanCategory,
-                                            component.loanPurpose,
-                                            component.loanPurposeCategory,
-                                            businessType = businessTypeData,
-                                            businessLocation = businessLocationData,
-                                            kraPin = kraPinData
-                                        )
+                                        signHomeState.prestaTenantByPhoneNumber?.refId?.let {
+                                            component.onContinueSelected(
+                                                component.loanRefId,
+                                                component.loanType,
+                                                component.desiredAmount,
+                                                component.loanPeriod,
+                                                component.requiredGuarantors,
+                                                component.loanCategory,
+                                                component.loanPurpose,
+                                                component.loanPurposeCategory,
+                                                businessType = businessTypeData,
+                                                businessLocation = businessLocationData,
+                                                kraPin = kraPin,
+                                                employer = employer,
+                                                employmentNumber = employmentNumber,
+                                                grossSalary = grossSalary.toDouble(),
+                                                netSalary = netSalary.toDouble(),
+                                                memberRefId = it,
+                                                guarantorList = guarantorData,
+                                            )
+                                        }
                                         launchCheckSelfAndEmPloyedPopUp = false
                                         scope.launch { modalBottomSheetState.hide() }
                                     }
