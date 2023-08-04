@@ -61,7 +61,6 @@ data class LongTermLoanRequestData constructor(
     val witnessRefId: String?,
     val guarantorList: ArrayList<Guarantor>,
 )
-
 class PrestaLongTermLoansClient(
     private val httpClient: HttpClient
 ) {
@@ -152,7 +151,6 @@ class PrestaLongTermLoansClient(
             }
         }
     }
-
     suspend fun sendLongTermLoanRequest(
         token: String,
         details: DetailsData,

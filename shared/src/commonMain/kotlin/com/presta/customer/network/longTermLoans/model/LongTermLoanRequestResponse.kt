@@ -1,7 +1,6 @@
 package com.presta.customer.network.longTermLoans.model
 
 import com.presta.customer.network.longTermLoans.client.DetailsData
-import com.presta.customer.network.longTermLoans.tst.Guarantor
 import kotlinx.serialization.Serializable
 
 @Serializable

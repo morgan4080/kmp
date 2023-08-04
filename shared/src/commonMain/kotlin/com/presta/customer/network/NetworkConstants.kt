@@ -128,4 +128,7 @@ object NetworkConstants {
         const val route =  EguarantorshipApplicationV2BaseUrl + "loan-request"
 
     }
+    object PrestaUpdateMemberDetails {
+        const val route =  EguarantorshipApplicationV1BaseUrl + "members"
+    }
 }

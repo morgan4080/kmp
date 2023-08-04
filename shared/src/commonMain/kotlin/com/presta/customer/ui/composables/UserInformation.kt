@@ -56,6 +56,7 @@ data class Repayment_modes(
     val value: String,
     val selected: Boolean
 )
+
 @Composable
 fun UserInformation(
     component: LongTermLoanConfirmationComponent,
@@ -130,7 +131,7 @@ fun UserInformation(
 //                                    } else {
 //
 //                                    }
-//                                }
+//                               }
                             }
                         }
                         Row(modifier = Modifier.fillMaxWidth()) {
@@ -162,19 +163,22 @@ fun UserInformation(
                                 .fillMaxWidth()
                                 .padding(top = 10.dp)
                         ) {
-                            ModeSelectionCard(label = "Disbursement Mode", onClickContainer = {
-                                //launch POP Up
-                                launchDisbursementModePopUp = true
+                            ModeSelectionCard(label = "Disbursement Mode",
+                                description = if (disbursementMode != "") disbursementMode else "",
+                                onClickContainer = {
+                                    //launch POP Up
+                                    launchDisbursementModePopUp = true
 
-
-                            })
+                                })
                         }
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 10.dp)
                         ) {
-                            ModeSelectionCard(label = "Repayment Mode", onClickContainer = {
+                            ModeSelectionCard(label = "Repayment Mode",
+                                description = if (repaymentMode!= "") repaymentMode else "",
+                                onClickContainer = {
                                 //launch POP Up
                                 launchPaymentModePopUp = true
                             })
@@ -190,16 +194,18 @@ fun UserInformation(
                                     //Execute  Submit Loan Request Api- pass   the required data
                                     //submit The loan request
                                     //Pass the required Data
-                                    println("Data arrived " + component.loanType)
+                                    println("Data arrived " + component.loanPurpose)
                                     println("Name is :::::::")
+                                    println("Repayment Mode:: " + disbursementMode)
+                                    // Repayment mode
                                     println(lastName.text)
                                     authState.cachedMemberData?.let {
                                         ApplyLongTermLoansStore.Intent.RequestLongTermLoan(
                                             token = it.accessToken,
                                             details = DetailsData(
-                                                loan_purpose_1 = "Agriculture",
-                                                loan_purpose_2 = "Crop  Farming",
-                                                loan_purpose_3 = "Coffee",
+                                                loan_purpose_1 = component.loanCategory,
+                                                loan_purpose_2 = component.loanPurpose,
+                                                loan_purpose_3 = component.loanPurposeCategory,
                                                 loanPurposeCode = "1120",
                                                 loanPeriod = component.loanPeriod.toString(),
                                                 repayment_period = "4",
@@ -210,8 +216,8 @@ fun UserInformation(
                                                 business_type = component.businessType,
                                                 net_salary = component.netSalary.toString(),
                                                 gross_salary = component.grossSalary.toString(),
-                                                disbursement_mode = "Cheques",
-                                                repayment_mode = "Check Off",
+                                                disbursement_mode = disbursementMode,
+                                                repayment_mode = repaymentMode,
                                                 loan_type = component.loanType,
                                                 kraPin = component.kraPin
                                             ),
@@ -221,7 +227,7 @@ fun UserInformation(
                                             loanAmount = component.desiredAmount,
                                             memberRefId = component.memberRefId,
                                             memberNumber = signProfileState.prestaTenantByPhoneNumber.memberNumber,
-                                            witnessRefId = "O1yMVEdh0kYzfYxi",
+                                            witnessRefId = "",
                                             guarantorList = guarantorList,
                                         )
                                     }?.let {

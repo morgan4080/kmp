@@ -3,7 +3,6 @@ package com.presta.customer.ui.composables
 import ShimmerBrush
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.presta.customer.network.signHome.model.Details
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
@@ -40,12 +40,15 @@ fun EmployedDetails(
     var lastName by remember { mutableStateOf(TextFieldValue()) }
     var grossSalary by remember { mutableStateOf(TextFieldValue()) }
     var employer by remember { mutableStateOf("") }
+    var employername by remember { mutableStateOf("") }
     var grossSalaryData by remember { mutableStateOf("") }
     var netSalary by remember { mutableStateOf("") }
     var kraPin by remember { mutableStateOf("") }
     var employmentNumber by remember { mutableStateOf("") }
     val liveName: String? = signHomeState.prestaTenantByPhoneNumber?.firstName
     val employeename by remember { mutableStateOf(TextFieldValue(liveName.toString())) }
+    var employerkey by remember { mutableStateOf("") }
+    val userDetailsMap = mutableMapOf<String, String>()
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -83,8 +86,9 @@ fun EmployedDetails(
             signHomeState.prestaTenantByPhoneNumber.details?.map { it ->
                 if (it.key.contains("employer")) {
                     employer = it.value.value.toString()
+                    employerkey = it.key
                 }
-                if (it.key.contains("GROSS")) {
+                if (it.key.contains("gross")) {
                     grossSalaryData = it.value.value.toString()
                 }
                 if (it.key.contains("net")) {
@@ -207,6 +211,20 @@ fun EmployedDetails(
                         label = "Submit",
                         onClickContainer = {
                             onClickSubmit(multipleVariables)
+                            //Submit  Updates
+                            userDetailsMap[employerkey] = "Presta Africa cap"
+                            authState.cachedMemberData?.let {
+                                SignHomeStore.Intent.UpdatePrestaTenantDetails(
+                                    token = it.accessToken,
+                                    memberRefId = it.refId,
+                                    details = Details(employerkey,employer)
+                                )
+                            }?.let {
+                                onProfileEvent(
+                                    it
+                                )
+                            }
+
                             println("test groos $grossSalaryData")
                         },
                         enabled = true

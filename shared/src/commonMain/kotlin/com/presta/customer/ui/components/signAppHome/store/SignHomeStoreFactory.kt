@@ -6,6 +6,7 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.signHome.data.SignHomeRepository
+import com.presta.customer.network.signHome.model.Details
 import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
 import com.presta.customer.prestaDispatchers
 import kotlinx.coroutines.Job
@@ -37,6 +38,9 @@ class SignHomeStoreFactory(
         data class SignTenantByMemberNumberLoaded(val signTenantByMemberNumber: PrestaSignUserDetailsResponse) :
             Msg()
 
+        data class UpdateSignTenantDetails(val updateSignTenantDetails: PrestaSignUserDetailsResponse) :
+            Msg()
+
         data class SignHomeFailed(val error: String?) : Msg()
     }
 
@@ -61,6 +65,12 @@ class SignHomeStoreFactory(
                 is SignHomeStore.Intent.GetPrestaTenantByMemberNumber -> getPrestaTenantByMemberNumber(
                     token = intent.token,
                     memberNumber = intent.memberNumber
+                )
+
+                is SignHomeStore.Intent.UpdatePrestaTenantDetails -> updatePrestaMemberDetails(
+                    token = intent.token,
+                    memberRefId = intent.memberRefId,
+                    details = intent.details
                 )
 
             }
@@ -88,6 +98,7 @@ class SignHomeStoreFactory(
                 dispatch(Msg.SignHomeLoading(false))
             }
         }
+
         private var getPrestaTenantByMemberNumberJob: Job? = null
         private fun getPrestaTenantByMemberNumber(
             token: String,
@@ -109,7 +120,32 @@ class SignHomeStoreFactory(
                 dispatch(Msg.SignHomeLoading(false))
             }
         }
+
+        private var updatePrestaMemberDetailsJob: Job? = null
+        private fun updatePrestaMemberDetails(
+            token: String,
+            memberRefId: String,
+            details: Details
+        ) {
+            if (updatePrestaMemberDetailsJob?.isActive == true) return
+
+            dispatch(Msg.SignHomeLoading())
+
+            updatePrestaMemberDetailsJob = scope.launch {
+                signHomeRepository.upDateMemberDetails(
+                    token = token,
+                    memberRefId = memberRefId,
+                    details = details
+                ).onSuccess { response ->
+                    dispatch(Msg.UpdateSignTenantDetails(response))
+                }.onFailure { e ->
+                    dispatch(Msg.SignHomeFailed(e.message))
+                }
+                dispatch(Msg.SignHomeLoading(false))
+            }
+        }
     }
+
     private object ReducerImpl :
         Reducer<SignHomeStore.State, Msg> {
         override fun SignHomeStore.State.reduce(msg: Msg): SignHomeStore.State =
@@ -118,6 +154,7 @@ class SignHomeStoreFactory(
                 is Msg.SignHomeFailed -> copy(error = msg.error)
                 is Msg.SignTenantByPhoneNumberLoaded -> copy(prestaTenantByPhoneNumber = msg.signTenantById)
                 is Msg.SignTenantByMemberNumberLoaded -> copy(prestaTenantByMemberNumber = msg.signTenantByMemberNumber)
+                is Msg.UpdateSignTenantDetails -> copy(updatePrestaTenantDetails = msg.updateSignTenantDetails)
 
             }
     }

@@ -149,6 +149,7 @@ fun AddGuarantorContent(
     //Added
     var employerName by remember { mutableStateOf("") }
     var employer by remember { mutableStateOf("") }
+    var employerkey by remember { mutableStateOf("") }
     var grossSalary by remember { mutableStateOf("") }
     var netSalary by remember { mutableStateOf("") }
     var kraPin by remember { mutableStateOf("") }
@@ -184,6 +185,7 @@ fun AddGuarantorContent(
     signHomeState.prestaTenantByPhoneNumber?.details?.map { it ->
         if (it.key.contains("employer")) {
             employer = it.value.value.toString()
+            employerkey=it.key
         }
         if (it.key.contains("GROSS")) {
             grossSalary = it.value.value.toString()
@@ -205,6 +207,9 @@ fun AddGuarantorContent(
         }
     }
     val scope = rememberCoroutineScope()
+
+    val userDetailsMap  = mutableMapOf<String, String>()
+    userDetailsMap[employerkey] = employerName
     //Todo--Some  loans needs more than one guarantor
     //get loan by The refid and check the  number of guarantors
     //Check  whether the organisation support self Guarantee
@@ -256,13 +261,27 @@ fun AddGuarantorContent(
 //                                grossSalaryData=grossSalary
 //
 //                            },
+                            //Delegated onclick Button functions
                             onClickSubmit = { multipleVariables ->
                                 println(multipleVariables.grossSalary)
                                 //test
                                 println("Test2fromfff" + multipleVariables.variable2)
                                 employerName = multipleVariables.variable2
                                 allConditionsChecked = true
-                                scope.launch { modalBottomSheetState.hide() }
+                                //scope.launch { modalBottomSheetState.hide() }
+                                //Post the Changed user info
+//                                authState.cachedMemberData?.let {
+//                                    SignHomeStore.Intent.UpdatePrestaTenantDetails(
+//                                        token = it.accessToken,
+//                                        memberRefId = "",
+//                                        details =userDetailsMap
+//                                    )
+//                                }?.let {
+//                                    onProfileEvent(
+//                                        it
+//                                    )
+//                                }
+
                             }
                         )
 

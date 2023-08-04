@@ -29,8 +29,7 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ModeSelectionCard(label: String, description: String? = null, onClickContainer: () -> Unit) {
-    //Has  single central text-use cases- Select Bank.etc -has  more  padding than  The product Selection card
+fun ModeSelectionCard(label: String, description: String? = "", onClickContainer: () -> Unit) {
     ElevatedCard(
         onClick = onClickContainer,
         modifier = Modifier.fillMaxWidth()
@@ -50,13 +49,14 @@ fun ModeSelectionCard(label: String, description: String? = null, onClickContain
                         fontSize = 14.sp,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                     )
-                    if (description != null) {
-                        Text(
-
-                            text = description,
-                            modifier = Modifier.padding(start = 15.dp),
-                            fontSize = 12.sp,
-                        )
+                    if (description != "") {
+                        if (description != null) {
+                            Text(
+                                text = description,
+                                modifier = Modifier.padding(start = 15.dp),
+                                fontSize = 12.sp,
+                            )
+                        }
                     }
                 }
                 Row() {
