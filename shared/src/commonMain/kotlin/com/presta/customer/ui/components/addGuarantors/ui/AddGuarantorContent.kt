@@ -624,7 +624,6 @@ fun AddGuarantorContent(
                             .fillMaxWidth()
                             .fillMaxHeight(0.8f)
                     ) {
-
                         if (guarantorOption == "") {
                             item {
                                 Row(
@@ -682,7 +681,17 @@ fun AddGuarantorContent(
                         ActionButton(
                             label = if (searchGuarantorByMemberNumber) "Search" else "Continue",
                             onClickContainer = {
-                                if (searchGuarantorByMemberNumber && signHomeState.prestaTenantByMemberNumber?.firstName != null) {
+                                        authState.cachedMemberData?.let {
+                                            SignHomeStore.Intent.GetPrestaTenantByMemberNumber(
+                                                token = it.accessToken,
+                                                memberNumber = memberNumber
+                                            )
+                                        }?.let {
+                                            onProfileEvent(
+                                                it
+                                            )
+                                        }
+                                if (searchGuarantorByMemberNumber) {
                                     launchCheckSelfAndEmPloyedPopUp = false
                                     launchAddAmountToGuarantee = true
                                     scope.launch { modalBottomSheetState.show() }
