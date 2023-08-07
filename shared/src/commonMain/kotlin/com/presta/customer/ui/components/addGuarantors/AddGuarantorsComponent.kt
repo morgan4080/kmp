@@ -15,6 +15,7 @@ interface AddGuarantorsComponent {
     val requiredGuarantors: Int
     val loanCategory: String
     val loanPurposeCategory: String
+    val loanPurposeCategoryCode: String
     val loanPurpose: String
     val platform: Platform
     val contactlist: ContactsUtils
@@ -36,7 +37,8 @@ interface AddGuarantorsComponent {
         grossSalary: Double,
         netSalary:Double,
         memberRefId:String,
-        guarantorList:ArrayList<String>
+        guarantorList:ArrayList<String>,
+        loanPurposeCategoryCode: String
     )
     val authStore: AuthStore
     val authState: StateFlow<AuthStore.State>

@@ -45,7 +45,7 @@ class SignHomeRepositoryImpl : SignHomeRepository, KoinComponent {
     override suspend fun upDateMemberDetails(
         token: String,
         memberRefId: String,
-        details: Details
+       details:MutableMap<String,String>
     ): Result<PrestaSignUserDetailsResponse> {
         return try {
             val response = prestaSignHomeClient.upDateMemberDetails(

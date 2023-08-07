@@ -20,32 +20,50 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 
 @Composable
 fun SelfEmployedDetails(
     signHomeState: SignHomeStore.State,
-    onBusinessLocationChanged: (String) -> Unit,
-    onBusinessTypeChanged: (String) -> Unit,
-    onKRAPinChanged: (String) -> Unit,
+    authState: AuthStore.State,
+    onProfileEvent: (SignHomeStore.Intent) -> Unit,
 ) {
-    var businessLocationData by remember { mutableStateOf("") }
-    var businessTypeData by remember { mutableStateOf("") }
-    var kraPinData by remember { mutableStateOf("") }
+    var employernameLive by remember { mutableStateOf("") }
+    var employmentNumberLive by remember { mutableStateOf("") }
+    var grossSalaryDataLive by remember { mutableStateOf("") }
+    var netSalaryLive by remember { mutableStateOf("") }
+    var kraPinLive by remember { mutableStateOf("") }
+    var businessLocationLive by remember { mutableStateOf("") }
+    var businessTypeLive by remember { mutableStateOf("") }
+    val userDetailsMap = mutableMapOf<String, String>()
+
     signHomeState.prestaTenantByPhoneNumber?.details?.map { it ->
-        if (it.key.contains("businessL")) {
-            businessLocationData = it.value.value.toString()
+        if (it.key.contains("employer")) {
+            employernameLive = it.value.value.toString()
         }
-        if (it.key.contains("businessT")) {
-            businessTypeData = it.value.value.toString()
+        if (it.key.contains("gross")) {
+            grossSalaryDataLive = it.value.value.toString()
+        }
+        if (it.key.contains("net")) {
+            netSalaryLive = it.value.value.toString()
         }
         if (it.key.contains("kra")) {
-            kraPinData = it.value.value.toString()
+            kraPinLive = it.value.value.toString()
+        }
+        if (it.key.contains("employment")) {
+            employmentNumberLive = it.value.value.toString()
+        }
+        if (it.key.contains("businessLocation")) {
+            businessLocationLive = it.value.value.toString()
+        }
+        if (it.key.contains("businessType")) {
+            businessTypeLive = it.value.value.toString()
         }
     }
-    var businessLocation by remember { mutableStateOf(TextFieldValue(businessLocationData)) }
-    var kraPin by remember { mutableStateOf(TextFieldValue(kraPinData)) }
-    var businessType by remember { mutableStateOf(TextFieldValue(businessTypeData)) }
+    var businessLocation by remember { mutableStateOf(TextFieldValue(businessLocationLive)) }
+    var kraPin by remember { mutableStateOf(TextFieldValue(kraPinLive)) }
+    var businessType by remember { mutableStateOf(TextFieldValue(businessTypeLive)) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -97,9 +115,7 @@ fun SelfEmployedDetails(
                     if (inputValue != "") {
                         if (TextFieldValue(it).text !== "") {
                             businessLocation = TextFieldValue(it)
-                            onBusinessLocationChanged(it)
                         } else {
-                            //Throw error
                         }
                     }
                 }
@@ -113,25 +129,24 @@ fun SelfEmployedDetails(
                     if (inputValue != "") {
                         if (TextFieldValue(it).text !== "") {
                             businessType = TextFieldValue(it)
-                            onBusinessTypeChanged(it)
                         } else {
-                            //Throw error
+
                         }
                     }
                 }
             }
             Row(modifier = Modifier.fillMaxWidth()) {
                 LiveTextContainer(
-                    userInput = kraPin.text,
+                    userInput = kraPinLive,
                     label = "KRA pin"
                 ) {
                     val inputValue: String = TextFieldValue(it).text
                     if (inputValue != "") {
                         if (TextFieldValue(it).text !== "") {
                             kraPin = TextFieldValue(it)
-                            onKRAPinChanged(it)
+
                         } else {
-                            //Throw error
+
                         }
                     }
                 }
@@ -142,13 +157,32 @@ fun SelfEmployedDetails(
                     .padding(top = 40.dp)
             ) {
                 ActionButton(
-                    label = "Submit", onClickContainer = {
-                        //Suspend the  view
-                        onBusinessLocationChanged(businessLocation.text)
-                        onBusinessTypeChanged(businessType.text)
-                        onKRAPinChanged(kraPin.text)
+                    label = "Submit",
+                    onClickContainer = {
+                        userDetailsMap["employer"] = employernameLive
+                        userDetailsMap["employmentNumber"] = employmentNumberLive
+                        userDetailsMap["grossSalary"] = grossSalaryDataLive
+                        userDetailsMap["netSalary"] = netSalaryLive
+                        userDetailsMap["kraPin"] =
+                            if (kraPin.text != "") kraPin.text else kraPinLive
+                        userDetailsMap["businessLocation"] =
+                            if (businessLocation.text != "") businessLocation.text else businessLocationLive
+                        userDetailsMap["businessType"] =
+                            if (businessType.text != "") businessType.text else businessTypeLive
+                        authState.cachedMemberData?.let {
+                            SignHomeStore.Intent.UpdatePrestaTenantDetails(
+                                token = it.accessToken,
+                                memberRefId = signHomeState.prestaTenantByPhoneNumber.refId,
+                                details = userDetailsMap
+                            )
+                        }?.let {
+                            onProfileEvent(
+                                it
+                            )
+                        }
                     },
-                    enabled = true
+                    enabled = true,
+                    loading = signHomeState.isLoading
                 )
             }
         }

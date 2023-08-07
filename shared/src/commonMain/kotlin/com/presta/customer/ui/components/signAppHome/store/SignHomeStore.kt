@@ -15,7 +15,7 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
         data class UpdatePrestaTenantDetails(
             val token: String,
             val memberRefId: String,
-            val details: Details
+            val details:MutableMap<String,String>
         ) : Intent()
 
     }

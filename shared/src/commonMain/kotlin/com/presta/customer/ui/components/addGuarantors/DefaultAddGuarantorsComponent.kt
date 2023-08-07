@@ -45,7 +45,8 @@ class DefaultAddGuarantorsComponent(
         grossSalary: Double,
         netSalary: Double,
         memberRefId: String,
-        guarantorList:ArrayList<String>
+        guarantorList:ArrayList<String>,
+        loanPurposeCategoryCode: String
     ) -> Unit,
     override val loanRefId: String,
     override val loanType: String,
@@ -55,6 +56,7 @@ class DefaultAddGuarantorsComponent(
     override val loanCategory: String,
     override val loanPurpose: String,
     override val loanPurposeCategory: String,
+    override val loanPurposeCategoryCode: String,
 ) : AddGuarantorsComponent, ComponentContext by componentContext, KoinComponent {
     private val scope = coroutineScope(mainContext + SupervisorJob())
     override val authStore: AuthStore =
@@ -158,7 +160,8 @@ class DefaultAddGuarantorsComponent(
         grossSalary: Double,
         netSalary: Double,
         memberRefId: String,
-        guarantorList:ArrayList<String>
+        guarantorList:ArrayList<String>,
+        loanPurposeCategoryCode: String
     ) {
         onContinueClicked(
             loanRefId,
@@ -177,7 +180,8 @@ class DefaultAddGuarantorsComponent(
             grossSalary,
             netSalary,
             memberRefId,
-            guarantorList
+            guarantorList,
+            loanPurposeCategoryCode
         )
     }
 

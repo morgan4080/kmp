@@ -71,6 +71,7 @@ fun SelectLoanPurposeContent(
     var loanCategory by remember { mutableStateOf("") }
     var loanPurpose by remember { mutableStateOf("") }
     var loanPurposeCategory by remember { mutableStateOf("") }
+    var loanPurposeCategoryCode by remember { mutableStateOf("") }
     if (parentId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -215,8 +216,8 @@ fun SelectLoanPurposeContent(
                                                                                 if (selectedSubCategoryChildrenIndex == subCatsChildIndex) -1 else subCatChildIndex
                                                                             if (selectedSubCategoryChildrenIndex > -1) {
                                                                                 if (selectedSubCategoryChildrenIndex == subCatChildIndex) {
-                                                                                    loanPurposeCategory =
-                                                                                        state.prestaLongTermLoanProductsSubCategoriesChildren[selectedSubCategoryChildrenIndex].name
+                                                                                    loanPurposeCategory = state.prestaLongTermLoanProductsSubCategoriesChildren[selectedSubCategoryChildrenIndex].name
+                                                                                    loanPurposeCategoryCode=state.prestaLongTermLoanProductsSubCategoriesChildren[selectedSubCategoryChildrenIndex].code
                                                                                 }
                                                                             }
 
@@ -263,7 +264,9 @@ fun SelectLoanPurposeContent(
                         requiredGuarantors = component.requiredGuarantors,
                         loanCategory = loanCategory,
                         loanPurpose = loanPurpose,
-                        loanPurposeCategory = loanPurposeCategory
+                        loanPurposeCategory = loanPurposeCategory,
+                        loanPurposeCategoryCode =loanPurposeCategoryCode
+
 //                                loanCategory!="" && loanPurpose!="" && loanPurposeCategory!=""
                     )
                 }, enabled = true)

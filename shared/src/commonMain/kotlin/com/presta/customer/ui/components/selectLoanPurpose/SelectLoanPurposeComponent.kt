@@ -20,6 +20,7 @@ interface SelectLoanPurposeComponent {
         loanCategory: String,
         loanPurpose: String,
         loanPurposeCategory: String,
+        loanPurposeCategoryCode: String,
     )
     val authStore: AuthStore
     val authState: StateFlow<AuthStore.State>

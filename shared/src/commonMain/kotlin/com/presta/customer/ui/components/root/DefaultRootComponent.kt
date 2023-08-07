@@ -590,7 +590,7 @@ class DefaultRootComponent(
                 //signHomeNavigation.pop()
                 navigation.pop()
             },
-            onContinueClicked = { loanRefId, loanType, desiredAmount, loanPeriod, requiredGuarantors, loanCategory, loanPurpose, loanPurposeCategory ->
+            onContinueClicked = { loanRefId, loanType, desiredAmount, loanPeriod, requiredGuarantors, loanCategory, loanPurpose, loanPurposeCategory, loanPurposeCategoryCode ->
                 navigation.push(
                     Config.AddGuarantors(
                         loanRefId = loanRefId,
@@ -600,7 +600,8 @@ class DefaultRootComponent(
                         requiredGuarantors = requiredGuarantors,
                         loanCategory = loanCategory,
                         loanPurpose = loanPurpose,
-                        loanPurposeCategory = loanPurposeCategory
+                        loanPurposeCategory = loanPurposeCategory,
+                        loanPurposeCategoryCode = loanPurposeCategoryCode
                     )
                 )
             },
@@ -639,7 +640,8 @@ class DefaultRootComponent(
                                   grossSalary,
                                   netSalary,
                                   memberRefId,
-                                  guarantorList ->
+                                  guarantorList,
+                                  loanPurposeCategoryCode ->
                 //Navigate to confirm
                 navigation.push(
                     Config.LongTermLoanConfirmation(
@@ -659,7 +661,8 @@ class DefaultRootComponent(
                         grossSalary = grossSalary,
                         netSalary = netSalary,
                         memberRefId = memberRefId,
-                        guarantorList = guarantorList
+                        guarantorList = guarantorList,
+                        loanPurposeCategoryCode = loanPurposeCategoryCode
                     )
                 )
             },
@@ -672,7 +675,8 @@ class DefaultRootComponent(
             requiredGuarantors = config.requiredGuarantors,
             loanCategory = config.loanCategory,
             loanPurpose = config.loanPurpose,
-            loanPurposeCategory = config.loanPurposeCategory
+            loanPurposeCategory = config.loanPurposeCategory,
+            loanPurposeCategoryCode = config.loanPurposeCategoryCode
         )
 
     private fun guarantorshipRequestComponent(componentContext: ComponentContext): GuarantorshipRequestComponent =
@@ -725,7 +729,8 @@ class DefaultRootComponent(
             grossSalary = config.grossSalary,
             netSalary = config.netSalary,
             memberRefId = config.memberRefId,
-            guarantorList = config.guarantorList
+            guarantorList = config.guarantorList,
+            loanPurposeCategoryCode = config.loanPurposeCategoryCode
         )
 
     enum class OnBoardingContext {
@@ -834,6 +839,7 @@ class DefaultRootComponent(
             val loanCategory: String,
             val loanPurpose: String,
             val loanPurposeCategory: String,
+            val loanPurposeCategoryCode: String,
         ) : Config()
 
         @Parcelize
@@ -863,7 +869,8 @@ class DefaultRootComponent(
             val grossSalary: Double,
             val netSalary: Double,
             val memberRefId: String,
-            val guarantorList: ArrayList<String>
+            val guarantorList: ArrayList<String>,
+            val loanPurposeCategoryCode: String,
         ) : Config()
     }
 

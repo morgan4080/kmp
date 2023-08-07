@@ -19,7 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.presta.customer.network.signHome.model.Details
+import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
@@ -35,19 +35,21 @@ fun EmployedDetails(
     signHomeState: SignHomeStore.State,
     onProfileEvent: (SignHomeStore.Intent) -> Unit,
     //onKRAPinChanged: (String) -> Unit,
-    onClickSubmit: (MultipleVariables) -> Unit,
+    onClickSubmit: () -> Unit,
+    component: AddGuarantorsComponent,
 ) {
-    var lastName by remember { mutableStateOf(TextFieldValue()) }
+    var employernameLive by remember { mutableStateOf("") }
+    var employmentNumberLive by remember { mutableStateOf("") }
+    var grossSalaryDataLive by remember { mutableStateOf("") }
+    var netSalaryLive by remember { mutableStateOf("") }
+    var kraPinLive by remember { mutableStateOf("") }
+    var businessLocationLive by remember { mutableStateOf("") }
+    var businessTypeLive by remember { mutableStateOf("") }
+    var employer by remember { mutableStateOf(TextFieldValue()) }
+    var employMentNumber by remember { mutableStateOf(TextFieldValue()) }
     var grossSalary by remember { mutableStateOf(TextFieldValue()) }
-    var employer by remember { mutableStateOf("") }
-    var employername by remember { mutableStateOf("") }
-    var grossSalaryData by remember { mutableStateOf("") }
-    var netSalary by remember { mutableStateOf("") }
-    var kraPin by remember { mutableStateOf("") }
-    var employmentNumber by remember { mutableStateOf("") }
-    val liveName: String? = signHomeState.prestaTenantByPhoneNumber?.firstName
-    val employeename by remember { mutableStateOf(TextFieldValue(liveName.toString())) }
-    var employerkey by remember { mutableStateOf("") }
+    var netSalary by remember { mutableStateOf(TextFieldValue()) }
+    var kraPin by remember { mutableStateOf(TextFieldValue()) }
     val userDetailsMap = mutableMapOf<String, String>()
     LazyColumn(
         modifier = Modifier
@@ -85,20 +87,25 @@ fun EmployedDetails(
         } else {
             signHomeState.prestaTenantByPhoneNumber.details?.map { it ->
                 if (it.key.contains("employer")) {
-                    employer = it.value.value.toString()
-                    employerkey = it.key
+                    employernameLive = it.value.value.toString()
                 }
                 if (it.key.contains("gross")) {
-                    grossSalaryData = it.value.value.toString()
+                    grossSalaryDataLive = it.value.value.toString()
                 }
                 if (it.key.contains("net")) {
-                    netSalary = it.value.value.toString()
+                    netSalaryLive = it.value.value.toString()
                 }
                 if (it.key.contains("kra")) {
-                    kraPin = it.value.value.toString()
+                    kraPinLive = it.value.value.toString()
                 }
                 if (it.key.contains("employment")) {
-                    employmentNumber = it.value.value.toString()
+                    employmentNumberLive = it.value.value.toString()
+                }
+                if (it.key.contains("businessLocation")) {
+                    businessLocationLive = it.value.value.toString()
+                }
+                if (it.key.contains("businessType")) {
+                    businessTypeLive = it.value.value.toString()
                 }
             }
             item {
@@ -108,13 +115,13 @@ fun EmployedDetails(
                         .padding(top = 20.dp)
                 ) {
                     LiveTextContainer(
-                        userInput = employer,
+                        userInput = employernameLive,
                         label = "Employer"
                     ) {
                         val inputValue: String = TextFieldValue(it).text
                         if (inputValue != "") {
                             if (TextFieldValue(it).text !== "") {
-                                grossSalary = TextFieldValue(it)
+                                employer = TextFieldValue(it)
                             } else {
                                 //Throw error
                             }
@@ -129,13 +136,13 @@ fun EmployedDetails(
                         .fillMaxWidth()
                 ) {
                     LiveTextContainer(
-                        userInput = employmentNumber,
+                        userInput = employmentNumberLive,
                         label = "Employment Number"
                     ) {
                         val inputValue: String = TextFieldValue(it).text
                         if (inputValue != "") {
                             if (TextFieldValue(it).text !== "") {
-                                grossSalary = TextFieldValue(it)
+                                employMentNumber = TextFieldValue(it)
                             } else {
                                 //Throw error
                             }
@@ -147,7 +154,7 @@ fun EmployedDetails(
 
                 Row(modifier = Modifier.fillMaxWidth()) {
                     LiveTextContainer(
-                        userInput = grossSalaryData,
+                        userInput = grossSalaryDataLive,
                         label = "Gross Salary"
                     ) {
                         val inputValue: String = TextFieldValue(it).text
@@ -166,13 +173,13 @@ fun EmployedDetails(
 
                 Row(modifier = Modifier.fillMaxWidth()) {
                     LiveTextContainer(
-                        userInput = netSalary,
+                        userInput = netSalaryLive,
                         label = "Net Salary"
                     ) {
                         val inputValue: String = TextFieldValue(it).text
                         if (inputValue != "") {
                             if (TextFieldValue(it).text !== "") {
-                                grossSalary = TextFieldValue(it)
+                                netSalary = TextFieldValue(it)
                             } else {
                                 //Throw error
                             }
@@ -184,13 +191,13 @@ fun EmployedDetails(
             item {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     LiveTextContainer(
-                        userInput = kraPin,
+                        userInput = kraPinLive,
                         label = "KRA Pin"
                     ) {
                         val inputValue: String = TextFieldValue(it).text
                         if (inputValue != "") {
                             if (TextFieldValue(it).text !== "") {
-                                grossSalary = TextFieldValue(it)
+                                kraPin = TextFieldValue(it)
                             } else {
                                 //Throw error
                             }
@@ -205,19 +212,26 @@ fun EmployedDetails(
                         .fillMaxWidth()
                         .padding(top = 40.dp)
                 ) {
-                    val multipleVariables =
-                        MultipleVariables(grossSalary.text, employeename.text, true)
                     ActionButton(
                         label = "Submit",
                         onClickContainer = {
-                            onClickSubmit(multipleVariables)
-                            //Submit  Updates
-                            userDetailsMap[employerkey] = "Presta Africa cap"
+                            userDetailsMap["employer"] =
+                                if (employer.text != "") employer.text else employernameLive
+                            userDetailsMap["employmentNumber"] =
+                                if (employMentNumber.text != "") employMentNumber.text else employmentNumberLive
+                            userDetailsMap["grossSalary"] =
+                                if (grossSalary.text != "") grossSalary.text else grossSalaryDataLive
+                            userDetailsMap["netSalary"] =
+                                if (netSalary.text != "") netSalary.text else netSalaryLive
+                            userDetailsMap["kraPin"] =
+                                if (kraPin.text != "") kraPin.text else kraPinLive
+                            userDetailsMap["businessLocation"] = businessLocationLive
+                            userDetailsMap["businessType"] = businessTypeLive
                             authState.cachedMemberData?.let {
                                 SignHomeStore.Intent.UpdatePrestaTenantDetails(
                                     token = it.accessToken,
-                                    memberRefId = it.refId,
-                                    details = Details(employerkey,employer)
+                                    memberRefId = signHomeState.prestaTenantByPhoneNumber.refId,
+                                    details = userDetailsMap
                                 )
                             }?.let {
                                 onProfileEvent(
@@ -225,9 +239,12 @@ fun EmployedDetails(
                                 )
                             }
 
-                            println("test groos $grossSalaryData")
+                            //Todo-----show failed or successful update
+                            onClickSubmit()
+
                         },
-                        enabled = true
+                        enabled =true,
+                        loading = signHomeState.isLoading
                     )
                 }
             }

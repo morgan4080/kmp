@@ -125,7 +125,7 @@ class SignHomeStoreFactory(
         private fun updatePrestaMemberDetails(
             token: String,
             memberRefId: String,
-            details: Details
+            details: MutableMap<String,String>
         ) {
             if (updatePrestaMemberDetailsJob?.isActive == true) return
 

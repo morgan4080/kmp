@@ -23,6 +23,7 @@ interface LongTermLoanConfirmationComponent {
     val netSalary: Double
     val memberRefId: String
     val guarantorList: ArrayList<String>
+    val loanPurposeCategoryCode: String
     fun onBackNavClicked()
     fun onProductSelected(
 

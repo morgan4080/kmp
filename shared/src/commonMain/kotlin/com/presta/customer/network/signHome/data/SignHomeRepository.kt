@@ -1,6 +1,5 @@
 package com.presta.customer.network.signHome.data
 
-import com.presta.customer.network.signHome.model.Details
 import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
 
 interface SignHomeRepository {
@@ -17,6 +16,6 @@ interface SignHomeRepository {
     suspend fun upDateMemberDetails(
         token: String,
         memberRefId: String,
-        details: Details,
+        details:MutableMap<String,String>,
     ): Result<PrestaSignUserDetailsResponse>
 }

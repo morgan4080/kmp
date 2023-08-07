@@ -2,12 +2,10 @@ package com.presta.customer.network.signHome.client
 
 import com.presta.customer.network.NetworkConstants
 import com.presta.customer.network.signHome.errorHandler.signHomeErrorHandler
-import com.presta.customer.network.signHome.model.Details
 import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
-import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType.Application.Json
@@ -17,7 +15,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MemberDetails(
-    val details: Details
+    val details: MutableMap<String,String>,
 )
 
 class PrestaSignHomeClient(
@@ -58,7 +56,7 @@ class PrestaSignHomeClient(
     suspend fun upDateMemberDetails(
         token: String,
         memberRefId: String,
-        details: Details,
+        details:MutableMap<String,String>,
     ): PrestaSignUserDetailsResponse {
         return signHomeErrorHandler {
             httpClient.put("${NetworkConstants.PrestaUpdateMemberDetails.route}/${memberRefId}") {
@@ -66,7 +64,7 @@ class PrestaSignHomeClient(
                 contentType(Json)
                 setBody(
                     MemberDetails(
-                        details = details
+                         details = details
                     )
                 )
             }

@@ -31,6 +31,7 @@ class DefaultSelectLoanPurposeComponent(
         loanCategory: String,
         loanPurpose: String,
         loanPurposeCategory: String,
+        loanPurposeCategoryCode: String,
     ) -> Unit,
     override val loanRefId: String,
     override val loanType: String,
@@ -111,6 +112,7 @@ class DefaultSelectLoanPurposeComponent(
         loanCategory: String,
         loanPurpose: String,
         loanPurposeCategory: String,
+        loanPurposeCategoryCode: String,
     ) {
         onContinueClicked(
             loanRefId,
@@ -120,7 +122,8 @@ class DefaultSelectLoanPurposeComponent(
             requiredGuarantors,
             loanCategory,
             loanPurpose,
-            loanPurposeCategory
+            loanPurposeCategory,
+            loanPurposeCategoryCode
         )
     }
 

@@ -166,7 +166,6 @@ fun UserInformation(
                             ModeSelectionCard(label = "Disbursement Mode",
                                 description = if (disbursementMode != "") disbursementMode else "",
                                 onClickContainer = {
-                                    //launch POP Up
                                     launchDisbursementModePopUp = true
 
                                 })
@@ -177,11 +176,10 @@ fun UserInformation(
                                 .padding(top = 10.dp)
                         ) {
                             ModeSelectionCard(label = "Repayment Mode",
-                                description = if (repaymentMode!= "") repaymentMode else "",
+                                description = if (repaymentMode != "") repaymentMode else "",
                                 onClickContainer = {
-                                //launch POP Up
-                                launchPaymentModePopUp = true
-                            })
+                                    launchPaymentModePopUp = true
+                                })
                         }
                         Row(
                             modifier = Modifier
@@ -190,15 +188,6 @@ fun UserInformation(
                         ) {
                             ActionButton(
                                 label = "Submit  Loan Request", onClickContainer = {
-                                    //Submit  the loan Request and pass the required data
-                                    //Execute  Submit Loan Request Api- pass   the required data
-                                    //submit The loan request
-                                    //Pass the required Data
-                                    println("Data arrived " + component.loanPurpose)
-                                    println("Name is :::::::")
-                                    println("Repayment Mode:: " + disbursementMode)
-                                    // Repayment mode
-                                    println(lastName.text)
                                     authState.cachedMemberData?.let {
                                         ApplyLongTermLoansStore.Intent.RequestLongTermLoan(
                                             token = it.accessToken,
@@ -206,7 +195,7 @@ fun UserInformation(
                                                 loan_purpose_1 = component.loanCategory,
                                                 loan_purpose_2 = component.loanPurpose,
                                                 loan_purpose_3 = component.loanPurposeCategory,
-                                                loanPurposeCode = "1120",
+                                                loanPurposeCode = component.loanPurposeCategoryCode,
                                                 loanPeriod = component.loanPeriod.toString(),
                                                 repayment_period = "4",
                                                 employer_name = component.employer,
@@ -237,7 +226,8 @@ fun UserInformation(
                                     }
 
                                 },
-                                enabled = true
+                                enabled = true,
+                                loading = true
                             )
                         }
                     }
