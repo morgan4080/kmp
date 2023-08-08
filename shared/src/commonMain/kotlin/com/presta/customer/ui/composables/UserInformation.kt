@@ -226,8 +226,8 @@ fun UserInformation(
                                     }
 
                                 },
-                                enabled = true,
-                                loading = true
+                                enabled = false,
+                                loading = false
                             )
                         }
                     }

@@ -59,19 +59,27 @@ fun SignSettingsContent(
     authState: AuthStore.State,
     onEvent: (SignHomeStore.Intent) -> Unit,
 ) {
-    val dataTest = state.prestaTenantByPhoneNumber?.firstName
+    var firstnameLive by remember { mutableStateOf("") }
+    var lastnameLive by remember { mutableStateOf("") }
+    var phoneNumberLive by remember { mutableStateOf("") }
+    var idNumberLive by remember { mutableStateOf("") }
+    var emailLive by remember { mutableStateOf("") }
+    val name = state.prestaTenantByPhoneNumber?.firstName
+    if (state.prestaTenantByPhoneNumber?.refId!=null) {
+        firstnameLive = state.prestaTenantByPhoneNumber.firstName
+        lastnameLive = state.prestaTenantByPhoneNumber.lastName
+        phoneNumberLive = state.prestaTenantByPhoneNumber.phoneNumber
+        idNumberLive = state.prestaTenantByPhoneNumber.idNumber
+        emailLive = state.prestaTenantByPhoneNumber.email
+    }
     var firstName by remember { mutableStateOf(TextFieldValue()) }
-    var lastName by remember { mutableStateOf(TextFieldValue("Mutugi")) }
-    var phoneNumber by remember { mutableStateOf(TextFieldValue("0796387377")) }
-    var idNumber by remember { mutableStateOf(TextFieldValue("29955745 ")) }
-    var email by remember { mutableStateOf(TextFieldValue("morganmurungi@live.com")) }
+    var lastName by remember { mutableStateOf(TextFieldValue(lastnameLive)) }
+    var phoneNumber by remember { mutableStateOf(TextFieldValue(phoneNumberLive)) }
+    var idNumber by remember { mutableStateOf(TextFieldValue(idNumberLive)) }
+    var email by remember { mutableStateOf(TextFieldValue(emailLive)) }
     val focusRequester = remember { FocusRequester() }
     val emptyTextContainer by remember { mutableStateOf(TextFieldValue()) }
     var checked by remember { mutableStateOf(false) }
-    val name = state.prestaTenantByPhoneNumber?.firstName
-    if (name != null) {
-        firstName = TextFieldValue(name.toString())
-    }
     Scaffold(
         modifier = Modifier.padding(LocalSafeArea.current),
         topBar = {
@@ -123,32 +131,32 @@ fun SignSettingsContent(
 
                 if (state.prestaTenantByPhoneNumber?.firstName == null) {
                     items(6) {
-                            Row(
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 10.dp, start = 16.dp, end = 16.dp)
+                                .background(color = MaterialTheme.colorScheme.background),
+                        ) {
+                            ElevatedCard(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding( bottom = 10.dp, start = 16.dp, end = 16.dp)
                                     .background(color = MaterialTheme.colorScheme.background),
+                                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                             ) {
-                                ElevatedCard(
+                                Box(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(color = MaterialTheme.colorScheme.background),
-                                    colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .defaultMinSize(40.dp, 40.dp)
-                                            .background(
-                                                ShimmerBrush(
-                                                    targetValue = 1300f,
-                                                    showShimmer = true
-                                                )
+                                        .defaultMinSize(40.dp, 40.dp)
+                                        .background(
+                                            ShimmerBrush(
+                                                targetValue = 1300f,
+                                                showShimmer = true
                                             )
-                                            .fillMaxWidth()
-                                    ) {
-                                    }
+                                        )
+                                        .fillMaxWidth()
+                                ) {
                                 }
                             }
+                        }
 
                     }
                 } else {
@@ -164,9 +172,8 @@ fun SignSettingsContent(
                                 modifier = Modifier
                                     .fillMaxWidth()
                             ) {
-
                                 LiveTextContainer(
-                                    userInput = state.prestaTenantByPhoneNumber.firstName,
+                                    userInput = firstnameLive,
                                     label = "First Name"
                                 ) {
                                     val inputValue: String = TextFieldValue(it).text
@@ -185,13 +192,13 @@ fun SignSettingsContent(
                                     .fillMaxWidth()
                             ) {
                                 LiveTextContainer(
-                                    userInput = state.prestaTenantByPhoneNumber.lastName,
+                                    userInput = lastnameLive,
                                     label = "last Name "
                                 ) {
                                     val inputValue: String = TextFieldValue(it).text
                                     if (inputValue != "") {
                                         if (TextFieldValue(it).text !== "") {
-                                            firstName = TextFieldValue(it)
+                                            lastName = TextFieldValue(it)
 
                                         } else {
 
@@ -204,13 +211,13 @@ fun SignSettingsContent(
                                     .fillMaxWidth()
                             ) {
                                 LiveTextContainer(
-                                    userInput = state.prestaTenantByPhoneNumber.phoneNumber,
+                                    userInput = phoneNumberLive,
                                     label = "Phone Number"
                                 ) {
                                     val inputValue: String = TextFieldValue(it).text
                                     if (inputValue != "") {
                                         if (TextFieldValue(it).text !== "") {
-                                            firstName = TextFieldValue(it)
+                                            phoneNumber = TextFieldValue(it)
 
                                         } else {
 
@@ -224,13 +231,13 @@ fun SignSettingsContent(
                                     .fillMaxWidth()
                             ) {
                                 LiveTextContainer(
-                                    userInput = state.prestaTenantByPhoneNumber.idNumber,
+                                    userInput = idNumberLive,
                                     label = "ID Number"
                                 ) {
                                     val inputValue: String = TextFieldValue(it).text
                                     if (inputValue != "") {
                                         if (TextFieldValue(it).text !== "") {
-                                            firstName = TextFieldValue(it)
+                                            idNumber = TextFieldValue(it)
 
                                         } else {
 
@@ -243,13 +250,13 @@ fun SignSettingsContent(
                                     .fillMaxWidth()
                             ) {
                                 LiveTextContainer(
-                                    userInput = state.prestaTenantByPhoneNumber.email,
+                                    userInput = emailLive,
                                     label = "Email"
                                 ) {
                                     val inputValue: String = TextFieldValue(it).text
                                     if (inputValue != "") {
                                         if (TextFieldValue(it).text !== "") {
-                                            firstName = TextFieldValue(it)
+                                            email = TextFieldValue(it)
 
                                         } else {
 
@@ -293,11 +300,27 @@ fun SignSettingsContent(
                                     .fillMaxWidth()
                                     .padding(top = 20.dp)
                             ) {
-                                ActionButton(label = "SUBMIT", onClickContainer = {
-                                    //post  The Edfited  Profile
+                                ActionButton(
+                                    label = "SUBMIT", onClickContainer = {
+                                        authState.cachedMemberData?.let {
+                                            SignHomeStore.Intent.UpdatePrestaTenantPersonalInfo(
+                                                token = it.accessToken,
+                                                memberRefId = state.prestaTenantByPhoneNumber.refId,
+                                                firstName = if (firstName.text != "") firstName.text else state.prestaTenantByPhoneNumber.firstName,
+                                                lastName = if (lastName.text != "") lastName.text else state.prestaTenantByPhoneNumber.lastName,
+                                                phoneNumber = if (phoneNumber.text != "") phoneNumber.text else state.prestaTenantByPhoneNumber.phoneNumber,
+                                                idNumber = if (idNumber.text != "") idNumber.text else state.prestaTenantByPhoneNumber.idNumber,
+                                                email = if (email.text != "") email.text else state.prestaTenantByPhoneNumber.email,
+                                            )
+                                        }?.let {
+                                            onEvent(
+                                                it
+                                            )
+                                        }
 
-
-                                })
+                                    },
+                                    loading = state.isLoading
+                                )
                             }
                         }
                     }

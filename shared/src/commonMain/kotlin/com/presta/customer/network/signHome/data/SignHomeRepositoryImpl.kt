@@ -1,7 +1,6 @@
 package com.presta.customer.network.signHome.data
 
 import com.presta.customer.network.signHome.client.PrestaSignHomeClient
-import com.presta.customer.network.signHome.model.Details
 import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -53,6 +52,32 @@ class SignHomeRepositoryImpl : SignHomeRepository, KoinComponent {
                 memberRefId = memberRefId,
                 details = details
 
+            )
+            Result.success(response)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+    override suspend fun upDateMemberPersonalInfo(
+        token: String,
+        memberRefId: String,
+        firstName: String,
+        lastName: String,
+        phoneNumber: String,
+        idNumber: String,
+        email: String
+    ): Result<PrestaSignUserDetailsResponse> {
+        return try {
+            val response = prestaSignHomeClient.upDateMemberPersonalInformation(
+                token = token,
+                memberRefId = memberRefId,
+                firstName =firstName,
+                lastName= lastName,
+                phoneNumber= phoneNumber,
+                idNumber= idNumber,
+                email= email
             )
             Result.success(response)
 

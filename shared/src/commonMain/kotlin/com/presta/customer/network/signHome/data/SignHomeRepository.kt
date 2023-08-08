@@ -18,4 +18,14 @@ interface SignHomeRepository {
         memberRefId: String,
         details:MutableMap<String,String>,
     ): Result<PrestaSignUserDetailsResponse>
+
+    suspend fun upDateMemberPersonalInfo(
+        token: String,
+        memberRefId: String,
+        firstName: String,
+        lastName: String,
+        phoneNumber: String,
+        idNumber: String,
+        email: String
+    ): Result<PrestaSignUserDetailsResponse>
 }

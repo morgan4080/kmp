@@ -15,7 +15,22 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MemberDetails(
-    val details: MutableMap<String,String>,
+    val details: MutableMap<String, String>,
+)
+
+//type memberPayloadType = {firstName?: string,
+//    lastName?: string,
+//    phoneNumber?: string,
+//    idNumber?: string, email?:
+//    string,
+//    refId?: string}
+@Serializable
+data class MemberPersonalInfo(
+    val firstName: String,
+    val lastName: String,
+    val phoneNumber: String,
+    val idNumber: String,
+    val email: String,
 )
 
 class PrestaSignHomeClient(
@@ -53,10 +68,11 @@ class PrestaSignHomeClient(
             }
         }
     }
+
     suspend fun upDateMemberDetails(
         token: String,
         memberRefId: String,
-        details:MutableMap<String,String>,
+        details: MutableMap<String, String>,
     ): PrestaSignUserDetailsResponse {
         return signHomeErrorHandler {
             httpClient.put("${NetworkConstants.PrestaUpdateMemberDetails.route}/${memberRefId}") {
@@ -64,7 +80,33 @@ class PrestaSignHomeClient(
                 contentType(Json)
                 setBody(
                     MemberDetails(
-                         details = details
+                        details = details
+                    )
+                )
+            }
+        }
+    }
+
+    suspend fun upDateMemberPersonalInformation(
+        token: String,
+        memberRefId: String,
+        firstName: String,
+        lastName: String,
+        phoneNumber: String,
+        idNumber: String,
+        email: String
+    ): PrestaSignUserDetailsResponse {
+        return signHomeErrorHandler {
+            httpClient.put("${NetworkConstants.PrestaUpdateMemberDetails.route}/${memberRefId}") {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                contentType(Json)
+                setBody(
+                    MemberPersonalInfo(
+                        firstName = firstName,
+                        lastName = lastName,
+                        phoneNumber = phoneNumber,
+                        idNumber = idNumber,
+                        email = email
                     )
                 )
             }
