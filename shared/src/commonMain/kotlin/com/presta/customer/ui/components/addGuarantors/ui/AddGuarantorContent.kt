@@ -111,6 +111,7 @@ class SnackbarVisualsWithError(
 }
 
 data class GuarantorData(val name: String, val memberNum: String)
+
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AddGuarantorContent(
@@ -333,7 +334,6 @@ fun AddGuarantorContent(
                                 .padding(top = 50.dp, bottom = 50.dp)
                         ) {
                             ActionButton("SUBMIT", onClickContainer = {
-                                //Hide the bottom  sheet and add the guarantor to the list
                                 if (guarantorDataListed.size != component.requiredGuarantors) {
                                     val apiResponse = listOf(
                                         GuarantorDataListing(
@@ -342,10 +342,25 @@ fun AddGuarantorContent(
                                             signHomeState.prestaTenantByMemberNumber.memberNumber,
                                             amountToGuarantee.text,
                                             signHomeState.prestaTenantByMemberNumber.refId,
-                                        ),
+                                        )
                                     )
-                                    guarantorDataListed = guarantorDataListed.toMutableSet().apply {
-                                        addAll(apiResponse)
+                                    val existingItems = guarantorDataListed.toSet()
+                                    val duplicateItems = apiResponse.filter { it in existingItems }
+                                    if (duplicateItems.isNotEmpty()) {
+                                        snackBarScope.launch {
+                                            snackbarHostState.showSnackbar(
+                                                SnackbarVisualsWithError(
+                                                    "Duplicate Entries not  allowed",
+                                                    isError = true
+                                                )
+                                            )
+                                        }
+
+                                    } else {
+                                        guarantorDataListed =
+                                            guarantorDataListed.toMutableSet().apply {
+                                                addAll(apiResponse)
+                                            }
                                     }
                                 }
                                 scope.launch { modalBottomSheetState.hide() }
@@ -636,6 +651,7 @@ fun AddGuarantorContent(
                         }
                         if (launchGuarantorListing) {
                             if (guarantorDataListed.isNotEmpty()) {
+
                                 guarantorDataListed.forEach { item ->
                                     item {
                                         Row(

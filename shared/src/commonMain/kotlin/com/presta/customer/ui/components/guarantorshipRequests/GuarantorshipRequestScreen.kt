@@ -98,8 +98,6 @@ fun GuarantorshipRequestScreen(component: GuarantorshipRequestComponent) {
                 }
             }
 
-            //List the guarantor-ship requests
-
             Spacer(modifier = Modifier.padding(bottom = 100.dp))
 
         }
@@ -146,26 +144,31 @@ fun GuarantorsRequestsView(
                         Text(
                             "Dennis Wanja ",
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
-                            color = actionButtonColor
+                            color = actionButtonColor,
+                            fontSize = 12.sp
                         )
                         Text(
                             "requested you  to",
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                            fontSize = 12.sp
                         )
                     }
 
                     Text(
                         "guarantee their loan LFRTFY of",
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        fontSize = 12.sp
                     )
                     Text(
                         "Ksh 334444",
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
-                        color = actionButtonColor
+                        color = actionButtonColor,
+                        fontSize = 12.sp
                     )
                     Text(
                         "02/06/20222",
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        fontSize = 12.sp
                     )
                 }
             }
