@@ -81,17 +81,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
+import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.EmployedDetails
-import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.LiveTextContainer
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.SelfEmployedDetails
-import com.presta.customer.ui.composables.TextInputContainer
 import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.backArrowColor
@@ -112,13 +111,6 @@ class SnackbarVisualsWithError(
 }
 
 data class GuarantorData(val name: String, val memberNum: String)
-data class GuarantorDataListing(
-    val guarantorName: String,
-    val phoneNumber: String,
-    val memberNumber: String,
-    val amount: String
-)
-
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AddGuarantorContent(
@@ -158,7 +150,7 @@ fun AddGuarantorContent(
     var employmentNumber by remember { mutableStateOf("") }
     var businessLocation by remember { mutableStateOf("") }
     var businessType by remember { mutableStateOf("") }
-    val guarantorData = arrayListOf<String>()
+    val guarantorData = ArrayList<String>()
     var amountToGuarantee by remember { mutableStateOf(TextFieldValue()) }
     var launchGuarantorListing by remember { mutableStateOf(false) }
     if (memberNumber != "") {
@@ -210,16 +202,12 @@ fun AddGuarantorContent(
         }
     }
     val scope = rememberCoroutineScope()
-    var guarantorDataListed by remember { mutableStateOf(emptyList<GuarantorDataListing>()) }
-    //Todo--Some  loans needs more than one guarantor
-    //Do not add  the same guarantor more than once in the selection
-    //get loan by The refid and check the  number of guarantors
-    //Check  whether the organisation support self Guarantee
+    var guarantorDataListed by remember { mutableStateOf(emptySet<GuarantorDataListing>()) }
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         sheetContent = {
-            if (launchCheckSelfAndEmPloyedPopUp && !searchGuarantorByMemberNumber) {
+            if (launchCheckSelfAndEmPloyedPopUp) {
                 val tabs = listOf("Employed", "Business/Self Employed")
                 var tabIndex by remember { mutableStateOf(0) }
                 Column(
@@ -346,10 +334,20 @@ fun AddGuarantorContent(
                         ) {
                             ActionButton("SUBMIT", onClickContainer = {
                                 //Hide the bottom  sheet and add the guarantor to the list
-                                val apiResponse = listOf(
-                                    GuarantorDataListing( signHomeState.prestaTenantByMemberNumber.firstName, signHomeState.prestaTenantByMemberNumber.phoneNumber, signHomeState.prestaTenantByMemberNumber.memberNumber, "400"),
-                                )
-                                guarantorDataListed += apiResponse
+                                if (guarantorDataListed.size != component.requiredGuarantors) {
+                                    val apiResponse = listOf(
+                                        GuarantorDataListing(
+                                            signHomeState.prestaTenantByMemberNumber.firstName,
+                                            signHomeState.prestaTenantByMemberNumber.phoneNumber,
+                                            signHomeState.prestaTenantByMemberNumber.memberNumber,
+                                            amountToGuarantee.text,
+                                            signHomeState.prestaTenantByMemberNumber.refId,
+                                        ),
+                                    )
+                                    guarantorDataListed = guarantorDataListed.toMutableSet().apply {
+                                        addAll(apiResponse)
+                                    }
+                                }
                                 scope.launch { modalBottomSheetState.hide() }
                                 launchGuarantorListing = true
 
@@ -571,8 +569,8 @@ fun AddGuarantorContent(
                                             .size(25.dp),
                                         onClick = {
                                             println("Test code" + component.loanPurposeCategoryCode)
-                                                //Test  the size of the array
-                                            println("Array size is " +guarantorDataListed.size)
+                                            //Test  the size of the array
+                                            println("Array size is " + guarantorDataListed.size)
 
 //                                            snackBarScope.launch {
 //                                                snackbarHostState.showSnackbar(
@@ -638,27 +636,26 @@ fun AddGuarantorContent(
                         }
                         if (launchGuarantorListing) {
                             if (guarantorDataListed.isNotEmpty()) {
-                                guarantorDataListed.forEach {item->
-                                        item {
-                                            Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(top = 30.dp)
-                                                    .background(MaterialTheme.colorScheme.background)
-                                            ) {
-                                                GuarantorsDetailsView(
-                                                    label = item.guarantorName,
-                                                    onClick = {
+                                guarantorDataListed.forEach { item ->
+                                    item {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(top = 30.dp)
+                                                .background(MaterialTheme.colorScheme.background)
+                                        ) {
+                                            GuarantorsDetailsView(
+                                                label = item.guarantorName,
+                                                onClick = {
 
-                                                    },
-                                                    selected = true,
-                                                    phoneNumber = item.phoneNumber,
-                                                    memberNumber = item.memberNumber,
-                                                    amount = item.amount.toDouble()
-                                                )
-                                            }
+                                                },
+                                                selected = true,
+                                                phoneNumber = item.phoneNumber,
+                                                memberNumber = item.memberNumber,
+                                                amount = item.amount.toDouble()
+                                            )
                                         }
-
+                                    }
                                 }
                             }
                         }
@@ -669,7 +666,7 @@ fun AddGuarantorContent(
                             .fillMaxWidth()
                     ) {
                         ActionButton(
-                            label = if (searchGuarantorByMemberNumber) "Search" else "Continue",
+                            label = if (searchGuarantorByMemberNumber && guarantorDataListed.size != component.requiredGuarantors) "Search" else "Continue",
                             onClickContainer = {
                                 authState.cachedMemberData?.let {
                                     SignHomeStore.Intent.GetPrestaTenantByMemberNumber(
@@ -681,11 +678,11 @@ fun AddGuarantorContent(
                                         it
                                     )
                                 }
-                                if (searchGuarantorByMemberNumber) {
+                                if (searchGuarantorByMemberNumber && guarantorDataListed.size != component.requiredGuarantors) {
                                     launchCheckSelfAndEmPloyedPopUp = false
                                     launchAddAmountToGuarantee = true
                                     scope.launch { modalBottomSheetState.show() }
-                                } else {
+                                } else if (guarantorDataListed.size == component.requiredGuarantors) {
                                     scope.launch { modalBottomSheetState.show() }
                                     launchAddAmountToGuarantee = false
                                     launchCheckSelfAndEmPloyedPopUp = true
@@ -708,7 +705,7 @@ fun AddGuarantorContent(
                                                 grossSalary = if (grossSalary != "") grossSalary.toDouble() else 0.0,
                                                 netSalary = if (netSalary != "") netSalary.toDouble() else 0.0,
                                                 memberRefId = it,
-                                                guarantorList = guarantorData,
+                                                guarantorList = guarantorDataListed,
                                                 loanPurposeCategoryCode = component.loanPurposeCategoryCode
                                             )
                                         }

@@ -71,11 +71,12 @@ fun UserInformation(
     var disbursementMode by remember { mutableStateOf("") }
     var repaymentMode by remember { mutableStateOf("") }
     val guarantorList = arrayListOf<Guarantor>()
-    guarantorList.add(Guarantor("", "200"))
-    guarantorList.add(Guarantor("", "400"))
-    val guarantorList3 = arrayListOf<DetailsData>()
-    //guarantorList3.add(details)
-    // val guarantorDetailsList = listOf(GuarantorDetails())
+    for (item in component.guarantorList) {
+        val refId = item.guarantorRefId
+        val amount = item.amount
+        val guarantorName = item.guarantorName
+        guarantorList.add(Guarantor(refId, amount,guarantorName))
+    }
     Column(modifier = Modifier.padding(top = 20.dp)) {
         LazyColumn() {
             if (signProfileState.prestaTenantByPhoneNumber?.firstName == null) {
@@ -199,7 +200,7 @@ fun UserInformation(
                                                 loanPeriod = component.loanPeriod.toString(),
                                                 repayment_period = "4",
                                                 employer_name = component.employer,
-                                                employment_type = "aa",
+                                                employment_type = "a",
                                                 employment_number = component.employmentNumber,
                                                 business_location = component.businessLocation,
                                                 business_type = component.businessType,
@@ -224,9 +225,14 @@ fun UserInformation(
                                             it
                                         )
                                     }
+                                    //Test Guarantor Data
+                                    for (items in guarantorList){
+                                        println("Guarantorlist RefId  " + items.memberRefId)
+
+                                    }
 
                                 },
-                                enabled = false,
+                                enabled = true,
                                 loading = false
                             )
                         }

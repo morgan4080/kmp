@@ -16,6 +16,7 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.network.payments.model.PaymentStatuses
@@ -869,7 +870,7 @@ class DefaultRootComponent(
             val grossSalary: Double,
             val netSalary: Double,
             val memberRefId: String,
-            val guarantorList: ArrayList<String>,
+            val guarantorList: Set<GuarantorDataListing>,
             val loanPurposeCategoryCode: String,
         ) : Config()
     }

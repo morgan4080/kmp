@@ -2,6 +2,7 @@ package com.presta.customer.ui.components.addGuarantors
 
 import com.presta.customer.ContactsUtils
 import com.presta.customer.Platform
+import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
@@ -37,7 +38,7 @@ interface AddGuarantorsComponent {
         grossSalary: Double,
         netSalary:Double,
         memberRefId:String,
-        guarantorList:ArrayList<String>,
+        guarantorList: Set<GuarantorDataListing>,
         loanPurposeCategoryCode: String
     )
     val authStore: AuthStore

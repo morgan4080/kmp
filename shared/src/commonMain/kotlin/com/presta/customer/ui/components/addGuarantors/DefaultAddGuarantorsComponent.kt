@@ -6,6 +6,7 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.ContactsUtils
 import com.presta.customer.Platform
+import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStoreFactory
@@ -45,7 +46,7 @@ class DefaultAddGuarantorsComponent(
         grossSalary: Double,
         netSalary: Double,
         memberRefId: String,
-        guarantorList:ArrayList<String>,
+        guarantorList:Set<GuarantorDataListing>,
         loanPurposeCategoryCode: String
     ) -> Unit,
     override val loanRefId: String,
@@ -160,7 +161,7 @@ class DefaultAddGuarantorsComponent(
         grossSalary: Double,
         netSalary: Double,
         memberRefId: String,
-        guarantorList:ArrayList<String>,
+        guarantorList: Set<GuarantorDataListing>,
         loanPurposeCategoryCode: String
     ) {
         onContinueClicked(

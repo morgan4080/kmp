@@ -1,5 +1,6 @@
 package com.presta.customer.ui.components.longTermLoanConfirmation
 
+import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
@@ -22,7 +23,7 @@ interface LongTermLoanConfirmationComponent {
     val grossSalary: Double
     val netSalary: Double
     val memberRefId: String
-    val guarantorList: ArrayList<String>
+    val guarantorList: Set<GuarantorDataListing>
     val loanPurposeCategoryCode: String
     fun onBackNavClicked()
     fun onProductSelected(

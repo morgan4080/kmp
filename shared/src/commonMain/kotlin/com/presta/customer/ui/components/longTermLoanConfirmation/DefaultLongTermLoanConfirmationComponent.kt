@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStoreFactory
@@ -41,7 +42,7 @@ class DefaultLongTermLoanConfirmationComponent(
     override val grossSalary: Double,
     override val netSalary: Double,
     override val memberRefId: String,
-    override val guarantorList: ArrayList<String>,
+    override val guarantorList: Set<GuarantorDataListing>,
     override val loanPurposeCategoryCode: String
 ) : LongTermLoanConfirmationComponent, ComponentContext by componentContext {
     private val scope = coroutineScope(mainContext + SupervisorJob())
