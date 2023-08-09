@@ -15,6 +15,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategor
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
+import com.presta.customer.network.longTermLoans.model.tst.TestguarantorItem
 import com.presta.customer.prestaDispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -58,7 +59,8 @@ class ApplyLongTermLoansStoreFactory(
 
         data class LongTermLoanRequestLoaded(val longTermLoanRequestResponse: LongTermLoanRequestResponse) :
             Msg()
-
+        data class GuarontorshipRequestsLoaded(val guarantorShipRequestsLoaded: List<TestguarantorItem> = listOf()) :
+            Msg()
         data class LongTermLoansFailed(val error: String?) : Msg()
     }
 
@@ -116,6 +118,10 @@ class ApplyLongTermLoansStoreFactory(
                     memberNumber = intent.memberNumber,
                     witnessRefId = intent.witnessRefId,
                     guarantorList = intent.guarantorList,
+                )
+                is ApplyLongTermLoansStore.Intent.GetPrestaGuarantorshipRequests -> getprestaGuarontorsRequests(
+                    token = intent.token,
+                    memberRefId = intent.memberRefId
                 )
             }
 
@@ -310,6 +316,30 @@ class ApplyLongTermLoansStoreFactory(
                 dispatch(Msg.LongTermLoansLoading(false))
             }
         }
+        private var getprestaGuarontorshipRequests: Job? = null
+
+        private fun getprestaGuarontorsRequests(
+            token: String,
+            memberRefId: String
+        ) {
+            if (getprestaGuarontorshipRequests?.isActive == true) return
+
+            dispatch(Msg.LongTermLoansLoading())
+
+            getprestaGuarontorshipRequests = scope.launch {
+                longTermLoansRepository.getGuarantorshipRequests(
+                    token = token,
+                    memberRefId = memberRefId
+                ).onSuccess { response ->
+                    dispatch(Msg.GuarontorshipRequestsLoaded(response))
+
+                }.onFailure { e ->
+                    dispatch(Msg.LongTermLoansFailed(e.message))
+                }
+
+                dispatch(Msg.LongTermLoansLoading(false))
+            }
+        }
     }
     private object ReducerImpl :
         Reducer<ApplyLongTermLoansStore.State, Msg> {
@@ -328,6 +358,7 @@ class ApplyLongTermLoansStoreFactory(
                 )
                 is Msg.ClientSettingsLoaded -> copy(prestaClientSettings = msg.clientSettingsLoaded)
                 is Msg.LongTermLoanRequestLoaded -> copy(prestaLongTermLoanRequestData = msg.longTermLoanRequestResponse)
+                is Msg.GuarontorshipRequestsLoaded -> copy(prestaGuarontorshipRequests = msg.guarantorShipRequestsLoaded)
             }
     }
 

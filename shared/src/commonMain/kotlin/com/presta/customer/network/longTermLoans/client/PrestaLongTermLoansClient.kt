@@ -11,6 +11,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategor
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
+import com.presta.customer.network.longTermLoans.model.tst.TestguarantorItem
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -180,6 +181,22 @@ class PrestaLongTermLoansClient(
                         guarantorList = guarantorList,
                     )
                 )
+            }
+        }
+    }
+    suspend fun getGuarantorshipRequests(
+        token: String,
+        memberRefId: String,
+    ):List<TestguarantorItem>{
+        return longTermLoansErrorHandler {
+            httpClient.get(NetworkConstants.PrestaGetGuarantorshipRequests.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+                url {
+                    encodedParameters.append("acceptanceStatus", "ANY")
+                    encodedParameters.append("memberRefId", memberRefId)
+                }
             }
         }
     }

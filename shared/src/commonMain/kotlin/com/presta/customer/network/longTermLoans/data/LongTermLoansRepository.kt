@@ -9,6 +9,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategor
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
+import com.presta.customer.network.longTermLoans.model.tst.TestguarantorItem
 
 interface LongTermLoansRepository {
     suspend fun getLonTermLoansData(
@@ -50,4 +51,8 @@ interface LongTermLoansRepository {
         witnessRefId: String?,
         guarantorList: ArrayList<Guarantor>,
     ): Result<LongTermLoanRequestResponse>
+    suspend fun getGuarantorshipRequests(
+        token: String,
+        memberRefId: String,
+    ): Result<List<TestguarantorItem>>
 }

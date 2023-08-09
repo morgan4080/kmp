@@ -225,11 +225,8 @@ fun UserInformation(
                                             it
                                         )
                                     }
-                                    //Test Guarantor Data
-                                    for (items in guarantorList){
-                                        println("Guarantorlist RefId  " + items.memberRefId)
-
-                                    }
+                                  //Navigate to show the application Status
+                                    component.onProductSelected()
 
                                 },
                                 enabled = true,

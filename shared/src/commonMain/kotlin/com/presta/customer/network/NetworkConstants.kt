@@ -131,4 +131,7 @@ object NetworkConstants {
     object PrestaUpdateMemberDetails {
         const val route =  EguarantorshipApplicationV1BaseUrl + "members"
     }
+    object PrestaGetGuarantorshipRequests {
+        const val route =  EguarantorshipApplicationV1BaseUrl + "guarantorship-request"
+    }
 }

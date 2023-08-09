@@ -10,6 +10,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategor
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
+import com.presta.customer.network.longTermLoans.model.tst.TestguarantorItem
 
 interface ApplyLongTermLoansStore :
     Store<ApplyLongTermLoansStore.Intent, ApplyLongTermLoansStore.State, Nothing> {
@@ -39,6 +40,7 @@ interface ApplyLongTermLoansStore :
             val witnessRefId: String?,
             val guarantorList: ArrayList<Guarantor>,
         ) : Intent()
+        data class GetPrestaGuarantorshipRequests(val token: String, val memberRefId: String) : Intent()
     }
     data class State(
         val isLoading: Boolean = false,
@@ -50,6 +52,7 @@ interface ApplyLongTermLoansStore :
         val prestaLongTermLoanProductsSubCategoriesChildren: List<PrestaLongTermLoanSubCategoriesChildren> = emptyList(),
         val prestaClientSettings: ClientSettingsResponse? = null,
         val prestaLongTermLoanRequestData: LongTermLoanRequestResponse? = null,
+        val prestaGuarontorshipRequests:  List<TestguarantorItem> = emptyList(),
         val memberNo: String = "By Member No",
         val phoneNo: String = "By Phone No",
         val selfGuarantee: String = "Self Guarantee",

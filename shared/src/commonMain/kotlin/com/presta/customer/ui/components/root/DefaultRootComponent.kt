@@ -32,6 +32,8 @@ import com.presta.customer.ui.components.favouriteGuarantors.DefaultFavouriteGua
 import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGuarantorsComponent
 import com.presta.customer.ui.components.guarantorshipRequests.DefaultGuarantorshipRequestComponent
 import com.presta.customer.ui.components.guarantorshipRequests.GuarantorshipRequestComponent
+import com.presta.customer.ui.components.longTermLoanApplicationStatus.DefaultLongTermLoanApplicationComponent
+import com.presta.customer.ui.components.longTermLoanApplicationStatus.LongtermLoansApplicationStatusComponent
 import com.presta.customer.ui.components.longTermLoanConfirmation.DefaultLongTermLoanConfirmationComponent
 import com.presta.customer.ui.components.longTermLoanConfirmation.LongTermLoanConfirmationComponent
 import com.presta.customer.ui.components.longTermLoanDetails.DefaultLongTermLoanDetailsComponent
@@ -205,6 +207,10 @@ class DefaultRootComponent(
 
         is Config.LongTermLoanConfirmation -> RootComponent.Child.LongTermLoanConfirmationChild(
             longTermLoanConfirmationComponent(componentContext, config)
+        )
+
+        is Config.LongTermLoanApplicationStatus -> RootComponent.Child.LongTermLoanApplicationStatusChild(
+            longTermLoanApplicationStatusComponent(componentContext)
         )
 
     }
@@ -685,7 +691,10 @@ class DefaultRootComponent(
             navigation.pop()
 
         }, onProductClicked = {
-        })
+        },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            )
 
     private fun favouriteGuarantorsComponent(componentContext: ComponentContext): FavouriteGuarantorsComponent =
         DefaultFavouriteGuarantorsComponent(componentContext = componentContext, onItemClicked = {
@@ -711,6 +720,8 @@ class DefaultRootComponent(
                 navigation.pop()
             },
             onProductClicked = {
+                //navigate to Application Status
+                navigation.push(Config.LongTermLoanApplicationStatus)
             },
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
@@ -732,6 +743,25 @@ class DefaultRootComponent(
             memberRefId = config.memberRefId,
             guarantorList = config.guarantorList,
             loanPurposeCategoryCode = config.loanPurposeCategoryCode
+        )
+
+    private fun longTermLoanApplicationStatusComponent(componentContext: ComponentContext): LongtermLoansApplicationStatusComponent =
+        DefaultLongTermLoanApplicationComponent(componentContext = componentContext,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            correlationId = "",
+            amount = 20.0,
+            navigateToCompleteFailure = { paymentStatus ->
+                if (paymentStatus == PaymentStatuses.COMPLETED) {
+                    println("::::::::Show COMPLETED")
+                }
+            },
+            onPop = {
+                navigation.pop()
+            },
+            navigateToProfile = {
+                navigation.replaceAll(Config.RootBottom(false))
+            }
         )
 
     enum class OnBoardingContext {
@@ -873,6 +903,10 @@ class DefaultRootComponent(
             val guarantorList: Set<GuarantorDataListing>,
             val loanPurposeCategoryCode: String,
         ) : Config()
+
+        @Parcelize
+        object LongTermLoanApplicationStatus : Config()
+
     }
 
     init {

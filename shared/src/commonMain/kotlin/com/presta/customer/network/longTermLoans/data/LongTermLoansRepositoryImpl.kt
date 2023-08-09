@@ -10,7 +10,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategor
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
-import com.presta.customer.network.signHome.model.Details
+import com.presta.customer.network.longTermLoans.model.tst.TestguarantorItem
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -31,6 +31,7 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
         }
 
     }
+
     override suspend fun getLongTermProductLoanById(
         token: String,
         loanRefId: String
@@ -79,6 +80,7 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
             Result.failure(e)
         }
     }
+
     override suspend fun getLongTermLoanSubCategoriesChildrenData(
         token: String,
         parent: String,
@@ -140,6 +142,22 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
                 guarantorList = guarantorList,
             )
             Result.success(response)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+    override suspend fun getGuarantorshipRequests(
+        token: String,
+        memberRefId: String
+    ): Result<List<TestguarantorItem>>{
+        return try {
+            val response = prestaLongTermLoansClient.getGuarantorshipRequests(
+                token = token,
+                memberRefId = memberRefId
+            )
+            Result.success(response)
+
         } catch (e: Exception) {
             e.printStackTrace()
             Result.failure(e)

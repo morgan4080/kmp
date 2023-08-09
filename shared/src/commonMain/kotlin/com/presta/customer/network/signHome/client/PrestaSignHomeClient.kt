@@ -86,7 +86,6 @@ class PrestaSignHomeClient(
             }
         }
     }
-
     suspend fun upDateMemberPersonalInformation(
         token: String,
         memberRefId: String,
