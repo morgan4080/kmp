@@ -226,4 +226,16 @@ class PrestaLongTermLoansClient(
             }
         }
     }
+    suspend fun getLoanByLoanRequestRefId(
+        token: String,
+        loanRequestRefId: String,
+    ): PrestaLoanByRefIdResponse {
+        return longTermLoansErrorHandler {
+            httpClient.get("${NetworkConstants.PrestaLongTermLoanRequestByRefId.route}/${loanRequestRefId}") {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+            }
+        }
+    }
 }
