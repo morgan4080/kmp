@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface GuarantorshipRequestComponent {
     fun onBackNavClicked()
-    fun onProductSelected()
+    fun onAcceptSelected(loanNumber: String, amount: Double, loanRequestRefId: String)
     val authStore: AuthStore
     val authState: StateFlow<AuthStore.State>
     fun onAuthEvent(event: AuthStore.Intent)

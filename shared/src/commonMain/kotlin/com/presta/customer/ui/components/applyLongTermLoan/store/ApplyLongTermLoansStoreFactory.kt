@@ -11,11 +11,13 @@ import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.longTermLoans.model.Guarantor
 import com.presta.customer.network.longTermLoans.model.LongTermLoanRequestResponse
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
+import com.presta.customer.network.longTermLoans.model.PrestaLoanByRefIdResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
-import com.presta.customer.network.longTermLoans.model.tst.TestguarantorItem
+import com.presta.customer.network.longTermLoans.model.guarantoResponse.PrestaGuarantorResponse
+import com.presta.customer.network.longTermLoans.model.tsststts.PrestaGuarantorAcceptanceResponse
 import com.presta.customer.prestaDispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -59,8 +61,15 @@ class ApplyLongTermLoansStoreFactory(
 
         data class LongTermLoanRequestLoaded(val longTermLoanRequestResponse: LongTermLoanRequestResponse) :
             Msg()
-        data class GuarontorshipRequestsLoaded(val guarantorShipRequestsLoaded: List<TestguarantorItem> = listOf()) :
+
+        data class GuarontorshipRequestsLoaded(val guarantorShipRequestsLoaded: List<PrestaGuarantorResponse> = listOf()) :
             Msg()
+
+        data class LongTermLoanRequestByRefIdLoaded(val longTermLoanRequestByRefIdResponse: PrestaLoanByRefIdResponse) :
+            Msg()
+        data class GuarantorAcceptanceResponseLoaded(val guarantorAcceptanceResponse: PrestaGuarantorAcceptanceResponse) :
+            Msg()
+
         data class LongTermLoansFailed(val error: String?) : Msg()
     }
 
@@ -119,9 +128,21 @@ class ApplyLongTermLoansStoreFactory(
                     witnessRefId = intent.witnessRefId,
                     guarantorList = intent.guarantorList,
                 )
+
                 is ApplyLongTermLoansStore.Intent.GetPrestaGuarantorshipRequests -> getprestaGuarontorsRequests(
                     token = intent.token,
                     memberRefId = intent.memberRefId
+                )
+
+                is ApplyLongTermLoansStore.Intent.GetPrestaLongTermLoanRequestByRefId -> getPrestaLongTermLoanRequestByRefId(
+                    token = intent.token,
+                    loanRequestRefId = intent.loanRequestRefId
+                )
+                is ApplyLongTermLoansStore.Intent.GetGuarantorAcceptanceStatus -> getGuarantorAcceptanceResponse(
+                    token = intent.token,
+                    guarantorshipRequestRefId = intent.guarantorshipRequestRefId,
+                    isAccepted = intent.isAccepted
+
                 )
             }
 
@@ -316,17 +337,18 @@ class ApplyLongTermLoansStoreFactory(
                 dispatch(Msg.LongTermLoansLoading(false))
             }
         }
-        private var getprestaGuarontorshipRequests: Job? = null
+
+        private var getprestaGuarontorshipRequestsJob: Job? = null
 
         private fun getprestaGuarontorsRequests(
             token: String,
             memberRefId: String
         ) {
-            if (getprestaGuarontorshipRequests?.isActive == true) return
+            if (getprestaGuarontorshipRequestsJob?.isActive == true) return
 
             dispatch(Msg.LongTermLoansLoading())
 
-            getprestaGuarontorshipRequests = scope.launch {
+            getprestaGuarontorshipRequestsJob = scope.launch {
                 longTermLoansRepository.getGuarantorshipRequests(
                     token = token,
                     memberRefId = memberRefId
@@ -340,7 +362,60 @@ class ApplyLongTermLoansStoreFactory(
                 dispatch(Msg.LongTermLoansLoading(false))
             }
         }
+
+        private var getLongTermLoanRequestByRefId: Job? = null
+        private fun getPrestaLongTermLoanRequestByRefId(
+            token: String,
+            loanRequestRefId: String
+        ) {
+            if (getLongTermLoanRequestByRefId?.isActive == true) return
+
+            dispatch(Msg.LongTermLoansLoading())
+
+            getLongTermLoanRequestByRefId = scope.launch {
+                longTermLoansRepository.getLongTermProductLoanRequestByRefId(
+                    token = token,
+                    loanRequestRefId = loanRequestRefId
+                ).onSuccess { response ->
+                    dispatch(Msg.LongTermLoanRequestByRefIdLoaded(response))
+                    println(":::::::::getLongTermLoanRequestByRefId")
+                    println(response)
+
+                }.onFailure { e ->
+                    dispatch(Msg.LongTermLoansFailed(e.message))
+                }
+
+                dispatch(Msg.LongTermLoansLoading(false))
+            }
+        }
+
+        private var getGuarantorAcceptanceResponseJob: Job? = null
+        private fun getGuarantorAcceptanceResponse(
+            token: String,
+            guarantorshipRequestRefId: String,
+            isAccepted: Boolean
+        ) {
+            if (getGuarantorAcceptanceResponseJob?.isActive == true) return
+            dispatch(Msg.LongTermLoansLoading())
+            getGuarantorAcceptanceResponseJob = scope.launch {
+                longTermLoansRepository.getGuarantorAcceptanceStatus(
+                    token = token,
+                    guarantorshipRequestRefId = guarantorshipRequestRefId,
+                    isAccepted = isAccepted
+                ).onSuccess { response ->
+                    dispatch(Msg.GuarantorAcceptanceResponseLoaded(response))
+                    println(":::::::::getGuarantorAcceptance Response")
+                    println(response)
+
+                }.onFailure { e ->
+                    dispatch(Msg.LongTermLoansFailed(e.message))
+                }
+
+                dispatch(Msg.LongTermLoansLoading(false))
+            }
+        }
     }
+
     private object ReducerImpl :
         Reducer<ApplyLongTermLoansStore.State, Msg> {
         override fun ApplyLongTermLoansStore.State.reduce(msg: Msg): ApplyLongTermLoansStore.State =
@@ -353,12 +428,16 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.LongTermLoansSubCategoriesLoaded -> copy(
                     prestaLongTermLoanProductsSubCategories = msg.longTermLoansSubCategoryLoaded
                 )
+
                 is Msg.LongTermLoansSubCategoriesChildrenLoaded -> copy(
                     prestaLongTermLoanProductsSubCategoriesChildren = msg.longTermLoansSubCategoryChildrenLoaded
                 )
+
                 is Msg.ClientSettingsLoaded -> copy(prestaClientSettings = msg.clientSettingsLoaded)
                 is Msg.LongTermLoanRequestLoaded -> copy(prestaLongTermLoanRequestData = msg.longTermLoanRequestResponse)
                 is Msg.GuarontorshipRequestsLoaded -> copy(prestaGuarontorshipRequests = msg.guarantorShipRequestsLoaded)
+                is Msg.LongTermLoanRequestByRefIdLoaded -> copy(prestaLongTermLoanrequestBYRefId = msg.longTermLoanRequestByRefIdResponse)
+                is Msg.GuarantorAcceptanceResponseLoaded -> copy(prestaGuarontorAcceptanceStatus = msg.guarantorAcceptanceResponse)
             }
     }
 

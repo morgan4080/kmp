@@ -8,12 +8,15 @@ import com.presta.customer.ui.components.guarantorshipRequests.GuarantorshipRequ
 @Composable
 fun GuarantorshipRequestScreen(component: GuarantorshipRequestComponent) {
     val applyLongTermLoansState by component.applyLongTermLoansState.collectAsState()
+    val authState by component.authState.collectAsState()
 
     GuarantorShipRequestsContent(
         component = component,
-        state = applyLongTermLoansState
+        state = applyLongTermLoansState,
+        authState = authState,
+        onEvent = component::onEvent,
 
-    )
+        )
 
 }
 

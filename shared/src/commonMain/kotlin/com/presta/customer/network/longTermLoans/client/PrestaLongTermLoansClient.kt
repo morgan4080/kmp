@@ -7,11 +7,13 @@ import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.longTermLoans.model.Guarantor
 import com.presta.customer.network.longTermLoans.model.LongTermLoanRequestResponse
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
+import com.presta.customer.network.longTermLoans.model.PrestaLoanByRefIdResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
-import com.presta.customer.network.longTermLoans.model.tst.TestguarantorItem
+import com.presta.customer.network.longTermLoans.model.guarantoResponse.PrestaGuarantorResponse
+import com.presta.customer.network.longTermLoans.model.tsststts.PrestaGuarantorAcceptanceResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -187,7 +189,7 @@ class PrestaLongTermLoansClient(
     suspend fun getGuarantorshipRequests(
         token: String,
         memberRefId: String,
-    ):List<TestguarantorItem>{
+    ):List<PrestaGuarantorResponse>{
         return longTermLoansErrorHandler {
             httpClient.get(NetworkConstants.PrestaGetGuarantorshipRequests.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")
@@ -197,6 +199,30 @@ class PrestaLongTermLoansClient(
                     encodedParameters.append("acceptanceStatus", "ANY")
                     encodedParameters.append("memberRefId", memberRefId)
                 }
+            }
+        }
+    }
+    suspend fun getLoanRequestByRefId(
+        token: String,
+        loanRequestRefId: String,
+    ): PrestaLoanByRefIdResponse {
+        return longTermLoansErrorHandler {
+            httpClient.get("${NetworkConstants.PrestaLongTermLoanRequestByRefId.route}/${loanRequestRefId}") {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+            }
+        }
+    }
+    suspend fun sendGuarantorAcceptanceStatus(
+        token: String,
+        guarantorshipRequestRefId: String,
+        isAccepted: Boolean
+    ): PrestaGuarantorAcceptanceResponse {
+        return loanRequestErrorHandler {
+            httpClient.post("${NetworkConstants.PrestaGetGuarantorshipRequests.route}/${guarantorshipRequestRefId}/${isAccepted}" ) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                contentType(ContentType.Application.Json)
             }
         }
     }

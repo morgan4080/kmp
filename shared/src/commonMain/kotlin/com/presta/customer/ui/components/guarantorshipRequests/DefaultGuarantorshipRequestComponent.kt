@@ -17,13 +17,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-class DefaultGuarantorshipRequestComponent (
+class DefaultGuarantorshipRequestComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     private val onItemClicked: () -> Unit,
-    private val onProductClicked: () -> Unit
-): GuarantorshipRequestComponent, ComponentContext by componentContext {
+    private val onAcceptClicked: (
+        loanNumber: String,
+        amount: Double,
+        loanRequestRefId: String
+    ) -> Unit
+) : GuarantorshipRequestComponent, ComponentContext by componentContext {
 
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
@@ -73,6 +77,7 @@ class DefaultGuarantorshipRequestComponent (
                             token = state.cachedMemberData.accessToken
                         )
                     )
+                    // Todo ---move thi to  appropraite plasce set generif refiD
                     onEvent(
                         ApplyLongTermLoansStore.Intent.GetPrestaGuarantorshipRequests(
                             token = state.cachedMemberData.accessToken,
@@ -88,8 +93,16 @@ class DefaultGuarantorshipRequestComponent (
         onItemClicked()
     }
 
-    override fun onProductSelected() {
-        //onProductClicked(loanRefId)
+    override fun onAcceptSelected(
+        loanNumber: String,
+        amount: Double,
+        loanRequestRefId: String
+    ) {
+        onAcceptClicked(
+            loanNumber,
+            amount,
+            loanRequestRefId
+        )
     }
 
     init {

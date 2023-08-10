@@ -22,6 +22,7 @@ import com.presta.customer.ui.components.registration.RegistrationComponent
 import com.presta.customer.ui.components.rootBottomSign.RootBottomSignComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
 import com.presta.customer.ui.components.selectLoanPurpose.SelectLoanPurposeComponent
+import com.presta.customer.ui.components.signDocument.SignDocumentComponent
 import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.tenant.TenantComponent
 import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
@@ -58,5 +59,6 @@ interface RootComponent {
         class WitnessRequestChild(val component: WitnessRequestComponent): Child()
         class LongTermLoanConfirmationChild(val component: LongTermLoanConfirmationComponent): Child()
         class LongTermLoanApplicationStatusChild(val component: LongtermLoansApplicationStatusComponent): Child()
+        class SignDocumentChild(val component: SignDocumentComponent): Child()
     }
 }

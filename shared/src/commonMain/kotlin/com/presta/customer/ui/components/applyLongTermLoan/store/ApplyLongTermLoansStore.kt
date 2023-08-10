@@ -6,11 +6,13 @@ import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.longTermLoans.model.Guarantor
 import com.presta.customer.network.longTermLoans.model.LongTermLoanRequestResponse
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
+import com.presta.customer.network.longTermLoans.model.PrestaLoanByRefIdResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
-import com.presta.customer.network.longTermLoans.model.tst.TestguarantorItem
+import com.presta.customer.network.longTermLoans.model.guarantoResponse.PrestaGuarantorResponse
+import com.presta.customer.network.longTermLoans.model.tsststts.PrestaGuarantorAcceptanceResponse
 
 interface ApplyLongTermLoansStore :
     Store<ApplyLongTermLoansStore.Intent, ApplyLongTermLoansStore.State, Nothing> {
@@ -40,8 +42,24 @@ interface ApplyLongTermLoansStore :
             val witnessRefId: String?,
             val guarantorList: ArrayList<Guarantor>,
         ) : Intent()
-        data class GetPrestaGuarantorshipRequests(val token: String, val memberRefId: String) : Intent()
+
+        data class GetPrestaGuarantorshipRequests(
+            val token: String,
+            val memberRefId: String
+        ) :
+            Intent()
+
+        data class GetPrestaLongTermLoanRequestByRefId(
+            val token: String,
+            val loanRequestRefId: String
+        ) : Intent()
+        data class GetGuarantorAcceptanceStatus(
+            val token: String,
+            val guarantorshipRequestRefId: String,
+            val isAccepted: Boolean
+        ) : Intent()
     }
+
     data class State(
         val isLoading: Boolean = false,
         val error: String? = null,
@@ -52,7 +70,9 @@ interface ApplyLongTermLoansStore :
         val prestaLongTermLoanProductsSubCategoriesChildren: List<PrestaLongTermLoanSubCategoriesChildren> = emptyList(),
         val prestaClientSettings: ClientSettingsResponse? = null,
         val prestaLongTermLoanRequestData: LongTermLoanRequestResponse? = null,
-        val prestaGuarontorshipRequests:  List<TestguarantorItem> = emptyList(),
+        val prestaGuarontorshipRequests: List<PrestaGuarantorResponse> = emptyList(),
+        val prestaLongTermLoanrequestBYRefId: PrestaLoanByRefIdResponse? = null,
+        val prestaGuarontorAcceptanceStatus: PrestaGuarantorAcceptanceResponse? = null,
         val memberNo: String = "By Member No",
         val phoneNo: String = "By Phone No",
         val selfGuarantee: String = "Self Guarantee",

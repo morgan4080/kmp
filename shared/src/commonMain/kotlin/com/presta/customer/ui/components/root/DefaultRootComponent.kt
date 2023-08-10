@@ -63,6 +63,8 @@ import com.presta.customer.ui.components.rootBottomStack.DefaultRootBottomCompon
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
 import com.presta.customer.ui.components.selectLoanPurpose.DefaultSelectLoanPurposeComponent
 import com.presta.customer.ui.components.selectLoanPurpose.SelectLoanPurposeComponent
+import com.presta.customer.ui.components.signDocument.DefaultSignDocumentComponent
+import com.presta.customer.ui.components.signDocument.SignDocumentComponent
 import com.presta.customer.ui.components.splash.DefaultSplashComponent
 import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.tenant.DefaultTenantComponent
@@ -106,7 +108,8 @@ class DefaultRootComponent(
     override val childStack: Value<ChildStack<*, RootComponent.Child>> = _childStack
 
     private fun createChild(
-        config: Config, componentContext: ComponentContext
+        config: Config,
+        componentContext: ComponentContext
     ): RootComponent.Child = when (config) {
         is Config.Tenant -> RootComponent.Child.TenantChild(
             tenantComponent(componentContext, config)
@@ -213,6 +216,11 @@ class DefaultRootComponent(
             longTermLoanApplicationStatusComponent(componentContext)
         )
 
+        is Config.SignDocument -> RootComponent.Child.SignDocumentChild(
+            signDocumentComponent(
+                componentContext, config
+            )
+        )
     }
 
     private fun loansPendingApprovalComponent(componentContext: ComponentContext): LoanPendingApprovalsComponent =
@@ -687,14 +695,26 @@ class DefaultRootComponent(
         )
 
     private fun guarantorshipRequestComponent(componentContext: ComponentContext): GuarantorshipRequestComponent =
-        DefaultGuarantorshipRequestComponent(componentContext = componentContext, onItemClicked = {
-            navigation.pop()
+        DefaultGuarantorshipRequestComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
 
-        }, onProductClicked = {
-        },
+            },
+            onAcceptClicked = { loanNumber, amount, loanRequestRefId ->
+                //Navigate to sign
+                navigation.push(
+                    Config.SignDocument(
+                        loanNumber = loanNumber,
+                        amount = amount,
+                        loanRequestRefId = loanRequestRefId
+                    )
+                )
+
+            },
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
-            )
+        )
 
     private fun favouriteGuarantorsComponent(componentContext: ComponentContext): FavouriteGuarantorsComponent =
         DefaultFavouriteGuarantorsComponent(componentContext = componentContext, onItemClicked = {
@@ -762,6 +782,20 @@ class DefaultRootComponent(
             navigateToProfile = {
                 navigation.replaceAll(Config.RootBottom(false))
             }
+        )
+
+    private fun signDocumentComponent(
+        componentContext: ComponentContext,
+        config: Config.SignDocument
+    ): SignDocumentComponent =
+        DefaultSignDocumentComponent(componentContext = componentContext, onItemClicked = {
+            navigation.pop()
+
+        }, onProductClicked = {
+        },
+            loanNumber = config.loanNumber,
+            amount = config.amount,
+            loanRequestRefId = config.loanRequestRefId
         )
 
     enum class OnBoardingContext {
@@ -907,6 +941,12 @@ class DefaultRootComponent(
         @Parcelize
         object LongTermLoanApplicationStatus : Config()
 
+        @Parcelize
+        data class SignDocument(
+            val loanNumber: String,
+            val amount: Double,
+            val loanRequestRefId: String
+        ) : Config()
     }
 
     init {

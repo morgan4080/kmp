@@ -5,11 +5,13 @@ import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.longTermLoans.model.Guarantor
 import com.presta.customer.network.longTermLoans.model.LongTermLoanRequestResponse
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
+import com.presta.customer.network.longTermLoans.model.PrestaLoanByRefIdResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
-import com.presta.customer.network.longTermLoans.model.tst.TestguarantorItem
+import com.presta.customer.network.longTermLoans.model.guarantoResponse.PrestaGuarantorResponse
+import com.presta.customer.network.longTermLoans.model.tsststts.PrestaGuarantorAcceptanceResponse
 
 interface LongTermLoansRepository {
     suspend fun getLonTermLoansData(
@@ -39,6 +41,7 @@ interface LongTermLoansRepository {
     suspend fun getClientSettingsData(
         token: String
     ): Result<ClientSettingsResponse>
+
     suspend fun requestLongTermLoan(
         token: String,
         details: DetailsData,
@@ -51,8 +54,18 @@ interface LongTermLoansRepository {
         witnessRefId: String?,
         guarantorList: ArrayList<Guarantor>,
     ): Result<LongTermLoanRequestResponse>
+
     suspend fun getGuarantorshipRequests(
         token: String,
         memberRefId: String,
-    ): Result<List<TestguarantorItem>>
+    ): Result<List<PrestaGuarantorResponse>>
+    suspend fun getLongTermProductLoanRequestByRefId(
+        token: String,
+        loanRequestRefId: String,
+    ): Result<PrestaLoanByRefIdResponse>
+    suspend fun getGuarantorAcceptanceStatus(
+        token: String,
+        guarantorshipRequestRefId: String,
+        isAccepted: Boolean
+    ): Result<PrestaGuarantorAcceptanceResponse>
 }

@@ -1,4 +1,4 @@
-package com.presta.customer.network.longTermLoans.model.tst
+package com.presta.customer.network.longTermLoans.model.guarantoResponse
 
 import kotlinx.serialization.Serializable
 
