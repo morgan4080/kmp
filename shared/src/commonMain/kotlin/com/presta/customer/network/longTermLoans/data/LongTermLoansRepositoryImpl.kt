@@ -2,15 +2,18 @@ package com.presta.customer.network.longTermLoans.data
 
 import com.presta.customer.network.longTermLoans.client.DetailsData
 import com.presta.customer.network.longTermLoans.client.PrestaLongTermLoansClient
+import com.presta.customer.network.longTermLoans.model.ActorType
 import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.longTermLoans.model.Guarantor
 import com.presta.customer.network.longTermLoans.model.LongTermLoanRequestResponse
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLoanByRefIdResponse
+import com.presta.customer.network.longTermLoans.model.PrestaLoanRequestByRequestRefId
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
+import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantoResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.tsststts.PrestaGuarantorAcceptanceResponse
 import org.koin.core.component.KoinComponent
@@ -33,6 +36,7 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
         }
 
     }
+
     override suspend fun getLongTermProductLoanById(
         token: String,
         loanRefId: String
@@ -194,6 +198,43 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
                 guarantorshipRequestRefId = guarantorshipRequestRefId,
                 isAccepted = isAccepted
 
+            )
+            Result.success(response)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getLoansByLoanRequestRefId(
+        token: String,
+        loanRequestRefId: String
+    ): Result<PrestaLoanRequestByRequestRefId> {
+        return try {
+            val response = prestaLongTermLoansClient.getLoanByLoanRequestRefId(
+                token = token,
+                loanRequestRefId = loanRequestRefId
+            )
+            Result.success(response)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+    override suspend fun getZohoSignUrl(
+        token: String,
+        loanRequestRefId: String,
+        actorRefId: String,
+        actorType: ActorType
+    ): Result<PrestaZohoSignUrlResponse> {
+        return try {
+            val response = prestaLongTermLoansClient.sendZohoSignUrlPayload(
+                token = token,
+                loanRequestRefId = loanRequestRefId,
+                actorRefId = actorRefId,
+                actorType = actorType
             )
             Result.success(response)
 

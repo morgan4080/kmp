@@ -795,7 +795,9 @@ class DefaultRootComponent(
         },
             loanNumber = config.loanNumber,
             amount = config.amount,
-            loanRequestRefId = config.loanRequestRefId
+            loanRequestRefId = config.loanRequestRefId,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
         )
 
     enum class OnBoardingContext {

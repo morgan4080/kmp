@@ -3,15 +3,18 @@ package com.presta.customer.network.longTermLoans.client
 import com.presta.customer.network.NetworkConstants
 import com.presta.customer.network.loanRequest.errorHandler.loanRequestErrorHandler
 import com.presta.customer.network.longTermLoans.errorHandler.longTermLoansErrorHandler
+import com.presta.customer.network.longTermLoans.model.ActorType
 import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.longTermLoans.model.Guarantor
 import com.presta.customer.network.longTermLoans.model.LongTermLoanRequestResponse
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLoanByRefIdResponse
+import com.presta.customer.network.longTermLoans.model.PrestaLoanRequestByRequestRefId
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
+import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantoResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.tsststts.PrestaGuarantorAcceptanceResponse
 import io.ktor.client.HttpClient
@@ -24,11 +27,11 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import kotlinx.serialization.Serializable
 
-
 @Serializable
-data class GuarantorDetails(
-    val value: String,
-    val type: String
+data class ZohoSignUrlPayload(
+    val loanRequestRefId: String,
+    val actorRefId: String,
+    val actorType: ActorType
 )
 
 @Serializable
@@ -64,6 +67,7 @@ data class LongTermLoanRequestData constructor(
     val witnessRefId: String?,
     val guarantorList: ArrayList<Guarantor>,
 )
+
 class PrestaLongTermLoansClient(
     private val httpClient: HttpClient
 ) {
@@ -154,6 +158,7 @@ class PrestaLongTermLoansClient(
             }
         }
     }
+
     suspend fun sendLongTermLoanRequest(
         token: String,
         details: DetailsData,
@@ -186,10 +191,11 @@ class PrestaLongTermLoansClient(
             }
         }
     }
+
     suspend fun getGuarantorshipRequests(
         token: String,
         memberRefId: String,
-    ):List<PrestaGuarantorResponse>{
+    ): List<PrestaGuarantorResponse> {
         return longTermLoansErrorHandler {
             httpClient.get(NetworkConstants.PrestaGetGuarantorshipRequests.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")
@@ -202,6 +208,7 @@ class PrestaLongTermLoansClient(
             }
         }
     }
+
     suspend fun getLoanRequestByRefId(
         token: String,
         loanRequestRefId: String,
@@ -214,27 +221,50 @@ class PrestaLongTermLoansClient(
             }
         }
     }
+
     suspend fun sendGuarantorAcceptanceStatus(
         token: String,
         guarantorshipRequestRefId: String,
         isAccepted: Boolean
     ): PrestaGuarantorAcceptanceResponse {
         return loanRequestErrorHandler {
-            httpClient.post("${NetworkConstants.PrestaGetGuarantorshipRequests.route}/${guarantorshipRequestRefId}/${isAccepted}" ) {
+            httpClient.post("${NetworkConstants.PrestaGetGuarantorshipRequests.route}/${guarantorshipRequestRefId}/${isAccepted}") {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 contentType(ContentType.Application.Json)
             }
         }
     }
+
     suspend fun getLoanByLoanRequestRefId(
         token: String,
         loanRequestRefId: String,
-    ): PrestaLoanByRefIdResponse {
+    ): PrestaLoanRequestByRequestRefId {
         return longTermLoansErrorHandler {
-            httpClient.get("${NetworkConstants.PrestaLongTermLoanRequestByRefId.route}/${loanRequestRefId}") {
+            httpClient.get("${NetworkConstants.PrestaGetLoanByLoanRequestId.route}/${loanRequestRefId}") {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
+            }
+        }
+    }
+
+    suspend fun sendZohoSignUrlPayload(
+        token: String,
+        loanRequestRefId: String,
+        actorRefId: String,
+        actorType: ActorType
+    ): PrestaZohoSignUrlResponse {
+        return loanRequestErrorHandler {
+            httpClient.post(NetworkConstants.PrestaGetZohoSignUrl.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                contentType(ContentType.Application.Json)
+                setBody(
+                    ZohoSignUrlPayload(
+                        loanRequestRefId = loanRequestRefId,
+                        actorRefId = actorRefId,
+                        actorType = actorType
+                    )
+                )
             }
         }
     }

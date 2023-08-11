@@ -77,8 +77,6 @@ fun GuarantorShipRequestsContent(
     var amountToGuarantee by remember { mutableStateOf("") }
     var loanNumber by remember { mutableStateOf("") }
 
-
-
     if (loanRequestRefId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -254,6 +252,8 @@ fun GuarantorShipRequestsContent(
                             modifier = Modifier
                                 .size(70.dp)
                                 .clickable {
+
+                                    //Request Declined
 //                                    authState.cachedMemberData?.let {
 //                                        ApplyLongTermLoansStore.Intent.GetGuarantorAcceptanceStatus(
 //                                            token = it.accessToken,
@@ -378,7 +378,6 @@ fun GuarantorShipRequestsContent(
                                                     guarantorRequests.loanRequest.loanNumber
                                                 println("Test Data" + state.prestaLongTermLoanrequestBYRefId?.memberFirstName)
                                                 modalBottomScope.launch { modalBottomState.show() }
-
                                             }
                                         )
                                     }

@@ -19,7 +19,6 @@ import android.widget.Toast
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.runtime.mutableStateOf
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -54,6 +53,7 @@ data class LocalAuthenticationResult(
     val warning: String?
 )
 
+
 actual class Platform actual constructor(
     private val context: AppContext
 ) {
@@ -73,6 +73,13 @@ actual class Platform actual constructor(
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
         context.startActivity(intent)
     }
+
+    actual fun convertBase64ToImage(base64String: String): Any {
+        val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
+        val bitmap = android.graphics.BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+        return bitmap
+    }
+
 
     @SuppressLint("Range")
     actual fun getContact(): List<Contact> {

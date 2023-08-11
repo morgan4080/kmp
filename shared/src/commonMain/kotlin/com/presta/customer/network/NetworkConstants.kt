@@ -137,7 +137,12 @@ object NetworkConstants {
     object PrestaLongTermLoanRequestByRefId {
         const val route = EguarantorshipApplicationV1BaseUrl+ "loan-request"
     }
-    object PrestaGetLoanByRequestId {
+    object PrestaGetLoanByLoanRequestId {
         const val route =  EguarantorshipApplicationV1BaseUrl + "loan-request"
     }
+    object PrestaGetZohoSignUrl {
+        const val route =  EguarantorshipApplicationV1BaseUrl + "zoho/get-sign-url"
+    }
+
+
 }

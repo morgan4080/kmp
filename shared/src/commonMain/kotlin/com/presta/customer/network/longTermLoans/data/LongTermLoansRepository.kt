@@ -1,15 +1,18 @@
 package com.presta.customer.network.longTermLoans.data
 
 import com.presta.customer.network.longTermLoans.client.DetailsData
+import com.presta.customer.network.longTermLoans.model.ActorType
 import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.longTermLoans.model.Guarantor
 import com.presta.customer.network.longTermLoans.model.LongTermLoanRequestResponse
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLoanByRefIdResponse
+import com.presta.customer.network.longTermLoans.model.PrestaLoanRequestByRequestRefId
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
+import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantoResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.tsststts.PrestaGuarantorAcceptanceResponse
 
@@ -68,4 +71,15 @@ interface LongTermLoansRepository {
         guarantorshipRequestRefId: String,
         isAccepted: Boolean
     ): Result<PrestaGuarantorAcceptanceResponse>
+    suspend fun getLoansByLoanRequestRefId(
+        token: String,
+        loanRequestRefId: String,
+    ): Result<PrestaLoanRequestByRequestRefId>
+    suspend fun getZohoSignUrl(
+        token: String,
+        loanRequestRefId: String,
+        actorRefId: String,
+         actorType: ActorType
+    ): Result<PrestaZohoSignUrlResponse>
+
 }

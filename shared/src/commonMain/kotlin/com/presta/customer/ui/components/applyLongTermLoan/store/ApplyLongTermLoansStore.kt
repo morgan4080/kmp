@@ -2,15 +2,18 @@ package com.presta.customer.ui.components.applyLongTermLoan.store
 
 import com.arkivanov.mvikotlin.core.store.Store
 import com.presta.customer.network.longTermLoans.client.DetailsData
+import com.presta.customer.network.longTermLoans.model.ActorType
 import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.longTermLoans.model.Guarantor
 import com.presta.customer.network.longTermLoans.model.LongTermLoanRequestResponse
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLoanByRefIdResponse
+import com.presta.customer.network.longTermLoans.model.PrestaLoanRequestByRequestRefId
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
+import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantoResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.tsststts.PrestaGuarantorAcceptanceResponse
 
@@ -53,11 +56,25 @@ interface ApplyLongTermLoansStore :
             val token: String,
             val loanRequestRefId: String
         ) : Intent()
+
         data class GetGuarantorAcceptanceStatus(
             val token: String,
             val guarantorshipRequestRefId: String,
             val isAccepted: Boolean
         ) : Intent()
+
+        data class GetPrestaLoanByLoanRequestRefId(
+            val token: String,
+            val loanRequestRefId: String
+        ) : Intent()
+
+        data class GetZohoSignUrl(
+            val token: String,
+            val loanRequestRefId: String,
+            val actorRefId: String,
+            val actorType: ActorType
+        ) : Intent()
+
     }
 
     data class State(
@@ -73,6 +90,8 @@ interface ApplyLongTermLoansStore :
         val prestaGuarontorshipRequests: List<PrestaGuarantorResponse> = emptyList(),
         val prestaLongTermLoanrequestBYRefId: PrestaLoanByRefIdResponse? = null,
         val prestaGuarontorAcceptanceStatus: PrestaGuarantorAcceptanceResponse? = null,
+        val prestaLoanByLoanRequestRefId: PrestaLoanRequestByRequestRefId? = null,
+        val prestaZohoSignUrl: PrestaZohoSignUrlResponse? = null,
         val memberNo: String = "By Member No",
         val phoneNo: String = "By Phone No",
         val selfGuarantee: String = "Self Guarantee",

@@ -7,15 +7,18 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.longTermLoans.client.DetailsData
 import com.presta.customer.network.longTermLoans.data.LongTermLoansRepository
+import com.presta.customer.network.longTermLoans.model.ActorType
 import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.longTermLoans.model.Guarantor
 import com.presta.customer.network.longTermLoans.model.LongTermLoanRequestResponse
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLoanByRefIdResponse
+import com.presta.customer.network.longTermLoans.model.PrestaLoanRequestByRequestRefId
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
+import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantoResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.tsststts.PrestaGuarantorAcceptanceResponse
 import com.presta.customer.prestaDispatchers
@@ -67,7 +70,14 @@ class ApplyLongTermLoansStoreFactory(
 
         data class LongTermLoanRequestByRefIdLoaded(val longTermLoanRequestByRefIdResponse: PrestaLoanByRefIdResponse) :
             Msg()
+
         data class GuarantorAcceptanceResponseLoaded(val guarantorAcceptanceResponse: PrestaGuarantorAcceptanceResponse) :
+            Msg()
+
+        data class LoanByLoanRequestRefIdLoaded(val loanRequestByRefIdResponse: PrestaLoanRequestByRequestRefId) :
+            Msg()
+
+        data class ZohoSignUrlLoaded(val zohoSignUrlResponse: PrestaZohoSignUrlResponse) :
             Msg()
 
         data class LongTermLoansFailed(val error: String?) : Msg()
@@ -138,11 +148,24 @@ class ApplyLongTermLoansStoreFactory(
                     token = intent.token,
                     loanRequestRefId = intent.loanRequestRefId
                 )
+
                 is ApplyLongTermLoansStore.Intent.GetGuarantorAcceptanceStatus -> getGuarantorAcceptanceResponse(
                     token = intent.token,
                     guarantorshipRequestRefId = intent.guarantorshipRequestRefId,
                     isAccepted = intent.isAccepted
 
+                )
+
+                is ApplyLongTermLoansStore.Intent.GetPrestaLoanByLoanRequestRefId -> getLoanByLoanRequestRefId(
+                    token = intent.token,
+                    loanRequestRefId = intent.loanRequestRefId
+                )
+
+                is ApplyLongTermLoansStore.Intent.GetZohoSignUrl -> requestZohoSignUrl(
+                    token = intent.token,
+                    loanRequestRefId = intent.loanRequestRefId,
+                    actorRefId = intent.actorRefId,
+                    actorType = intent.actorType
                 )
             }
 
@@ -363,16 +386,16 @@ class ApplyLongTermLoansStoreFactory(
             }
         }
 
-        private var getLongTermLoanRequestByRefId: Job? = null
+        private var getLongTermLoanRequestByRefIdJob: Job? = null
         private fun getPrestaLongTermLoanRequestByRefId(
             token: String,
             loanRequestRefId: String
         ) {
-            if (getLongTermLoanRequestByRefId?.isActive == true) return
+            if (getLongTermLoanRequestByRefIdJob?.isActive == true) return
 
             dispatch(Msg.LongTermLoansLoading())
 
-            getLongTermLoanRequestByRefId = scope.launch {
+            getLongTermLoanRequestByRefIdJob = scope.launch {
                 longTermLoansRepository.getLongTermProductLoanRequestByRefId(
                     token = token,
                     loanRequestRefId = loanRequestRefId
@@ -414,6 +437,59 @@ class ApplyLongTermLoansStoreFactory(
                 dispatch(Msg.LongTermLoansLoading(false))
             }
         }
+
+
+        private var getLoanByLoanRequestByRefIdJob: Job? = null
+        private fun getLoanByLoanRequestRefId(
+            token: String,
+            loanRequestRefId: String
+        ) {
+            if (getLoanByLoanRequestByRefIdJob?.isActive == true) return
+
+            dispatch(Msg.LongTermLoansLoading())
+
+            getLoanByLoanRequestByRefIdJob = scope.launch {
+                longTermLoansRepository.getLoansByLoanRequestRefId(
+                    token = token,
+                    loanRequestRefId = loanRequestRefId
+                ).onSuccess { response ->
+                    dispatch(Msg.LoanByLoanRequestRefIdLoaded(response))
+                    println(":::::::::LoanRequestByRequestRefId")
+                    println(response)
+
+                }.onFailure { e ->
+                    dispatch(Msg.LongTermLoansFailed(e.message))
+                }
+
+                dispatch(Msg.LongTermLoansLoading(false))
+            }
+        }
+
+        private var requestZohoSIgnUrlJob: Job? = null
+        private fun requestZohoSignUrl(
+            token: String,
+            loanRequestRefId: String,
+            actorRefId: String,
+             actorType: ActorType,
+        ) {
+            if (requestZohoSIgnUrlJob?.isActive == true) return
+            dispatch(Msg.LongTermLoansLoading())
+            requestZohoSIgnUrlJob = scope.launch {
+                longTermLoansRepository.getZohoSignUrl(
+                    token,
+                    loanRequestRefId,
+                    actorRefId,
+                    actorType
+
+                ).onSuccess { response ->
+                    dispatch(Msg.ZohoSignUrlLoaded(response))
+                    println("Zoho sign url loaded ")
+                }.onFailure { e ->
+                    dispatch(Msg.LongTermLoansFailed(e.message))
+                }
+                dispatch(Msg.LongTermLoansLoading(false))
+            }
+        }
     }
 
     private object ReducerImpl :
@@ -438,6 +514,8 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.GuarontorshipRequestsLoaded -> copy(prestaGuarontorshipRequests = msg.guarantorShipRequestsLoaded)
                 is Msg.LongTermLoanRequestByRefIdLoaded -> copy(prestaLongTermLoanrequestBYRefId = msg.longTermLoanRequestByRefIdResponse)
                 is Msg.GuarantorAcceptanceResponseLoaded -> copy(prestaGuarontorAcceptanceStatus = msg.guarantorAcceptanceResponse)
+                is Msg.LoanByLoanRequestRefIdLoaded -> copy(prestaLoanByLoanRequestRefId = msg.loanRequestByRefIdResponse)
+                is Msg.ZohoSignUrlLoaded -> copy(prestaZohoSignUrl = msg.zohoSignUrlResponse)
             }
     }
 
