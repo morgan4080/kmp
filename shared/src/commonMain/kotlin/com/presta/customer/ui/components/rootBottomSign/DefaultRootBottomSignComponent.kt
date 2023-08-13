@@ -27,8 +27,8 @@ import com.presta.customer.ui.components.rootSignHome.DefaultRootSignHomeCompone
 import com.presta.customer.ui.components.rootSignHome.RootSignHomeComponent
 import com.presta.customer.ui.components.sign.DefaultSignComponent
 import com.presta.customer.ui.components.sign.SignComponent
-import com.presta.customer.ui.components.signAppRequest.DefaultSignRequestComponent
-import com.presta.customer.ui.components.signAppRequest.SignRequestComponent
+import com.presta.customer.ui.components.longTermLoanRequestsList.DefaultLongTermLoansRequestsComponent
+import com.presta.customer.ui.components.longTermLoanRequestsList.LongTermLoanRequestsComponent
 import com.presta.customer.ui.components.signAppSettings.DefaultSignSettingsComponent
 import com.presta.customer.ui.components.signAppSettings.SignSettingsComponent
 import kotlinx.coroutines.CoroutineDispatcher
@@ -117,12 +117,14 @@ class DefaultRootBottomSignComponent(
             }
         )
 
-    private fun requestComponent(componentContext: ComponentContext): SignRequestComponent=
-        DefaultSignRequestComponent(
+    private fun requestComponent(componentContext: ComponentContext): LongTermLoanRequestsComponent=
+        DefaultLongTermLoansRequestsComponent(
             componentContext = componentContext,
             onSelected = {
 
-            }
+            },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
 
         )
     private fun settingsComponent(componentContext: ComponentContext): SignSettingsComponent =

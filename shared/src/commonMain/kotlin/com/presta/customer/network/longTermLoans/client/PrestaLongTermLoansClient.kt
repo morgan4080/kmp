@@ -13,6 +13,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLoanRequestByReques
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
+import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansRequestsListResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantoResponse.PrestaGuarantorResponse
@@ -265,6 +266,22 @@ class PrestaLongTermLoansClient(
                         actorType = actorType
                     )
                 )
+            }
+        }
+    }
+
+    suspend fun getLongTermLoanRequestsList(
+        token: String,
+        memberRefId: String,
+    ): List<PrestaLongTermLoansRequestsListResponse> {
+        return longTermLoansErrorHandler {
+            httpClient.get(NetworkConstants.PrestaLongTermLoansRequetsList.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+                url {
+                    encodedParameters.append("memberRefId", memberRefId)
+                }
             }
         }
     }

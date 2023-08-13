@@ -28,7 +28,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
-import com.presta.customer.ui.components.signAppRequest.SignRequestScreen
+import com.presta.customer.ui.components.longTermLoanRequestsList.ui.LongTermLoanRequestsScreen
 import com.presta.customer.ui.composables.GetIconForSignScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.components.signAppSettings.ui.SignSettingsScreen
@@ -124,7 +124,7 @@ fun RootBottomSignScreen(component: RootBottomSignComponent) {
             ) {
                 when (val childX = it.instance) {
                     is RootBottomSignComponent.ChildBottom.ProfileChild -> RootSignHomeScreen(childX.component)
-                    is RootBottomSignComponent.ChildBottom.RequestChild -> SignRequestScreen(childX.component)
+                    is RootBottomSignComponent.ChildBottom.RequestChild -> LongTermLoanRequestsScreen(childX.component)
                     is RootBottomSignComponent.ChildBottom.SettingsChild-> SignSettingsScreen(childX.component)
                    // is RootBottomSignComponent.ChildBottom.SignChild -> SignScreen(childX.component)
                 }

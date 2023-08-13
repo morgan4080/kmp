@@ -12,6 +12,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLoanRequestByReques
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
+import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansRequestsListResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantoResponse.PrestaGuarantorResponse
@@ -235,6 +236,23 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
                 loanRequestRefId = loanRequestRefId,
                 actorRefId = actorRefId,
                 actorType = actorType
+            )
+            Result.success(response)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getLongTermLoansRequestsList(
+        token: String,
+        memberRefId: String
+    ): Result<List<PrestaLongTermLoansRequestsListResponse>> {
+        return try {
+            val response = prestaLongTermLoansClient.getLongTermLoanRequestsList(
+                token = token,
+                memberRefId = memberRefId
             )
             Result.success(response)
 

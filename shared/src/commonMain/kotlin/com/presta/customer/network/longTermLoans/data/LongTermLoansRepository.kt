@@ -11,6 +11,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLoanRequestByReques
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
+import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansRequestsListResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantoResponse.PrestaGuarantorResponse
@@ -62,24 +63,31 @@ interface LongTermLoansRepository {
         token: String,
         memberRefId: String,
     ): Result<List<PrestaGuarantorResponse>>
+
     suspend fun getLongTermProductLoanRequestByRefId(
         token: String,
         loanRequestRefId: String,
     ): Result<PrestaLoanByRefIdResponse>
+
     suspend fun getGuarantorAcceptanceStatus(
         token: String,
         guarantorshipRequestRefId: String,
         isAccepted: Boolean
     ): Result<PrestaGuarantorAcceptanceResponse>
+
     suspend fun getLoansByLoanRequestRefId(
         token: String,
         loanRequestRefId: String,
     ): Result<PrestaLoanRequestByRequestRefId>
+
     suspend fun getZohoSignUrl(
         token: String,
         loanRequestRefId: String,
         actorRefId: String,
-         actorType: ActorType
+        actorType: ActorType
     ): Result<PrestaZohoSignUrlResponse>
-
+    suspend fun getLongTermLoansRequestsList(
+        token: String,
+        memberRefId: String,
+    ): Result<List<PrestaLongTermLoansRequestsListResponse>>
 }

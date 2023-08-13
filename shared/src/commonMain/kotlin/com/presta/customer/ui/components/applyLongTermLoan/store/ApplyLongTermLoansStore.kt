@@ -13,6 +13,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategor
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
+import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansRequestsListResponse
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantoResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.tsststts.PrestaGuarantorAcceptanceResponse
@@ -49,8 +50,7 @@ interface ApplyLongTermLoansStore :
         data class GetPrestaGuarantorshipRequests(
             val token: String,
             val memberRefId: String
-        ) :
-            Intent()
+        ) : Intent()
 
         data class GetPrestaLongTermLoanRequestByRefId(
             val token: String,
@@ -74,7 +74,10 @@ interface ApplyLongTermLoansStore :
             val actorRefId: String,
             val actorType: ActorType
         ) : Intent()
-
+        data class GetPrestaLongTermLoansRequestsList(
+            val token: String,
+            val memberRefId: String
+        ) : Intent()
     }
 
     data class State(
@@ -92,6 +95,7 @@ interface ApplyLongTermLoansStore :
         val prestaGuarontorAcceptanceStatus: PrestaGuarantorAcceptanceResponse? = null,
         val prestaLoanByLoanRequestRefId: PrestaLoanRequestByRequestRefId? = null,
         val prestaZohoSignUrl: PrestaZohoSignUrlResponse? = null,
+        val prestaLongTermLoansRequestsList: List<PrestaLongTermLoansRequestsListResponse> = emptyList(),
         val memberNo: String = "By Member No",
         val phoneNo: String = "By Phone No",
         val selfGuarantee: String = "Self Guarantee",

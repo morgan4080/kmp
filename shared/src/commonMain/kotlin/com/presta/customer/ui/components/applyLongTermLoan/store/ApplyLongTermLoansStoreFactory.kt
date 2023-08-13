@@ -18,6 +18,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategor
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
+import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansRequestsListResponse
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantoResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.tsststts.PrestaGuarantorAcceptanceResponse
@@ -79,7 +80,8 @@ class ApplyLongTermLoansStoreFactory(
 
         data class ZohoSignUrlLoaded(val zohoSignUrlResponse: PrestaZohoSignUrlResponse) :
             Msg()
-
+        data class LongTermLoansRequestsListLoaded(val longTermLoansRequestsListResponse: List<PrestaLongTermLoansRequestsListResponse> = listOf()) :
+            Msg()
         data class LongTermLoansFailed(val error: String?) : Msg()
     }
 
@@ -166,6 +168,10 @@ class ApplyLongTermLoansStoreFactory(
                     loanRequestRefId = intent.loanRequestRefId,
                     actorRefId = intent.actorRefId,
                     actorType = intent.actorType
+                )
+                is ApplyLongTermLoansStore.Intent.GetPrestaLongTermLoansRequestsList -> getprestaLongTermLoansRequestsList(
+                    token = intent.token,
+                    memberRefId = intent.memberRefId
                 )
             }
 
@@ -490,6 +496,30 @@ class ApplyLongTermLoansStoreFactory(
                 dispatch(Msg.LongTermLoansLoading(false))
             }
         }
+        private var getprestaLongTermLoansRequestsListJob: Job? = null
+
+        private fun getprestaLongTermLoansRequestsList(
+            token: String,
+            memberRefId: String
+        ) {
+            if (getprestaLongTermLoansRequestsListJob?.isActive == true) return
+
+            dispatch(Msg.LongTermLoansLoading())
+
+            getprestaLongTermLoansRequestsListJob = scope.launch {
+                longTermLoansRepository.getLongTermLoansRequestsList(
+                    token = token,
+                    memberRefId = memberRefId
+                ).onSuccess { response ->
+                    dispatch(Msg.LongTermLoansRequestsListLoaded(response))
+
+                }.onFailure { e ->
+                    dispatch(Msg.LongTermLoansFailed(e.message))
+                }
+
+                dispatch(Msg.LongTermLoansLoading(false))
+            }
+        }
     }
 
     private object ReducerImpl :
@@ -516,6 +546,7 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.GuarantorAcceptanceResponseLoaded -> copy(prestaGuarontorAcceptanceStatus = msg.guarantorAcceptanceResponse)
                 is Msg.LoanByLoanRequestRefIdLoaded -> copy(prestaLoanByLoanRequestRefId = msg.loanRequestByRefIdResponse)
                 is Msg.ZohoSignUrlLoaded -> copy(prestaZohoSignUrl = msg.zohoSignUrlResponse)
+                is Msg.LongTermLoansRequestsListLoaded -> copy(prestaLongTermLoansRequestsList = msg.longTermLoansRequestsListResponse)
             }
     }
 
