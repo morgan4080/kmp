@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -43,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
@@ -71,19 +73,23 @@ fun LongTermLoanRequestsContent(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = skipHalfExpanded
     )
-    val memBerRefId = signHomeState.prestaTenantByPhoneNumber?.refId
+    var memBerRefId by remember { mutableStateOf("") }
+    if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
+        memBerRefId = signHomeState.prestaTenantByPhoneNumber.refId
+    }
     val scope = rememberCoroutineScope()
-    if (signHomeState.prestaTenantByPhoneNumber?.memberNumber != null) {
+    if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         LaunchedEffect(
             authState.cachedMemberData,
-            signHomeState.prestaTenantByPhoneNumber.refId
+            memBerRefId
 
         ) {
             authState.cachedMemberData?.let {
                 ApplyLongTermLoansStore.Intent.GetPrestaLongTermLoansRequestsList(
                     token = it.accessToken,
-                    memberRefId = ""
+                    memberRefId = memBerRefId
                 )
+
             }?.let {
                 onEvent(
                     it
@@ -248,18 +254,22 @@ fun LongTermLoanRequestsContent(
                     item {
                         Spacer(modifier = Modifier.padding(innerPadding))
                     }
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        ) {
-                            LongTermLoanRequestsListContainer(
-                                onClickContainer = {
-                                    scope.launch { modalBottomSheetState.show() }
-                                }
-                            )
-                        }
 
+                    state.prestaLongTermLoansRequestsList?.content?.map {loanlistingData->
+                        item {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            ) {
+                                LongTermLoanRequestsListContainer(
+                                    onClickContainer = {
+                                        scope.launch { modalBottomSheetState.show() }
+                                    },
+                                    loanProductName = loanlistingData.loanProductName
+                                )
+                            }
+
+                        }
                     }
                 }
             })
@@ -269,7 +279,8 @@ fun LongTermLoanRequestsContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LongTermLoanRequestsListContainer(
-    onClickContainer: () -> Unit
+    onClickContainer: () -> Unit,
+    loanProductName: String
 ) {
     ElevatedCard(
         modifier = Modifier
@@ -280,10 +291,12 @@ fun LongTermLoanRequestsListContainer(
     ) {
         Row(
             modifier = Modifier
+                .fillMaxWidth()
                 .wrapContentHeight()
-                .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                .background(color = MaterialTheme.colorScheme.inverseOnSurface),
+            horizontalArrangement = Arrangement.Center
         ) {
-            Column(
+            Box(
                 modifier = Modifier
                     .clip(
                         shape = RoundedCornerShape(
@@ -296,9 +309,12 @@ fun LongTermLoanRequestsListContainer(
                         )
                     )
                     .fillMaxHeight(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+                Column(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxHeight()
+                ) {
                     Icon(
                         Icons.Filled.DoneAll,
                         contentDescription = "completed",
@@ -313,79 +329,76 @@ fun LongTermLoanRequestsListContainer(
                         fontSize = 13.sp,
                         modifier = Modifier.padding(top = 10.dp)
                     )
+
+                }
+
             }
-            Row(
+
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .padding(start = 10.dp)
                     .fillMaxHeight()
-                    .background(color = MaterialTheme.colorScheme.inverseOnSurface),
-                horizontalArrangement = Arrangement.Center
             ) {
-                Column(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .fillMaxHeight()
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
+                    Text(
+                        "APPLICANT SIGNED",
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        fontSize = 13.sp,
+                        modifier = Modifier.padding(
+                            end = 15.dp,
+                            top = 5.dp
+                        ),
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Column() {
                         Text(
-                            "APPLICANT SIGNED",
+                            text = loanProductName,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                            fontSize = 13.sp,
-                            modifier = Modifier.padding(
-                                end = 15.dp,
-                                top = 5.dp
-                            ),
-                            color = MaterialTheme.colorScheme.secondary
+                            fontSize = 12.sp
+                        )
+                        Text(
+                            "Loan",
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                            fontSize = 12.sp
                         )
                     }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-
-                        Column() {
-                            Text(
-                                "Normal",
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                fontSize = 12.sp
-                            )
-                            Text(
-                                "Loan",
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                fontSize = 12.sp
-                            )
-                        }
-                        Spacer(modifier = Modifier.weight(1f))
-                        Column() {
-                            Text(
-                                text = "ksh. 12000000.00",
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                fontSize = 12.sp,
-                                modifier = Modifier.padding(end = 15.dp)
-                            )
-                        }
-                    }
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight()
-                            .padding(top = 20.dp),
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.Bottom
-                    ) {
+                    Spacer(modifier = Modifier.weight(1f))
+                    Column() {
                         Text(
-                            "27/04/2023 08:32",
+                            text = "ksh. 12000000.00",
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                            fontSize = 10.sp,
+                            fontSize = 12.sp,
                             modifier = Modifier.padding(end = 15.dp)
                         )
                     }
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .padding(top = 20.dp),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    Text(
+                        "27/04/2023 08:32",
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        fontSize = 10.sp,
+                        modifier = Modifier.padding(end = 15.dp)
+                    )
                 }
             }
         }

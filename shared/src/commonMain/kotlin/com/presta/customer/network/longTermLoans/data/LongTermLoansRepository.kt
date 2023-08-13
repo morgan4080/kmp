@@ -89,5 +89,5 @@ interface LongTermLoansRepository {
     suspend fun getLongTermLoansRequestsList(
         token: String,
         memberRefId: String,
-    ): Result<List<PrestaLongTermLoansRequestsListResponse>>
+    ): Result<PrestaLongTermLoansRequestsListResponse>
 }

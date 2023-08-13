@@ -244,11 +244,10 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
             Result.failure(e)
         }
     }
-
     override suspend fun getLongTermLoansRequestsList(
         token: String,
         memberRefId: String
-    ): Result<List<PrestaLongTermLoansRequestsListResponse>> {
+    ): Result<PrestaLongTermLoansRequestsListResponse> {
         return try {
             val response = prestaLongTermLoansClient.getLongTermLoanRequestsList(
                 token = token,

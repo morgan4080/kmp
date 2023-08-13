@@ -95,7 +95,7 @@ interface ApplyLongTermLoansStore :
         val prestaGuarontorAcceptanceStatus: PrestaGuarantorAcceptanceResponse? = null,
         val prestaLoanByLoanRequestRefId: PrestaLoanRequestByRequestRefId? = null,
         val prestaZohoSignUrl: PrestaZohoSignUrlResponse? = null,
-        val prestaLongTermLoansRequestsList: List<PrestaLongTermLoansRequestsListResponse> = emptyList(),
+        val prestaLongTermLoansRequestsList: PrestaLongTermLoansRequestsListResponse? = null,
         val memberNo: String = "By Member No",
         val phoneNo: String = "By Phone No",
         val selfGuarantee: String = "Self Guarantee",

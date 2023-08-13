@@ -80,7 +80,7 @@ class ApplyLongTermLoansStoreFactory(
 
         data class ZohoSignUrlLoaded(val zohoSignUrlResponse: PrestaZohoSignUrlResponse) :
             Msg()
-        data class LongTermLoansRequestsListLoaded(val longTermLoansRequestsListResponse: List<PrestaLongTermLoansRequestsListResponse> = listOf()) :
+        data class LongTermLoansRequestsListLoaded(val longTermLoansRequestsListResponse: PrestaLongTermLoansRequestsListResponse) :
             Msg()
         data class LongTermLoansFailed(val error: String?) : Msg()
     }
@@ -534,11 +534,9 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.LongTermLoansSubCategoriesLoaded -> copy(
                     prestaLongTermLoanProductsSubCategories = msg.longTermLoansSubCategoryLoaded
                 )
-
                 is Msg.LongTermLoansSubCategoriesChildrenLoaded -> copy(
                     prestaLongTermLoanProductsSubCategoriesChildren = msg.longTermLoansSubCategoryChildrenLoaded
                 )
-
                 is Msg.ClientSettingsLoaded -> copy(prestaClientSettings = msg.clientSettingsLoaded)
                 is Msg.LongTermLoanRequestLoaded -> copy(prestaLongTermLoanRequestData = msg.longTermLoanRequestResponse)
                 is Msg.GuarontorshipRequestsLoaded -> copy(prestaGuarontorshipRequests = msg.guarantorShipRequestsLoaded)

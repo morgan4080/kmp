@@ -88,9 +88,10 @@ class DefaultLongTermLoansRequestsComponent (
                             token = state.cachedMemberData.accessToken
                         )
                     )
-                    onEvent(
-                        ApplyLongTermLoansStore.Intent.GetLongTermLoansProducts(
+                    onProfileEvent(
+                        SignHomeStore.Intent.GetPrestaTenantByPhoneNumber(
                             token = state.cachedMemberData.accessToken,
+                            phoneNumber = state.cachedMemberData.phoneNumber
                         )
                     )
                 }
