@@ -345,7 +345,6 @@ fun CircularProgressBarWithText(
     color: Color = MaterialTheme.colorScheme.primary
 ) {
     Box(modifier = modifier.size(80.dp)) {
-
         CircularProgressIndicator(
             progress = 1f,
             strokeWidth = strokeWidth,
