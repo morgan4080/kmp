@@ -285,4 +285,19 @@ class PrestaLongTermLoansClient(
             }
         }
     }
+    suspend fun getLongTermLoanRequestsFilteredList(
+        token: String,
+        memberRefId: String,
+    ): PrestaLongTermLoansRequestsListResponse {
+        return longTermLoansErrorHandler {
+            httpClient.get(NetworkConstants.PrestaLongTermLoansRequetsList.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+                url {
+                    encodedParameters.append("memberRefId", memberRefId)
+                }
+            }
+        }
+    }
 }

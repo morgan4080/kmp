@@ -1,64 +1,67 @@
 package com.presta.customer.ui.components.signAppHome.ui
 
- import ShimmerBrush
- import androidx.compose.foundation.background
- import androidx.compose.foundation.layout.Arrangement
- import androidx.compose.foundation.layout.Box
- import androidx.compose.foundation.layout.Column
- import androidx.compose.foundation.layout.Row
- import androidx.compose.foundation.layout.Spacer
- import androidx.compose.foundation.layout.absoluteOffset
- import androidx.compose.foundation.layout.defaultMinSize
- import androidx.compose.foundation.layout.fillMaxWidth
- import androidx.compose.foundation.layout.padding
- import androidx.compose.foundation.layout.size
- import androidx.compose.foundation.lazy.LazyColumn
- import androidx.compose.foundation.shape.RoundedCornerShape
- import androidx.compose.material.CircularProgressIndicator
- import androidx.compose.material.icons.Icons
- import androidx.compose.material.icons.filled.Apps
- import androidx.compose.material.icons.outlined.Assignment
- import androidx.compose.material.icons.outlined.Grade
- import androidx.compose.material.icons.outlined.Shield
- import androidx.compose.material3.CardDefaults
- import androidx.compose.material3.CenterAlignedTopAppBar
- import androidx.compose.material3.Divider
- import androidx.compose.material3.ElevatedCard
- import androidx.compose.material3.ExperimentalMaterial3Api
- import androidx.compose.material3.Icon
- import androidx.compose.material3.IconButton
- import androidx.compose.material3.MaterialTheme
- import androidx.compose.material3.Scaffold
- import androidx.compose.material3.Text
- import androidx.compose.material3.TopAppBarDefaults
- import androidx.compose.runtime.Composable
- import androidx.compose.runtime.getValue
- import androidx.compose.runtime.mutableStateOf
- import androidx.compose.runtime.remember
- import androidx.compose.runtime.setValue
- import androidx.compose.ui.Alignment
- import androidx.compose.ui.Modifier
- import androidx.compose.ui.draw.clip
- import androidx.compose.ui.graphics.Color
- import androidx.compose.ui.text.TextStyle
- import androidx.compose.ui.unit.Dp
- import androidx.compose.ui.unit.dp
- import androidx.compose.ui.unit.sp
- import androidx.compose.ui.zIndex
- import com.presta.customer.MR
- import com.presta.customer.ui.components.signAppHome.SignHomeComponent
- import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
- import com.presta.customer.ui.composables.SignProductSelection
- import com.presta.customer.ui.helpers.LocalSafeArea
- import com.presta.customer.ui.helpers.formatMoney
- import dev.icerock.moko.resources.compose.fontFamilyResource
+import ShimmerBrush
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Apps
+import androidx.compose.material.icons.outlined.Assignment
+import androidx.compose.material.icons.outlined.Grade
+import androidx.compose.material.icons.outlined.Shield
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
+import com.presta.customer.MR
+import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
+import com.presta.customer.ui.components.signAppHome.SignHomeComponent
+import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
+import com.presta.customer.ui.composables.SignProductSelection
+import com.presta.customer.ui.helpers.LocalSafeArea
+import com.presta.customer.ui.helpers.formatMoney
+import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun  SignHomeContent(
+fun SignHomeContent(
     component: SignHomeComponent,
     state: SignHomeStore.State,
-){
+    applyLongTermLoanState: ApplyLongTermLoansStore.State
+) {
     val progressPercentage = 0.75f // Example progress percentage
     var progress by remember { mutableStateOf(0.5f) }
     val progress2 = remember { mutableStateOf(0.75f) }
@@ -140,7 +143,7 @@ fun  SignHomeContent(
                                             ),
                                             shape = RoundedCornerShape(12.dp)
                                         ).defaultMinSize(150.dp),
-                                        text = if ( state.prestaTenantByPhoneNumber?.fullName !== null) state.prestaTenantByPhoneNumber.fullName.uppercase() else "",
+                                        text = if (state.prestaTenantByPhoneNumber?.fullName !== null) state.prestaTenantByPhoneNumber.fullName.uppercase() else "",
                                         color = MaterialTheme.colorScheme.onBackground,
                                         fontSize = 14.sp,
                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
@@ -149,13 +152,13 @@ fun  SignHomeContent(
                                         modifier = Modifier
                                             .padding(top = 2.dp)
                                             .background(
-                                            brush = ShimmerBrush(
-                                                targetValue = 1300f,
-                                                showShimmer = state.prestaTenantByPhoneNumber?.fullName == null
-                                            ),
-                                            shape = RoundedCornerShape(12.dp)
-                                        ).defaultMinSize(150.dp),
-                                        text = if ( state.prestaTenantByPhoneNumber?.memberNumber !== null) state.prestaTenantByPhoneNumber.memberNumber else "",
+                                                brush = ShimmerBrush(
+                                                    targetValue = 1300f,
+                                                    showShimmer = state.prestaTenantByPhoneNumber?.fullName == null
+                                                ),
+                                                shape = RoundedCornerShape(12.dp)
+                                            ).defaultMinSize(150.dp),
+                                        text = if (state.prestaTenantByPhoneNumber?.memberNumber !== null) state.prestaTenantByPhoneNumber.memberNumber else "",
                                         fontSize = 14.sp,
                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                     )
@@ -179,7 +182,7 @@ fun  SignHomeContent(
                                                     ),
                                                     shape = RoundedCornerShape(12.dp)
                                                 ).defaultMinSize(50.dp),
-                                            text = if ( state.prestaTenantByPhoneNumber?.totalShares!== null) "${
+                                            text = if (state.prestaTenantByPhoneNumber?.totalShares !== null) "${
                                                 formatMoney(
                                                     state.prestaTenantByPhoneNumber.totalShares
                                                 )
@@ -211,41 +214,18 @@ fun  SignHomeContent(
                                             "See All",
                                             fontSize = 14.sp,
                                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
-                                            color = MaterialTheme.colorScheme.primary
+                                            color = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.clickable {
+                                                component.goToLoanRequests()
+                                            }
                                         )
 
                                     }
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(top = 10.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        //CircularProgressBar(percentage = progressPercentage)
-                                        CircularProgressBarWithText(
-                                            progress = progress,
-                                            text = "${(progress * 100).toInt()}%",
-                                            modifier = Modifier.padding(start = 1.dp)
-                                        )
-                                        // Text(text = "${(progressPercentage * 100).toInt()}%", fontSize = 24.sp)
-                                        Column() {
-                                            Text(
-                                                "Normal loan",
-                                                fontSize = 12.sp
-                                            )
-                                            Text(
-                                                "27/04/2023 08:32",
-                                                fontSize = 12.sp
-                                            )
-                                        }
+                                    //Loan Requests Listing
+                                    //filtered by the first two
 
-                                        Spacer(modifier = Modifier.weight(1f))
-
-                                        Text(
-                                            text = "12,000.00  KES",
-                                            fontSize = 12.sp
-                                        )
-
+                                    Column() {
+                                        LoanRequestsListing()
                                     }
                                 }
                             }
@@ -334,7 +314,42 @@ fun  SignHomeContent(
             }
         })
 
+}
+@Composable
+fun LoanRequestsListing() {
+    val progress by remember { mutableStateOf(0.5f) }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        //CircularProgressBar(percentage = progressPercentage)
+        CircularProgressBarWithText(
+            progress = progress,
+            text = "${(progress * 100).toInt()}%",
+            modifier = Modifier.padding(start = 1.dp)
+        )
+        // Text(text = "${(progressPercentage * 100).toInt()}%", fontSize = 24.sp)
+        Column() {
+            Text(
+                "Normal loan",
+                fontSize = 12.sp
+            )
+            Text(
+                "27/04/2023 08:32",
+                fontSize = 12.sp
+            )
+        }
 
+        Spacer(modifier = Modifier.weight(1f))
+
+        Text(
+            text = "12,000.00  KES",
+            fontSize = 12.sp
+        )
+
+    }
 }
 @Composable
 fun CircularProgressBarWithText(

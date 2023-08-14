@@ -7,12 +7,13 @@ import com.presta.customer.ui.components.signAppHome.SignHomeComponent
 
 @Composable
 fun SignHomeScreen(component: SignHomeComponent) {
-
     val authState by component.authState.collectAsState()
     val  signHomeStateState by component.signHomeState.collectAsState()
+    val  applyLongTermLoansState by component.applyLongTermLoansState.collectAsState()
     SignHomeContent(
         component = component,
-        state = signHomeStateState
+        state = signHomeStateState,
+        applyLongTermLoanState = applyLongTermLoansState
     )
 }
 

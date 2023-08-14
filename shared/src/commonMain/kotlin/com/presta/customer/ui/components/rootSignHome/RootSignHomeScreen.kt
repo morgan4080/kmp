@@ -11,9 +11,8 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scal
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.presta.customer.ui.components.rootSignHome.RootSignHomeComponent
-import com.presta.customer.ui.components.savingsTransactionHistory.SavingsTransactionHistoryScreen
-import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.components.signAppHome.ui.SignHomeScreen
+import com.presta.customer.ui.helpers.LocalSafeArea
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,7 +27,6 @@ fun RootSignHomeScreen(component: RootSignHomeComponent) {
         ) {
             when (val child = it.instance) {
                 is RootSignHomeComponent.ChildHomeSign.SignHomeChild -> SignHomeScreen(child.component)
-                is RootSignHomeComponent.ChildHomeSign.TransactionHistoryChild-> SavingsTransactionHistoryScreen(child.component)
             }
         }
     }

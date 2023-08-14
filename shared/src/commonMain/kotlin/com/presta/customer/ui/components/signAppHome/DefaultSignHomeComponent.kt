@@ -5,6 +5,8 @@ import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.network.onBoarding.model.PinStatus
+import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
+import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStoreFactory
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.profile.coroutineScope
@@ -16,7 +18,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
-
 class DefaultSignHomeComponent (
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
@@ -25,9 +26,9 @@ class DefaultSignHomeComponent (
     private val onGuarantorshipRequestsClicked: () -> Unit,
     private val onFavouriteGuarantorsClicked: () -> Unit,
     private val witnessRequestClicked: () -> Unit,
+    private val onGotoLoanRequestsClicked: () -> Unit,
 ): SignHomeComponent, ComponentContext by componentContext {
     private val scope = coroutineScope(mainContext + SupervisorJob())
-
     override val authStore: AuthStore =
         instanceKeeper.getStore {
             AuthStoreFactory(
@@ -53,11 +54,26 @@ class DefaultSignHomeComponent (
     override val  signHomeState: StateFlow<SignHomeStore.State> =
         sigHomeStore.stateFlow
 
+    override val applyLongTermLoansStore: ApplyLongTermLoansStore =
+        instanceKeeper.getStore {
+            ApplyLongTermLoansStoreFactory(
+                storeFactory = storeFactory
+            ).create()
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val applyLongTermLoansState: StateFlow<ApplyLongTermLoansStore.State> =
+        applyLongTermLoansStore.stateFlow
+    override fun onApplyLongTermLoanEvent(event: ApplyLongTermLoansStore.Intent) {
+        applyLongTermLoansStore.accept(event)
+    }
+    override fun goToLoanRequests() {
+    onGotoLoanRequestsClicked()
+    }
+
     override fun onAuthEvent(event: AuthStore.Intent) {
         authStore.accept(event)
     }
-
-
     override fun onEvent(event: SignHomeStore.Intent) {
         sigHomeStore.accept(event)
     }
@@ -100,7 +116,6 @@ class DefaultSignHomeComponent (
     override fun witnessRequestSelected() {
         witnessRequestClicked()
     }
-
 
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)

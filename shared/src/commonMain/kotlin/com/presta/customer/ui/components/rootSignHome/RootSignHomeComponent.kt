@@ -11,6 +11,6 @@ interface RootSignHomeComponent {
 
     sealed class  ChildHomeSign {
         class SignHomeChild(val component: SignHomeComponent): ChildHomeSign()
-        class TransactionHistoryChild(val component: SavingsTransactionHistoryComponent): ChildHomeSign()
+
     }
 }

@@ -277,7 +277,8 @@ fun LongTermLoanRequestsContent(
                                             scope.launch { modalBottomSheetState.show() }
                                         },
                                         loanProductName = loanlistingData.loanProductName,
-                                        applicationComplete = false
+                                        applicationComplete = false,
+                                        loanAmount = formatMoney(loanlistingData.loanAmount)
                                     )
                                 }
 
@@ -517,6 +518,7 @@ fun LongTermLoanRequestsListContainer(
     onClickContainer: () -> Unit,
     loanProductName: String,
     applicationComplete: Boolean,
+    loanAmount: String
 ) {
     var progress by remember { mutableStateOf(0.5f) }
     ElevatedCard(
@@ -633,16 +635,11 @@ fun LongTermLoanRequestsListContainer(
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 fontSize = 12.sp
                             )
-                            Text(
-                                "Loan",
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                fontSize = 12.sp
-                            )
                         }
                         Spacer(modifier = Modifier.weight(1f))
                         Column() {
                             Text(
-                                text = "ksh. 12000000.00",
+                                text = loanAmount,
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 fontSize = 12.sp,
                                 modifier = Modifier.padding(end = 15.dp)

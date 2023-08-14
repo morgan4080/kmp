@@ -82,7 +82,6 @@ class DefaultRootBottomSignComponent(
             is ConfigBottom.SignProfile-> RootBottomSignComponent.ChildBottom.ProfileChild(rootSignHomeComponent(componentContext))
             is ConfigBottom.Request-> RootBottomSignComponent.ChildBottom.RequestChild(requestComponent(componentContext))
             is ConfigBottom.Settings -> RootBottomSignComponent.ChildBottom.SettingsChild(settingsComponent(componentContext))
-            //is ConfigBottom.Lms-> RootBottomSignComponent.ChildBottom.SignChild(signComponent(componentContext))
         }
 
     private fun rootSignHomeComponent(componentContext: ComponentContext): RootSignHomeComponent =
@@ -91,9 +90,6 @@ class DefaultRootBottomSignComponent(
             storeFactory = storeFactory,
             pop = {
                 navigationBottomStackNavigation.pop()
-            },
-            processTransaction = { correlationId, amount, mode ->
-               // processTransaction(correlationId, amount, mode)
             },
             onApplyLoanClicked = {
                 //go to component outside root Bottom
@@ -107,12 +103,9 @@ class DefaultRootBottomSignComponent(
             },
             onWitnessRequestClicked = {
                 gotoWitnessRequests()
-            }
-        )
-    private fun signComponent(componentContext: ComponentContext): SignComponent =
-        DefaultSignComponent(
-            componentContext = componentContext,
-            onSelected = {
+            },
+            onLoanRequestsListClicked = {
+                navigationBottomStackNavigation.bringToFront(ConfigBottom.Request)
 
             }
         )
@@ -160,8 +153,6 @@ class DefaultRootBottomSignComponent(
         object Request : ConfigBottom()
         @Parcelize
         object Settings : ConfigBottom()
-//        @Parcelize
-//        object Lms: ConfigBottom()
 
     }
 

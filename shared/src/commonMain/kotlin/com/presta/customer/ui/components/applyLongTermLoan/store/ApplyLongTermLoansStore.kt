@@ -78,6 +78,10 @@ interface ApplyLongTermLoansStore :
             val token: String,
             val memberRefId: String
         ) : Intent()
+        data class GetPrestaLongTermLoansRequestsFilteredList(
+            val token: String,
+            val memberRefId: String
+        ) : Intent()
     }
 
     data class State(
@@ -96,6 +100,7 @@ interface ApplyLongTermLoansStore :
         val prestaLoanByLoanRequestRefId: PrestaLoanRequestByRequestRefId? = null,
         val prestaZohoSignUrl: PrestaZohoSignUrlResponse? = null,
         val prestaLongTermLoansRequestsList: PrestaLongTermLoansRequestsListResponse? = null,
+        val prestaLongTermLoansRequestsFilteredList: PrestaLongTermLoansRequestsListResponse? = null,
         val memberNo: String = "By Member No",
         val phoneNo: String = "By Phone No",
         val selfGuarantee: String = "Self Guarantee",

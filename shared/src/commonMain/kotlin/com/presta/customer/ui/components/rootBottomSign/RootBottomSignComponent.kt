@@ -27,9 +27,7 @@ interface RootBottomSignComponent {
         class ProfileChild(val component: RootSignHomeComponent) : ChildBottom()
         class RequestChild(val component: LongTermLoanRequestsComponent) : ChildBottom()
         class SettingsChild(val component: SignSettingsComponent) : ChildBottom()
-       // class SignChild(val component: SignComponent) : ChildBottom()
     }
-    
-    
-    
+
+
 }

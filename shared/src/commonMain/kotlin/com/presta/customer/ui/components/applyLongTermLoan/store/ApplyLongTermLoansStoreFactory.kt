@@ -80,8 +80,13 @@ class ApplyLongTermLoansStoreFactory(
 
         data class ZohoSignUrlLoaded(val zohoSignUrlResponse: PrestaZohoSignUrlResponse) :
             Msg()
+
         data class LongTermLoansRequestsListLoaded(val longTermLoansRequestsListResponse: PrestaLongTermLoansRequestsListResponse) :
             Msg()
+
+        data class LongTermLoansRequestsFilteredListLoaded(val longTermLoansRequestsFilteredListResponse: PrestaLongTermLoansRequestsListResponse) :
+            Msg()
+
         data class LongTermLoansFailed(val error: String?) : Msg()
     }
 
@@ -169,7 +174,13 @@ class ApplyLongTermLoansStoreFactory(
                     actorRefId = intent.actorRefId,
                     actorType = intent.actorType
                 )
+
                 is ApplyLongTermLoansStore.Intent.GetPrestaLongTermLoansRequestsList -> getprestaLongTermLoansRequestsList(
+                    token = intent.token,
+                    memberRefId = intent.memberRefId
+                )
+
+                is ApplyLongTermLoansStore.Intent.GetPrestaLongTermLoansRequestsFilteredList -> getprestaLongTermLoansRequestsFilteredList(
                     token = intent.token,
                     memberRefId = intent.memberRefId
                 )
@@ -476,7 +487,7 @@ class ApplyLongTermLoansStoreFactory(
             token: String,
             loanRequestRefId: String,
             actorRefId: String,
-             actorType: ActorType,
+            actorType: ActorType,
         ) {
             if (requestZohoSIgnUrlJob?.isActive == true) return
             dispatch(Msg.LongTermLoansLoading())
@@ -496,6 +507,7 @@ class ApplyLongTermLoansStoreFactory(
                 dispatch(Msg.LongTermLoansLoading(false))
             }
         }
+
         private var getprestaLongTermLoansRequestsListJob: Job? = null
 
         private fun getprestaLongTermLoansRequestsList(
@@ -520,6 +532,30 @@ class ApplyLongTermLoansStoreFactory(
                 dispatch(Msg.LongTermLoansLoading(false))
             }
         }
+
+        private var getprestaLongTermLoansRequestsFilteredListJob: Job? = null
+        private fun getprestaLongTermLoansRequestsFilteredList(
+            token: String,
+            memberRefId: String
+        ) {
+            if (getprestaLongTermLoansRequestsFilteredListJob?.isActive == true) return
+
+            dispatch(Msg.LongTermLoansLoading())
+
+            getprestaLongTermLoansRequestsFilteredListJob = scope.launch {
+                longTermLoansRepository.getLongTermLoansRequestsList(
+                    token = token,
+                    memberRefId = memberRefId
+                ).onSuccess { response ->
+                    dispatch(Msg.LongTermLoansRequestsFilteredListLoaded(response))
+
+                }.onFailure { e ->
+                    dispatch(Msg.LongTermLoansFailed(e.message))
+                }
+
+                dispatch(Msg.LongTermLoansLoading(false))
+            }
+        }
     }
 
     private object ReducerImpl :
@@ -534,9 +570,11 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.LongTermLoansSubCategoriesLoaded -> copy(
                     prestaLongTermLoanProductsSubCategories = msg.longTermLoansSubCategoryLoaded
                 )
+
                 is Msg.LongTermLoansSubCategoriesChildrenLoaded -> copy(
                     prestaLongTermLoanProductsSubCategoriesChildren = msg.longTermLoansSubCategoryChildrenLoaded
                 )
+
                 is Msg.ClientSettingsLoaded -> copy(prestaClientSettings = msg.clientSettingsLoaded)
                 is Msg.LongTermLoanRequestLoaded -> copy(prestaLongTermLoanRequestData = msg.longTermLoanRequestResponse)
                 is Msg.GuarontorshipRequestsLoaded -> copy(prestaGuarontorshipRequests = msg.guarantorShipRequestsLoaded)
@@ -545,6 +583,9 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.LoanByLoanRequestRefIdLoaded -> copy(prestaLoanByLoanRequestRefId = msg.loanRequestByRefIdResponse)
                 is Msg.ZohoSignUrlLoaded -> copy(prestaZohoSignUrl = msg.zohoSignUrlResponse)
                 is Msg.LongTermLoansRequestsListLoaded -> copy(prestaLongTermLoansRequestsList = msg.longTermLoansRequestsListResponse)
+                is Msg.LongTermLoansRequestsFilteredListLoaded -> copy(
+                    prestaLongTermLoansRequestsFilteredList = msg.longTermLoansRequestsFilteredListResponse
+                )
             }
     }
 

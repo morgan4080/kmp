@@ -10,10 +10,7 @@ import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
-import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.prestaDispatchers
-import com.presta.customer.ui.components.savingsTransactionHistory.DefaultSavingsTransactionHistoryComponent
-import com.presta.customer.ui.components.savingsTransactionHistory.SavingsTransactionHistoryComponent
 import com.presta.customer.ui.components.signAppHome.DefaultSignHomeComponent
 import com.presta.customer.ui.components.signAppHome.SignHomeComponent
 
@@ -21,12 +18,8 @@ class DefaultRootSignHomeComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
     private val pop: () -> Unit = {},
-    private val processTransaction: (
-        correlationId: String,
-        amount: Double,
-        mode: PaymentTypes
-    ) -> Unit,
     private val onApplyLoanClicked: () -> Unit = {},
+    private val onLoanRequestsListClicked: () -> Unit = {},
     private val onGuarantorshipRequestsClicked: () -> Unit = {},
     private val onFavouriteGuarantorsClicked: () -> Unit = {},
     private val onWitnessRequestClicked: () -> Unit = {}
@@ -58,9 +51,6 @@ class DefaultRootSignHomeComponent(
                 signHomeComponent(componentContext)
             )
 
-            is ConfigSignHome.SavingsTransactionHistory -> RootSignHomeComponent.ChildHomeSign.TransactionHistoryChild(
-                savingsTransactionHistoryComponent(componentContext)
-            )
 
         }
 
@@ -82,20 +72,14 @@ class DefaultRootSignHomeComponent(
             },
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
+            onGotoLoanRequestsClicked = {
+                onLoanRequestsListClicked()
+
+            }
         )
-
-    private fun savingsTransactionHistoryComponent(componentContext: ComponentContext): SavingsTransactionHistoryComponent =
-        DefaultSavingsTransactionHistoryComponent(
-            componentContext = componentContext
-        )
-
-
     private sealed class ConfigSignHome : Parcelable {
         @Parcelize
         object SavingsHome : ConfigSignHome()
-
-        @Parcelize
-        object SavingsTransactionHistory : ConfigSignHome()
 
     }
 
