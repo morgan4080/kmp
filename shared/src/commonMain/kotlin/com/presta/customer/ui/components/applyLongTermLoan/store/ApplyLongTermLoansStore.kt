@@ -51,7 +51,7 @@ interface ApplyLongTermLoansStore :
             val token: String,
             val memberRefId: String
         ) : Intent()
-
+//Todo----To be replaced with --GetPrestaLoanByLoanRequestRefId
         data class GetPrestaLongTermLoanRequestByRefId(
             val token: String,
             val loanRequestRefId: String

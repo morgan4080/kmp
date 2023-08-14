@@ -32,6 +32,8 @@ data class PrestaLoanRequestByRequestRefId(
     val witnessSigned: Boolean,
     val zohoDocumentId: String,
     val zohoRequest: String,
-    val zohoRequestId: String
-)
+    val zohoRequestId: String,
+    val guarantorList: List<GuarantorDataResponse>,
+
+    )
 

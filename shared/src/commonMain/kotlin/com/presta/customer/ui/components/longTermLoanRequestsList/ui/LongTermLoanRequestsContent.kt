@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -48,7 +47,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
@@ -58,6 +56,7 @@ import com.presta.customer.ui.components.longTermLoanRequestsList.LongTermLoanRe
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
+import com.presta.customer.ui.helpers.formatMoney
 import com.presta.customer.ui.theme.backArrowColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.launch
@@ -78,6 +77,8 @@ fun LongTermLoanRequestsContent(
         skipHalfExpanded = skipHalfExpanded
     )
     var memBerRefId by remember { mutableStateOf("") }
+    var loanRequestRefId by remember { mutableStateOf("") }
+    var selectedIndex by remember { mutableStateOf(-1) }
     if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         memBerRefId = signHomeState.prestaTenantByPhoneNumber.refId
     }
@@ -101,140 +102,102 @@ fun LongTermLoanRequestsContent(
             }
         }
     }
+    if (loanRequestRefId != "") {
+        LaunchedEffect(
+            authState.cachedMemberData,
+            loanRequestRefId
+
+        ) {
+            authState.cachedMemberData?.let {
+                ApplyLongTermLoansStore.Intent.GetPrestaLoanByLoanRequestRefId(
+                    token = it.accessToken,
+                    loanRequestRefId = loanRequestRefId
+                )
+            }?.let {
+                onEvent(
+                    it
+                )
+            }
+        }
+    }
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         sheetContent = {
-            LazyColumn(
+            Column(
                 modifier = Modifier
                     .fillMaxHeight(0.9f)
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                item {
+
+                Column(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(bottom = 100.dp)
+                ) {
                     Column(
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.background)
-                            .padding(bottom = 100.dp)
+                            .padding(horizontal = 16.dp, vertical = 10.dp)
                     ) {
-                        Column(
+                        Row(
                             modifier = Modifier
-                                .padding(horizontal = 16.dp, vertical = 10.dp)
+                                .padding(top = 5.dp)
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
                         ) {
-                            Row(
-                                modifier = Modifier
-                                    .padding(top = 5.dp)
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.End
-                            ) {
-                                Icon(
-                                    Icons.Filled.Cancel,
-                                    contentDescription = "Cancel  Arrow",
-                                    tint = backArrowColor,
-                                    modifier = Modifier.clickable {
-                                        scope.launch { modalBottomSheetState.hide() }
-                                    }
-                                )
-                            }
-                            Row(modifier = Modifier.fillMaxWidth()) {
-                                Text(
-                                    "Normal Loan : 12000",
-                                    fontSize = 14.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                )
-
-                            }
-                            Row(
-                                modifier = Modifier
-                                    .padding(top = 10.dp)
-                                    .fillMaxWidth()
-                            ) {
-                                Text(
-                                    "88.89% Done",
-                                    fontSize = 12.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                )
-
-                            }
-                            Row(
-                                modifier = Modifier
-                                    .padding(top = 20.dp)
-                                    .fillMaxWidth()
-                            ) {
-                                Text(
-                                    "GUARANTORS  STATUS",
-                                    fontSize = 13.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                )
-                            }
-                            Column(
-                                modifier = Modifier
-                                    .padding(top = 30.dp)
-                                    .fillMaxWidth()
-                            ) {
-                                //Expand the content  of this container
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        "MORGAN MUTUGI",
-                                        fontSize = 13.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                    )
-                                    //progress indicator
-                                    LinearProgressWithPercentage(progress = 0.5f)
-                                    IconButton(
-                                        modifier = Modifier
-                                            .clip(CircleShape)
-                                            .padding(start = 10.dp)
-                                            .background(color = MaterialTheme.colorScheme.background)
-                                            .size(20.dp),
-                                        onClick = {
-                                            showExpanded = !showExpanded
-                                        },
-                                        content = {
-                                            Icon(
-                                                imageVector = Icons.Filled.PlayArrow,
-                                                modifier = if (showExpanded) Modifier.size(
-                                                    25.dp
-                                                )
-                                                    .rotate(90F) else Modifier.size(25.dp),
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
-                                    )
+                            Icon(
+                                Icons.Filled.Cancel,
+                                contentDescription = "Cancel  Arrow",
+                                tint = backArrowColor,
+                                modifier = Modifier.clickable {
+                                    scope.launch { modalBottomSheetState.hide() }
                                 }
-                                AnimatedVisibility(showExpanded) {
-                                    //:
-                                    LazyColumn(
-                                        modifier = Modifier
-                                            .fillParentMaxHeight(0.7f)
-                                            .fillMaxHeight()
-                                    ) {
-                                        item {
-                                            Row(
-                                                modifier = Modifier
-                                                    .padding(top = 20.dp)
-                                                    .fillMaxWidth(),
-                                                horizontalArrangement = Arrangement.SpaceBetween
-                                            ) {
-                                                Text(
-                                                    "Eligibility Status",
-                                                    fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                                )
-                                                Text(
-                                                    "Member can guarantee",
-                                                    fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            )
+                        }
+
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                text = if (state.prestaLoanByLoanRequestRefId?.loanProductName != null) state.prestaLoanByLoanRequestRefId.loanProductName + " " + formatMoney(
+                                    state.prestaLoanByLoanRequestRefId.loanAmount
+                                ) else "",
+                                fontSize = 14.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                            )
+
+                        }
+                        Row(
+                            modifier = Modifier
+                                .padding(top = 10.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                text = if (state.prestaLoanByLoanRequestRefId?.loanRequestProgress != null) state.prestaLoanByLoanRequestRefId.loanRequestProgress.toString() + "% DONE" else "",
+                                fontSize = 12.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                            )
+
+                        }
+                        Row(
+                            modifier = Modifier
+                                .padding(top = 20.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                "GUARANTORS  STATUS",
+                                fontSize = 13.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                            )
+                        }
+                        //guarantor Listing
+                        state.prestaLoanByLoanRequestRefId?.guarantorList?.mapIndexed { index, guarantorDataResponse ->
+                            GuarantorListingContainer(
+                                guarantorName = guarantorDataResponse.firstName.uppercase(),
+                                index = index,
+                                onClick = { indexed: Int ->
+                                    selectedIndex = if (selectedIndex == index) -1 else indexed
+                                },
+                                expandContent = selectedIndex == index
+                            )
                         }
                     }
                 }
@@ -298,6 +261,7 @@ fun LongTermLoanRequestsContent(
                                 ) {
                                     LongTermLoanRequestsListContainer(
                                         onClickContainer = {
+                                            loanRequestRefId = loanlistingData.refId
                                             scope.launch { modalBottomSheetState.show() }
                                         },
                                         loanProductName = loanlistingData.loanProductName
@@ -309,6 +273,87 @@ fun LongTermLoanRequestsContent(
                     }
                 }
             })
+    }
+}
+
+@Composable
+fun GuarantorListingContainer(
+    guarantorName: String,
+    index: Int,
+    onClick: (Int) -> Unit,
+    expandContent: Boolean,
+) {
+    var showExpanded by remember { mutableStateOf(false) }
+    Column(
+        modifier = Modifier
+            .padding(top = 30.dp)
+            .fillMaxWidth()
+    ) {
+        //Expand the content  of this container
+        //Guarantor Listing
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                guarantorName,
+                fontSize = 13.sp,
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+            )
+            //progress indicator
+            LinearProgressWithPercentage(progress = 0.5f)
+            IconButton(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .padding(start = 10.dp)
+                    .background(color = MaterialTheme.colorScheme.background)
+                    .size(20.dp),
+                onClick = {
+                    onClick.invoke(index)
+                    showExpanded = !showExpanded
+                },
+                content = {
+                    Icon(
+                        imageVector = Icons.Filled.PlayArrow,
+                        modifier = if (expandContent) Modifier.size(
+                            25.dp
+                        )
+                            .rotate(90F) else Modifier.size(25.dp),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            )
+        }
+        AnimatedVisibility(expandContent) {
+            //:
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxHeight(0.7f)
+                    .fillMaxHeight()
+            ) {
+                item {
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 20.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            "Eligibility Status",
+                            fontSize = 12.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        )
+                        Text(
+                            "Member can guarantee",
+                            fontSize = 12.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -327,7 +372,7 @@ fun LongTermLoanRequestsListContainer(
     ) {
         Row(
             modifier = Modifier
-                .background(color =  MaterialTheme.colorScheme.inverseOnSurface)
+                .background(color = MaterialTheme.colorScheme.inverseOnSurface)
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,
@@ -343,8 +388,10 @@ fun LongTermLoanRequestsListContainer(
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(start = 10.dp, end = 10.dp,
-                            top = 25.dp)
+                        .padding(
+                            start = 10.dp, end = 10.dp,
+                            top = 25.dp
+                        )
                         .fillMaxHeight(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -360,8 +407,10 @@ fun LongTermLoanRequestsListContainer(
                         "Completed",
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                         fontSize = 13.sp,
-                        modifier = Modifier.padding(top = 10.dp,
-                            bottom = 25.dp)
+                        modifier = Modifier.padding(
+                            top = 10.dp,
+                            bottom = 25.dp
+                        )
                     )
                 }
             }
@@ -442,7 +491,6 @@ fun LongTermLoanRequestsListContainer(
                 }
             }
         }
-
     }
 }
 
