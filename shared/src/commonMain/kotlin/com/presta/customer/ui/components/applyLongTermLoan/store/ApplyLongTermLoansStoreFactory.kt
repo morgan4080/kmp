@@ -20,8 +20,8 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCate
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansRequestsListResponse
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
-import com.presta.customer.network.longTermLoans.model.guarantoResponse.PrestaGuarantorResponse
-import com.presta.customer.network.longTermLoans.model.tsststts.PrestaGuarantorAcceptanceResponse
+import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
+import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
 import com.presta.customer.prestaDispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch

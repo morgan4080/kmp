@@ -1,9 +1,9 @@
-package com.presta.customer.network.longTermLoans.model.tsststts
+package com.presta.customer.network.longTermLoans.model.guarantorResponse
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PrestaGuarantorAcceptanceResponse(
+data class PrestaGuarantorResponse(
     val refId: String,
     val memberNumber: String,
     val memberRefId: String,
@@ -11,11 +11,11 @@ data class PrestaGuarantorAcceptanceResponse(
     val lastName: String,
     val eligible: Boolean,
     val eligibilityMessage: String,
-    val dateAccepted: String,
     val isAccepted: Boolean,
     val isSigned: Boolean,
     val isActive: Boolean,
-    val committedAmount: Int,
+    val committedAmount: Double,
     val applicant: Applicant,
-    val loanRequest: LoanRequest,
+    val loanRequest: LoanRequest
 )
+

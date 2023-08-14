@@ -1,13 +1,16 @@
 package com.presta.customer.ui.components.longTermLoanRequestsList.ui
 
+import ShimmerBrush
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,6 +28,7 @@ import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -254,21 +258,53 @@ fun LongTermLoanRequestsContent(
                     item {
                         Spacer(modifier = Modifier.padding(innerPadding))
                     }
-
-                    state.prestaLongTermLoansRequestsList?.content?.map {loanlistingData->
-                        item {
-                            Column(
+                    if (state.prestaLongTermLoansRequestsList?.content.isNullOrEmpty()) {
+                        items(6) {
+                            Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
+                                    .padding(bottom = 10.dp, start = 16.dp, end = 16.dp)
+                                    .background(color = MaterialTheme.colorScheme.background),
                             ) {
-                                LongTermLoanRequestsListContainer(
-                                    onClickContainer = {
-                                        scope.launch { modalBottomSheetState.show() }
-                                    },
-                                    loanProductName = loanlistingData.loanProductName
-                                )
+                                ElevatedCard(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(color = MaterialTheme.colorScheme.background),
+                                    colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .defaultMinSize(40.dp, 40.dp)
+                                            .background(
+                                                ShimmerBrush(
+                                                    targetValue = 1300f,
+                                                    showShimmer = true
+                                                )
+                                            )
+                                            .fillMaxWidth()
+                                    ) {
+                                    }
+                                }
                             }
 
+                        }
+                    } else {
+                        state.prestaLongTermLoansRequestsList?.content?.map { loanlistingData ->
+                            item {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 10.dp)
+                                ) {
+                                    LongTermLoanRequestsListContainer(
+                                        onClickContainer = {
+                                            scope.launch { modalBottomSheetState.show() }
+                                        },
+                                        loanProductName = loanlistingData.loanProductName
+                                    )
+                                }
+
+                            }
                         }
                     }
                 }
@@ -291,29 +327,26 @@ fun LongTermLoanRequestsListContainer(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .background(color = MaterialTheme.colorScheme.inverseOnSurface),
-            horizontalArrangement = Arrangement.Center
+                .background(color =  MaterialTheme.colorScheme.inverseOnSurface)
         ) {
-            Box(
+            Column(
+                verticalArrangement = Arrangement.Center,
                 modifier = Modifier
-                    .clip(
+                    .background(
+                        color = MaterialTheme.colorScheme.outline.copy(0.3f),
                         shape = RoundedCornerShape(
+                            topStart = 0.dp,
+                            bottomStart = 0.dp,
                             bottomEnd = 20.dp
                         )
-                    )
-                    .background(
-                        color = MaterialTheme.colorScheme.outline.copy(
-                            alpha = 0.3f
-                        )
-                    )
-                    .fillMaxHeight(),
+                    ),
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(10.dp)
-                        .fillMaxHeight()
+                        .padding(start = 10.dp, end = 10.dp,
+                            top = 25.dp)
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Icon(
                         Icons.Filled.DoneAll,
@@ -327,81 +360,89 @@ fun LongTermLoanRequestsListContainer(
                         "Completed",
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                         fontSize = 13.sp,
-                        modifier = Modifier.padding(top = 10.dp)
+                        modifier = Modifier.padding(top = 10.dp,
+                            bottom = 25.dp)
                     )
-
                 }
-
             }
 
-            Column(
+            Row(
                 modifier = Modifier
+                    .fillMaxWidth()
                     .padding(start = 10.dp)
-                    .fillMaxHeight()
+                    .wrapContentHeight()
+                    .background(color = MaterialTheme.colorScheme.inverseOnSurface),
+                horizontalArrangement = Arrangement.Center
             ) {
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    Text(
-                        "APPLICANT SIGNED",
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                        fontSize = 13.sp,
-                        modifier = Modifier.padding(
-                            end = 15.dp,
-                            top = 5.dp
-                        ),
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                }
-                Row(
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .fillMaxHeight()
                 ) {
 
-                    Column() {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
                         Text(
-                            text = loanProductName,
+                            "APPLICANT SIGNED",
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                            fontSize = 12.sp
-                        )
-                        Text(
-                            "Loan",
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                            fontSize = 12.sp
+                            fontSize = 13.sp,
+                            modifier = Modifier.padding(
+                                end = 15.dp,
+                                top = 5.dp
+                            ),
+                            color = MaterialTheme.colorScheme.secondary
                         )
                     }
-                    Spacer(modifier = Modifier.weight(1f))
-                    Column() {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        Column() {
+                            Text(
+                                text = loanProductName,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                fontSize = 12.sp
+                            )
+                            Text(
+                                "Loan",
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                fontSize = 12.sp
+                            )
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                        Column() {
+                            Text(
+                                text = "ksh. 12000000.00",
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                fontSize = 12.sp,
+                                modifier = Modifier.padding(end = 15.dp)
+                            )
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                            .padding(top = 20.dp),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.Bottom
+                    ) {
                         Text(
-                            text = "ksh. 12000000.00",
+                            "27/04/2023 08:32",
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                            fontSize = 12.sp,
+                            fontSize = 10.sp,
                             modifier = Modifier.padding(end = 15.dp)
                         )
                     }
                 }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .padding(top = 20.dp),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.Bottom
-                ) {
-                    Text(
-                        "27/04/2023 08:32",
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                        fontSize = 10.sp,
-                        modifier = Modifier.padding(end = 15.dp)
-                    )
-                }
             }
         }
+
     }
 }
 

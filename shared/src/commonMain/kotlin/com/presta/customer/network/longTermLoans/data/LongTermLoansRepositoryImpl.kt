@@ -15,8 +15,8 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCate
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansRequestsListResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
-import com.presta.customer.network.longTermLoans.model.guarantoResponse.PrestaGuarantorResponse
-import com.presta.customer.network.longTermLoans.model.tsststts.PrestaGuarantorAcceptanceResponse
+import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
+import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
