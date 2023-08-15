@@ -10,16 +10,16 @@ data class LoanRequestListData(
     val loanProductName: String,
     val loanProductRefId: String,
     val loanAmount: Double,
-    // val status: String,
-    // val signingStatus: String,
-    // val acceptanceStatus: String,
-    //val applicationStatus: String,
+    val status: String,
+    val signingStatus: String,
+    val acceptanceStatus: String,
+    val applicationStatus: String,
     val memberRefId: String,
     val isActive: Boolean,
     val memberNumber: String,
     val memberFirstName: String,
     val memberLastName: String,
     val phoneNumber: String,
-    // val loanRequestProgress: Double,
-
+    val loanRequestProgress: Double,
+    val applicantSigned: Boolean
 )

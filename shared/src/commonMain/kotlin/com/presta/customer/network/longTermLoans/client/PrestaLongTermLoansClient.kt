@@ -27,12 +27,21 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import kotlinx.serialization.Serializable
-
 @Serializable
 data class ZohoSignUrlPayload(
     val loanRequestRefId: String,
     val actorRefId: String,
     val actorType: ActorType
+)
+@Serializable
+data class GuarantorPayLoad(
+    val memberRefId: String,
+    val committedAmount: String,
+    val guarantorName: String
+)
+@Serializable
+data class GuarantorListPayLoad(
+    val guarantorList: ArrayList<GuarantorPayLoad>,
 )
 
 @Serializable
@@ -285,6 +294,7 @@ class PrestaLongTermLoansClient(
             }
         }
     }
+
     suspend fun getLongTermLoanRequestsFilteredList(
         token: String,
         memberRefId: String,
@@ -296,7 +306,27 @@ class PrestaLongTermLoansClient(
                 contentType(ContentType.Application.Json)
                 url {
                     encodedParameters.append("memberRefId", memberRefId)
+                    encodedParameters.append("order", "ASC")
+                    encodedParameters.append("pageSize", "2")
                 }
+            }
+        }
+    }
+    suspend fun upDateGuarantor(
+        token: String,
+//        loanRequestRefId: String,
+//        guarantorRefId: String,
+        guarantorList: ArrayList<GuarantorPayLoad>,
+    ): LongTermLoanRequestResponse {
+        return loanRequestErrorHandler {
+            httpClient.post(NetworkConstants.PrestaLongTermLoanRequest.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                contentType(ContentType.Application.Json)
+                setBody(
+                    GuarantorListPayLoad(
+                        guarantorList = guarantorList,
+                    )
+                )
             }
         }
     }

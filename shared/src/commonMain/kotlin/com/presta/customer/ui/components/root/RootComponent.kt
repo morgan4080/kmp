@@ -19,6 +19,7 @@ import com.presta.customer.ui.components.pendingApprovals.LoanPendingApprovalsCo
 import com.presta.customer.ui.components.processLoanDisbursement.ProcessLoanDisbursementComponent
 import com.presta.customer.ui.components.processingTransaction.ProcessingTransactionComponent
 import com.presta.customer.ui.components.registration.RegistrationComponent
+import com.presta.customer.ui.components.replaceGuarantor.ReplaceGuarantorComponent
 import com.presta.customer.ui.components.rootBottomSign.RootBottomSignComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
 import com.presta.customer.ui.components.selectLoanPurpose.SelectLoanPurposeComponent
@@ -60,5 +61,7 @@ interface RootComponent {
         class LongTermLoanConfirmationChild(val component: LongTermLoanConfirmationComponent): Child()
         class LongTermLoanApplicationStatusChild(val component: LongtermLoansApplicationStatusComponent): Child()
         class SignDocumentChild(val component: SignDocumentComponent): Child()
+        class ReplaceGuarantorChild(val component: ReplaceGuarantorComponent): Child()
+
     }
 }

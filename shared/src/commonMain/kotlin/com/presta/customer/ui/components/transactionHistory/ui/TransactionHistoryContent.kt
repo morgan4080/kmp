@@ -121,7 +121,6 @@ fun TransactionHistoryContent(
                         .padding(bottom = 2.dp)
                         .padding(horizontal = 16.dp)
                 ) {
-
                     TextInputContainer(
                         label = "Transaction Reference",
                         inputValue = "",

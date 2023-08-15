@@ -23,6 +23,8 @@ class DefaultLongTermLoansRequestsComponent (
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     private val onSelected: (item: String) -> Unit,
+    private val onNavigateBackCLicked: () -> Unit,
+    private val onReplaceGuarantorCLicked: () -> Unit
 ): LongTermLoanRequestsComponent, ComponentContext by componentContext {
 
     private val scope = coroutineScope(mainContext + SupervisorJob())
@@ -102,6 +104,15 @@ class DefaultLongTermLoansRequestsComponent (
     override fun onSelected(item: String) {
         onSelected(item)
     }
+
+    override fun navigateToHome() {
+   onNavigateBackCLicked()
+    }
+
+    override fun navigateToReplaceGuarantor() {
+    onReplaceGuarantorCLicked()
+    }
+
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         checkAuthenticatedUser()

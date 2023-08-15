@@ -543,7 +543,7 @@ class ApplyLongTermLoansStoreFactory(
             dispatch(Msg.LongTermLoansLoading())
 
             getprestaLongTermLoansRequestsFilteredListJob = scope.launch {
-                longTermLoansRepository.getLongTermLoansRequestsList(
+                longTermLoansRepository.getLongTermLoansRequestsFilteredList(
                     token = token,
                     memberRefId = memberRefId
                 ).onSuccess { response ->

@@ -28,6 +28,7 @@ import com.presta.customer.ui.components.pendingApprovals.ui.PendingApprovalsScr
 import com.presta.customer.ui.components.processLoanDisbursement.ui.ProcessLoanDisbursementScreen
 import com.presta.customer.ui.components.processingTransaction.ui.ProcessingTransactionScreen
 import com.presta.customer.ui.components.registration.ui.RegistrationScreen
+import com.presta.customer.ui.components.replaceGuarantor.ui.ReplaceGuarantorScreen
 import com.presta.customer.ui.components.root.RootComponent
 import com.presta.customer.ui.components.rootBottomSign.RootBottomSignScreen
 import com.presta.customer.ui.components.rootBottomStack.RootBottomScreen
@@ -90,6 +91,7 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
             is RootComponent.Child.LongTermLoanConfirmationChild-> LongTermLoanConfirmationScreen(child.component)
             is RootComponent.Child.LongTermLoanApplicationStatusChild-> LongTermLoanApplicationStatusScreen(child.component)
             is RootComponent.Child.SignDocumentChild-> SignDocumentScreen(child.component)
+            is RootComponent.Child.ReplaceGuarantorChild-> ReplaceGuarantorScreen(child.component)
         }
     }
 }

@@ -33,6 +33,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.presta.customer.MR
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
+import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.SignHomeComponent
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.SignProductSelection
@@ -60,11 +62,44 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 fun SignHomeContent(
     component: SignHomeComponent,
     state: SignHomeStore.State,
-    applyLongTermLoanState: ApplyLongTermLoansStore.State
+    applyLongTermLoanState: ApplyLongTermLoansStore.State,
+    authState: AuthStore.State,
+    onApplyLongTermLoanEvent: (ApplyLongTermLoansStore.Intent) -> Unit
 ) {
     val progressPercentage = 0.75f // Example progress percentage
     var progress by remember { mutableStateOf(0.5f) }
     val progress2 = remember { mutableStateOf(0.75f) }
+    var memBerRefId by remember { mutableStateOf("") }
+    val greeting = if (component.platform.getCurrentTimeMillis() / (1000 * 60 * 60) in 6..11) {
+        "Good morning!"
+    } else if (component.platform.getCurrentTimeMillis() / (1000 * 60 * 60) in 12..17) {
+        "Good afternoon!"
+    } else {
+        "Good evening!"
+    }
+    if (state.prestaTenantByPhoneNumber?.refId != null) {
+        memBerRefId = state.prestaTenantByPhoneNumber.refId
+
+    }
+    if (state.prestaTenantByPhoneNumber?.refId != null) {
+        LaunchedEffect(
+            authState.cachedMemberData,
+            memBerRefId
+
+        ) {
+            authState.cachedMemberData?.let {
+                ApplyLongTermLoansStore.Intent.GetPrestaLongTermLoansRequestsFilteredList(
+                    token = it.accessToken,
+                    memberRefId = memBerRefId
+                )
+
+            }?.let {
+                onApplyLongTermLoanEvent(
+                    it
+                )
+            }
+        }
+    }
     Scaffold(
         modifier = Modifier.padding(LocalSafeArea.current),
         topBar = {
@@ -131,7 +166,7 @@ fun SignHomeContent(
                             ) {
                                 Column(modifier = Modifier.fillMaxWidth()) {
                                     Text(
-                                        text = "GOOD AFTERNOON",
+                                        text = "GOOD MORNING",
                                         fontSize = 14.sp,
                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                     )
@@ -221,11 +256,47 @@ fun SignHomeContent(
                                         )
 
                                     }
-                                    //Loan Requests Listing
-                                    //filtered by the first two
+                                    if (applyLongTermLoanState.prestaLongTermLoansRequestsFilteredList?.content.isNullOrEmpty()) {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(bottom = 10.dp, start = 16.dp, end = 16.dp)
+                                                .background(color = MaterialTheme.colorScheme.inverseOnSurface),
+                                        ) {
+                                            ElevatedCard(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .background(color = MaterialTheme.colorScheme.background),
+                                                colors = CardDefaults.elevatedCardColors(
+                                                    containerColor = MaterialTheme.colorScheme.inverseOnSurface
+                                                )
+                                            ) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .defaultMinSize(40.dp, 40.dp)
+                                                        .background(
+                                                            ShimmerBrush(
+                                                                targetValue = 1300f,
+                                                                showShimmer = true
+                                                            )
+                                                        )
+                                                        .fillMaxWidth()
+                                                ) {
+                                                }
+                                            }
+                                        }
 
-                                    Column() {
-                                        LoanRequestsListing()
+                                    } else {
+                                        applyLongTermLoanState.prestaLongTermLoansRequestsFilteredList?.content?.map { filteredLoanRequests ->
+                                            Row(modifier = Modifier.padding(top = 10.dp)) {
+                                                LoanRequestsListing(
+                                                    loanName = filteredLoanRequests.loanProductName,
+                                                    loanRequestDate = filteredLoanRequests.loanDate,
+                                                    loanAmount = formatMoney(filteredLoanRequests.loanAmount) + " KES",
+                                                    loanProgress = filteredLoanRequests.loanRequestProgress.toFloat() / 100,
+                                                )
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -315,13 +386,18 @@ fun SignHomeContent(
         })
 
 }
+
 @Composable
-fun LoanRequestsListing() {
-    val progress by remember { mutableStateOf(0.5f) }
+fun LoanRequestsListing(
+    loanName: String,
+    loanRequestDate: String,
+    loanAmount: String,
+    loanProgress: Float
+) {
+    val progress by remember { mutableStateOf(loanProgress) }
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp),
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         //CircularProgressBar(percentage = progressPercentage)
@@ -333,11 +409,11 @@ fun LoanRequestsListing() {
         // Text(text = "${(progressPercentage * 100).toInt()}%", fontSize = 24.sp)
         Column() {
             Text(
-                "Normal loan",
+                text = loanName,
                 fontSize = 12.sp
             )
             Text(
-                "27/04/2023 08:32",
+                text = loanRequestDate,
                 fontSize = 12.sp
             )
         }
@@ -345,12 +421,13 @@ fun LoanRequestsListing() {
         Spacer(modifier = Modifier.weight(1f))
 
         Text(
-            text = "12,000.00  KES",
+            text = loanAmount,
             fontSize = 12.sp
         )
 
     }
 }
+
 @Composable
 fun CircularProgressBarWithText(
     progress: Float,

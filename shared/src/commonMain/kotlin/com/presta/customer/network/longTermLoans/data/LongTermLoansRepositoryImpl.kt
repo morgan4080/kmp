@@ -1,6 +1,7 @@
 package com.presta.customer.network.longTermLoans.data
 
 import com.presta.customer.network.longTermLoans.client.DetailsData
+import com.presta.customer.network.longTermLoans.client.GuarantorPayLoad
 import com.presta.customer.network.longTermLoans.client.PrestaLongTermLoansClient
 import com.presta.customer.network.longTermLoans.model.ActorType
 import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
@@ -266,12 +267,27 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
         memberRefId: String
     ): Result<PrestaLongTermLoansRequestsListResponse> {
         return try {
-            val response = prestaLongTermLoansClient.getLongTermLoanRequestsList(
+            val response = prestaLongTermLoansClient.getLongTermLoanRequestsFilteredList(
                 token = token,
                 memberRefId = memberRefId
             )
             Result.success(response)
 
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+    override suspend fun updateLoanGuarantor(
+        token: String,
+        guarantorList: ArrayList<GuarantorPayLoad>
+    ): Result<LongTermLoanRequestResponse> {
+        return try {
+            val response = prestaLongTermLoansClient.upDateGuarantor(
+                token = token,
+                guarantorList = guarantorList,
+            )
+            Result.success(response)
         } catch (e: Exception) {
             e.printStackTrace()
             Result.failure(e)

@@ -22,5 +22,6 @@ expect class Platform(context: AppContext) {
     fun getContact(): List<Contact>
     //fun requestReadContactsPermission(callback: (Boolean) -> Unit)
     fun convertBase64ToImage(base64String: String): Any
+    fun getCurrentTimeMillis(): Long
 }
 

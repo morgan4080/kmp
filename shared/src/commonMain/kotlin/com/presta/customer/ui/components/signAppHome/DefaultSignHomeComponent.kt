@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.presta.customer.Platform
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStoreFactory
@@ -17,6 +18,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import kotlin.coroutines.CoroutineContext
 class DefaultSignHomeComponent (
     componentContext: ComponentContext,
@@ -27,7 +30,8 @@ class DefaultSignHomeComponent (
     private val onFavouriteGuarantorsClicked: () -> Unit,
     private val witnessRequestClicked: () -> Unit,
     private val onGotoLoanRequestsClicked: () -> Unit,
-): SignHomeComponent, ComponentContext by componentContext {
+): SignHomeComponent, ComponentContext by componentContext,KoinComponent {
+    override val platform by inject<Platform>()
     private val scope = coroutineScope(mainContext + SupervisorJob())
     override val authStore: AuthStore =
         instanceKeeper.getStore {

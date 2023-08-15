@@ -13,7 +13,9 @@ fun SignHomeScreen(component: SignHomeComponent) {
     SignHomeContent(
         component = component,
         state = signHomeStateState,
-        applyLongTermLoanState = applyLongTermLoansState
+        applyLongTermLoanState = applyLongTermLoansState,
+        authState = authState,
+        onApplyLongTermLoanEvent = component::onApplyLongTermLoanEvent
     )
 }
 

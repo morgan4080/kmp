@@ -1,5 +1,6 @@
 package com.presta.customer.ui.components.signAppHome
 
+import com.presta.customer.Platform
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
@@ -20,5 +21,6 @@ interface SignHomeComponent {
     val applyLongTermLoansStore: ApplyLongTermLoansStore
     val applyLongTermLoansState: StateFlow<ApplyLongTermLoansStore.State>
     fun goToLoanRequests()
+    val platform: Platform
 
 }

@@ -59,7 +59,7 @@ class DefaultRootBottomSignComponent(
     val gotoFavouriteGuarantors: () -> Unit,
     val gotoWitnessRequests: () -> Unit,
     val goBackToLMs: () -> Unit,
-
+    val gotoReplaceGuarantor: () -> Unit,
     backTopProfile: Boolean = false
 ) : RootBottomSignComponent, ComponentContext by componentContext, KoinComponent {
     private val authRepository by inject<AuthRepository>()
@@ -118,6 +118,13 @@ class DefaultRootBottomSignComponent(
             },
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
+            onNavigateBackCLicked = {
+                navigationBottomStackNavigation.bringToFront(ConfigBottom.SignProfile)
+            },
+            onReplaceGuarantorCLicked = {
+                gotoReplaceGuarantor()
+
+            }
 
         )
     private fun settingsComponent(componentContext: ComponentContext): SignSettingsComponent =

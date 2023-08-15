@@ -1,6 +1,7 @@
 package com.presta.customer.network.longTermLoans.data
 
 import com.presta.customer.network.longTermLoans.client.DetailsData
+import com.presta.customer.network.longTermLoans.client.GuarantorPayLoad
 import com.presta.customer.network.longTermLoans.model.ActorType
 import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.longTermLoans.model.Guarantor
@@ -94,4 +95,8 @@ interface LongTermLoansRepository {
         token: String,
         memberRefId: String,
     ): Result<PrestaLongTermLoansRequestsListResponse>
+    suspend fun updateLoanGuarantor(
+        token: String,
+        guarantorList: ArrayList<GuarantorPayLoad>,
+    ): Result<LongTermLoanRequestResponse>
 }

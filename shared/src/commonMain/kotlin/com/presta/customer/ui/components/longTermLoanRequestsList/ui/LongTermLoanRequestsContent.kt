@@ -8,7 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -208,7 +207,10 @@ fun LongTermLoanRequestsContent(
                                 eligibilityStatus = guarantorDataResponse.eligibilityMessage,
                                 guarantorShipStatus = if (guarantorDataResponse.isActive) "Active" else "Not Active",
                                 signatureStatus = if (guarantorDataResponse.isSigned) "Signed" else "Pending",
-                                acceptanceStatus = if (guarantorDataResponse.isAccepted) "Accepted " else "Pending"
+                                acceptanceStatus = if (guarantorDataResponse.isAccepted) "Accepted " else "Pending",
+                                onClickReplaceGuarantor = {
+                                    component.navigateToReplaceGuarantor()
+                                }
                             )
                         }
                     }
@@ -220,7 +222,8 @@ fun LongTermLoanRequestsContent(
             modifier = Modifier.padding(LocalSafeArea.current),
             topBar = {
                 NavigateBackTopBar(label = "Loan Requests", onClickContainer = {
-
+                    //navigate to profile
+                    component.navigateToHome()
                 })
             },
             content = { innerPadding ->
@@ -278,7 +281,10 @@ fun LongTermLoanRequestsContent(
                                         },
                                         loanProductName = loanlistingData.loanProductName,
                                         applicationComplete = false,
-                                        loanAmount = formatMoney(loanlistingData.loanAmount)
+                                        loanAmount = "Ksh. ${formatMoney(loanlistingData.loanAmount)}",
+                                        loanApplicationProgress = loanlistingData.loanRequestProgress.toFloat() / 100,
+                                        applicantSigned = if (loanlistingData.applicantSigned) "APPLICANT SIGNED" else "APPLICANT SIGN PENDING",
+                                        applicantHasSigned = loanlistingData.applicantSigned
                                     )
                                 }
 
@@ -300,7 +306,9 @@ fun GuarantorListingContainer(
     eligibilityStatus: String,
     guarantorShipStatus: String,
     signatureStatus: String,
-    acceptanceStatus: String
+    acceptanceStatus: String,
+    onClickReplaceGuarantor: () -> Unit,
+
 ) {
     var showExpanded by remember { mutableStateOf(false) }
     Column(
@@ -491,9 +499,7 @@ fun GuarantorListingContainer(
                 //Replace guarantor
                 item {
                     OutlinedButton(
-                        onClick = {
-                            /*TODO*/
-                        },
+                        onClick = onClickReplaceGuarantor,
                         modifier = Modifier.padding(top = 16.dp),
                         shape = CircleShape,
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
@@ -511,16 +517,18 @@ fun GuarantorListingContainer(
         }
     }
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LongTermLoanRequestsListContainer(
     onClickContainer: () -> Unit,
     loanProductName: String,
     applicationComplete: Boolean,
-    loanAmount: String
+    loanAmount: String,
+    loanApplicationProgress: Float,
+    applicantSigned: String,
+    applicantHasSigned: Boolean
 ) {
-    var progress by remember { mutableStateOf(0.5f) }
+    val progress by remember { mutableStateOf(loanApplicationProgress) }
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -612,14 +620,14 @@ fun LongTermLoanRequestsListContainer(
                         horizontalArrangement = Arrangement.End
                     ) {
                         Text(
-                            "APPLICANT SIGNED",
+                            text = applicantSigned,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                             fontSize = 13.sp,
                             modifier = Modifier.padding(
                                 end = 15.dp,
                                 top = 5.dp
                             ),
-                            color = MaterialTheme.colorScheme.secondary
+                            color = if (applicantHasSigned) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
                         )
                     }
                     Row(
@@ -715,7 +723,6 @@ fun LinearProgressWithPercentage(
         }
     }
 }
-
 @Composable
 fun LoanApplicationProgress(
     progress: Float,

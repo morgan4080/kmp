@@ -126,7 +126,6 @@ fun RootBottomSignScreen(component: RootBottomSignComponent) {
                     is RootBottomSignComponent.ChildBottom.ProfileChild -> RootSignHomeScreen(childX.component)
                     is RootBottomSignComponent.ChildBottom.RequestChild -> LongTermLoanRequestsScreen(childX.component)
                     is RootBottomSignComponent.ChildBottom.SettingsChild-> SignSettingsScreen(childX.component)
-                   // is RootBottomSignComponent.ChildBottom.SignChild -> SignScreen(childX.component)
                 }
             }
         }
@@ -139,7 +138,6 @@ private val RootBottomSignComponent.ChildBottom.index: Int
             is RootBottomSignComponent.ChildBottom.ProfileChild -> 0
             is RootBottomSignComponent.ChildBottom.RequestChild -> 1
             is RootBottomSignComponent.ChildBottom.SettingsChild  -> 2
-            //is RootBottomSignComponent.ChildBottom.SignChild -> 3
         }
 
 @Suppress("OPT_IN_USAGE")

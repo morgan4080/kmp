@@ -57,6 +57,8 @@ import com.presta.customer.ui.components.processingTransaction.ProcessingTransac
 import com.presta.customer.ui.components.profile.coroutineScope
 import com.presta.customer.ui.components.registration.DefaultRegistrationComponent
 import com.presta.customer.ui.components.registration.RegistrationComponent
+import com.presta.customer.ui.components.replaceGuarantor.DefaultReplaceGuarantorComponent
+import com.presta.customer.ui.components.replaceGuarantor.ReplaceGuarantorComponent
 import com.presta.customer.ui.components.rootBottomSign.DefaultRootBottomSignComponent
 import com.presta.customer.ui.components.rootBottomSign.RootBottomSignComponent
 import com.presta.customer.ui.components.rootBottomStack.DefaultRootBottomComponent
@@ -220,6 +222,10 @@ class DefaultRootComponent(
             signDocumentComponent(
                 componentContext, config
             )
+        )
+
+        is Config.ReplaceGuarantor -> RootComponent.Child.ReplaceGuarantorChild(
+            replaceGuarantorComponent(componentContext)
         )
     }
 
@@ -551,6 +557,11 @@ class DefaultRootComponent(
             goBackToLMs = {
                 //navigate to  Lms
                 navigation.bringToFront(Config.RootBottom(backTopProfile = false))
+            },
+            gotoReplaceGuarantor = {
+                //navigate  to replace  guarantor
+                navigation.push(Config.ReplaceGuarantor)
+
             }
         )
 
@@ -788,14 +799,30 @@ class DefaultRootComponent(
         componentContext: ComponentContext,
         config: Config.SignDocument
     ): SignDocumentComponent =
-        DefaultSignDocumentComponent(componentContext = componentContext, onItemClicked = {
-            navigation.pop()
+        DefaultSignDocumentComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
 
-        }, onProductClicked = {
-        },
+            },
+            onProductClicked = {
+            },
             loanNumber = config.loanNumber,
             amount = config.amount,
             loanRequestRefId = config.loanRequestRefId,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+        )
+
+    private fun replaceGuarantorComponent(componentContext: ComponentContext): ReplaceGuarantorComponent =
+        DefaultReplaceGuarantorComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
+
+            },
+            onProductClicked = {
+            },
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
         )
@@ -949,6 +976,9 @@ class DefaultRootComponent(
             val amount: Double,
             val loanRequestRefId: String
         ) : Config()
+
+        @Parcelize
+        object ReplaceGuarantor : Config()
     }
 
     init {

@@ -68,6 +68,8 @@ actual class Platform actual constructor(
         ).show()
     }
 
+    actual fun getCurrentTimeMillis(): Long = System.currentTimeMillis()
+
     actual fun openUrl(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
