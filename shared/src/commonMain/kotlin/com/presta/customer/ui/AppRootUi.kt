@@ -52,7 +52,7 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
         animation = stackAnimation(fade() + scale()),// tabAnimation()
     ) {
         when (val child = it.instance) {
-            is RootComponent.Child.TenantChild -> TenantScreen(child.component, connectivityStatus)
+            is RootComponent.Child.TenantChild -> TenantScreen(child.component)
             is RootComponent.Child.SplashChild -> SplashScreen(child.component, connectivityStatus)
             is RootComponent.Child.WelcomeChild -> WelcomeScreen(child.component)
             is RootComponent.Child.OnboardingChild -> OnBoardingScreen(child.component)

@@ -159,7 +159,8 @@ class DefaultRootComponent(
             componentContext = componentContext,
             onBoardingContext = config.context,
             onGetStartedSelected = {
-
+                println("::::::OrganisationModel.organisation.sandbox:::::::")
+                println(OrganisationModel.organisation.sandbox)
                 if (OrganisationModel.organisation.sandbox) {
                     navigation.push(
                         Config.Tenant(

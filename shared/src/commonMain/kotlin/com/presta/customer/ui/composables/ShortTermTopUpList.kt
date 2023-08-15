@@ -120,10 +120,6 @@ fun ShortTermTopUpList(
                             if (
                                 state.error !== null || authState.error !== null
                             ) {
-                                state.error?.let { component.platform.logErrorsToFirebase(Exception(it)) }
-                                authState.error?.let { component.platform.logErrorsToFirebase(
-                                    Exception(it)
-                                ) }
                                 Column(modifier = Modifier
                                     .fillMaxWidth()
                                     .clip(shape = RoundedCornerShape(10.dp))

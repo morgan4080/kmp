@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -29,7 +27,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -46,19 +43,13 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.moriatsushi.insetsx.systemBars
-import com.presta.customer.AppContext
 import com.presta.customer.MR
-import com.presta.customer.Platform
 import com.presta.customer.SharedStatus
 import com.presta.customer.ui.components.tenant.TenantComponent
 import com.presta.customer.ui.components.tenant.store.TenantStore
@@ -72,7 +63,6 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 @Composable
 fun TenantContent(
     component: TenantComponent,
-    connectivityStatus: SharedStatus?,
     onTenantEvent: (TenantStore.Intent) -> Unit,
     state: TenantStore.State
 ) {
@@ -80,20 +70,6 @@ fun TenantContent(
     val focusRequester = remember { FocusRequester() }
     var isError by remember { mutableStateOf(false) }
 
-
-
-    LaunchedEffect(connectivityStatus) {
-        if (connectivityStatus !== null) {
-            connectivityStatus.current.collect {
-                if (!it) {
-                    snackBarHostState.showSnackbar(
-                        message = "No internet connection",
-                        duration = SnackbarDuration.Short
-                    )
-                }
-            }
-        }
-    }
     LaunchedEffect(state.tenantData) {
         if (state.tenantData !== null) {
             component.onSubmitClicked(state.tenantData.tenantId)
@@ -107,15 +83,15 @@ fun TenantContent(
                 modifier = Modifier.padding(bottom = 10.dp),
                 hostState = snackBarHostState
             )
-        },
-        contentWindowInsets = WindowInsets.systemBars
+        }
     ) {
         Column(
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp)
                 .background(color = MaterialTheme.colorScheme.background)
                 .fillMaxHeight()
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(it),
         ) {
             Row(
                 modifier = Modifier

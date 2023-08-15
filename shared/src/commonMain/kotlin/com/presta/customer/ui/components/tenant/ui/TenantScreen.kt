@@ -9,13 +9,11 @@ import com.presta.customer.ui.components.tenant.TenantComponent
 
 @Composable
 fun TenantScreen(
-    component: TenantComponent,
-    connectivityStatus: SharedStatus?
+    component: TenantComponent
 ) {
     val  tenantState by component.tenantState.collectAsState()
     TenantContent(
         component = component,
-        connectivityStatus = connectivityStatus,
         onTenantEvent = component::onEvent,
         state = tenantState
     )
