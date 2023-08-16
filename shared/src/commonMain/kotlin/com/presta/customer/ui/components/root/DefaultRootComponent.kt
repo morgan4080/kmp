@@ -735,11 +735,17 @@ class DefaultRootComponent(
         })
 
     private fun witnessRequestComponent(componentContext: ComponentContext): WitnessRequestComponent =
-        DefaultWitnessRequestComponent(componentContext = componentContext, onItemClicked = {
-            navigation.pop()
+        DefaultWitnessRequestComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
 
-        }, onProductClicked = {
-        })
+            },
+            onProductClicked = {
+            },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+        )
 
     private fun longTermLoanConfirmationComponent(
         componentContext: ComponentContext,

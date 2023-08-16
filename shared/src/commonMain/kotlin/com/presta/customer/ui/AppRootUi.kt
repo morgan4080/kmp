@@ -38,7 +38,7 @@ import com.presta.customer.ui.components.splash.SplashScreen
 import com.presta.customer.ui.components.tenant.ui.TenantScreen
 import com.presta.customer.ui.components.transactionHistory.ui.TransactionHistoryScreen
 import com.presta.customer.ui.components.welcome.WelcomeScreen
-import com.presta.customer.ui.components.witnessRequests.WitnessRequestScreen
+import com.presta.customer.ui.components.witnessRequests.ui.WitnessRequestScreen
 
 @Composable
 fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {

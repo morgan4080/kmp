@@ -18,6 +18,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProduc
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
+import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -225,6 +226,7 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
             Result.failure(e)
         }
     }
+
     override suspend fun getZohoSignUrl(
         token: String,
         loanRequestRefId: String,
@@ -245,6 +247,7 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
             Result.failure(e)
         }
     }
+
     override suspend fun getLongTermLoansRequestsList(
         token: String,
         memberRefId: String
@@ -278,16 +281,37 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
             Result.failure(e)
         }
     }
+
     override suspend fun updateLoanGuarantor(
         token: String,
-        guarantorList: ArrayList<GuarantorPayLoad>
+        loanRequestRefId: String,
+        guarantorRefId: String,//old guarantor---replace the old guarantor with the new guarantor
+        memberRefId: String,
     ): Result<LongTermLoanRequestResponse> {
         return try {
             val response = prestaLongTermLoansClient.upDateGuarantor(
                 token = token,
-                guarantorList = guarantorList,
+                loanRequestRefId = loanRequestRefId,
+                guarantorRefId = guarantorRefId,
+                memberRefId = memberRefId
             )
             Result.success(response)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+    override suspend fun getWitnessRequests(
+        token: String,
+        memberRefId: String
+    ): Result<List<PrestaWitnessRequestResponse>> {
+        return try {
+            val response = prestaLongTermLoansClient.getWitnessRequests(
+                token = token,
+                memberRefId = memberRefId
+            )
+            Result.success(response)
+
         } catch (e: Exception) {
             e.printStackTrace()
             Result.failure(e)

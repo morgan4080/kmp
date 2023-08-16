@@ -2,6 +2,7 @@ package com.presta.customer.ui.components.applyLongTermLoan.store
 
 import com.arkivanov.mvikotlin.core.store.Store
 import com.presta.customer.network.longTermLoans.client.DetailsData
+import com.presta.customer.network.longTermLoans.client.GuarantorPayLoad
 import com.presta.customer.network.longTermLoans.model.ActorType
 import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.longTermLoans.model.Guarantor
@@ -17,6 +18,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansReques
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
+import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 
 interface ApplyLongTermLoansStore :
     Store<ApplyLongTermLoansStore.Intent, ApplyLongTermLoansStore.State, Nothing> {
@@ -82,6 +84,16 @@ interface ApplyLongTermLoansStore :
             val token: String,
             val memberRefId: String
         ) : Intent()
+        data class ReplaceLoanGuarantor(
+            val token: String,
+           val loanRequestRefId: String,
+           val guarantorRefId: String,//old guarantor---replace the old guarantor with the new guarantor
+            val memberRefId: String,
+        ) : Intent()
+        data class GetPrestaWitnessRequests(
+            val token: String,
+            val memberRefId: String
+        ) : Intent()
     }
 
     data class State(
@@ -101,6 +113,8 @@ interface ApplyLongTermLoansStore :
         val prestaZohoSignUrl: PrestaZohoSignUrlResponse? = null,
         val prestaLongTermLoansRequestsList: PrestaLongTermLoansRequestsListResponse? = null,
         val prestaLongTermLoansRequestsFilteredList: PrestaLongTermLoansRequestsListResponse? = null,
+        val prestaUpdatedGuarantorData: LongTermLoanRequestResponse? = null,
+        val prestaWitnessRequests: List<PrestaWitnessRequestResponse> = emptyList(),
         val memberNo: String = "By Member No",
         val phoneNo: String = "By Phone No",
         val selfGuarantee: String = "Self Guarantee",

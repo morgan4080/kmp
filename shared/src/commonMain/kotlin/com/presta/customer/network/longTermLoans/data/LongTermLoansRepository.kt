@@ -17,6 +17,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProduc
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
+import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 
 interface LongTermLoansRepository {
     suspend fun getLonTermLoansData(
@@ -97,6 +98,12 @@ interface LongTermLoansRepository {
     ): Result<PrestaLongTermLoansRequestsListResponse>
     suspend fun updateLoanGuarantor(
         token: String,
-        guarantorList: ArrayList<GuarantorPayLoad>,
+        loanRequestRefId: String,
+        guarantorRefId: String,//old guarantor---replace the old guarantor with the new guarantor
+        memberRefId: String,
     ): Result<LongTermLoanRequestResponse>
+    suspend fun getWitnessRequests(
+        token: String,
+        memberRefId: String,
+    ): Result<List<PrestaWitnessRequestResponse>>
 }

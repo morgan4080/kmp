@@ -18,6 +18,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProduc
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
+import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -27,21 +28,24 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import kotlinx.serialization.Serializable
+
 @Serializable
 data class ZohoSignUrlPayload(
     val loanRequestRefId: String,
     val actorRefId: String,
     val actorType: ActorType
 )
+
 @Serializable
 data class GuarantorPayLoad(
     val memberRefId: String,
     val committedAmount: String,
     val guarantorName: String
 )
+
 @Serializable
 data class GuarantorListPayLoad(
-    val guarantorList: ArrayList<GuarantorPayLoad>,
+    val memberRefId: String
 )
 
 @Serializable
@@ -257,7 +261,6 @@ class PrestaLongTermLoansClient(
             }
         }
     }
-
     suspend fun sendZohoSignUrlPayload(
         token: String,
         loanRequestRefId: String,
@@ -278,7 +281,6 @@ class PrestaLongTermLoansClient(
             }
         }
     }
-
     suspend fun getLongTermLoanRequestsList(
         token: String,
         memberRefId: String,
@@ -314,19 +316,35 @@ class PrestaLongTermLoansClient(
     }
     suspend fun upDateGuarantor(
         token: String,
-//        loanRequestRefId: String,
-//        guarantorRefId: String,
-        guarantorList: ArrayList<GuarantorPayLoad>,
+        loanRequestRefId: String,
+        guarantorRefId: String,//old guarantor---replace the old guarantor with the new guarantor
+        memberRefId: String,
     ): LongTermLoanRequestResponse {
         return loanRequestErrorHandler {
-            httpClient.post(NetworkConstants.PrestaLongTermLoanRequest.route) {
+            httpClient.post("${NetworkConstants.PrestaLongTermLoanRequest.route}/${loanRequestRefId}/${"guarantor"}/${guarantorRefId}") {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 contentType(ContentType.Application.Json)
                 setBody(
                     GuarantorListPayLoad(
-                        guarantorList = guarantorList,
+                     memberRefId = memberRefId
                     )
                 )
+            }
+        }
+    }
+    suspend fun getWitnessRequests(
+        token: String,
+        memberRefId: String,
+    ): List<PrestaWitnessRequestResponse> {
+        return longTermLoansErrorHandler {
+            httpClient.get(NetworkConstants.PrestaWitnessRequests.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+                url {
+                    encodedParameters.append("acceptanceStatus", "ANY")
+                    encodedParameters.append("memberRefId", memberRefId)
+                }
             }
         }
     }

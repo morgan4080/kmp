@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,7 +46,6 @@ import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReplaceGuarantorContent(
@@ -58,8 +58,45 @@ fun ReplaceGuarantorContent(
 ) {
     val focusRequester = remember { FocusRequester() }
     var memberNumber by remember { mutableStateOf("") }
+    var phoneNumber by remember { mutableStateOf("") }
     var firstName by remember { mutableStateOf(TextFieldValue()) }
     val emptyTextContainer by remember { mutableStateOf(TextFieldValue()) }
+    if (memberNumber != "") {
+        LaunchedEffect(
+            authState.cachedMemberData,
+            memberNumber
+
+        ) {
+            authState.cachedMemberData?.let {
+                SignHomeStore.Intent.GetPrestaTenantByMemberNumber(
+                    token = it.accessToken,
+                    memberNumber = memberNumber
+                )
+            }?.let {
+                onProfileEvent(
+                    it
+                )
+            }
+        }
+    }
+    if (phoneNumber != "") {
+        LaunchedEffect(
+            authState.cachedMemberData,
+            phoneNumber
+
+        ) {
+            authState.cachedMemberData?.let {
+                SignHomeStore.Intent.GetPrestaTenantByPhoneNumber(
+                    token = it.accessToken,
+                    phoneNumber = phoneNumber
+                )
+            }?.let {
+                onProfileEvent(
+                    it
+                )
+            }
+        }
+    }
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Replace Guarantor", onClickContainer = {
             component.onBackNavClicked()
@@ -76,7 +113,57 @@ fun ReplaceGuarantorContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(modifier = Modifier.fillMaxWidth()) {
-                    LiveSearch()
+
+                    TextField(
+                        value = memberNumber,
+                        onValueChange = {
+                            memberNumber = it
+                        },
+                        textStyle = TextStyle(fontSize = 17.sp),
+                        singleLine = true,
+                        leadingIcon = {
+                            Icon(
+                                Icons.Filled.Search,
+                                null,
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(shape = RoundedCornerShape(20.dp))
+                            .background(
+                                color = MaterialTheme.colorScheme.inverseOnSurface,
+                                RoundedCornerShape(30.dp)
+                            ),
+                        placeholder = {
+                            Text(
+                                text = "Guarantor Mobile or Member No",
+                                fontSize = 12.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                            )
+                        },
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            cursorColor = Color.DarkGray,
+                            containerColor = MaterialTheme.colorScheme.inverseOnSurface
+                        ),
+                        trailingIcon = {
+                            Row() {
+                                Divider(
+                                    modifier = Modifier
+                                        .height(30.dp)
+                                        .padding(start = 2.dp)
+                                        .width(1.dp)
+                                )
+                                Icon(
+                                    Icons.Filled.Contacts,
+                                    null,
+                                    tint = MaterialTheme.colorScheme.outline
+                                )
+                            }
+                        }
+                    )
                 }
             }
             //Guarontor Listing
@@ -86,31 +173,29 @@ fun ReplaceGuarantorContent(
                     .fillMaxHeight(0.8f)
             ) {
                 //list the  selected  Guarantor
-               if (memberNumber==""){
-                   item {
-                       Row(
-                           modifier = Modifier
-                               .fillMaxWidth()
-                               .padding(top = 30.dp),
-                           verticalAlignment = Alignment.CenterVertically
-                       ) {
-                           Icon(
-                               imageVector = Icons.Outlined.Error,
-                               modifier = Modifier,
-                               contentDescription = null,
-                               tint = MaterialTheme.colorScheme.primary
-                           )
-                           Text(
-                               "Add Guarantors using phone number or member number on the above text input",
-                               fontSize = 12.sp,
-                               fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
-                               modifier = Modifier.padding(start = 10.dp)
-                           )
-                       }
-                   }
-
-               }
-
+                if (memberNumber == "") {
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 30.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Error,
+                                modifier = Modifier,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                "Add Guarantors using phone number or member number on the above text input",
+                                fontSize = 12.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                modifier = Modifier.padding(start = 10.dp)
+                            )
+                        }
+                    }
+                }
             }
             ActionButton(
                 label = "Set Guarantor", onClickContainer = {
@@ -120,57 +205,4 @@ fun ReplaceGuarantorContent(
             )
         }
     })
-}
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun LiveSearch() {
-    val (value, onValueChange) = remember { mutableStateOf("") }
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        textStyle = TextStyle(fontSize = 17.sp),
-        singleLine = true,
-        leadingIcon = {
-            Icon(
-                Icons.Filled.Search,
-                null,
-                tint = MaterialTheme.colorScheme.onBackground
-            )
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(shape = RoundedCornerShape(20.dp))
-            .background(
-                color = MaterialTheme.colorScheme.inverseOnSurface,
-                RoundedCornerShape(30.dp)
-            ),
-        placeholder = {
-            Text(
-                text = "Guarantor Mobile or Member No",
-                fontSize = 12.sp,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-            )
-        },
-        colors = TextFieldDefaults.textFieldColors(
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            cursorColor = Color.DarkGray,
-            containerColor = MaterialTheme.colorScheme.inverseOnSurface
-        ),
-        trailingIcon = {
-            Row() {
-                Divider(
-                    modifier = Modifier
-                        .height(30.dp)
-                        .padding(start = 2.dp)
-                        .width(1.dp)
-                )
-                Icon(
-                    Icons.Filled.Contacts,
-                    null,
-                    tint = MaterialTheme.colorScheme.outline
-                )
-            }
-        }
-    )
 }
