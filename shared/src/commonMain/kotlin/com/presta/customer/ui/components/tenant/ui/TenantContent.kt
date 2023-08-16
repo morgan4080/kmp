@@ -222,8 +222,11 @@ fun TenantContent(
                     Text(modifier = Modifier
                         .padding(top = 22.dp)
                         .clickable {
-                            component.platform.openUrl("https://support.presta.co.ke/portal/en/kb/articles/how-to-access-account-tenant-id")
-
+                            try {
+                                component.platform.openUrl("https://support.presta.co.ke/portal/en/kb/articles/how-to-access-account-tenant-id")
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
                         },
                         text = "How to get tenant ID?",
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),

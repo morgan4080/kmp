@@ -350,13 +350,20 @@ fun OnBoardingContent(
                         ClickableText(text = annotatedString, style = MaterialTheme.typography.bodySmall, onClick = { offset ->
                             annotatedString.getStringAnnotations(tag = "terms", start = offset, end = offset).firstOrNull()?.let {
                                 //Test  the logged url
-                                component.platform.openUrl("https://support.presta.co.ke/portal/en/kb/articles/privacy-policy")
+                                try {
+                                    component.platform.openUrl("https://support.presta.co.ke/portal/en/kb/articles/privacy-policy")
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
                             }
                             annotatedString.getStringAnnotations(tag = "policy", start = offset, end = offset).firstOrNull()?.let {
-                                component.platform.openUrl("https://support.presta.co.ke/portal/en/kb/articles/privacy-policy")
+                                try {
+                                    component.platform.openUrl("https://support.presta.co.ke/portal/en/kb/articles/privacy-policy")
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
                             }
                             onEvent(OnBoardingStore.Intent.UpdateError(null))
-
                         })
                     }
                 }

@@ -1,5 +1,6 @@
 package com.presta.customer.di
 
+import com.presta.customer.AppContext
 import com.presta.customer.Platform
 import com.presta.customer.database.di.databaseModule
 import com.presta.customer.network.di.dataModule
@@ -18,7 +19,7 @@ fun initKoin(enableNetworkLogs: Boolean = false, appDeclaration: KoinAppDeclarat
             dataModule,
             componentModule,
             module {
-                    factory { Platform(get()) }
+                    factory { Platform(get<AppContext>()) }
             }
         )
     }

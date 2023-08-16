@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -431,7 +432,7 @@ fun AuthContent(
                     }
 
                     Row  (
-                        modifier = Modifier.absoluteOffset(y = -(50).dp),
+                        modifier = Modifier.absoluteOffset(y = -(50).dp).defaultMinSize(minHeight = 1000.dp),
                     ) {
                         LazyVerticalGrid(
                             modifier = Modifier
@@ -441,75 +442,142 @@ fun AuthContent(
                             verticalArrangement = Arrangement.Top,
                             contentPadding = PaddingValues(
                                 start = 2.dp,
-                                top = 5.dp,
+                                top = 2.dp,
                                 end = 2.dp,
-                                bottom = 5.dp
+                                bottom = 2.dp
                             )
                         ) {
                             items(listOf(1,2,3,4,5,6,7,8,9,10,0,12)) {
-                                Button(
-                                    modifier = Modifier
-                                        .padding(vertical = 10.dp, horizontal = 10.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color.Transparent,
-                                        contentColor = MaterialTheme.colorScheme.onBackground,
-                                    ),
-                                    onClick = {
-                                        when(it) {
-                                            10 -> {
-                                                // enable finger print
+                                when(it) {
+                                    10 -> {
+                                        /*Icon(
+                                            modifier = Modifier
+                                                .padding(vertical = 12.dp)
+                                                .size(30.dp)
+                                                .align(Alignment.CenterVertically),
+                                            imageVector = Icons.Filled.Fingerprint,
+                                            contentDescription = "Finger Print",
+                                            tint = MaterialTheme.colorScheme.onBackground
+                                        )*/
+                                    }
+                                    12 -> {
+                                        Button(
+                                            modifier = Modifier
+                                                .padding(vertical = 5.dp, horizontal = 5.dp),
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = MaterialTheme.colorScheme.inverseOnSurface,
+                                                contentColor = MaterialTheme.colorScheme.onBackground,
+                                            ),
+                                            onClick = {
+                                                when(it) {
+                                                    10 -> {
+                                                        // enable finger print
+                                                    }
+                                                    12 -> {
+                                                        pinInput = pinInput.dropLast(1)
+                                                        setupPinCharacters(pinInput)
+                                                    }
+                                                    else -> {
+                                                        if (pinInput.length <= maxChar && inputEnabled) {
+                                                            builder.append(pinInput).append(it.toString())
+                                                            pinInput = builder.toString()
+                                                            setupPinCharacters(pinInput)
+                                                        }
+                                                    }
+                                                }
                                             }
-                                            12 -> {
-                                                pinInput = pinInput.dropLast(1)
-                                                setupPinCharacters(pinInput)
-                                            }
-                                            else -> {
-                                                if (pinInput.length <= maxChar && inputEnabled) {
-                                                    builder.append(pinInput).append(it.toString())
-                                                    pinInput = builder.toString()
-                                                    setupPinCharacters(pinInput)
+                                        ) {
+                                            when(it) {
+                                                10 -> {
+
+                                                }
+                                                12 -> {
+                                                    Icon(
+                                                        modifier = Modifier
+                                                            .padding(vertical = 12.dp)
+                                                            .size(30.dp)
+                                                            .align(Alignment.CenterVertically),
+                                                        imageVector = Icons.Outlined.Backspace,
+                                                        contentDescription = "Back Space",
+                                                        tint = MaterialTheme.colorScheme.onBackground
+                                                    )
+                                                }
+                                                else -> {
+                                                    Text(
+                                                        textAlign = TextAlign.Center,
+                                                        text = it.toString(),
+                                                        style = TextStyle(
+                                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                                            fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
+                                                            fontSize = MaterialTheme.typography.headlineLarge.fontSize,
+                                                            fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+                                                            letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
+                                                            lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                                                            textAlign = TextAlign.Center
+                                                        )
+                                                    )
                                                 }
                                             }
                                         }
                                     }
-                                ) {
-                                    when(it) {
-                                        10 -> {
-                                            /*Icon(
-                                                modifier = Modifier
-                                                    .padding(vertical = 12.dp)
-                                                    .size(30.dp)
-                                                    .align(Alignment.CenterVertically),
-                                                imageVector = Icons.Filled.Fingerprint,
-                                                contentDescription = "Finger Print",
-                                                tint = MaterialTheme.colorScheme.onBackground
-                                            )*/
-                                        }
-                                        12 -> {
-                                            Icon(
-                                                modifier = Modifier
-                                                    .padding(vertical = 12.dp)
-                                                    .size(30.dp)
-                                                    .align(Alignment.CenterVertically),
-                                                imageVector = Icons.Outlined.Backspace,
-                                                contentDescription = "Delete",
-                                                tint = MaterialTheme.colorScheme.onBackground
-                                            )
-                                        }
-                                        else -> {
-                                            Text(
-                                                textAlign = TextAlign.Center,
-                                                text = it.toString(),
-                                                style = TextStyle(
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                                                    fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
-                                                    fontSize = MaterialTheme.typography.headlineLarge.fontSize,
-                                                    fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
-                                                    letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
-                                                    lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
-                                                    textAlign = TextAlign.Center
-                                                ),
-                                            )
+                                    else -> {
+                                        Button(
+                                            modifier = Modifier
+                                                .padding(vertical = 5.dp, horizontal = 5.dp),
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = MaterialTheme.colorScheme.inverseOnSurface,
+                                                contentColor = MaterialTheme.colorScheme.onBackground,
+                                            ),
+                                            onClick = {
+                                                when(it) {
+                                                    10 -> {
+                                                        // enable finger print
+                                                    }
+                                                    12 -> {
+                                                        pinInput = pinInput.dropLast(1)
+                                                        setupPinCharacters(pinInput)
+                                                    }
+                                                    else -> {
+                                                        if (pinInput.length <= maxChar && inputEnabled) {
+                                                            builder.append(pinInput).append(it.toString())
+                                                            pinInput = builder.toString()
+                                                            setupPinCharacters(pinInput)
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ) {
+                                            when(it) {
+                                                10 -> {
+
+                                                }
+                                                12 -> {
+                                                    Icon(
+                                                        modifier = Modifier
+                                                            .padding(vertical = 12.dp)
+                                                            .size(30.dp)
+                                                            .align(Alignment.CenterVertically),
+                                                        imageVector = Icons.Outlined.Backspace,
+                                                        contentDescription = "Back Space",
+                                                        tint = MaterialTheme.colorScheme.onBackground
+                                                    )
+                                                }
+                                                else -> {
+                                                    Text(
+                                                        textAlign = TextAlign.Center,
+                                                        text = it.toString(),
+                                                        style = TextStyle(
+                                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                                            fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
+                                                            fontSize = MaterialTheme.typography.headlineLarge.fontSize,
+                                                            fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+                                                            letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
+                                                            lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                                                            textAlign = TextAlign.Center
+                                                        )
+                                                    )
+                                                }
+                                            }
                                         }
                                     }
                                 }
