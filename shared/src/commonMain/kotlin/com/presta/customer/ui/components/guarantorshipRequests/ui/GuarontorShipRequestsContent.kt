@@ -51,6 +51,7 @@ import com.presta.customer.MR
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.guarantorshipRequests.GuarantorshipRequestComponent
+import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.helpers.formatMoney
@@ -65,6 +66,8 @@ fun GuarantorShipRequestsContent(
     state: ApplyLongTermLoansStore.State,
     authState: AuthStore.State,
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
+    signHomeState: SignHomeStore.State,
+    onProfileEvent: (SignHomeStore.Intent) -> Unit,
 ) {
     val skipHalfExpanded by remember { mutableStateOf(true) }
     val modalBottomState = rememberModalBottomSheetState(
@@ -73,10 +76,13 @@ fun GuarantorShipRequestsContent(
     )
     val modalBottomScope = rememberCoroutineScope()
     var loanRequestRefId by remember { mutableStateOf("") }
+    var memberRefId by remember { mutableStateOf("") }
     var guarantorshipRequestRefId by remember { mutableStateOf("") }
     var amountToGuarantee by remember { mutableStateOf("") }
     var loanNumber by remember { mutableStateOf("") }
-
+    if(signHomeState.prestaTenantByPhoneNumber?.refId!=null){
+        memberRefId= signHomeState.prestaTenantByPhoneNumber.refId
+    }
     if (loanRequestRefId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -87,6 +93,25 @@ fun GuarantorShipRequestsContent(
                 ApplyLongTermLoansStore.Intent.GetPrestaLongTermLoanRequestByRefId(
                     token = it.accessToken,
                     loanRequestRefId = loanRequestRefId
+                )
+            }?.let {
+                onEvent(
+                    it
+                )
+            }
+        }
+    }
+    if (memberRefId != "") {
+        LaunchedEffect(
+            authState.cachedMemberData,
+            memberRefId
+
+        ) {
+            //Todo------
+            authState.cachedMemberData?.let {
+                ApplyLongTermLoansStore.Intent.GetPrestaGuarantorshipRequests(
+                    token = it.accessToken,
+                    memberRefId ="tvzGHXVGkkxGJizi" //memberRefId
                 )
             }?.let {
                 onEvent(
@@ -222,10 +247,6 @@ fun GuarantorShipRequestsContent(
 //                                            it
 //                                        )
 //                                    }
-                                    //From the response get the Refid
-                                    println("Test guarontor RequstRefId " + guarantorshipRequestRefId)
-                                    println("Test loan Number " + loanNumber)
-                                    println("Test loan  Amount " + amountToGuarantee)
                                     component.onAcceptSelected(
                                         loanNumber = loanNumber,
                                         amount = if (amountToGuarantee != "") amountToGuarantee.toDouble() else 0.0,
@@ -296,7 +317,7 @@ fun GuarantorShipRequestsContent(
                         .fillMaxWidth()
                         .padding(innerPadding)
                 ) {
-                    if (state.prestaGuarontorshipRequests.isEmpty()) {
+                    if (state.isLoading) {
                         items(5) {
                             Row(
                                 modifier = Modifier

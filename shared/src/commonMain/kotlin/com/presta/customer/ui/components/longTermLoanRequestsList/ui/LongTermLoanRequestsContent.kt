@@ -28,6 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
@@ -236,7 +237,7 @@ fun LongTermLoanRequestsContent(
                     item {
                         Spacer(modifier = Modifier.padding(innerPadding))
                     }
-                    if (state.prestaLongTermLoansRequestsList?.content.isNullOrEmpty()) {
+                    if (state.isLoading) {
                         items(6) {
                             Row(
                                 modifier = Modifier
@@ -267,27 +268,62 @@ fun LongTermLoanRequestsContent(
 
                         }
                     } else {
-                        state.prestaLongTermLoansRequestsList?.content?.map { loanlistingData ->
+                        if (state.prestaLongTermLoansRequestsList?.content.isNullOrEmpty()){
                             item {
                                 Column(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = 10.dp)
+                                        .fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    LongTermLoanRequestsListContainer(
-                                        onClickContainer = {
-                                            loanRequestRefId = loanlistingData.refId
-                                            scope.launch { modalBottomSheetState.show() }
-                                        },
-                                        loanProductName = loanlistingData.loanProductName,
-                                        applicationComplete = false,
-                                        loanAmount = "Ksh. ${formatMoney(loanlistingData.loanAmount)}",
-                                        loanApplicationProgress = loanlistingData.loanRequestProgress.toFloat() / 100,
-                                        applicantSigned = if (loanlistingData.applicantSigned) "APPLICANT SIGNED" else "APPLICANT SIGN PENDING",
-                                        applicantHasSigned = loanlistingData.applicantSigned
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 70.dp),
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Inventory2,
+                                            modifier = Modifier
+                                                .size(70.dp),
+                                            contentDescription = "No data",
+                                            tint = MaterialTheme.colorScheme.outline
+                                        )
+                                    }
+                                    Text(
+                                        "Whoops",
+                                        fontSize = 13.sp,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                    )
+                                    Text(
+                                        "No Data",
+                                        fontSize = 10.sp,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                     )
                                 }
+                            }
+                        }else{
+                            state.prestaLongTermLoansRequestsList?.content?.map { loanlistingData ->
+                                item {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(bottom = 10.dp)
+                                    ) {
+                                        LongTermLoanRequestsListContainer(
+                                            onClickContainer = {
+                                                loanRequestRefId = loanlistingData.refId
+                                                scope.launch { modalBottomSheetState.show() }
+                                            },
+                                            loanProductName = loanlistingData.loanProductName,
+                                            applicationComplete = false,
+                                            loanAmount = "Ksh. ${formatMoney(loanlistingData.loanAmount)}",
+                                            loanApplicationProgress = loanlistingData.loanRequestProgress.toFloat() / 100,
+                                            applicantSigned = if (loanlistingData.applicantSigned) "APPLICANT SIGNED" else "APPLICANT SIGN PENDING",
+                                            applicantHasSigned = loanlistingData.applicantSigned
+                                        )
+                                    }
 
+                                }
                             }
                         }
                     }

@@ -728,11 +728,17 @@ class DefaultRootComponent(
         )
 
     private fun favouriteGuarantorsComponent(componentContext: ComponentContext): FavouriteGuarantorsComponent =
-        DefaultFavouriteGuarantorsComponent(componentContext = componentContext, onItemClicked = {
-            navigation.pop()
+        DefaultFavouriteGuarantorsComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
 
-        }, onProductClicked = {
-        })
+            },
+            onProductClicked = {
+            },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+        )
 
     private fun witnessRequestComponent(componentContext: ComponentContext): WitnessRequestComponent =
         DefaultWitnessRequestComponent(

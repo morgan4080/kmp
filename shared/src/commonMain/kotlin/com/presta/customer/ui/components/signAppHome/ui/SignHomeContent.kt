@@ -256,7 +256,7 @@ fun SignHomeContent(
                                         )
 
                                     }
-                                    if (applyLongTermLoanState.prestaLongTermLoansRequestsFilteredList?.content.isNullOrEmpty()) {
+                                    if (applyLongTermLoanState.isLoading) {
                                         Row(
                                             modifier = Modifier
                                                 .fillMaxWidth()
@@ -287,14 +287,25 @@ fun SignHomeContent(
                                         }
 
                                     } else {
-                                        applyLongTermLoanState.prestaLongTermLoansRequestsFilteredList?.content?.map { filteredLoanRequests ->
-                                            Row(modifier = Modifier.padding(top = 10.dp)) {
-                                                LoanRequestsListing(
-                                                    loanName = filteredLoanRequests.loanProductName,
-                                                    loanRequestDate = filteredLoanRequests.loanDate,
-                                                    loanAmount = formatMoney(filteredLoanRequests.loanAmount) + " KES",
-                                                    loanProgress = filteredLoanRequests.loanRequestProgress.toFloat() / 100,
+                                        if (applyLongTermLoanState.prestaLongTermLoansRequestsFilteredList?.content.isNullOrEmpty()){
+                                            Row(modifier = Modifier
+                                                .fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.Center){
+                                                Text(text = "You don't have Loan Requests",
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                                    fontSize = 12.sp
                                                 )
+                                            }
+                                        }else{
+                                            applyLongTermLoanState.prestaLongTermLoansRequestsFilteredList?.content?.map { filteredLoanRequests ->
+                                                Row(modifier = Modifier.padding(top = 10.dp)) {
+                                                    LoanRequestsListing(
+                                                        loanName = filteredLoanRequests.loanProductName,
+                                                        loanRequestDate = filteredLoanRequests.loanDate,
+                                                        loanAmount = formatMoney(filteredLoanRequests.loanAmount) + " KES",
+                                                        loanProgress = filteredLoanRequests.loanRequestProgress.toFloat() / 100,
+                                                    )
+                                                }
                                             }
                                         }
                                     }
