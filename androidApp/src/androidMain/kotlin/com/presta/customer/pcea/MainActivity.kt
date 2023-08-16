@@ -1,4 +1,4 @@
-package com.presta.customer
+package com.presta.customer.pcea
 
 import android.app.Activity
 import android.os.Bundle
@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import com.arkivanov.decompose.defaultComponentContext
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
+import com.presta.customer.MainView
+import com.presta.customer.SharedStatus
 import com.presta.customer.di.initKoin
 import com.presta.customer.ui.components.root.DefaultRootComponent
 import org.koin.android.ext.koin.androidContext
