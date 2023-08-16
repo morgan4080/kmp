@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.fir.scopes.debugCollectOverrides
-
 plugins {
     kotlin("multiplatform")
     id("com.android.application")
@@ -33,12 +31,12 @@ kotlin {
 
 android {
     compileSdk = (findProperty("android.compileSdk") as String).toInt()
-    namespace = "com.presta.customer"
+    namespace = "com.presta.customer.pcea"
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
 
     defaultConfig {
-        applicationId = "com.presta.customer"
+        applicationId = "com.presta.customer.pcea"
         minSdk = (findProperty("android.minSdk") as String).toInt()
         targetSdk = (findProperty("android.targetSdk") as String).toInt()
         versionCode = 1
