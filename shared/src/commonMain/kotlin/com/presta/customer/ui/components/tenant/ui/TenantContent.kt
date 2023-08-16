@@ -99,7 +99,7 @@ fun TenantContent(
                     .padding(top = 30.dp)
             ) {
                 Text(
-                    text = "Key in your Organization tenant id",
+                    text = "Key in your Organization name or tenant ID",
                     style = MaterialTheme.typography.headlineSmall,
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
                     fontSize = 20.0.sp
