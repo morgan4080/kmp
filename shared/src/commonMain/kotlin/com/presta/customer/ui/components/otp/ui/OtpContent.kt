@@ -356,11 +356,11 @@ fun OtpContent(
                 }
             }
 
-            Column (modifier = Modifier.absoluteOffset(y = -(30).dp).defaultMinSize(minHeight = 1000.dp)) {
+            Column (modifier = Modifier.absoluteOffset(y = -(30).dp)) {
                 LazyVerticalGrid(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxHeight(),
+                        .fillMaxHeight().defaultMinSize(minHeight = 1000.dp),
                     columns = GridCells.Fixed(3),
                     verticalArrangement = Arrangement.Top,
                     contentPadding = PaddingValues(
