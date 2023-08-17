@@ -7,7 +7,7 @@ data class Organisation(
     val tenant_id: String,
     val logo: ImageResource,
     val logodark: ImageResource,
-    val sandbox: Boolean = false
+    val sandbox: Boolean = true
 )
 
 

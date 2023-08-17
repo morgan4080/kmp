@@ -24,11 +24,7 @@ import androidx.fragment.app.FragmentManager
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.crashlytics.ktx.setCustomKeys
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
@@ -57,7 +53,6 @@ data class LocalAuthenticationResult (
 actual class Platform(
     private val context: Context
 ) {
-    actual val platformName: String = "Android"
     actual val otpCode = MutableStateFlow("")
     actual fun showToast(text: String, duration: Durations) {
         Toast.makeText(
@@ -402,6 +397,6 @@ class BiometricAuthenticator(
 
 }
 
-
+actual fun getPlatformName(): String = "Android"
 
 

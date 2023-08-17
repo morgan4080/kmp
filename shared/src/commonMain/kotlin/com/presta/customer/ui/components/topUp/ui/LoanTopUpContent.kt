@@ -235,7 +235,7 @@ fun LoanTopUpContent(
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Select Loan Term",
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                         modifier = Modifier.padding(top = 10.dp),
                         fontSize = 14.sp
                     )
@@ -282,7 +282,7 @@ fun LoanTopUpContent(
                     modifier = Modifier,
                     text = "Top up amount",
                     color = MaterialTheme.colorScheme.onBackground,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                     fontSize = 14.sp
                 )
             }

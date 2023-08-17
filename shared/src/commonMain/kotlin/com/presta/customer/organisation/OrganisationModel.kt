@@ -11,7 +11,7 @@ class OrganisationModel {
             "t10091",
             MR.images.prestalogo,
             MR.images.prestalogodark,
-            false,
+            true,
         )
 
         fun  loadOrganisation(org: Organisation) {

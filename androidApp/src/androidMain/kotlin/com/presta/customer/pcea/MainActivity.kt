@@ -8,6 +8,7 @@ import androidx.core.view.WindowCompat
 import com.arkivanov.decompose.defaultComponentContext
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import com.presta.customer.MainView
+import com.presta.customer.Platform
 import com.presta.customer.SharedStatus
 import com.presta.customer.di.initKoin
 import com.presta.customer.ui.components.root.DefaultRootComponent
@@ -16,6 +17,7 @@ import org.koin.core.context.stopKoin
 import org.koin.core.error.KoinAppAlreadyStartedException
 
 class MainActivity : AppCompatActivity() {
+    var platform: Platform? = null
     private var currentActivity: Activity? = null
     private fun getCurrentActivity(): Activity? {
         return currentActivity
@@ -33,16 +35,17 @@ class MainActivity : AppCompatActivity() {
         setCurrentActivity(this)
 
         connectivityStatus = SharedStatus(this)
+        platform = Platform(this)
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
         try {
-            initKoin(
+            val koinApplication = initKoin(
                 // add to build configuration, false in prod
-                enableNetworkLogs = true
-            ) {
-                androidContext(applicationContext)
-            }
+                enableNetworkLogs = true,
+                platform = platform,
+            )
+            koinApplication.androidContext(applicationContext)
         } catch (e: KoinAppAlreadyStartedException) {
             e.printStackTrace()
         }

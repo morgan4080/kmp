@@ -7,7 +7,6 @@ enum class Durations {
 }
 
 expect class Platform {
-    val platformName: String
 
     val otpCode: MutableStateFlow<String>
     fun showToast(text: String, duration: Durations = Durations.LONG)
@@ -17,3 +16,5 @@ expect class Platform {
     fun logErrorsToFirebase(Error: Exception)
 
 }
+
+expect fun getPlatformName(): String

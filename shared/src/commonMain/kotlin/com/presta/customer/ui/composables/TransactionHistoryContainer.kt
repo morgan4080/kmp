@@ -103,7 +103,7 @@ fun TransactionHistoryContainer() {
                             text = transaction.code,
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 10.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                         )
                     }
                 }
@@ -119,7 +119,7 @@ fun TransactionHistoryContainer() {
                     Text(
                         text = transaction.date,
                         fontSize = 10.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                     )
                 }
             }

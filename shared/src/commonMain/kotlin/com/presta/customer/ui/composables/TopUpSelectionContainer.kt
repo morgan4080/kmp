@@ -61,13 +61,13 @@ fun TopUpSelectionContainer(
 
                 Text(text = "Emergency Loan",
                 fontSize = 12.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                     color = labelTextColor
                 )
                     Text(
                         text = "min and max",
                         fontSize = 10.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                     )
             }
         }
@@ -82,7 +82,7 @@ fun TopUpSelectionContainer(
             Text(
                 text = "Due- 12 May 2020",
                 fontSize = 10.sp,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
             )
 
         }

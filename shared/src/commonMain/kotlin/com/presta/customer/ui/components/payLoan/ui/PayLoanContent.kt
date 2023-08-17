@@ -381,14 +381,14 @@ fun MoreDetails(
                                             modifier = Modifier.align(Alignment.Start),
                                             text = "${localDateTime.dayOfMonth} ${localDateTime.month}",
                                             fontSize = MaterialTheme.typography.labelSmall.fontSize,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                         )
 
                                         Text(
                                             modifier = Modifier.align(Alignment.Start),
                                             text = "${localDateTime.time}",
                                             fontSize = MaterialTheme.typography.labelSmall.fontSize,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                         )
                                     }
 
@@ -404,7 +404,7 @@ fun MoreDetails(
                                             modifier = Modifier.align(Alignment.End),
                                             text = schedule.status,
                                             fontSize = MaterialTheme.typography.labelSmall.fontSize,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                                             textAlign = TextAlign.End
                                         )
                                     }

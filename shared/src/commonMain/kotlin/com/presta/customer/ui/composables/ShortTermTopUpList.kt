@@ -251,12 +251,12 @@ fun TopUpListView(
                         Text(
                             text =  formatMoney(minAmount),
                             fontSize = 10.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                         )
                         Text(
                             text = " - " + formatMoney(maxAmount),
                             fontSize = 10.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                         )
                     }
                 }
@@ -276,7 +276,7 @@ fun TopUpListView(
 //                            color = if (isOverdue(daysAvailable)) Color.Red else MaterialTheme.colorScheme.onBackground,
                             text =  daysAvailable,
                             fontSize = 10.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                         )
                     }
                     Spacer(modifier = Modifier.padding(end = 15.dp))

@@ -253,7 +253,7 @@ fun HomeCardListItem(
                                         text = breakdown.loanType,
                                         color = MaterialTheme.colorScheme.onBackground,
                                         fontSize = 14.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                                         textAlign = TextAlign.End
                                     )
 
@@ -317,7 +317,7 @@ fun HomeCardListItem(
                                     text = "Current Savings",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 14.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                                     textAlign = TextAlign.End
                                 )
 
@@ -346,7 +346,7 @@ fun HomeCardListItem(
                                     text = "Current Shares",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 14.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                                     textAlign = TextAlign.End
                                 )
 

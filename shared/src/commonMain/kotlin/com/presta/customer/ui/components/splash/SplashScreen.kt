@@ -45,7 +45,7 @@ fun SplashScreen(component: SplashComponent, connectivityStatus: SharedStatus?) 
                 component.onEvent(AuthStore.Intent.UpdateOnlineState(it))
                 if (!it) {
                     snackBarHostState.showSnackbar(
-                        message = "No internet connection",
+                        message = "Checking network connection",
                         duration = SnackbarDuration.Short
                     )
                 } else {

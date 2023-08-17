@@ -175,7 +175,7 @@ fun TransactionHistoryContent(
                                 Text(
                                     text = it.value,
                                     fontSize = 12.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                                     color = if (pagerState.currentPage == it.key.toInt()) Color.White else MaterialTheme.colorScheme.onBackground,
                                     textAlign = TextAlign.Center
                                 )

@@ -12,12 +12,10 @@ import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.profile.coroutineScope
-import com.presta.customer.ui.components.profile.store.ProfileStore
 import com.presta.customer.ui.components.savings.store.SavingsStore
 import com.presta.customer.ui.components.savings.store.SavingsStoreFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
@@ -81,51 +79,42 @@ class DefaultSavingsComponent (
 
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
-    private var refreshTokenScopeJob: Job? = null
-
     private fun refreshToken() {
-        if (refreshTokenScopeJob?.isActive == true) return
-
-        refreshTokenScopeJob = scope.launch {
+        scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
                     onAuthEvent(AuthStore.Intent.RefreshToken(
                         tenantId = OrganisationModel.organisation.tenant_id,
                         refId = state.cachedMemberData.refId
                     ))
+
+                    this.cancel()
                 }
-                this.cancel()
             }
         }
     }
 
-    private var fetchSavingsDataJob: Job? = null
+    private fun fetchSavingsData (accessToken: String, refId: String) {
 
-    private fun fetchSavingsData (access_token: String, refId: String) {
-        if (fetchSavingsDataJob?.isActive == true) return
-
-        fetchSavingsDataJob = scope.launch {
+        scope.launch {
             savingsState.collect { state ->
                 if (state.transactionMapping !== null) {
                     onEvent(
                         SavingsStore.Intent.GetSavingsTransactions (
-                            token = access_token,
+                            token = accessToken,
                             refId = refId,
                             purposeIds = listOf("2","3"),
                             searchTerm = null
                         )
                     )
+                    this.cancel()
                 }
             }
         }
     }
 
-    private var loadEssentialsJob: Job? = null
-
     override fun loadEssentials() {
-        if (loadEssentialsJob?.isActive == true) return
-
-        loadEssentialsJob = scope.launch {
+        scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
                     onAuthEvent(AuthStore.Intent.CheckAuthenticatedUser(
@@ -146,6 +135,8 @@ class DefaultSavingsComponent (
                     )
 
                     fetchSavingsData(state.cachedMemberData.accessToken, state.cachedMemberData.refId)
+
+                    this.cancel()
                 }
             }
         }

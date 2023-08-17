@@ -8,12 +8,19 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +32,6 @@ import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.helpers.LocalSafeArea
-import com.presta.customer.ui.helpers.formatMoney
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -96,11 +102,14 @@ internal fun MainModalDrawerSheet(
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                     )
                     Spacer(modifier = Modifier.padding(end = 15.dp))
-                    Text(
-                        text = if (authState.authUserResponse !== null) authState.authUserResponse.firstName + " " + authState.authUserResponse.lastName else "",
-                        fontSize = MaterialTheme.typography.labelSmall.fontSize,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                    )
+                    if (authState.authUserResponse !== null) {
+                        println(authState.authUserResponse)
+                        Text(
+                            text = "${authState.authUserResponse.firstName} ${authState.authUserResponse.lastName}",
+                            fontSize = MaterialTheme.typography.labelSmall.fontSize,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                        )
+                    }
                 }
             }
         }

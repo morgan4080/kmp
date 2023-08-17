@@ -198,7 +198,7 @@ fun RegistrationContent(
                             modifier = Modifier.alpha(0.5f).fillMaxWidth(0.9f),
                             text = state.label,
                             style = MaterialTheme.typography.bodyMedium,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                         )
                     }
                 }
@@ -321,7 +321,7 @@ fun RegistrationContent(
                                 text = inputMethod.errorMessage,
                                 fontSize = 10.sp,
                                 style = MaterialTheme.typography.bodyMedium,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                                 color = Color.Red
                             )
                         }

@@ -13,8 +13,9 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,19 +29,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.moriatsushi.insetsx.ExperimentalSoftwareKeyboardApi
 import com.presta.customer.MR
 import com.presta.customer.ui.components.savings.store.SavingsStore
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.CurrentSavingsContainer
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.singleTransaction
-import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalSoftwareKeyboardApi::class
+)
 @Composable
 fun SavingsContent(
     state:  SavingsStore.State,
@@ -61,26 +64,20 @@ fun SavingsContent(
 
     val refreshState = rememberPullRefreshState(refreshing, ::refresh)
 
-    Surface(
+    Scaffold(
         modifier = Modifier
-            .fillMaxHeight()
-            .padding(LocalSafeArea.current)
-            .background(color = MaterialTheme.colorScheme.background),
-        color = MaterialTheme.colorScheme.background
+            .fillMaxHeight(),
+        topBar = {
+            NavigateBackTopBar("Savings", onClickContainer = {
+                onBack()
+            })
+        }
     ) {
         Column(
             modifier = Modifier
+                .padding(it)
                 .background(color = MaterialTheme.colorScheme.background)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                NavigateBackTopBar("Savings", onClickContainer = {
-                    onBack()
-                })
-
-            }
             Column(
                 modifier = Modifier
                     .padding(start = 16.dp, end = 16.dp)

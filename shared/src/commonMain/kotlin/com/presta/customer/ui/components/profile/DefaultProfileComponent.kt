@@ -147,8 +147,8 @@ class DefaultProfileComponent(
                             paymentType = PaymentTypes.MEMBERSHIPFEES
                         )
                     )
+                    this.cancel()
                 }
-                this.cancel()
             }
         }
 
@@ -207,6 +207,8 @@ class DefaultProfileComponent(
                     ))
 
                     checkProfileTransactions(state.cachedMemberData.accessToken, state.cachedMemberData.refId)
+
+                    this.cancel()
                 }
             }
         }
@@ -217,6 +219,7 @@ class DefaultProfileComponent(
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
                     onAuthEvent(AuthStore.Intent.LogOutUser)
+                    this.cancel()
                 }
             }
         }

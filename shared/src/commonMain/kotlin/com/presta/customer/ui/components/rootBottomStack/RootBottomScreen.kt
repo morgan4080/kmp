@@ -1,7 +1,7 @@
 package com.presta.customer.ui.components.rootBottomStack
 
 import GetIconForScreen
-import RootLoansScreen
+import com.presta.customer.ui.components.rootLoans.RootLoansScreen
 import RootSavingsScreen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,9 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.Direction
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade

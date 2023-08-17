@@ -115,9 +115,6 @@ fun ProfileContent(
     logout: () -> Unit,
     reloadModels: () -> Unit,
 ) {
-    println(":::::::CUSTOMER REF ID:::::::::::")
-    println(authState.cachedMemberData?.refId)
-
     val stateLazyRow0 = rememberLazyListState()
 
     val scope = rememberCoroutineScope()
@@ -173,7 +170,7 @@ fun ProfileContent(
     val refreshState = rememberPullRefreshState(refreshing, ::refresh)
 
     val items = listOf("Log Out" to Icons.Outlined.Logout)
-    var selectedItem by remember { mutableStateOf(items[0]) }
+    var selectedItem by remember { mutableStateOf("Log Out" to Icons.Outlined.Logout) }
 
     val scopeDrawer = rememberCoroutineScope()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -182,10 +179,10 @@ fun ProfileContent(
         drawerState = drawerState,
         drawerContent = {
             MainModalDrawerSheet(
-                items = items,
+                items,
                 authState,
                 logout,
-                selectedItem = selectedItem,
+                selectedItem,
                 onItemsClick = { item ->
                     scopeDrawer.launch { drawerState.close() }
                     selectedItem = item
@@ -300,13 +297,13 @@ fun ProfileContent(
                             }
                         )
                     },
-                    content = { innerPadding ->
-                        Box (Modifier.consumeWindowInsets(innerPadding).pullRefresh(refreshState)) {
+                    content = { pd ->
+                        Box (Modifier.consumeWindowInsets(pd).pullRefresh(refreshState)) {
 
                             LazyColumn(
                                 modifier = Modifier
                                     .wrapContentHeight(),
-                                contentPadding = innerPadding
+                                contentPadding = pd
                             ) {
 
                                 item {
@@ -331,7 +328,7 @@ fun ProfileContent(
                                 item {
                                     LazyRow(modifier = Modifier
                                         .fillMaxWidth()
-                                        .consumeWindowInsets(innerPadding)
+                                        .consumeWindowInsets(pd)
                                         .padding(vertical = 10.dp),
                                         horizontalArrangement = Arrangement.spacedBy(20.dp),
                                         state = stateLazyRow0,
@@ -503,7 +500,7 @@ fun ProfileContent(
 
                             PullRefreshIndicator(refreshing, refreshState,
                                 Modifier
-                                    .padding(innerPadding)
+                                    .padding(pd)
                                     .align(Alignment.TopCenter).zIndex(1f),
                                 contentColor = actionButtonColor
                             )

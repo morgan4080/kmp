@@ -3,7 +3,6 @@ package com.presta.customer
 import kotlinx.coroutines.flow.MutableStateFlow
 
 actual class Platform {
-    actual val platformName: String = "iOS"
 
     actual val otpCode = MutableStateFlow("")
     actual fun showToast(text: String, duration: Durations) {
@@ -20,3 +19,5 @@ actual class Platform {
     actual fun logErrorsToFirebase(Error: Exception) {
     }
 }
+
+actual fun getPlatformName(): String = "iOS"
