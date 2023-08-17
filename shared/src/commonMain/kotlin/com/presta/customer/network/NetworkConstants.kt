@@ -149,5 +149,8 @@ object NetworkConstants {
     object PrestaWitnessRequests {
         const val route =  EguarantorshipApplicationV1BaseUrl + "witness-request"
     }
+    object PrestaFavouriteGuarantor {
+        const val route =  EguarantorshipApplicationV1BaseUrl + "favorite-guarantor"
+    }
 
 }

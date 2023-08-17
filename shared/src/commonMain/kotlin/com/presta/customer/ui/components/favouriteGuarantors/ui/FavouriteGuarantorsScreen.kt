@@ -1,12 +1,10 @@
 package com.presta.customer.ui.components.favouriteGuarantors.ui
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGuarantorsComponent
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavouriteGaurantorsScreen(
     component: FavouriteGuarantorsComponent

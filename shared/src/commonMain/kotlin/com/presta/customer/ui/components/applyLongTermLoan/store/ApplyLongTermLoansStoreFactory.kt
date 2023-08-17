@@ -23,6 +23,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansReques
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
+import com.presta.customer.network.longTermLoans.model.favouriteGuarantor.PrestaFavouriteGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 import com.presta.customer.prestaDispatchers
 import kotlinx.coroutines.Job
@@ -94,7 +95,8 @@ class ApplyLongTermLoansStoreFactory(
 
         data class WitnessRequestsLoaded(val witnessRequestsLoaded: List<PrestaWitnessRequestResponse> = listOf()) :
             Msg()
-
+        data class FavouriteGuarantorLoaded(val favouriteGuarantorLoaded: List<PrestaFavouriteGuarantorResponse> = listOf()) :
+            Msg()
         data class LongTermLoansFailed(val error: String?) : Msg()
     }
 
@@ -200,6 +202,10 @@ class ApplyLongTermLoansStoreFactory(
                     memberRefId = intent.memberRefId
                 )
                 is ApplyLongTermLoansStore.Intent.GetPrestaWitnessRequests -> getprestaWitnessRequests(
+                    token = intent.token,
+                    memberRefId = intent.memberRefId
+                )
+                is ApplyLongTermLoansStore.Intent.GetPrestaFavouriteGuarantor -> getprestaFavouriteGuarantor(
                     token = intent.token,
                     memberRefId = intent.memberRefId
                 )
@@ -625,6 +631,30 @@ class ApplyLongTermLoansStoreFactory(
                 dispatch(Msg.LongTermLoansLoading(false))
             }
         }
+
+        private var getprestaFavouriteGuarantorJob: Job? = null
+        private fun getprestaFavouriteGuarantor(
+            token: String,
+            memberRefId: String
+        ) {
+            if (getprestaFavouriteGuarantorJob?.isActive == true) return
+
+            dispatch(Msg.LongTermLoansLoading())
+
+            getprestaFavouriteGuarantorJob = scope.launch {
+                longTermLoansRepository.getFavouriteGuarantor(
+                    token = token,
+                    memberRefId = memberRefId
+                ).onSuccess { response ->
+                    dispatch(Msg.FavouriteGuarantorLoaded(response))
+
+                }.onFailure { e ->
+                    dispatch(Msg.LongTermLoansFailed(e.message))
+                }
+
+                dispatch(Msg.LongTermLoansLoading(false))
+            }
+        }
     }
 
     private object ReducerImpl :
@@ -657,6 +687,7 @@ class ApplyLongTermLoansStoreFactory(
                 )
                 is Msg.UpdatedGuarantorLoaded -> copy(prestaUpdatedGuarantorData = msg.replacedGuarantorResponse)
                 is Msg.WitnessRequestsLoaded -> copy(prestaWitnessRequests = msg.witnessRequestsLoaded)
+                is Msg.FavouriteGuarantorLoaded -> copy(prestaFavouriteGuarantor= msg.favouriteGuarantorLoaded)
             }
     }
 

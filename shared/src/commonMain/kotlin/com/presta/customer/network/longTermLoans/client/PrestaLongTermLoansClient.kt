@@ -18,6 +18,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProduc
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
+import com.presta.customer.network.longTermLoans.model.favouriteGuarantor.PrestaFavouriteGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -348,4 +349,35 @@ class PrestaLongTermLoansClient(
             }
         }
     }
+    suspend fun addFavouriteGuarantor(
+        token: String,
+        loanRequestRefId: String,
+        guarantorRefId: String,//old guarantor---replace the old guarantor with the new guarantor
+        memberRefId: String,
+    ): PrestaFavouriteGuarantorResponse {
+        return loanRequestErrorHandler {
+            httpClient.post("${NetworkConstants.PrestaLongTermLoanRequest.route}/${loanRequestRefId}/${"guarantor"}/${guarantorRefId}") {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                contentType(ContentType.Application.Json)
+                setBody(
+                    GuarantorListPayLoad(
+                        memberRefId = memberRefId
+                    )
+                )
+            }
+        }
+    }
+    suspend fun getFavouriteGuarantor(
+        token: String,
+        memberRefId: String,
+    ): List<PrestaFavouriteGuarantorResponse> {
+        return longTermLoansErrorHandler {
+            httpClient.get("${NetworkConstants.PrestaFavouriteGuarantor.route}/${memberRefId}") {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+            }
+        }
+    }
+
 }

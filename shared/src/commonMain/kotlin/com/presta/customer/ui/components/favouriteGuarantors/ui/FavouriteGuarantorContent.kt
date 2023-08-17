@@ -7,6 +7,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,11 +34,13 @@ import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Contacts
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -118,7 +122,7 @@ fun FavouriteGuarantorContent(
                         scope.launch { modalBottomState.hide() }
                     })
                 },
-                content = {innerPadding->
+                content = { innerPadding ->
                     Column(
                         modifier = Modifier
                             .padding(start = 16.dp, end = 16.dp)
@@ -250,7 +254,9 @@ fun FavouriteGuarantorContent(
 
                                                     IconButton(
                                                         modifier = Modifier.size(18.dp),
-                                                        onClick = { firstName = emptyTextContainer },
+                                                        onClick = {
+                                                            firstName = emptyTextContainer
+                                                        },
                                                         content = {
                                                             Icon(
                                                                 modifier = Modifier.alpha(0.4f),
@@ -490,8 +496,6 @@ fun FavouriteGuarantorContent(
                             }
                         }
                     }
-
-
                 }
             )
         }
@@ -522,20 +526,135 @@ fun FavouriteGuarantorContent(
                     component.onBackNavClicked()
                 })
             }, content = { innerPadding ->
-                LazyColumn(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(innerPadding)
-                        .fillMaxHeight(0.8f)
+                        .padding(start = 16.dp, end = 16.dp)
+                        .fillMaxHeight()
                 ) {
-
                     //list Guarantors from Live Data
+                    LazyColumn(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxHeight(0.85f)
+                    ) {
 
+                        item {
+                            FavouriteGuarantorView(
+                                Index = 1,
+                                selected = false,
+                                onClick = {
 
-                    item {
-                        Spacer(modifier = Modifier.padding(bottom = 100.dp))
+                                },
+                                deleteAccount = {
+
+                                },
+                                label = "Dennis",
+                                description = null
+                            )
+                        }
                     }
                 }
             })
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FavouriteGuarantorView(
+    Index: Int,
+    selected: Boolean,
+    onClick: (Int) -> Unit,
+    deleteAccount: () -> Unit,
+    label: String,
+    description: String? = null,
+) {
+    ElevatedCard(
+        onClick = {
+            onClick.invoke(Index)
+        }
+    ) {
+        Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.inverseOnSurface)) {
+            Row(
+                modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row {
+                    Spacer(modifier = Modifier.padding(end = 15.dp))
+                    Card(
+                        modifier = Modifier
+                            .clip(shape = CircleShape)
+                            .border(
+                                border = BorderStroke(0.2.dp, MaterialTheme.colorScheme.outline),
+                                shape = CircleShape
+                            ),
+                        elevation = CardDefaults.cardElevation(0.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(19.dp)
+                                .background(if (selected) actionButtonColor else MaterialTheme.colorScheme.background)
+                                .clickable {
+                                    onClick.invoke(Index)
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (selected) {
+                                Icon(
+                                    Icons.Default.Check,
+                                    contentDescription = "Check Box",
+                                    tint = Color.White,
+                                    modifier = Modifier.padding(1.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Column {
+
+                    Text(
+                        text = label,
+                        modifier = Modifier
+                            .padding(start = 15.dp),
+                        fontSize = 12.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                    )
+
+                    if (description != null) {
+                        Text(
+                            text = description,
+                            modifier = Modifier.padding(start = 15.dp),
+                            fontSize = 10.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                        )
+                    }
+                }
+
+                Row {
+                    //Created a Custom checkBox
+                    Spacer(modifier = Modifier.weight(1f))
+                    Box(
+                        modifier = Modifier
+                            .size(19.dp)
+                            .clickable {
+                                deleteAccount()
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            modifier = Modifier,
+                            imageVector = Icons.Filled.Cancel,
+                            contentDescription = null,
+                            tint = actionButtonColor.copy(
+                                alpha = 0.4f
+                            )
+                        )
+                    }
+                    Spacer(modifier = Modifier.padding(end = 15.dp))
+                }
+            }
+        }
     }
 }

@@ -18,6 +18,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansReques
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
+import com.presta.customer.network.longTermLoans.model.favouriteGuarantor.PrestaFavouriteGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 
 interface ApplyLongTermLoansStore :
@@ -94,6 +95,10 @@ interface ApplyLongTermLoansStore :
             val token: String,
             val memberRefId: String
         ) : Intent()
+        data class GetPrestaFavouriteGuarantor(
+            val token: String,
+            val memberRefId: String
+        ) : Intent()
     }
 
     data class State(
@@ -115,6 +120,7 @@ interface ApplyLongTermLoansStore :
         val prestaLongTermLoansRequestsFilteredList: PrestaLongTermLoansRequestsListResponse? = null,
         val prestaUpdatedGuarantorData: LongTermLoanRequestResponse? = null,
         val prestaWitnessRequests: List<PrestaWitnessRequestResponse> = emptyList(),
+        val prestaFavouriteGuarantor: List<PrestaFavouriteGuarantorResponse> = emptyList(),
         val memberNo: String = "By Member No",
         val phoneNo: String = "By Phone No",
         val selfGuarantee: String = "Self Guarantee",

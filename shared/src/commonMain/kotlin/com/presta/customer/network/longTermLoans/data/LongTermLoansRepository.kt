@@ -17,6 +17,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProduc
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
+import com.presta.customer.network.longTermLoans.model.favouriteGuarantor.PrestaFavouriteGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 
 interface LongTermLoansRepository {
@@ -106,4 +107,8 @@ interface LongTermLoansRepository {
         token: String,
         memberRefId: String,
     ): Result<List<PrestaWitnessRequestResponse>>
+    suspend fun getFavouriteGuarantor(
+        token: String,
+        memberRefId: String,
+    ): Result<List<PrestaFavouriteGuarantorResponse>>
 }

@@ -18,6 +18,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProduc
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
+import com.presta.customer.network.longTermLoans.model.favouriteGuarantor.PrestaFavouriteGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -307,6 +308,23 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
     ): Result<List<PrestaWitnessRequestResponse>> {
         return try {
             val response = prestaLongTermLoansClient.getWitnessRequests(
+                token = token,
+                memberRefId = memberRefId
+            )
+            Result.success(response)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getFavouriteGuarantor(
+        token: String,
+        memberRefId: String
+    ): Result<List<PrestaFavouriteGuarantorResponse>> {
+        return try {
+            val response = prestaLongTermLoansClient.getFavouriteGuarantor(
                 token = token,
                 memberRefId = memberRefId
             )
