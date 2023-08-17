@@ -112,18 +112,15 @@ fun RegistrationContent(
     fun doRegistration() {
         if (state.phoneNumber !== null) {
 
-            if (OrganisationModel.organisation.tenant_id!=null){
-
-                onEvent(RegistrationStore.Intent.CreateMember(
-                    token = "",
-                    firstName = state.firstName.value.text,
-                    lastName = state.lastName.value.text,
-                    phoneNumber = state.phoneNumber,
-                    idNumber = state.idNumber.value.text,
-                    tocsAccepted = state.isTermsAccepted,
-                    tenantId = OrganisationModel.organisation.tenant_id!!
-                ))
-            }
+            onEvent(RegistrationStore.Intent.CreateMember(
+                token = "",
+                firstName = state.firstName.value.text,
+                lastName = state.lastName.value.text,
+                phoneNumber = state.phoneNumber,
+                idNumber = state.idNumber.value.text,
+                tocsAccepted = state.isTermsAccepted,
+                tenantId = OrganisationModel.organisation.tenant_id
+            ))
 
         } else {
             scope.launch {

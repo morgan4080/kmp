@@ -6,7 +6,7 @@ enum class Durations {
     SHORT, LONG
 }
 
-expect class Platform(context: AppContext) {
+expect class Platform {
     val platformName: String
 
     val otpCode: MutableStateFlow<String>

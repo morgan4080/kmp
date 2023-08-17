@@ -54,8 +54,8 @@ data class LocalAuthenticationResult (
 )
 
 
-actual class Platform actual constructor(
-    private val context: AppContext
+actual class Platform(
+    private val context: Context
 ) {
     actual val platformName: String = "Android"
     actual val otpCode = MutableStateFlow("")
@@ -128,7 +128,7 @@ actual class Platform actual constructor(
 }
 
 class AppSignatureHelper(
-    context: AppContext
+    context: Context
 ): ContextWrapper(context) {
     private val tag = AppSignatureHelper::class.java.simpleName
     private val hashType = "SHA-256"

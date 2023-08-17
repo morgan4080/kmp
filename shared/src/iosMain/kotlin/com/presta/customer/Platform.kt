@@ -2,8 +2,7 @@ package com.presta.customer
 
 import kotlinx.coroutines.flow.MutableStateFlow
 
-
-actual class Platform actual constructor(context: AppContext) {
+actual class Platform {
     actual val platformName: String = "iOS"
 
     actual val otpCode = MutableStateFlow("")

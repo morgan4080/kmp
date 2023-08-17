@@ -88,13 +88,11 @@ class DefaultSavingsComponent (
 
         refreshTokenScopeJob = scope.launch {
             authState.collect { state ->
-                if (OrganisationModel.organisation.tenant_id!=null){
-                    if (state.cachedMemberData !== null) {
-                        onAuthEvent(AuthStore.Intent.RefreshToken(
-                            tenantId = OrganisationModel.organisation.tenant_id!!,
-                            refId = state.cachedMemberData.refId
-                        ))
-                    }
+                if (state.cachedMemberData !== null) {
+                    onAuthEvent(AuthStore.Intent.RefreshToken(
+                        tenantId = OrganisationModel.organisation.tenant_id,
+                        refId = state.cachedMemberData.refId
+                    ))
                 }
                 this.cancel()
             }
