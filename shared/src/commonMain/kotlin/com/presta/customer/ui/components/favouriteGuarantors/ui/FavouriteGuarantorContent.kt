@@ -112,382 +112,388 @@ fun FavouriteGuarantorContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
-                    .background(color = MaterialTheme.colorScheme.background)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(start = 16.dp, end = 16.dp)
-                ) {
-                    Row(
+                    .background(color = MaterialTheme.colorScheme.background),
+                topBar = {
+                    NavigateBackTopBar("Add Favourite Guarantor ", onClickContainer = {
+                        scope.launch { modalBottomState.hide() }
+                    })
+                },
+                content = {innerPadding->
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp)
-                            .background(color = MaterialTheme.colorScheme.background),
-                        verticalAlignment = Alignment.CenterVertically
+                            .padding(start = 16.dp, end = 16.dp)
                     ) {
-                        ElevatedCard(
-                            onClick = {
-                                //launch pop up
-                                launchPopUp = true
-
-                            },
+                        Row(
                             modifier = Modifier
-                                .background(color = MaterialTheme.colorScheme.background)
+                                .fillMaxWidth()
+                                .padding(innerPadding)
+                                .background(color = MaterialTheme.colorScheme.background),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Box(
+                            ElevatedCard(
+                                onClick = {
+                                    //launch pop up
+                                    launchPopUp = true
+
+                                },
                                 modifier = Modifier
-                                    .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                                    .background(color = MaterialTheme.colorScheme.background)
                             ) {
-                                Row(
-                                    modifier = Modifier.padding(10.dp),
-                                    verticalAlignment = Alignment.CenterVertically
+                                Box(
+                                    modifier = Modifier
+                                        .background(color = MaterialTheme.colorScheme.inverseOnSurface)
                                 ) {
-                                    androidx.compose.material3.IconButton(
+                                    Row(
+                                        modifier = Modifier.padding(10.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        androidx.compose.material3.IconButton(
+                                            modifier = Modifier
+                                                .clip(CircleShape)
+                                                .background(Color(0xFFE5F1F5))
+                                                .size(25.dp),
+                                            onClick = {
+                                                launchPopUp = true
+                                            },
+                                            content = {
+                                                Icon(
+                                                    imageVector = Icons.Filled.KeyboardArrowDown,
+                                                    modifier = if (launchPopUp) Modifier.size(25.dp)
+                                                        .rotate(180F) else Modifier.size(25.dp),
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                            Row(modifier = Modifier) {
+                                Column(
+                                    modifier = Modifier
+                                        .wrapContentWidth()
+                                        .padding(start = 7.dp)
+                                        .shadow(0.5.dp, RoundedCornerShape(10.dp))
+                                        .background(
+                                            color = MaterialTheme.colorScheme.inverseOnSurface,
+                                            shape = RoundedCornerShape(10.dp)
+                                        ),
+                                ) {
+                                    BasicTextField(
                                         modifier = Modifier
-                                            .clip(CircleShape)
-                                            .background(Color(0xFFE5F1F5))
-                                            .size(25.dp),
-                                        onClick = {
-                                            launchPopUp = true
+                                            .focusRequester(focusRequester)
+                                            .height(50.dp)
+                                            .wrapContentWidth()
+                                            .padding(
+                                                top = 16.dp,
+                                                bottom = 16.dp,
+                                                start = 10.dp,
+                                                end = 10.dp
+                                            ),
+                                        enabled = true,
+                                        keyboardOptions = KeyboardOptions(
+                                            keyboardType = KeyboardType.Text
+                                        ),
+                                        value = memberNumber,
+                                        onValueChange = {
+                                            memberNumber = it
                                         },
-                                        content = {
-                                            Icon(
-                                                imageVector = Icons.Filled.KeyboardArrowDown,
-                                                modifier = if (launchPopUp) Modifier.size(25.dp)
-                                                    .rotate(180F) else Modifier.size(25.dp),
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
+                                        singleLine = true,
+                                        textStyle = TextStyle(
+                                            color = MaterialTheme.colorScheme.onBackground,
+                                            fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
+                                            fontSize = 13.sp,
+                                            fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
+                                            letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
+                                            lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                                            fontFamily = MaterialTheme.typography.bodySmall.fontFamily
+                                        ),
+                                        decorationBox = { innerTextField ->
+                                            if (memberNumber == "") {
+                                                Text(
+                                                    modifier = Modifier.alpha(.3f),
+                                                    text = if (guarantorOption == state.memberNo) "Search Member Number" else "Search PhoneBook",
+                                                    style = MaterialTheme.typography.bodySmall
+                                                )
+                                            }
+                                            AnimatedVisibility(
+                                                visible = memberNumber != "",
+                                                modifier = Modifier.absoluteOffset(y = -(16).dp),
+                                                enter = fadeIn() + expandVertically(),
+                                                exit = fadeOut() + shrinkVertically(),
+                                            ) {
+                                                Text(
+                                                    text = if (guarantorOption == state.memberNo) "Search Member Number" else "Search PhoneBook",
+                                                    color = primaryColor,
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                    fontSize = 11.sp
+                                                )
+                                            }
+
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(0.8f),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.SpaceBetween
+                                            ) {
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                ) {
+
+                                                    innerTextField()
+                                                }
+
+                                                AnimatedVisibility(
+                                                    visible = firstName.text.isNotEmpty(),
+                                                    enter = fadeIn() + expandVertically(),
+                                                    exit = fadeOut() + shrinkVertically(),
+                                                ) {
+
+                                                    IconButton(
+                                                        modifier = Modifier.size(18.dp),
+                                                        onClick = { firstName = emptyTextContainer },
+                                                        content = {
+                                                            Icon(
+                                                                modifier = Modifier.alpha(0.4f),
+                                                                imageVector = Icons.Filled.Cancel,
+                                                                contentDescription = null,
+                                                                tint = actionButtonColor
+                                                            )
+                                                        }
+                                                    )
+                                                }
+                                            }
                                         }
                                     )
                                 }
                             }
-                        }
-                        Row(modifier = Modifier) {
-                            Column(
+                            ElevatedCard(
+                                onClick = {
+                                },
                                 modifier = Modifier
-                                    .wrapContentWidth()
+                                    .background(color = MaterialTheme.colorScheme.background)
                                     .padding(start = 7.dp)
-                                    .shadow(0.5.dp, RoundedCornerShape(10.dp))
-                                    .background(
-                                        color = MaterialTheme.colorScheme.inverseOnSurface,
-                                        shape = RoundedCornerShape(10.dp)
-                                    ),
                             ) {
-                                BasicTextField(
+                                Box(
                                     modifier = Modifier
-                                        .focusRequester(focusRequester)
-                                        .height(50.dp)
-                                        .wrapContentWidth()
-                                        .padding(
-                                            top = 16.dp,
-                                            bottom = 16.dp,
-                                            start = 10.dp,
-                                            end = 10.dp
-                                        ),
-                                    enabled = true,
-                                    keyboardOptions = KeyboardOptions(
-                                        keyboardType = KeyboardType.Text
-                                    ),
-                                    value = memberNumber,
-                                    onValueChange = {
-                                        memberNumber = it
-                                    },
-                                    singleLine = true,
-                                    textStyle = TextStyle(
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
-                                        fontSize = 13.sp,
-                                        fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
-                                        letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
-                                        lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
-                                        fontFamily = MaterialTheme.typography.bodySmall.fontFamily
-                                    ),
-                                    decorationBox = { innerTextField ->
-                                        if (memberNumber == "") {
-                                            Text(
-                                                modifier = Modifier.alpha(.3f),
-                                                text = if (guarantorOption == state.memberNo) "Search Member Number" else "Search PhoneBook",
-                                                style = MaterialTheme.typography.bodySmall
-                                            )
-                                        }
-                                        AnimatedVisibility(
-                                            visible = memberNumber != "",
-                                            modifier = Modifier.absoluteOffset(y = -(16).dp),
-                                            enter = fadeIn() + expandVertically(),
-                                            exit = fadeOut() + shrinkVertically(),
-                                        ) {
-                                            Text(
-                                                text = if (guarantorOption == state.memberNo) "Search Member Number" else "Search PhoneBook",
-                                                color = primaryColor,
-                                                style = MaterialTheme.typography.labelSmall,
-                                                fontSize = 11.sp
-                                            )
-                                        }
-
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(0.8f),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.SpaceBetween
-                                        ) {
-                                            Row(
-                                                verticalAlignment = Alignment.CenterVertically,
-                                            ) {
-
-                                                innerTextField()
-                                            }
-
-                                            AnimatedVisibility(
-                                                visible = firstName.text.isNotEmpty(),
-                                                enter = fadeIn() + expandVertically(),
-                                                exit = fadeOut() + shrinkVertically(),
-                                            ) {
-
-                                                IconButton(
-                                                    modifier = Modifier.size(18.dp),
-                                                    onClick = { firstName = emptyTextContainer },
-                                                    content = {
-                                                        Icon(
-                                                            modifier = Modifier.alpha(0.4f),
-                                                            imageVector = Icons.Filled.Cancel,
-                                                            contentDescription = null,
-                                                            tint = actionButtonColor
-                                                        )
-                                                    }
-                                                )
-                                            }
-                                        }
-                                    }
-                                )
-                            }
-                        }
-                        ElevatedCard(
-                            onClick = {
-                            },
-                            modifier = Modifier
-                                .background(color = MaterialTheme.colorScheme.background)
-                                .padding(start = 7.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .background(color = MaterialTheme.colorScheme.inverseOnSurface)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(10.dp),
-                                    verticalAlignment = Alignment.CenterVertically
+                                        .background(color = MaterialTheme.colorScheme.inverseOnSurface)
                                 ) {
-                                    androidx.compose.material3.IconButton(
-                                        modifier = Modifier
-                                            .clip(CircleShape)
-                                            .background(Color(0xFFE5F1F5))
-                                            .size(25.dp),
-                                        onClick = {
+                                    Row(
+                                        modifier = Modifier.padding(10.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        androidx.compose.material3.IconButton(
+                                            modifier = Modifier
+                                                .clip(CircleShape)
+                                                .background(Color(0xFFE5F1F5))
+                                                .size(25.dp),
+                                            onClick = {
 //                                            snackBarScope.launch {
 //                                                snackbarHostState.showSnackbar(
 //                                                    "member data"
 //                                                )
 //                                            }
-                                            //open contacts Library
+                                                //open contacts Library
 //                                        component.platform.getContact().map { contact ->
 //                                            println("Test Contact")
 //                                            println(contact.phoneNumber)
 //                                        }
-                                        },
-                                        content = {
-                                            Icon(
-                                                imageVector = Icons.Outlined.Contacts,
-                                                modifier = Modifier,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
-                                    )
+                                            },
+                                            content = {
+                                                Icon(
+                                                    imageVector = Icons.Outlined.Contacts,
+                                                    modifier = Modifier,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
+                                        )
+                                    }
                                 }
                             }
                         }
-                    }
-                    //list the guarantor
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(0.8f)
-                    ) {
-
-
-                    }
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 30.dp)
-                    ) {
-                        ActionButton(
-                            label = "Search",
-                            onClickContainer = {
-
-                            },
-                            enabled = true
-                        )
-                    }
-                }
-
-                //pop Up
-                //Select Guarantor Option Pop UP
-                if (launchPopUp) {
-                    Popup {
-                        Column(
+                        //list the guarantor
+                        LazyColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .fillMaxHeight()
-                                .background(color = Color.Black.copy(alpha = 0.7f)),
-                            verticalArrangement = Arrangement.Center
+                                .fillMaxHeight(0.8f)
                         ) {
-                            ElevatedCard(
+
+
+                        }
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 30.dp)
+                        ) {
+                            ActionButton(
+                                label = "Search",
+                                onClickContainer = {
+
+                                },
+                                enabled = true
+                            )
+                        }
+                    }
+
+                    if (launchPopUp) {
+                        Popup {
+                            Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .fillMaxHeight(0.7f)
-                                    .padding(
-                                        start = 26.dp,
-                                        end = 26.dp,
-                                        top = 40.dp,
-                                        bottom = 90.dp
-                                    ),
-                                colors = CardDefaults
-                                    .elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
+                                    .fillMaxHeight()
+                                    .background(color = Color.Black.copy(alpha = 0.7f)),
+                                verticalArrangement = Arrangement.Center
                             ) {
-
-                                Column(
+                                ElevatedCard(
                                     modifier = Modifier
-                                        .padding(start = 16.dp, end = 16.dp)
+                                        .fillMaxWidth()
+                                        .fillMaxHeight(0.7f)
+                                        .padding(
+                                            start = 26.dp,
+                                            end = 26.dp,
+                                            top = 40.dp,
+                                            bottom = 90.dp
+                                        ),
+                                    colors = CardDefaults
+                                        .elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                                 ) {
 
-                                    Text(
-                                        "OPTIONS",
-                                        modifier = Modifier
-                                            .padding(start = 16.dp, top = 17.dp),
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
-                                        fontSize = 14.sp,
-                                    )
-                                    Text(
-                                        "Select guarantor option",
-                                        modifier = Modifier
-                                            .padding(start = 16.dp),
-                                        fontSize = 10.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                    )
                                     Column(
-                                        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.7f)
+                                        modifier = Modifier
+                                            .padding(start = 16.dp, end = 16.dp)
                                     ) {
-                                        Column(
+
+                                        Text(
+                                            "OPTIONS",
                                             modifier = Modifier
-                                                .fillMaxWidth()
+                                                .padding(start = 16.dp, top = 17.dp),
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                            fontSize = 14.sp,
+                                        )
+                                        Text(
+                                            "Select guarantor option",
+                                            modifier = Modifier
+                                                .padding(start = 16.dp),
+                                            fontSize = 10.sp,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                        )
+                                        Column(
+                                            modifier = Modifier.fillMaxWidth().fillMaxHeight(0.7f)
                                         ) {
-                                            LazyColumn(
+                                            Column(
                                                 modifier = Modifier
-                                                    .wrapContentHeight()
+                                                    .fillMaxWidth()
                                             ) {
-                                                val guarantorList = arrayListOf<String>()
-                                                guarantorList.add(state.memberNo)
-                                                guarantorList.add(state.phoneNo)
-                                                guarantorList.mapIndexed { guarantorIndex, guarantorOptions ->
-                                                    item {
-                                                        Row(
-                                                            modifier = Modifier
-                                                                .fillMaxWidth()
-                                                                .background(color = MaterialTheme.colorScheme.inverseOnSurface)
-                                                                .padding(
-                                                                    top = 10.dp,
-                                                                    start = 16.dp,
-                                                                    end = 16.dp
+                                                LazyColumn(
+                                                    modifier = Modifier
+                                                        .wrapContentHeight()
+                                                ) {
+                                                    val guarantorList = arrayListOf<String>()
+                                                    guarantorList.add(state.memberNo)
+                                                    guarantorList.add(state.phoneNo)
+                                                    guarantorList.mapIndexed { guarantorIndex, guarantorOptions ->
+                                                        item {
+                                                            Row(
+                                                                modifier = Modifier
+                                                                    .fillMaxWidth()
+                                                                    .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                                                                    .padding(
+                                                                        top = 10.dp,
+                                                                        start = 16.dp,
+                                                                        end = 16.dp
+                                                                    )
+                                                            ) {
+                                                                SelectGuarantorsView(
+                                                                    Index = guarantorIndex,
+                                                                    selected = selectedIndex == guarantorIndex,
+                                                                    onClick = { index: Int ->
+                                                                        selectedIndex =
+                                                                            if (selectedIndex == index) -1 else index
+                                                                        if (selectedIndex > -1) {
+                                                                            guarantorOption =
+                                                                                guarantorList[selectedIndex]
+                                                                        }
+                                                                        searchGuarantorByMemberNumber =
+                                                                            guarantorOption == state.memberNo || guarantorOption == state.phoneNo
+                                                                    },
+                                                                    label = guarantorOptions
                                                                 )
-                                                        ) {
-                                                            SelectGuarantorsView(
-                                                                Index = guarantorIndex,
-                                                                selected = selectedIndex == guarantorIndex,
-                                                                onClick = { index: Int ->
-                                                                    selectedIndex =
-                                                                        if (selectedIndex == index) -1 else index
-                                                                    if (selectedIndex > -1) {
-                                                                        guarantorOption =
-                                                                            guarantorList[selectedIndex]
-                                                                    }
-                                                                    searchGuarantorByMemberNumber =
-                                                                        guarantorOption == state.memberNo || guarantorOption == state.phoneNo
-                                                                },
-                                                                label = guarantorOptions
-                                                            )
+                                                            }
                                                         }
                                                     }
                                                 }
                                             }
                                         }
                                     }
-                                }
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(
-                                            top = 20.dp,
-                                            bottom = 20.dp,
-                                            start = 16.dp,
-                                            end = 16.dp
-                                        ),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-
-                                    OutlinedButton(
-                                        border = BorderStroke(
-                                            width = 1.dp,
-                                            color = MaterialTheme.colorScheme.primary
-                                        ),
-                                        onClick = {
-                                            launchPopUp = false
-                                        },
+                                    Row(
                                         modifier = Modifier
-                                            .padding(start = 16.dp)
-                                            .height(30.dp),
+                                            .fillMaxWidth()
+                                            .padding(
+                                                top = 20.dp,
+                                                bottom = 20.dp,
+                                                start = 16.dp,
+                                                end = 16.dp
+                                            ),
+                                        horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
 
-                                        Text(
-                                            text = "Dismiss",
-                                            fontSize = 11.sp,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.align(Alignment.CenterVertically),
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                        )
+                                        OutlinedButton(
+                                            border = BorderStroke(
+                                                width = 1.dp,
+                                                color = MaterialTheme.colorScheme.primary
+                                            ),
+                                            onClick = {
+                                                launchPopUp = false
+                                            },
+                                            modifier = Modifier
+                                                .padding(start = 16.dp)
+                                                .height(30.dp),
+                                        ) {
 
-                                    }
-                                    OutlinedButton(
-                                        colors = ButtonDefaults.outlinedButtonColors(
-                                            containerColor = actionButtonColor
-                                        ),
-                                        border = BorderStroke(
-                                            width = 0.dp,
-                                            color = actionButtonColor
-                                        ),
-                                        onClick = {
-                                            launchPopUp = false
-                                        },
-                                        modifier = Modifier
-                                            .padding(end = 16.dp)
-                                            .height(30.dp),
-                                    ) {
+                                            Text(
+                                                text = "Dismiss",
+                                                fontSize = 11.sp,
+                                                textAlign = TextAlign.Center,
+                                                modifier = Modifier.align(Alignment.CenterVertically),
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                            )
 
-                                        Text(
-                                            text = "Proceed",
-                                            color = Color.White,
-                                            fontSize = 11.sp,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.align(Alignment.CenterVertically),
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                        )
+                                        }
+                                        OutlinedButton(
+                                            colors = ButtonDefaults.outlinedButtonColors(
+                                                containerColor = actionButtonColor
+                                            ),
+                                            border = BorderStroke(
+                                                width = 0.dp,
+                                                color = actionButtonColor
+                                            ),
+                                            onClick = {
+                                                launchPopUp = false
+                                            },
+                                            modifier = Modifier
+                                                .padding(end = 16.dp)
+                                                .height(30.dp),
+                                        ) {
+
+                                            Text(
+                                                text = "Proceed",
+                                                color = Color.White,
+                                                fontSize = 11.sp,
+                                                textAlign = TextAlign.Center,
+                                                modifier = Modifier.align(Alignment.CenterVertically),
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                            )
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+
+
                 }
-            }
+            )
         }
     ) {
         //list Data

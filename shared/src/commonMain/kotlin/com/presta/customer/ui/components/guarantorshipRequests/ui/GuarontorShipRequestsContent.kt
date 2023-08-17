@@ -107,7 +107,7 @@ fun GuarantorShipRequestsContent(
             memberRefId
 
         ) {
-            //Todo------
+            //Todo------test
             authState.cachedMemberData?.let {
                 ApplyLongTermLoansStore.Intent.GetPrestaGuarantorshipRequests(
                     token = it.accessToken,
@@ -122,7 +122,7 @@ fun GuarantorShipRequestsContent(
     }
     ModalBottomSheetLayout(
         sheetState = modalBottomState,
-        sheetShape = RoundedCornerShape(16.dp),
+        sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         sheetContent = {
             Column(
                 modifier = Modifier
