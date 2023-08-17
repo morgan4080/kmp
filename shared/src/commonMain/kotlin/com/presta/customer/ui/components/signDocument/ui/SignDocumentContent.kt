@@ -20,11 +20,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.presta.customer.ImageConverter
 import com.presta.customer.MR
 import com.presta.customer.network.longTermLoans.model.ActorType
@@ -44,6 +49,8 @@ fun SignDocumentContent(
     authState: AuthStore.State,
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
 ) {
+    var launchPopUp by remember { mutableStateOf(false) }
+
     if (component.loanRequestRefId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -62,6 +69,33 @@ fun SignDocumentContent(
             }
         }
     }
+    LaunchedEffect(
+        authState.cachedMemberData
+    ) {
+        authState.cachedMemberData?.let {
+            ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
+                token = it.accessToken,
+                loanRequestRefId = component.loanRequestRefId,
+                actorRefId = "CQ4uQ8vfcXF712SD",
+                actorType = ActorType.GUARANTOR
+            )
+        }?.let {
+            onEvent(
+                it
+            )
+        }
+    }
+
+    LaunchedEffect(
+        authState.cachedMemberData,
+        launchPopUp
+    ) {
+
+        if (state.prestaGuarontorAcceptanceStatus?.isSigned == false) {
+            component.onDocumentSigned(sign = true)
+        }
+    }
+
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Sign Document", onClickContainer = {
             component.onBackNavClicked()
@@ -137,28 +171,16 @@ fun SignDocumentContent(
                     ActionButton(
                         label = "SIGN DOCUMENT",
                         onClickContainer = {
-                            //Proceed to sign the document
-                            //Requests for Zoho sign Url
-                            //fetch the loan to see if it signed to show success or failure
-                            //if the loan has been signed show success else failed
-                            //Get the sign url  to load zoho sign
-                            authState.cachedMemberData?.let {
-                                ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
-                                    token = it.accessToken,
-                                    loanRequestRefId = component.loanRequestRefId,
-                                    actorRefId = "tvzGHXVGkkxGJizi",
-                                    actorType = ActorType.GUARANTOR
-                                )
-                            }?.let {
-                                onEvent(
-                                    it
-                                )
-                            }
+                            //when succesfully signed navigate to sign successfull
+                            //else  failed
                             if (state.prestaZohoSignUrl?.signURL != null) {
                                 component.platform.openUrl(state.prestaZohoSignUrl.signURL)
                             }
+                           // component.onDocumentSigned(sign = true)
+                            //launchPopUp = true
+
                         },
-                        loading = state.isLoading
+                        loading = state.prestaZohoSignUrl == null
                     )
                 }
             }
@@ -183,5 +205,7 @@ fun Base64ToImage(base64String: String) {
 
     )
 }
+
+
 
 

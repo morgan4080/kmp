@@ -824,6 +824,13 @@ class DefaultRootComponent(
             loanRequestRefId = config.loanRequestRefId,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
+            onDocumentSignedClicked = {signed->
+                //when doc is signed navigate
+                if (signed==true){
+                    navigation.bringToFront(Config.LongTermLoanApplicationStatus)
+                }
+            },
+            sign = false
         )
 
     private fun replaceGuarantorComponent(componentContext: ComponentContext): ReplaceGuarantorComponent =
@@ -995,12 +1002,18 @@ class DefaultRootComponent(
 
     init {
         lifecycle.subscribe(object : Lifecycle.Callbacks {
+            val nav=true
             override fun onResume() {
                 when (childStack.active.configuration) {
                     is Config.AddGuarantors -> {
                         super.onResume()
                     }
+                    is Config.SignDocument -> {
+                        super.onResume()
+                        //if signed navigate
 
+
+                    }
                     else -> {
                         super.onResume()
                         navigation.replaceAll(Config.Splash)

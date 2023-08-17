@@ -1,6 +1,12 @@
 package com.presta.customer.ui.components.signDocument
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.essenty.lifecycle.Lifecycle
+import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
@@ -10,7 +16,9 @@ import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLo
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStoreFactory
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
+import com.presta.customer.ui.components.profile.CoroutineScope
 import com.presta.customer.ui.components.profile.coroutineScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -20,15 +28,20 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.coroutines.CoroutineContext
 
+fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
+    CoroutineScope(context, lifecycle)
+
 class DefaultSignDocumentComponent (
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     private val onItemClicked: () -> Unit,
+    private val onDocumentSignedClicked: (sign: Boolean) -> Unit,
     private val onProductClicked: () -> Unit,
     override val loanNumber: String,
     override val amount: Double,
-    override val loanRequestRefId: String
+    override val loanRequestRefId: String,
+    override var sign: Boolean,
 ): SignDocumentComponent, ComponentContext by componentContext, KoinComponent {
 
     override val platform by inject<Platform>()
@@ -79,11 +92,9 @@ class DefaultSignDocumentComponent (
                             token = state.cachedMemberData.accessToken
                         )
                     )
-                    // Todo ---move thi to  appropraite plasce set generif refiD
                     onEvent(
-                        ApplyLongTermLoansStore.Intent.GetPrestaGuarantorshipRequests(
+                        ApplyLongTermLoansStore.Intent.GetLongTermLoansProducts(
                             token = state.cachedMemberData.accessToken,
-                            memberRefId = "tvzGHXVGkkxGJizi"
                         )
                     )
                 }
@@ -97,8 +108,23 @@ class DefaultSignDocumentComponent (
     override fun onProductSelected() {
       onProductClicked()
     }
+
+    override fun onDocumentSigned(
+        sign: Boolean) {
+    onDocumentSignedClicked(sign)
+    }
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         checkAuthenticatedUser()
+//        lifecycle.subscribe(
+//            object : Lifecycle.Callbacks {
+//                override fun onResume() {
+//                    super.onResume()
+//                        onDocumentSigned(sign = sign)
+//
+//                }
+//            }
+//        )
     }
+
 }

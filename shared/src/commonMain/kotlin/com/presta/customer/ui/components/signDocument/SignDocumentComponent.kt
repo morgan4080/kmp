@@ -11,6 +11,7 @@ interface SignDocumentComponent {
     val loanRequestRefId: String
     val authStore: AuthStore
     val authState: StateFlow<AuthStore.State>
+    var sign: Boolean
     fun onAuthEvent(event: AuthStore.Intent)
     fun onEvent(event: ApplyLongTermLoansStore.Intent)
     val applyLongTermLoansStore: ApplyLongTermLoansStore
@@ -18,4 +19,5 @@ interface SignDocumentComponent {
     val platform: Platform
     fun onBackNavClicked()
     fun onProductSelected()
+    fun onDocumentSigned(sign : Boolean)
 }

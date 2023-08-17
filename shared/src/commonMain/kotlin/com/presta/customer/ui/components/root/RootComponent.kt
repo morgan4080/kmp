@@ -33,6 +33,10 @@ import com.presta.customer.ui.components.witnessRequests.WitnessRequestComponent
 interface RootComponent {
 
     val childStack: Value<ChildStack<*, Child>>
+    //get  the guarantor sign status to navigate user to appropriate screen
+
+
+
     sealed class Child {
         class TenantChild(val component: TenantComponent) : Child()
         class SplashChild(val component: SplashComponent) : Child()

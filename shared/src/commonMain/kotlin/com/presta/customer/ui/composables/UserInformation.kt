@@ -189,42 +189,42 @@ fun UserInformation(
                         ) {
                             ActionButton(
                                 label = "Submit  Loan Request", onClickContainer = {
-                                    authState.cachedMemberData?.let {
-                                        ApplyLongTermLoansStore.Intent.RequestLongTermLoan(
-                                            token = it.accessToken,
-                                            details = DetailsData(
-                                                loan_purpose_1 = component.loanCategory,
-                                                loan_purpose_2 = component.loanPurpose,
-                                                loan_purpose_3 = component.loanPurposeCategory,
-                                                loanPurposeCode = component.loanPurposeCategoryCode,
-                                                loanPeriod = component.loanPeriod.toString(),
-                                                repayment_period = "4",
-                                                employer_name = component.employer,
-                                                employment_type = "a",
-                                                employment_number = component.employmentNumber,
-                                                business_location = component.businessLocation,
-                                                business_type = component.businessType,
-                                                net_salary = component.netSalary.toString(),
-                                                gross_salary = component.grossSalary.toString(),
-                                                disbursement_mode = disbursementMode,
-                                                repayment_mode = repaymentMode,
-                                                loan_type = component.loanType,
-                                                kraPin = component.kraPin
-                                            ),
-                                            loanProductName = component.loanType,
-                                            loanProductRefId = component.loanRefId,
-                                            selfCommitment = 0.0,
-                                            loanAmount = component.desiredAmount,
-                                            memberRefId = component.memberRefId,
-                                            memberNumber = signProfileState.prestaTenantByPhoneNumber.memberNumber,
-                                            witnessRefId = "",
-                                            guarantorList = guarantorList,
-                                        )
-                                    }?.let {
-                                        onLongTermLoanEvent(
-                                            it
-                                        )
-                                    }
+//                                    authState.cachedMemberData?.let {
+//                                        ApplyLongTermLoansStore.Intent.RequestLongTermLoan(
+//                                            token = it.accessToken,
+//                                            details = DetailsData(
+//                                                loan_purpose_1 = component.loanCategory,
+//                                                loan_purpose_2 = component.loanPurpose,
+//                                                loan_purpose_3 = component.loanPurposeCategory,
+//                                                loanPurposeCode = component.loanPurposeCategoryCode,
+//                                                loanPeriod = component.loanPeriod.toString(),
+//                                                repayment_period = "4",
+//                                                employer_name = component.employer,
+//                                                employment_type = "Contract",
+//                                                employment_number = component.employmentNumber,
+//                                                business_location = component.businessLocation,
+//                                                business_type = component.businessType,
+//                                                net_salary = component.netSalary.toString(),
+//                                                gross_salary = component.grossSalary.toString(),
+//                                                disbursement_mode = disbursementMode,
+//                                                repayment_mode = repaymentMode,
+//                                                loan_type = component.loanType,
+//                                                kraPin = component.kraPin
+//                                            ),
+//                                            loanProductName = component.loanType,
+//                                            loanProductRefId = component.loanRefId,
+//                                            selfCommitment = 0.0,
+//                                            loanAmount = component.desiredAmount,
+//                                            memberRefId = component.memberRefId,
+//                                            memberNumber = signProfileState.prestaTenantByPhoneNumber.memberNumber,
+//                                            witnessRefId = "",
+//                                            guarantorList = guarantorList,
+//                                        )
+//                                    }?.let {
+//                                        onLongTermLoanEvent(
+//                                            it
+//                                        )
+//                                    }
                                   //Navigate to show the application Status
                                     component.onProductSelected()
 
