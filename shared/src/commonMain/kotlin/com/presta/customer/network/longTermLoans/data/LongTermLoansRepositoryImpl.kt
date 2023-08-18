@@ -302,6 +302,7 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
             Result.failure(e)
         }
     }
+
     override suspend fun getWitnessRequests(
         token: String,
         memberRefId: String
@@ -330,6 +331,39 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
             )
             Result.success(response)
 
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun addFavouriteGuarantor(
+        token: String,
+        memberRefId: String,
+        guarantorRefId: String
+    ): Result<PrestaFavouriteGuarantorResponse> {
+        return try {
+            val response = prestaLongTermLoansClient.addFavouriteGuarantor(
+                token = token,
+                memberRefId = memberRefId,
+                guarantorRefId = guarantorRefId
+            )
+            Result.success(response)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+    override suspend fun deleteFavouriteGuarantor(
+        token: String,
+        refId: String
+    ): Result<String> {
+        return try {
+            val response = prestaLongTermLoansClient.deleteFavouriteGuarantor(
+                token = token,
+                refId = refId
+            )
+            Result.success(response)
         } catch (e: Exception) {
             e.printStackTrace()
             Result.failure(e)

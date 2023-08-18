@@ -89,26 +89,41 @@ interface LongTermLoansRepository {
         actorRefId: String,
         actorType: ActorType
     ): Result<PrestaZohoSignUrlResponse>
+
     suspend fun getLongTermLoansRequestsList(
         token: String,
         memberRefId: String,
     ): Result<PrestaLongTermLoansRequestsListResponse>
+
     suspend fun getLongTermLoansRequestsFilteredList(
         token: String,
         memberRefId: String,
     ): Result<PrestaLongTermLoansRequestsListResponse>
+
     suspend fun updateLoanGuarantor(
         token: String,
         loanRequestRefId: String,
         guarantorRefId: String,//old guarantor---replace the old guarantor with the new guarantor
         memberRefId: String,
     ): Result<LongTermLoanRequestResponse>
+
     suspend fun getWitnessRequests(
         token: String,
         memberRefId: String,
     ): Result<List<PrestaWitnessRequestResponse>>
+
     suspend fun getFavouriteGuarantor(
         token: String,
         memberRefId: String,
     ): Result<List<PrestaFavouriteGuarantorResponse>>
+
+    suspend fun addFavouriteGuarantor(
+        token: String,
+        memberRefId: String,
+        guarantorRefId: String,
+    ): Result<PrestaFavouriteGuarantorResponse>
+    suspend fun deleteFavouriteGuarantor(
+        token: String,
+        refId: String
+    ): Result<String>
 }

@@ -21,6 +21,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptance
 import com.presta.customer.network.longTermLoans.model.favouriteGuarantor.PrestaFavouriteGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 import io.ktor.client.HttpClient
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
@@ -47,6 +48,12 @@ data class GuarantorPayLoad(
 @Serializable
 data class GuarantorListPayLoad(
     val memberRefId: String
+)
+
+@Serializable
+data class FavouriteGuarantorPayload(
+    val memberRefId: String,
+    val guarantorRefId: String
 )
 
 @Serializable
@@ -262,6 +269,7 @@ class PrestaLongTermLoansClient(
             }
         }
     }
+
     suspend fun sendZohoSignUrlPayload(
         token: String,
         loanRequestRefId: String,
@@ -282,6 +290,7 @@ class PrestaLongTermLoansClient(
             }
         }
     }
+
     suspend fun getLongTermLoanRequestsList(
         token: String,
         memberRefId: String,
@@ -315,6 +324,7 @@ class PrestaLongTermLoansClient(
             }
         }
     }
+
     suspend fun upDateGuarantor(
         token: String,
         loanRequestRefId: String,
@@ -327,12 +337,13 @@ class PrestaLongTermLoansClient(
                 contentType(ContentType.Application.Json)
                 setBody(
                     GuarantorListPayLoad(
-                     memberRefId = memberRefId
+                        memberRefId = memberRefId
                     )
                 )
             }
         }
     }
+
     suspend fun getWitnessRequests(
         token: String,
         memberRefId: String,
@@ -349,19 +360,20 @@ class PrestaLongTermLoansClient(
             }
         }
     }
+
     suspend fun addFavouriteGuarantor(
         token: String,
-        loanRequestRefId: String,
-        guarantorRefId: String,//old guarantor---replace the old guarantor with the new guarantor
         memberRefId: String,
+        guarantorRefId: String,
     ): PrestaFavouriteGuarantorResponse {
         return loanRequestErrorHandler {
-            httpClient.post("${NetworkConstants.PrestaLongTermLoanRequest.route}/${loanRequestRefId}/${"guarantor"}/${guarantorRefId}") {
+            httpClient.post(NetworkConstants.PrestaFavouriteGuarantor.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 contentType(ContentType.Application.Json)
                 setBody(
-                    GuarantorListPayLoad(
-                        memberRefId = memberRefId
+                    FavouriteGuarantorPayload(
+                        memberRefId = memberRefId,
+                        guarantorRefId = guarantorRefId
                     )
                 )
             }
@@ -379,5 +391,16 @@ class PrestaLongTermLoansClient(
             }
         }
     }
-
+    suspend fun deleteFavouriteGuarantor(
+        token: String,
+        refId: String,
+    ): String {
+        return longTermLoansErrorHandler {
+            httpClient.delete("${NetworkConstants.PrestaFavouriteGuarantor.route}/${refId}") {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+            }
+        }
+    }
 }

@@ -6,13 +6,13 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.longTermLoans.client.DetailsData
-import com.presta.customer.network.longTermLoans.client.GuarantorPayLoad
 import com.presta.customer.network.longTermLoans.data.LongTermLoansRepository
 import com.presta.customer.network.longTermLoans.model.ActorType
 import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.longTermLoans.model.Guarantor
 import com.presta.customer.network.longTermLoans.model.LongTermLoanRequestResponse
 import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
+import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLoanByRefIdResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLoanRequestByRequestRefId
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
@@ -21,11 +21,11 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCate
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProductResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansRequestsListResponse
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
-import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
-import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
 import com.presta.customer.network.longTermLoans.model.favouriteGuarantor.PrestaFavouriteGuarantorResponse
+import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 import com.presta.customer.prestaDispatchers
+import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStoreFactory
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -95,8 +95,16 @@ class ApplyLongTermLoansStoreFactory(
 
         data class WitnessRequestsLoaded(val witnessRequestsLoaded: List<PrestaWitnessRequestResponse> = listOf()) :
             Msg()
+
         data class FavouriteGuarantorLoaded(val favouriteGuarantorLoaded: List<PrestaFavouriteGuarantorResponse> = listOf()) :
             Msg()
+
+        data class AddedFavouriteGuarantorLoaded(val addedfavouriteGuarantorLoaded: PrestaFavouriteGuarantorResponse) :
+            Msg()
+
+        data class FavouriteGuarantorDeleted(val favouriteGuarantorDeletedResponse: String) :
+            Msg()
+
         data class LongTermLoansFailed(val error: String?) : Msg()
     }
 
@@ -201,14 +209,29 @@ class ApplyLongTermLoansStoreFactory(
                     guarantorRefId = intent.guarantorRefId,
                     memberRefId = intent.memberRefId
                 )
+
                 is ApplyLongTermLoansStore.Intent.GetPrestaWitnessRequests -> getprestaWitnessRequests(
                     token = intent.token,
                     memberRefId = intent.memberRefId
                 )
+
                 is ApplyLongTermLoansStore.Intent.GetPrestaFavouriteGuarantor -> getprestaFavouriteGuarantor(
                     token = intent.token,
                     memberRefId = intent.memberRefId
                 )
+
+                is ApplyLongTermLoansStore.Intent.AddFavouriteGuarantor -> getAddedprestaFavouriteGuarantor(
+                    token = intent.token,
+                    memberRefId = intent.memberRefId,
+                    guarantorRefId = intent.guarantorRefId
+                )
+
+                is ApplyLongTermLoansStore.Intent.DeleteFavouriteGuarantor -> deleteFavouriteGuarantor(
+                    token = intent.token,
+                    refId = intent.refId
+
+                )
+
             }
 
         private var getPrestaLongTermLoansProductsJob: Job? = null
@@ -655,8 +678,52 @@ class ApplyLongTermLoansStoreFactory(
                 dispatch(Msg.LongTermLoansLoading(false))
             }
         }
-    }
 
+        private var getAddedprestaFavouriteGuarantorJob: Job? = null
+        private fun getAddedprestaFavouriteGuarantor(
+            token: String,
+            memberRefId: String,
+            guarantorRefId: String,
+        ) {
+            if (getAddedprestaFavouriteGuarantorJob?.isActive == true) return
+
+            dispatch(Msg.LongTermLoansLoading())
+            getAddedprestaFavouriteGuarantorJob = scope.launch {
+                longTermLoansRepository.addFavouriteGuarantor(
+                    token = token,
+                    memberRefId = memberRefId,
+                    guarantorRefId = guarantorRefId
+                ).onSuccess { response ->
+                    dispatch(Msg.AddedFavouriteGuarantorLoaded(response))
+
+                }.onFailure { e ->
+                    dispatch(Msg.LongTermLoansFailed(e.message))
+                }
+
+                dispatch(Msg.LongTermLoansLoading(false))
+            }
+        }
+
+        private var deleteFavouriteGuarantorJob: Job? = null
+        private fun deleteFavouriteGuarantor(
+            token: String,
+            refId: String
+        ) {
+            if (deleteFavouriteGuarantorJob?.isActive == true) return
+            dispatch(Msg.LongTermLoansLoading())
+            deleteFavouriteGuarantorJob = scope.launch {
+                longTermLoansRepository.deleteFavouriteGuarantor(
+                    token,
+                    refId
+                ).onSuccess { response ->
+                    dispatch(Msg.FavouriteGuarantorDeleted(response))
+                }.onFailure { e ->
+                    dispatch(Msg.LongTermLoansFailed(e.message))
+                }
+                dispatch(Msg.LongTermLoansLoading(false))
+            }
+        }
+    }
     private object ReducerImpl :
         Reducer<ApplyLongTermLoansStore.State, Msg> {
         override fun ApplyLongTermLoansStore.State.reduce(msg: Msg): ApplyLongTermLoansStore.State =
@@ -669,11 +736,9 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.LongTermLoansSubCategoriesLoaded -> copy(
                     prestaLongTermLoanProductsSubCategories = msg.longTermLoansSubCategoryLoaded
                 )
-
                 is Msg.LongTermLoansSubCategoriesChildrenLoaded -> copy(
                     prestaLongTermLoanProductsSubCategoriesChildren = msg.longTermLoansSubCategoryChildrenLoaded
                 )
-
                 is Msg.ClientSettingsLoaded -> copy(prestaClientSettings = msg.clientSettingsLoaded)
                 is Msg.LongTermLoanRequestLoaded -> copy(prestaLongTermLoanRequestData = msg.longTermLoanRequestResponse)
                 is Msg.GuarontorshipRequestsLoaded -> copy(prestaGuarontorshipRequests = msg.guarantorShipRequestsLoaded)
@@ -687,7 +752,10 @@ class ApplyLongTermLoansStoreFactory(
                 )
                 is Msg.UpdatedGuarantorLoaded -> copy(prestaUpdatedGuarantorData = msg.replacedGuarantorResponse)
                 is Msg.WitnessRequestsLoaded -> copy(prestaWitnessRequests = msg.witnessRequestsLoaded)
-                is Msg.FavouriteGuarantorLoaded -> copy(prestaFavouriteGuarantor= msg.favouriteGuarantorLoaded)
+                is Msg.FavouriteGuarantorLoaded -> copy(prestaFavouriteGuarantor = msg.favouriteGuarantorLoaded)
+                is Msg.AddedFavouriteGuarantorLoaded -> copy(prestaAdedFavouriteGuarantor = msg.addedfavouriteGuarantorLoaded)
+                is Msg.FavouriteGuarantorDeleted -> copy(deleteFavouriteGuarantorResponse = msg. favouriteGuarantorDeletedResponse)
+
             }
     }
 

@@ -1,5 +1,6 @@
 package com.presta.customer.ui.components.favouriteGuarantors.ui
 
+import ShimmerBrush
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -48,8 +50,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,20 +76,30 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
 import com.presta.customer.ui.components.addGuarantors.ui.SelectGuarantorsView
+import com.presta.customer.ui.components.addGuarantors.ui.SnackbarVisualsWithError
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGuarantorsComponent
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
+import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.theme.actionButtonColor
+import com.presta.customer.ui.theme.backArrowColor
 import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
-import androidx.compose.ui.window.Popup
-import com.presta.customer.ui.composables.ActionButton
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class FavouriteGuarantorDetails(
+    val refId: String,
+    val memberName: String,
+    val memberNumber: String
+)
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -108,6 +124,90 @@ fun FavouriteGuarantorContent(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = skipHalfExpanded
     )
+    var clearList by remember { mutableStateOf(true) }
+    var memberRefId by remember { mutableStateOf("") }
+    var memberUpdated by remember { mutableStateOf(0) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val snackBarScope = rememberCoroutineScope()
+    var guarantorDataListed by remember { mutableStateOf(emptySet<FavouriteGuarantorDetails>()) }
+    var emptyguarantorDataListed by remember { mutableStateOf(emptySet<FavouriteGuarantorDetails>()) }
+
+    if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
+        memberRefId = signHomeState.prestaTenantByPhoneNumber.refId
+
+    }
+    if (memberRefId != "") {
+        LaunchedEffect(
+            authState.cachedMemberData,
+            memberRefId,
+            memberUpdated
+        ) {
+            authState.cachedMemberData?.let {
+                ApplyLongTermLoansStore.Intent.GetPrestaFavouriteGuarantor(
+                    token = it.accessToken,
+                    memberRefId = memberRefId
+                )
+            }?.let {
+                onEvent(
+                    it
+                )
+            }
+        }
+    }
+    if (memberNumber != "") {
+        LaunchedEffect(
+            authState.cachedMemberData,
+            memberNumber
+
+        ) {
+            authState.cachedMemberData?.let {
+                SignHomeStore.Intent.GetPrestaTenantByMemberNumber(
+                    token = it.accessToken,
+                    memberNumber = memberNumber
+                )
+            }?.let {
+                onProfileEvent(
+                    it
+                )
+            }
+        }
+    }
+    if (signHomeState.prestaTenantByMemberNumber != null) {
+        if (guarantorDataListed.size != 1) {
+            val apiResponse = listOf(
+                FavouriteGuarantorDetails(
+                    refId = signHomeState.prestaTenantByMemberNumber.refId,
+                    memberName = signHomeState.prestaTenantByMemberNumber.firstName,
+                    memberNumber = signHomeState.prestaTenantByMemberNumber.memberNumber
+                )
+            )
+            val existingItems = guarantorDataListed.toSet()
+            val duplicateItems = apiResponse.filter { it in existingItems }
+            if (duplicateItems.isNotEmpty()) {
+                snackBarScope.launch {
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsWithError(
+                            "Duplicate Entries not  allowed",
+                            isError = true
+                        )
+                    )
+                }
+
+            } else {
+                guarantorDataListed =
+                    guarantorDataListed.toMutableSet().apply {
+                        addAll(apiResponse)
+                    }
+            }
+        }
+    }
+    if (guarantorDataListed.isNotEmpty()) {
+        LaunchedEffect(guarantorDataListed) {
+            if (guarantorDataListed.isEmpty()) {
+                clearList = false
+            }
+        }
+    }
     val scope = rememberCoroutineScope()
     ModalBottomSheetLayout(
         sheetState = modalBottomState,
@@ -117,6 +217,40 @@ fun FavouriteGuarantorContent(
                     .fillMaxWidth()
                     .fillMaxHeight()
                     .background(color = MaterialTheme.colorScheme.background),
+                snackbarHost = {
+                    SnackbarHost(snackbarHostState) { data ->
+                        val isError = (data.visuals as? SnackbarVisualsWithError)?.isError ?: false
+                        val buttonColor = if (isError) {
+                            ButtonDefaults.textButtonColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer,
+                                contentColor = MaterialTheme.colorScheme.error
+                            )
+                        } else {
+                            ButtonDefaults.textButtonColors(
+                                contentColor = MaterialTheme.colorScheme.inversePrimary
+                            )
+                        }
+                        Snackbar(
+                            modifier = Modifier.padding(bottom = 20.dp, start = 16.dp, end = 16.dp),
+                            action = {
+                                IconButton(
+                                    onClick = { if (isError) data.dismiss() else data.performAction() },
+                                ) {
+                                    Icon(
+                                        Icons.Filled.Cancel,
+                                        contentDescription = "Cancel  Arrow",
+                                        tint = backArrowColor,
+                                        modifier = Modifier.clickable {
+                                            if (isError) data.dismiss() else data.performAction()
+                                        }
+                                    )
+                                }
+                            }
+                        ) {
+                            Text(data.visuals.message)
+                        }
+                    }
+                },
                 topBar = {
                     NavigateBackTopBar("Add Favourite Guarantor ", onClickContainer = {
                         scope.launch { modalBottomState.hide() }
@@ -323,25 +457,76 @@ fun FavouriteGuarantorContent(
                                 .fillMaxWidth()
                                 .fillMaxHeight(0.8f)
                         ) {
+                            //list the searched Guarantor
+                            item {
+                                Spacer(modifier = Modifier.padding(top = 10.dp))
+                            }
+                            if (guarantorDataListed.isNotEmpty()) {
+                                guarantorDataListed.forEach { item ->
+                                    item {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(bottom = 10.dp)
+                                        ) {
+                                            FavouriteGuarantorView(
+                                                Index = 1,
+                                                selected = false,
+                                                onClick = {
 
-
+                                                },
+                                                deleteAccount = {
+                                                    guarantorDataListed = emptySet()
+                                                    clearList = false
+                                                },
+                                                label = item.memberName,
+                                                description = item.memberNumber
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                         }
-
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(bottom = 30.dp)
                         ) {
                             ActionButton(
-                                label = "Search",
+                                label = if (guarantorDataListed.size != 1) "Search" else "Add Guarantor",
                                 onClickContainer = {
-
+                                    //Post Favouriete Guarantor
+                                    if (signHomeState.prestaTenantByMemberNumber != null) {
+                                        guarantorDataListed.map { mapedrefId ->
+                                            authState.cachedMemberData?.let {
+                                                ApplyLongTermLoansStore.Intent.AddFavouriteGuarantor(
+                                                    token = it.accessToken,
+                                                    memberRefId = memberRefId,
+                                                    guarantorRefId = mapedrefId.refId
+                                                )
+                                            }?.let {
+                                                onEvent(
+                                                    it
+                                                )
+                                            }
+                                        }
+                                        memberUpdated++
+                                    } else {
+                                        snackBarScope.launch {
+                                            snackbarHostState.showSnackbar(
+                                                SnackbarVisualsWithError(
+                                                    "Error loading Member $memberNumber",
+                                                    isError = true
+                                                )
+                                            )
+                                        }
+                                    }
                                 },
-                                enabled = true
+                                enabled = true,
+                                loading = state.isLoading
                             )
                         }
                     }
-
                     if (launchPopUp) {
                         Popup {
                             Column(
@@ -538,20 +723,70 @@ fun FavouriteGuarantorContent(
                             .padding(innerPadding)
                             .fillMaxHeight(0.85f)
                     ) {
+                        if (state.isLoading) {
+                            items(6) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 10.dp, start = 16.dp, end = 16.dp)
+                                        .background(color = MaterialTheme.colorScheme.background),
+                                ) {
+                                    ElevatedCard(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(color = MaterialTheme.colorScheme.background),
+                                        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .defaultMinSize(40.dp, 40.dp)
+                                                .background(
+                                                    ShimmerBrush(
+                                                        targetValue = 1300f,
+                                                        showShimmer = true
+                                                    )
+                                                )
+                                                .fillMaxWidth()
+                                        ) {
+                                        }
+                                    }
+                                }
 
-                        item {
-                            FavouriteGuarantorView(
-                                Index = 1,
-                                selected = false,
-                                onClick = {
+                            }
+                        } else {
+                            state.prestaFavouriteGuarantor.map { prestaFavouriteGuarantorResponse ->
+                                item {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(bottom = 10.dp)
+                                    ) {
+                                        FavouriteGuarantorView(
+                                            Index = 1,
+                                            selected = false,
+                                            onClick = {
 
-                                },
-                                deleteAccount = {
-
-                                },
-                                label = "Dennis",
-                                description = null
-                            )
+                                            },
+                                            deleteAccount = {
+                                                //delete favourite guarantor
+                                                authState.cachedMemberData?.let {
+                                                    ApplyLongTermLoansStore.Intent.DeleteFavouriteGuarantor(
+                                                        token = it.accessToken,
+                                                        refId = prestaFavouriteGuarantorResponse.refId
+                                                    )
+                                                }?.let {
+                                                    onEvent(
+                                                        it
+                                                    )
+                                                }
+                                                memberUpdated++
+                                            },
+                                            label = prestaFavouriteGuarantorResponse.firstName + " " + prestaFavouriteGuarantorResponse.lastName,
+                                            description = prestaFavouriteGuarantorResponse.memberNumber
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }

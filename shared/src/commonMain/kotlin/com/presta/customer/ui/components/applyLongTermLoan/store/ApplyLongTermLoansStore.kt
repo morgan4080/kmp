@@ -54,7 +54,8 @@ interface ApplyLongTermLoansStore :
             val token: String,
             val memberRefId: String
         ) : Intent()
-//Todo----To be replaced with --GetPrestaLoanByLoanRequestRefId
+
+        //Todo----To be replaced with --GetPrestaLoanByLoanRequestRefId
         data class GetPrestaLongTermLoanRequestByRefId(
             val token: String,
             val loanRequestRefId: String
@@ -77,30 +78,44 @@ interface ApplyLongTermLoansStore :
             val actorRefId: String,
             val actorType: ActorType
         ) : Intent()
+
         data class GetPrestaLongTermLoansRequestsList(
             val token: String,
             val memberRefId: String
         ) : Intent()
+
         data class GetPrestaLongTermLoansRequestsFilteredList(
             val token: String,
             val memberRefId: String
         ) : Intent()
+
         data class ReplaceLoanGuarantor(
             val token: String,
-           val loanRequestRefId: String,
-           val guarantorRefId: String,//old guarantor---replace the old guarantor with the new guarantor
+            val loanRequestRefId: String,
+            val guarantorRefId: String,//old guarantor---replace the old guarantor with the new guarantor
             val memberRefId: String,
         ) : Intent()
+
         data class GetPrestaWitnessRequests(
             val token: String,
             val memberRefId: String
         ) : Intent()
+
         data class GetPrestaFavouriteGuarantor(
             val token: String,
             val memberRefId: String
         ) : Intent()
-    }
 
+        data class AddFavouriteGuarantor(
+            val token: String,
+            val memberRefId: String,
+            val guarantorRefId: String,
+        ) : Intent()
+        data class DeleteFavouriteGuarantor(
+            val token: String,
+            val refId: String
+        ) : Intent()
+    }
     data class State(
         val isLoading: Boolean = false,
         val error: String? = null,
@@ -121,6 +136,8 @@ interface ApplyLongTermLoansStore :
         val prestaUpdatedGuarantorData: LongTermLoanRequestResponse? = null,
         val prestaWitnessRequests: List<PrestaWitnessRequestResponse> = emptyList(),
         val prestaFavouriteGuarantor: List<PrestaFavouriteGuarantorResponse> = emptyList(),
+        val prestaAdedFavouriteGuarantor: PrestaFavouriteGuarantorResponse? = null,
+        val deleteFavouriteGuarantorResponse: String? = null,
         val memberNo: String = "By Member No",
         val phoneNo: String = "By Phone No",
         val selfGuarantee: String = "Self Guarantee",

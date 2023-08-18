@@ -85,6 +85,7 @@ import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.favouriteGuarantors.ui.FavouriteGuarantorDetails
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.EmployedDetails
@@ -154,6 +155,7 @@ fun AddGuarantorContent(
     val guarantorData = ArrayList<String>()
     var amountToGuarantee by remember { mutableStateOf(TextFieldValue()) }
     var launchGuarantorListing by remember { mutableStateOf(false) }
+    var selectedClear by remember { mutableStateOf(true) }
     if (memberNumber != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -178,6 +180,7 @@ fun AddGuarantorContent(
             guarantor = signHomeState.prestaTenantByMemberNumber?.firstName.toString()
         }
     }
+
     signHomeState.prestaTenantByPhoneNumber?.details?.map { it ->
         if (it.key.contains("employer")) {
             employer = it.value.value.toString()
@@ -204,6 +207,19 @@ fun AddGuarantorContent(
     }
     val scope = rememberCoroutineScope()
     var guarantorDataListed by remember { mutableStateOf(emptySet<GuarantorDataListing>()) }
+
+    val deleteItem: (GuarantorDataListing) -> Unit = { itemToDelete ->
+        guarantorDataListed = guarantorDataListed - itemToDelete
+        guarantorDataListed = emptySet()
+    }
+
+    val onItemClick: (GuarantorDataListing) -> Unit = { item ->
+        // Perform the action you want when an item is clicked
+        // In this example, we'll just print the item's memberName
+        println("Item clicked: ${item.guarantorName}")
+        guarantorDataListed -= item
+    }
+
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -251,7 +267,6 @@ fun AddGuarantorContent(
                             onClickSubmit = {
                                 allConditionsChecked = true
                                 scope.launch { modalBottomSheetState.hide() }
-
                             },
                             component
                         )
@@ -276,7 +291,7 @@ fun AddGuarantorContent(
                             modifier = Modifier
                                 .padding(top = 5.dp)
                                 .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
+                            horizontalArrangement = Arrangement.End
                         ) {
                             Icon(
                                 Icons.Filled.Cancel,
@@ -309,7 +324,6 @@ fun AddGuarantorContent(
                                 fontSize = 12.sp
                             )
                         }
-
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -355,7 +369,6 @@ fun AddGuarantorContent(
                                                 )
                                             )
                                         }
-
                                     } else {
                                         guarantorDataListed =
                                             guarantorDataListed.toMutableSet().apply {
@@ -586,6 +599,7 @@ fun AddGuarantorContent(
                                             println("Test code" + component.loanPurposeCategoryCode)
                                             //Test  the size of the array
                                             println("Array size is " + guarantorDataListed.size)
+                                         //   guarantorDataListed = emptySet()
 
 //                                            snackBarScope.launch {
 //                                                snackbarHostState.showSnackbar(
@@ -651,7 +665,6 @@ fun AddGuarantorContent(
                         }
                         if (launchGuarantorListing) {
                             if (guarantorDataListed.isNotEmpty()) {
-
                                 guarantorDataListed.forEach { item ->
                                     item {
                                         Row(
@@ -663,12 +676,18 @@ fun AddGuarantorContent(
                                             GuarantorsDetailsView(
                                                 label = item.guarantorName,
                                                 onClick = {
-
+                                                    //clear the list
+                                                    // guarantorDataListed= emptySet()
+                                                    //guarantorDataListed -= item
+                                                         // selectedClear=true
+                                                   // deleteItem(item)
+                                                    onItemClick(item)
+                                                    println("clickedddf")
                                                 },
                                                 selected = true,
                                                 phoneNumber = item.phoneNumber,
                                                 memberNumber = item.memberNumber,
-                                                amount = item.amount.toDouble()
+                                                amount = item.amount.toDouble(),
                                             )
                                         }
                                     }
@@ -684,17 +703,7 @@ fun AddGuarantorContent(
                         ActionButton(
                             label = if (searchGuarantorByMemberNumber && guarantorDataListed.size != component.requiredGuarantors) "Search" else "Continue",
                             onClickContainer = {
-                                authState.cachedMemberData?.let {
-                                    SignHomeStore.Intent.GetPrestaTenantByMemberNumber(
-                                        token = it.accessToken,
-                                        memberNumber = memberNumber
-                                    )
-                                }?.let {
-                                    onProfileEvent(
-                                        it
-                                    )
-                                }
-                                if (searchGuarantorByMemberNumber && guarantorDataListed.size != component.requiredGuarantors) {
+                                if (searchGuarantorByMemberNumber && guarantorDataListed.size != component.requiredGuarantors && signHomeState.prestaTenantByMemberNumber != null) {
                                     launchCheckSelfAndEmPloyedPopUp = false
                                     launchAddAmountToGuarantee = true
                                     scope.launch { modalBottomSheetState.show() }
@@ -729,7 +738,8 @@ fun AddGuarantorContent(
                                         scope.launch { modalBottomSheetState.hide() }
                                     }
                                 }
-                                if (signHomeState.prestaTenantByMemberNumber == null) {
+                                if (memberNumber != "" && signHomeState.prestaTenantByMemberNumber == null) {
+                                    launchAddAmountToGuarantee = false
                                     snackBarScope.launch {
                                         snackbarHostState.showSnackbar(
                                             SnackbarVisualsWithError(
@@ -739,6 +749,7 @@ fun AddGuarantorContent(
                                         )
                                     }
                                 }
+
                             },
                             enabled = true
                         )
@@ -996,16 +1007,15 @@ fun SelectGuarantorsView(
 @Composable
 fun GuarantorsDetailsView(
     selected: Boolean,
-    onClick: (Int) -> Unit,
+    onClick: () -> Unit,
     label: String,
     phoneNumber: String,
     memberNumber: String,
-    amount: Double
+    amount: Double,
 ) {
     ElevatedCard(
-        onClick = {
-            //onClick.invoke(Index)
-        },
+        onClick =onClick
+        ,
         modifier = Modifier.fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.background),
         elevation = CardDefaults.cardElevation(defaultElevation = 20.dp)
@@ -1015,7 +1025,7 @@ fun GuarantorsDetailsView(
                 .background(color = MaterialTheme.colorScheme.inverseOnSurface)
         ) {
             Row(
-                modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
+                modifier = Modifier.padding(top = 16.dp, bottom = 16.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -1033,7 +1043,7 @@ fun GuarantorsDetailsView(
                     Box(
                         modifier = Modifier
                             .size(19.dp)
-                            .background(if (selected) actionButtonColor else MaterialTheme.colorScheme.background)
+                            .background(if (selected) actionButtonColor else MaterialTheme.colorScheme.inverseOnSurface)
                             .clickable {
                                 //onClickContainer(mode)
                                 // onClick.invoke(Index)
