@@ -78,6 +78,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
+import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.ui.components.addGuarantors.ui.SelectGuarantorsView
 import com.presta.customer.ui.components.addGuarantors.ui.SnackbarVisualsWithError
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
@@ -124,13 +125,11 @@ fun FavouriteGuarantorContent(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = skipHalfExpanded
     )
-    var clearList by remember { mutableStateOf(true) }
     var memberRefId by remember { mutableStateOf("") }
     var memberUpdated by remember { mutableStateOf(0) }
     val snackbarHostState = remember { SnackbarHostState() }
     val snackBarScope = rememberCoroutineScope()
     var guarantorDataListed by remember { mutableStateOf(emptySet<FavouriteGuarantorDetails>()) }
-    var emptyguarantorDataListed by remember { mutableStateOf(emptySet<FavouriteGuarantorDetails>()) }
 
     if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         memberRefId = signHomeState.prestaTenantByPhoneNumber.refId
@@ -158,7 +157,6 @@ fun FavouriteGuarantorContent(
         LaunchedEffect(
             authState.cachedMemberData,
             memberNumber
-
         ) {
             authState.cachedMemberData?.let {
                 SignHomeStore.Intent.GetPrestaTenantByMemberNumber(
@@ -201,14 +199,11 @@ fun FavouriteGuarantorContent(
             }
         }
     }
-    if (guarantorDataListed.isNotEmpty()) {
-        LaunchedEffect(guarantorDataListed) {
-            if (guarantorDataListed.isEmpty()) {
-                clearList = false
-            }
-        }
-    }
     val scope = rememberCoroutineScope()
+    val clearItemClicked: (FavouriteGuarantorDetails) -> Unit = { item ->
+        guarantorDataListed -= item
+    }
+
     ModalBottomSheetLayout(
         sheetState = modalBottomState,
         sheetContent = {
@@ -458,6 +453,7 @@ fun FavouriteGuarantorContent(
                                 .fillMaxHeight(0.8f)
                         ) {
                             //list the searched Guarantor
+                            //Todo---clear  the selected gauranotor on choice
                             item {
                                 Spacer(modifier = Modifier.padding(top = 10.dp))
                             }
@@ -475,9 +471,8 @@ fun FavouriteGuarantorContent(
                                                 onClick = {
 
                                                 },
-                                                deleteAccount = {
-                                                    guarantorDataListed = emptySet()
-                                                    clearList = false
+                                                deleteMember = {
+                                                    clearItemClicked(item)
                                                 },
                                                 label = item.memberName,
                                                 description = item.memberNumber
@@ -767,7 +762,7 @@ fun FavouriteGuarantorContent(
                                             onClick = {
 
                                             },
-                                            deleteAccount = {
+                                            deleteMember = {
                                                 //delete favourite guarantor
                                                 authState.cachedMemberData?.let {
                                                     ApplyLongTermLoansStore.Intent.DeleteFavouriteGuarantor(
@@ -800,7 +795,7 @@ fun FavouriteGuarantorView(
     Index: Int,
     selected: Boolean,
     onClick: (Int) -> Unit,
-    deleteAccount: () -> Unit,
+    deleteMember: () -> Unit,
     label: String,
     description: String? = null,
 ) {
@@ -874,7 +869,7 @@ fun FavouriteGuarantorView(
                         modifier = Modifier
                             .size(19.dp)
                             .clickable {
-                                deleteAccount()
+                                deleteMember()
                             },
                         contentAlignment = Alignment.Center
                     ) {

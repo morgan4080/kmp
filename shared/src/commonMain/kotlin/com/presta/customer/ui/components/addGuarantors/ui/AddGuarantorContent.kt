@@ -128,7 +128,7 @@ fun AddGuarantorContent(
     var firstName by remember { mutableStateOf(TextFieldValue()) }
     val emptyTextContainer by remember { mutableStateOf(TextFieldValue()) }
     var selectedIndex by remember { mutableStateOf(-1) }
-    var skipHalfExpanded by remember { mutableStateOf(true) }
+    val skipHalfExpanded by remember { mutableStateOf(true) }
     var guarantorOption by remember { mutableStateOf("") }
     var launchCheckSelfAndEmPloyedPopUp by remember { mutableStateOf(false) }
     var allConditionsChecked by remember { mutableStateOf(false) }
@@ -141,9 +141,8 @@ fun AddGuarantorContent(
     val snackbarHostState = remember { SnackbarHostState() }
     val snackBarScope = rememberCoroutineScope()
     var launchAddAmountToGuarantee by remember { mutableStateOf(false) }
-    var guarantor by remember { mutableStateOf("") }
-    var businessLocationData by remember { mutableStateOf("") }
-    var businessTypeData by remember { mutableStateOf("") }
+    val businessLocationData by remember { mutableStateOf("") }
+    val businessTypeData by remember { mutableStateOf("") }
     var employer by remember { mutableStateOf("") }
     var employerkey by remember { mutableStateOf("") }
     var grossSalary by remember { mutableStateOf("") }
@@ -154,6 +153,12 @@ fun AddGuarantorContent(
     var businessType by remember { mutableStateOf("") }
     var amountToGuarantee by remember { mutableStateOf(TextFieldValue()) }
     var launchGuarantorListing by remember { mutableStateOf(false) }
+    var dupref by remember { mutableStateOf("") }
+    var trueId by remember { mutableStateOf("") }
+    if (signHomeState.prestaTenantByPhoneNumber?.phoneNumber != null) {
+        trueId = signHomeState.prestaTenantByPhoneNumber.phoneNumber
+    }
+
     if (memberNumber != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -172,13 +177,6 @@ fun AddGuarantorContent(
             }
         }
     }
-    if (memberNumber != "") {
-        LaunchedEffect(memberNumber) {
-
-            guarantor = signHomeState.prestaTenantByMemberNumber?.firstName.toString()
-        }
-    }
-
     signHomeState.prestaTenantByPhoneNumber?.details?.map { it ->
         if (it.key.contains("employer")) {
             employer = it.value.value.toString()
@@ -208,6 +206,25 @@ fun AddGuarantorContent(
     //Call-back to delete the selected  gaurantor from the list
     val clearItemClicked: (GuarantorDataListing) -> Unit = { item ->
         guarantorDataListed -= item
+    }
+    //Todo------handle Witness selection when required to add a witness
+    //add an id to the data  based on if self guarantee is allowed
+    //Sourece of truth to add the guarantor
+    if (memberNumber != "") {
+        LaunchedEffect(
+            authState.cachedMemberData,
+            memberNumber
+        ) {
+            if (state.prestaClientSettings?.response?.allowSelfGuarantee == false) {
+                if ( trueId!="" && trueId == signHomeState.prestaTenantByMemberNumber?.phoneNumber ) {
+                    dupref = "not null"
+                }
+            } else {
+                if (trueId!="" && trueId != signHomeState.prestaTenantByMemberNumber?.phoneNumber) {
+                    dupref = ""
+                }
+            }
+        }
     }
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
@@ -339,6 +356,7 @@ fun AddGuarantorContent(
                         ) {
                             ActionButton("SUBMIT", onClickContainer = {
                                 if (guarantorDataListed.size != component.requiredGuarantors) {
+                                    //Todo-- handle self guarantee case
                                     val apiResponse = listOf(
                                         GuarantorDataListing(
                                             signHomeState.prestaTenantByMemberNumber.firstName,
@@ -583,30 +601,17 @@ fun AddGuarantorContent(
                                 ) {
                                     androidx.compose.material3.IconButton(
                                         modifier = Modifier
-                                            .clip(CircleShape)
-                                            .background(Color(0xFFE5F1F5))
-                                            .size(25.dp),
+                                            .background(Color(0xFFE5F1F5)),
                                         onClick = {
-                                            println("Test code" + component.loanPurposeCategoryCode)
-                                            //Test  the size of the array
-                                            println("Array size is " + guarantorDataListed.size)
-                                            //   guarantorDataListed = emptySet()
+                                            //load Contacts
+                                            //Todo----open  the contacts library and take the selected contact
 
-//                                            snackBarScope.launch {
-//                                                snackbarHostState.showSnackbar(
-//                                                    "member data"
-//                                                )
-//                                            }
-                                            //open contacts Library
-//                                        component.platform.getContact().map { contact ->
-//                                            println("Test Contact")
-//                                            println(contact.phoneNumber)
-//                                        }
                                         },
                                         content = {
                                             Icon(
                                                 imageVector = Icons.Outlined.Contacts,
-                                                modifier = Modifier,
+                                                modifier = Modifier
+                                                    .size(25.dp),
                                                 contentDescription = null,
                                                 tint = MaterialTheme.colorScheme.primary
                                             )
@@ -631,12 +636,14 @@ fun AddGuarantorContent(
                             .fillMaxWidth()
                             .fillMaxHeight(0.8f)
                     ) {
+                        item {
+                            Spacer(modifier = Modifier.padding(top = 30.dp))
+                        }
                         if (guarantorOption == "") {
                             item {
                                 Row(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 30.dp),
+                                        .fillMaxWidth(),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
@@ -661,13 +668,13 @@ fun AddGuarantorContent(
                                         Row(
                                             modifier = Modifier
                                                 .fillMaxWidth()
-                                                .padding(top = 30.dp)
+                                                .padding(bottom = 10.dp)
                                                 .background(MaterialTheme.colorScheme.background)
                                         ) {
                                             GuarantorsDetailsView(
-                                                label = item.guarantorFirstName+ " " + item.guarantorFirstName,
+                                                label = item.guarantorFirstName + " " + item.guarantorFirstName,
                                                 onClick = {
-                                                    //calll back executed
+                                                    //call back executed
                                                     clearItemClicked(item)
                                                 },
                                                 selected = true,
@@ -724,7 +731,7 @@ fun AddGuarantorContent(
                                         scope.launch { modalBottomSheetState.hide() }
                                     }
                                 }
-                                if (memberNumber != "" && signHomeState.prestaTenantByMemberNumber == null) {
+                                if (memberNumber != "" && signHomeState.prestaTenantByMemberNumber == null || dupref!="") {
                                     launchAddAmountToGuarantee = false
                                     snackBarScope.launch {
                                         snackbarHostState.showSnackbar(
@@ -736,6 +743,7 @@ fun AddGuarantorContent(
                                     }
                                 }
 
+                                println("The duplicate referemce"+ dupref)
                             },
                             enabled = true
                         )
@@ -1068,7 +1076,7 @@ fun GuarantorsDetailsView(
                         )
                         Divider(
                             modifier = Modifier
-                                .height(20.dp)
+                                .height(10.dp)
                                 .padding(start = 2.dp)
                                 .width(1.dp)
                         )
@@ -1081,7 +1089,7 @@ fun GuarantorsDetailsView(
                         )
                         Divider(
                             modifier = Modifier
-                                .height(20.dp)
+                                .height(10.dp)
                                 .padding(start = 2.dp)
                                 .width(1.dp)
                         )
