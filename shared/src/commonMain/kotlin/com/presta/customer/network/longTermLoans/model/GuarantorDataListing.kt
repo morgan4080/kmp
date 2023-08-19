@@ -5,7 +5,8 @@ import com.arkivanov.essenty.parcelable.Parcelize
 
 @Parcelize
 data class GuarantorDataListing(
-    val guarantorName: String,
+    val guarantorFirstName: String,
+    val guarantorLastName: String,
     val phoneNumber: String,
     val memberNumber: String,
     val amount: String,

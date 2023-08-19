@@ -38,6 +38,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.Contacts
 import androidx.compose.material.icons.outlined.Error
+import androidx.compose.material.icons.outlined.PersonRemove
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -85,7 +86,6 @@ import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
-import com.presta.customer.ui.components.favouriteGuarantors.ui.FavouriteGuarantorDetails
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.EmployedDetails
@@ -152,10 +152,8 @@ fun AddGuarantorContent(
     var employmentNumber by remember { mutableStateOf("") }
     var businessLocation by remember { mutableStateOf("") }
     var businessType by remember { mutableStateOf("") }
-    val guarantorData = ArrayList<String>()
     var amountToGuarantee by remember { mutableStateOf(TextFieldValue()) }
     var launchGuarantorListing by remember { mutableStateOf(false) }
-    var selectedClear by remember { mutableStateOf(true) }
     if (memberNumber != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -207,19 +205,10 @@ fun AddGuarantorContent(
     }
     val scope = rememberCoroutineScope()
     var guarantorDataListed by remember { mutableStateOf(emptySet<GuarantorDataListing>()) }
-
-    val deleteItem: (GuarantorDataListing) -> Unit = { itemToDelete ->
-        guarantorDataListed = guarantorDataListed - itemToDelete
-        guarantorDataListed = emptySet()
-    }
-
-    val onItemClick: (GuarantorDataListing) -> Unit = { item ->
-        // Perform the action you want when an item is clicked
-        // In this example, we'll just print the item's memberName
-        println("Item clicked: ${item.guarantorName}")
+    //Call-back to delete the selected  gaurantor from the list
+    val clearItemClicked: (GuarantorDataListing) -> Unit = { item ->
         guarantorDataListed -= item
     }
-
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -287,6 +276,7 @@ fun AddGuarantorContent(
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 10.dp)
                     ) {
+                        //Todo----Dismiss focus requester when the modal bottomsheet is dismissed
                         Row(
                             modifier = Modifier
                                 .padding(top = 5.dp)
@@ -352,6 +342,7 @@ fun AddGuarantorContent(
                                     val apiResponse = listOf(
                                         GuarantorDataListing(
                                             signHomeState.prestaTenantByMemberNumber.firstName,
+                                            signHomeState.prestaTenantByMemberNumber.lastName,
                                             signHomeState.prestaTenantByMemberNumber.phoneNumber,
                                             signHomeState.prestaTenantByMemberNumber.memberNumber,
                                             amountToGuarantee.text,
@@ -599,7 +590,7 @@ fun AddGuarantorContent(
                                             println("Test code" + component.loanPurposeCategoryCode)
                                             //Test  the size of the array
                                             println("Array size is " + guarantorDataListed.size)
-                                         //   guarantorDataListed = emptySet()
+                                            //   guarantorDataListed = emptySet()
 
 //                                            snackBarScope.launch {
 //                                                snackbarHostState.showSnackbar(
@@ -674,15 +665,10 @@ fun AddGuarantorContent(
                                                 .background(MaterialTheme.colorScheme.background)
                                         ) {
                                             GuarantorsDetailsView(
-                                                label = item.guarantorName,
+                                                label = item.guarantorFirstName+ " " + item.guarantorFirstName,
                                                 onClick = {
-                                                    //clear the list
-                                                    // guarantorDataListed= emptySet()
-                                                    //guarantorDataListed -= item
-                                                         // selectedClear=true
-                                                   // deleteItem(item)
-                                                    onItemClick(item)
-                                                    println("clickedddf")
+                                                    //calll back executed
+                                                    clearItemClicked(item)
                                                 },
                                                 selected = true,
                                                 phoneNumber = item.phoneNumber,
@@ -1014,8 +1000,9 @@ fun GuarantorsDetailsView(
     amount: Double,
 ) {
     ElevatedCard(
-        onClick =onClick
-        ,
+        onClick = {
+
+        },
         modifier = Modifier.fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.background),
         elevation = CardDefaults.cardElevation(defaultElevation = 20.dp)
@@ -1066,7 +1053,7 @@ fun GuarantorsDetailsView(
                         modifier = Modifier
                             .padding(start = 15.dp),
                         fontSize = 12.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
                     )
                     Row(
                         modifier = Modifier.width(IntrinsicSize.Max),
@@ -1110,17 +1097,17 @@ fun GuarantorsDetailsView(
                 Spacer(modifier = Modifier.weight(1f))
                 androidx.compose.material3.IconButton(
                     modifier = Modifier
-                        .clip(CircleShape)
-                        .background(Color(0xFFE5F1F5))
-                        .size(25.dp),
+                        .background(color = MaterialTheme.colorScheme.inverseOnSurface),
                     onClick = {
                         //open contacts Library
+                        onClick()
 
                     },
                     content = {
                         Icon(
-                            imageVector = Icons.Outlined.Contacts,
-                            modifier = Modifier,
+                            imageVector = Icons.Outlined.PersonRemove,
+                            modifier = Modifier
+                                .size(30.dp),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary
                         )

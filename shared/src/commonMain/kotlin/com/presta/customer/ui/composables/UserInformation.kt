@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
-import com.presta.customer.network.longTermLoans.client.DetailsData
 import com.presta.customer.network.longTermLoans.model.Guarantor
 import com.presta.customer.ui.components.addGuarantors.ui.SelectGuarantorsView
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
@@ -74,7 +73,7 @@ fun UserInformation(
     for (item in component.guarantorList) {
         val refId = item.guarantorRefId
         val amount = item.amount
-        val guarantorName = item.guarantorName
+        val guarantorName = item.guarantorFirstName
         guarantorList.add(Guarantor(refId, amount,guarantorName))
     }
     Column(modifier = Modifier.padding(top = 20.dp)) {
