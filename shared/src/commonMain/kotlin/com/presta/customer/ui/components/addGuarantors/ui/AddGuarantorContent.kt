@@ -153,7 +153,6 @@ fun AddGuarantorContent(
     var businessType by remember { mutableStateOf("") }
     var amountToGuarantee by remember { mutableStateOf(TextFieldValue()) }
     var launchGuarantorListing by remember { mutableStateOf(false) }
-    var dupref by remember { mutableStateOf("") }
     var trueId by remember { mutableStateOf("") }
     if (signHomeState.prestaTenantByPhoneNumber?.phoneNumber != null) {
         trueId = signHomeState.prestaTenantByPhoneNumber.phoneNumber
@@ -210,18 +209,26 @@ fun AddGuarantorContent(
     //Todo------handle Witness selection when required to add a witness
     //add an id to the data  based on if self guarantee is allowed
     //Sourece of truth to add the guarantor
-    if (memberNumber != "") {
-        LaunchedEffect(
-            authState.cachedMemberData,
-            memberNumber
-        ) {
+    var violateSelfGuarantee by remember { mutableStateOf(false) }
+    LaunchedEffect(
+        guarantorDataListed
+    ) {
+        guarantorDataListed.map { datas ->
             if (state.prestaClientSettings?.response?.allowSelfGuarantee == false) {
-                if ( trueId!="" && trueId == signHomeState.prestaTenantByMemberNumber?.phoneNumber ) {
-                    dupref = "not null"
-                }
-            } else {
-                if (trueId!="" && trueId != signHomeState.prestaTenantByMemberNumber?.phoneNumber) {
-                    dupref = ""
+                if (datas.phoneNumber == signHomeState.prestaTenantByPhoneNumber?.phoneNumber) {
+                    violateSelfGuarantee = true
+                    launchAddAmountToGuarantee = false
+                    clearItemClicked(datas)
+                    snackBarScope.launch {
+                        snackbarHostState.showSnackbar(
+                            SnackbarVisualsWithError(
+                                "self guarantee not allowed $memberNumber",
+                                isError = true
+                            )
+                        )
+                    }
+                } else {
+                    violateSelfGuarantee = false
                 }
             }
         }
@@ -605,6 +612,8 @@ fun AddGuarantorContent(
                                         onClick = {
                                             //load Contacts
                                             //Todo----open  the contacts library and take the selected contact
+                                            //test the duplicates
+                                            println("found the duplicates" + state.prestaClientSettings?.response?.allowSelfGuarantee)
 
                                         },
                                         content = {
@@ -731,7 +740,7 @@ fun AddGuarantorContent(
                                         scope.launch { modalBottomSheetState.hide() }
                                     }
                                 }
-                                if (memberNumber != "" && signHomeState.prestaTenantByMemberNumber == null || dupref!="") {
+                                if (memberNumber != "" && signHomeState.prestaTenantByMemberNumber == null) {
                                     launchAddAmountToGuarantee = false
                                     snackBarScope.launch {
                                         snackbarHostState.showSnackbar(
@@ -742,8 +751,18 @@ fun AddGuarantorContent(
                                         )
                                     }
                                 }
+                                if (violateSelfGuarantee && guarantorDataListed.isNotEmpty()) {
+                                    launchAddAmountToGuarantee = false
+                                    snackBarScope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            SnackbarVisualsWithError(
+                                                "self guarantee not allowed $memberNumber",
+                                                isError = true
+                                            )
+                                        )
+                                    }
 
-                                println("The duplicate referemce"+ dupref)
+                                }
                             },
                             enabled = true
                         )
