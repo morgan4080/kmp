@@ -25,8 +25,6 @@ import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.profile.coroutineScope
 import com.presta.customer.ui.components.rootSignHome.DefaultRootSignHomeComponent
 import com.presta.customer.ui.components.rootSignHome.RootSignHomeComponent
-import com.presta.customer.ui.components.sign.DefaultSignComponent
-import com.presta.customer.ui.components.sign.SignComponent
 import com.presta.customer.ui.components.longTermLoanRequestsList.DefaultLongTermLoansRequestsComponent
 import com.presta.customer.ui.components.longTermLoanRequestsList.LongTermLoanRequestsComponent
 import com.presta.customer.ui.components.signAppSettings.DefaultSignSettingsComponent
@@ -50,6 +48,7 @@ fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineSc
 
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
+
 class DefaultRootBottomSignComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
@@ -60,6 +59,12 @@ class DefaultRootBottomSignComponent(
     val gotoWitnessRequests: () -> Unit,
     val goBackToLMs: () -> Unit,
     val gotoReplaceGuarantor: () -> Unit,
+    val gotoSignLoanForm: (
+        loanNumber: String,
+        amount: Double,
+        loanRequestRefId: String,
+        memberRefId: String
+    ) -> Unit,
     backTopProfile: Boolean = false
 ) : RootBottomSignComponent, ComponentContext by componentContext, KoinComponent {
     private val authRepository by inject<AuthRepository>()
@@ -75,13 +80,25 @@ class DefaultRootBottomSignComponent(
             key = "authStack"
         )
 
-    override val childStackBottom: Value<ChildStack<*, RootBottomSignComponent.ChildBottom>> = _childStackBottom
+    override val childStackBottom: Value<ChildStack<*, RootBottomSignComponent.ChildBottom>> =
+        _childStackBottom
 
-    private fun createChildBottom(config: ConfigBottom, componentContext: ComponentContext): RootBottomSignComponent.ChildBottom =
+    private fun createChildBottom(
+        config: ConfigBottom,
+        componentContext: ComponentContext
+    ): RootBottomSignComponent.ChildBottom =
         when (config) {
-            is ConfigBottom.SignProfile-> RootBottomSignComponent.ChildBottom.ProfileChild(rootSignHomeComponent(componentContext))
-            is ConfigBottom.Request-> RootBottomSignComponent.ChildBottom.RequestChild(requestComponent(componentContext))
-            is ConfigBottom.Settings -> RootBottomSignComponent.ChildBottom.SettingsChild(settingsComponent(componentContext))
+            is ConfigBottom.SignProfile -> RootBottomSignComponent.ChildBottom.ProfileChild(
+                rootSignHomeComponent(componentContext)
+            )
+
+            is ConfigBottom.Request -> RootBottomSignComponent.ChildBottom.RequestChild(
+                longTermLoansrequestsListComponent(componentContext)
+            )
+
+            is ConfigBottom.Settings -> RootBottomSignComponent.ChildBottom.SettingsChild(
+                settingsComponent(componentContext)
+            )
         }
 
     private fun rootSignHomeComponent(componentContext: ComponentContext): RootSignHomeComponent =
@@ -110,7 +127,7 @@ class DefaultRootBottomSignComponent(
             }
         )
 
-    private fun requestComponent(componentContext: ComponentContext): LongTermLoanRequestsComponent=
+    private fun longTermLoansrequestsListComponent(componentContext: ComponentContext): LongTermLoanRequestsComponent =
         DefaultLongTermLoansRequestsComponent(
             componentContext = componentContext,
             onSelected = {
@@ -124,9 +141,23 @@ class DefaultRootBottomSignComponent(
             onReplaceGuarantorCLicked = {
                 gotoReplaceGuarantor()
 
+            },
+//            loanNumber: String,
+//            amount: Double,
+//            loanRequestRefId: String,
+//            memberRefId: String
+            navigateToSignLoanFormCLicked = { loanNumber, amount, loanRequestRefId, memberRefId ->
+                //create a data class transfer
+                gotoSignLoanForm(
+                    loanNumber,
+                    amount,
+                    loanRequestRefId,
+                    memberRefId
+                )
             }
 
         )
+
     private fun settingsComponent(componentContext: ComponentContext): SignSettingsComponent =
         DefaultSignSettingsComponent(
             componentContext = componentContext,
@@ -156,8 +187,10 @@ class DefaultRootBottomSignComponent(
     private sealed class ConfigBottom : Parcelable {
         @Parcelize
         object SignProfile : ConfigBottom()
+
         @Parcelize
         object Request : ConfigBottom()
+
         @Parcelize
         object Settings : ConfigBottom()
 

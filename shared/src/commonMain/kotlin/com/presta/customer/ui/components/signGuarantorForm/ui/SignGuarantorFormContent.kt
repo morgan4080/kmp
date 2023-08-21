@@ -1,4 +1,4 @@
-package com.presta.customer.ui.components.signDocument.ui
+package com.presta.customer.ui.components.signGuarantorForm.ui
 
 import ShimmerBrush
 import androidx.compose.foundation.Image
@@ -23,19 +23,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.presta.customer.ImageConverter
 import com.presta.customer.MR
 import com.presta.customer.network.longTermLoans.model.ActorType
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
-import com.presta.customer.ui.components.signDocument.SignDocumentComponent
+import com.presta.customer.ui.components.signGuarantorForm.SignGuarantorFormComponent
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
@@ -43,14 +41,13 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignDocumentContent(
-    component: SignDocumentComponent,
+fun SignGuarantorFormContent(
+    component: SignGuarantorFormComponent,
     state: ApplyLongTermLoansStore.State,
     authState: AuthStore.State,
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
 ) {
-    var launchPopUp by remember { mutableStateOf(false) }
-
+    val launchPopUp by remember { mutableStateOf(false) }
     if (component.loanRequestRefId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -69,6 +66,7 @@ fun SignDocumentContent(
             }
         }
     }
+    //Todo --Test
     LaunchedEffect(
         authState.cachedMemberData
     ) {
@@ -76,7 +74,7 @@ fun SignDocumentContent(
             ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
                 token = it.accessToken,
                 loanRequestRefId = component.loanRequestRefId,
-                actorRefId = "CQ4uQ8vfcXF712SD",
+                actorRefId = component.memberRefId,
                 actorType = ActorType.GUARANTOR
             )
         }?.let {

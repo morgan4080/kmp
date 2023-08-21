@@ -27,7 +27,9 @@ class DefaultGuarantorshipRequestComponent(
     private val onAcceptClicked: (
         loanNumber: String,
         amount: Double,
-        loanRequestRefId: String
+        loanRequestRefId: String,
+        memberRefId: String
+
     ) -> Unit
 ) : GuarantorshipRequestComponent, ComponentContext by componentContext {
 
@@ -112,12 +114,14 @@ class DefaultGuarantorshipRequestComponent(
     override fun onAcceptSelected(
         loanNumber: String,
         amount: Double,
-        loanRequestRefId: String
+        loanRequestRefId: String,
+        memberRefId: String
     ) {
         onAcceptClicked(
             loanNumber,
             amount,
-            loanRequestRefId
+            loanRequestRefId,
+            memberRefId
         )
     }
 

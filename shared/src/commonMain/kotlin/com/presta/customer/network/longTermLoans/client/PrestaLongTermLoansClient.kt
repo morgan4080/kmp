@@ -302,6 +302,7 @@ class PrestaLongTermLoansClient(
                 contentType(ContentType.Application.Json)
                 url {
                     encodedParameters.append("memberRefId", memberRefId)
+                   // encodedParameters.append("loanReqStatus", "OPEN")
                 }
             }
         }
@@ -343,7 +344,6 @@ class PrestaLongTermLoansClient(
             }
         }
     }
-
     suspend fun getWitnessRequests(
         token: String,
         memberRefId: String,
@@ -397,6 +397,18 @@ class PrestaLongTermLoansClient(
     ): String {
         return longTermLoansErrorHandler {
             httpClient.delete("${NetworkConstants.PrestaFavouriteGuarantor.route}/${refId}") {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+            }
+        }
+    }
+    suspend fun deleteLoanRequest(
+        token: String,
+        loanRequestNumber: String,
+    ): String {
+        return longTermLoansErrorHandler {
+            httpClient.delete("${NetworkConstants.PrestaGetLoanByLoanRequestId.route}/${loanRequestNumber}") {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 contentType(ContentType.Application.Json)

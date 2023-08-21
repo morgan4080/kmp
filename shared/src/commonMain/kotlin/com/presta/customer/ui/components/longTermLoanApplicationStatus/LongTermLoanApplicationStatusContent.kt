@@ -40,7 +40,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
-import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.helpers.formatMoney
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
@@ -52,7 +51,6 @@ fun LongTermLoanApplicationStatusContent(
     //navigateBack: () -> Unit
 ) {
     var showprocessing by remember { mutableStateOf(true) }
-
 
     Scaffold(
         modifier = Modifier.fillMaxHeight().fillMaxWidth()
@@ -68,12 +66,12 @@ fun LongTermLoanApplicationStatusContent(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        text = "Phone Number ${"334454"}",
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 14.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
-                    )
+//                    Text(
+//                        text = "Phone Number ${"334454"}",
+//                        color = MaterialTheme.colorScheme.onBackground,
+//                        fontSize = 14.sp,
+//                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+//                    )
 
                 }
                 Row(
@@ -81,7 +79,7 @@ fun LongTermLoanApplicationStatusContent(
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "KSH ${formatMoney(300.0)}")
+                   // Text(text = "KSH ${formatMoney(300.0)}")
                 }
 
             }
@@ -115,11 +113,17 @@ fun LongTermLoanApplicationStatusContent(
                                 contentAlignment = Alignment.Center
                             ) {
                                 if (showprocessing) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.then(
-                                            Modifier.size(60.dp)
-                                                .alpha(if (showprocessing) 1f else 0.0f)
-                                        ),
+//                                    CircularProgressIndicator(
+//                                        modifier = Modifier.then(
+//                                            Modifier.size(60.dp)
+//                                                .alpha(if (showprocessing) 1f else 0.0f)
+//                                        ),
+//                                    )
+                                    Icon(
+                                        imageVector = Icons.Filled.CheckCircle,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(150.dp),
+                                        tint = Color.Green
                                     )
                                 } else {
                                     Icon(
@@ -131,7 +135,6 @@ fun LongTermLoanApplicationStatusContent(
                                 }
                             }
                         }
-
                         AnimatedVisibility(
 
                             visible = false
@@ -155,7 +158,7 @@ fun LongTermLoanApplicationStatusContent(
                                 horizontalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    text = "TRANSACTION SUCCESSFUL!",
+                                    text = "Loan Application  SUCCESSFUL!",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 22.sp,
                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
@@ -164,18 +167,6 @@ fun LongTermLoanApplicationStatusContent(
                                 )
                             }
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth().padding(top = 15.dp),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = "You paid KES ${formatMoney(3000.0)} to ${OrganisationModel.organisation.tenant_name}",
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 14.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
-                                    textAlign = TextAlign.Center
-                                )
-                            }
                         } else {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),

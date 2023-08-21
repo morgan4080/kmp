@@ -354,6 +354,7 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
             Result.failure(e)
         }
     }
+
     override suspend fun deleteFavouriteGuarantor(
         token: String,
         refId: String
@@ -362,6 +363,21 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
             val response = prestaLongTermLoansClient.deleteFavouriteGuarantor(
                 token = token,
                 refId = refId
+            )
+            Result.success(response)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+    override suspend fun deleteLoanRequest(
+        token: String,
+        loanRequestNumber: String
+    ): Result<String> {
+        return try {
+            val response = prestaLongTermLoansClient.deleteLoanRequest(
+                token = token,
+                loanRequestNumber= loanRequestNumber
             )
             Result.success(response)
         } catch (e: Exception) {

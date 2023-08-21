@@ -188,6 +188,8 @@ fun UserInformation(
                         ) {
                             ActionButton(
                                 label = "Submit  Loan Request", onClickContainer = {
+                                    //Todo show pop up to handle loanreQuest Errors
+
 //                                    authState.cachedMemberData?.let {
 //                                        ApplyLongTermLoansStore.Intent.RequestLongTermLoan(
 //                                            token = it.accessToken,

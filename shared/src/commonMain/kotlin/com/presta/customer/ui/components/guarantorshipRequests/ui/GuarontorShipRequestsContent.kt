@@ -24,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Contacts
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.CardDefaults
@@ -80,8 +81,8 @@ fun GuarantorShipRequestsContent(
     var guarantorshipRequestRefId by remember { mutableStateOf("") }
     var amountToGuarantee by remember { mutableStateOf("") }
     var loanNumber by remember { mutableStateOf("") }
-    if(signHomeState.prestaTenantByPhoneNumber?.refId!=null){
-        memberRefId= signHomeState.prestaTenantByPhoneNumber.refId
+    if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
+        memberRefId = signHomeState.prestaTenantByPhoneNumber.refId
     }
     if (loanRequestRefId != "") {
         LaunchedEffect(
@@ -111,7 +112,7 @@ fun GuarantorShipRequestsContent(
             authState.cachedMemberData?.let {
                 ApplyLongTermLoansStore.Intent.GetPrestaGuarantorshipRequests(
                     token = it.accessToken,
-                    memberRefId ="CQ4uQ8vfcXF712SD" //memberRefId
+                    memberRefId = memberRefId//memberRefId
                 )
             }?.let {
                 onEvent(
@@ -236,22 +237,25 @@ fun GuarantorShipRequestsContent(
                             modifier = Modifier
                                 .size(70.dp)
                                 .clickable {
-//                                    authState.cachedMemberData?.let {
-//                                        ApplyLongTermLoansStore.Intent.GetGuarantorAcceptanceStatus(
-//                                            token = it.accessToken,
-//                                            guarantorshipRequestRefId = guarantorshipRequestRefId,
-//                                            isAccepted = true
-//                                        )
-//                                    }?.let {
-//                                        onEvent(
-//                                            it
-//                                        )
-//                                    }
-                                    component.onAcceptSelected(
-                                        loanNumber = loanNumber,
-                                        amount = if (amountToGuarantee != "") amountToGuarantee.toDouble() else 0.0,
-                                        loanRequestRefId = loanRequestRefId
-                                    )
+                                    authState.cachedMemberData?.let {
+                                        ApplyLongTermLoansStore.Intent.GetGuarantorAcceptanceStatus(
+                                            token = it.accessToken,
+                                            guarantorshipRequestRefId = guarantorshipRequestRefId,
+                                            isAccepted = true
+                                        )
+                                    }?.let {
+                                        onEvent(
+                                            it
+                                        )
+                                    }
+                                    signHomeState.prestaTenantByPhoneNumber?.refId?.let {
+                                        component.onAcceptSelected(
+                                            loanNumber = loanNumber,
+                                            amount = if (amountToGuarantee != "") amountToGuarantee.toDouble() else 0.0,
+                                            loanRequestRefId = loanRequestRefId,
+                                            memberRefId = it
+                                        )
+                                    }
                                     modalBottomScope.launch { modalBottomState.hide() }
                                 }
                                 .clip(shape = CircleShape),
@@ -273,7 +277,6 @@ fun GuarantorShipRequestsContent(
                             modifier = Modifier
                                 .size(70.dp)
                                 .clickable {
-
                                     //Request Declined
 //                                    authState.cachedMemberData?.let {
 //                                        ApplyLongTermLoansStore.Intent.GetGuarantorAcceptanceStatus(
@@ -440,7 +443,7 @@ fun GuarantorsRequestsView(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = Icons.Filled.Contacts,
+                    imageVector = Icons.Filled.Person,
                     contentDescription = null,
                     modifier = Modifier
                         .size(30.dp)

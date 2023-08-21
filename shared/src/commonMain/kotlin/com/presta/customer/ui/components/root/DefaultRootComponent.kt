@@ -65,8 +65,10 @@ import com.presta.customer.ui.components.rootBottomStack.DefaultRootBottomCompon
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
 import com.presta.customer.ui.components.selectLoanPurpose.DefaultSelectLoanPurposeComponent
 import com.presta.customer.ui.components.selectLoanPurpose.SelectLoanPurposeComponent
-import com.presta.customer.ui.components.signDocument.DefaultSignDocumentComponent
-import com.presta.customer.ui.components.signDocument.SignDocumentComponent
+import com.presta.customer.ui.components.signGuarantorForm.DefaultSignGuarantorFormComponent
+import com.presta.customer.ui.components.signGuarantorForm.SignGuarantorFormComponent
+import com.presta.customer.ui.components.signLoanForm.DefaultSignLoanFormComponent
+import com.presta.customer.ui.components.signLoanForm.SignLoanFormComponent
 import com.presta.customer.ui.components.splash.DefaultSplashComponent
 import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.tenant.DefaultTenantComponent
@@ -96,6 +98,7 @@ class DefaultRootComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
 ) : RootComponent, ComponentContext by componentContext {
+
 
     private val navigation = StackNavigation<Config>()
 
@@ -220,6 +223,11 @@ class DefaultRootComponent(
 
         is Config.SignDocument -> RootComponent.Child.SignDocumentChild(
             signDocumentComponent(
+                componentContext, config
+            )
+        )
+        is Config.SignLoanForm -> RootComponent.Child.SignLoanFormChild(
+            signLoanForm(
                 componentContext, config
             )
         )
@@ -562,6 +570,15 @@ class DefaultRootComponent(
                 //navigate  to replace  guarantor
                 navigation.push(Config.ReplaceGuarantor)
 
+            },
+            //Todo--- handle the sign loan form  state--------
+            gotoSignLoanForm ={loanNumber, amount, loanRequestRefId, memberRefId ->
+                navigation.push(Config.SignLoanForm(
+                    loanNumber = loanNumber,
+                    amount = amount,
+                    loanRequestRefId = loanRequestRefId,
+                    memberRefId = memberRefId
+                ))
             }
         )
 
@@ -712,13 +729,14 @@ class DefaultRootComponent(
                 navigation.pop()
 
             },
-            onAcceptClicked = { loanNumber, amount, loanRequestRefId ->
+            onAcceptClicked = { loanNumber, amount, loanRequestRefId,memberRefId ->
                 //Navigate to sign
                 navigation.push(
                     Config.SignDocument(
                         loanNumber = loanNumber,
                         amount = amount,
-                        loanRequestRefId = loanRequestRefId
+                        loanRequestRefId = loanRequestRefId,
+                        memberRefId = memberRefId
                     )
                 )
 
@@ -810,8 +828,8 @@ class DefaultRootComponent(
     private fun signDocumentComponent(
         componentContext: ComponentContext,
         config: Config.SignDocument
-    ): SignDocumentComponent =
-        DefaultSignDocumentComponent(
+    ): SignGuarantorFormComponent =
+        DefaultSignGuarantorFormComponent(
             componentContext = componentContext,
             onItemClicked = {
                 navigation.pop()
@@ -830,9 +848,35 @@ class DefaultRootComponent(
                     navigation.bringToFront(Config.LongTermLoanApplicationStatus)
                 }
             },
-            sign = false
+            sign = false,
+            memberRefId = config.memberRefId
         )
+    private fun signLoanForm(
+        componentContext: ComponentContext,
+        config: Config.SignLoanForm
+    ): SignLoanFormComponent =
+        DefaultSignLoanFormComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
 
+            },
+            onProductClicked = {
+            },
+            loanNumber = config.loanNumber,
+            amount = config.amount,
+            loanRequestRefId = config.loanRequestRefId,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            onDocumentSignedClicked = {signed->
+                //when doc is signed navigate
+                if (signed==true){
+                    navigation.bringToFront(Config.LongTermLoanApplicationStatus)
+                }
+            },
+            sign = false,
+            memberRefId = config.memberRefId
+        )
     private fun replaceGuarantorComponent(componentContext: ComponentContext): ReplaceGuarantorComponent =
         DefaultReplaceGuarantorComponent(
             componentContext = componentContext,
@@ -849,7 +893,6 @@ class DefaultRootComponent(
     enum class OnBoardingContext {
         LOGIN, REGISTRATION
     }
-
     private sealed class Config : Parcelable {
         @Parcelize
         data class Tenant(val onBoardingContext: OnBoardingContext) : Config()
@@ -993,7 +1036,15 @@ class DefaultRootComponent(
         data class SignDocument(
             val loanNumber: String,
             val amount: Double,
-            val loanRequestRefId: String
+            val loanRequestRefId: String,
+            val memberRefId: String,
+        ) : Config()
+        @Parcelize
+        data class SignLoanForm(
+            val loanNumber: String,
+            val amount: Double,
+            val loanRequestRefId: String,
+            val memberRefId: String,
         ) : Config()
 
         @Parcelize

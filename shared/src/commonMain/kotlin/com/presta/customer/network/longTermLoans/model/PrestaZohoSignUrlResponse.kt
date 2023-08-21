@@ -7,10 +7,12 @@ data class PrestaZohoSignUrlResponse(
     val signURL: String,
     val success: Boolean,
     val message: String,
-    )
+)
 
 
 @Serializable
-enum class ActorType{
-  GUARANTOR
+enum class ActorType {
+    GUARANTOR,
+    WITNESS,
+    APPLICANT
 }

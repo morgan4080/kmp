@@ -5,12 +5,19 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.ContactsContract
 
-actual class AndroidContactPicker(private val activity: Activity) : ContactPicker {
+actual class AndroidContactPicker actual constructor(
+) : ContactPicker {
+    private val activity2 = Activity()
     actual override fun pickContact(onContactPicked: (name: String?, phoneNumber: String?) -> Unit) {
         val intent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
-        activity.startActivityForResult(intent, PICK_CONTACT_REQUEST_CODE)
+        activity2.startActivityForResult(intent, PICK_CONTACT_REQUEST_CODE)
     }
-    fun handleActivityResult(requestCode: Int, resultCode: Int, data: Intent?, onContactPicked: (name: String?, phoneNumber: String?) -> Unit) {
+    fun handleActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?,
+        onContactPicked: (name: String?, phoneNumber: String?) -> Unit
+    ) {
         if (requestCode == PICK_CONTACT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             // Get the contact URI
             val contactUri = data?.data
@@ -25,12 +32,11 @@ actual class AndroidContactPicker(private val activity: Activity) : ContactPicke
             onContactPicked(null, null)
         }
     }
+
     private fun getContactInfo(contactUri: Uri): Pair<String?, String?> {
-        // Use the contactUri to query the contact details and retrieve the name and phone number
-        // Implement this part to extract the name and phone number based on the selected contactUri.
-        // For example:
+        //test
         val name = "Dennis"
-        val phoneNumber = "123-456-7890"
+        val phoneNumber = "123333"
         return Pair(name, phoneNumber)
     }
     actual companion object {

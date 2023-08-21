@@ -1,41 +1,47 @@
-package com.presta.customer.ui.components.longTermLoanRequestsList
+package com.presta.customer.ui.components.signLoanForm
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.presta.customer.Platform
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStoreFactory
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
+import com.presta.customer.ui.components.profile.CoroutineScope
 import com.presta.customer.ui.components.profile.coroutineScope
-import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
-import com.presta.customer.ui.components.signAppHome.store.SignHomeStoreFactory
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import kotlin.coroutines.CoroutineContext
 
-class DefaultLongTermLoansRequestsComponent(
+fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
+    CoroutineScope(context, lifecycle)
+
+class DefaultSignLoanFormComponent (
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
-    private val onSelected: (item: String) -> Unit,
-    private val onNavigateBackCLicked: () -> Unit,
-    private val onReplaceGuarantorCLicked: () -> Unit,
-    private val navigateToSignLoanFormCLicked: (
-        loanNumber: String,
-        amount: Double,
-        loanRequestRefId: String,
-        memberRefId: String
-    ) -> Unit
-) : LongTermLoanRequestsComponent, ComponentContext by componentContext {
+    private val onItemClicked: () -> Unit,
+    private val onDocumentSignedClicked: (sign: Boolean) -> Unit,
+    private val onProductClicked: () -> Unit,
+    override val loanNumber: String,
+    override val amount: Double,
+    override val loanRequestRefId: String,
+    override var sign: Boolean,
+    override val memberRefId: String,
+): SignLoanFormComponent, ComponentContext by componentContext, KoinComponent {
 
+    override val platform by inject<Platform>()
     private val scope = coroutineScope(mainContext + SupervisorJob())
-
     override val authStore: AuthStore =
         instanceKeeper.getStore {
             AuthStoreFactory(
@@ -70,21 +76,6 @@ class DefaultLongTermLoansRequestsComponent(
         applyLongTermLoansStore.accept(event)
     }
 
-    override val sigHomeStore: SignHomeStore =
-        instanceKeeper.getStore {
-            SignHomeStoreFactory(
-                storeFactory = storeFactory
-            ).create()
-        }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val signHomeState: StateFlow<SignHomeStore.State> =
-        sigHomeStore.stateFlow
-
-    override fun onProfileEvent(event: SignHomeStore.Intent) {
-        sigHomeStore.accept(event)
-    }
-
     private var authUserScopeJob: Job? = null
     private fun checkAuthenticatedUser() {
         if (authUserScopeJob?.isActive == true) return
@@ -97,45 +88,39 @@ class DefaultLongTermLoansRequestsComponent(
                             token = state.cachedMemberData.accessToken
                         )
                     )
-                    onProfileEvent(
-                        SignHomeStore.Intent.GetPrestaTenantByPhoneNumber(
+                    onEvent(
+                        ApplyLongTermLoansStore.Intent.GetLongTermLoansProducts(
                             token = state.cachedMemberData.accessToken,
-                            phoneNumber = state.cachedMemberData.phoneNumber
                         )
                     )
                 }
             }
         }
     }
-
-    override fun onSelected(item: String) {
-        onSelected(item)
+    override fun onBackNavClicked() {
+        onItemClicked()
     }
 
-    override fun navigateToHome() {
-        onNavigateBackCLicked()
+    override fun onProductSelected() {
+      onProductClicked()
     }
 
-    override fun navigateToReplaceGuarantor() {
-        onReplaceGuarantorCLicked()
+    override fun onDocumentSigned(
+        sign: Boolean) {
+    onDocumentSignedClicked(sign)
     }
-
-    override fun navigateToSignLoanForm(
-        loanNumber: String,
-        amount: Double,
-        loanRequestRefId: String,
-        memberRefId: String
-    ) {
-        navigateToSignLoanFormCLicked(
-            loanNumber,
-            amount,
-            loanRequestRefId,
-            memberRefId
-        )
-    }
-
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         checkAuthenticatedUser()
+//        lifecycle.subscribe(
+//            object : Lifecycle.Callbacks {
+//                override fun onResume() {
+//                    super.onResume()
+//                        onDocumentSigned(sign = sign)
+//
+//                }
+//            }
+//        )
     }
+
 }

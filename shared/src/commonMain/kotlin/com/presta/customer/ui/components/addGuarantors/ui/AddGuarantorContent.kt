@@ -38,6 +38,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.Contacts
 import androidx.compose.material.icons.outlined.Error
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.PersonRemove
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ButtonDefaults
@@ -81,6 +82,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import com.presta.customer.AndroidContactPicker
+import com.presta.customer.ContactPicker
 import com.presta.customer.MR
 import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
@@ -93,10 +96,13 @@ import com.presta.customer.ui.composables.LiveTextContainer
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.SelfEmployedDetails
 import com.presta.customer.ui.helpers.LocalSafeArea
+import com.presta.customer.ui.helpers.formatMoney
 import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.backArrowColor
 import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import io.ktor.util.reflect.instanceOf
+import io.ktor.util.sha1
 import kotlinx.coroutines.launch
 
 class SnackbarVisualsWithError(
@@ -153,11 +159,6 @@ fun AddGuarantorContent(
     var businessType by remember { mutableStateOf("") }
     var amountToGuarantee by remember { mutableStateOf(TextFieldValue()) }
     var launchGuarantorListing by remember { mutableStateOf(false) }
-    var trueId by remember { mutableStateOf("") }
-    if (signHomeState.prestaTenantByPhoneNumber?.phoneNumber != null) {
-        trueId = signHomeState.prestaTenantByPhoneNumber.phoneNumber
-    }
-
     if (memberNumber != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -207,8 +208,6 @@ fun AddGuarantorContent(
         guarantorDataListed -= item
     }
     //Todo------handle Witness selection when required to add a witness
-    //add an id to the data  based on if self guarantee is allowed
-    //Sourece of truth to add the guarantor
     var violateSelfGuarantee by remember { mutableStateOf(false) }
     LaunchedEffect(
         guarantorDataListed
@@ -600,7 +599,7 @@ fun AddGuarantorContent(
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .background(color = MaterialTheme.colorScheme.background)
+                                    .background(color = Color(0xFFE5F1F5))
                             ) {
                                 Row(
                                     modifier = Modifier.padding(10.dp),
@@ -608,19 +607,24 @@ fun AddGuarantorContent(
                                 ) {
                                     androidx.compose.material3.IconButton(
                                         modifier = Modifier
+                                            .size(25.dp)
+                                            .clip(shape = CircleShape)
                                             .background(Color(0xFFE5F1F5)),
                                         onClick = {
                                             //load Contacts
                                             //Todo----open  the contacts library and take the selected contact
-                                            //test the duplicates
-                                            println("found the duplicates" + state.prestaClientSettings?.response?.allowSelfGuarantee)
+                                                  val androidContactsPicker= AndroidContactPicker()
+                                            androidContactsPicker.pickContact(onContactPicked = {
+                                                name, phoneNumber ->
 
+                                                println("name is;;; " + name)
+                                                println("phone number is is;;; " + phoneNumber)
+                                            })
                                         },
                                         content = {
                                             Icon(
-                                                imageVector = Icons.Outlined.Contacts,
-                                                modifier = Modifier
-                                                    .size(25.dp),
+                                                imageVector = Icons.Outlined.Person,
+                                                modifier = Modifier,
                                                 contentDescription = null,
                                                 tint = MaterialTheme.colorScheme.primary
                                             )
@@ -648,7 +652,7 @@ fun AddGuarantorContent(
                         item {
                             Spacer(modifier = Modifier.padding(top = 30.dp))
                         }
-                        if (guarantorOption == "") {
+                        if (guarantorDataListed.isEmpty()) {
                             item {
                                 Row(
                                     modifier = Modifier
@@ -681,7 +685,7 @@ fun AddGuarantorContent(
                                                 .background(MaterialTheme.colorScheme.background)
                                         ) {
                                             GuarantorsDetailsView(
-                                                label = item.guarantorFirstName + " " + item.guarantorFirstName,
+                                                label = item.guarantorFirstName + " " + item.guarantorLastName,
                                                 onClick = {
                                                     //call back executed
                                                     clearItemClicked(item)
@@ -689,7 +693,7 @@ fun AddGuarantorContent(
                                                 selected = true,
                                                 phoneNumber = item.phoneNumber,
                                                 memberNumber = item.memberNumber,
-                                                amount = item.amount.toDouble(),
+                                                amount = formatMoney(item.amount.toDouble()).toDouble(),
                                             )
                                         }
                                     }

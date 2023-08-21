@@ -1,11 +1,6 @@
-package com.presta.customer.ui.components.signDocument
+package com.presta.customer.ui.components.signGuarantorForm
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
@@ -31,7 +26,7 @@ import kotlin.coroutines.CoroutineContext
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
 
-class DefaultSignDocumentComponent (
+class DefaultSignGuarantorFormComponent (
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
@@ -42,8 +37,8 @@ class DefaultSignDocumentComponent (
     override val amount: Double,
     override val loanRequestRefId: String,
     override var sign: Boolean,
-): SignDocumentComponent, ComponentContext by componentContext, KoinComponent {
-
+    override val memberRefId: String,
+): SignGuarantorFormComponent, ComponentContext by componentContext, KoinComponent {
     override val platform by inject<Platform>()
     private val scope = coroutineScope(mainContext + SupervisorJob())
     override val authStore: AuthStore =

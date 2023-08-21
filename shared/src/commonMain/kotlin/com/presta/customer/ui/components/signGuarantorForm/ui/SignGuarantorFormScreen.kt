@@ -1,19 +1,16 @@
-package com.presta.customer.ui.components.signDocument.ui
+package com.presta.customer.ui.components.signGuarantorForm.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.arkivanov.essenty.lifecycle.Lifecycle
-import com.presta.customer.ui.components.auth.store.AuthStore
-import com.presta.customer.ui.components.signDocument.SignDocumentComponent
-import org.koin.core.KoinApplication.Companion.init
+import com.presta.customer.ui.components.signGuarantorForm.SignGuarantorFormComponent
 
 @Composable
-fun SignDocumentScreen(component: SignDocumentComponent) {
+fun SignGuarantorFormScreen(component: SignGuarantorFormComponent) {
     val applyLongTermLoansState by component.applyLongTermLoansState.collectAsState()
     val authState by component.authState.collectAsState()
 
-    SignDocumentContent(
+    SignGuarantorFormContent(
         component = component,
         state = applyLongTermLoansState,
         authState = authState,

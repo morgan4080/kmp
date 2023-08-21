@@ -4,6 +4,7 @@ import ShimmerBrush
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -40,6 +42,9 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,6 +63,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.ui.components.addGuarantors.ui.SnackbarVisualsWithError
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.longTermLoanRequestsList.LongTermLoanRequestsComponent
@@ -67,6 +73,9 @@ import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.helpers.formatMoney
 import com.presta.customer.ui.theme.backArrowColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
@@ -85,10 +94,17 @@ fun LongTermLoanRequestsContent(
     )
     var memBerRefId by remember { mutableStateOf("") }
     var loanRequestRefId by remember { mutableStateOf("") }
+    var loanAmount by remember { mutableStateOf("") }
+    var loanNumber by remember { mutableStateOf("") }
+    var loanRequestNumber by remember { mutableStateOf("") }
     var selectedIndex by remember { mutableStateOf(-1) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val snackBarScope = rememberCoroutineScope()
+    val coroutineScope = CoroutineScope(Dispatchers.Main)
     if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         memBerRefId = signHomeState.prestaTenantByPhoneNumber.refId
     }
+
     val scope = rememberCoroutineScope()
     if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         LaunchedEffect(
@@ -164,11 +180,11 @@ fun LongTermLoanRequestsContent(
 
                         Row(modifier = Modifier.fillMaxWidth()) {
                             Text(
-                                text = if (state.prestaLoanByLoanRequestRefId?.loanProductName != null) state.prestaLoanByLoanRequestRefId.loanProductName + " " + formatMoney(
+                                text = if (state.prestaLoanByLoanRequestRefId?.loanProductName != null) state.prestaLoanByLoanRequestRefId.loanProductName.uppercase() + " " + formatMoney(
                                     state.prestaLoanByLoanRequestRefId.loanAmount
                                 ) else "",
-                                fontSize = 14.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                fontSize = 16.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
                             )
 
                         }
@@ -180,9 +196,93 @@ fun LongTermLoanRequestsContent(
                             Text(
                                 text = if (state.prestaLoanByLoanRequestRefId?.loanRequestProgress != null) state.prestaLoanByLoanRequestRefId.loanRequestProgress.toString() + "% DONE" else "",
                                 fontSize = 12.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                             )
 
+                        }
+                        Row(
+                            modifier = Modifier
+                                .padding(top = 10.dp)
+                                .fillMaxWidth()
+                        ) {
+                            OutlinedButton(
+                                onClick = {
+                                    //sign the application form
+                                    //navigate to sign
+                                    scope.launch { modalBottomSheetState.hide() }
+                                    if (loanAmount != "") {
+                                        signHomeState.prestaTenantByPhoneNumber?.let {
+                                            component.navigateToSignLoanForm(
+                                                loanNumber = loanNumber,
+                                                amount = loanAmount.toDouble(),
+                                                loanRequestRefId = loanRequestRefId,
+                                                memberRefId = it.refId,
+                                            )
+                                        }
+                                    }
+                                },
+                                modifier = Modifier.padding(top = 16.dp),
+                                shape = CircleShape,
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                                colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primary)
+                            ) {
+                                Text(
+                                    modifier = Modifier,
+                                    text = "Sign Application Form ",
+                                    color = MaterialTheme.colorScheme.background,
+                                    fontSize = 12.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                )
+                            }
+                            OutlinedButton(
+                                onClick = {
+                                    //Todo---delete loan Request---delay checking condition to wait for execution
+                                    //Delete the loan request
+                                    if (loanRequestNumber != "") {
+                                        authState.cachedMemberData?.let {
+                                            ApplyLongTermLoansStore.Intent.DeleteLoanRequest(
+                                                token = it.accessToken,
+                                                loanRequestNumber = loanRequestNumber
+                                            )
+
+                                        }?.let {
+                                            onEvent(
+                                                it
+                                            )
+                                        }
+                                    }
+                                    coroutineScope.launch {
+                                        delay(1000)
+                                        if (state.deleteLoanRequestResponse.toString() == "SUCCESS") {
+                                            snackBarScope.launch {
+                                                snackbarHostState.showSnackbar(
+                                                    SnackbarVisualsWithError(
+                                                        "Loan Deleted successfully",
+                                                        isError = true
+                                                    )
+                                                )
+                                            }
+                                        }
+                                    }
+                                    scope.launch { modalBottomSheetState.hide() }
+                                },
+                                modifier = Modifier
+                                    .padding(
+                                        top = 16.dp,
+                                        start = 10.dp
+                                    ),
+                                shape = CircleShape,
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
+                                colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.error)
+                            ) {
+                                Text(
+                                    modifier = Modifier,
+                                    text = "Void Loan request",
+                                    color = MaterialTheme.colorScheme.background,
+                                    fontSize = 12.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                )
+                            }
                         }
                         Row(
                             modifier = Modifier
@@ -192,7 +292,8 @@ fun LongTermLoanRequestsContent(
                             Text(
                                 "GUARANTORS  STATUS",
                                 fontSize = 13.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                color = MaterialTheme.colorScheme.primary
                             )
                         }
                         //guarantor Listing
@@ -221,9 +322,42 @@ fun LongTermLoanRequestsContent(
     ) {
         Scaffold(
             modifier = Modifier.padding(LocalSafeArea.current),
+            snackbarHost = {
+                SnackbarHost(snackbarHostState) { data ->
+                    val isError = (data.visuals as? SnackbarVisualsWithError)?.isError ?: false
+                    val buttonColor = if (isError) {
+                        ButtonDefaults.textButtonColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                            contentColor = MaterialTheme.colorScheme.error
+                        )
+                    } else {
+                        ButtonDefaults.textButtonColors(
+                            contentColor = MaterialTheme.colorScheme.inversePrimary
+                        )
+                    }
+                    Snackbar(
+                        modifier = Modifier.padding(bottom = 80.dp, start = 16.dp, end = 16.dp),
+                        action = {
+                            androidx.compose.material.IconButton(
+                                onClick = { if (isError) data.dismiss() else data.performAction() },
+                            ) {
+                                Icon(
+                                    Icons.Filled.Cancel,
+                                    contentDescription = "Cancel  Arrow",
+                                    tint = backArrowColor,
+                                    modifier = Modifier.clickable {
+                                        if (isError) data.dismiss() else data.performAction()
+                                    }
+                                )
+                            }
+                        }
+                    ) {
+                        Text(data.visuals.message)
+                    }
+                }
+            },
             topBar = {
                 NavigateBackTopBar(label = "Loan Requests", onClickContainer = {
-                    //navigate to profile
                     component.navigateToHome()
                 })
             },
@@ -268,7 +402,7 @@ fun LongTermLoanRequestsContent(
 
                         }
                     } else {
-                        if (state.prestaLongTermLoansRequestsList?.content.isNullOrEmpty()){
+                        if (state.prestaLongTermLoansRequestsList?.content.isNullOrEmpty()) {
                             item {
                                 Column(
                                     modifier = Modifier
@@ -301,7 +435,7 @@ fun LongTermLoanRequestsContent(
                                     )
                                 }
                             }
-                        }else{
+                        } else {
                             state.prestaLongTermLoansRequestsList?.content?.map { loanlistingData ->
                                 item {
                                     Column(
@@ -312,6 +446,9 @@ fun LongTermLoanRequestsContent(
                                         LongTermLoanRequestsListContainer(
                                             onClickContainer = {
                                                 loanRequestRefId = loanlistingData.refId
+                                                loanAmount = loanlistingData.loanAmount.toString()
+                                                loanNumber = loanlistingData.loanRequestNumber
+                                                loanRequestNumber = loanlistingData.loanRequestNumber
                                                 scope.launch { modalBottomSheetState.show() }
                                             },
                                             loanProductName = loanlistingData.loanProductName,
@@ -345,7 +482,7 @@ fun GuarantorListingContainer(
     acceptanceStatus: String,
     onClickReplaceGuarantor: () -> Unit,
 
-) {
+    ) {
     var showExpanded by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
@@ -362,14 +499,16 @@ fun GuarantorListingContainer(
             Text(
                 guarantorName,
                 fontSize = 13.sp,
-                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
             )
             //progress indicator
-            LinearProgressWithPercentage(progress = 0.5f,
+
+            LinearProgressWithPercentage(progress = 0.0f,
                 onClick = {
                     onClick.invoke(index)
                     showExpanded = !showExpanded
                 })
+
             IconButton(
                 modifier = Modifier
                     .clip(CircleShape)
@@ -534,25 +673,32 @@ fun GuarantorListingContainer(
                 }
                 //Replace guarantor
                 item {
-                    OutlinedButton(
-                        onClick = onClickReplaceGuarantor,
-                        modifier = Modifier.padding(top = 16.dp),
-                        shape = CircleShape,
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
-                        colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.onBackground)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
                     ) {
-                        Text(
-                            modifier = Modifier,
-                            text = "Replace  Guarantor",
-                            color = MaterialTheme.colorScheme.background,
-                            fontSize = 12.sp
-                        )
+                        OutlinedButton(
+                            onClick = onClickReplaceGuarantor,
+                            modifier = Modifier.padding(top = 16.dp),
+                            shape = CircleShape,
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
+                            colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.onBackground)
+                        ) {
+                            Text(
+                                modifier = Modifier,
+                                text = "Replace  Guarantor",
+                                color = MaterialTheme.colorScheme.background,
+                                fontSize = 12.sp
+                            )
+                        }
                     }
                 }
             }
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LongTermLoanRequestsListContainer(
@@ -727,13 +873,24 @@ fun LinearProgressWithPercentage(
     ) {
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            LinearProgressIndicator(
-                progress = progress,
+            Row(
                 modifier = Modifier
-                    .clip(shape = RoundedCornerShape(16.dp))
-                    .height(10.dp)
-            )
-
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(16.dp)
+                    ),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                LinearProgressIndicator(
+                    progress = progress,
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(16.dp))
+                        .height(10.dp),
+                    color = MaterialTheme.colorScheme.inverseOnSurface,
+                    trackColor = MaterialTheme.colorScheme.inverseOnSurface
+                )
+            }
         }
         Row(
             modifier = Modifier
@@ -759,6 +916,7 @@ fun LinearProgressWithPercentage(
         }
     }
 }
+
 @Composable
 fun LoanApplicationProgress(
     progress: Float,

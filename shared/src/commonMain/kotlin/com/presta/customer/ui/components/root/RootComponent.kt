@@ -23,7 +23,8 @@ import com.presta.customer.ui.components.replaceGuarantor.ReplaceGuarantorCompon
 import com.presta.customer.ui.components.rootBottomSign.RootBottomSignComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
 import com.presta.customer.ui.components.selectLoanPurpose.SelectLoanPurposeComponent
-import com.presta.customer.ui.components.signDocument.SignDocumentComponent
+import com.presta.customer.ui.components.signGuarantorForm.SignGuarantorFormComponent
+import com.presta.customer.ui.components.signLoanForm.SignLoanFormComponent
 import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.tenant.TenantComponent
 import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
@@ -34,9 +35,6 @@ interface RootComponent {
 
     val childStack: Value<ChildStack<*, Child>>
     //get  the guarantor sign status to navigate user to appropriate screen
-
-
-
     sealed class Child {
         class TenantChild(val component: TenantComponent) : Child()
         class SplashChild(val component: SplashComponent) : Child()
@@ -64,7 +62,8 @@ interface RootComponent {
         class WitnessRequestChild(val component: WitnessRequestComponent): Child()
         class LongTermLoanConfirmationChild(val component: LongTermLoanConfirmationComponent): Child()
         class LongTermLoanApplicationStatusChild(val component: LongtermLoansApplicationStatusComponent): Child()
-        class SignDocumentChild(val component: SignDocumentComponent): Child()
+        class SignDocumentChild(val component: SignGuarantorFormComponent): Child()
+        class SignLoanFormChild(val component: SignLoanFormComponent): Child()
         class ReplaceGuarantorChild(val component: ReplaceGuarantorComponent): Child()
 
     }

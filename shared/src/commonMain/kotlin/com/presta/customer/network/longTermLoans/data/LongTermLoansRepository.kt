@@ -126,4 +126,8 @@ interface LongTermLoansRepository {
         token: String,
         refId: String
     ): Result<String>
+    suspend fun deleteLoanRequest(
+        token: String,
+        loanRequestNumber: String
+    ): Result<String>
 }

@@ -104,7 +104,8 @@ class ApplyLongTermLoansStoreFactory(
 
         data class FavouriteGuarantorDeleted(val favouriteGuarantorDeletedResponse: String) :
             Msg()
-
+        data class LoanRequestDeleted (val loanRequestDeleted : String) :
+            Msg()
         data class LongTermLoansFailed(val error: String?) : Msg()
     }
 
@@ -230,6 +231,10 @@ class ApplyLongTermLoansStoreFactory(
                     token = intent.token,
                     refId = intent.refId
 
+                )
+                is ApplyLongTermLoansStore.Intent.DeleteLoanRequest -> deleteLoanRequest(
+                    token = intent.token,
+                    loanRequestNumber = intent.loanRequestNumber
                 )
 
             }
@@ -723,6 +728,25 @@ class ApplyLongTermLoansStoreFactory(
                 dispatch(Msg.LongTermLoansLoading(false))
             }
         }
+        private var deleteLoanRequestJob: Job? = null
+        private fun deleteLoanRequest(
+            token: String,
+            loanRequestNumber: String
+        ) {
+            if (deleteLoanRequestJob?.isActive == true) return
+            dispatch(Msg.LongTermLoansLoading())
+            deleteLoanRequestJob = scope.launch {
+                longTermLoansRepository.deleteLoanRequest(
+                    token,
+                    loanRequestNumber
+                ).onSuccess { response ->
+                    dispatch(Msg.LoanRequestDeleted(response))
+                }.onFailure { e ->
+                    dispatch(Msg.LongTermLoansFailed(e.message))
+                }
+                dispatch(Msg.LongTermLoansLoading(false))
+            }
+        }
     }
     private object ReducerImpl :
         Reducer<ApplyLongTermLoansStore.State, Msg> {
@@ -755,6 +779,7 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.FavouriteGuarantorLoaded -> copy(prestaFavouriteGuarantor = msg.favouriteGuarantorLoaded)
                 is Msg.AddedFavouriteGuarantorLoaded -> copy(prestaAdedFavouriteGuarantor = msg.addedfavouriteGuarantorLoaded)
                 is Msg.FavouriteGuarantorDeleted -> copy(deleteFavouriteGuarantorResponse = msg. favouriteGuarantorDeletedResponse)
+                is Msg.LoanRequestDeleted -> copy(deleteLoanRequestResponse =msg. loanRequestDeleted)
 
             }
     }

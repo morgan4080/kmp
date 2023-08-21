@@ -19,4 +19,12 @@ interface LongTermLoanRequestsComponent {
     fun onSelected(item: String)
     fun navigateToHome()
     fun navigateToReplaceGuarantor()
+    fun navigateToSignLoanForm(
+        loanNumber: String,
+        amount: Double,
+        loanRequestRefId: String,
+        memberRefId: String
+
+
+    )
 }

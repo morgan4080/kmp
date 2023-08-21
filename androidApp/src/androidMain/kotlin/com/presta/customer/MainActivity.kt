@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         const val READ_CONTACTS_PERMISSION_REQUEST_CODE = 123
     }
 
-    private val contactPicker = AndroidContactPicker(this)
+    private val contactPicker = AndroidContactPicker()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

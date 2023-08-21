@@ -115,6 +115,10 @@ interface ApplyLongTermLoansStore :
             val token: String,
             val refId: String
         ) : Intent()
+        data class DeleteLoanRequest(
+            val token: String,
+            val loanRequestNumber: String
+        ) : Intent()
     }
     data class State(
         val isLoading: Boolean = false,
@@ -138,6 +142,7 @@ interface ApplyLongTermLoansStore :
         val prestaFavouriteGuarantor: List<PrestaFavouriteGuarantorResponse> = emptyList(),
         val prestaAdedFavouriteGuarantor: PrestaFavouriteGuarantorResponse? = null,
         val deleteFavouriteGuarantorResponse: String? = null,
+        val deleteLoanRequestResponse: String? = null,
         val memberNo: String = "By Member No",
         val phoneNo: String = "By Phone No",
         val selfGuarantee: String = "Self Guarantee",
