@@ -29,12 +29,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
+import com.presta.customer.network.longTermLoans.client.DetailsData
 import com.presta.customer.network.longTermLoans.model.Guarantor
 import com.presta.customer.ui.components.addGuarantors.ui.SelectGuarantorsView
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
@@ -62,20 +64,25 @@ fun UserInformation(
     authState: AuthStore.State,
     signProfileState: SignHomeStore.State,
     onLongTermLoanEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
+    state: ApplyLongTermLoansStore.State,
 ) {
     var selectedIndex by remember { mutableStateOf(-1) }
     var launchDisbursementModePopUp by remember { mutableStateOf(false) }
     var launchPaymentModePopUp by remember { mutableStateOf(false) }
+    var launchHandleLoanRequestPopUp by remember { mutableStateOf(false) }
     var lastName by remember { mutableStateOf(TextFieldValue()) }
     var disbursementMode by remember { mutableStateOf("") }
     var repaymentMode by remember { mutableStateOf("") }
+    val pattern = remember { Regex("^\\d+\$") }
+    val numberTextPattern = remember { Regex("^[\\p{L}\\d ]+$") }
     val guarantorList = arrayListOf<Guarantor>()
     for (item in component.guarantorList) {
         val refId = item.guarantorRefId
         val amount = item.amount
         val guarantorName = item.guarantorFirstName
-        guarantorList.add(Guarantor(refId, amount,guarantorName))
+        guarantorList.add(Guarantor(refId, amount, guarantorName))
     }
+    //Todo---Pop up to handle the failed requsts message
     Column(modifier = Modifier.padding(top = 20.dp)) {
         LazyColumn() {
             if (signProfileState.prestaTenantByPhoneNumber?.firstName == null) {
@@ -120,7 +127,9 @@ fun UserInformation(
                         ) {
                             LiveTextContainer(
                                 userInput = lastName.text,
-                                label = "first Name"
+                                label = "first Name",
+                                keyboardType = KeyboardType.Text,
+                                pattern = numberTextPattern
                             ) {
                                 val inputValue: String = TextFieldValue(it).text
                                 lastName = TextFieldValue(it)
@@ -137,25 +146,33 @@ fun UserInformation(
                         Row(modifier = Modifier.fillMaxWidth()) {
                             LiveTextContainer(
                                 userInput = signProfileState.prestaTenantByPhoneNumber.lastName,
-                                label = "last name"
+                                label = "last name",
+                                keyboardType = KeyboardType.Text,
+                                pattern = numberTextPattern
                             )
                         }
                         Row(modifier = Modifier.fillMaxWidth()) {
                             LiveTextContainer(
                                 userInput = signProfileState.prestaTenantByPhoneNumber.idNumber,
-                                label = "ID number"
+                                label = "ID number",
+                                keyboardType = KeyboardType.Number,
+                                pattern = pattern
                             )
                         }
                         Row(modifier = Modifier.fillMaxWidth()) {
                             LiveTextContainer(
                                 userInput = signProfileState.prestaTenantByPhoneNumber.phoneNumber,
-                                label = "Phone Number"
+                                label = "Phone Number",
+                                keyboardType = KeyboardType.Number,
+                                pattern = pattern
                             )
                         }
                         Row(modifier = Modifier.fillMaxWidth()) {
                             LiveTextContainer(
                                 userInput = signProfileState.prestaTenantByPhoneNumber.email,
-                                label = "email"
+                                label = "email",
+                                keyboardType = KeyboardType.Text,
+                                pattern = numberTextPattern
                             )
                         }
                         Row(
@@ -189,46 +206,57 @@ fun UserInformation(
                             ActionButton(
                                 label = "Submit  Loan Request", onClickContainer = {
                                     //Todo show pop up to handle loanreQuest Errors
+                                    authState.cachedMemberData?.let {
+                                        ApplyLongTermLoansStore.Intent.RequestLongTermLoan(
+                                            token = it.accessToken,
+                                            details = DetailsData(
+                                                loan_purpose_1 = component.loanCategory,
+                                                loan_purpose_2 = component.loanPurpose,
+                                                loan_purpose_3 = component.loanPurposeCategory,
+                                                loanPurposeCode = component.loanPurposeCategoryCode,
+                                                loanPeriod = component.loanPeriod.toString(),
+                                                repayment_period = "4",
+                                                employer_name = component.employer,
+                                                employment_type = "Contract",
+                                                employment_number = component.employmentNumber,
+                                                business_location = component.businessLocation,
+                                                business_type = component.businessType,
+                                                net_salary = component.netSalary.toString(),
+                                                gross_salary = component.grossSalary.toString(),
+                                                disbursement_mode = disbursementMode,
+                                                repayment_mode = repaymentMode,
+                                                loan_type = component.loanType,
+                                                kraPin = component.kraPin
+                                            ),
+                                            loanProductName = component.loanType,
+                                            loanProductRefId = component.loanRefId,
+                                            selfCommitment = 0.0,
+                                            loanAmount = component.desiredAmount,
+                                            memberRefId = component.memberRefId,
+                                            memberNumber = signProfileState.prestaTenantByPhoneNumber.memberNumber,
+                                            witnessRefId = component.witnessRefId,
+                                            guarantorList = guarantorList,
+                                        )
+                                    }?.let {
+                                        onLongTermLoanEvent(
+                                            it
+                                        )
+                                    }
+                                    //Navigate to show the application Status
+                                    //Todo--handle reason of loan failure on a pop up navigate to sign form
+                                    //component.onProductSelected()
+                                    if (state.prestaLongTermLoanRequestData?.refId != null) {
+                                        component.navigateToSignLoanForm(
+                                            loanNumber = "",
+                                            amount = 0.0,
+                                            loanRequestRefId = "JOHiFKA6uPAWkWGw",
+                                            memberRefId = ""
+                                        )
+                                    } else {
+                                        //launch pop up to show reason of loan failure
+                                        launchHandleLoanRequestPopUp = true
 
-//                                    authState.cachedMemberData?.let {
-//                                        ApplyLongTermLoansStore.Intent.RequestLongTermLoan(
-//                                            token = it.accessToken,
-//                                            details = DetailsData(
-//                                                loan_purpose_1 = component.loanCategory,
-//                                                loan_purpose_2 = component.loanPurpose,
-//                                                loan_purpose_3 = component.loanPurposeCategory,
-//                                                loanPurposeCode = component.loanPurposeCategoryCode,
-//                                                loanPeriod = component.loanPeriod.toString(),
-//                                                repayment_period = "4",
-//                                                employer_name = component.employer,
-//                                                employment_type = "Contract",
-//                                                employment_number = component.employmentNumber,
-//                                                business_location = component.businessLocation,
-//                                                business_type = component.businessType,
-//                                                net_salary = component.netSalary.toString(),
-//                                                gross_salary = component.grossSalary.toString(),
-//                                                disbursement_mode = disbursementMode,
-//                                                repayment_mode = repaymentMode,
-//                                                loan_type = component.loanType,
-//                                                kraPin = component.kraPin
-//                                            ),
-//                                            loanProductName = component.loanType,
-//                                            loanProductRefId = component.loanRefId,
-//                                            selfCommitment = 0.0,
-//                                            loanAmount = component.desiredAmount,
-//                                            memberRefId = component.memberRefId,
-//                                            memberNumber = signProfileState.prestaTenantByPhoneNumber.memberNumber,
-//                                            witnessRefId = "",
-//                                            guarantorList = guarantorList,
-//                                        )
-//                                    }?.let {
-//                                        onLongTermLoanEvent(
-//                                            it
-//                                        )
-//                                    }
-                                  //Navigate to show the application Status
-                                    component.onProductSelected()
-
+                                    }
                                 },
                                 enabled = true,
                                 loading = false
@@ -526,6 +554,105 @@ fun UserInformation(
                                         ),
                                         onClick = {
                                             launchPaymentModePopUp = false
+                                        },
+                                        modifier = Modifier
+                                            .padding(end = 16.dp)
+                                            .height(30.dp),
+                                    ) {
+
+                                        Text(
+                                            text = "Proceed",
+                                            color = Color.White,
+                                            fontSize = 11.sp,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.align(Alignment.CenterVertically),
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            item {
+                //lauch pop up to handle loan Request Errors
+                if (launchHandleLoanRequestPopUp) {
+                    Popup {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                                .background(color = Color.Black.copy(alpha = 0.7f)),
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            ElevatedCard(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(
+                                        start = 26.dp,
+                                        end = 26.dp,
+                                        top = 40.dp,
+                                        bottom = 90.dp
+                                    ),
+                                colors = CardDefaults
+                                    .elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(start = 16.dp, end = 16.dp)
+                                ) {
+                                    Column(modifier = Modifier
+                                        .fillMaxWidth()) {
+                                        Text(text = "PENDING REASON",
+                                            modifier = Modifier.padding(top = 20.dp),
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.bold))
+                                        Text(text =  state.error.toString(),
+                                            modifier = Modifier.padding(top = 10.dp),
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                        )
+                                    }
+                                }
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(
+                                            top = 20.dp,
+                                            bottom = 10.dp,
+                                        ),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+
+                                    OutlinedButton(
+                                        border = BorderStroke(
+                                            width = 1.dp,
+                                            color = MaterialTheme.colorScheme.primary
+                                        ),
+                                        onClick = {
+                                            launchHandleLoanRequestPopUp = false
+                                        },
+                                        modifier = Modifier
+                                            .padding(start = 16.dp)
+                                            .height(30.dp),
+                                    ) {
+
+                                        Text(
+                                            text = "Dismiss",
+                                            fontSize = 11.sp,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.align(Alignment.CenterVertically),
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                        )
+
+                                    }
+                                    OutlinedButton(
+                                        colors = ButtonDefaults.outlinedButtonColors(containerColor = actionButtonColor),
+                                        border = BorderStroke(
+                                            width = 0.dp,
+                                            color = actionButtonColor
+                                        ),
+                                        onClick = {
+                                            launchHandleLoanRequestPopUp = false
                                         },
                                         modifier = Modifier
                                             .padding(end = 16.dp)

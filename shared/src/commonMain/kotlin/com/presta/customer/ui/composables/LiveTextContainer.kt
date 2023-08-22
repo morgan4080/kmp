@@ -41,9 +41,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.primaryColor
-
 @Composable
 fun LiveTextContainer(
+    keyboardType: KeyboardType,
+    pattern: Regex,
     userInput: String,
     label:String,
     callback: (userInput: String) -> Unit = {},
@@ -73,12 +74,14 @@ fun LiveTextContainer(
                     .absoluteOffset(y = 2.dp),
                 enabled = true,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text
+                    keyboardType = keyboardType
                 ),
                 value = userInputs,
                 onValueChange = {
-                    userInputs = it
-                    callback(userInputs.text)
+                    if (it.text.isEmpty() || it.text.matches(pattern)) {
+                        userInputs = it
+                        callback(userInputs.text)
+                    }
                 },
                 singleLine = true,
                 textStyle = TextStyle(
@@ -131,7 +134,6 @@ fun LiveTextContainer(
                             enter = fadeIn() + expandVertically(),
                             exit = fadeOut() + shrinkVertically(),
                         ) {
-
                             IconButton(
                                 modifier = Modifier.size(18.dp),
                                 onClick = { userInputs = emptyTextContainer },

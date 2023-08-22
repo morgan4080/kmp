@@ -11,11 +11,13 @@ fun LongTermLoanConfirmationScreen(
 ) {
     val authState by component.authState.collectAsState()
     val  signHomeStateState by component.signHomeState.collectAsState()
+    val applyLongTermLoansState by component.applyLongTermLoansState.collectAsState()
     LongTermLoanConfirmationContent(
         component = component,
         signProfileState = signHomeStateState,
         authState = authState,
-        onLongTermLoanEvent = component::onEvent
+        onLongTermLoanEvent = component::onEvent,
+        state = applyLongTermLoansState
     )
 
 }

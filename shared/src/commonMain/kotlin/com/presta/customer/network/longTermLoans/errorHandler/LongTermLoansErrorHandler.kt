@@ -22,7 +22,10 @@ suspend inline fun <reified T> longTermLoansErrorHandler(
 
     when(result.status.value) {
         in 200..299 -> Unit
-        in 400..499 -> throw LongTermLoansExceptions(LongTermLoansError.ClientError, null)
+        in 400..499 ->{
+            val data: Message = result.body()
+            throw LongTermLoansExceptions(LongTermLoansError.ClientError, "${data.message}: \n ${result.request.url}")
+        }
         500 -> {
             val data: Message = result.body()
             throw LongTermLoansExceptions(LongTermLoansError.ServerError, "${data.message}: \n ${result.request.url}")

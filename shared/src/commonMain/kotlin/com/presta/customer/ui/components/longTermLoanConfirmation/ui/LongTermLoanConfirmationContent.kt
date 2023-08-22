@@ -42,6 +42,7 @@ fun LongTermLoanConfirmationContent(
     signProfileState: SignHomeStore.State,
     authState: AuthStore.State,
     onLongTermLoanEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
+    state: ApplyLongTermLoansStore.State,
 ) {
     var tabs = listOf("User Information", "Loan Information")
     var tabIndex by remember { mutableStateOf(0) }
@@ -114,7 +115,7 @@ fun LongTermLoanConfirmationContent(
                     }
                 }
                 when (tabIndex) {
-                    0 -> UserInformation(component,authState,signProfileState,onLongTermLoanEvent)
+                    0 -> UserInformation(component,authState,signProfileState,onLongTermLoanEvent,state)
                     1 -> LoanInformation(component)
                 }
             }

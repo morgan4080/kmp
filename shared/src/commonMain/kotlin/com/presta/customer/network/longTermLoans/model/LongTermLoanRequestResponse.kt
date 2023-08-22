@@ -1,17 +1,26 @@
 package com.presta.customer.network.longTermLoans.model
 
-import com.presta.customer.network.longTermLoans.client.DetailsData
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class LongTermLoanRequestResponse constructor(
-    val details: DetailsData,
+    val refId: String,
+    val loanDate: String,
+    val loanRequestNumber: String,
     val loanProductName: String,
     val loanProductRefId: String,
-    val selfCommitment: Double,
     val loanAmount: Double,
     val memberRefId: String,
+    val isActive: Boolean,
     val memberNumber: String,
-    val witnessRefId: String?,
-    val guarantorList: List<Guarantor>,
+    val memberFirstName: String,
+    val memberLastName: String,
+    val phoneNumber: String,
+    val loanRequestProgress: Double,
+    val totalDeposits: Double,
+    val applicantSigned: Boolean,
+    val witnessAccepted: Boolean,
+    val witnessSigned: Boolean,
+    val pdfThumbNail: String,
+    val guarantorList: List<GuarantorDataResponse>,
 )

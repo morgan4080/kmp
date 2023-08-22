@@ -193,7 +193,7 @@ class PrestaLongTermLoansClient(
         witnessRefId: String?,
         guarantorList: ArrayList<Guarantor>,
     ): LongTermLoanRequestResponse {
-        return loanRequestErrorHandler {
+        return longTermLoansErrorHandler {
             httpClient.post(NetworkConstants.PrestaLongTermLoanRequest.route) {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 contentType(ContentType.Application.Json)

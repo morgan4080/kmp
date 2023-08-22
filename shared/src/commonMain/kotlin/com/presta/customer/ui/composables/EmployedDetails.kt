@@ -17,16 +17,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
-
-
 data class MultipleVariables(val grossSalary: String, val variable2: String, val variable3: Boolean)
-
 @Composable
 fun EmployedDetails(
     state: ApplyLongTermLoansStore.State,
@@ -51,6 +49,8 @@ fun EmployedDetails(
     var netSalary by remember { mutableStateOf(TextFieldValue()) }
     var kraPin by remember { mutableStateOf(TextFieldValue()) }
     val userDetailsMap = mutableMapOf<String, String>()
+    val pattern = remember { Regex("^\\d+\$") }
+    val numberTextPattern = remember { Regex("^[\\p{L}\\d ]+$") }
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -116,7 +116,9 @@ fun EmployedDetails(
                 ) {
                     LiveTextContainer(
                         userInput = employernameLive,
-                        label = "Employer"
+                        label = "Employer",
+                        keyboardType = KeyboardType.Text,
+                        pattern = numberTextPattern
                     ) {
                         val inputValue: String = TextFieldValue(it).text
                         if (inputValue != "") {
@@ -137,7 +139,9 @@ fun EmployedDetails(
                 ) {
                     LiveTextContainer(
                         userInput = employmentNumberLive,
-                        label = "Employment Number"
+                        label = "Employment Number",
+                        keyboardType = KeyboardType.Text,
+                        pattern = numberTextPattern
                     ) {
                         val inputValue: String = TextFieldValue(it).text
                         if (inputValue != "") {
@@ -155,7 +159,9 @@ fun EmployedDetails(
                 Row(modifier = Modifier.fillMaxWidth()) {
                     LiveTextContainer(
                         userInput = grossSalaryDataLive,
-                        label = "Gross Salary"
+                        label = "Gross Salary",
+                        keyboardType = KeyboardType.Number,
+                        pattern = pattern
                     ) {
                         val inputValue: String = TextFieldValue(it).text
                         if (inputValue != "") {
@@ -174,7 +180,9 @@ fun EmployedDetails(
                 Row(modifier = Modifier.fillMaxWidth()) {
                     LiveTextContainer(
                         userInput = netSalaryLive,
-                        label = "Net Salary"
+                        label = "Net Salary",
+                        keyboardType = KeyboardType.Number,
+                        pattern = pattern
                     ) {
                         val inputValue: String = TextFieldValue(it).text
                         if (inputValue != "") {
@@ -192,7 +200,9 @@ fun EmployedDetails(
                 Row(modifier = Modifier.fillMaxWidth()) {
                     LiveTextContainer(
                         userInput = kraPinLive,
-                        label = "KRA Pin"
+                        label = "KRA Pin",
+                        keyboardType = KeyboardType.Text,
+                        pattern = numberTextPattern
                     ) {
                         val inputValue: String = TextFieldValue(it).text
                         if (inputValue != "") {

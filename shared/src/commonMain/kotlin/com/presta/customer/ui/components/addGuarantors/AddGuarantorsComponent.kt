@@ -39,7 +39,29 @@ interface AddGuarantorsComponent {
         netSalary:Double,
         memberRefId:String,
         guarantorList: Set<GuarantorDataListing>,
-        loanPurposeCategoryCode: String
+        loanPurposeCategoryCode: String,
+        witnessRefId: String,
+    )
+    fun onNavigateToAddWitness(
+        loanRefId: String,
+        loanType: String,
+        desiredAmount: Double,
+        loanPeriod: Int,
+        requiredGuarantors: Int,
+        loanCategory: String,
+        loanPurpose: String,
+        loanPurposeCategory: String,
+        businessType: String,
+        businessLocation: String,
+        kraPin: String,
+        employer: String,
+        employmentNumber: String,
+        grossSalary: Double,
+        netSalary:Double,
+        memberRefId:String,
+        guarantorList: Set<GuarantorDataListing>,
+        loanPurposeCategoryCode: String,
+        witnessRefId: String,
     )
     val authStore: AuthStore
     val authState: StateFlow<AuthStore.State>

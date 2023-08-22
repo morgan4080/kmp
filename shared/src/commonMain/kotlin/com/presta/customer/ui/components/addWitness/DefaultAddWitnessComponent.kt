@@ -1,11 +1,9 @@
-package com.presta.customer.ui.components.addGuarantors
+package com.presta.customer.ui.components.addWitness
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
-import com.presta.customer.ContactsUtils
-import com.presta.customer.Platform
 import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
@@ -20,37 +18,15 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import kotlin.coroutines.CoroutineContext
 
-class DefaultAddGuarantorsComponent(
+class DefaultAddWitnessComponent (
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     private val onItemClicked: () -> Unit,
-    private val onContinueClicked: (
-        loanRefId: String,
-        loanType: String,
-        desiredAmount: Double,
-        loanPeriod: Int,
-        requiredGuarantors: Int,
-        loanCategory: String,
-        loanPurpose: String,
-        loanPurposeCategory: String,
-        businessType: String,
-        businessLocation: String,
-        kraPin: String,
-        employer: String,
-        employmentNumber: String,
-        grossSalary: Double,
-        netSalary: Double,
-        memberRefId: String,
-        guarantorList:Set<GuarantorDataListing>,
-        loanPurposeCategoryCode: String,
-        witnessRefId: String,
-    ) -> Unit,
-    private val onNavigateToAddWitnessClicked: (
+    private val onProductClicked: () -> Unit,
+    private val onAddWitnessClicked: (
         loanRefId: String,
         loanType: String,
         desiredAmount: Double,
@@ -79,8 +55,18 @@ class DefaultAddGuarantorsComponent(
     override val loanCategory: String,
     override val loanPurpose: String,
     override val loanPurposeCategory: String,
+    override val businessType: String,
+    override val businessLocation: String,
+    override val kraPin: String,
+    override val employer: String,
+    override val employmentNumber: String,
+    override val grossSalary: Double,
+    override val netSalary: Double,
+    override val memberRefId: String,
+    override val guarantorList: Set<GuarantorDataListing>,
     override val loanPurposeCategoryCode: String,
-) : AddGuarantorsComponent, ComponentContext by componentContext, KoinComponent {
+    override val witnessRefId: String
+): AddWitnessComponent, ComponentContext by componentContext {
     private val scope = coroutineScope(mainContext + SupervisorJob())
     override val authStore: AuthStore =
         instanceKeeper.getStore {
@@ -150,67 +136,11 @@ class DefaultAddGuarantorsComponent(
                             phoneNumber = state.cachedMemberData.phoneNumber
                         )
                     )
-                    onEvent(
-                        ApplyLongTermLoansStore.Intent.GetClientSettings(
-                            token = state.cachedMemberData.accessToken,
-                        )
-                    )
                 }
             }
         }
     }
-
-    override val platform by inject<Platform>()
-    override val contactlist by inject<ContactsUtils>()
-    override fun onBackNavClicked() {
-        onItemClicked()
-    }
-
-    override fun onContinueSelected(
-        loanRefId: String,
-        loanType: String,
-        desiredAmount: Double,
-        loanPeriod: Int,
-        requiredGuarantors: Int,
-        loanCategory: String,
-        loanPurpose: String,
-        loanPurposeCategory: String,
-        businessType: String,
-        businessLocation: String,
-        kraPin: String,
-        employer: String,
-        employmentNumber: String,
-        grossSalary: Double,
-        netSalary: Double,
-        memberRefId: String,
-        guarantorList: Set<GuarantorDataListing>,
-        loanPurposeCategoryCode: String,
-        witnessRefId: String,
-    ) {
-        onContinueClicked(
-            loanRefId,
-            loanType,
-            desiredAmount,
-            loanPeriod,
-            requiredGuarantors,
-            loanCategory,
-            loanPurpose,
-            loanPurposeCategory,
-            businessType,
-            businessLocation,
-            kraPin,
-            employer,
-            employmentNumber,
-            grossSalary,
-            netSalary,
-            memberRefId,
-            guarantorList,
-            loanPurposeCategoryCode,
-            witnessRefId
-        )
-    }
-
-    override fun onNavigateToAddWitness(
+    override fun onAddWitnessSelected(
         loanRefId: String,
         loanType: String,
         desiredAmount: Double,
@@ -231,7 +161,7 @@ class DefaultAddGuarantorsComponent(
         loanPurposeCategoryCode: String,
         witnessRefId: String
     ) {
-        onNavigateToAddWitnessClicked(
+        onAddWitnessClicked(
             loanRefId,
             loanType,
             desiredAmount,
@@ -252,9 +182,14 @@ class DefaultAddGuarantorsComponent(
             loanPurposeCategoryCode,
             witnessRefId
         )
-
+    }
+    override fun onBackNavClicked() {
+        onItemClicked()
     }
 
+    override fun onProductSelected() {
+      onProductClicked()
+    }
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         checkAuthenticatedUser()

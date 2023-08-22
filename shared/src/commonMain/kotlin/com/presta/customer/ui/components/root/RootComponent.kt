@@ -3,6 +3,7 @@ package com.presta.customer.ui.components.root
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
 import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
+import com.presta.customer.ui.components.addWitness.AddWitnessComponent
 import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComponent
 import com.presta.customer.ui.components.auth.AuthComponent
 import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGuarantorsComponent
@@ -59,6 +60,7 @@ interface RootComponent {
         class AddGuarantorsChild(val component: AddGuarantorsComponent): Child()
         class GuarantorshipRequestChild(val component: GuarantorshipRequestComponent): Child()
         class FavouriteGuarantorsChild(val component: FavouriteGuarantorsComponent): Child()
+        class AddWitnessChild(val component: AddWitnessComponent): Child()
         class WitnessRequestChild(val component: WitnessRequestComponent): Child()
         class LongTermLoanConfirmationChild(val component: LongTermLoanConfirmationComponent): Child()
         class LongTermLoanApplicationStatusChild(val component: LongtermLoansApplicationStatusComponent): Child()

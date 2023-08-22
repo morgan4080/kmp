@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.presta.customer.ui.components.auth.store.AuthStore
@@ -37,6 +38,8 @@ fun SelfEmployedDetails(
     var businessLocationLive by remember { mutableStateOf("") }
     var businessTypeLive by remember { mutableStateOf("") }
     val userDetailsMap = mutableMapOf<String, String>()
+    val pattern = remember { Regex("^\\d+\$") }
+    val numberTextPattern = remember { Regex("^[\\p{L}\\d ]+$") }
 
     signHomeState.prestaTenantByPhoneNumber?.details?.map { it ->
         if (it.key.contains("employer")) {
@@ -108,7 +111,9 @@ fun SelfEmployedDetails(
             ) {
                 LiveTextContainer(
                     userInput = businessLocation.text,
-                    label = "Business Location"
+                    label = "Business Location",
+                    keyboardType = KeyboardType.Text,
+                    pattern = numberTextPattern
 
                 ) {
                     val inputValue: String = TextFieldValue(it).text
@@ -123,7 +128,9 @@ fun SelfEmployedDetails(
             Row(modifier = Modifier.fillMaxWidth()) {
                 LiveTextContainer(
                     userInput = businessType.text,
-                    label = "Business Type"
+                    label = "Business Type",
+                    keyboardType = KeyboardType.Text,
+                    pattern = numberTextPattern
                 ) {
                     val inputValue: String = TextFieldValue(it).text
                     if (inputValue != "") {
@@ -138,7 +145,9 @@ fun SelfEmployedDetails(
             Row(modifier = Modifier.fillMaxWidth()) {
                 LiveTextContainer(
                     userInput = kraPinLive,
-                    label = "KRA pin"
+                    label = "KRA pin",
+                    keyboardType = KeyboardType.Text,
+                    pattern = numberTextPattern
                 ) {
                     val inputValue: String = TextFieldValue(it).text
                     if (inputValue != "") {

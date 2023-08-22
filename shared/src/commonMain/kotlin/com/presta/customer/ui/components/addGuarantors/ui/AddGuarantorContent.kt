@@ -36,7 +36,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.outlined.Contacts
 import androidx.compose.material.icons.outlined.Error
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.PersonRemove
@@ -82,8 +81,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
-import com.presta.customer.AndroidContactPicker
-import com.presta.customer.ContactPicker
 import com.presta.customer.MR
 import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
@@ -101,8 +98,6 @@ import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.backArrowColor
 import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
-import io.ktor.util.reflect.instanceOf
-import io.ktor.util.sha1
 import kotlinx.coroutines.launch
 
 class SnackbarVisualsWithError(
@@ -159,6 +154,7 @@ fun AddGuarantorContent(
     var businessType by remember { mutableStateOf("") }
     var amountToGuarantee by remember { mutableStateOf(TextFieldValue()) }
     var launchGuarantorListing by remember { mutableStateOf(false) }
+    val pattern = remember { Regex("^\\d+\$") }
     if (memberNumber != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -235,6 +231,7 @@ fun AddGuarantorContent(
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        sheetBackgroundColor = MaterialTheme.colorScheme.background,
         sheetContent = {
             if (launchCheckSelfAndEmPloyedPopUp) {
                 val tabs = listOf("Employed", "Business/Self Employed")
@@ -298,6 +295,7 @@ fun AddGuarantorContent(
                     Column(
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 10.dp)
+                            .background(MaterialTheme.colorScheme.background)
                     ) {
                         //Todo----Dismiss focus requester when the modal bottomsheet is dismissed
                         Row(
@@ -323,7 +321,8 @@ fun AddGuarantorContent(
                             Text(
                                 text = "Guarantor: " + signHomeState.prestaTenantByMemberNumber.firstName,
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                fontSize = 12.sp
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                         }
                         Row(
@@ -334,7 +333,8 @@ fun AddGuarantorContent(
                             Text(
                                 text = "Remaining Amount: 10.00",
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                fontSize = 12.sp
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                         }
                         Row(
@@ -344,7 +344,9 @@ fun AddGuarantorContent(
                         ) {
                             LiveTextContainer(
                                 userInput = amountToGuarantee.text,
-                                label = "Amount to Guarantee"
+                                label = "Amount to Guarantee",
+                                keyboardType = KeyboardType.Number,
+                                pattern =pattern
                             ) {
                                 val inputValue: String = TextFieldValue(it).text
                                 if (inputValue != "") {
@@ -355,6 +357,7 @@ fun AddGuarantorContent(
                                     }
                                 }
                             }
+
                         }
                         Row(
                             modifier = Modifier.fillMaxWidth()
@@ -613,13 +616,12 @@ fun AddGuarantorContent(
                                         onClick = {
                                             //load Contacts
                                             //Todo----open  the contacts library and take the selected contact
-                                                  val androidContactsPicker= AndroidContactPicker()
-                                            androidContactsPicker.pickContact(onContactPicked = {
-                                                name, phoneNumber ->
-
-                                                println("name is;;; " + name)
-                                                println("phone number is is;;; " + phoneNumber)
-                                            })
+//                                            val androidContactsPicker = AndroidContactPicker()
+//                                            androidContactsPicker.pickContact(onContactPicked = { name, phoneNumber ->
+//
+//                                                println("name is;;; " + name)
+//                                                println("phone number is is;;; " + phoneNumber)
+//                                            })
                                         },
                                         content = {
                                             Icon(
@@ -693,7 +695,7 @@ fun AddGuarantorContent(
                                                 selected = true,
                                                 phoneNumber = item.phoneNumber,
                                                 memberNumber = item.memberNumber,
-                                                amount = formatMoney(item.amount.toDouble()).toDouble(),
+                                                amount = formatMoney(item.amount.toDouble()),
                                             )
                                         }
                                     }
@@ -718,30 +720,63 @@ fun AddGuarantorContent(
                                     launchAddAmountToGuarantee = false
                                     launchCheckSelfAndEmPloyedPopUp = true
                                     if (allConditionsChecked) {
-                                        signHomeState.prestaTenantByPhoneNumber?.refId?.let {
-                                            component.onContinueSelected(
-                                                component.loanRefId,
-                                                component.loanType,
-                                                component.desiredAmount,
-                                                component.loanPeriod,
-                                                component.requiredGuarantors,
-                                                component.loanCategory,
-                                                component.loanPurpose,
-                                                component.loanPurposeCategory,
-                                                businessType = businessTypeData,
-                                                businessLocation = businessLocationData,
-                                                kraPin = kraPin,
-                                                employer = employer,
-                                                employmentNumber = employmentNumber,
-                                                grossSalary = if (grossSalary != "") grossSalary.toDouble() else 0.0,
-                                                netSalary = if (netSalary != "") netSalary.toDouble() else 0.0,
-                                                memberRefId = it,
-                                                guarantorList = guarantorDataListed,
-                                                loanPurposeCategoryCode = component.loanPurposeCategoryCode
-                                            )
+                                        //Todo--check if witness is required and navigate
+                                        if (state.prestaClientSettings?.response?.requireWitness == true) {
+                                            //navigate  to add witness
+                                            signHomeState.prestaTenantByPhoneNumber?.refId?.let {
+                                                component.onNavigateToAddWitness(
+                                                    component.loanRefId,
+                                                    component.loanType,
+                                                    component.desiredAmount,
+                                                    component.loanPeriod,
+                                                    component.requiredGuarantors,
+                                                    component.loanCategory,
+                                                    component.loanPurpose,
+                                                    component.loanPurposeCategory,
+                                                    businessType = businessTypeData,
+                                                    businessLocation = businessLocationData,
+                                                    kraPin = kraPin,
+                                                    employer = employer,
+                                                    employmentNumber = employmentNumber,
+                                                    grossSalary = if (grossSalary != "") grossSalary.toDouble() else 0.0,
+                                                    netSalary = if (netSalary != "") netSalary.toDouble() else 0.0,
+                                                    memberRefId = it,
+                                                    guarantorList = guarantorDataListed,
+                                                    loanPurposeCategoryCode = component.loanPurposeCategoryCode,
+                                                    witnessRefId = ""
+                                                )
+                                            }
+                                            launchCheckSelfAndEmPloyedPopUp = false
+                                            scope.launch { modalBottomSheetState.hide() }
+
+                                        } else if (state.prestaClientSettings?.response?.requireWitness == false) {
+                                            signHomeState.prestaTenantByPhoneNumber?.refId?.let {
+                                                component.onContinueSelected(
+                                                    component.loanRefId,
+                                                    component.loanType,
+                                                    component.desiredAmount,
+                                                    component.loanPeriod,
+                                                    component.requiredGuarantors,
+                                                    component.loanCategory,
+                                                    component.loanPurpose,
+                                                    component.loanPurposeCategory,
+                                                    businessType = businessTypeData,
+                                                    businessLocation = businessLocationData,
+                                                    kraPin = kraPin,
+                                                    employer = employer,
+                                                    employmentNumber = employmentNumber,
+                                                    grossSalary = if (grossSalary != "") grossSalary.toDouble() else 0.0,
+                                                    netSalary = if (netSalary != "") netSalary.toDouble() else 0.0,
+                                                    memberRefId = it,
+                                                    guarantorList = guarantorDataListed,
+                                                    loanPurposeCategoryCode = component.loanPurposeCategoryCode,
+                                                    witnessRefId = ""
+                                                )
+                                            }
+                                            launchCheckSelfAndEmPloyedPopUp = false
+                                            scope.launch { modalBottomSheetState.hide() }
                                         }
-                                        launchCheckSelfAndEmPloyedPopUp = false
-                                        scope.launch { modalBottomSheetState.hide() }
+
                                     }
                                 }
                                 if (memberNumber != "" && signHomeState.prestaTenantByMemberNumber == null) {
@@ -1028,7 +1063,7 @@ fun GuarantorsDetailsView(
     label: String,
     phoneNumber: String,
     memberNumber: String,
-    amount: Double,
+    amount: String,
 ) {
     ElevatedCard(
         onClick = {

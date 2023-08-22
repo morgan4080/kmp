@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -80,6 +81,8 @@ fun SignSettingsContent(
     val focusRequester = remember { FocusRequester() }
     val emptyTextContainer by remember { mutableStateOf(TextFieldValue()) }
     var checked by remember { mutableStateOf(false) }
+    val pattern = remember { Regex("^\\d+\$") }
+    val numberTextPattern = remember { Regex("^[\\p{L}\\d ]+$") }
     Scaffold(
         modifier = Modifier.padding(LocalSafeArea.current),
         topBar = {
@@ -174,7 +177,9 @@ fun SignSettingsContent(
                             ) {
                                 LiveTextContainer(
                                     userInput = firstnameLive,
-                                    label = "First Name"
+                                    label = "First Name",
+                                    keyboardType = KeyboardType.Text,
+                                    pattern = numberTextPattern
                                 ) {
                                     val inputValue: String = TextFieldValue(it).text
                                     if (inputValue != "") {
@@ -193,7 +198,9 @@ fun SignSettingsContent(
                             ) {
                                 LiveTextContainer(
                                     userInput = lastnameLive,
-                                    label = "last Name "
+                                    label = "last Name ",
+                                    keyboardType = KeyboardType.Text,
+                                    pattern = numberTextPattern
                                 ) {
                                     val inputValue: String = TextFieldValue(it).text
                                     if (inputValue != "") {
@@ -212,7 +219,9 @@ fun SignSettingsContent(
                             ) {
                                 LiveTextContainer(
                                     userInput = phoneNumberLive,
-                                    label = "Phone Number"
+                                    label = "Phone Number",
+                                    keyboardType = KeyboardType.Number,
+                                    pattern = pattern
                                 ) {
                                     val inputValue: String = TextFieldValue(it).text
                                     if (inputValue != "") {
@@ -232,7 +241,9 @@ fun SignSettingsContent(
                             ) {
                                 LiveTextContainer(
                                     userInput = idNumberLive,
-                                    label = "ID Number"
+                                    label = "ID Number",
+                                    keyboardType = KeyboardType.Number,
+                                    pattern = pattern
                                 ) {
                                     val inputValue: String = TextFieldValue(it).text
                                     if (inputValue != "") {
@@ -251,7 +262,10 @@ fun SignSettingsContent(
                             ) {
                                 LiveTextContainer(
                                     userInput = emailLive,
-                                    label = "Email"
+                                    label = "Email",
+                                    keyboardType = KeyboardType.Text,
+                                    pattern = numberTextPattern
+
                                 ) {
                                     val inputValue: String = TextFieldValue(it).text
                                     if (inputValue != "") {

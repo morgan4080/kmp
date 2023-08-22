@@ -7,5 +7,5 @@ enum class LongTermLoansError {
     UnknownError
 }
 class  LongTermLoansExceptions(error: LongTermLoansError, message: String?): Exception(
-    "Data loading  Error: ${if (message !== null) message else error}"
+    "Data loading  Error: ${message ?: error}"
 )

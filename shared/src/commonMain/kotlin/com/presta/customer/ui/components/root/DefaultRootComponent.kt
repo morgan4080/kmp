@@ -24,6 +24,8 @@ import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.prestaDispatchers
 import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
 import com.presta.customer.ui.components.addGuarantors.DefaultAddGuarantorsComponent
+import com.presta.customer.ui.components.addWitness.AddWitnessComponent
+import com.presta.customer.ui.components.addWitness.DefaultAddWitnessComponent
 import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComponent
 import com.presta.customer.ui.components.applyLongTermLoan.DefaultApplyLongtermLoanComponent
 import com.presta.customer.ui.components.auth.AuthComponent
@@ -213,6 +215,10 @@ class DefaultRootComponent(
             witnessRequestComponent(componentContext)
         )
 
+        is Config.AddWitness -> RootComponent.Child.AddWitnessChild(
+            addWitnessComponent(componentContext, config)
+        )
+
         is Config.LongTermLoanConfirmation -> RootComponent.Child.LongTermLoanConfirmationChild(
             longTermLoanConfirmationComponent(componentContext, config)
         )
@@ -226,6 +232,7 @@ class DefaultRootComponent(
                 componentContext, config
             )
         )
+
         is Config.SignLoanForm -> RootComponent.Child.SignLoanFormChild(
             signLoanForm(
                 componentContext, config
@@ -235,6 +242,7 @@ class DefaultRootComponent(
         is Config.ReplaceGuarantor -> RootComponent.Child.ReplaceGuarantorChild(
             replaceGuarantorComponent(componentContext)
         )
+
     }
 
     private fun loansPendingApprovalComponent(componentContext: ComponentContext): LoanPendingApprovalsComponent =
@@ -572,13 +580,15 @@ class DefaultRootComponent(
 
             },
             //Todo--- handle the sign loan form  state--------
-            gotoSignLoanForm ={loanNumber, amount, loanRequestRefId, memberRefId ->
-                navigation.push(Config.SignLoanForm(
-                    loanNumber = loanNumber,
-                    amount = amount,
-                    loanRequestRefId = loanRequestRefId,
-                    memberRefId = memberRefId
-                ))
+            gotoSignLoanForm = { loanNumber, amount, loanRequestRefId, memberRefId ->
+                navigation.push(
+                    Config.SignLoanForm(
+                        loanNumber = loanNumber,
+                        amount = amount,
+                        loanRequestRefId = loanRequestRefId,
+                        memberRefId = memberRefId
+                    )
+                )
             }
         )
 
@@ -684,7 +694,8 @@ class DefaultRootComponent(
                                   netSalary,
                                   memberRefId,
                                   guarantorList,
-                                  loanPurposeCategoryCode ->
+                                  loanPurposeCategoryCode,
+                                  witnessRefid ->
                 //Navigate to confirm
                 navigation.push(
                     Config.LongTermLoanConfirmation(
@@ -705,7 +716,8 @@ class DefaultRootComponent(
                         netSalary = netSalary,
                         memberRefId = memberRefId,
                         guarantorList = guarantorList,
-                        loanPurposeCategoryCode = loanPurposeCategoryCode
+                        loanPurposeCategoryCode = loanPurposeCategoryCode,
+                        witnessRefId = witnessRefid
                     )
                 )
             },
@@ -719,7 +731,51 @@ class DefaultRootComponent(
             loanCategory = config.loanCategory,
             loanPurpose = config.loanPurpose,
             loanPurposeCategory = config.loanPurposeCategory,
-            loanPurposeCategoryCode = config.loanPurposeCategoryCode
+            loanPurposeCategoryCode = config.loanPurposeCategoryCode,
+            onNavigateToAddWitnessClicked = { loanRefId,
+                                              loanType,
+                                              desiredAmount,
+                                              loanPeriod,
+                                              requiredGuarantors,
+                                              loanCategory,
+                                              loanPurpose,
+                                              loanPurposeCategory,
+                                              businessType,
+                                              businessLocation,
+                                              kraPin,
+                                              employer,
+                                              employmentNumber,
+                                              grossSalary,
+                                              netSalary,
+                                              memberRefId,
+                                              guarantorList,
+                                              loanPurposeCategoryCode,
+                                              witnessRefid ->
+                //navigate to add Witness
+                navigation.push(
+                    Config.AddWitness(
+                        loanRefId = loanRefId,
+                        loanType = loanType,
+                        desiredAmount = desiredAmount,
+                        loanPeriod = loanPeriod,
+                        requiredGuarantors = requiredGuarantors,
+                        loanCategory = loanCategory,
+                        loanPurpose = loanPurpose,
+                        loanPurposeCategory = loanPurposeCategory,
+                        businessType = businessType,
+                        businessLocation = businessLocation,
+                        kraPin = kraPin,
+                        employer = employer,
+                        employmentNumber = employmentNumber,
+                        grossSalary = grossSalary,
+                        netSalary = netSalary,
+                        memberRefId = memberRefId,
+                        guarantorList = guarantorList,
+                        loanPurposeCategoryCode = loanPurposeCategoryCode,
+                        witnessRefId = witnessRefid
+                    )
+                )
+            }
         )
 
     private fun guarantorshipRequestComponent(componentContext: ComponentContext): GuarantorshipRequestComponent =
@@ -729,7 +785,7 @@ class DefaultRootComponent(
                 navigation.pop()
 
             },
-            onAcceptClicked = { loanNumber, amount, loanRequestRefId,memberRefId ->
+            onAcceptClicked = { loanNumber, amount, loanRequestRefId, memberRefId ->
                 //Navigate to sign
                 navigation.push(
                     Config.SignDocument(
@@ -771,6 +827,84 @@ class DefaultRootComponent(
             mainContext = prestaDispatchers.main,
         )
 
+    private fun addWitnessComponent(
+        componentContext: ComponentContext,
+        config: Config.AddWitness
+    ): AddWitnessComponent =
+        DefaultAddWitnessComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
+
+            },
+            onProductClicked = {
+            },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            loanRefId = config.loanRefId,
+            loanType = config.loanType,
+            desiredAmount = config.desiredAmount,
+            loanPeriod = config.loanPeriod,
+            requiredGuarantors = config.requiredGuarantors,
+            loanCategory = config.loanCategory,
+            loanPurpose = config.loanPurpose,
+            loanPurposeCategory = config.loanPurposeCategory,
+            businessType = config.businessType,
+            businessLocation = config.businessLocation,
+            kraPin = config.kraPin,
+            employer = config.employer,
+            employmentNumber = config.employmentNumber,
+            grossSalary = config.grossSalary,
+            netSalary = config.netSalary,
+            memberRefId = config.memberRefId,
+            guarantorList = config.guarantorList,
+            loanPurposeCategoryCode = config.loanPurposeCategoryCode,
+            witnessRefId = config.witnessRefId,
+            onAddWitnessClicked = { loanRefId,
+                                    loanType,
+                                    desiredAmount,
+                                    loanPeriod,
+                                    requiredGuarantors,
+                                    loanCategory,
+                                    loanPurpose,
+                                    loanPurposeCategory,
+                                    businessType,
+                                    businessLocation,
+                                    kraPin,
+                                    employer,
+                                    employmentNumber,
+                                    grossSalary,
+                                    netSalary,
+                                    memberRefId,
+                                    guarantorList,
+                                    loanPurposeCategoryCode,
+                                    witnessRefid ->
+                navigation.push(
+                    Config.LongTermLoanConfirmation(
+                        loanRefId = loanRefId,
+                        loanType = loanType,
+                        desiredAmount = desiredAmount,
+                        loanPeriod = loanPeriod,
+                        requiredGuarantors = requiredGuarantors,
+                        loanCategory = loanCategory,
+                        loanPurpose = loanPurpose,
+                        loanPurposeCategory = loanPurposeCategory,
+                        businessType = businessType,
+                        businessLocation = businessLocation,
+                        kraPin = kraPin,
+                        employer = employer,
+                        employmentNumber = employmentNumber,
+                        grossSalary = grossSalary,
+                        netSalary = netSalary,
+                        memberRefId = memberRefId,
+                        guarantorList = guarantorList,
+                        loanPurposeCategoryCode = loanPurposeCategoryCode,
+                        witnessRefId = witnessRefid
+                    )
+                )
+            }
+        )
+
     private fun longTermLoanConfirmationComponent(
         componentContext: ComponentContext,
         config: Config.LongTermLoanConfirmation
@@ -803,7 +937,18 @@ class DefaultRootComponent(
             netSalary = config.netSalary,
             memberRefId = config.memberRefId,
             guarantorList = config.guarantorList,
-            loanPurposeCategoryCode = config.loanPurposeCategoryCode
+            loanPurposeCategoryCode = config.loanPurposeCategoryCode,
+            witnessRefId = config.witnessRefId,
+            navigateToSignLoanFormCLicked = { loanNumber, amount, loanRequestRefId, memberRefId ->
+                navigation.push(
+                    Config.SignLoanForm(
+                        loanNumber = loanNumber,
+                        amount = amount,
+                        loanRequestRefId = loanRequestRefId,
+                        memberRefId = memberRefId
+                    )
+                )
+            }
         )
 
     private fun longTermLoanApplicationStatusComponent(componentContext: ComponentContext): LongtermLoansApplicationStatusComponent =
@@ -842,15 +987,16 @@ class DefaultRootComponent(
             loanRequestRefId = config.loanRequestRefId,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
-            onDocumentSignedClicked = {signed->
+            onDocumentSignedClicked = { signed ->
                 //when doc is signed navigate
-                if (signed==true){
+                if (signed == true) {
                     navigation.bringToFront(Config.LongTermLoanApplicationStatus)
                 }
             },
             sign = false,
             memberRefId = config.memberRefId
         )
+
     private fun signLoanForm(
         componentContext: ComponentContext,
         config: Config.SignLoanForm
@@ -868,15 +1014,16 @@ class DefaultRootComponent(
             loanRequestRefId = config.loanRequestRefId,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
-            onDocumentSignedClicked = {signed->
+            onDocumentSignedClicked = { signed ->
                 //when doc is signed navigate
-                if (signed==true){
+                if (signed == true) {
                     navigation.bringToFront(Config.LongTermLoanApplicationStatus)
                 }
             },
             sign = false,
             memberRefId = config.memberRefId
         )
+
     private fun replaceGuarantorComponent(componentContext: ComponentContext): ReplaceGuarantorComponent =
         DefaultReplaceGuarantorComponent(
             componentContext = componentContext,
@@ -893,6 +1040,7 @@ class DefaultRootComponent(
     enum class OnBoardingContext {
         LOGIN, REGISTRATION
     }
+
     private sealed class Config : Parcelable {
         @Parcelize
         data class Tenant(val onBoardingContext: OnBoardingContext) : Config()
@@ -1027,6 +1175,30 @@ class DefaultRootComponent(
             val memberRefId: String,
             val guarantorList: Set<GuarantorDataListing>,
             val loanPurposeCategoryCode: String,
+            val witnessRefId: String,
+        ) : Config()
+
+        @Parcelize
+        data class AddWitness(
+            val loanRefId: String,
+            val loanType: String,
+            val desiredAmount: Double,
+            val loanPeriod: Int,
+            val requiredGuarantors: Int,
+            val loanCategory: String,
+            val loanPurpose: String,
+            val loanPurposeCategory: String,
+            val businessType: String,
+            val businessLocation: String,
+            val kraPin: String,
+            val employer: String,
+            val employmentNumber: String,
+            val grossSalary: Double,
+            val netSalary: Double,
+            val memberRefId: String,
+            val guarantorList: Set<GuarantorDataListing>,
+            val loanPurposeCategoryCode: String,
+            val witnessRefId: String,
         ) : Config()
 
         @Parcelize
@@ -1039,6 +1211,7 @@ class DefaultRootComponent(
             val loanRequestRefId: String,
             val memberRefId: String,
         ) : Config()
+
         @Parcelize
         data class SignLoanForm(
             val loanNumber: String,
@@ -1053,18 +1226,20 @@ class DefaultRootComponent(
 
     init {
         lifecycle.subscribe(object : Lifecycle.Callbacks {
-            val nav=true
+            val nav = true
             override fun onResume() {
                 when (childStack.active.configuration) {
                     is Config.AddGuarantors -> {
                         super.onResume()
                     }
+
                     is Config.SignDocument -> {
                         super.onResume()
                         //if signed navigate
 
 
                     }
+
                     else -> {
                         super.onResume()
                         navigation.replaceAll(Config.Splash)

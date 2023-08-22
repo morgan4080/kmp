@@ -24,7 +24,5 @@ interface LongTermLoanRequestsComponent {
         amount: Double,
         loanRequestRefId: String,
         memberRefId: String
-
-
     )
 }

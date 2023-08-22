@@ -26,6 +26,12 @@ class DefaultLongTermLoanConfirmationComponent(
     mainContext: CoroutineContext,
     private val onItemClicked: () -> Unit,
     private val onProductClicked: () -> Unit,
+    private val navigateToSignLoanFormCLicked: (
+        loanNumber: String,
+        amount: Double,
+        loanRequestRefId: String,
+        memberRefId: String
+    ) -> Unit,
     override val loanRefId: String,
     override val loanType: String,
     override val desiredAmount: Double,
@@ -43,7 +49,8 @@ class DefaultLongTermLoanConfirmationComponent(
     override val netSalary: Double,
     override val memberRefId: String,
     override val guarantorList: Set<GuarantorDataListing>,
-    override val loanPurposeCategoryCode: String
+    override val loanPurposeCategoryCode: String,
+    override val witnessRefId: String
 ) : LongTermLoanConfirmationComponent, ComponentContext by componentContext {
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
@@ -92,6 +99,21 @@ class DefaultLongTermLoanConfirmationComponent(
     @OptIn(ExperimentalCoroutinesApi::class)
     override val applyLongTermLoansState: StateFlow<ApplyLongTermLoansStore.State> =
         applyLongTermLoansStore.stateFlow
+
+    override fun navigateToSignLoanForm(
+        loanNumber: String,
+        amount: Double,
+        loanRequestRefId: String,
+        memberRefId: String
+    ) {
+        navigateToSignLoanFormCLicked(
+            loanNumber,
+            amount,
+            loanRequestRefId,
+            memberRefId
+        )
+    }
+
     override fun onEvent(event: ApplyLongTermLoansStore.Intent) {
         applyLongTermLoansStore.accept(event)
     }

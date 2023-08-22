@@ -12,6 +12,7 @@ import com.moriatsushi.insetsx.SystemBarsBehavior
 import com.moriatsushi.insetsx.rememberWindowInsetsController
 import com.presta.customer.SharedStatus
 import com.presta.customer.ui.components.addGuarantors.ui.AddGuarantorsScreen
+import com.presta.customer.ui.components.addWitness.AddwitnessScreen
 import com.presta.customer.ui.components.applyLongTermLoan.ui.ApplyLongTermLoanScreen
 import com.presta.customer.ui.components.auth.ui.AuthScreen
 import com.presta.customer.ui.components.favouriteGuarantors.ui.FavouriteGaurantorsScreen
@@ -88,6 +89,7 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
             is RootComponent.Child.AddGuarantorsChild-> AddGuarantorsScreen(child.component)
             is RootComponent.Child.GuarantorshipRequestChild -> GuarantorshipRequestScreen(child.component)
             is RootComponent.Child.FavouriteGuarantorsChild-> FavouriteGaurantorsScreen(child.component)
+            is RootComponent.Child.AddWitnessChild -> AddwitnessScreen(child.component)
             is RootComponent.Child.WitnessRequestChild-> WitnessRequestScreen(child.component)
             is RootComponent.Child.LongTermLoanConfirmationChild-> LongTermLoanConfirmationScreen(child.component)
             is RootComponent.Child.LongTermLoanApplicationStatusChild-> LongTermLoanApplicationStatusScreen(child.component)
