@@ -610,7 +610,6 @@ class ApplyLongTermLoansStoreFactory(
                 dispatch(Msg.LongTermLoansLoading(false))
             }
         }
-
         private var replaceGuarantorJob: Job? = null
         private fun replaceLoanGuarantor(
             token: String,
@@ -618,9 +617,9 @@ class ApplyLongTermLoansStoreFactory(
             guarantorRefId: String,//old guarantor---replace the old guarantor with the new guarantor
             memberRefId: String,
         ) {
-            if (requestLongTermLoanJob?.isActive == true) return
+            if (replaceGuarantorJob?.isActive == true) return
             dispatch(Msg.LongTermLoansLoading())
-            requestLongTermLoanJob = scope.launch {
+            replaceGuarantorJob = scope.launch {
                 longTermLoansRepository.updateLoanGuarantor(
                     token,
                     loanRequestRefId,

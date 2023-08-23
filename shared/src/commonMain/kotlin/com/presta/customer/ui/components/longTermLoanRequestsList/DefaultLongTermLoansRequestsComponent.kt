@@ -25,7 +25,12 @@ class DefaultLongTermLoansRequestsComponent(
     mainContext: CoroutineContext,
     private val onSelected: (item: String) -> Unit,
     private val onNavigateBackCLicked: () -> Unit,
-    private val onReplaceGuarantorCLicked: () -> Unit,
+    private val onReplaceGuarantorCLicked: (
+        loanRequestRefId: String,
+        guarantorRefId: String,
+        guarantorFirstname: String,
+        guarantorLastName: String
+    ) -> Unit,
     private val navigateToSignLoanFormCLicked: (
         loanNumber: String,
         amount: Double,
@@ -116,8 +121,18 @@ class DefaultLongTermLoansRequestsComponent(
         onNavigateBackCLicked()
     }
 
-    override fun navigateToReplaceGuarantor() {
-        onReplaceGuarantorCLicked()
+    override fun navigateToReplaceGuarantor(
+        loanRequestRefId: String,
+        guarantorRefId: String,
+        guarantorFirstname: String,
+        guarantorLastName: String
+    ) {
+        onReplaceGuarantorCLicked(
+            loanRequestRefId,
+            guarantorRefId,
+            guarantorFirstname,
+            guarantorLastName
+        )
     }
 
     override fun navigateToSignLoanForm(

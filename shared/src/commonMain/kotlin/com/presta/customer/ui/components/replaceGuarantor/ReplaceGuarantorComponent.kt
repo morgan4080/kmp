@@ -6,6 +6,10 @@ import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import kotlinx.coroutines.flow.StateFlow
 
 interface ReplaceGuarantorComponent {
+    val loanRequestRefId: String
+    val guarantorRefId: String
+    val guarantorFirstName: String
+    val guarantorLastName: String
     val authStore: AuthStore
     val authState: StateFlow<AuthStore.State>
     fun onAuthEvent(event: AuthStore.Intent)

@@ -28,13 +28,12 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.Dire
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.presta.customer.ui.components.profile.ui.ProfileScreen
 import com.presta.customer.ui.components.sign.SignScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RootBottomScreen(component: RootBottomComponent) {
@@ -120,8 +119,14 @@ fun RootBottomScreen(component: RootBottomComponent) {
         },
         content = { innerPadding ->
             Children(
+                //Todo-- Modified screen Transition
                 stack = component.childStackBottom,
-                animation = stackAnimation(fade() + scale()),
+                animation = stackAnimation {child ->
+                    when (child.instance) {
+                        is RootBottomComponent.ChildBottom.SignChild -> fade() + slide()
+                        else -> fade() + scale()
+                    }
+                }
             ) {
                 when (val childX = it.instance) {
                     is RootBottomComponent.ChildBottom.ProfileChild -> ProfileScreen(childX.component, innerPadding)

@@ -92,7 +92,7 @@ interface ApplyLongTermLoansStore :
         data class ReplaceLoanGuarantor(
             val token: String,
             val loanRequestRefId: String,
-            val guarantorRefId: String,//old guarantor---replace the old guarantor with the new guarantor
+            val guarantorRefId: String,
             val memberRefId: String,
         ) : Intent()
 

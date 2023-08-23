@@ -18,7 +18,13 @@ interface LongTermLoanRequestsComponent {
     val signHomeState: StateFlow<SignHomeStore.State>
     fun onSelected(item: String)
     fun navigateToHome()
-    fun navigateToReplaceGuarantor()
+    fun navigateToReplaceGuarantor(
+        loanRequestRefId: String,
+        guarantorRefId: String,
+        guarantorFirstname: String,
+        guarantorLastName: String
+    )
+
     fun navigateToSignLoanForm(
         loanNumber: String,
         amount: Double,

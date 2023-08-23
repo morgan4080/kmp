@@ -58,7 +58,12 @@ class DefaultRootBottomSignComponent(
     val gotoFavouriteGuarantors: () -> Unit,
     val gotoWitnessRequests: () -> Unit,
     val goBackToLMs: () -> Unit,
-    val gotoReplaceGuarantor: () -> Unit,
+    val gotoReplaceGuarantor: (
+        loanRequestRefId: String,
+        guarantorRefId: String,
+        guarantorFirstname: String,
+        guarantorLastName: String
+    ) -> Unit,
     val gotoSignLoanForm: (
         loanNumber: String,
         amount: Double,
@@ -138,14 +143,15 @@ class DefaultRootBottomSignComponent(
             onNavigateBackCLicked = {
                 navigationBottomStackNavigation.bringToFront(ConfigBottom.SignProfile)
             },
-            onReplaceGuarantorCLicked = {
-                gotoReplaceGuarantor()
+            onReplaceGuarantorCLicked = { loanRequestRefId, guarantorRefId, guarantorFirstName, guarantorLastName ->
+                gotoReplaceGuarantor(
+                    loanRequestRefId,
+                    guarantorRefId,
+                    guarantorFirstName,
+                    guarantorLastName
+                )
 
             },
-//            loanNumber: String,
-//            amount: Double,
-//            loanRequestRefId: String,
-//            memberRefId: String
             navigateToSignLoanFormCLicked = { loanNumber, amount, loanRequestRefId, memberRefId ->
                 //create a data class transfer
                 gotoSignLoanForm(

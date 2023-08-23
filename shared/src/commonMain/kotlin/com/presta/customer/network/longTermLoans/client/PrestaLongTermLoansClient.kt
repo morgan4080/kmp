@@ -46,7 +46,7 @@ data class GuarantorPayLoad(
 )
 
 @Serializable
-data class GuarantorListPayLoad(
+data class  NewGuarantorPayload(
     val memberRefId: String
 )
 
@@ -269,7 +269,6 @@ class PrestaLongTermLoansClient(
             }
         }
     }
-
     suspend fun sendZohoSignUrlPayload(
         token: String,
         loanRequestRefId: String,
@@ -333,11 +332,11 @@ class PrestaLongTermLoansClient(
         memberRefId: String,
     ): LongTermLoanRequestResponse {
         return loanRequestErrorHandler {
-            httpClient.post("${NetworkConstants.PrestaLongTermLoanRequest.route}/${loanRequestRefId}/${"guarantor"}/${guarantorRefId}") {
+            httpClient.post("${NetworkConstants.PrestaLongTermLoanRequestByRefId.route}/${loanRequestRefId}/${"guarantor"}/${guarantorRefId}") {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 contentType(ContentType.Application.Json)
                 setBody(
-                    GuarantorListPayLoad(
+                    NewGuarantorPayload(
                         memberRefId = memberRefId
                     )
                 )

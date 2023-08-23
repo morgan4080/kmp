@@ -282,11 +282,10 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
             Result.failure(e)
         }
     }
-
     override suspend fun updateLoanGuarantor(
         token: String,
         loanRequestRefId: String,
-        guarantorRefId: String,//old guarantor---replace the old guarantor with the new guarantor
+        guarantorRefId: String,
         memberRefId: String,
     ): Result<LongTermLoanRequestResponse> {
         return try {

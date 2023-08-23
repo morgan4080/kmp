@@ -120,10 +120,6 @@ fun AddWitnessContent(
     var searchGuarantorByMemberNumber by remember { mutableStateOf(false) }
     val skipHalfExpanded by remember { mutableStateOf(true) }
     var conditionChecked by remember { mutableStateOf(false) }
-    val modalBottomState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        skipHalfExpanded = skipHalfExpanded
-    )
     var memberRefId by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
     val snackBarScope = rememberCoroutineScope()
@@ -166,8 +162,8 @@ fun AddWitnessContent(
                         )
                     )
                 }
-            }else{
-                conditionChecked=true
+            } else {
+                conditionChecked = true
             }
 
         }
@@ -438,6 +434,19 @@ fun AddWitnessContent(
                                 }
                             }
                         }
+                    } else {
+                        //Todo--message to show  how to add the witness
+                        item {
+                            Text(
+                                "Add Guarantors using phone number or member number on the above text input",
+                                fontSize = 12.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                modifier = Modifier.padding(
+                                    start = 10.dp,
+                                    top = 10.dp
+                                )
+                            )
+                        }
                     }
                 }
                 Row(
@@ -489,10 +498,9 @@ fun AddWitnessContent(
                                 }
 
                             }
-                            //navigate if the list  is not empty
-                            if(conditionChecked){
-                                witnessDataListed.map {witnessData->
-                                //navigate to Loan Confirmation
+                            if (conditionChecked) {
+                                witnessDataListed.map { witnessData ->
+                                    //navigate to Loan Confirmation
                                     component.onAddWitnessSelected(
                                         loanRefId = component.loanRefId,
                                         loanType = component.loanType,

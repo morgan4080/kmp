@@ -240,7 +240,7 @@ class DefaultRootComponent(
         )
 
         is Config.ReplaceGuarantor -> RootComponent.Child.ReplaceGuarantorChild(
-            replaceGuarantorComponent(componentContext)
+            replaceGuarantorComponent(componentContext,config)
         )
 
     }
@@ -574,9 +574,16 @@ class DefaultRootComponent(
                 //navigate to  Lms
                 navigation.bringToFront(Config.RootBottom(backTopProfile = false))
             },
-            gotoReplaceGuarantor = {
+            gotoReplaceGuarantor = { loanRequestRefId, guarantorRefId, guarantorFirstName, guarantorLastName ->
                 //navigate  to replace  guarantor
-                navigation.push(Config.ReplaceGuarantor)
+                navigation.push(
+                    Config.ReplaceGuarantor(
+                        loanRequestRefId,
+                        guarantorRefId,
+                        guarantorFirstName,
+                        guarantorLastName
+                    )
+                )
 
             },
             //Todo--- handle the sign loan form  state--------
@@ -1024,17 +1031,23 @@ class DefaultRootComponent(
             memberRefId = config.memberRefId
         )
 
-    private fun replaceGuarantorComponent(componentContext: ComponentContext): ReplaceGuarantorComponent =
+    private fun replaceGuarantorComponent(
+        componentContext: ComponentContext,
+        config: Config.ReplaceGuarantor
+    ): ReplaceGuarantorComponent =
         DefaultReplaceGuarantorComponent(
             componentContext = componentContext,
             onItemClicked = {
                 navigation.pop()
-
             },
             onProductClicked = {
             },
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
+            loanRequestRefId = config.loanRequestRefId,
+            guarantorRefId = config.guarantorRefId,
+            guarantorFirstName = config.guarantorFirstname,
+            guarantorLastName = config.guarantorLastName
         )
 
     enum class OnBoardingContext {
@@ -1221,7 +1234,12 @@ class DefaultRootComponent(
         ) : Config()
 
         @Parcelize
-        object ReplaceGuarantor : Config()
+        data class ReplaceGuarantor(
+            val loanRequestRefId: String,
+            val guarantorRefId: String,
+            val guarantorFirstname: String,
+            val guarantorLastName: String
+        ) : Config()
     }
 
     init {

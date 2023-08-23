@@ -99,9 +99,7 @@ fun ApplyLongTermLoansContent(
                     Spacer(modifier = Modifier.padding(bottom = 100.dp))
                 }
             }
-
         }
-
     })
 
 }

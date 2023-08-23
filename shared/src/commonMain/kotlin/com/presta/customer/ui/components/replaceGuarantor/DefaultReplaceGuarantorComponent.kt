@@ -24,7 +24,11 @@ class DefaultReplaceGuarantorComponent (
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     private val onItemClicked: () -> Unit,
-    private val onProductClicked: () -> Unit
+    private val onProductClicked: () -> Unit,
+    override val loanRequestRefId: String,
+    override val guarantorRefId: String,
+    override val guarantorFirstName: String,
+    override val guarantorLastName: String
 ): ReplaceGuarantorComponent, ComponentContext by componentContext {
 
     private val scope = coroutineScope(mainContext + SupervisorJob())

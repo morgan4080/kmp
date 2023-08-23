@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -98,6 +97,9 @@ fun LongTermLoanRequestsContent(
     var loanNumber by remember { mutableStateOf("") }
     var loanRequestNumber by remember { mutableStateOf("") }
     var selectedIndex by remember { mutableStateOf(-1) }
+    var guarantorFirstName by remember { mutableStateOf("") }
+    var guarantorLastName by remember { mutableStateOf("") }
+    var guarantorRefId by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
     val snackBarScope = rememberCoroutineScope()
     val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -303,6 +305,10 @@ fun LongTermLoanRequestsContent(
                                 index = index,
                                 onClick = { indexed: Int ->
                                     selectedIndex = if (selectedIndex == index) -1 else indexed
+                                    //take the clicked guarantor name
+                                    guarantorFirstName = guarantorDataResponse.firstName
+                                    guarantorLastName = guarantorDataResponse.lastName
+                                    guarantorRefId = guarantorDataResponse.refId
                                 },
                                 expandContent = selectedIndex == index,
                                 committedAmount = formatMoney(guarantorDataResponse.committedAmount),
@@ -311,7 +317,13 @@ fun LongTermLoanRequestsContent(
                                 signatureStatus = if (guarantorDataResponse.isSigned) "Signed" else "Pending",
                                 acceptanceStatus = if (guarantorDataResponse.isAccepted) "Accepted " else "Pending",
                                 onClickReplaceGuarantor = {
-                                    component.navigateToReplaceGuarantor()
+                                    scope.launch { modalBottomSheetState.hide() }
+                                    component.navigateToReplaceGuarantor(
+                                        loanRequestRefId = loanRequestRefId ,
+                                        guarantorRefId = guarantorRefId ,
+                                        guarantorFirstname = guarantorFirstName ,
+                                        guarantorLastName = guarantorLastName
+                                    )
                                 }
                             )
                         }
@@ -448,7 +460,8 @@ fun LongTermLoanRequestsContent(
                                                 loanRequestRefId = loanlistingData.refId
                                                 loanAmount = loanlistingData.loanAmount.toString()
                                                 loanNumber = loanlistingData.loanRequestNumber
-                                                loanRequestNumber = loanlistingData.loanRequestNumber
+                                                loanRequestNumber =
+                                                    loanlistingData.loanRequestNumber
                                                 scope.launch { modalBottomSheetState.show() }
                                             },
                                             loanProductName = loanlistingData.loanProductName,
