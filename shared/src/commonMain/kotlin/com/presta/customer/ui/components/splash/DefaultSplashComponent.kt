@@ -107,16 +107,6 @@ class DefaultSplashComponent(
                             }
                         }
                     }
-                    scope.launch {
-                        authState.collect { state ->
-                            if (state.isOnline) {
-                                onEvent(AuthStore.Intent.UpdateLoading)
-                                delay(3000)
-                                onSignInClicked()
-                                this.cancel()
-                            }
-                        }
-                    }
                 }
             }
         )

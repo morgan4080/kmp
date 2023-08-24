@@ -1,8 +1,7 @@
-import androidx.compose.foundation.layout.padding
+package com.presta.customer.ui.components.rootLoans
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
@@ -16,20 +15,16 @@ import com.presta.customer.ui.components.loanConfirmation.ui.LoansConfirmationSc
 import com.presta.customer.ui.components.longTermLoans.LongTermLoansScreen
 import com.presta.customer.ui.components.modeofDisbursement.ui.SelectModeOfDisbursementScreen
 import com.presta.customer.ui.components.processingTransaction.ui.ProcessingTransactionScreen
-import com.presta.customer.ui.components.rootLoans.RootLoansComponent
 import com.presta.customer.ui.components.shortTermLoans.ui.ShortTermLoansScreen
 import com.presta.customer.ui.components.specificLoanType.ui.SpecificLoansScreen
 import com.presta.customer.ui.components.succesfulTransaction.SuccessfulTransactionScreen
 import com.presta.customer.ui.components.topUp.ui.LoanTopUpScreen
-import com.presta.customer.ui.helpers.LocalSafeArea
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RootLoansScreen(component: RootLoansComponent) {
 
-    Scaffold (
-        modifier = Modifier.padding(LocalSafeArea.current),
-    ) { innerPadding ->
+    Scaffold { innerPadding ->
         Children(
             stack = component.childLoansStack,
             animation = stackAnimation(fade() + scale()),

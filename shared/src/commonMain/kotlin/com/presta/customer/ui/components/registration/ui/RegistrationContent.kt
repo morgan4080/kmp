@@ -112,18 +112,15 @@ fun RegistrationContent(
     fun doRegistration() {
         if (state.phoneNumber !== null) {
 
-            if (OrganisationModel.organisation.tenant_id!=null){
-
-                onEvent(RegistrationStore.Intent.CreateMember(
-                    token = "",
-                    firstName = state.firstName.value.text,
-                    lastName = state.lastName.value.text,
-                    phoneNumber = state.phoneNumber,
-                    idNumber = state.idNumber.value.text,
-                    tocsAccepted = state.isTermsAccepted,
-                    tenantId = OrganisationModel.organisation.tenant_id!!
-                ))
-            }
+            onEvent(RegistrationStore.Intent.CreateMember(
+                token = "",
+                firstName = state.firstName.value.text,
+                lastName = state.lastName.value.text,
+                phoneNumber = state.phoneNumber,
+                idNumber = state.idNumber.value.text,
+                tocsAccepted = state.isTermsAccepted,
+                tenantId = OrganisationModel.organisation.tenant_id
+            ))
 
         } else {
             scope.launch {
@@ -186,7 +183,7 @@ fun RegistrationContent(
                                 letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
                                 fontFamily = MaterialTheme.typography.bodySmall.fontFamily
                             ),
-                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
                             fontSize = 20.0.sp
                         )
                     }
@@ -201,7 +198,7 @@ fun RegistrationContent(
                             modifier = Modifier.alpha(0.5f).fillMaxWidth(0.9f),
                             text = state.label,
                             style = MaterialTheme.typography.bodyMedium,
-                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular)
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                         )
                     }
                 }
@@ -324,7 +321,7 @@ fun RegistrationContent(
                                 text = inputMethod.errorMessage,
                                 fontSize = 10.sp,
                                 style = MaterialTheme.typography.bodyMedium,
-                                fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular),
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                                 color = Color.Red
                             )
                         }

@@ -30,6 +30,7 @@ import com.presta.customer.SharedStatus
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.painterResource
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,13 +42,17 @@ fun SplashScreen(component: SplashComponent, connectivityStatus: SharedStatus?) 
     LaunchedEffect(connectivityStatus) {
         if (connectivityStatus !== null) {
             connectivityStatus.current.collect{
+                component.onEvent(AuthStore.Intent.UpdateOnlineState(it))
                 if (!it) {
                     snackBarHostState.showSnackbar(
-                        message = "No internet connection",
+                        message = "Checking network connection",
                         duration = SnackbarDuration.Short
                     )
+                } else {
+                    component.onEvent(AuthStore.Intent.UpdateLoading)
+                    delay(3000)
+                    component.onSignInClicked()
                 }
-                component.onEvent(AuthStore.Intent.UpdateOnlineState(it))
             }
         }
     }

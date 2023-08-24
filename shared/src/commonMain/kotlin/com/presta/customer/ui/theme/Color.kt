@@ -1,6 +1,5 @@
 package com.presta.customer.ui.theme
 import androidx.compose.ui.graphics.Color
-import com.presta.customer.MR
 
 val Black = Color(0xFF090f0b)
 
@@ -28,7 +27,7 @@ val DarkGray400 = Color(0xFF3e4047)
 
 val Gray400 = Color(0xFF595C61)
 
-val primaryColor = Color(0xFF8FC95C)
+val primaryColor = Color(0xFF459aab)
 
 val textColorBlur = Color(0xFF95989A)
 

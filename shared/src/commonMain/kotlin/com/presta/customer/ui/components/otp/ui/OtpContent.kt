@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -51,10 +52,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.Durations
 import com.presta.customer.MR
-import com.presta.customer.Platform
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.otp.OtpComponent
 import com.presta.customer.ui.components.otp.store.OtpStore
 import com.presta.customer.ui.components.root.DefaultRootComponent
 import com.presta.customer.ui.helpers.LocalSafeArea
@@ -74,7 +75,7 @@ fun OtpContent(
         onBoardingContext: DefaultRootComponent.OnBoardingContext,
         pinStatus: PinStatus?
     ) -> Unit,
-    platform: Platform
+    component: OtpComponent
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
 
@@ -128,7 +129,11 @@ fun OtpContent(
 
     LaunchedEffect(state.otpRequestData) {
         if (state.otpRequestData !== null) {
-            platform.showToast("OTP Sent!", Durations.SHORT)
+            try {
+                component.platform.showToast("OTP Sent!", Durations.SHORT)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -161,7 +166,11 @@ fun OtpContent(
             state.isTermsAccepted !== null &&
             state.isActive !== null
         ) {
-            platform.showToast(state.otpVerificationData.message, Durations.SHORT)
+            try {
+                component.platform.showToast(state.otpVerificationData.message, Durations.SHORT)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             if (state.otpVerificationData.validated || otpInput == "4080") {
                 inputEnabled = false
                 navigate(
@@ -179,13 +188,18 @@ fun OtpContent(
         }
     }
 
-    LaunchedEffect(platform.otpCode) {
-        platform.otpCode.collect {
-            if (it !== "") {
-                val bs = StringBuilder().append(it)
-                otpInput = bs.toString()
-                setupOtpCharacters(otpInput)
+
+    LaunchedEffect("") {
+        try {
+            component.platform.otpCode.collect {
+                if (it !== "") {
+                    val bs = StringBuilder().append(it)
+                    otpInput = bs.toString()
+                    setupOtpCharacters(otpInput)
+                }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -210,7 +224,7 @@ fun OtpContent(
                     Text(
                         text = state.title,
                         style = MaterialTheme.typography.headlineSmall,
-                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
                         fontSize = 20.0.sp
                     )
                 }
@@ -220,7 +234,7 @@ fun OtpContent(
                     Text(
                         text = "${state.label}${if (state.phone_number != null) " to ${state.phone_number}" else ""}",
                         style = MaterialTheme.typography.bodySmall,
-                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                     )
                 }
                 Row(
@@ -247,7 +261,7 @@ fun OtpContent(
                                 value = otpCharList[index],
                                 textStyle = TextStyle(
                                     color = MaterialTheme.colorScheme.onBackground,
-                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
                                     fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
                                     fontSize = MaterialTheme.typography.headlineLarge.fontSize,
                                     fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
@@ -322,7 +336,7 @@ fun OtpContent(
                         textDecoration = TextDecoration.Underline,
                         text = "Resend verification code",
                         style = MaterialTheme.typography.titleSmall,
-                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                     )
                 }
 
@@ -346,72 +360,141 @@ fun OtpContent(
                 LazyVerticalGrid(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxHeight(),
+                        .fillMaxHeight().defaultMinSize(minHeight = 1000.dp),
                     columns = GridCells.Fixed(3),
                     verticalArrangement = Arrangement.Top,
                     contentPadding = PaddingValues(
                         start = 2.dp,
-                        top = 5.dp,
+                        top = 2.dp,
                         end = 2.dp,
-                        bottom = 5.dp
+                        bottom = 2.dp
                     )
                 ) {
                     items(listOf(1,2,3,4,5,6,7,8,9,10,0,12)) {
-                        Button(
-                            modifier = Modifier
-                                .padding(vertical = 10.dp, horizontal = 10.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Transparent,
-                                contentColor = MaterialTheme.colorScheme.onBackground,
-                            ),
-                            onClick = {
-                                when(it) {
-                                    10 -> {
+                        when(it) {
+                            10 -> {
 
+                            }
+                            12 -> {
+                                Button(
+                                    modifier = Modifier
+                                        .padding(vertical = 5.dp, horizontal = 5.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.inverseOnSurface,
+                                        contentColor = MaterialTheme.colorScheme.onBackground,
+                                    ),
+                                    onClick = {
+                                        when(it) {
+                                            10 -> {
+
+                                            }
+                                            12 -> {
+                                                otpInput = otpInput.dropLast(1)
+                                                setupOtpCharacters(otpInput)
+                                                println(otpInput)
+                                            }
+                                            else -> {
+                                                if (otpInput.length <= maxChar  && inputEnabled) {
+                                                    builder.append(otpInput).append(it.toString())
+                                                    otpInput = builder.toString()
+                                                    setupOtpCharacters(otpInput)
+                                                }
+                                            }
+                                        }
                                     }
-                                    12 -> {
-                                        otpInput = otpInput.dropLast(1)
-                                        setupOtpCharacters(otpInput)
-                                    }
-                                    else -> {
-                                        if (otpInput.length <= maxChar  && inputEnabled) {
-                                            builder.append(otpInput).append(it.toString())
-                                            otpInput = builder.toString()
-                                            setupOtpCharacters(otpInput)
+                                ) {
+                                    when(it) {
+                                        10 -> {
+
+                                        }
+                                        12 -> {
+                                            Icon(
+                                                modifier = Modifier
+                                                    .padding(vertical = 12.dp)
+                                                    .size(30.dp)
+                                                    .align(Alignment.CenterVertically),
+                                                imageVector = Icons.Outlined.Backspace,
+                                                contentDescription = "Back Space",
+                                                tint = MaterialTheme.colorScheme.onBackground
+                                            )
+                                        }
+                                        else -> {
+                                            Text(
+                                                textAlign = TextAlign.Center,
+                                                text = it.toString(),
+                                                style = TextStyle(
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                                    fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
+                                                    fontSize = MaterialTheme.typography.headlineLarge.fontSize,
+                                                    fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+                                                    letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
+                                                    lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                                                    textAlign = TextAlign.Center
+                                                )
+                                            )
                                         }
                                     }
                                 }
                             }
-                        ) {
-                            when(it) {
-                                10 -> {
+                            else -> {
+                                Button(
+                                    modifier = Modifier
+                                        .padding(vertical = 5.dp, horizontal = 5.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.inverseOnSurface,
+                                        contentColor = MaterialTheme.colorScheme.onBackground,
+                                    ),
+                                    onClick = {
+                                        when(it) {
+                                            10 -> {
 
-                                }
-                                12 -> {
-                                    Icon(
-                                        modifier = Modifier
-                                            .padding(vertical = 12.dp)
-                                            .size(30.dp)
-                                            .align(Alignment.CenterVertically),
-                                        imageVector = Icons.Outlined.Backspace,
-                                        contentDescription = "Back Space",
-                                        tint = MaterialTheme.colorScheme.onBackground
-                                    )
-                                }
-                                else -> {
-                                    Text(
-                                        textAlign = TextAlign.Center,
-                                        text = it.toString(),
-                                        style = TextStyle(
-                                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
-                                            fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
-                                            fontSize = MaterialTheme.typography.headlineLarge.fontSize,
-                                            fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
-                                            letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
-                                            lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
-                                            textAlign = TextAlign.Center
-                                        )
-                                    )
+                                            }
+                                            12 -> {
+                                                otpInput = otpInput.dropLast(1)
+                                                setupOtpCharacters(otpInput)
+                                                println(otpInput)
+                                            }
+                                            else -> {
+                                                if (otpInput.length <= maxChar  && inputEnabled) {
+                                                    builder.append(otpInput).append(it.toString())
+                                                    otpInput = builder.toString()
+                                                    setupOtpCharacters(otpInput)
+                                                }
+                                            }
+                                        }
+                                    }
+                                ) {
+                                    when(it) {
+                                        10 -> {
+
+                                        }
+                                        12 -> {
+                                            Icon(
+                                                modifier = Modifier
+                                                    .padding(vertical = 12.dp)
+                                                    .size(30.dp)
+                                                    .align(Alignment.CenterVertically),
+                                                imageVector = Icons.Outlined.Backspace,
+                                                contentDescription = "Back Space",
+                                                tint = MaterialTheme.colorScheme.onBackground
+                                            )
+                                        }
+                                        else -> {
+                                            Text(
+                                                textAlign = TextAlign.Center,
+                                                text = it.toString(),
+                                                style = TextStyle(
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                                    fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
+                                                    fontSize = MaterialTheme.typography.headlineLarge.fontSize,
+                                                    fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+                                                    letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
+                                                    lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                                                    textAlign = TextAlign.Center
+                                                )
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }

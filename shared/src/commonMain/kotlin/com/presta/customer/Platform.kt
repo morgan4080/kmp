@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 enum class Durations {
     SHORT, LONG
 }
-expect class Platform(context: AppContext) {
-    val platformName: String
+
+expect class Platform {
 
     val otpCode: MutableStateFlow<String>
     fun showToast(text: String, duration: Durations = Durations.LONG)
@@ -16,3 +16,5 @@ expect class Platform(context: AppContext) {
     fun logErrorsToFirebase(Error: Exception)
 
 }
+
+expect fun getPlatformName(): String

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -43,6 +44,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.moriatsushi.insetsx.ExperimentalSoftwareKeyboardApi
+import com.moriatsushi.insetsx.imePadding
 import com.presta.customer.MR
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.onBoarding.model.SelfRegistrationStatus
@@ -63,7 +66,7 @@ import dev.icerock.moko.resources.compose.painterResource
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class,
-    ExperimentalComposeUiApi::class
+    ExperimentalComposeUiApi::class, ExperimentalSoftwareKeyboardApi::class
 )
 @Composable
 fun OnBoardingContent(
@@ -221,7 +224,7 @@ fun OnBoardingContent(
     ) {
         Scaffold (
             snackbarHost = {
-                SnackbarHost(modifier = Modifier.padding(bottom = 300.dp), hostState = snackbarHostState)
+                SnackbarHost(modifier = Modifier.padding(bottom = 500.dp), hostState = snackbarHostState)
             }
         ) {
             LazyColumn (
@@ -231,153 +234,155 @@ fun OnBoardingContent(
                     .fillMaxHeight()
             ) {
                 item {
-                    Row (
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .imePadding(),
                     ) {
-                        when(isSystemInDarkTheme()) {
-                            false -> Image(
-                                painter = painterResource(state.organisation.logo),
-                                contentDescription = "Logo",
-                                modifier = Modifier.size(150.dp)
-                            )
-                            true -> Image(
-                                painter = painterResource(state.organisation.logodark),
-                                contentDescription = "Logo",
-                                modifier = Modifier.size(150.dp)
-                            )
+                        Row (
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            when(isSystemInDarkTheme()) {
+                                false -> Image(
+                                    painter = painterResource(state.organisation.logo),
+                                    contentDescription = "Logo",
+                                    modifier = Modifier.size(150.dp)
+                                )
+                                true -> Image(
+                                    painter = painterResource(state.organisation.logodark),
+                                    contentDescription = "Logo",
+                                    modifier = Modifier.size(150.dp)
+                                )
+                            }
                         }
-                    }
-                }
-                item {
-                    Row {
-                        Text(
-                            text = state.title,
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
-                            fontSize = 20.0.sp
-                        )
-                    }
-                }
-                item {
-                    Row {
-                        Text(
-                            text = state.label
-                                    + " "
-                                    + if (state.onBoardingContext == DefaultRootComponent.OnBoardingContext.LOGIN)
-                                "login"
-                            else
-                                "sign up",
-                            style = MaterialTheme.typography.bodySmall,
-                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
-                        )
-                    }
-                }
-                item {
-                    Column (
-                        modifier = Modifier.padding(vertical = 20.dp)
-                    ) {
-                        for (input in state.inputs) {
-                            if (input.fieldType == InputFields.ORGANISATION) {
-                                Row(modifier = Modifier.padding(bottom = 20.dp)) {
-                                    TextInputContainer(
-                                        label = input.inputLabel,
-                                        inputValue = state.organisation.tenant_name,
-                                        enabled = false,
-                                    )
-                                }
-                            }
-                            if (input.fieldType == InputFields.COUNTRY) {
-                                Row(modifier = Modifier.padding(bottom = 20.dp)) {
-                                    TextInputContainer(
-                                        label = input.inputLabel,
-                                        inputValue = state.country.name,
-                                        imageUrl = flagImg,
-                                        enabled = false,
-                                        callback = {
-                                            kc?.hide()
-                                            scope.launch {
-                                                scaffoldState.show()
-                                            }
-                                        }
-                                    )
-                                }
-                            }
-                            if (input.fieldType == InputFields.PHONE_NUMBER) {
-                                Row {
-                                    TextInputContainer(
-                                        label = input.inputLabel,
-                                        inputValue = "",
-                                        callingCode = state.country.code,
-                                        inputType = InputTypes.PHONE,
-                                        callback = {
-                                            if (!isPhoneNumber(it) && it.isNotEmpty()) {
-                                                onEvent(OnBoardingStore.Intent.UpdateError("Please enter a valid phone number"))
-                                            } else {
-                                                onEvent(OnBoardingStore.Intent.UpdateError(null))
-                                            }
 
-                                            phoneNumber = TextFieldValue(it)
-                                        }
-                                    )
+                        Row {
+                            Text(
+                                text = state.title,
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                fontSize = 20.0.sp
+                            )
+                        }
+
+                        Row {
+                            Text(
+                                text = state.label
+                                        + " "
+                                        + if (state.onBoardingContext == DefaultRootComponent.OnBoardingContext.LOGIN)
+                                    "login"
+                                else
+                                    "sign up",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                            )
+                        }
+
+                        Column (
+                            modifier = Modifier.padding(vertical = 20.dp)
+                        ) {
+                            for (input in state.inputs) {
+                                if (input.fieldType == InputFields.ORGANISATION) {
+                                    Row(modifier = Modifier.padding(bottom = 20.dp)) {
+                                        TextInputContainer(
+                                            label = input.inputLabel,
+                                            inputValue = state.organisation.tenant_name,
+                                            enabled = false,
+                                        )
+                                    }
                                 }
-                                state.error?.let {
-                                    Text(
-                                        modifier = Modifier.padding(top = 10.dp, start = 5.dp),
-                                        text = it,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light),
-                                        color = Color.Red
-                                    )
+                                if (input.fieldType == InputFields.COUNTRY) {
+                                    Row(modifier = Modifier.padding(bottom = 20.dp)) {
+                                        TextInputContainer(
+                                            label = input.inputLabel,
+                                            inputValue = state.country.name,
+                                            imageUrl = flagImg,
+                                            enabled = false,
+                                            callback = {
+                                                kc?.hide()
+                                                scope.launch {
+                                                    scaffoldState.show()
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
+                                if (input.fieldType == InputFields.PHONE_NUMBER) {
+                                    Row {
+                                        TextInputContainer(
+                                            label = input.inputLabel,
+                                            inputValue = "",
+                                            callingCode = state.country.code,
+                                            inputType = InputTypes.PHONE,
+                                            callback = {
+                                                if (!isPhoneNumber(it) && it.isNotEmpty()) {
+                                                    onEvent(OnBoardingStore.Intent.UpdateError("Please enter a valid phone number"))
+                                                } else {
+                                                    onEvent(OnBoardingStore.Intent.UpdateError(null))
+                                                }
+
+                                                phoneNumber = TextFieldValue(it)
+                                            }
+                                        )
+                                    }
+                                    state.error?.let {
+                                        Text(
+                                            modifier = Modifier.padding(top = 10.dp, start = 5.dp),
+                                            text = it,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                            color = Color.Red
+                                        )
+                                    }
                                 }
                             }
                         }
-                    }
-                }
-                item {
-                    Row (
-                        modifier = Modifier.padding(bottom = 20.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Checkbox(
-                            checked = termsAccepted,
-                            onCheckedChange = {
-                                termsAccepted = !termsAccepted
+
+                        Row (
+                            modifier = Modifier.padding(bottom = 20.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Checkbox(
+                                checked = termsAccepted,
+                                onCheckedChange = {
+                                    termsAccepted = !termsAccepted
+                                    onEvent(OnBoardingStore.Intent.UpdateError(null))
+                                }
+                            )
+                            ClickableText(text = annotatedString, style = MaterialTheme.typography.bodySmall, onClick = { offset ->
+                                annotatedString.getStringAnnotations(tag = "terms", start = offset, end = offset).firstOrNull()?.let {
+                                    //Test  the logged url
+                                    try {
+                                        component.platform.openUrl("https://support.presta.co.ke/portal/en/kb/articles/privacy-policy")
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                }
+                                annotatedString.getStringAnnotations(tag = "policy", start = offset, end = offset).firstOrNull()?.let {
+                                    try {
+                                        component.platform.openUrl("https://support.presta.co.ke/portal/en/kb/articles/privacy-policy")
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                }
                                 onEvent(OnBoardingStore.Intent.UpdateError(null))
-                            }
-                        )
-                        ClickableText(text = annotatedString, style = MaterialTheme.typography.bodySmall, onClick = { offset ->
-                            annotatedString.getStringAnnotations(tag = "terms", start = offset, end = offset).firstOrNull()?.let {
-                                //Test  the logged url
-                                component.platform.openUrl("https://support.presta.co.ke/portal/en/kb/articles/privacy-policy")
-                            }
-                            annotatedString.getStringAnnotations(tag = "policy", start = offset, end = offset).firstOrNull()?.let {
-                                component.platform.openUrl("https://support.presta.co.ke/portal/en/kb/articles/privacy-policy")
-                            }
-                            onEvent(OnBoardingStore.Intent.UpdateError(null))
+                            })
+                        }
 
-                        })
-                    }
-                }
-                item {
-                    Row {
-                        ActionButton("Submit", onClickContainer = {
-                            when(state.onBoardingContext) {
-                                DefaultRootComponent.OnBoardingContext.REGISTRATION -> {
-                                    startRegistrationJourney()
+                        Row {
+                            ActionButton("Submit", onClickContainer = {
+                                when(state.onBoardingContext) {
+                                    DefaultRootComponent.OnBoardingContext.REGISTRATION -> {
+                                        startRegistrationJourney()
+                                    }
+                                    DefaultRootComponent.OnBoardingContext.LOGIN -> {
+                                        startLoginJourney()
+                                    }
                                 }
-                                DefaultRootComponent.OnBoardingContext.LOGIN -> {
-                                    startLoginJourney()
-                                }
-                            }
-                        }, loading = state.isLoading)
-                    }
-                }
-
-                item {
-                    Row (modifier = Modifier.padding(bottom = 350.dp)) {
-
+                            }, loading = state.isLoading)
+                        }
                     }
                 }
             }

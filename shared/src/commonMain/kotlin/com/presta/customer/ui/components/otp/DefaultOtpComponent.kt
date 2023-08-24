@@ -73,6 +73,10 @@ class DefaultOtpComponent(
     }
 
     init {
-        platform.startSmsRetriever()
+        try {
+            platform.startSmsRetriever()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

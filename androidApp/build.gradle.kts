@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.fir.scopes.debugCollectOverrides
-
 plugins {
     kotlin("multiplatform")
     id("com.android.application")

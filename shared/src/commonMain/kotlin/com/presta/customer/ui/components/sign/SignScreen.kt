@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
@@ -64,8 +63,7 @@ fun SignScreen(component: SignComponent) {
                         text = "Coming Soon",
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 20.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold),
-                        textAlign = TextAlign.Center
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                     )
                 }
                 Column(
@@ -74,11 +72,26 @@ fun SignScreen(component: SignComponent) {
                     Text(modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 40.dp, end = 40.dp),
-                        text = "This new feature will enable you to Guarantee & sign loan forms from anywhere, anytime",
+                        text = "This new feature will enable you to",
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 13.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular),
-                        textAlign = TextAlign.Center
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                    )
+                    Text(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 60.dp, end = 60.dp),
+                        text = "Guarantee & sign loan forms ",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 13.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                    )
+                    Text(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 75.dp, end = 75.dp),
+                        text = "from anywhere, anytime",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 13.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                     )
                 }
             }

@@ -17,7 +17,7 @@ class DefaultWelcomeComponent (
             // create welcome screens here
             items = listOf(
                 UserEducationScreens(
-                    "Welcome to ${OrganisationModel.organisation.tenant_name} Easily save, apply and pay for loans anywhere, anytime.",
+                    "Welcome to PCEA RUIRU SACCO, save easily, apply and pay for loans anywhere, anytime.",
                     "Instant loans & 24/7 access to your account",
                     MR.images.send_money_abroad_dark,
                     MR.images.send_money_abroad_light,
@@ -40,6 +40,8 @@ class DefaultWelcomeComponent (
     )
 
     override fun onGetStarted(onBoardingContext: DefaultRootComponent.OnBoardingContext) {
+        println(":::::onBoardingContext:::::::")
+        println(onBoardingContext)
         onGetStartedSelected(onBoardingContext)
     }
 }

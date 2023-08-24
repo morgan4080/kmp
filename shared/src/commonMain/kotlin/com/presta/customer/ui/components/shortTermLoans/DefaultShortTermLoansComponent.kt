@@ -1,8 +1,6 @@
 package com.presta.customer.ui.components.shortTermLoans
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.value.MutableValue
-import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.doOnDestroy
@@ -18,7 +16,6 @@ import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStor
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStoreFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
@@ -134,12 +131,9 @@ class DefaultShortTermLoansComponent(
         shortTermloansStore.accept(event)
     }
 
-    private var authUserScopeJob: Job? = null
-
     private fun checkAuthenticatedUser() {
-        if (authUserScopeJob?.isActive == true) return
 
-        authUserScopeJob = scope.launch {
+        scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
                     onAuthEvent(
@@ -170,6 +164,8 @@ class DefaultShortTermLoansComponent(
                             refId = state.cachedMemberData.refId
                         )
                     )
+
+                    this.cancel()
                 }
             }
         }

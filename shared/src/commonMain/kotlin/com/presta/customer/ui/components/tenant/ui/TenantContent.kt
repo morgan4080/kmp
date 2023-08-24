@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -29,7 +27,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -46,20 +43,15 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.moriatsushi.insetsx.systemBars
-import com.presta.customer.AppContext
+import com.moriatsushi.insetsx.ExperimentalSoftwareKeyboardApi
+import com.moriatsushi.insetsx.imePadding
 import com.presta.customer.MR
-import com.presta.customer.Platform
-import com.presta.customer.SharedStatus
 import com.presta.customer.ui.components.tenant.TenantComponent
 import com.presta.customer.ui.components.tenant.store.TenantStore
 import com.presta.customer.ui.composables.ActionButton
@@ -68,11 +60,10 @@ import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSoftwareKeyboardApi::class)
 @Composable
 fun TenantContent(
     component: TenantComponent,
-    connectivityStatus: SharedStatus?,
     onTenantEvent: (TenantStore.Intent) -> Unit,
     state: TenantStore.State
 ) {
@@ -80,20 +71,6 @@ fun TenantContent(
     val focusRequester = remember { FocusRequester() }
     var isError by remember { mutableStateOf(false) }
 
-
-
-    LaunchedEffect(connectivityStatus) {
-        if (connectivityStatus !== null) {
-            connectivityStatus.current.collect {
-                if (!it) {
-                    snackBarHostState.showSnackbar(
-                        message = "No internet connection",
-                        duration = SnackbarDuration.Short
-                    )
-                }
-            }
-        }
-    }
     LaunchedEffect(state.tenantData) {
         if (state.tenantData !== null) {
             component.onSubmitClicked(state.tenantData.tenantId)
@@ -107,185 +84,193 @@ fun TenantContent(
                 modifier = Modifier.padding(bottom = 10.dp),
                 hostState = snackBarHostState
             )
-        },
-        contentWindowInsets = WindowInsets.systemBars
+        }
     ) {
         Column(
             modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp)
                 .background(color = MaterialTheme.colorScheme.background)
                 .fillMaxHeight()
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(it)
+                .imePadding(),
         ) {
-            Row(
+            Column (
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 30.dp)
+                    .padding(start = 16.dp, end = 16.dp)
             ) {
-                Text(
-                    text = "Key in your Organization tenant id",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
-                    fontSize = 20.0.sp
-                )
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = "Kindly note that your organization account number or account name serves as your tenant ID.",
-                    style = MaterialTheme.typography.bodySmall,
-                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
-                )
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 31.dp)
-            ) {
-                listOf(state.tenantField).map { inputMethod ->
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .shadow(0.5.dp, RoundedCornerShape(10.dp))
-                            .background(
-                                color = MaterialTheme.colorScheme.inverseOnSurface,
-                                shape = RoundedCornerShape(10.dp)
-                            ),
-                    ) {
-                        BasicTextField(
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 30.dp)
+                ) {
+                    Text(
+                        text = "Key in your Organization name or tenant ID",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                        fontSize = 20.0.sp
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Kindly note that your organization account number or account name serves as your tenant ID.",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 31.dp)
+                ) {
+                    listOf(state.tenantField).map { inputMethod ->
+                        Column(
                             modifier = Modifier
-                                .focusRequester(focusRequester)
-                                .height(65.dp)
-                                .padding(top = 20.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
-                                .absoluteOffset(y = 2.dp),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                            value = inputMethod.value,
-                            onValueChange = {
-                                onTenantEvent(TenantStore.Intent.UpdateField(it))
-                            },
-                            singleLine = true,
-                            textStyle = TextStyle(
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
-                                fontSize = 13.sp,
-                                fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
-                                letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
-                                lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
-                                fontFamily = MaterialTheme.typography.bodySmall.fontFamily
-                            ),
-                            decorationBox = { innerTextField ->
+                                .fillMaxWidth()
+                                .shadow(0.5.dp, RoundedCornerShape(10.dp))
+                                .background(
+                                    color = MaterialTheme.colorScheme.inverseOnSurface,
+                                    shape = RoundedCornerShape(10.dp)
+                                ),
+                        ) {
+                            BasicTextField(
+                                modifier = Modifier
+                                    .focusRequester(focusRequester)
+                                    .height(65.dp)
+                                    .padding(top = 20.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                                    .absoluteOffset(y = 2.dp),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                                value = inputMethod.value,
+                                onValueChange = {
+                                    onTenantEvent(TenantStore.Intent.UpdateField(it))
+                                },
+                                singleLine = true,
+                                textStyle = TextStyle(
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
+                                    fontSize = 13.sp,
+                                    fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
+                                    letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
+                                    lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                                    fontFamily = MaterialTheme.typography.bodySmall.fontFamily
+                                ),
+                                decorationBox = { innerTextField ->
 
-                                if (inputMethod.value.text.isEmpty()
-                                ) {
-                                    Text(
-                                        modifier = Modifier.alpha(.3f),
-                                        text = inputMethod.inputLabel,
-                                        style = MaterialTheme.typography.bodySmall
-                                    )
-                                }
-
-                                AnimatedVisibility(
-                                    visible = inputMethod.value.text.isNotEmpty(),
-                                    modifier = Modifier.absoluteOffset(y = -(16).dp),
-                                    enter = fadeIn() + expandVertically(),
-                                    exit = fadeOut() + shrinkVertically(),
-                                ) {
-                                    Text(
-                                        text = inputMethod.inputLabel,
-                                        color = primaryColor,
-                                        style = MaterialTheme.typography.labelSmall,
-                                        fontSize = 11.sp
-                                    )
-                                }
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
+                                    if (inputMethod.value.text.isEmpty()
                                     ) {
-
-                                        innerTextField()
+                                        Text(
+                                            modifier = Modifier.alpha(.3f),
+                                            text = inputMethod.inputLabel,
+                                            style = MaterialTheme.typography.bodySmall
+                                        )
                                     }
 
                                     AnimatedVisibility(
                                         visible = inputMethod.value.text.isNotEmpty(),
+                                        modifier = Modifier.absoluteOffset(y = -(16).dp),
                                         enter = fadeIn() + expandVertically(),
                                         exit = fadeOut() + shrinkVertically(),
                                     ) {
-
-                                        IconButton(
-                                            modifier = Modifier.size(18.dp),
-                                            onClick = {
-                                                onTenantEvent(
-                                                    TenantStore.Intent.UpdateField(
-                                                        TextFieldValue()
-                                                    )
-                                                )
-                                            },
-                                            content = {
-                                                Icon(
-                                                    modifier = Modifier.alpha(0.4f),
-                                                    imageVector = Icons.Filled.Cancel,
-                                                    contentDescription = null,
-                                                    tint = actionButtonColor
-                                                )
-                                            }
+                                        Text(
+                                            text = inputMethod.inputLabel,
+                                            color = primaryColor,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontSize = 11.sp
                                         )
                                     }
+
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                        ) {
+
+                                            innerTextField()
+                                        }
+
+                                        AnimatedVisibility(
+                                            visible = inputMethod.value.text.isNotEmpty(),
+                                            enter = fadeIn() + expandVertically(),
+                                            exit = fadeOut() + shrinkVertically(),
+                                        ) {
+
+                                            IconButton(
+                                                modifier = Modifier.size(18.dp),
+                                                onClick = {
+                                                    onTenantEvent(
+                                                        TenantStore.Intent.UpdateField(
+                                                            TextFieldValue()
+                                                        )
+                                                    )
+                                                },
+                                                content = {
+                                                    Icon(
+                                                        modifier = Modifier.alpha(0.4f),
+                                                        imageVector = Icons.Filled.Cancel,
+                                                        contentDescription = null,
+                                                        tint = actionButtonColor
+                                                    )
+                                                }
+                                            )
+                                        }
+                                    }
                                 }
-                            }
+                            )
+                        }
+
+
+                        Text(modifier = Modifier
+                            .padding(top = 22.dp)
+                            .clickable {
+                                try {
+                                    component.platform.openUrl("https://support.presta.co.ke/portal/en/kb/articles/how-to-access-account-tenant-id")
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            },
+                            text = "How to get tenant ID?",
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                            color = actionButtonColor,
+                            fontSize = 12.sp,
+                            textDecoration = TextDecoration.Underline
                         )
-                    }
 
-
-                    Text(modifier = Modifier
-                        .padding(top = 22.dp)
-                        .clickable {
-                            component.platform.openUrl("https://support.presta.co.ke/portal/en/kb/articles/how-to-access-account-tenant-id")
-
-                        },
-                        text = "How to get tenant ID?",
-                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular),
-                        color = actionButtonColor,
-                        fontSize = 12.sp,
-                        textDecoration = TextDecoration.Underline
-                    )
-
-                    if (inputMethod.errorMessage !== "") {
-                        Text(
-                            modifier = Modifier.padding(10.dp),
-                            text = inputMethod.errorMessage,
-                            fontSize = 10.sp,
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.regular),
-                            color = Color.Red
-                        )
+                        if (inputMethod.errorMessage !== "") {
+                            Text(
+                                modifier = Modifier.padding(10.dp),
+                                text = inputMethod.errorMessage,
+                                fontSize = 10.sp,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                color = Color.Red
+                            )
+                        }
                     }
                 }
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 70.dp),
-            ) {
-                ActionButton(
-                    "Submit", onClickContainer = {
-                        onTenantEvent(
-                            TenantStore.Intent.GetClientById(
-                                searchTerm = state.tenantField.value.text
+                Spacer(modifier = Modifier.weight(1f))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 20.dp),
+                ) {
+                    ActionButton(
+                        "Submit", onClickContainer = {
+                            onTenantEvent(
+                                TenantStore.Intent.GetClientById(
+                                    searchTerm = state.tenantField.value.text
+                                )
                             )
-                        )
-                        isError = state.error != null
-                    },
-                    loading = state.isLoading,
-                    enabled = state.tenantField.value.text != ""
-                )
+                            isError = state.error != null
+                        },
+                        loading = state.isLoading,
+                        enabled = state.tenantField.value.text != ""
+                    )
+                }
             }
         }
     }

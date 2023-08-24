@@ -22,7 +22,7 @@ kotlin {
         version = "1.0.1"
         summary = "Presta Customer Shared Module"
         homepage = "Link to the Shared Module homepage"
-        ios.deploymentTarget = "14.1"
+        ios.deploymentTarget = "14.0"
         podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "shared"

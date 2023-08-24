@@ -2,19 +2,22 @@ package com.presta.customer.ui.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,22 +28,23 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigateBackTopBar(label: String,onClickContainer: () -> Unit) {
-    CenterAlignedTopAppBar(modifier = Modifier
-        .padding(start = 5.dp),
+    CenterAlignedTopAppBar(
+        modifier =Modifier
+            .background(color =  MaterialTheme.colorScheme.background)
+            .padding(start = 9.dp),
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.background),
         title = {
-            Row(modifier = Modifier
-                .fillMaxWidth()){
-                Box(contentAlignment = Alignment.Center){
-
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                ) {
                     Row(verticalAlignment = Alignment.CenterVertically){
                         Icon(
                             Icons.Filled.ArrowBack,
                             contentDescription = "Forward Arrow",
                             tint = backArrowColor,
                             modifier = Modifier.clickable {
-
                                 onClickContainer()
-
                             }
                         )
 
@@ -57,20 +61,10 @@ fun NavigateBackTopBar(label: String,onClickContainer: () -> Unit) {
                         )
 
                         Spacer(modifier = Modifier.weight(1f))
-
-
                     }
-
-
                 }
-
-
             }
-
         },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.background)
-
-
     )
 
 }
