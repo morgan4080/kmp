@@ -99,6 +99,11 @@ interface LongTermLoansRepository {
         token: String,
         memberRefId: String,
     ): Result<PrestaLongTermLoansRequestsListResponse>
+    suspend fun getLongTermLoansRequestSpecificProduct(
+        token: String,
+        productRefId: String,
+        memberRefId: String,
+    ): Result<PrestaLongTermLoansRequestsListResponse>
 
     suspend fun updateLoanGuarantor(
         token: String,

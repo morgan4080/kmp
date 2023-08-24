@@ -10,6 +10,8 @@ import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLo
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.profile.coroutineScope
+import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
+import com.presta.customer.ui.components.signAppHome.store.SignHomeStoreFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -61,6 +63,21 @@ class DefaultApplyLongtermLoanComponent(
         applyLongTermLoansStore.accept(event)
     }
 
+    override val sigHomeStore: SignHomeStore =
+        instanceKeeper.getStore {
+            SignHomeStoreFactory(
+                storeFactory = storeFactory
+            ).create()
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val signHomeState: StateFlow<SignHomeStore.State> =
+        sigHomeStore.stateFlow
+
+    override fun onProfileEvent(event: SignHomeStore.Intent) {
+        sigHomeStore.accept(event)
+    }
+
     private var authUserScopeJob: Job? = null
     private fun checkAuthenticatedUser() {
         if (authUserScopeJob?.isActive == true) return
@@ -73,6 +90,13 @@ class DefaultApplyLongtermLoanComponent(
                             token = state.cachedMemberData.accessToken
                         )
                     )
+                    onProfileEvent(
+                        SignHomeStore.Intent.GetPrestaTenantByPhoneNumber(
+                            token = state.cachedMemberData.accessToken,
+                            phoneNumber = state.cachedMemberData.phoneNumber
+                        )
+                    )
+
                     onEvent(
                         ApplyLongTermLoansStore.Intent.GetLongTermLoansProducts(
                             token = state.cachedMemberData.accessToken,

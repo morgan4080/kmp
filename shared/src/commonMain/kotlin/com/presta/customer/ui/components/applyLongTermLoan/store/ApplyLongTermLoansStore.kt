@@ -88,6 +88,11 @@ interface ApplyLongTermLoansStore :
             val token: String,
             val memberRefId: String
         ) : Intent()
+        data class GetPrestaLongTermLoansRequestsSpecificProduct(
+            val token: String,
+            val productRefId: String,
+            val memberRefId: String
+        ) : Intent()
 
         data class ReplaceLoanGuarantor(
             val token: String,
@@ -137,6 +142,7 @@ interface ApplyLongTermLoansStore :
         val prestaZohoSignUrl: PrestaZohoSignUrlResponse? = null,
         val prestaLongTermLoansRequestsList: PrestaLongTermLoansRequestsListResponse? = null,
         val prestaLongTermLoansRequestsFilteredList: PrestaLongTermLoansRequestsListResponse? = null,
+        val prestaLongTermLoansRequestsSpecificProduct: PrestaLongTermLoansRequestsListResponse? = null,
         val prestaUpdatedGuarantorData: LongTermLoanRequestResponse? = null,
         val prestaWitnessRequests: List<PrestaWitnessRequestResponse> = emptyList(),
         val prestaFavouriteGuarantor: List<PrestaFavouriteGuarantorResponse> = emptyList(),

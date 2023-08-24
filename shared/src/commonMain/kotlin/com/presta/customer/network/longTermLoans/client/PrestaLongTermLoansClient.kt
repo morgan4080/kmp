@@ -324,7 +324,25 @@ class PrestaLongTermLoansClient(
             }
         }
     }
-
+    suspend fun getLongTermLoanRequestSpecificProduct(
+        token: String,
+        productRefId: String,
+        memberRefId: String,
+    ): PrestaLongTermLoansRequestsListResponse {
+        return longTermLoansErrorHandler {
+            httpClient.get(NetworkConstants.PrestaLongTermLoansRequetsList.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+                url {
+                    encodedParameters.append("productRefId", productRefId)
+                    encodedParameters.append("memberRefId", memberRefId)
+                    encodedParameters.append("order", "ASC")
+                    encodedParameters.append("pageSize", "10")
+                }
+            }
+        }
+    }
     suspend fun upDateGuarantor(
         token: String,
         loanRequestRefId: String,

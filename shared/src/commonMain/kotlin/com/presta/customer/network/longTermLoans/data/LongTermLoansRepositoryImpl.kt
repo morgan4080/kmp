@@ -282,6 +282,26 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
             Result.failure(e)
         }
     }
+
+    override suspend fun getLongTermLoansRequestSpecificProduct(
+        token: String,
+        productRefId: String,
+        memberRefId: String
+    ): Result<PrestaLongTermLoansRequestsListResponse> {
+        return try {
+            val response = prestaLongTermLoansClient.getLongTermLoanRequestSpecificProduct(
+                token = token,
+                productRefId = productRefId,
+                memberRefId = memberRefId
+            )
+            Result.success(response)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
     override suspend fun updateLoanGuarantor(
         token: String,
         loanRequestRefId: String,
@@ -369,6 +389,7 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
             Result.failure(e)
         }
     }
+
     override suspend fun deleteLoanRequest(
         token: String,
         loanRequestNumber: String
@@ -376,7 +397,7 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
         return try {
             val response = prestaLongTermLoansClient.deleteLoanRequest(
                 token = token,
-                loanRequestNumber= loanRequestNumber
+                loanRequestNumber = loanRequestNumber
             )
             Result.success(response)
         } catch (e: Exception) {

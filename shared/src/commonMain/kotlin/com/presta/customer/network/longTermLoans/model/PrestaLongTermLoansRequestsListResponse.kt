@@ -4,5 +4,16 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PrestaLongTermLoansRequestsListResponse(
-    val content: List<LoanRequestListData>
+    val content: List<LoanRequestListData>,
+    val  empty: Boolean
 )
+
+
+@Serializable
+enum class LoanStatus {
+    INPROGRESS,
+    COMPLETED
+}
+
+
+

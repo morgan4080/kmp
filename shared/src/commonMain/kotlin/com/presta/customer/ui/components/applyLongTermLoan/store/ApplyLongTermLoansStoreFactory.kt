@@ -89,6 +89,8 @@ class ApplyLongTermLoansStoreFactory(
 
         data class LongTermLoansRequestsFilteredListLoaded(val longTermLoansRequestsFilteredListResponse: PrestaLongTermLoansRequestsListResponse) :
             Msg()
+        data class LongTermLoansRequestsSpecificProductLoaded(val longTermLoansRequestsSpecificProduct: PrestaLongTermLoansRequestsListResponse) :
+            Msg()
 
         data class UpdatedGuarantorLoaded(val replacedGuarantorResponse: LongTermLoanRequestResponse) :
             Msg()
@@ -104,8 +106,10 @@ class ApplyLongTermLoansStoreFactory(
 
         data class FavouriteGuarantorDeleted(val favouriteGuarantorDeletedResponse: String) :
             Msg()
-        data class LoanRequestDeleted (val loanRequestDeleted : String) :
+
+        data class LoanRequestDeleted(val loanRequestDeleted: String) :
             Msg()
+
         data class LongTermLoansFailed(val error: String?) : Msg()
     }
 
@@ -203,6 +207,11 @@ class ApplyLongTermLoansStoreFactory(
                     token = intent.token,
                     memberRefId = intent.memberRefId
                 )
+                is ApplyLongTermLoansStore.Intent.GetPrestaLongTermLoansRequestsSpecificProduct -> getprestaLongTermLoansRequestsSpecificProduct(
+                    token = intent.token,
+                    productRefId = intent.productRefId,
+                    memberRefId = intent.memberRefId
+                )
 
                 is ApplyLongTermLoansStore.Intent.ReplaceLoanGuarantor -> replaceLoanGuarantor(
                     token = intent.token,
@@ -232,6 +241,7 @@ class ApplyLongTermLoansStoreFactory(
                     refId = intent.refId
 
                 )
+
                 is ApplyLongTermLoansStore.Intent.DeleteLoanRequest -> deleteLoanRequest(
                     token = intent.token,
                     loanRequestNumber = intent.loanRequestNumber
@@ -610,6 +620,33 @@ class ApplyLongTermLoansStoreFactory(
                 dispatch(Msg.LongTermLoansLoading(false))
             }
         }
+
+        private var getprestaLongTermLoansRequestsSpecificProductJob: Job? = null
+        private fun getprestaLongTermLoansRequestsSpecificProduct(
+            token: String,
+            productRefId: String,
+            memberRefId: String
+        ) {
+            if (getprestaLongTermLoansRequestsSpecificProductJob?.isActive == true) return
+            dispatch(Msg.LongTermLoansLoading())
+
+            getprestaLongTermLoansRequestsSpecificProductJob = scope.launch {
+                longTermLoansRepository.getLongTermLoansRequestSpecificProduct(
+                    token = token,
+                    productRefId = productRefId,
+                    memberRefId = memberRefId
+
+                ).onSuccess { response ->
+                    dispatch(Msg.LongTermLoansRequestsSpecificProductLoaded(response))
+
+                }.onFailure { e ->
+                    dispatch(Msg.LongTermLoansFailed(e.message))
+                }
+
+                dispatch(Msg.LongTermLoansLoading(false))
+            }
+        }
+
         private var replaceGuarantorJob: Job? = null
         private fun replaceLoanGuarantor(
             token: String,
@@ -728,6 +765,7 @@ class ApplyLongTermLoansStoreFactory(
                 dispatch(Msg.LongTermLoansLoading(false))
             }
         }
+
         private var deleteLoanRequestJob: Job? = null
         private fun deleteLoanRequest(
             token: String,
@@ -774,13 +812,15 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.LongTermLoansRequestsFilteredListLoaded -> copy(
                     prestaLongTermLoansRequestsFilteredList = msg.longTermLoansRequestsFilteredListResponse
                 )
+                is Msg.LongTermLoansRequestsSpecificProductLoaded -> copy(
+                    prestaLongTermLoansRequestsSpecificProduct = msg.longTermLoansRequestsSpecificProduct
+                )
                 is Msg.UpdatedGuarantorLoaded -> copy(prestaUpdatedGuarantorData = msg.replacedGuarantorResponse)
                 is Msg.WitnessRequestsLoaded -> copy(prestaWitnessRequests = msg.witnessRequestsLoaded)
                 is Msg.FavouriteGuarantorLoaded -> copy(prestaFavouriteGuarantor = msg.favouriteGuarantorLoaded)
                 is Msg.AddedFavouriteGuarantorLoaded -> copy(prestaAdedFavouriteGuarantor = msg.addedfavouriteGuarantorLoaded)
-                is Msg.FavouriteGuarantorDeleted -> copy(deleteFavouriteGuarantorResponse = msg. favouriteGuarantorDeletedResponse)
-                is Msg.LoanRequestDeleted -> copy(deleteLoanRequestResponse =msg. loanRequestDeleted)
-
+                is Msg.FavouriteGuarantorDeleted -> copy(deleteFavouriteGuarantorResponse = msg.favouriteGuarantorDeletedResponse)
+                is Msg.LoanRequestDeleted -> copy(deleteLoanRequestResponse = msg.loanRequestDeleted)
             }
     }
 
