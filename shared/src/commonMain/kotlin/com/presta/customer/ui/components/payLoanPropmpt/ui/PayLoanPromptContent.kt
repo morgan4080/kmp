@@ -50,7 +50,7 @@ fun PayLoanPromptContent(
                 text = "Phone Number ${authState.cachedMemberData?.phoneNumber}",
                 color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 14.sp,
-                fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
             )
 
         }
@@ -64,7 +64,7 @@ fun PayLoanPromptContent(
                 text = "KSH ${formatMoney(amount.toDouble())}",
                 color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 14.sp,
-                fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
             )
         }
 
@@ -96,7 +96,7 @@ fun PayLoanPromptContent(
             Text(
                 text = "Your transaction is ${if (state.paymentStatus !== null) state.paymentStatus.status else "....."}",
                 fontSize = 14.sp,
-                fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium),
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onBackground
             )

@@ -1,9 +1,9 @@
 package com.presta.customer.ui.components.welcome
 
-import com.presta.customer.MR
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import com.presta.customer.MR
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.root.DefaultRootComponent
 
@@ -17,7 +17,7 @@ class DefaultWelcomeComponent (
             // create welcome screens here
             items = listOf(
                 UserEducationScreens(
-                    "Welcome to PCEA RUIRU SACCO, save easily, apply and pay for loans anywhere, anytime.",
+                    "Welcome to ${OrganisationModel.organisation.tenant_name}, save easily, apply and pay for loans anywhere, anytime.",
                     "Instant loans & 24/7 access to your account",
                     MR.images.send_money_abroad_dark,
                     MR.images.send_money_abroad_light,

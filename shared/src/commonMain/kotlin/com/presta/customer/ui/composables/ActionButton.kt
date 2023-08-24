@@ -55,7 +55,7 @@ fun  ActionButton(label: String, onClickContainer: () -> Unit, loading: Boolean 
                     lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
                     fontFamily = MaterialTheme.typography.bodyLarge.fontFamily
                 ),
-                fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold)
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
             )
         }
     }

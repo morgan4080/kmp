@@ -70,6 +70,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
@@ -207,7 +208,7 @@ fun ProfileContent(
                             ) {
                                 Text(
                                     text = "Activate  Account",
-                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium),
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                                     fontSize = 14.sp
                                 )
                                 Icon(
@@ -228,7 +229,7 @@ fun ProfileContent(
                                 Text(
                                     text = "Welcome to ${if (authState.authUserResponse !== null) authState.authUserResponse.companyName else ""}," +
                                             " please pay a registration fee of KSH ${if (authState.cachedMemberData !== null) authState.cachedMemberData.registrationFees else ""} to activate your account",
-                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.light),
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                     fontSize = 12.sp
                                 )
 
@@ -374,7 +375,7 @@ fun ProfileContent(
                                             text = "Quick Links",
                                             color = MaterialTheme.colorScheme.onBackground,
                                             fontSize = 18.sp,
-                                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold)
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                                         )
                                     }
                                 }
@@ -421,7 +422,7 @@ fun ProfileContent(
                                                                 imageVector = item1.icon,
                                                                 modifier = Modifier.size(30.dp),
                                                                 contentDescription = null,
-                                                                tint = MaterialTheme.colorScheme.onBackground
+                                                                tint = Color.White
                                                             )
                                                         }
                                                     )
@@ -431,14 +432,14 @@ fun ProfileContent(
                                                         text = item1.labelTop,
                                                         color = MaterialTheme.colorScheme.onBackground,
                                                         fontSize = 12.sp,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                                     )
 
                                                     Text(
                                                         text = item1.labelBottom,
                                                         color = MaterialTheme.colorScheme.onBackground,
                                                         fontSize = 12.sp,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                                     )
                                                 }
                                             }
@@ -457,7 +458,7 @@ fun ProfileContent(
                                             text = "Transactions",
                                             color = MaterialTheme.colorScheme.onBackground,
                                             fontSize = 18.sp,
-                                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold)
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                                         )
 
                                         Row (
@@ -471,7 +472,7 @@ fun ProfileContent(
                                                 textAlign = TextAlign.Center,
                                                 color = backArrowColor,
                                                 fontSize = 12.sp,
-                                                fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium),
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                                                 style = MaterialTheme.typography.headlineSmall
                                             )
 

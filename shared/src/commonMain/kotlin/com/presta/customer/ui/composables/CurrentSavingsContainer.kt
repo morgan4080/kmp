@@ -64,7 +64,7 @@ fun CurrentSavingsContainer (
                     Text(
                         text = "Total Savings",
                         color = MaterialTheme.colorScheme.outline,
-                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light),
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
@@ -84,7 +84,7 @@ fun CurrentSavingsContainer (
                                     " KES"
                         } else "",
                         color= MaterialTheme.colorScheme.onBackground,
-                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold),
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
@@ -96,7 +96,7 @@ fun CurrentSavingsContainer (
                             text = "Current Savings ",
                             color = MaterialTheme.colorScheme.outline,
                             style = MaterialTheme.typography.bodySmall,
-                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                         )
 
                         Text(
@@ -110,7 +110,7 @@ fun CurrentSavingsContainer (
                             text = if (savingsBalance !== null) savingsBalance.toString() else "",
                             color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.labelLarge,
-                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold)
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                         )
                     }
 
@@ -121,7 +121,7 @@ fun CurrentSavingsContainer (
                             text = "Current Shares",
                             color = MaterialTheme.colorScheme.outline,
                             style = MaterialTheme.typography.bodySmall,
-                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                         )
 
                         Text(
@@ -135,7 +135,7 @@ fun CurrentSavingsContainer (
                             text = if (sharesBalance !== null && sharePrice !== null) "$sharePrice (${sharesBalance})" else "",
                             color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.labelLarge,
-                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold)
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                         )
                     }
                 }

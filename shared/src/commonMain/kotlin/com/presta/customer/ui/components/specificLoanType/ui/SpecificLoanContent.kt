@@ -107,7 +107,7 @@ fun SpecificLoaContent(
                         text = "Enter Loan Amount",
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 14.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                     )
                 }
                 item {
@@ -143,7 +143,7 @@ fun SpecificLoaContent(
                             modifier = Modifier.padding(top = 10.dp, start = 5.dp),
                             text = "min value Ksh " + allowedMinAmount.toString() + " max value Ksh " + allowedMaxAmount.toString(),
                             style = MaterialTheme.typography.bodySmall,
-                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.light),
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                             color = Color.Red
                         )
 
@@ -257,7 +257,7 @@ fun SpecificLoaContent(
                             modifier = Modifier.padding(top = 10.dp, start = 5.dp),
                             text = "min period is " + allowedMinTerm.toString() +" " + loanPeriodUnit.toString() + " max period is " + allowedMaxTerm.toString() +" " + loanPeriodUnit,
                             style = MaterialTheme.typography.bodySmall,
-                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.light),
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                             color = Color.Red
                         )
 

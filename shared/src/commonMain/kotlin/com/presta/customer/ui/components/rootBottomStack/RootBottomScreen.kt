@@ -62,7 +62,7 @@ fun RootBottomScreen(component: RootBottomComponent) {
                                 text = screens[0],
                                 color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.ProfileChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                 style = MaterialTheme.typography.bodySmall,
-                                fontFamily = fontFamilyResource(MR.fonts.Metropolis.light),
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
@@ -77,7 +77,7 @@ fun RootBottomScreen(component: RootBottomComponent) {
                                 text = screens[1],
                                 color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.RootLoansChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                 style = MaterialTheme.typography.bodySmall,
-                                fontFamily = fontFamilyResource(MR.fonts.Metropolis.light),
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
@@ -92,7 +92,7 @@ fun RootBottomScreen(component: RootBottomComponent) {
                                 text = screens[2],
                                 color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.RootSavingsChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                 style = MaterialTheme.typography.bodySmall,
-                                fontFamily = fontFamilyResource(MR.fonts.Metropolis.light),
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
@@ -107,7 +107,7 @@ fun RootBottomScreen(component: RootBottomComponent) {
                                 text = screens[3],
                                 color= if (activeComponentStackBottom is RootBottomComponent.ChildBottom.SignChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                 style = MaterialTheme.typography.bodySmall,
-                                fontFamily = fontFamilyResource(MR.fonts.Metropolis.light),
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },

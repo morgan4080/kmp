@@ -67,7 +67,7 @@ fun WelcomeScreen(
                                 Text(
                                     text = item.title,
                                     style = MaterialTheme.typography.headlineMedium,
-                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold)
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
                                 )
                             }
 
@@ -75,7 +75,7 @@ fun WelcomeScreen(
                                 Text(
                                     text = item.label,
                                     style = MaterialTheme.typography.titleSmall,
-                                    fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                 )
                             }
 

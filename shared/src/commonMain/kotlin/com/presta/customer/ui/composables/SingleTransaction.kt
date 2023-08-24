@@ -87,14 +87,14 @@ fun singleTransaction(transactionHistory:  List<PrestaTransactionHistoryResponse
                             text = if (transaction.purpose !== null) "${transaction.purpose}" else "",
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 14.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.medium)
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                         )
 
                         Text(
                             text = transaction.transactionReference,
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 10.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                         )
                     }
                 }
@@ -105,12 +105,12 @@ fun singleTransaction(transactionHistory:  List<PrestaTransactionHistoryResponse
                         text = formatMoney(transaction.amount),
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 14.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.bold)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
                     )
                     Text(
                         text = formatDate(transaction.created),
                         fontSize = 10.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                     )
                 }
             }
@@ -147,7 +147,7 @@ fun singleTransaction(transactionHistory:  List<PrestaTransactionHistoryResponse
                     Text(
                         text = "",
                         fontSize = MaterialTheme.typography.labelSmall.fontSize,
-                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.light),
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                         modifier = Modifier
                             .clip(shape = RoundedCornerShape(12.dp))
                             .defaultMinSize(minHeight = 20.dp, minWidth = 150.dp)
@@ -158,7 +158,7 @@ fun singleTransaction(transactionHistory:  List<PrestaTransactionHistoryResponse
                         text = "",
                         fontSize = MaterialTheme.typography.labelMedium.fontSize,
                         color = MaterialTheme.colorScheme.onBackground,
-                        fontFamily = fontFamilyResource(MR.fonts.Metropolis.semiBold),
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
                         modifier = Modifier
                             .clip(shape = RoundedCornerShape(12.dp))
                             .defaultMinSize(minHeight = 20.dp, minWidth = 100.dp)
