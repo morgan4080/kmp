@@ -1,9 +1,4 @@
-<<<<<<<< HEAD:androidApp/src/androidMain/kotlin/com/presta/customer/codo/MainActivity.kt
 package com.presta.customer.codo
-========
-package com.presta.customer.pcea
->>>>>>>> PCEA:androidApp/src/androidMain/kotlin/com/presta/customer/pcea/MainActivity.kt
-
 import android.app.Activity
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -12,10 +7,7 @@ import androidx.core.view.WindowCompat
 import com.arkivanov.decompose.defaultComponentContext
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import com.presta.customer.MainView
-<<<<<<<< HEAD:androidApp/src/androidMain/kotlin/com/presta/customer/codo/MainActivity.kt
-========
 import com.presta.customer.Platform
->>>>>>>> PCEA:androidApp/src/androidMain/kotlin/com/presta/customer/pcea/MainActivity.kt
 import com.presta.customer.SharedStatus
 import com.presta.customer.di.initKoin
 import com.presta.customer.ui.components.root.DefaultRootComponent
@@ -24,7 +16,7 @@ import org.koin.core.context.stopKoin
 import org.koin.core.error.KoinAppAlreadyStartedException
 
 class MainActivity : AppCompatActivity() {
-    var platform: Platform? = null
+    private var platform: Platform? = null
     private var currentActivity: Activity? = null
     private fun getCurrentActivity(): Activity? {
         return currentActivity
