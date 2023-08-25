@@ -98,9 +98,9 @@ fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
 
 class DefaultRootComponent(
     componentContext: ComponentContext,
-    val storeFactory: StoreFactory,
-) : RootComponent, ComponentContext by componentContext {
+    val storeFactory: StoreFactory
 
+) : RootComponent, ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
 
@@ -183,7 +183,7 @@ class DefaultRootComponent(
             loansPendingApprovalComponent(componentContext)
         )
 
-        is Config.SignApp -> RootComponent.Child.SignAppChild(signApplication(componentContext))
+        is Config.SignApp -> RootComponent.Child.SignAppChild(signApplication(componentContext,config))
         is Config.ApplyLongTermLoans -> RootComponent.Child.ApplyLongtermLoanChild(
             applyLongTermLoanComponent(componentContext)
         )
@@ -463,7 +463,7 @@ class DefaultRootComponent(
         },
         backTopProfile = config.backTopProfile,
         gotoSignApp = {
-            navigation.bringToFront(Config.SignApp)
+            navigation.bringToFront(Config.SignApp(loanRefId = ""))
         })
 
     private fun allTransactionHistory(componentContext: ComponentContext): TransactionHistoryComponent =
@@ -552,13 +552,16 @@ class DefaultRootComponent(
                 navigation.replaceAll(Config.RootBottom(true))
             })
 
-    private fun signApplication(componentContext: ComponentContext): RootBottomSignComponent =
+    private fun signApplication(
+        componentContext: ComponentContext,
+        config: Config.SignApp
+    ): RootBottomSignComponent =
         DefaultRootBottomSignComponent(componentContext = componentContext,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
             gotoApplyAllLoans = {
                 //navigate to all  loans outside  bottom scope
-                navigation.push(Config.ApplyLongTermLoans)
+                navigation.bringToFront(Config.ApplyLongTermLoans)
             },
             gotoGuarantorshipRequests = {
                 navigation.push(Config.GuarantorshipRequest)
@@ -596,7 +599,8 @@ class DefaultRootComponent(
                         memberRefId = memberRefId
                     )
                 )
-            }
+            },
+            loanRefId = config.loanRefId
         )
 
     private fun applyLongTermLoanComponent(componentContext: ComponentContext): ApplyLongTermLoanComponent =
@@ -612,6 +616,11 @@ class DefaultRootComponent(
             },
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
+            onResolveLoanClicked = {loanRequestRefId->
+                //Todo navigate to bottom sign  and launch requests  if refid is not null
+                navigation.bringToFront(Config.SignApp(loanRefId = loanRequestRefId))
+
+            }
         )
 
     private fun longTermLoanDetailsComponent(
@@ -1101,8 +1110,12 @@ class DefaultRootComponent(
         @Parcelize
         object AllTransactions : Config()
 
+//        @Parcelize
+//        object SignApp : Config()
         @Parcelize
-        object SignApp : Config()
+        data class SignApp(
+            val loanRefId: String,
+        ) : Config()
 
         @Parcelize
         object LoanPendingApprovals : Config()

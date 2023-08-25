@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface RootBottomSignComponent {
 
     val childStackBottom: Value<ChildStack<*, ChildBottom>>
+    val loanRefId: String
 
     fun onProfileTabClicked()
     fun onRequestTabClicked()

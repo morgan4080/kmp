@@ -70,7 +70,8 @@ class DefaultRootBottomSignComponent(
         loanRequestRefId: String,
         memberRefId: String
     ) -> Unit,
-    backTopProfile: Boolean = false
+    backTopProfile: Boolean = false,
+    override val loanRefId: String
 ) : RootBottomSignComponent, ComponentContext by componentContext, KoinComponent {
     private val authRepository by inject<AuthRepository>()
 

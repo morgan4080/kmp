@@ -24,7 +24,8 @@ class DefaultApplyLongtermLoanComponent(
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     private val onItemClicked: () -> Unit,
-    private val onProductClicked: (loanRefId: String) -> Unit
+    private val onProductClicked: (loanRefId: String) -> Unit,
+    private val onResolveLoanClicked: (loanRefId:String) -> Unit,
 ) : ApplyLongTermLoanComponent, ComponentContext by componentContext {
 
     private val scope = coroutineScope(mainContext + SupervisorJob())
@@ -113,6 +114,9 @@ class DefaultApplyLongtermLoanComponent(
 
     override fun onProductSelected(loanRefId: String) {
         onProductClicked(loanRefId)
+    }
+    override fun onResolveLoanSelected(loanRefId: String) {
+      onResolveLoanClicked(loanRefId)
     }
 
     init {

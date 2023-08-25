@@ -17,4 +17,5 @@ interface ApplyLongTermLoanComponent {
     fun onProfileEvent(event: SignHomeStore.Intent)
     val sigHomeStore: SignHomeStore
     val signHomeState: StateFlow<SignHomeStore.State>
+    fun onResolveLoanSelected(loanRefId: String)
 }

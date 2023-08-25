@@ -230,6 +230,9 @@ fun ApplyLongTermLoansContent(
                                         onClick = {
                                             launchHandleLoanRequestPopUp = false
                                             //Navigate to resolve the loan
+                                            //Take the loan refid to launch the laon
+                                            //Directly  invoke loan Requests
+                                            component.onResolveLoanSelected(loanRefId = "ds")
 
                                         },
                                         modifier = Modifier
@@ -349,9 +352,7 @@ fun ApplyLongTermLoansContent(
                         item {
                             Spacer(modifier = Modifier.padding(bottom = 100.dp))
                         }
-
                         //Pop up-- check if a loan has been previously applied, proceed or resolve
-
                     }
                 }
             }
