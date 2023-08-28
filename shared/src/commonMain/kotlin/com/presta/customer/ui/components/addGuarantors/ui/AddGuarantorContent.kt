@@ -134,6 +134,7 @@ fun AddGuarantorContent(
     var launchCheckSelfAndEmPloyedPopUp by remember { mutableStateOf(false) }
     var allConditionsChecked by remember { mutableStateOf(false) }
     var searchGuarantorByMemberNumber by remember { mutableStateOf(false) }
+    var searchGuarantorByPhoneNumber by remember { mutableStateOf(false) }
     val modalBottomSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = skipHalfExpanded
@@ -155,6 +156,18 @@ fun AddGuarantorContent(
     var amountToGuarantee by remember { mutableStateOf(TextFieldValue()) }
     var launchGuarantorListing by remember { mutableStateOf(false) }
     val pattern = remember { Regex("^\\d+\$") }
+    var tenantPhoneNumber by remember { mutableStateOf("") }
+    //Create a source of truth for the user phone number
+    //Source of truth for  tenant phone number
+    //store the initial phone number as the tenant phone number
+    LaunchedEffect(
+        ""
+    ) {
+        if (signHomeState.prestaTenantByPhoneNumber?.phoneNumber != null) {
+            tenantPhoneNumber = signHomeState.prestaTenantByPhoneNumber.phoneNumber
+        }
+    }
+
     if (memberNumber != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -168,6 +181,25 @@ fun AddGuarantorContent(
                 )
             }?.let {
                 onProfileEvent(
+                    it
+                )
+            }
+        }
+    }
+    //Get Tenant by phone Number
+    if (memberNumber != "") {
+        LaunchedEffect(
+            authState.cachedMemberData,
+            memberNumber
+
+        ) {
+            authState.cachedMemberData?.let {
+                ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber(
+                    token = it.accessToken,
+                    phoneNumber = memberNumber
+                )
+            }?.let {
+                onEvent(
                     it
                 )
             }
@@ -287,7 +319,7 @@ fun AddGuarantorContent(
                         )
                     }
                 }
-            } else if (launchAddAmountToGuarantee && signHomeState.prestaTenantByMemberNumber?.firstName != null) {
+            } else if (launchAddAmountToGuarantee && (signHomeState.prestaTenantByMemberNumber?.firstName != null || state.prestaLoadTenantByPhoneNumber?.firstName != null)) {
                 Column(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.background)
@@ -319,7 +351,7 @@ fun AddGuarantorContent(
                                 .fillMaxWidth()
                         ) {
                             Text(
-                                text = "Guarantor: " + signHomeState.prestaTenantByMemberNumber.firstName,
+                                text = "Guarantor: " + if (searchGuarantorByMemberNumber) signHomeState.prestaTenantByMemberNumber?.firstName else state.prestaLoadTenantByPhoneNumber?.firstName,
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onBackground
@@ -346,7 +378,7 @@ fun AddGuarantorContent(
                                 userInput = amountToGuarantee.text,
                                 label = "Amount to Guarantee",
                                 keyboardType = KeyboardType.Number,
-                                pattern =pattern
+                                pattern = pattern
                             ) {
                                 val inputValue: String = TextFieldValue(it).text
                                 if (inputValue != "") {
@@ -364,7 +396,7 @@ fun AddGuarantorContent(
                                 .padding(top = 50.dp, bottom = 50.dp)
                         ) {
                             ActionButton("SUBMIT", onClickContainer = {
-                                if (guarantorDataListed.size != component.requiredGuarantors) {
+                                if (guarantorDataListed.size != component.requiredGuarantors && searchGuarantorByMemberNumber && signHomeState.prestaTenantByMemberNumber?.firstName != null) {
                                     //Todo-- handle self guarantee case
                                     val apiResponse = listOf(
                                         GuarantorDataListing(
@@ -393,9 +425,45 @@ fun AddGuarantorContent(
                                                 addAll(apiResponse)
                                             }
                                     }
+                                } else {
+                                    if (guarantorDataListed.size != component.requiredGuarantors && searchGuarantorByPhoneNumber && state.prestaLoadTenantByPhoneNumber?.phoneNumber != null) {
+                                        val apiResponse = listOf(
+                                            GuarantorDataListing(
+                                                state.prestaLoadTenantByPhoneNumber.firstName,
+                                                state.prestaLoadTenantByPhoneNumber.lastName,
+                                                state.prestaLoadTenantByPhoneNumber.phoneNumber,
+                                                state.prestaLoadTenantByPhoneNumber.memberNumber,
+                                                amountToGuarantee.text,
+                                                state.prestaLoadTenantByPhoneNumber.refId,
+                                            )
+
+                                        )
+                                        val existingItems = guarantorDataListed.toSet()
+                                        val duplicateItems =
+                                            apiResponse.filter { it in existingItems }
+                                        if (duplicateItems.isNotEmpty()) {
+                                            snackBarScope.launch {
+                                                snackbarHostState.showSnackbar(
+                                                    SnackbarVisualsWithError(
+                                                        "Duplicate Entries not  allowed",
+                                                        isError = true
+                                                    )
+                                                )
+                                            }
+                                        } else {
+                                            guarantorDataListed =
+                                                guarantorDataListed.toMutableSet().apply {
+                                                    addAll(apiResponse)
+                                                }
+                                        }
+                                    }
                                 }
                                 scope.launch { modalBottomSheetState.hide() }
                                 launchGuarantorListing = true
+
+                                //Test
+                                println("::::::::::::::;; " + tenantPhoneNumber)
+
 
                             }, enabled = true)
                         }
@@ -709,9 +777,9 @@ fun AddGuarantorContent(
                             .fillMaxWidth()
                     ) {
                         ActionButton(
-                            label = if (searchGuarantorByMemberNumber && guarantorDataListed.size != component.requiredGuarantors) "Search" else "Continue",
+                            label = if (searchGuarantorByMemberNumber || searchGuarantorByPhoneNumber && guarantorDataListed.size != component.requiredGuarantors) "Search" else "Continue",
                             onClickContainer = {
-                                if (searchGuarantorByMemberNumber && guarantorDataListed.size != component.requiredGuarantors && signHomeState.prestaTenantByMemberNumber != null) {
+                                if (searchGuarantorByMemberNumber || searchGuarantorByPhoneNumber && guarantorDataListed.size != component.requiredGuarantors) {
                                     launchCheckSelfAndEmPloyedPopUp = false
                                     launchAddAmountToGuarantee = true
                                     scope.launch { modalBottomSheetState.show() }
@@ -779,12 +847,23 @@ fun AddGuarantorContent(
 
                                     }
                                 }
-                                if (memberNumber != "" && signHomeState.prestaTenantByMemberNumber == null) {
+                                if (memberNumber != "" && signHomeState.prestaTenantByMemberNumber?.phoneNumber == null && searchGuarantorByMemberNumber) {
                                     launchAddAmountToGuarantee = false
                                     snackBarScope.launch {
                                         snackbarHostState.showSnackbar(
                                             SnackbarVisualsWithError(
                                                 "Error loading Member $memberNumber",
+                                                isError = true
+                                            )
+                                        )
+                                    }
+                                }
+                                if (memberNumber != "" && state.prestaLoadTenantByPhoneNumber?.phoneNumber == null && searchGuarantorByPhoneNumber) {
+                                    launchAddAmountToGuarantee = false
+                                    snackBarScope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            SnackbarVisualsWithError(
+                                                "Error loading Member by phoneNumber  $memberNumber",
                                                 isError = true
                                             )
                                         )
@@ -889,7 +968,9 @@ fun AddGuarantorContent(
                                                                                 guarantorList[selectedIndex]
                                                                         }
                                                                         searchGuarantorByMemberNumber =
-                                                                            guarantorOption == state.memberNo || guarantorOption == state.phoneNo
+                                                                            guarantorOption == state.memberNo
+                                                                        searchGuarantorByPhoneNumber =
+                                                                            guarantorOption == state.phoneNo
                                                                     },
                                                                     label = guarantorOptions
                                                                 )

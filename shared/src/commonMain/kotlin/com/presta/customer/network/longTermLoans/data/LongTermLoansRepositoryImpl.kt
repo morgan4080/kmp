@@ -20,6 +20,7 @@ import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaG
 import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
 import com.presta.customer.network.longTermLoans.model.favouriteGuarantor.PrestaFavouriteGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
+import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -400,6 +401,23 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
                 loanRequestNumber = loanRequestNumber
             )
             Result.success(response)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun loadTenantByPhoneNumber(
+        phoneNumber: String,
+        token: String
+    ): Result<PrestaSignUserDetailsResponse> {
+        return try {
+            val response = prestaLongTermLoansClient.loadTenantByPhoneNumber(
+                token = token,
+                phoneNumber = phoneNumber
+            )
+            Result.success(response)
+
         } catch (e: Exception) {
             e.printStackTrace()
             Result.failure(e)

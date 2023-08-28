@@ -19,6 +19,7 @@ import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaG
 import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
 import com.presta.customer.network.longTermLoans.model.favouriteGuarantor.PrestaFavouriteGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
+import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
 
 interface LongTermLoansRepository {
     suspend fun getLonTermLoansData(
@@ -135,4 +136,8 @@ interface LongTermLoansRepository {
         token: String,
         loanRequestNumber: String
     ): Result<String>
+    suspend fun loadTenantByPhoneNumber(
+        phoneNumber: String,
+        token: String
+    ): Result<PrestaSignUserDetailsResponse>
 }

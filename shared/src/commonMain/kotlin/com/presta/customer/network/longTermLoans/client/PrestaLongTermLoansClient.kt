@@ -20,6 +20,8 @@ import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaG
 import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
 import com.presta.customer.network.longTermLoans.model.favouriteGuarantor.PrestaFavouriteGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
+import com.presta.customer.network.signHome.errorHandler.signHomeErrorHandler
+import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
@@ -429,6 +431,21 @@ class PrestaLongTermLoansClient(
                 header(HttpHeaders.Authorization, "Bearer $token")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
+            }
+        }
+    }
+    suspend fun loadTenantByPhoneNumber(
+        token: String,
+        phoneNumber: String,
+    ): PrestaSignUserDetailsResponse {
+        return signHomeErrorHandler {
+            httpClient.get(NetworkConstants.PrestaGetTenantByPhoneNumber.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+                url {
+                    parameters.append("phoneNumber", phoneNumber)
+                }
             }
         }
     }

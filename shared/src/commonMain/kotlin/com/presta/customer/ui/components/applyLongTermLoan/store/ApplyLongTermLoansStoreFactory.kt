@@ -24,8 +24,10 @@ import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.favouriteGuarantor.PrestaFavouriteGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
+import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
 import com.presta.customer.prestaDispatchers
 import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStoreFactory
+import com.presta.customer.ui.components.signAppHome.store.SignHomeStoreFactory
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -109,6 +111,8 @@ class ApplyLongTermLoansStoreFactory(
             Msg()
 
         data class LoanRequestDeleted(val loanRequestDeleted: String) :
+            Msg()
+        data class LoadedSignTenantByPhoneNumber(val signTenantByPhoneNumberResponse: PrestaSignUserDetailsResponse) :
             Msg()
 
         data class LongTermLoansFailed(val error: String?) : Msg()
@@ -248,7 +252,10 @@ class ApplyLongTermLoansStoreFactory(
                     token = intent.token,
                     loanRequestNumber = intent.loanRequestNumber
                 )
-
+                 is  ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber -> loadPrestaTenantByPhoneNumber(
+                     token = intent.token,
+                     phoneNumber = intent.phoneNumber
+                 )
             }
 
         private var getPrestaLongTermLoansProductsJob: Job? = null
@@ -787,6 +794,25 @@ class ApplyLongTermLoansStoreFactory(
                 dispatch(Msg.LongTermLoansLoading(false))
             }
         }
+        private var loadTenantByPhoneNumberJob: Job? = null
+        private fun loadPrestaTenantByPhoneNumber(
+            token: String,
+            phoneNumber: String
+        ) {
+            if (loadTenantByPhoneNumberJob?.isActive == true) return
+            dispatch(Msg.LongTermLoansLoading())
+            loadTenantByPhoneNumberJob = scope.launch {
+                longTermLoansRepository.loadTenantByPhoneNumber(
+                    token = token,
+                    phoneNumber = phoneNumber
+                ).onSuccess { response ->
+                    dispatch(Msg.LoadedSignTenantByPhoneNumber(response))
+                }.onFailure { e ->
+                    dispatch(Msg.LongTermLoansFailed(e.message))
+                }
+                dispatch(Msg.LongTermLoansLoading(false))
+            }
+        }
     }
     private object ReducerImpl :
         Reducer<ApplyLongTermLoansStore.State, Msg> {
@@ -823,6 +849,7 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.AddedFavouriteGuarantorLoaded -> copy(prestaAdedFavouriteGuarantor = msg.addedfavouriteGuarantorLoaded)
                 is Msg.FavouriteGuarantorDeleted -> copy(deleteFavouriteGuarantorResponse = msg.favouriteGuarantorDeletedResponse)
                 is Msg.LoanRequestDeleted -> copy(deleteLoanRequestResponse = msg.loanRequestDeleted)
+                is Msg.LoadedSignTenantByPhoneNumber -> copy(prestaLoadTenantByPhoneNumber = msg.signTenantByPhoneNumberResponse)
             }
     }
 

@@ -20,6 +20,8 @@ import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaG
 import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
 import com.presta.customer.network.longTermLoans.model.favouriteGuarantor.PrestaFavouriteGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
+import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
+import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 
 interface ApplyLongTermLoansStore :
     Store<ApplyLongTermLoansStore.Intent, ApplyLongTermLoansStore.State, Nothing> {
@@ -88,6 +90,7 @@ interface ApplyLongTermLoansStore :
             val token: String,
             val memberRefId: String
         ) : Intent()
+
         data class GetPrestaLongTermLoansRequestsSpecificProduct(
             val token: String,
             val productRefId: String,
@@ -116,15 +119,22 @@ interface ApplyLongTermLoansStore :
             val memberRefId: String,
             val guarantorRefId: String,
         ) : Intent()
+
         data class DeleteFavouriteGuarantor(
             val token: String,
             val refId: String
         ) : Intent()
+
         data class DeleteLoanRequest(
             val token: String,
             val loanRequestNumber: String
         ) : Intent()
+
+        data class LoadTenantByPhoneNumber(
+            val token: String, val phoneNumber: String
+        ) : Intent()
     }
+
     data class State(
         val isLoading: Boolean = false,
         val error: String? = null,
@@ -149,6 +159,7 @@ interface ApplyLongTermLoansStore :
         val prestaAdedFavouriteGuarantor: PrestaFavouriteGuarantorResponse? = null,
         val deleteFavouriteGuarantorResponse: String? = null,
         val deleteLoanRequestResponse: String? = null,
+        val prestaLoadTenantByPhoneNumber: PrestaSignUserDetailsResponse? = null,
         val memberNo: String = "By Member No",
         val phoneNo: String = "By Phone No",
         val selfGuarantee: String = "Self Guarantee",
