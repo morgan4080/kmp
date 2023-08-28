@@ -32,7 +32,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class ApplyLongTermLoansStoreFactory(
-    private val storeFactory: StoreFactory
+    private val storeFactory: StoreFactory,
+    private val loanRefId: String? = null,
 ) : KoinComponent {
     private val longTermLoansRepository by inject<LongTermLoansRepository>()
 
@@ -118,7 +119,8 @@ class ApplyLongTermLoansStoreFactory(
             prestaDispatchers.main
         ) {
         override fun executeAction(action: Unit, getState: () -> ApplyLongTermLoansStore.State) {
-
+            println(":::::::::;loanRefId::::::::::::::::::::")
+            println(loanRefId)
         }
 
         override fun executeIntent(

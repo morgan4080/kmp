@@ -15,6 +15,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,9 +41,7 @@ fun RootBottomSignScreen(component: RootBottomSignComponent) {
     val childStackBottom by component.childStackBottom.subscribeAsState()
     val activeComponentStackBottom = childStackBottom.active.instance
     //Todo----Modified going back to loan  requests when user hits resolve loan
-    if (component.loanRefId != "") {
-        component.onRequestTabClicked()
-    }
+
 
     Scaffold(
         modifier = Modifier.padding(LocalSafeArea.current),

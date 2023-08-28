@@ -100,7 +100,8 @@ class DefaultAddGuarantorsComponent(
     override val applyLongTermLoansStore: ApplyLongTermLoansStore =
         instanceKeeper.getStore {
             ApplyLongTermLoansStoreFactory(
-                storeFactory = storeFactory
+                storeFactory = storeFactory,
+                loanRefId = ""
             ).create()
         }
 

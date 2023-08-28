@@ -33,6 +33,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -77,18 +78,43 @@ fun ApplyLongTermLoansContent(
     signHomeState: SignHomeStore.State
 ) {
     var launchHandleLoanRequestPopUp by remember { mutableStateOf(false) }
-    var launchContinue by remember { mutableStateOf(false) }
     var memberRefId by remember { mutableStateOf("") }
     var productRefId by remember { mutableStateOf("") }
-    var productsRefId by remember { mutableStateOf("") }
     var loanName by remember { mutableStateOf("") }
     var loanAmount by remember { mutableStateOf("") }
-    val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val snackBarScope = rememberCoroutineScope()
-    val loanScope = rememberCoroutineScope()
     if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         memberRefId = signHomeState.prestaTenantByPhoneNumber.refId
+    }
+    //Delegate navigation until a  response is found
+    if (productRefId != "") {
+        LaunchedEffect(
+            state.prestaLongTermLoansRequestsSpecificProduct,
+            productRefId
+        ) {
+            if (state.prestaLongTermLoansRequestsSpecificProduct?.empty != null) {
+                snackbarHostState.currentSnackbarData?.dismiss()
+                if (!state.prestaLongTermLoansRequestsSpecificProduct.empty) {
+                    state.prestaLongTermLoansRequestsSpecificProduct.content.map {existingLoan->
+                        snackBarScope.launch {
+                            snackbarHostState.showSnackbar(
+                                CustomSnackBar(
+                                    "${existingLoan.loanProductName} of ${existingLoan.loanAmount} is in progress from: ${existingLoan.loanDate}",
+                                    isError = true
+                                )
+                            )
+                        }
+                    }
+
+                } else {
+                    snackbarHostState.currentSnackbarData?.dismiss()
+                    component.onProductSelected(
+                        loanRefId = productRefId
+                    )
+                }
+            }
+        }
     }
     Scaffold(modifier = Modifier.padding(),
         snackbarHost = {
@@ -307,42 +333,18 @@ fun ApplyLongTermLoansContent(
                                                 productRefId = longTermLoanResponse.refId.toString()
                                                 loanName = longTermLoanResponse.name.toString()
                                                 loanAmount = ""
-                                                snackbarHostState.currentSnackbarData?.dismiss()
-                                                snackBarScope.launch {
-                                                    snackbarHostState.showSnackbar(
-                                                        CustomSnackBar(
-                                                            "$loanName of 10,00 is in progress from: 27/03/2023 11:13",
-                                                            isError = true
-                                                        )
+                                                //Todo---withhold navigation until a response is returned
+                                                authState.cachedMemberData?.let {
+                                                    ApplyLongTermLoansStore.Intent.GetPrestaLongTermLoansRequestsSpecificProduct(
+                                                        token = it.accessToken,
+                                                        productRefId = productRefId,
+                                                        memberRefId = memberRefId
+                                                    )
+                                                }?.let {
+                                                    onEvent(
+                                                        it
                                                     )
                                                 }
-
-
-//                                                authState.cachedMemberData?.let {
-//                                                    ApplyLongTermLoansStore.Intent.GetPrestaLongTermLoansRequestsSpecificProduct(
-//                                                        token = it.accessToken,
-//                                                        productRefId = productRefId,
-//                                                        memberRefId = memberRefId
-//                                                    )
-//
-//                                                }?.let {
-//                                                    onEvent(
-//                                                        it
-//                                                    )
-//                                                }
-//                                                if (!state.prestaLongTermLoansRequestsSpecificProduct?.content.isNullOrEmpty()) {
-//                                                    scope.launch { bottomSheetState.expand() }
-//                                                    isSheetContentVisible = true
-//
-//                                                } else {
-//                                                    isSheetContentVisible = false
-//                                                    scope.launch { bottomSheetState.collapse() }
-//                                                    component.onProductSelected(
-//                                                        loanRefId = productRefId
-//                                                    )
-//                                                }
-//                                                println("The product Refid::  " + productRefId)
-
                                             }
                                         )
                                     }

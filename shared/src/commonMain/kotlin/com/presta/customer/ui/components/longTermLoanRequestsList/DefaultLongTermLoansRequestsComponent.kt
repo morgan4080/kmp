@@ -36,7 +36,8 @@ class DefaultLongTermLoansRequestsComponent(
         amount: Double,
         loanRequestRefId: String,
         memberRefId: String
-    ) -> Unit
+    ) -> Unit,
+    loanRefId: String,
 ) : LongTermLoanRequestsComponent, ComponentContext by componentContext {
 
     private val scope = coroutineScope(mainContext + SupervisorJob())
@@ -59,7 +60,8 @@ class DefaultLongTermLoansRequestsComponent(
     override val applyLongTermLoansStore: ApplyLongTermLoansStore =
         instanceKeeper.getStore {
             ApplyLongTermLoansStoreFactory(
-                storeFactory = storeFactory
+                storeFactory = storeFactory,
+                loanRefId = loanRefId
             ).create()
         }
 

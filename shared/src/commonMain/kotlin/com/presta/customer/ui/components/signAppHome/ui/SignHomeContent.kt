@@ -178,7 +178,7 @@ fun SignHomeContent(
                                             ),
                                             shape = RoundedCornerShape(12.dp)
                                         ).defaultMinSize(150.dp),
-                                        text = if (state.prestaTenantByPhoneNumber?.fullName !== null) state.prestaTenantByPhoneNumber.fullName.uppercase() else "",
+                                        text = if (state.prestaTenantByPhoneNumber?.fullName !== null) state.prestaTenantByPhoneNumber.firstName.uppercase() else "",
                                         color = MaterialTheme.colorScheme.onBackground,
                                         fontSize = 14.sp,
                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)

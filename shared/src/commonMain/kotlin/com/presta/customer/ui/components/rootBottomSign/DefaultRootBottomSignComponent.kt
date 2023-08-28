@@ -71,7 +71,7 @@ class DefaultRootBottomSignComponent(
         memberRefId: String
     ) -> Unit,
     backTopProfile: Boolean = false,
-    override val loanRefId: String
+    loanRefId: () -> String,
 ) : RootBottomSignComponent, ComponentContext by componentContext, KoinComponent {
     private val authRepository by inject<AuthRepository>()
 
@@ -80,7 +80,7 @@ class DefaultRootBottomSignComponent(
     private val _childStackBottom =
         childStack(
             source = navigationBottomStackNavigation,
-            initialConfiguration = ConfigBottom.SignProfile,
+            initialConfiguration = if(loanRefId() == "") ConfigBottom.SignProfile else ConfigBottom.Request(loanRefId()),
             handleBackButton = true,
             childFactory = ::createChildBottom,
             key = "authStack"
@@ -99,7 +99,7 @@ class DefaultRootBottomSignComponent(
             )
 
             is ConfigBottom.Request -> RootBottomSignComponent.ChildBottom.RequestChild(
-                longTermLoansrequestsListComponent(componentContext)
+                longTermLoansrequestsListComponent(componentContext, config)
             )
 
             is ConfigBottom.Settings -> RootBottomSignComponent.ChildBottom.SettingsChild(
@@ -128,12 +128,12 @@ class DefaultRootBottomSignComponent(
                 gotoWitnessRequests()
             },
             onLoanRequestsListClicked = {
-                navigationBottomStackNavigation.bringToFront(ConfigBottom.Request)
+                navigationBottomStackNavigation.bringToFront(ConfigBottom.Request(""))
 
             }
         )
 
-    private fun longTermLoansrequestsListComponent(componentContext: ComponentContext): LongTermLoanRequestsComponent =
+    private fun longTermLoansrequestsListComponent(componentContext: ComponentContext, config: ConfigBottom.Request): LongTermLoanRequestsComponent =
         DefaultLongTermLoansRequestsComponent(
             componentContext = componentContext,
             onSelected = {
@@ -161,8 +161,8 @@ class DefaultRootBottomSignComponent(
                     loanRequestRefId,
                     memberRefId
                 )
-            }
-
+            },
+            loanRefId = config.refId
         )
 
     private fun settingsComponent(componentContext: ComponentContext): SignSettingsComponent =
@@ -180,7 +180,7 @@ class DefaultRootBottomSignComponent(
     }
 
     override fun onRequestTabClicked() {
-        navigationBottomStackNavigation.bringToFront(ConfigBottom.Request)
+        navigationBottomStackNavigation.bringToFront(ConfigBottom.Request(""))
     }
 
     override fun onSettingsTabClicked() {
@@ -196,7 +196,7 @@ class DefaultRootBottomSignComponent(
         object SignProfile : ConfigBottom()
 
         @Parcelize
-        object Request : ConfigBottom()
+        data class Request(val refId: String) : ConfigBottom()
 
         @Parcelize
         object Settings : ConfigBottom()

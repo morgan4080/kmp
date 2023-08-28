@@ -100,6 +100,7 @@ fun LongTermLoanRequestsContent(
     var guarantorFirstName by remember { mutableStateOf("") }
     var guarantorLastName by remember { mutableStateOf("") }
     var guarantorRefId by remember { mutableStateOf("") }
+    var appliCantSigned by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val snackBarScope = rememberCoroutineScope()
     val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -202,88 +203,90 @@ fun LongTermLoanRequestsContent(
                             )
 
                         }
-                        Row(
-                            modifier = Modifier
-                                .padding(top = 10.dp)
-                                .fillMaxWidth()
-                        ) {
-                            OutlinedButton(
-                                onClick = {
-                                    //sign the application form
-                                    //navigate to sign
-                                    scope.launch { modalBottomSheetState.hide() }
-                                    if (loanAmount != "") {
-                                        signHomeState.prestaTenantByPhoneNumber?.let {
-                                            component.navigateToSignLoanForm(
-                                                loanNumber = loanNumber,
-                                                amount = loanAmount.toDouble(),
-                                                loanRequestRefId = loanRequestRefId,
-                                                memberRefId = it.refId,
-                                            )
-                                        }
-                                    }
-                                },
-                                modifier = Modifier.padding(top = 16.dp),
-                                shape = CircleShape,
-                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                                colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primary)
+                        if (!appliCantSigned) {
+                            Row(
+                                modifier = Modifier
+                                    .padding(top = 10.dp)
+                                    .fillMaxWidth()
                             ) {
-                                Text(
-                                    modifier = Modifier,
-                                    text = "Sign Application Form ",
-                                    color = MaterialTheme.colorScheme.background,
-                                    fontSize = 12.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                )
-                            }
-                            OutlinedButton(
-                                onClick = {
-                                    //Todo---delete loan Request---delay checking condition to wait for execution
-                                    //Delete the loan request
-                                    if (loanRequestNumber != "") {
-                                        authState.cachedMemberData?.let {
-                                            ApplyLongTermLoansStore.Intent.DeleteLoanRequest(
-                                                token = it.accessToken,
-                                                loanRequestNumber = loanRequestNumber
-                                            )
-
-                                        }?.let {
-                                            onEvent(
-                                                it
-                                            )
-                                        }
-                                    }
-                                    coroutineScope.launch {
-                                        delay(1000)
-                                        if (state.deleteLoanRequestResponse.toString() == "SUCCESS") {
-                                            snackBarScope.launch {
-                                                snackbarHostState.showSnackbar(
-                                                    SnackbarVisualsWithError(
-                                                        "Loan Deleted successfully",
-                                                        isError = true
-                                                    )
+                                OutlinedButton(
+                                    onClick = {
+                                        //sign the application form
+                                        //navigate to sign
+                                        scope.launch { modalBottomSheetState.hide() }
+                                        if (loanAmount != "") {
+                                            signHomeState.prestaTenantByPhoneNumber?.let {
+                                                component.navigateToSignLoanForm(
+                                                    loanNumber = loanNumber,
+                                                    amount = loanAmount.toDouble(),
+                                                    loanRequestRefId = loanRequestRefId,
+                                                    memberRefId = it.refId,
                                                 )
                                             }
                                         }
-                                    }
-                                    scope.launch { modalBottomSheetState.hide() }
-                                },
-                                modifier = Modifier
-                                    .padding(
-                                        top = 16.dp,
-                                        start = 10.dp
-                                    ),
-                                shape = CircleShape,
-                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
-                                colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.error)
-                            ) {
-                                Text(
-                                    modifier = Modifier,
-                                    text = "Void Loan request",
-                                    color = MaterialTheme.colorScheme.background,
-                                    fontSize = 12.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                )
+                                    },
+                                    modifier = Modifier.padding(top = 16.dp),
+                                    shape = CircleShape,
+                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                                    colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primary)
+                                ) {
+                                    Text(
+                                        modifier = Modifier,
+                                        text = "Sign Application Form ",
+                                        color = MaterialTheme.colorScheme.background,
+                                        fontSize = 12.sp,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    )
+                                }
+                                OutlinedButton(
+                                    onClick = {
+                                        //Todo---delete loan Request---delay checking condition to wait for execution
+                                        //Delete the loan request
+                                        if (loanRequestNumber != "") {
+                                            authState.cachedMemberData?.let {
+                                                ApplyLongTermLoansStore.Intent.DeleteLoanRequest(
+                                                    token = it.accessToken,
+                                                    loanRequestNumber = loanRequestNumber
+                                                )
+
+                                            }?.let {
+                                                onEvent(
+                                                    it
+                                                )
+                                            }
+                                        }
+                                        coroutineScope.launch {
+                                            delay(500)
+                                            if (state.deleteLoanRequestResponse.toString() == "SUCCESS") {
+                                                snackBarScope.launch {
+                                                    snackbarHostState.showSnackbar(
+                                                        SnackbarVisualsWithError(
+                                                            "Loan Deleted successfully",
+                                                            isError = true
+                                                        )
+                                                    )
+                                                }
+                                            }
+                                        }
+                                        scope.launch { modalBottomSheetState.hide() }
+                                    },
+                                    modifier = Modifier
+                                        .padding(
+                                            top = 16.dp,
+                                            start = 10.dp
+                                        ),
+                                    shape = CircleShape,
+                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
+                                    colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.error)
+                                ) {
+                                    Text(
+                                        modifier = Modifier,
+                                        text = "Void Loan request",
+                                        color = MaterialTheme.colorScheme.background,
+                                        fontSize = 12.sp,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    )
+                                }
                             }
                         }
                         Row(
@@ -319,9 +322,9 @@ fun LongTermLoanRequestsContent(
                                 onClickReplaceGuarantor = {
                                     scope.launch { modalBottomSheetState.hide() }
                                     component.navigateToReplaceGuarantor(
-                                        loanRequestRefId = loanRequestRefId ,
-                                        guarantorRefId = guarantorRefId ,
-                                        guarantorFirstname = guarantorFirstName ,
+                                        loanRequestRefId = loanRequestRefId,
+                                        guarantorRefId = guarantorRefId,
+                                        guarantorFirstname = guarantorFirstName,
                                         guarantorLastName = guarantorLastName
                                     )
                                 }
@@ -449,6 +452,7 @@ fun LongTermLoanRequestsContent(
                             }
                         } else {
                             state.prestaLongTermLoansRequestsList?.content?.map { loanlistingData ->
+                                appliCantSigned = loanlistingData.applicantSigned
                                 item {
                                     Column(
                                         modifier = Modifier
