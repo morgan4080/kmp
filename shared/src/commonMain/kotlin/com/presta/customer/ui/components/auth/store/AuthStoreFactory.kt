@@ -10,6 +10,8 @@ import com.presta.customer.network.authDevice.data.AuthRepository
 import com.presta.customer.network.authDevice.model.PrestaCheckAuthUserResponse
 import com.presta.customer.network.authDevice.model.PrestaLogInResponse
 import com.presta.customer.network.authDevice.model.RefreshTokenResponse
+import com.presta.customer.network.authDevice.model.TenantServiceConfigResponse
+import com.presta.customer.network.authDevice.model.TenantServicesResponse
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.prestaDispatchers
 import kotlinx.coroutines.Job
@@ -52,6 +54,8 @@ internal class AuthStoreFactory(
         data class LoginFulfilled(val logInResponse: PrestaLogInResponse) : Msg()
         data class ConnectivityFulfilled(val isOnline: Boolean) : Msg()
         data class RefreshFulfilled(val refreshResponse: RefreshTokenResponse) : Msg()
+        data class CheckTenantServicesConfigFulfilled(val tenantServicesConfig: List<TenantServiceConfigResponse>) : Msg()
+        data class CheckTenantServicesFulfilled(val tenantServices: List<TenantServicesResponse>) : Msg()
 
         data class CheckAuthenticatedUserLoaded(val authUserResponse: PrestaCheckAuthUserResponse): Msg()
         data class AuthFailed(val error: String?) : Msg()
@@ -87,6 +91,17 @@ internal class AuthStoreFactory(
                     pinConfirmed = intent.pinConfirmed,
                     error = intent.error,
                 ))
+
+                is AuthStore.Intent.CheckServices -> checkTenantServices(
+                    token = intent.token,
+                    tenantId = intent.tenantId,
+                )
+                is AuthStore.Intent.CheckServiceConfigs -> checkTenantServicesConfig(
+                    token = intent.token,
+                    tenantId = intent.tenantId,
+                )
+
+
                 is AuthStore.Intent.RefreshToken -> updateAuthToken(intent.tenantId,intent.refId)
                 is AuthStore.Intent.LogOutUser -> logOutUser()
                 is AuthStore.Intent.UpdateOnlineState -> dispatch(Msg.ConnectivityFulfilled(isOnline = intent.isOnline))
@@ -205,6 +220,46 @@ internal class AuthStoreFactory(
                 onLogOut()
             }
         }
+
+
+        private var tenantServicesQueryJob: Job? = null
+
+        private fun checkTenantServices(token: String, tenantId: String) {
+            if (tenantServicesQueryJob?.isActive == true) return
+
+            dispatch(Msg.AuthLoading())
+
+            tenantServicesQueryJob = scope.launch {
+                authRepository.checkTenantServices(token, tenantId)
+                    .onSuccess { response ->
+                        dispatch(Msg.CheckTenantServicesFulfilled(response))
+                    }
+                    .onFailure { e ->
+                        dispatch(Msg.AuthFailed(e.message))
+                    }
+                dispatch(Msg.AuthLoading(false))
+            }
+        }
+
+
+        private var tenantServicesConfigQueryJob: Job? = null
+
+        private fun checkTenantServicesConfig(token: String, tenantId: String) {
+            if (tenantServicesConfigQueryJob?.isActive == true) return
+
+            dispatch(Msg.AuthLoading())
+
+            tenantServicesConfigQueryJob = scope.launch {
+                authRepository.checkTenantServicesConfig(token, tenantId)
+                    .onSuccess { response ->
+                        dispatch(Msg.CheckTenantServicesConfigFulfilled(response))
+                    }
+                    .onFailure { e ->
+                        dispatch(Msg.AuthFailed(e.message))
+                    }
+                dispatch(Msg.AuthLoading(false))
+            }
+        }
     }
 
     private object ReducerImpl: Reducer<AuthStore.State, Msg> {
@@ -254,6 +309,12 @@ internal class AuthStoreFactory(
                 )
                 is Msg.ConnectivityFulfilled -> copy(
                     isOnline = msg.isOnline
+                )
+                is Msg.CheckTenantServicesConfigFulfilled -> copy(
+                    tenantServicesConfig = msg.tenantServicesConfig
+                )
+                is Msg.CheckTenantServicesFulfilled -> copy(
+                    tenantServices = msg.tenantServices
                 )
             }
     }

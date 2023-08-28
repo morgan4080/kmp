@@ -19,6 +19,25 @@ data class RefreshTokenResponse (
     val refresh_expires_in: Long,
     val refresh_token: String,
 )
+enum class PrestaServices {
+    EGUARANTORSHIP, EASYUSSD, PRESTALENDER, PRESTAPAY, PRESTAAPPRAISAL, USERSADMIN
+}
+enum class ServicesActivity {
+    ACTIVE, INACTIVE
+}
+@Serializable
+data class TenantServicesResponse (
+    val name: PrestaServices,
+    val status: ServicesActivity
+)
+enum class TenantServiceConfig {
+    savings, shares, membershipFees
+}
+@Serializable
+data class TenantServiceConfigResponse (
+    val name: TenantServiceConfig,
+    val status: Boolean
+)
 @Serializable
 data class AuthUserRoles(
     val realm: List<String>,

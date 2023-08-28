@@ -43,7 +43,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -58,7 +57,6 @@ import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.otp.OtpComponent
 import com.presta.customer.ui.components.otp.store.OtpStore
 import com.presta.customer.ui.components.root.DefaultRootComponent
-import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -204,12 +202,12 @@ fun OtpContent(
     }
 
     Scaffold (modifier = Modifier
-        .fillMaxHeight()
-        .padding(LocalSafeArea.current),
+        .fillMaxHeight(),
         snackbarHost = { SnackbarHost(snackBarHostState) },
     ) {
         Column(
             modifier = Modifier
+                .padding(it)
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .padding(

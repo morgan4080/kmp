@@ -1,9 +1,7 @@
 package com.presta.customer.ui.composables
 
 import ShimmerBrush
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
@@ -57,7 +54,6 @@ fun LoanLimitContainer(state: ShortTermLoansStore.State) {
                         text = "Loan  Limit",
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                         fontSize = 16.sp
-
                     )
                 }
                 Row(

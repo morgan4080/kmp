@@ -4,6 +4,8 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.presta.customer.network.authDevice.model.PrestaCheckAuthUserResponse
 import com.presta.customer.network.authDevice.model.PrestaLogInResponse
 import com.presta.customer.network.authDevice.model.RefreshTokenResponse
+import com.presta.customer.network.authDevice.model.TenantServiceConfigResponse
+import com.presta.customer.network.authDevice.model.TenantServicesResponse
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 
@@ -37,6 +39,8 @@ interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
         object LogOutUser: Intent()
         data class UpdateOnlineState(val isOnline: Boolean): Intent()
         data class UpdateRefreshToken(val refreshResponse: RefreshTokenResponse): Intent()
+        data class CheckServices(val token: String, val tenantId: String): Intent()
+        data class CheckServiceConfigs(val token: String, val tenantId: String): Intent()
     }
 
     data class State(
@@ -73,5 +77,7 @@ interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
                 value = ""
             )
         ),
+        val tenantServices: List<TenantServicesResponse> = listOf(),
+        val tenantServicesConfig: List<TenantServiceConfigResponse> = listOf(),
     )
 }

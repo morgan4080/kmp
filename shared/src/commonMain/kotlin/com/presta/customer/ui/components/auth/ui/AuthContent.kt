@@ -25,7 +25,6 @@ import androidx.compose.material.icons.outlined.Backspace
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -59,10 +58,8 @@ import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.Contexts
 import com.presta.customer.ui.components.onBoarding.store.IdentifierTypes
 import com.presta.customer.ui.components.onBoarding.store.OnBoardingStore
-import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthContent(
     state: AuthStore.State,
@@ -183,7 +180,6 @@ fun AuthContent(
                                 registrationFeeStatus = onBoardingState.member.registrationFeeInfo.registrationFeeStatus.toString()
                             ))
                         }
-
                     }
                     clearPinCharacters()
                 }
@@ -263,15 +259,13 @@ fun AuthContent(
         }
     }
 
-    Scaffold (modifier = Modifier
-        .fillMaxHeight(1f)
-        .padding(LocalSafeArea.current),
+    Scaffold (modifier = Modifier.fillMaxHeight(1f),
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .fillMaxSize().padding(it)
+                .fillMaxSize()
         ) {
             if (state.isLoading || onBoardingState.isLoading) {
                 Column(
@@ -291,7 +285,6 @@ fun AuthContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight()
-                        .padding(it)
                 ) {
                     Row (
                         modifier = Modifier
@@ -447,8 +440,8 @@ fun AuthContent(
                                 bottom = 2.dp
                             )
                         ) {
-                            items(listOf(1,2,3,4,5,6,7,8,9,10,0,12)) {
-                                when(it) {
+                            items(listOf(1,2,3,4,5,6,7,8,9,10,0,12)) { ls ->
+                                when(ls) {
                                     10 -> {
                                         /*Icon(
                                             modifier = Modifier
@@ -469,7 +462,7 @@ fun AuthContent(
                                                 contentColor = MaterialTheme.colorScheme.onBackground,
                                             ),
                                             onClick = {
-                                                when(it) {
+                                                when(ls) {
                                                     10 -> {
                                                         // enable finger print
                                                     }
@@ -479,7 +472,7 @@ fun AuthContent(
                                                     }
                                                     else -> {
                                                         if (pinInput.length <= maxChar && inputEnabled) {
-                                                            builder.append(pinInput).append(it.toString())
+                                                            builder.append(pinInput).append(ls.toString())
                                                             pinInput = builder.toString()
                                                             setupPinCharacters(pinInput)
                                                         }
@@ -487,7 +480,7 @@ fun AuthContent(
                                                 }
                                             }
                                         ) {
-                                            when(it) {
+                                            when(ls) {
                                                 10 -> {
 
                                                 }
@@ -505,7 +498,7 @@ fun AuthContent(
                                                 else -> {
                                                     Text(
                                                         textAlign = TextAlign.Center,
-                                                        text = it.toString(),
+                                                        text = ls.toString(),
                                                         style = TextStyle(
                                                             fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
                                                             fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
@@ -529,7 +522,7 @@ fun AuthContent(
                                                 contentColor = MaterialTheme.colorScheme.onBackground,
                                             ),
                                             onClick = {
-                                                when(it) {
+                                                when(ls) {
                                                     10 -> {
                                                         // enable finger print
                                                     }
@@ -539,7 +532,7 @@ fun AuthContent(
                                                     }
                                                     else -> {
                                                         if (pinInput.length <= maxChar && inputEnabled) {
-                                                            builder.append(pinInput).append(it.toString())
+                                                            builder.append(pinInput).append(ls.toString())
                                                             pinInput = builder.toString()
                                                             setupPinCharacters(pinInput)
                                                         }
@@ -547,7 +540,7 @@ fun AuthContent(
                                                 }
                                             }
                                         ) {
-                                            when(it) {
+                                            when(ls) {
                                                 10 -> {
 
                                                 }
@@ -565,7 +558,7 @@ fun AuthContent(
                                                 else -> {
                                                     Text(
                                                         textAlign = TextAlign.Center,
-                                                        text = it.toString(),
+                                                        text = ls.toString(),
                                                         style = TextStyle(
                                                             fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
                                                             fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,

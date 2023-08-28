@@ -5,6 +5,8 @@ import com.presta.customer.network.authDevice.errorHandler.authErrorHandler
 import com.presta.customer.network.authDevice.model.PrestaCheckAuthUserResponse
 import com.presta.customer.network.authDevice.model.PrestaLogInResponse
 import com.presta.customer.network.authDevice.model.RefreshTokenResponse
+import com.presta.customer.network.authDevice.model.TenantServiceConfigResponse
+import com.presta.customer.network.authDevice.model.TenantServicesResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -65,6 +67,32 @@ class PrestaAuthClient(
                 header(HttpHeaders.Authorization, "Bearer $token")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
+            }
+        }
+    }
+
+    suspend fun checkTenantServices(token: String, tenantId: String): List<TenantServicesResponse> {
+        return authErrorHandler {
+            httpClient.get(NetworkConstants.PrestaServices.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+                url {
+                    parameters.append("tenantId", tenantId)
+                }
+            }
+        }
+    }
+
+    suspend fun checkTenantServicesConfig(token: String, tenantId: String): List<TenantServiceConfigResponse> {
+        return authErrorHandler {
+            httpClient.get(NetworkConstants.PrestaServicesConfig.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+                url {
+                    parameters.append("tenantId", tenantId)
+                }
             }
         }
     }

@@ -5,6 +5,8 @@ import com.presta.customer.network.authDevice.client.PrestaAuthClient
 import com.presta.customer.network.authDevice.model.PrestaCheckAuthUserResponse
 import com.presta.customer.network.authDevice.model.PrestaLogInResponse
 import com.presta.customer.network.authDevice.model.RefreshTokenResponse
+import com.presta.customer.network.authDevice.model.TenantServiceConfigResponse
+import com.presta.customer.network.authDevice.model.TenantServicesResponse
 import com.presta.customer.organisation.OrganisationModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -78,6 +80,32 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
                 tenantId
             )
 
+            Result.success(response)
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+
+            Result.failure(e)
+
+        }
+    }
+
+    override suspend fun checkTenantServices(token: String, tenantId: String): Result<List<TenantServicesResponse>> {
+        return try {
+            val response = prestaAuthClient.checkTenantServices(token, tenantId)
+            Result.success(response)
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+
+            Result.failure(e)
+
+        }
+    }
+
+    override suspend fun checkTenantServicesConfig(token: String, tenantId: String): Result<List<TenantServiceConfigResponse>> {
+        return try {
+            val response = prestaAuthClient.checkTenantServicesConfig(token, tenantId)
             Result.success(response)
         } catch (e: Exception) {
 

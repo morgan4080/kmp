@@ -2,8 +2,10 @@ package com.presta.customer.ui.components.transactionHistory.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -11,14 +13,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
@@ -51,7 +52,7 @@ import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class,
+@OptIn(
     ExperimentalFoundationApi::class
 )
 @Composable
@@ -62,15 +63,21 @@ fun TransactionHistoryContent(
     onBack: () -> Unit,
     onMappingChange: (mapping: List<String>) -> Unit
 ) {
+    val scope = rememberCoroutineScope()
+
+    val tabs = remember { mutableMapOf("0" to "All") }
+
     var transactionReference by remember {
         mutableStateOf(TextFieldValue())
     }
 
-    val pagerState = rememberPagerState()
-
-    val scope = rememberCoroutineScope()
-
-    val tabs = remember { mutableMapOf("0" to "All") }
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f
+    ) {
+        // provide pageCount
+        tabs.size
+    }
 
     LaunchedEffect(state.transactionMapping) {
         if (state.transactionMapping !== null) {
@@ -193,39 +200,51 @@ fun TransactionHistoryContent(
                 }
 
                 HorizontalPager(
-                    pageCount = tabs.size,
+                    modifier = Modifier,
                     state = pagerState,
+                    pageSpacing = 0.dp,
+                    userScrollEnabled = true,
+                    reverseLayout = false,
+                    contentPadding = PaddingValues(0.dp),
+                    beyondBoundsPageCount = 0,
+                    pageSize = PageSize.Fill,
                     flingBehavior = PagerDefaults.flingBehavior(state = pagerState),
-                ) {
-                    Box (modifier = Modifier
-                        .padding(start = 16.dp, end = 16.dp)
-                        .defaultMinSize(minHeight = 500.dp)
-                    ) {
-                        LazyColumn(
+                    key = null,
+                    pageNestedScrollConnection = PagerDefaults.pageNestedScrollConnection(
+                        Orientation.Horizontal
+                    ),
+                    pageContent =  {
+                        Box(
                             modifier = Modifier
-                                .fillMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp)
+                                .defaultMinSize(minHeight = 500.dp)
                         ) {
-                            item {
-                                Row(
-                                    modifier = Modifier
-                                        .padding(vertical = 10.dp)
-                                ) {
-                                    Text (
-                                        modifier = Modifier.padding(horizontal = 5.dp),
-                                        text = if (tabs.isNotEmpty()) {
-                                            "${tabs["${pagerState.currentPage}"]}"
-                                        } else "",
-                                        fontSize = 14.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
-                                    )
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            ) {
+                                item {
+                                    Row(
+                                        modifier = Modifier
+                                            .padding(vertical = 10.dp)
+                                    ) {
+                                        Text(
+                                            modifier = Modifier.padding(horizontal = 5.dp),
+                                            text = if (tabs.isNotEmpty()) {
+                                                "${tabs["${pagerState.currentPage}"]}"
+                                            } else "",
+                                            fontSize = 14.sp,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                                        )
+                                    }
                                 }
-                            }
-                            item {
-                                singleTransaction(state.transactionHistory)
+                                item {
+                                    singleTransaction(state.transactionHistory)
+                                }
                             }
                         }
                     }
-                }
+                )
             }
         }
     }

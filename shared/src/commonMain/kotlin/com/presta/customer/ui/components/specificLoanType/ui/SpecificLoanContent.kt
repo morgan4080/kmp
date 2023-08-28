@@ -14,15 +14,10 @@ import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.IconButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -53,7 +48,6 @@ import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.LoanLimitContainer
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.TextInputContainer
-import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
@@ -219,26 +213,6 @@ fun SpecificLoaContent(
                                     ) {
 
                                         innerTextField()
-                                    }
-
-                                    AnimatedVisibility(
-                                        visible = desiredPeriod.text.isNotEmpty(),
-                                        enter = fadeIn() + expandVertically(),
-                                        exit = fadeOut() + shrinkVertically(),
-                                    ) {
-
-                                        IconButton(
-                                            modifier = Modifier.size(18.dp),
-                                            onClick = { desiredPeriod=emptyDesiredPeriod},
-                                            content = {
-                                                Icon(
-                                                    modifier = Modifier.alpha(0.4f),
-                                                    imageVector = Icons.Filled.Cancel,
-                                                    contentDescription = null,
-                                                    tint = actionButtonColor
-                                                )
-                                            }
-                                        )
                                     }
                                 }
                             }

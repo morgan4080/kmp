@@ -59,7 +59,6 @@ import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.CountriesSearch
 import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.TextInputContainer
-import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.helpers.isPhoneNumber
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import dev.icerock.moko.resources.compose.painterResource
@@ -214,7 +213,6 @@ fun OnBoardingContent(
         }
     }
     ModalBottomSheetLayout(
-        modifier = Modifier.padding(LocalSafeArea.current),
         sheetShape = RoundedCornerShape(
             topStart = 12.dp,
             topEnd = 12.dp
@@ -231,6 +229,7 @@ fun OnBoardingContent(
                 state = listState,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
+                    .padding(it)
                     .fillMaxHeight()
             ) {
                 item {

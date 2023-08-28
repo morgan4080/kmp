@@ -9,8 +9,6 @@ plugins {
     id("dev.icerock.mobile.multiplatform-resources")
     id("app.cash.sqldelight")
     id("com.google.firebase.crashlytics")
-   // id("com.google.gms.google-services")
-
 }
 
 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
@@ -99,7 +97,6 @@ kotlin {
                 // moko resources
                 api(deps.moko.resources)
                 api(deps.moko.resources.compose)
-                implementation(deps.moko.resources.test)
 
                 // settings
                 implementation(deps.russhwolf.settings.core)
@@ -108,7 +105,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
                 implementation("com.github.ln-12:multiplatform-connectivity-status:1.2.0")
                 api("io.github.qdsfdhvh:image-loader:1.4.1")
-                implementation("com.moriatsushi.insetsx:insetsx:0.1.0-alpha07")
+                implementation("com.moriatsushi.insetsx:insetsx:0.1.0-alpha10")
 
             }
         }

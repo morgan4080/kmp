@@ -66,18 +66,23 @@ data class TabData(
 fun CustomerBanksScreen(
     component: CustomerBanksComponent
 ) {
-    val modeOfDisbursementState by component.modeOfDisbursementState.collectAsState()
-    val authState by component.authState.collectAsState()
-    val pagerState = rememberPagerState()
-    var selectedIndex by remember { mutableStateOf(-1) }
-    var selectedAccount by remember { mutableStateOf<PrestaCustomerBanksResponse?>(null) }
-
     val buttons = listOf(
         TabData(
             "Add Bank",
             Icons.Filled.Add
         )
     )
+    val modeOfDisbursementState by component.modeOfDisbursementState.collectAsState()
+    val authState by component.authState.collectAsState()
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f
+    ) {
+        // provide pageCount
+        buttons.size
+    }
+    var selectedIndex by remember { mutableStateOf(-1) }
+    var selectedAccount by remember { mutableStateOf<PrestaCustomerBanksResponse?>(null) }
 
     Scaffold (
         topBar = {

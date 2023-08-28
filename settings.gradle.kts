@@ -17,7 +17,6 @@ pluginManagement {
         val composeVersion = extra["compose.version"] as String
         val sqldelightVersion = extra["sqldelight.version"] as String
 
-        kotlin("jvm").version(kotlinVersion)
         kotlin("multiplatform").version(kotlinVersion)
         kotlin("native.cocoapods").version(kotlinVersion)
         kotlin("android").version(kotlinVersion)

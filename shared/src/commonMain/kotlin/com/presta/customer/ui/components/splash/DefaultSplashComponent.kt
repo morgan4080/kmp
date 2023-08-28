@@ -1,7 +1,6 @@
 package com.presta.customer.ui.components.splash
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.Lifecycle
@@ -23,7 +22,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 
 fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineScope {
@@ -94,6 +92,7 @@ class DefaultSplashComponent(
                                     state.cachedMemberData.phoneNumber !== ""
                                 ) {
                                     if (state.isOnline) {
+                                        delay(2000L)
                                         navigateToAuth(
                                             state.cachedMemberData.refId,
                                             state.cachedMemberData.phoneNumber,

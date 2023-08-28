@@ -93,5 +93,10 @@ object NetworkConstants {
     object PrestaGetTenantById {
         const val route = applicationV2BaseUrl + "tenants-query/search"
     }
-
+    object PrestaServicesConfig {
+        const val route = applicationV2BaseUrl + "account-config/contributions"
+    }
+    object PrestaServices {
+        const val route = applicationV2BaseUrl + "tenants-query/apps"
+    }
 }

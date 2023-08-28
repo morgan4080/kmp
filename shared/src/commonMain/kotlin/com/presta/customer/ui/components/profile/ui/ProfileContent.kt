@@ -73,6 +73,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -192,7 +193,6 @@ fun ProfileContent(
         },
         content = {
             ModalBottomSheetLayout(
-                modifier = Modifier.padding(innerPadding),
                 sheetState = sheetState,
                 sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                 sheetContent = {
@@ -255,46 +255,38 @@ fun ProfileContent(
                     topBar = {
                         CenterAlignedTopAppBar(
                             modifier =Modifier
-                                .background(color =  MaterialTheme.colorScheme.background)
-                                .padding(start = 9.dp),
+                                .background(color =  MaterialTheme.colorScheme.background),
                             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.background),
-                            title = {
-                                Column(modifier = Modifier.fillMaxWidth()) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Text(
-                                                modifier = Modifier.background(
-                                                    brush = ShimmerBrush(
-                                                        targetValue = 1300f,
-                                                        showShimmer = authState.authUserResponse?.companyName == null
-                                                    ),
-                                                    shape = RoundedCornerShape(12.dp)
-                                                ).defaultMinSize(200.dp),
-                                                text = if (authState.authUserResponse !== null) authState.authUserResponse.companyName else "",
-                                                color = MaterialTheme.colorScheme.onBackground,
-                                                fontSize = 18.sp
-                                            )
-                                        }
-                                        IconButton(
-                                            modifier = Modifier.absoluteOffset(x = 6.dp).zIndex(1f),
-                                            onClick = {
-                                                scopeDrawer.launch { drawerState.open() }
-                                            },
-                                            content = {
-                                                Icon(
-                                                    imageVector = Icons.Filled.Apps,
-                                                    modifier = Modifier.size(25.dp),
-                                                    contentDescription = "Menu pending",
-                                                    tint = MaterialTheme.colorScheme.primary
-                                                )
-                                            }
+                            title = {},
+                            navigationIcon = {
+                                Text(
+                                    modifier = Modifier.padding(start = 9.dp).background(
+                                        brush = ShimmerBrush(
+                                            targetValue = 1300f,
+                                            showShimmer = authState.authUserResponse?.companyName == null
+                                        ),
+                                        shape = RoundedCornerShape(12.dp)
+                                    ).defaultMinSize(200.dp),
+                                    text = if (authState.authUserResponse !== null) authState.authUserResponse.companyName else "",
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = TextStyle(fontSize = 18.sp),
+                                )
+                            },
+                            actions = {
+                                IconButton(
+                                    modifier = Modifier.zIndex(1f),
+                                    onClick = {
+                                        scopeDrawer.launch { drawerState.open() }
+                                    },
+                                    content = {
+                                        Icon(
+                                            imageVector = Icons.Filled.Apps,
+                                            modifier = Modifier.size(25.dp),
+                                            contentDescription = "Menu pending",
+                                            tint = MaterialTheme.colorScheme.primary
                                         )
                                     }
-                                }
+                                )
                             }
                         )
                     },

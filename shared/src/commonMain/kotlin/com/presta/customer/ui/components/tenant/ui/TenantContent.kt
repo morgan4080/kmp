@@ -8,6 +8,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -86,7 +87,7 @@ fun TenantContent(
             )
         }
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .background(color = MaterialTheme.colorScheme.background)
                 .fillMaxHeight()
