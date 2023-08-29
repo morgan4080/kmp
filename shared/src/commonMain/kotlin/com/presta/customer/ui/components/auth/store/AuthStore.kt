@@ -8,6 +8,7 @@ import com.presta.customer.network.authDevice.model.TenantServiceConfigResponse
 import com.presta.customer.network.authDevice.model.TenantServicesResponse
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
+import com.presta.customer.ui.components.rootBottomStack.ScreensBottom
 
 data class InputMethod(val value: String)
 enum class Contexts {
@@ -41,6 +42,7 @@ interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
         data class UpdateRefreshToken(val refreshResponse: RefreshTokenResponse): Intent()
         data class CheckServices(val token: String, val tenantId: String): Intent()
         data class CheckServiceConfigs(val token: String, val tenantId: String): Intent()
+        data class UpdateScreens(val screens: List<ScreensBottom>): Intent()
     }
 
     data class State(
@@ -79,5 +81,6 @@ interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
         ),
         val tenantServices: List<TenantServicesResponse> = listOf(),
         val tenantServicesConfig: List<TenantServiceConfigResponse> = listOf(),
+        val screens: List<ScreensBottom> = listOf(),
     )
 }

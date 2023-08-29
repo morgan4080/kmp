@@ -14,6 +14,7 @@ import com.presta.customer.network.authDevice.model.TenantServiceConfigResponse
 import com.presta.customer.network.authDevice.model.TenantServicesResponse
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.prestaDispatchers
+import com.presta.customer.ui.components.rootBottomStack.ScreensBottom
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -58,6 +59,7 @@ internal class AuthStoreFactory(
         data class CheckTenantServicesFulfilled(val tenantServices: List<TenantServicesResponse>) : Msg()
 
         data class CheckAuthenticatedUserLoaded(val authUserResponse: PrestaCheckAuthUserResponse): Msg()
+        data class ScreensChanged(val screens: List<ScreensBottom>): Msg()
         data class AuthFailed(val error: String?) : Msg()
 
         data class CachedMemberData(val accessToken: String, val refreshToken: String, val refId: String, val session_id: String, val registrationFees: Double, val registrationFeeStatus: String, val phoneNumber: String, val expires_in: Long, val refresh_expires_in: Long, val tenantId: String): Msg()
@@ -107,6 +109,7 @@ internal class AuthStoreFactory(
                 is AuthStore.Intent.UpdateOnlineState -> dispatch(Msg.ConnectivityFulfilled(isOnline = intent.isOnline))
                 is AuthStore.Intent.UpdateRefreshToken -> dispatch(Msg.RefreshFulfilled(refreshResponse = intent.refreshResponse))
                 is AuthStore.Intent.UpdateLoading -> dispatch(Msg.AuthLoading())
+                is AuthStore.Intent.UpdateScreens -> dispatch(Msg.ScreensChanged(screens = intent.screens))
             }
 
         private var loginUserJob: Job? = null
@@ -225,19 +228,24 @@ internal class AuthStoreFactory(
         private var tenantServicesQueryJob: Job? = null
 
         private fun checkTenantServices(token: String, tenantId: String) {
-            if (tenantServicesQueryJob?.isActive == true) return
+            println("::::::navigationBottomStackNavigation.subscribe000000::::::::")
+            try {
+                if (tenantServicesQueryJob?.isActive == true) return
 
-            dispatch(Msg.AuthLoading())
+                dispatch(Msg.AuthLoading())
 
-            tenantServicesQueryJob = scope.launch {
-                authRepository.checkTenantServices(token, tenantId)
-                    .onSuccess { response ->
-                        dispatch(Msg.CheckTenantServicesFulfilled(response))
-                    }
-                    .onFailure { e ->
-                        dispatch(Msg.AuthFailed(e.message))
-                    }
-                dispatch(Msg.AuthLoading(false))
+                tenantServicesQueryJob = scope.launch {
+                    authRepository.checkTenantServices(token, tenantId)
+                        .onSuccess { response ->
+                            dispatch(Msg.CheckTenantServicesFulfilled(response))
+                        }
+                        .onFailure { e ->
+                            dispatch(Msg.AuthFailed(e.message))
+                        }
+                    dispatch(Msg.AuthLoading(false))
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
 
@@ -245,19 +253,26 @@ internal class AuthStoreFactory(
         private var tenantServicesConfigQueryJob: Job? = null
 
         private fun checkTenantServicesConfig(token: String, tenantId: String) {
-            if (tenantServicesConfigQueryJob?.isActive == true) return
+            println("::::::navigationBottomStackNavigation.subscribe000000::::::::")
+            try {
+                if (tenantServicesConfigQueryJob?.isActive == true) return
 
-            dispatch(Msg.AuthLoading())
+                dispatch(Msg.AuthLoading())
 
-            tenantServicesConfigQueryJob = scope.launch {
-                authRepository.checkTenantServicesConfig(token, tenantId)
-                    .onSuccess { response ->
-                        dispatch(Msg.CheckTenantServicesConfigFulfilled(response))
-                    }
-                    .onFailure { e ->
-                        dispatch(Msg.AuthFailed(e.message))
-                    }
-                dispatch(Msg.AuthLoading(false))
+                tenantServicesConfigQueryJob = scope.launch {
+                    println("tenantServicesConfigQueryJob")
+                    authRepository.checkTenantServicesConfig(token, tenantId)
+                        .onSuccess { response ->
+                            dispatch(Msg.CheckTenantServicesConfigFulfilled(response))
+                        }
+                        .onFailure { e ->
+                            dispatch(Msg.AuthFailed(e.message))
+                        }
+                    dispatch(Msg.AuthLoading(false))
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
@@ -315,6 +330,9 @@ internal class AuthStoreFactory(
                 )
                 is Msg.CheckTenantServicesFulfilled -> copy(
                     tenantServices = msg.tenantServices
+                )
+                is Msg.ScreensChanged -> copy(
+                    screens = msg.screens
                 )
             }
     }

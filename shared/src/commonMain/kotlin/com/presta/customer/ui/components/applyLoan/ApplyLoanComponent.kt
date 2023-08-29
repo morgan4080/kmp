@@ -1,14 +1,15 @@
-import com.arkivanov.decompose.value.Value
+package com.presta.customer.ui.components.applyLoan
+
+import com.presta.customer.ui.components.auth.store.AuthStore
+import kotlinx.coroutines.flow.StateFlow
 
 interface ApplyLoanComponent {
-    val model: Value<Model>
+    val authStore: AuthStore
 
+    val authState: StateFlow<AuthStore.State>
     fun onShortTermSelected()
     fun onLongTermSelected()
     fun onBackNavSelected()
     fun onBack()
-
-    data class Model(
-        val items: List<String>,
-    )
+    fun onAuthEvent(event: AuthStore.Intent)
 }

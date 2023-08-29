@@ -208,6 +208,20 @@ class DefaultProfileComponent(
 
                     checkProfileTransactions(state.cachedMemberData.accessToken, state.cachedMemberData.refId)
 
+                    onAuthEvent(
+                        AuthStore.Intent.CheckServices(
+                            token = state.cachedMemberData.accessToken,
+                            tenantId = state.cachedMemberData.tenantId
+                        )
+                    )
+
+                    onAuthEvent(
+                        AuthStore.Intent.CheckServiceConfigs(
+                            token = state.cachedMemberData.accessToken,
+                            tenantId = state.cachedMemberData.tenantId
+                        )
+                    )
+
                     this.cancel()
                 }
             }

@@ -70,7 +70,6 @@ class DefaultRootBottomComponent(
     backTopProfile: Boolean = false
 ) : RootBottomComponent, ComponentContext by componentContext, KoinComponent {
     private val authRepository by inject<AuthRepository>()
-
     private val navigationBottomStackNavigation = StackNavigation<ConfigBottom>()
 
     private val _childStackBottom =
@@ -129,6 +128,9 @@ class DefaultRootBottomComponent(
             },
             navigateToProfile = {
                 navigationBottomStackNavigation.bringToFront(ConfigBottom.Profile)
+            },
+            navigateToSign = {
+                navigationBottomStackNavigation.bringToFront(ConfigBottom.Sign)
             },
             processLoanState = {
                 processLoanState(it)
@@ -211,11 +213,25 @@ class DefaultRootBottomComponent(
 
         scope.launch {
             authState.collect { state ->
-                if (state.cachedMemberData !== null) {
+                state.cachedMemberData?.let { cachedMemberData ->
+                    onAuthEvent(
+                        AuthStore.Intent.CheckServices(
+                            token = cachedMemberData.accessToken,
+                            tenantId = cachedMemberData.tenantId
+                        )
+                    )
+
+                    onAuthEvent(
+                        AuthStore.Intent.CheckServiceConfigs(
+                            token = cachedMemberData.accessToken,
+                            tenantId = cachedMemberData.tenantId
+                        )
+                    )
+
                     val flow = poller.poll(
-                        state.cachedMemberData.expires_in * 100,
+                        cachedMemberData.expires_in * 100,
                         OrganisationModel.organisation.tenant_id,
-                        state.cachedMemberData.refId
+                        cachedMemberData.refId
                     )
 
                     flow.collect {

@@ -75,10 +75,10 @@ fun SplashScreen(component: SplashComponent, connectivityStatus: SharedStatus?) 
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    "Powered By Presta",
+                    "Powered By @ Presta",
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
-                    style = TextStyle(fontSize = 12.sp),
+                    style = TextStyle(fontSize = 10.sp),
                     fontWeight = FontWeight.Light,
                     fontStyle = FontStyle.Italic
                 )

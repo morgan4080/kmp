@@ -44,7 +44,7 @@ internal fun MainModalDrawerSheet(
     onItemsClick: (Pair<String, ImageVector>) -> Unit
 ) {
     ModalDrawerSheet(
-        drawerContainerColor = MaterialTheme.colorScheme.background,
+        drawerContainerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.95f),
         drawerContentColor = MaterialTheme.colorScheme.onBackground,
         windowInsets = WindowInsets(
             top = LocalSafeArea.current.calculateTopPadding() + 20.dp,
@@ -127,7 +127,7 @@ internal fun MainModalDrawerSheet(
                     onItemsClick(item)
                 },
                 colors = NavigationDrawerItemDefaults.colors(
-                    selectedContainerColor = MaterialTheme.colorScheme.primary.copy(.6f),
+                    selectedContainerColor = MaterialTheme.colorScheme.primary.copy(.8f),
                     unselectedContainerColor = Color.Transparent,
                     selectedTextColor = MaterialTheme.colorScheme.onPrimary,
                     unselectedTextColor = MaterialTheme.colorScheme.onBackground,

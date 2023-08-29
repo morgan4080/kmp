@@ -2,11 +2,16 @@ package com.presta.customer.ui.components.profile.ui
 
 
 import ShimmerBrush
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -79,6 +84,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.presta.customer.MR
+import com.presta.customer.network.authDevice.model.TenantServiceConfig
+import com.presta.customer.network.authDevice.model.TenantServiceConfigResponse
 import com.presta.customer.ui.components.addSavings.store.AddSavingsStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStore
@@ -176,6 +183,10 @@ fun ProfileContent(
 
     val scopeDrawer = rememberCoroutineScope()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
+
+    val savingsIsFalse = authState.tenantServicesConfig.contains(
+        TenantServiceConfigResponse(TenantServiceConfig.savings, false)
+    )
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -327,7 +338,9 @@ fun ProfileContent(
                                         state = stateLazyRow0,
                                         flingBehavior = rememberSnapFlingBehavior(lazyListState = stateLazyRow0),
                                         content = {
-                                            balancesMap.map { balance ->
+                                            balancesMap.filter { balance ->
+                                                !(savingsIsFalse && balance.key == "Total Savings Amount")
+                                            }.map { balance ->
                                                 item {
                                                     Box(
                                                         modifier = Modifier
@@ -354,85 +367,99 @@ fun ProfileContent(
                                     )
                                 }
                                 item {
-                                    Paginator(balancesMap.size, stateLazyRow0.firstVisibleItemIndex)
+                                    Paginator(if (savingsIsFalse) 1 else balancesMap.size, stateLazyRow0.firstVisibleItemIndex)
                                 }
                                 item {
-                                    Box(
-                                        modifier = Modifier
-                                            .padding(top = 12.92.dp)
-                                            .padding(start = 16.dp, end = 16.dp)
-                                            .fillMaxWidth()
+                                    AnimatedVisibility(
+                                        !authState.isLoading,
+                                        enter = fadeIn() + expandVertically(),
+                                        exit = fadeOut() + shrinkVertically()
                                     ) {
-                                        Text(
-                                            text = "Quick Links",
-                                            color = MaterialTheme.colorScheme.onBackground,
-                                            fontSize = 18.sp,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
-                                        )
+                                        Box(
+                                            modifier = Modifier
+                                                .padding(top = 12.92.dp)
+                                                .padding(start = 16.dp, end = 16.dp)
+                                                .fillMaxWidth()
+                                        ) {
+                                            Text(
+                                                text = "Quick Links",
+                                                color = MaterialTheme.colorScheme.onBackground,
+                                                fontSize = 18.sp,
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                                            )
+                                        }
                                     }
                                 }
                                 item {
-                                    Row (
-                                        modifier = Modifier.fillMaxWidth()
-                                            .padding(top = 16.dp)
-                                            .padding(start = 16.dp, end = 16.dp),
-                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    AnimatedVisibility(
+                                        !authState.isLoading,
+                                        enter = fadeIn() + expandVertically(),
+                                        exit = fadeOut() + shrinkVertically()
                                     ) {
-                                        val transition = rememberInfiniteTransition()
-                                        val translateAnimation = transition.animateFloat(
-                                            initialValue = 0f,
-                                            targetValue = 5f,
-                                            animationSpec = infiniteRepeatable(
-                                                animation = tween(800), repeatMode = RepeatMode.Reverse
+                                        Row (
+                                            modifier = Modifier.fillMaxWidth()
+                                                .padding(top = 16.dp)
+                                                .padding(start = 16.dp, end = 16.dp),
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            val transition = rememberInfiniteTransition()
+                                            val translateAnimation = transition.animateFloat(
+                                                initialValue = 0f,
+                                                targetValue = 5f,
+                                                animationSpec = infiniteRepeatable(
+                                                    animation = tween(800), repeatMode = RepeatMode.Reverse
+                                                )
                                             )
-                                        )
 
-                                        quickLinks.map { item1 ->
-                                            BadgedBox(badge = {
-                                                if (item1.badge && modeOfDisbursementState.loans.isNotEmpty()) {
-                                                    Badge (
-                                                        modifier = Modifier.graphicsLayer {
-                                                            translationY = translateAnimation.value
-                                                        }
-                                                    ) { Text(modeOfDisbursementState.loans.count().toString()) }
-                                                }
-                                            }) {
-                                                Column(
-                                                    verticalArrangement = Arrangement.Center,
-                                                    horizontalAlignment = Alignment.CenterHorizontally
-                                                ) {
-                                                    IconButton(
-                                                        modifier = Modifier
-                                                            .clip(shape = RoundedCornerShape(10.dp))
-                                                            .background(MaterialTheme.colorScheme.primary)
-                                                            .size(57.dp),
-                                                        onClick = {
-                                                            item1.action()
-                                                        },
-                                                        content = {
-                                                            Icon(
-                                                                imageVector = item1.icon,
-                                                                modifier = Modifier.size(30.dp),
-                                                                contentDescription = null,
-                                                                tint = Color.White
-                                                            )
-                                                        }
-                                                    )
+                                            quickLinks.filter{ link ->
+                                                !(savingsIsFalse && link.labelBottom == "Savings")
+                                            }.map { item1 ->
+                                                BadgedBox(badge = {
+                                                    if (item1.badge && modeOfDisbursementState.loans.isNotEmpty()) {
+                                                        Badge (
+                                                            modifier = Modifier.graphicsLayer {
+                                                                translationY = translateAnimation.value
+                                                            }
+                                                        ) { Text(modeOfDisbursementState.loans.count().toString()) }
+                                                    }
+                                                }) {
+                                                    Column(
+                                                        verticalArrangement = Arrangement.Center,
+                                                        horizontalAlignment = Alignment.CenterHorizontally
+                                                    ) {
+                                                        IconButton(
+                                                            modifier = Modifier
+                                                                .clip(shape = RoundedCornerShape(10.dp))
+                                                                .background(MaterialTheme.colorScheme.primary)
+                                                                .size(57.dp),
+                                                            onClick = {
+                                                                item1.action()
+                                                            },
+                                                            content = {
+                                                                Icon(
+                                                                    imageVector = item1.icon,
+                                                                    modifier = Modifier.size(30.dp),
+                                                                    contentDescription = null,
+                                                                    tint = Color.White
+                                                                )
+                                                            }
+                                                        )
 
-                                                    Text(
-                                                        modifier = Modifier.padding(top = 7.08.dp),
-                                                        text = item1.labelTop,
-                                                        color = MaterialTheme.colorScheme.onBackground,
-                                                        fontSize = 12.sp,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                                                    )
+                                                        Text(
+                                                            modifier = Modifier.padding(top = 7.08.dp),
+                                                            text = item1.labelTop,
+                                                            color = MaterialTheme.colorScheme.onBackground,
+                                                            fontSize = 12.sp,
+                                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                                        )
 
-                                                    Text(
-                                                        text = item1.labelBottom,
-                                                        color = MaterialTheme.colorScheme.onBackground,
-                                                        fontSize = 12.sp,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                                                    )
+                                                        Text(
+                                                            text = item1.labelBottom,
+                                                            color = MaterialTheme.colorScheme.onBackground,
+                                                            fontSize = 12.sp,
+                                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                                        )
+                                                    }
                                                 }
                                             }
                                         }

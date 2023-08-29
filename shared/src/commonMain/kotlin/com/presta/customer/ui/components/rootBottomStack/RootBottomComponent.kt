@@ -2,17 +2,19 @@ package com.presta.customer.ui.components.rootBottomStack
 
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
+import com.presta.customer.network.authDevice.model.PrestaServices
+import com.presta.customer.network.authDevice.model.TenantServiceConfig
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.profile.ProfileComponent
+import com.presta.customer.ui.components.rootLoans.RootLoansComponent
 import com.presta.customer.ui.components.rootSavings.RootSavingsComponent
 import com.presta.customer.ui.components.sign.SignComponent
-import com.presta.customer.ui.components.rootLoans.RootLoansComponent
 import kotlinx.coroutines.flow.StateFlow
 
+data class ScreensBottom(val name: String, val component: () -> Unit, var active: Boolean, val serviceMapping: PrestaServices, val featureMapping: TenantServiceConfig? = null)
 interface RootBottomComponent {
 
     val childStackBottom: Value<ChildStack<*, ChildBottom>>
-
     fun onProfileTabClicked()
     fun onLoanTabClicked()
     fun onSavingsTabClicked()

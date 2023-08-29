@@ -1,6 +1,5 @@
 package com.presta.customer.ui.components.rootLoans
 
-import ApplyLoanComponent
 import FailedTransactionComponent
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
@@ -18,6 +17,7 @@ import com.presta.customer.network.loanRequest.model.DisbursementMethod
 import com.presta.customer.network.loanRequest.model.LoanType
 import com.presta.customer.network.payments.model.PaymentStatuses
 import com.presta.customer.prestaDispatchers
+import com.presta.customer.ui.components.applyLoan.ApplyLoanComponent
 import com.presta.customer.ui.components.applyLoan.DefaultApplyLoanComponent
 import com.presta.customer.ui.components.banKDisbursement.BankDisbursementComponent
 import com.presta.customer.ui.components.banKDisbursement.DefaultBankDisbursementComponent
@@ -52,6 +52,7 @@ class DefaultRootLoansComponent(
     val storeFactory: StoreFactory,
     val pop: () -> Unit = {},
     val navigateToProfile: () -> Unit = {},
+    val navigateToSign: () -> Unit = {},
     var processLoanState: (state: ProcessLoanDisbursement?) -> Unit = {}
 ) : RootLoansComponent, ComponentContext by componentContext {
     private val loansNavigation = StackNavigation<ConfigLoans>()
@@ -157,12 +158,15 @@ class DefaultRootLoansComponent(
     private fun applyLoanComponent(componentContext: ComponentContext): ApplyLoanComponent =
         DefaultApplyLoanComponent(
             componentContext = componentContext,
+            mainContext = prestaDispatchers.main,
+            storeFactory = storeFactory,
             onShortTermClicked = {
                 loansNavigation.push(ConfigLoans.ShortTermLoans(
                     referencedLoanRefId = null
                 ))
-            }, onLongTermClicked = {
-                loansNavigation.push(ConfigLoans.LongTermLoans)
+            },
+            onLongTermClicked = {
+                navigateToSign()
             },
             onBackNavClicked = {
                 pop()
