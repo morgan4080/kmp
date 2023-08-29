@@ -88,7 +88,7 @@ import androidx.compose.ui.window.Popup
 @Composable
 fun ReplaceGuarantorContent(
     component: ReplaceGuarantorComponent,
-    state: ApplyLongTermLoansStore.State,
+    applyLongTermLoanState: ApplyLongTermLoansStore.State,
     authState: AuthStore.State,
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
     signHomeState: SignHomeStore.State,
@@ -102,6 +102,7 @@ fun ReplaceGuarantorContent(
     val emptyTextContainer by remember { mutableStateOf(TextFieldValue()) }
     var selectedIndex by remember { mutableStateOf(-1) }
     var searchGuarantorByMemberNumber by remember { mutableStateOf(false) }
+    var searchGuarantorByPhoneNumber by remember { mutableStateOf(false) }
     var conditionChecked by remember { mutableStateOf(false) }
     var allowedToUpdateGuarantor by remember { mutableStateOf(false) }
     var memberRefId by remember { mutableStateOf("") }
@@ -130,6 +131,23 @@ fun ReplaceGuarantorContent(
             }
         }
     }
+    if (memberNumber != "") {
+        LaunchedEffect(
+            authState.cachedMemberData,
+            memberNumber
+        ) {
+            authState.cachedMemberData?.let {
+                ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber(
+                    token = it.accessToken,
+                    phoneNumber = memberNumber
+                )
+            }?.let {
+                onEvent(
+                    it
+                )
+            }
+        }
+    }
     //Todo check if the selected guarantor is already the loan guarantor
     if (component.loanRequestRefId != "") {
         LaunchedEffect(
@@ -149,7 +167,6 @@ fun ReplaceGuarantorContent(
             }
         }
     }
-    val scope = rememberCoroutineScope()
     val clearItemClicked: (FavouriteGuarantorDetails) -> Unit = { item ->
         witnessDataListed -= item
     }
@@ -158,9 +175,9 @@ fun ReplaceGuarantorContent(
             witnessDataListed,
             memberNumber,
         ) {
-            if (signHomeState.prestaTenantByMemberNumber != null) {
+            if (signHomeState.prestaTenantByMemberNumber?.refId != null || applyLongTermLoanState.prestaLoadTenantByPhoneNumber?.refId !=null ) {
                 witnessDataListed.map { datas ->
-                    state.prestaLoanByLoanRequestRefId?.guarantorList?.map { existingGuarantor ->
+                    applyLongTermLoanState.prestaLoanByLoanRequestRefId?.guarantorList?.map { existingGuarantor ->
                         if (datas.memberNumber == signHomeState.prestaTenantByPhoneNumber?.memberNumber) {
                             clearItemClicked(datas)
                             conditionChecked = false
@@ -331,7 +348,7 @@ fun ReplaceGuarantorContent(
                                     if (memberNumber == "") {
                                         Text(
                                             modifier = Modifier.alpha(.3f),
-                                            text = if (guarantorOption == state.memberNo) "Search Member Number" else "Search PhoneBook",
+                                            text = if (guarantorOption == applyLongTermLoanState.memberNo) "Search Member Number" else "Search PhoneBook",
                                             style = MaterialTheme.typography.bodySmall
                                         )
                                     }
@@ -342,7 +359,7 @@ fun ReplaceGuarantorContent(
                                         exit = fadeOut() + shrinkVertically(),
                                     ) {
                                         Text(
-                                            text = if (guarantorOption == state.memberNo) "Search Member Number" else "Search PhoneBook",
+                                            text = if (guarantorOption == applyLongTermLoanState.memberNo) "Search Member Number" else "Search PhoneBook",
                                             color = primaryColor,
                                             style = MaterialTheme.typography.labelSmall,
                                             fontSize = 11.sp
@@ -482,7 +499,7 @@ fun ReplaceGuarantorContent(
                         label = if (witnessDataListed.size != 1) "Search" else "Add  Guarantor",
                         onClickContainer = {
                             witnessDataListed = emptySet()
-                            if (signHomeState.prestaTenantByMemberNumber?.refId != null) {
+                            if ( searchGuarantorByMemberNumber && signHomeState.prestaTenantByMemberNumber?.refId != null) {
                                 if (witnessDataListed.size != 1) {
                                     val apiResponse = listOf(
                                         FavouriteGuarantorDetails(
@@ -521,22 +538,73 @@ fun ReplaceGuarantorContent(
                                     }
                                 }
                             } else {
-                                snackBarScope.launch {
-                                    snackbarHostState.showSnackbar(
-                                        SnackbarVisualsWithError(
-                                            "Error loading Member $memberNumber",
-                                            isError = true
+                                if (searchGuarantorByMemberNumber && signHomeState.prestaTenantByMemberNumber?.refId == null){
+                                    snackBarScope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            SnackbarVisualsWithError(
+                                                "Error loading Member $memberNumber",
+                                                isError = true
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+                            if ( searchGuarantorByPhoneNumber && applyLongTermLoanState.prestaLoadTenantByPhoneNumber?.refId != null) {
+                                if (witnessDataListed.size != 1) {
+                                    val apiResponse = listOf(
+                                        FavouriteGuarantorDetails(
+                                            refId = applyLongTermLoanState.prestaLoadTenantByPhoneNumber.refId,
+                                            memberFirstName = applyLongTermLoanState.prestaLoadTenantByPhoneNumber.firstName,
+                                            memberNumber = applyLongTermLoanState.prestaLoadTenantByPhoneNumber.memberNumber,
+                                            memberLastName = applyLongTermLoanState.prestaLoadTenantByPhoneNumber.lastName,
+                                            memberPhoneNumber = applyLongTermLoanState.prestaLoadTenantByPhoneNumber.phoneNumber
                                         )
                                     )
-                                }
+                                    val existingItems = witnessDataListed.toSet()
+                                    val duplicateItems = apiResponse.filter { it in existingItems }
+                                    if (duplicateItems.isNotEmpty()) {
+                                        snackBarScope.launch {
+                                            snackbarHostState.showSnackbar(
+                                                SnackbarVisualsWithError(
+                                                    "Duplicate Entries not  allowed",
+                                                    isError = true
+                                                )
+                                            )
+                                        }
 
+                                    } else {
+                                        witnessDataListed = witnessDataListed.toMutableSet().apply {
+                                            addAll(apiResponse)
+                                        }
+                                    }
+                                } else {
+                                    snackBarScope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            SnackbarVisualsWithError(
+                                                "Guarantor Selected",
+                                                isError = true
+                                            )
+                                        )
+                                    }
+                                }
+                            } else {
+                                if (searchGuarantorByPhoneNumber &&  applyLongTermLoanState.prestaLoadTenantByPhoneNumber == null){
+                                    snackBarScope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            SnackbarVisualsWithError(
+                                                "Error loading Member by Phone Number  $memberNumber",
+                                                isError = true
+                                            )
+                                        )
+                                    }
+                                }
                             }
                             if (conditionChecked) {
                                 confirmGuarantorReplacementPopUp = true
                             }
                         },
                         enabled = true,
-                        loading = state.isLoading
+                        loading = applyLongTermLoanState.isLoading
                     )
                 }
             }
@@ -594,8 +662,8 @@ fun ReplaceGuarantorContent(
                                                 .wrapContentHeight()
                                         ) {
                                             val guarantorList = arrayListOf<String>()
-                                            guarantorList.add(state.memberNo)
-                                            guarantorList.add(state.phoneNo)
+                                            guarantorList.add(applyLongTermLoanState.memberNo)
+                                            guarantorList.add(applyLongTermLoanState.phoneNo)
                                             guarantorList.mapIndexed { guarantorIndex, guarantorOptions ->
                                                 item {
                                                     Row(
@@ -618,8 +686,8 @@ fun ReplaceGuarantorContent(
                                                                     guarantorOption =
                                                                         guarantorList[selectedIndex]
                                                                 }
-                                                                searchGuarantorByMemberNumber =
-                                                                    guarantorOption == state.memberNo || guarantorOption == state.phoneNo
+                                                                searchGuarantorByMemberNumber = guarantorOption == applyLongTermLoanState.memberNo
+                                                                searchGuarantorByPhoneNumber = guarantorOption ==  applyLongTermLoanState.phoneNo
                                                             },
                                                             label = guarantorOptions
                                                         )
@@ -823,6 +891,8 @@ fun ReplaceGuarantorContent(
         }
     }
 }
+
+
 
 
 

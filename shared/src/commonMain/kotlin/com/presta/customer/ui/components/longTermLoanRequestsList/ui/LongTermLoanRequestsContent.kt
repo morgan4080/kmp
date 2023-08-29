@@ -461,6 +461,8 @@ fun LongTermLoanRequestsContent(
                                     ) {
                                         LongTermLoanRequestsListContainer(
                                             onClickContainer = {
+                                                //Todo--check the passed is
+                                                println("passed id is;;;;;;;;; ")
                                                 loanRequestRefId = loanlistingData.refId
                                                 loanAmount = loanlistingData.loanAmount.toString()
                                                 loanNumber = loanlistingData.loanRequestNumber

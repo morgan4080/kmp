@@ -41,12 +41,14 @@ interface AddWitnessComponent {
         employer: String,
         employmentNumber: String,
         grossSalary: Double,
-        netSalary:Double,
-        memberRefId:String,
+        netSalary: Double,
+        memberRefId: String,
         guarantorList: Set<GuarantorDataListing>,
         loanPurposeCategoryCode: String,
         witnessRefId: String,
+        witnessName: String,
     )
+
     val authStore: AuthStore
     val authState: StateFlow<AuthStore.State>
     fun onAuthEvent(event: AuthStore.Intent)

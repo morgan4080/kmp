@@ -46,6 +46,7 @@ class DefaultAddWitnessComponent (
         guarantorList:Set<GuarantorDataListing>,
         loanPurposeCategoryCode: String,
         witnessRefId: String,
+        witnessName: String,
     ) -> Unit,
     override val loanRefId: String,
     override val loanType: String,
@@ -159,7 +160,8 @@ class DefaultAddWitnessComponent (
         memberRefId: String,
         guarantorList: Set<GuarantorDataListing>,
         loanPurposeCategoryCode: String,
-        witnessRefId: String
+        witnessRefId: String,
+        witnessName: String
     ) {
         onAddWitnessClicked(
             loanRefId,
@@ -180,7 +182,8 @@ class DefaultAddWitnessComponent (
             memberRefId,
             guarantorList,
             loanPurposeCategoryCode,
-            witnessRefId
+            witnessRefId,
+            witnessName
         )
     }
     override fun onBackNavClicked() {

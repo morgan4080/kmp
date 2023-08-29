@@ -110,7 +110,6 @@ kotlin {
                 implementation("com.github.ln-12:multiplatform-connectivity-status:1.2.0")
                 api("io.github.qdsfdhvh:image-loader:1.4.1")
                 implementation("com.moriatsushi.insetsx:insetsx:0.1.0-alpha07")
-
             }
         }
 

@@ -30,15 +30,12 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.outlined.Contacts
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.PersonRemove
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -117,8 +114,8 @@ fun AddWitnessContent(
     var firstName by remember { mutableStateOf(TextFieldValue()) }
     val emptyTextContainer by remember { mutableStateOf(TextFieldValue()) }
     var selectedIndex by remember { mutableStateOf(-1) }
-    var searchGuarantorByMemberNumber by remember { mutableStateOf(false) }
-    val skipHalfExpanded by remember { mutableStateOf(true) }
+    var searchWitnessByMemberNumber by remember { mutableStateOf(false) }
+    var searchWitnessByPhoneNumber by remember { mutableStateOf(false) }
     var conditionChecked by remember { mutableStateOf(false) }
     var memberRefId by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -144,7 +141,24 @@ fun AddWitnessContent(
             }
         }
     }
-    val scope = rememberCoroutineScope()
+    if (memberNumber != "") {
+        LaunchedEffect(
+            authState.cachedMemberData,
+            memberNumber
+
+        ) {
+            authState.cachedMemberData?.let {
+                ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber(
+                    token = it.accessToken,
+                    phoneNumber = memberNumber
+                )
+            }?.let {
+                onEvent(
+                    it
+                )
+            }
+        }
+    }
     val clearItemClicked: (FavouriteGuarantorDetails) -> Unit = { item ->
         witnessDataListed -= item
     }
@@ -457,7 +471,9 @@ fun AddWitnessContent(
                     ActionButton(
                         label = if (witnessDataListed.size != 1) "Search" else "Add Witness",
                         onClickContainer = {
-                            if (signHomeState.prestaTenantByMemberNumber != null) {
+                            println(" Check active state memeber Number::::" + searchWitnessByMemberNumber)
+                            println(" Check active state Phone Number::::" + searchWitnessByPhoneNumber)
+                            if (searchWitnessByMemberNumber && signHomeState.prestaTenantByMemberNumber != null) {
                                 if (witnessDataListed.size != 1) {
                                     val apiResponse = listOf(
                                         FavouriteGuarantorDetails(
@@ -488,15 +504,60 @@ fun AddWitnessContent(
                                     }
                                 }
                             } else {
-                                snackBarScope.launch {
-                                    snackbarHostState.showSnackbar(
-                                        SnackbarVisualsWithError(
-                                            "Error loading Member $memberNumber",
-                                            isError = true
+                                if (searchWitnessByMemberNumber && signHomeState.prestaTenantByMemberNumber == null) {
+                                    snackBarScope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            SnackbarVisualsWithError(
+                                                "Error loading Member $memberNumber",
+                                                isError = true
+                                            )
+                                        )
+                                    }
+
+                                }
+                            }
+                            //Handle loading  member by Phone Number
+                            if (searchWitnessByPhoneNumber && state.prestaLoadTenantByPhoneNumber?.phoneNumber != null) {
+                                if (witnessDataListed.size != 1) {
+                                    val apiResponse = listOf(
+                                        FavouriteGuarantorDetails(
+                                            refId = state.prestaLoadTenantByPhoneNumber.refId,
+                                            memberFirstName = state.prestaLoadTenantByPhoneNumber.firstName,
+                                            memberNumber = state.prestaLoadTenantByPhoneNumber.memberNumber,
+                                            memberLastName = state.prestaLoadTenantByPhoneNumber.lastName,
+                                            memberPhoneNumber = state.prestaLoadTenantByPhoneNumber.phoneNumber
                                         )
                                     )
-                                }
+                                    val existingItems = witnessDataListed.toSet()
+                                    val duplicateItems = apiResponse.filter { it in existingItems }
+                                    if (duplicateItems.isNotEmpty()) {
+                                        snackBarScope.launch {
+                                            snackbarHostState.showSnackbar(
+                                                SnackbarVisualsWithError(
+                                                    "Duplicate Entries not  allowed",
+                                                    isError = true
+                                                )
+                                            )
+                                        }
 
+                                    } else {
+                                        witnessDataListed =
+                                            witnessDataListed.toMutableSet().apply {
+                                                addAll(apiResponse)
+                                            }
+                                    }
+                                }
+                            } else {
+                                if (searchWitnessByPhoneNumber && state.prestaLoadTenantByPhoneNumber?.phoneNumber == null ){
+                                    snackBarScope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            SnackbarVisualsWithError(
+                                                "Error loading Member by PhoneNumber $memberNumber",
+                                                isError = true
+                                            )
+                                        )
+                                    }
+                                }
                             }
                             if (conditionChecked) {
                                 witnessDataListed.map { witnessData ->
@@ -520,7 +581,8 @@ fun AddWitnessContent(
                                         memberRefId = component.memberRefId,
                                         guarantorList = component.guarantorList,
                                         loanPurposeCategoryCode = component.loanPurposeCategoryCode,
-                                        witnessRefId = witnessData.refId
+                                        witnessRefId = witnessData.refId,
+                                        witnessName = witnessData.memberFirstName +" "+ witnessData.memberLastName
                                     )
                                 }
                             }
@@ -608,8 +670,10 @@ fun AddWitnessContent(
                                                                     guarantorOption =
                                                                         guarantorList[selectedIndex]
                                                                 }
-                                                                searchGuarantorByMemberNumber =
-                                                                    guarantorOption == state.memberNo || guarantorOption == state.phoneNo
+                                                                searchWitnessByMemberNumber =
+                                                                    guarantorOption == state.memberNo
+                                                                searchWitnessByPhoneNumber =
+                                                                    guarantorOption == state.phoneNo
                                                             },
                                                             label = guarantorOptions
                                                         )

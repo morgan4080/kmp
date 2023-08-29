@@ -26,6 +26,7 @@ interface LongTermLoanConfirmationComponent {
     val guarantorList: Set<GuarantorDataListing>
     val loanPurposeCategoryCode: String
     val witnessRefId: String
+    val witnessName: String
     fun onBackNavClicked()
     fun onProductSelected(
 

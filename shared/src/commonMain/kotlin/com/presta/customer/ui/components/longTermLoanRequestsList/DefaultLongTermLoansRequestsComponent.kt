@@ -59,6 +59,7 @@ class DefaultLongTermLoansRequestsComponent(
 
     override val applyLongTermLoansStore: ApplyLongTermLoansStore =
         instanceKeeper.getStore {
+            //use the loan refId to launch a specific product in Request loan screen
             ApplyLongTermLoansStoreFactory(
                 storeFactory = storeFactory,
                 loanRefId = loanRefId

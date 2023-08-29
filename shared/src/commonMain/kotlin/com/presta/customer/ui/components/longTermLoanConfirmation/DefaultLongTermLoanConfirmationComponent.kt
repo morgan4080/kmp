@@ -50,7 +50,8 @@ class DefaultLongTermLoanConfirmationComponent(
     override val memberRefId: String,
     override val guarantorList: Set<GuarantorDataListing>,
     override val loanPurposeCategoryCode: String,
-    override val witnessRefId: String
+    override val witnessRefId: String,
+    override val witnessName: String
 ) : LongTermLoanConfirmationComponent, ComponentContext by componentContext {
     private val scope = coroutineScope(mainContext + SupervisorJob())
 

@@ -1,6 +1,7 @@
 package com.presta.customer.ui.composables
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,10 +16,14 @@ import com.presta.customer.MR
 import com.presta.customer.ui.components.longTermLoanConfirmation.LongTermLoanConfirmationComponent
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
-data class LoansData(val field: String, val value: String)
+data class LoansData(
+    val field: String,
+    val value: String?=null,
+)
 
 @Composable
 fun LoanInformation(component: LongTermLoanConfirmationComponent) {
+
     val loanDetailsListing = listOf(
         LoansData(
             field = "Loan Type:",
@@ -32,13 +37,13 @@ fun LoanInformation(component: LongTermLoanConfirmationComponent) {
             field = "Amount:",
             value = component.desiredAmount.toString()
         ),
-        LoansData(
-            field = "Cuarantors:",
-            value = ""
-        ),
+            LoansData(
+                field = "Guarantors:",
+            )
+        ,
         LoansData(
             field = "Witness:",
-            value = ""
+            value = component.witnessName
         ),
         LoansData(
             field = "Category:",
@@ -63,11 +68,28 @@ fun LoanInformation(component: LongTermLoanConfirmationComponent) {
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
                         modifier = Modifier.fillMaxWidth(0.4f)
                     )
-                    Text(
-                        loanDetails.value,
-                        fontSize = 14.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                    )
+                    Column(){
+                        if(loanDetails.field=="Guarantors:"){
+                            component.guarantorList.map {listedData->
+                                Text(
+                                    listedData.guarantorFirstName+ " " + listedData.guarantorLastName,
+                                    fontSize = 14.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                )
+                            }
+
+                        }else{
+                            loanDetails.value?.let {
+                                Text(
+                                    it,
+                                    fontSize = 14.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                )
+                            }
+                        }
+
+
+                    }
                 }
             }
         }

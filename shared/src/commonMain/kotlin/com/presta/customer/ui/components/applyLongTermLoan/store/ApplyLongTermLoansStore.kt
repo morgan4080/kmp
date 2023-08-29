@@ -2,7 +2,6 @@ package com.presta.customer.ui.components.applyLongTermLoan.store
 
 import com.arkivanov.mvikotlin.core.store.Store
 import com.presta.customer.network.longTermLoans.client.DetailsData
-import com.presta.customer.network.longTermLoans.client.GuarantorPayLoad
 import com.presta.customer.network.longTermLoans.model.ActorType
 import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.longTermLoans.model.Guarantor
@@ -21,7 +20,6 @@ import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptance
 import com.presta.customer.network.longTermLoans.model.favouriteGuarantor.PrestaFavouriteGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
-import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 
 interface ApplyLongTermLoansStore :
     Store<ApplyLongTermLoansStore.Intent, ApplyLongTermLoansStore.State, Nothing> {
@@ -131,12 +129,15 @@ interface ApplyLongTermLoansStore :
         ) : Intent()
 
         data class LoadTenantByPhoneNumber(
-            val token: String, val phoneNumber: String
+            val token: String,
+            val phoneNumber: String
         ) : Intent()
+
     }
 
     data class State(
         val isLoading: Boolean = false,
+        val passedLoanRefId: String? = null,
         val error: String? = null,
         val prestaLongTermLoanProducts: PrestaLongTermLoansProductResponse? = null,
         val prestaLongTermLoanProductById: LongTermLoanResponse? = null,

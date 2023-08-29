@@ -135,6 +135,7 @@ fun AddGuarantorContent(
     var allConditionsChecked by remember { mutableStateOf(false) }
     var searchGuarantorByMemberNumber by remember { mutableStateOf(false) }
     var searchGuarantorByPhoneNumber by remember { mutableStateOf(false) }
+    var selfGuarantee by remember { mutableStateOf(false) }
     val modalBottomSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = skipHalfExpanded
@@ -157,9 +158,6 @@ fun AddGuarantorContent(
     var launchGuarantorListing by remember { mutableStateOf(false) }
     val pattern = remember { Regex("^\\d+\$") }
     var tenantPhoneNumber by remember { mutableStateOf("") }
-    //Create a source of truth for the user phone number
-    //Source of truth for  tenant phone number
-    //store the initial phone number as the tenant phone number
     LaunchedEffect(
         ""
     ) {
@@ -229,6 +227,8 @@ fun AddGuarantorContent(
             businessType = it.value.value.toString()
         }
     }
+
+
     val scope = rememberCoroutineScope()
     var guarantorDataListed by remember { mutableStateOf(emptySet<GuarantorDataListing>()) }
     //Call-back to delete the selected  gaurantor from the list
@@ -257,6 +257,41 @@ fun AddGuarantorContent(
                 } else {
                     violateSelfGuarantee = false
                 }
+            }
+        }
+    }
+    LaunchedEffect(
+        selfGuarantee
+    ) {
+        println("Test data:::::::::::;;" + signHomeState.prestaTenantByPhoneNumber?.firstName)
+        if (selfGuarantee && signHomeState.prestaTenantByPhoneNumber?.firstName != null) {
+            val apiResponse = listOf(
+                GuarantorDataListing(
+                    signHomeState.prestaTenantByPhoneNumber.firstName,
+                    signHomeState.prestaTenantByPhoneNumber.lastName,
+                    signHomeState.prestaTenantByPhoneNumber.phoneNumber,
+                    signHomeState.prestaTenantByPhoneNumber.memberNumber,
+                    amountToGuarantee.text,
+                    signHomeState.prestaTenantByPhoneNumber.refId,
+                )
+            )
+            val existingItems = guarantorDataListed.toSet()
+            val duplicateItems = apiResponse.filter { it in existingItems }
+            if (duplicateItems.isNotEmpty()) {
+                snackBarScope.launch {
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsWithError(
+                            "Duplicate Entries not  allowed",
+                            isError = true
+                        )
+                    )
+                }
+            } else {
+                guarantorDataListed =
+                    guarantorDataListed.toMutableSet().apply {
+                        addAll(apiResponse)
+                    }
+                launchGuarantorListing = true
             }
         }
     }
@@ -763,7 +798,7 @@ fun AddGuarantorContent(
                                                 selected = true,
                                                 phoneNumber = item.phoneNumber,
                                                 memberNumber = item.memberNumber,
-                                                amount = formatMoney(item.amount.toDouble()),
+                                                amount = if(item.amount!="") formatMoney(item.amount.toDouble()) else component.desiredAmount.toString(),
                                             )
                                         }
                                     }
@@ -777,9 +812,19 @@ fun AddGuarantorContent(
                             .fillMaxWidth()
                     ) {
                         ActionButton(
-                            label = if (searchGuarantorByMemberNumber || searchGuarantorByPhoneNumber && guarantorDataListed.size != component.requiredGuarantors) "Search" else "Continue",
+                            label = if (guarantorDataListed.size != component.requiredGuarantors) "Search" else "Continue",
                             onClickContainer = {
-                                if (searchGuarantorByMemberNumber || searchGuarantorByPhoneNumber && guarantorDataListed.size != component.requiredGuarantors) {
+                                authState.cachedMemberData?.let {
+                                    ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber(
+                                        token = it.accessToken,
+                                        phoneNumber = memberNumber
+                                    )
+                                }?.let {
+                                    onEvent(
+                                        it
+                                    )
+                                }
+                                if (guarantorDataListed.size != component.requiredGuarantors) {
                                     launchCheckSelfAndEmPloyedPopUp = false
                                     launchAddAmountToGuarantee = true
                                     scope.launch { modalBottomSheetState.show() }
@@ -971,6 +1016,8 @@ fun AddGuarantorContent(
                                                                             guarantorOption == state.memberNo
                                                                         searchGuarantorByPhoneNumber =
                                                                             guarantorOption == state.phoneNo
+                                                                        selfGuarantee =
+                                                                            guarantorOption == state.selfGuarantee
                                                                     },
                                                                     label = guarantorOptions
                                                                 )
@@ -1233,7 +1280,7 @@ fun GuarantorsDetailsView(
                                 .width(1.dp)
                         )
                         Text(
-                            text = amount.toString(),
+                            text = amount,
                             modifier = Modifier
                                 .padding(start = 10.dp),
                             fontSize = 12.sp,

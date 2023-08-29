@@ -183,7 +183,13 @@ class DefaultRootComponent(
             loansPendingApprovalComponent(componentContext)
         )
 
-        is Config.SignApp -> RootComponent.Child.SignAppChild(signApplication(componentContext,config))
+        is Config.SignApp -> RootComponent.Child.SignAppChild(
+            signApplication(
+                componentContext,
+                config
+            )
+        )
+
         is Config.ApplyLongTermLoans -> RootComponent.Child.ApplyLongtermLoanChild(
             applyLongTermLoanComponent(componentContext)
         )
@@ -240,7 +246,7 @@ class DefaultRootComponent(
         )
 
         is Config.ReplaceGuarantor -> RootComponent.Child.ReplaceGuarantorChild(
-            replaceGuarantorComponent(componentContext,config)
+            replaceGuarantorComponent(componentContext, config)
         )
 
     }
@@ -556,7 +562,8 @@ class DefaultRootComponent(
         componentContext: ComponentContext,
         config: Config.SignApp
     ): RootBottomSignComponent =
-        DefaultRootBottomSignComponent(componentContext = componentContext,
+        DefaultRootBottomSignComponent(
+            componentContext = componentContext,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
             gotoApplyAllLoans = {
@@ -616,7 +623,7 @@ class DefaultRootComponent(
             },
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
-            onResolveLoanClicked = {loanRequestRefId->
+            onResolveLoanClicked = { loanRequestRefId ->
                 //Todo navigate to bottom sign  and launch requests  if refid is not null
                 navigation.bringToFront(Config.SignApp(loanRefId = {
                     loanRequestRefId
@@ -735,7 +742,8 @@ class DefaultRootComponent(
                         memberRefId = memberRefId,
                         guarantorList = guarantorList,
                         loanPurposeCategoryCode = loanPurposeCategoryCode,
-                        witnessRefId = witnessRefid
+                        witnessRefId = witnessRefid,
+                        witnessName = ""
                     )
                 )
             },
@@ -896,7 +904,8 @@ class DefaultRootComponent(
                                     memberRefId,
                                     guarantorList,
                                     loanPurposeCategoryCode,
-                                    witnessRefid ->
+                                    witnessRefid,
+                                    witnessName ->
                 navigation.push(
                     Config.LongTermLoanConfirmation(
                         loanRefId = loanRefId,
@@ -917,7 +926,8 @@ class DefaultRootComponent(
                         memberRefId = memberRefId,
                         guarantorList = guarantorList,
                         loanPurposeCategoryCode = loanPurposeCategoryCode,
-                        witnessRefId = witnessRefid
+                        witnessRefId = witnessRefid,
+                        witnessName = witnessName
                     )
                 )
             }
@@ -957,6 +967,7 @@ class DefaultRootComponent(
             guarantorList = config.guarantorList,
             loanPurposeCategoryCode = config.loanPurposeCategoryCode,
             witnessRefId = config.witnessRefId,
+            witnessName = config.witnessName,
             navigateToSignLoanFormCLicked = { loanNumber, amount, loanRequestRefId, memberRefId ->
                 navigation.push(
                     Config.SignLoanForm(
@@ -1112,11 +1123,11 @@ class DefaultRootComponent(
         @Parcelize
         object AllTransactions : Config()
 
-//        @Parcelize
+        //        @Parcelize
 //        object SignApp : Config()
         @Parcelize
         data class SignApp(
-            val loanRefId: ()-> String,
+            val loanRefId: () -> String,
         ) : Config()
 
         @Parcelize
@@ -1204,6 +1215,7 @@ class DefaultRootComponent(
             val guarantorList: Set<GuarantorDataListing>,
             val loanPurposeCategoryCode: String,
             val witnessRefId: String,
+            val witnessName: String,
         ) : Config()
 
         @Parcelize

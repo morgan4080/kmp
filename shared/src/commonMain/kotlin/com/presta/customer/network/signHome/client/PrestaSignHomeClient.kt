@@ -17,13 +17,6 @@ import kotlinx.serialization.Serializable
 data class MemberDetails(
     val details: MutableMap<String, String>,
 )
-
-//type memberPayloadType = {firstName?: string,
-//    lastName?: string,
-//    phoneNumber?: string,
-//    idNumber?: string, email?:
-//    string,
-//    refId?: string}
 @Serializable
 data class MemberPersonalInfo(
     val firstName: String,

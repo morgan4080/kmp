@@ -26,8 +26,6 @@ import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaG
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
 import com.presta.customer.prestaDispatchers
-import com.presta.customer.ui.components.modeofDisbursement.store.ModeOfDisbursementStoreFactory
-import com.presta.customer.ui.components.signAppHome.store.SignHomeStoreFactory
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -131,7 +129,6 @@ class ApplyLongTermLoansStoreFactory(
             intent: ApplyLongTermLoansStore.Intent, getState: () -> ApplyLongTermLoansStore.State
         ): Unit =
             when (intent) {
-
                 is ApplyLongTermLoansStore.Intent.GetLongTermLoansProducts -> getPrestalongTermLoanProducts(
                     token = intent.token
 
