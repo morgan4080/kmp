@@ -20,5 +20,7 @@ interface SignLoanFormComponent {
     val platform: Platform
     fun onBackNavClicked()
     fun onProductSelected()
-    fun onDocumentSigned(sign : Boolean)
+    fun onDocumentSigned()
+    fun onDocumentSignedNav(signed: Boolean)
+
 }

@@ -1,4 +1,4 @@
-package com.presta.customer.ui.components.longTermLoanApplicationStatus
+package com.presta.customer.ui.components.longTermLoanSignStatus
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,57 +32,30 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
-import com.presta.customer.ui.helpers.formatMoney
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LongTermLoanApplicationStatusContent(
-    //amount: Double,
-   // retryTransaction: () -> Unit,
-    //navigateBack: () -> Unit
+fun LongTermLoanSigningStatusContent(
+    component: LongtermLoanSigningStatusComponent
 ) {
-    var showprocessing by remember { mutableStateOf(true) }
+   //Todo---
+   //add more info about the loan
+   //loan amount  and  loan Number
 
+
+    var showprocessing by remember { mutableStateOf(true) }
+    //show that the loan has been signed
     Scaffold(
         modifier = Modifier.fillMaxHeight().fillMaxWidth()
     ) {
         Column(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-
-            }
-
-            Column(modifier = Modifier.fillMaxWidth().padding(top = 50.dp)) {
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-//                    Text(
-//                        text = "Phone Number ${"334454"}",
-//                        color = MaterialTheme.colorScheme.onBackground,
-//                        fontSize = 14.sp,
-//                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
-//                    )
-
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                   // Text(text = "KSH ${formatMoney(300.0)}")
-                }
-
-            }
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -113,12 +85,6 @@ fun LongTermLoanApplicationStatusContent(
                                 contentAlignment = Alignment.Center
                             ) {
                                 if (showprocessing) {
-//                                    CircularProgressIndicator(
-//                                        modifier = Modifier.then(
-//                                            Modifier.size(60.dp)
-//                                                .alpha(if (showprocessing) 1f else 0.0f)
-//                                        ),
-//                                    )
                                     Icon(
                                         imageVector = Icons.Filled.CheckCircle,
                                         contentDescription = null,
@@ -127,7 +93,7 @@ fun LongTermLoanApplicationStatusContent(
                                     )
                                 } else {
                                     Icon(
-                                        imageVector = Icons.Filled.CheckCircle,
+                                        imageVector = Icons.Filled.Cancel,
                                         contentDescription = null,
                                         modifier = Modifier.size(150.dp),
                                         tint = Color.Green
@@ -147,7 +113,6 @@ fun LongTermLoanApplicationStatusContent(
                             )
                         }
                     }
-
                     Column(
                         modifier = Modifier.fillMaxWidth()
                             .padding(start = 80.dp, end = 80.dp, top = 50.dp),
@@ -158,7 +123,7 @@ fun LongTermLoanApplicationStatusContent(
                                 horizontalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    text = "Loan Application  SUCCESSFUL!",
+                                    text = "Loan Signed  SUCCESSFULLY!",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 22.sp,
                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
@@ -173,9 +138,9 @@ fun LongTermLoanApplicationStatusContent(
                                 horizontalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    text = "Your transaction ${if (showprocessing) "status is ${"data"}" else "failed"}!",
+                                    text = "Loan not Signed!",
                                     color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 20.sp,
+                                    fontSize = 22.sp,
                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                                     textAlign = TextAlign.Center,
                                     lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
@@ -184,7 +149,6 @@ fun LongTermLoanApplicationStatusContent(
                         }
                     }
                 }
-
                 Column(
                     modifier = Modifier.padding(horizontal = 16.dp)
                 ) {
@@ -197,6 +161,9 @@ fun LongTermLoanApplicationStatusContent(
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(size = 12.dp),
                                 onClick = {
+                                    // Todo---Go back to profile
+                                    component.navigateToProfile()
+
                                     //navigateBack()
                                 }
                             ) {
@@ -222,7 +189,8 @@ fun LongTermLoanApplicationStatusContent(
                                     contentColor = MaterialTheme.colorScheme.primary
                                 ),
                                 onClick = {
-                                    //navigateBack()
+                                    //Todo-----Go back to profile
+                                   component.navigateToProfile()
                                 }
                             ) {
                                 Text(
@@ -235,6 +203,8 @@ fun LongTermLoanApplicationStatusContent(
                                 modifier = Modifier.width(150.dp),
                                 shape = RoundedCornerShape(size = 12.dp),
                                 onClick = {
+                                    //Todo----Execute  the action to check sign  status triggered by life cycle
+                                    //navigate back to retry signing
                                     //retryTransaction()
                                 }
                             ) {

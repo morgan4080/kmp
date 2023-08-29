@@ -8,7 +8,7 @@ import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComp
 import com.presta.customer.ui.components.auth.AuthComponent
 import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGuarantorsComponent
 import com.presta.customer.ui.components.guarantorshipRequests.GuarantorshipRequestComponent
-import com.presta.customer.ui.components.longTermLoanApplicationStatus.LongtermLoansApplicationStatusComponent
+import com.presta.customer.ui.components.longTermLoanSignStatus.LongtermLoanSigningStatusComponent
 import com.presta.customer.ui.components.longTermLoanConfirmation.LongTermLoanConfirmationComponent
 import com.presta.customer.ui.components.longTermLoanDetails.LongTermLoanDetailsComponent
 import com.presta.customer.ui.components.onBoarding.OnBoardingComponent
@@ -63,7 +63,7 @@ interface RootComponent {
         class AddWitnessChild(val component: AddWitnessComponent): Child()
         class WitnessRequestChild(val component: WitnessRequestComponent): Child()
         class LongTermLoanConfirmationChild(val component: LongTermLoanConfirmationComponent): Child()
-        class LongTermLoanApplicationStatusChild(val component: LongtermLoansApplicationStatusComponent): Child()
+        class LongTermLoanSigningStatusChild(val component: LongtermLoanSigningStatusComponent): Child()
         class SignDocumentChild(val component: SignGuarantorFormComponent): Child()
         class SignLoanFormChild(val component: SignLoanFormComponent): Child()
         class ReplaceGuarantorChild(val component: ReplaceGuarantorComponent): Child()

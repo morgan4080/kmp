@@ -9,6 +9,7 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.router.stack.replaceAll
+import com.arkivanov.decompose.router.stack.replaceCurrent
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
@@ -34,8 +35,8 @@ import com.presta.customer.ui.components.favouriteGuarantors.DefaultFavouriteGua
 import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGuarantorsComponent
 import com.presta.customer.ui.components.guarantorshipRequests.DefaultGuarantorshipRequestComponent
 import com.presta.customer.ui.components.guarantorshipRequests.GuarantorshipRequestComponent
-import com.presta.customer.ui.components.longTermLoanApplicationStatus.DefaultLongTermLoanApplicationComponent
-import com.presta.customer.ui.components.longTermLoanApplicationStatus.LongtermLoansApplicationStatusComponent
+import com.presta.customer.ui.components.longTermLoanSignStatus.DefaultLongTermLoanSigningStatusComponent
+import com.presta.customer.ui.components.longTermLoanSignStatus.LongtermLoanSigningStatusComponent
 import com.presta.customer.ui.components.longTermLoanConfirmation.DefaultLongTermLoanConfirmationComponent
 import com.presta.customer.ui.components.longTermLoanConfirmation.LongTermLoanConfirmationComponent
 import com.presta.customer.ui.components.longTermLoanDetails.DefaultLongTermLoanDetailsComponent
@@ -229,8 +230,8 @@ class DefaultRootComponent(
             longTermLoanConfirmationComponent(componentContext, config)
         )
 
-        is Config.LongTermLoanApplicationStatus -> RootComponent.Child.LongTermLoanApplicationStatusChild(
-            longTermLoanApplicationStatusComponent(componentContext)
+        is Config.LongTermLoanSigningStatus -> RootComponent.Child.LongTermLoanSigningStatusChild(
+            longTermLoanSigningStatusComponent(componentContext)
         )
 
         is Config.SignDocument -> RootComponent.Child.SignDocumentChild(
@@ -944,7 +945,7 @@ class DefaultRootComponent(
             },
             onProductClicked = {
                 //navigate to Application Status
-                navigation.push(Config.LongTermLoanApplicationStatus)
+                navigation.push(Config.LongTermLoanSigningStatus)
             },
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
@@ -980,22 +981,14 @@ class DefaultRootComponent(
             }
         )
 
-    private fun longTermLoanApplicationStatusComponent(componentContext: ComponentContext): LongtermLoansApplicationStatusComponent =
-        DefaultLongTermLoanApplicationComponent(componentContext = componentContext,
+    private fun longTermLoanSigningStatusComponent(componentContext: ComponentContext): LongtermLoanSigningStatusComponent =
+        DefaultLongTermLoanSigningStatusComponent(componentContext = componentContext,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
             correlationId = "",
-            amount = 20.0,
-            navigateToCompleteFailure = { paymentStatus ->
-                if (paymentStatus == PaymentStatuses.COMPLETED) {
-                    println("::::::::Show COMPLETED")
-                }
-            },
-            onPop = {
-                navigation.pop()
-            },
-            navigateToProfile = {
-                navigation.replaceAll(Config.RootBottom(false))
+            amount = 0.0,
+            navigateToProfileClicked = {
+                navigation.replaceAll(Config.SignApp(loanRefId = { "" }))
             }
         )
 
@@ -1019,7 +1012,7 @@ class DefaultRootComponent(
             onDocumentSignedClicked = { signed ->
                 //when doc is signed navigate
                 if (signed == true) {
-                    navigation.bringToFront(Config.LongTermLoanApplicationStatus)
+                    navigation.bringToFront(Config.LongTermLoanSigningStatus)
                 }
             },
             sign = false,
@@ -1043,14 +1036,18 @@ class DefaultRootComponent(
             loanRequestRefId = config.loanRequestRefId,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
-            onDocumentSignedClicked = { signed ->
+            onDocumentSignedClicked = {
                 //when doc is signed navigate
-                if (signed == true) {
-                    navigation.bringToFront(Config.LongTermLoanApplicationStatus)
-                }
+                navigation.bringToFront(Config.LongTermLoanSigningStatus)
+
             },
             sign = false,
-            memberRefId = config.memberRefId
+            memberRefId = config.memberRefId,
+            //Todo--navigate when Signed
+            onDocumentSignedNavClicked = {
+
+
+            }
         )
 
     private fun replaceGuarantorComponent(
@@ -1242,7 +1239,7 @@ class DefaultRootComponent(
         ) : Config()
 
         @Parcelize
-        object LongTermLoanApplicationStatus : Config()
+        object LongTermLoanSigningStatus : Config()
 
         @Parcelize
         data class SignDocument(
@@ -1268,7 +1265,6 @@ class DefaultRootComponent(
             val guarantorLastName: String
         ) : Config()
     }
-
     init {
         lifecycle.subscribe(object : Lifecycle.Callbacks {
             val nav = true
@@ -1282,6 +1278,11 @@ class DefaultRootComponent(
                         super.onResume()
                         //if signed navigate
 
+                    }
+
+                    is Config.SignLoanForm -> {
+                        super.onResume()
+                        //if signed navigate
 
                     }
 

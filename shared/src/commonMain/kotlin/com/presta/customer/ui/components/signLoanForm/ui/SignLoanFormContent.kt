@@ -33,7 +33,6 @@ import com.presta.customer.MR
 import com.presta.customer.network.longTermLoans.model.ActorType
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
-import com.presta.customer.ui.components.signGuarantorForm.SignGuarantorFormComponent
 import com.presta.customer.ui.components.signLoanForm.SignLoanFormComponent
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.NavigateBackTopBar
@@ -90,8 +89,8 @@ fun SignLoanFormContent(
         launchPopUp
     ) {
 
-        if (state.prestaGuarontorAcceptanceStatus?.isSigned == false) {
-            component.onDocumentSigned(sign = true)
+        if (state.prestaGuarontorAcceptanceStatus?.isSigned == true) {
+            component.onDocumentSigned()
         }
     }
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
@@ -171,14 +170,17 @@ fun SignLoanFormContent(
                         onClickContainer = {
                             //when succesfully signed navigate to sign successfull
                             //else  failed
-                            if (state.prestaZohoSignUrl?.signURL != null) {
-                                component.platform.openUrl(state.prestaZohoSignUrl.signURL)
-                            }
+                            //Todo=--already fixed this implementation
+//                            if (state.prestaZohoSignUrl?.signURL != null) {
+//                                component.platform.openUrl(state.prestaZohoSignUrl.signURL)
+//                            }
                            // component.onDocumentSigned(sign = true)
                             //launchPopUp = true
 
+                            component.onDocumentSigned()
+
                         },
-                        loading = state.prestaZohoSignUrl == null
+                        loading = false //state.prestaZohoSignUrl == null
                     )
                 }
             }

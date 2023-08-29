@@ -3,7 +3,6 @@ package com.presta.customer.ui.components.signLoanForm.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.presta.customer.ui.components.signGuarantorForm.SignGuarantorFormComponent
 import com.presta.customer.ui.components.signLoanForm.SignLoanFormComponent
 
 @Composable

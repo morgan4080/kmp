@@ -1,6 +1,7 @@
 package com.presta.customer.ui.components.signLoanForm
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
@@ -26,20 +27,20 @@ import kotlin.coroutines.CoroutineContext
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
 
-class DefaultSignLoanFormComponent (
+class DefaultSignLoanFormComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     private val onItemClicked: () -> Unit,
-    private val onDocumentSignedClicked: (sign: Boolean) -> Unit,
+    private val onDocumentSignedClicked: () -> Unit,
+    private val onDocumentSignedNavClicked: () -> Unit,
     private val onProductClicked: () -> Unit,
     override val loanNumber: String,
     override val amount: Double,
     override val loanRequestRefId: String,
     override var sign: Boolean,
     override val memberRefId: String,
-): SignLoanFormComponent, ComponentContext by componentContext, KoinComponent {
-
+) : SignLoanFormComponent, ComponentContext by componentContext, KoinComponent {
     override val platform by inject<Platform>()
     private val scope = coroutineScope(mainContext + SupervisorJob())
     override val authStore: AuthStore =
@@ -97,26 +98,40 @@ class DefaultSignLoanFormComponent (
             }
         }
     }
+
     override fun onBackNavClicked() {
         onItemClicked()
     }
 
     override fun onProductSelected() {
-      onProductClicked()
+        onProductClicked()
     }
 
     override fun onDocumentSigned(
-        sign: Boolean) {
-    onDocumentSignedClicked(sign)
+    ) {
+        onDocumentSignedClicked()
     }
+
+    override fun onDocumentSignedNav(signed: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    //Todo-- when activity resumes check if the document is signed
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         checkAuthenticatedUser()
+        lifecycle.subscribe(object : Lifecycle.Callbacks {
+            //Todo-- Trigger an action to check loan Signing  Status
+            override fun onResume() {
+                //onDocumentSignedClicked()
+            }
+        })
+
 //        lifecycle.subscribe(
 //            object : Lifecycle.Callbacks {
 //                override fun onResume() {
 //                    super.onResume()
-//                        onDocumentSigned(sign = sign)
+//                      onDocumentSigned()
 //
 //                }
 //            }
