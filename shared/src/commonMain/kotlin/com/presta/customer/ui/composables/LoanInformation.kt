@@ -4,11 +4,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -18,7 +21,7 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 
 data class LoansData(
     val field: String,
-    val value: String?=null,
+    val value: String? = null,
 )
 
 @Composable
@@ -37,10 +40,9 @@ fun LoanInformation(component: LongTermLoanConfirmationComponent) {
             field = "Amount:",
             value = component.desiredAmount.toString()
         ),
-            LoansData(
-                field = "Guarantors:",
-            )
-        ,
+        LoansData(
+            field = "Guarantors:",
+        ),
         LoansData(
             field = "Witness:",
             value = component.witnessName
@@ -58,37 +60,50 @@ fun LoanInformation(component: LongTermLoanConfirmationComponent) {
         loanDetailsListing.map { loanDetails ->
             item {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Text(
-                        loanDetails.field,
-                        fontSize = 14.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                        modifier = Modifier.fillMaxWidth(0.4f)
-                    )
-                    Column(){
-                        if(loanDetails.field=="Guarantors:"){
-                            component.guarantorList.map {listedData->
+                    Row {
+                        Column {
+                            Text(
+                                modifier = Modifier
+                                    .defaultMinSize(minHeight = 8.dp, minWidth = 100.dp),
+                                text = loanDetails.field,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 14.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                            )
+                        }
+                    }
+
+                    Column {
+                        if (loanDetails.field == "Guarantors:") {
+                            component.guarantorList.map { listedData ->
                                 Text(
-                                    listedData.guarantorFirstName+ " " + listedData.guarantorLastName,
+                                    modifier = Modifier
+                                        .align(Alignment.Start)
+                                        .fillMaxWidth(0.8f),
+                                    text = listedData.guarantorFirstName + " " + listedData.guarantorLastName,
+                                    color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 14.sp,
                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                 )
                             }
 
-                        }else{
+                        } else {
                             loanDetails.value?.let {
                                 Text(
-                                    it,
+                                    modifier = Modifier
+                                        .align(Alignment.Start)
+                                        .fillMaxWidth(0.8f),
+                                    text = it,
+                                    color = MaterialTheme.colorScheme.onBackground,
                                     fontSize = 14.sp,
                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                 )
                             }
                         }
-
-
                     }
                 }
             }

@@ -84,6 +84,313 @@ fun UserInformation(
     }
     //Todo---Pop up to handle the failed requsts message
     Column(modifier = Modifier.padding(top = 20.dp)) {
+        //popup Disbursement mode
+        //Aded the popUps on top of Parent Column to prevent them from freezing
+            if (launchDisbursementModePopUp) {
+
+                val disburementModeListing = listOf(
+                    Disbursement_modes("Cheques", "Cheques", selected = true),
+                    Disbursement_modes("My Account", "My Account", selected = true),
+                    Disbursement_modes("EFT", "EFT", selected = true)
+                )
+                Popup {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                            .background(color = Color.Black.copy(alpha = 0.7f)),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        ElevatedCard(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(0.7f)
+                                .padding(
+                                    start = 26.dp,
+                                    end = 26.dp,
+                                    top = 40.dp,
+                                    bottom = 90.dp
+                                ),
+                            colors = CardDefaults
+                                .elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
+                        ) {
+
+                            Column(
+                                modifier = Modifier
+                                    .padding(start = 16.dp, end = 16.dp)
+                            ) {
+
+                                Text(
+                                    "SELECT DISBURSEMENT MODE",
+                                    modifier = Modifier
+                                        .padding(start = 16.dp, top = 17.dp),
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                    fontSize = 14.sp,
+                                )
+                                Text(
+                                    "Select Options Below ",
+                                    modifier = Modifier
+                                        .padding(start = 16.dp),
+                                    fontSize = 10.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                )
+                                Column(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.7f)) {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                    ) {
+                                        LazyColumn(
+                                            modifier = Modifier
+                                                .wrapContentHeight()
+                                        ) {
+
+                                            disburementModeListing.mapIndexed { indexed, disbursementModes ->
+                                                item {
+                                                    Row(
+                                                        modifier = Modifier
+                                                            .fillMaxWidth()
+                                                            .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                                                            .padding(
+                                                                top = 10.dp,
+                                                                start = 16.dp,
+                                                                end = 16.dp
+                                                            )
+                                                    ) {
+                                                        SelectGuarantorsView(
+                                                            Index = indexed,
+                                                            selected = selectedIndex == indexed,
+                                                            onClick = { index: Int ->
+                                                                selectedIndex =
+                                                                    if (selectedIndex == index) -1 else index
+                                                                if (selectedIndex > -1) {
+                                                                    disbursementMode =
+                                                                        disburementModeListing[selectedIndex].name
+                                                                }
+                                                            },
+                                                            label = disbursementModes.name
+                                                        )
+                                                    }
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(
+                                        top = 20.dp,
+                                        bottom = 20.dp,
+                                        start = 16.dp,
+                                        end = 16.dp
+                                    ),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+
+                                OutlinedButton(
+                                    border = BorderStroke(
+                                        width = 1.dp,
+                                        color = MaterialTheme.colorScheme.primary
+                                    ),
+                                    onClick = {
+                                        launchDisbursementModePopUp = false
+                                    },
+                                    modifier = Modifier
+                                        .padding(start = 16.dp)
+                                        .height(30.dp),
+                                ) {
+
+                                    Text(
+                                        text = "Dismiss",
+                                        fontSize = 11.sp,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.align(Alignment.CenterVertically),
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    )
+
+                                }
+                                OutlinedButton(
+                                    colors = ButtonDefaults.outlinedButtonColors(containerColor = actionButtonColor),
+                                    border = BorderStroke(
+                                        width = 0.dp,
+                                        color = actionButtonColor
+                                    ),
+                                    onClick = {
+                                        launchDisbursementModePopUp = false
+                                    },
+                                    modifier = Modifier
+                                        .padding(end = 16.dp)
+                                        .height(30.dp),
+                                ) {
+
+                                    Text(
+                                        text = "Proceed",
+                                        color = Color.White,
+                                        fontSize = 11.sp,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.align(Alignment.CenterVertically),
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //popup Repayment mode
+            if (launchPaymentModePopUp) {
+                val repaymentmentModeListing = listOf(
+                    Repayment_modes("Check Off ", "Check Off", selected = true),
+                    Repayment_modes("Paybill", "Paybill", selected = true),
+                    Repayment_modes("Standing Order", "Standing Order", selected = true)
+                )
+                Popup {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                            .background(color = Color.Black.copy(alpha = 0.7f)),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        ElevatedCard(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(0.7f)
+                                .padding(
+                                    start = 26.dp,
+                                    end = 26.dp,
+                                    top = 40.dp,
+                                    bottom = 90.dp
+                                ),
+                            colors = CardDefaults
+                                .elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
+                        ) {
+
+                            Column(
+                                modifier = Modifier
+                                    .padding(start = 16.dp, end = 16.dp)
+                            ) {
+
+                                Text(
+                                    "SET PAYMENT MODE",
+                                    modifier = Modifier
+                                        .padding(start = 16.dp, top = 17.dp),
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                    fontSize = 14.sp,
+                                )
+                                Text(
+                                    "Select Options Below",
+                                    modifier = Modifier
+                                        .padding(start = 16.dp),
+                                    fontSize = 10.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                )
+                                Column(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.7f)) {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                    ) {
+                                        LazyColumn(
+                                            modifier = Modifier
+                                                .wrapContentHeight()
+                                        ) {
+
+                                            repaymentmentModeListing.mapIndexed { indexedPay, repamentModes ->
+                                                item {
+                                                    Row(
+                                                        modifier = Modifier
+                                                            .fillMaxWidth()
+                                                            .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                                                            .padding(
+                                                                top = 10.dp,
+                                                                start = 16.dp,
+                                                                end = 16.dp
+                                                            )
+                                                    ) {
+                                                        SelectGuarantorsView(
+                                                            Index = indexedPay,
+                                                            selected = selectedIndex == indexedPay,
+                                                            onClick = { index: Int ->
+                                                                selectedIndex =
+                                                                    if (selectedIndex == index) -1 else index
+                                                                if (selectedIndex > -1) {
+                                                                    repaymentMode =
+                                                                        repaymentmentModeListing[selectedIndex].name
+                                                                }
+                                                            },
+                                                            label = repamentModes.name
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(
+                                        top = 20.dp,
+                                        bottom = 20.dp,
+                                        start = 16.dp,
+                                        end = 16.dp
+                                    ),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+
+                                OutlinedButton(
+                                    border = BorderStroke(
+                                        width = 1.dp,
+                                        color = MaterialTheme.colorScheme.primary
+                                    ),
+                                    onClick = {
+                                        launchPaymentModePopUp = false
+                                    },
+                                    modifier = Modifier
+                                        .padding(start = 16.dp)
+                                        .height(30.dp),
+                                ) {
+
+                                    Text(
+                                        text = "Dismiss",
+                                        fontSize = 11.sp,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.align(Alignment.CenterVertically),
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    )
+
+                                }
+                                OutlinedButton(
+                                    colors = ButtonDefaults.outlinedButtonColors(containerColor = actionButtonColor),
+                                    border = BorderStroke(
+                                        width = 0.dp,
+                                        color = actionButtonColor
+                                    ),
+                                    onClick = {
+                                        launchPaymentModePopUp = false
+                                    },
+                                    modifier = Modifier
+                                        .padding(end = 16.dp)
+                                        .height(30.dp),
+                                ) {
+
+                                    Text(
+                                        text = "Proceed",
+                                        color = Color.White,
+                                        fontSize = 11.sp,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.align(Alignment.CenterVertically),
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         LazyColumn() {
             if (signProfileState.prestaTenantByPhoneNumber?.firstName == null) {
                 items(6) {
@@ -261,316 +568,6 @@ fun UserInformation(
                                 enabled = true,
                                 loading = false
                             )
-                        }
-                    }
-                }
-            }
-            //popup Disbursement mode
-            item {
-                if (launchDisbursementModePopUp) {
-
-                    val disburementModeListing = listOf(
-                        Disbursement_modes("Cheques", "Cheques", selected = true),
-                        Disbursement_modes("My Account", "My Account", selected = true),
-                        Disbursement_modes("EFT", "EFT", selected = true)
-                    )
-                    Popup {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight()
-                                .background(color = Color.Black.copy(alpha = 0.7f)),
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            ElevatedCard(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .fillMaxHeight(0.7f)
-                                    .padding(
-                                        start = 26.dp,
-                                        end = 26.dp,
-                                        top = 40.dp,
-                                        bottom = 90.dp
-                                    ),
-                                colors = CardDefaults
-                                    .elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
-                            ) {
-
-                                Column(
-                                    modifier = Modifier
-                                        .padding(start = 16.dp, end = 16.dp)
-                                ) {
-
-                                    Text(
-                                        "SELECT DISBURSEMENT MODE",
-                                        modifier = Modifier
-                                            .padding(start = 16.dp, top = 17.dp),
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
-                                        fontSize = 14.sp,
-                                    )
-                                    Text(
-                                        "Select Options Below ",
-                                        modifier = Modifier
-                                            .padding(start = 16.dp),
-                                        fontSize = 10.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                    )
-                                    Column(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.7f)) {
-                                        Column(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                        ) {
-                                            LazyColumn(
-                                                modifier = Modifier
-                                                    .wrapContentHeight()
-                                            ) {
-
-                                                disburementModeListing.mapIndexed { indexed, disbursementModes ->
-                                                    item {
-                                                        Row(
-                                                            modifier = Modifier
-                                                                .fillMaxWidth()
-                                                                .background(color = MaterialTheme.colorScheme.inverseOnSurface)
-                                                                .padding(
-                                                                    top = 10.dp,
-                                                                    start = 16.dp,
-                                                                    end = 16.dp
-                                                                )
-                                                        ) {
-                                                            SelectGuarantorsView(
-                                                                Index = indexed,
-                                                                selected = selectedIndex == indexed,
-                                                                onClick = { index: Int ->
-                                                                    selectedIndex =
-                                                                        if (selectedIndex == index) -1 else index
-                                                                    if (selectedIndex > -1) {
-                                                                        disbursementMode =
-                                                                            disburementModeListing[selectedIndex].name
-                                                                    }
-                                                                },
-                                                                label = disbursementModes.name
-                                                            )
-                                                        }
-                                                    }
-
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(
-                                            top = 20.dp,
-                                            bottom = 20.dp,
-                                            start = 16.dp,
-                                            end = 16.dp
-                                        ),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-
-                                    OutlinedButton(
-                                        border = BorderStroke(
-                                            width = 1.dp,
-                                            color = MaterialTheme.colorScheme.primary
-                                        ),
-                                        onClick = {
-                                            launchDisbursementModePopUp = false
-                                        },
-                                        modifier = Modifier
-                                            .padding(start = 16.dp)
-                                            .height(30.dp),
-                                    ) {
-
-                                        Text(
-                                            text = "Dismiss",
-                                            fontSize = 11.sp,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.align(Alignment.CenterVertically),
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                        )
-
-                                    }
-                                    OutlinedButton(
-                                        colors = ButtonDefaults.outlinedButtonColors(containerColor = actionButtonColor),
-                                        border = BorderStroke(
-                                            width = 0.dp,
-                                            color = actionButtonColor
-                                        ),
-                                        onClick = {
-                                            launchDisbursementModePopUp = false
-                                        },
-                                        modifier = Modifier
-                                            .padding(end = 16.dp)
-                                            .height(30.dp),
-                                    ) {
-
-                                        Text(
-                                            text = "Proceed",
-                                            color = Color.White,
-                                            fontSize = 11.sp,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.align(Alignment.CenterVertically),
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            item {
-                //popup Repayment mode
-                if (launchPaymentModePopUp) {
-                    val repaymentmentModeListing = listOf(
-                        Repayment_modes("Check Off ", "Check Off", selected = true),
-                        Repayment_modes("Paybill", "Paybill", selected = true),
-                        Repayment_modes("Standing Order", "Standing Order", selected = true)
-                    )
-                    Popup {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight()
-                                .background(color = Color.Black.copy(alpha = 0.7f)),
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            ElevatedCard(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .fillMaxHeight(0.7f)
-                                    .padding(
-                                        start = 26.dp,
-                                        end = 26.dp,
-                                        top = 40.dp,
-                                        bottom = 90.dp
-                                    ),
-                                colors = CardDefaults
-                                    .elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
-                            ) {
-
-                                Column(
-                                    modifier = Modifier
-                                        .padding(start = 16.dp, end = 16.dp)
-                                ) {
-
-                                    Text(
-                                        "SET PAYMENT MODE",
-                                        modifier = Modifier
-                                            .padding(start = 16.dp, top = 17.dp),
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
-                                        fontSize = 14.sp,
-                                    )
-                                    Text(
-                                        "Select Options Below",
-                                        modifier = Modifier
-                                            .padding(start = 16.dp),
-                                        fontSize = 10.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                    )
-                                    Column(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.7f)) {
-                                        Column(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                        ) {
-                                            LazyColumn(
-                                                modifier = Modifier
-                                                    .wrapContentHeight()
-                                            ) {
-
-                                                repaymentmentModeListing.mapIndexed { indexedPay, repamentModes ->
-                                                    item {
-                                                        Row(
-                                                            modifier = Modifier
-                                                                .fillMaxWidth()
-                                                                .background(color = MaterialTheme.colorScheme.inverseOnSurface)
-                                                                .padding(
-                                                                    top = 10.dp,
-                                                                    start = 16.dp,
-                                                                    end = 16.dp
-                                                                )
-                                                        ) {
-                                                            SelectGuarantorsView(
-                                                                Index = indexedPay,
-                                                                selected = selectedIndex == indexedPay,
-                                                                onClick = { index: Int ->
-                                                                    selectedIndex =
-                                                                        if (selectedIndex == index) -1 else index
-                                                                    if (selectedIndex > -1) {
-                                                                        repaymentMode =
-                                                                            repaymentmentModeListing[selectedIndex].name
-                                                                    }
-                                                                },
-                                                                label = repamentModes.name
-                                                            )
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(
-                                            top = 20.dp,
-                                            bottom = 20.dp,
-                                            start = 16.dp,
-                                            end = 16.dp
-                                        ),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-
-                                    OutlinedButton(
-                                        border = BorderStroke(
-                                            width = 1.dp,
-                                            color = MaterialTheme.colorScheme.primary
-                                        ),
-                                        onClick = {
-                                            launchPaymentModePopUp = false
-                                        },
-                                        modifier = Modifier
-                                            .padding(start = 16.dp)
-                                            .height(30.dp),
-                                    ) {
-
-                                        Text(
-                                            text = "Dismiss",
-                                            fontSize = 11.sp,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.align(Alignment.CenterVertically),
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                        )
-
-                                    }
-                                    OutlinedButton(
-                                        colors = ButtonDefaults.outlinedButtonColors(containerColor = actionButtonColor),
-                                        border = BorderStroke(
-                                            width = 0.dp,
-                                            color = actionButtonColor
-                                        ),
-                                        onClick = {
-                                            launchPaymentModePopUp = false
-                                        },
-                                        modifier = Modifier
-                                            .padding(end = 16.dp)
-                                            .height(30.dp),
-                                    ) {
-
-                                        Text(
-                                            text = "Proceed",
-                                            color = Color.White,
-                                            fontSize = 11.sp,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.align(Alignment.CenterVertically),
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                        )
-                                    }
-                                }
-                            }
                         }
                     }
                 }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -61,10 +62,10 @@ fun LongTermLoanConfirmationContent(
                     .padding(innerPadding)
             ) {
                 TabRow(selectedTabIndex = tabIndex,
-                    containerColor = Color.White.copy(alpha = 0.5f),
+                    containerColor = MaterialTheme.colorScheme.inverseOnSurface.copy(alpha = 0.5f),//Color.White.copy(alpha = 0.5f),
                     modifier = Modifier
                         .clip(shape = RoundedCornerShape(29.dp))
-                        .background(Color.Gray.copy(alpha = 0.5f)),
+                        .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
                     indicator = {},
                     divider = {}
                 ) {
@@ -76,7 +77,7 @@ fun LongTermLoanConfirmationContent(
                         ) {
                             Card(
                                 shape = RoundedCornerShape(70.dp),
-                                colors = CardDefaults.cardColors(containerColor = if (tabIndex == index) Color.White else Color.Transparent),
+                                colors = CardDefaults.cardColors(containerColor = if (tabIndex == index) MaterialTheme.colorScheme.inverseOnSurface else Color.Transparent),
                                 modifier = Modifier
                                     .padding(1.5.dp)
                             ) {
@@ -103,12 +104,10 @@ fun LongTermLoanConfirmationContent(
                                             )
                                         )
                                         .background(
-                                            color = if (tabIndex == index) Color.White.copy(
-                                                alpha = 0.3f
-                                            ) else Color.White.copy(alpha = 0.1f)
+                                            color = if (tabIndex == index) MaterialTheme.colorScheme.inverseOnSurface.copy(0.3f) else MaterialTheme.colorScheme.inverseOnSurface.copy(0.1f)
                                         ),
-                                    selectedContentColor = Color.Black,
-                                    unselectedContentColor = Color.DarkGray
+                                    selectedContentColor = MaterialTheme.colorScheme.surfaceTint,
+                                    unselectedContentColor = MaterialTheme.colorScheme.outline
                                 )
                             }
                         }

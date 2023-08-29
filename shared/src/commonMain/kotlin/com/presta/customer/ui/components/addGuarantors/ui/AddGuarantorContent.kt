@@ -327,8 +327,8 @@ fun AddGuarantorContent(
                                     tabIndex = index
                                 },
                                 modifier = Modifier,
-                                selectedContentColor = Color.Black,
-                                unselectedContentColor = Color.DarkGray
+                                selectedContentColor = MaterialTheme.colorScheme.primary,
+                                unselectedContentColor = MaterialTheme.colorScheme.outline
                             )
                         }
                     }
@@ -798,7 +798,7 @@ fun AddGuarantorContent(
                                                 selected = true,
                                                 phoneNumber = item.phoneNumber,
                                                 memberNumber = item.memberNumber,
-                                                amount = if(item.amount!="") formatMoney(item.amount.toDouble()) else component.desiredAmount.toString(),
+                                                amount = if (item.amount != "") formatMoney(item.amount.toDouble()) else component.desiredAmount.toString(),
                                             )
                                         }
                                     }
