@@ -34,7 +34,5 @@ data class PrestaLoanRequestByRequestRefId(
     //val zohoDocumentId: String,
     //val zohoRequest: String,
     //val zohoRequestId: String,
-
-
     )
 

@@ -83,17 +83,13 @@ fun SignGuarantorFormContent(
             )
         }
     }
-
     LaunchedEffect(
-        authState.cachedMemberData,
-        launchPopUp
+        state.prestaGuarontorAcceptanceStatus?.isSigned
     ) {
-
-        if (state.prestaGuarontorAcceptanceStatus?.isSigned == false) {
-            component.onDocumentSigned(sign = true)
+        if (state.prestaGuarontorAcceptanceStatus?.isSigned == true) {
+            component.onDocumentSigned()
         }
     }
-
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Sign Document", onClickContainer = {
             component.onBackNavClicked()
@@ -174,7 +170,7 @@ fun SignGuarantorFormContent(
                             if (state.prestaZohoSignUrl?.signURL != null) {
                                 component.platform.openUrl(state.prestaZohoSignUrl.signURL)
                             }
-                           // component.onDocumentSigned(sign = true)
+                            // component.onDocumentSigned(sign = true)
                             //launchPopUp = true
 
                         },

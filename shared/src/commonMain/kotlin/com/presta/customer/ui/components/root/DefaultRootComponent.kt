@@ -1,6 +1,6 @@
 package com.presta.customer.ui.components.root
 
-import  com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.active
@@ -9,7 +9,6 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.router.stack.replaceAll
-import com.arkivanov.decompose.router.stack.replaceCurrent
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
@@ -35,12 +34,12 @@ import com.presta.customer.ui.components.favouriteGuarantors.DefaultFavouriteGua
 import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGuarantorsComponent
 import com.presta.customer.ui.components.guarantorshipRequests.DefaultGuarantorshipRequestComponent
 import com.presta.customer.ui.components.guarantorshipRequests.GuarantorshipRequestComponent
-import com.presta.customer.ui.components.longTermLoanSignStatus.DefaultLongTermLoanSigningStatusComponent
-import com.presta.customer.ui.components.longTermLoanSignStatus.LongtermLoanSigningStatusComponent
 import com.presta.customer.ui.components.longTermLoanConfirmation.DefaultLongTermLoanConfirmationComponent
 import com.presta.customer.ui.components.longTermLoanConfirmation.LongTermLoanConfirmationComponent
 import com.presta.customer.ui.components.longTermLoanDetails.DefaultLongTermLoanDetailsComponent
 import com.presta.customer.ui.components.longTermLoanDetails.LongTermLoanDetailsComponent
+import com.presta.customer.ui.components.longTermLoanSignStatus.DefaultLongTermLoanSigningStatusComponent
+import com.presta.customer.ui.components.longTermLoanSignStatus.LongtermLoanSigningStatusComponent
 import com.presta.customer.ui.components.onBoarding.DefaultOnboardingComponent
 import com.presta.customer.ui.components.onBoarding.OnBoardingComponent
 import com.presta.customer.ui.components.otp.DefaultOtpComponent
@@ -812,14 +811,15 @@ class DefaultRootComponent(
                 navigation.pop()
 
             },
-            onAcceptClicked = { loanNumber, amount, loanRequestRefId, memberRefId ->
+            onAcceptClicked = { loanNumber, amount, loanRequestRefId, memberRefId,guarantorRefId ->
                 //Navigate to sign
                 navigation.push(
                     Config.SignDocument(
                         loanNumber = loanNumber,
                         amount = amount,
                         loanRequestRefId = loanRequestRefId,
-                        memberRefId = memberRefId
+                        memberRefId = memberRefId,
+                        guarantorRefId = guarantorRefId
                     )
                 )
 
@@ -1009,14 +1009,13 @@ class DefaultRootComponent(
             loanRequestRefId = config.loanRequestRefId,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
-            onDocumentSignedClicked = { signed ->
+            onDocumentSignedClicked = {
                 //when doc is signed navigate
-                if (signed == true) {
-                    navigation.bringToFront(Config.LongTermLoanSigningStatus)
-                }
+                navigation.bringToFront(Config.LongTermLoanSigningStatus)
             },
             sign = false,
-            memberRefId = config.memberRefId
+            memberRefId = config.memberRefId,
+            guarantorRefId = config.guarantorRefId
         )
 
     private fun signLoanForm(
@@ -1043,11 +1042,6 @@ class DefaultRootComponent(
             },
             sign = false,
             memberRefId = config.memberRefId,
-            //Todo--navigate when Signed
-            onDocumentSignedNavClicked = {
-
-
-            }
         )
 
     private fun replaceGuarantorComponent(
@@ -1247,6 +1241,7 @@ class DefaultRootComponent(
             val amount: Double,
             val loanRequestRefId: String,
             val memberRefId: String,
+            val guarantorRefId: String
         ) : Config()
 
         @Parcelize
@@ -1265,6 +1260,7 @@ class DefaultRootComponent(
             val guarantorLastName: String
         ) : Config()
     }
+
     init {
         lifecycle.subscribe(object : Lifecycle.Callbacks {
             val nav = true
@@ -1285,7 +1281,6 @@ class DefaultRootComponent(
                         //if signed navigate
 
                     }
-
                     else -> {
                         super.onResume()
                         navigation.replaceAll(Config.Splash)

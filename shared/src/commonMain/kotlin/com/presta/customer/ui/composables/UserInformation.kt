@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -83,6 +84,23 @@ fun UserInformation(
         guarantorList.add(Guarantor(refId, amount, guarantorName))
     }
     //Todo---Pop up to handle the failed requsts message
+    LaunchedEffect(state.prestaLongTermLoanRequestData?.refId){
+        if (state.prestaLongTermLoanRequestData?.refId != null) {
+            component.navigateToSignLoanForm(
+                loanNumber =  state.prestaLongTermLoanRequestData.loanRequestNumber,
+                amount = state.prestaLongTermLoanRequestData.loanAmount,
+                loanRequestRefId = state.prestaLongTermLoanRequestData.refId,
+                memberRefId = ""
+            )
+        } else {
+            //launch pop up to show reason of loan failure
+            launchHandleLoanRequestPopUp = true
+
+        }
+
+    }
+
+
     Column(modifier = Modifier.padding(top = 20.dp)) {
         //popup Disbursement mode
         //Aded the popUps on top of Parent Column to prevent them from freezing
@@ -522,9 +540,9 @@ fun UserInformation(
                                                 loan_purpose_3 = component.loanPurposeCategory,
                                                 loanPurposeCode = component.loanPurposeCategoryCode,
                                                 loanPeriod = component.loanPeriod.toString(),
-                                                repayment_period = "4",
+                                                repayment_period =  component.loanPeriod.toString(),
                                                 employer_name = component.employer,
-                                                employment_type = "Contract",
+                                                employment_type = "",
                                                 employment_number = component.employmentNumber,
                                                 business_location = component.businessLocation,
                                                 business_type = component.businessType,
@@ -536,12 +554,12 @@ fun UserInformation(
                                                 kraPin = component.kraPin
                                             ),
                                             loanProductName = component.loanType,
-                                            loanProductRefId = component.loanRefId,
+                                            loanProductRefId ="", //component.loanRefId,
                                             selfCommitment = 0.0,
                                             loanAmount = component.desiredAmount,
                                             memberRefId = component.memberRefId,
                                             memberNumber = signProfileState.prestaTenantByPhoneNumber.memberNumber,
-                                            witnessRefId = component.witnessRefId,
+                                            witnessRefId = "",//component.witnessRefId,
                                             guarantorList = guarantorList,
                                         )
                                     }?.let {
@@ -552,12 +570,12 @@ fun UserInformation(
                                     //Navigate to show the application Status
                                     //Todo--handle reason of loan failure on a pop up navigate to sign form
                                     //component.onProductSelected()
-                                    if (state.prestaLongTermLoanRequestData?.refId != null) {
+                                    if (state.prestaLongTermLoanRequestData?.refId == null) {
                                         component.navigateToSignLoanForm(
-                                            loanNumber = "",
-                                            amount = 0.0,
-                                            loanRequestRefId = state.prestaLongTermLoanRequestData.refId,
-                                            memberRefId = ""
+                                            loanNumber ="" ,// state.prestaLongTermLoanRequestData.loanRequestNumber,
+                                            amount =0.0 ,//state.prestaLongTermLoanRequestData.loanAmount,
+                                            loanRequestRefId = "JOHiFKA6uPAWkWGw",//state.prestaLongTermLoanRequestData.refId,
+                                            memberRefId = "",
                                         )
                                     } else {
                                         //launch pop up to show reason of loan failure

@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -47,7 +48,6 @@ fun SignLoanFormContent(
     authState: AuthStore.State,
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
 ) {
-    val launchPopUp by remember { mutableStateOf(false) }
     if (component.loanRequestRefId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -83,14 +83,14 @@ fun SignLoanFormContent(
             )
         }
     }
-
+    //Todo --- test
+    //Check also if the guarantor has signed
     LaunchedEffect(
-        authState.cachedMemberData,
-        launchPopUp
+        state.prestaLoanByLoanRequestRefId?.applicantSigned
     ) {
-
-        if (state.prestaGuarontorAcceptanceStatus?.isSigned == true) {
+        if (state.prestaLoanByLoanRequestRefId?.applicantSigned == true) {
             component.onDocumentSigned()
+            println("scope launched:::::::::::::")
         }
     }
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
@@ -147,7 +147,7 @@ fun SignLoanFormContent(
                             .fillMaxWidth()
                     ) {
                         Text(
-                            "Proceed to Sign your Loan " + component.loanNumber + " of Kes " + component.amount ,
+                            "Proceed to Sign your Loan " + component.loanNumber + " of Kes " + component.amount,
                             fontSize = 16.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
                             color = MaterialTheme.colorScheme.primary
@@ -168,19 +168,12 @@ fun SignLoanFormContent(
                     ActionButton(
                         label = "SIGN DOCUMENT",
                         onClickContainer = {
-                            //when succesfully signed navigate to sign successfull
-                            //else  failed
                             //Todo=--already fixed this implementation
-//                            if (state.prestaZohoSignUrl?.signURL != null) {
-//                                component.platform.openUrl(state.prestaZohoSignUrl.signURL)
-//                            }
-                           // component.onDocumentSigned(sign = true)
-                            //launchPopUp = true
-
-                            component.onDocumentSigned()
-
+                            if (state.prestaZohoSignUrl?.signURL != null) {
+                                component.platform.openUrl(state.prestaZohoSignUrl.signURL)
+                            }
                         },
-                        loading = false //state.prestaZohoSignUrl == null
+                        loading = state.prestaZohoSignUrl == null
                     )
                 }
             }

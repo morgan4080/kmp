@@ -79,11 +79,13 @@ fun GuarantorShipRequestsContent(
     var loanRequestRefId by remember { mutableStateOf("") }
     var memberRefId by remember { mutableStateOf("") }
     var guarantorshipRequestRefId by remember { mutableStateOf("") }
+    var guarantorRefIdRefId by remember { mutableStateOf("") }
     var amountToGuarantee by remember { mutableStateOf("") }
     var loanNumber by remember { mutableStateOf("") }
     if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         memberRefId = signHomeState.prestaTenantByPhoneNumber.refId
     }
+
     if (loanRequestRefId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -393,13 +395,11 @@ fun GuarantorShipRequestsContent(
                                             loanAmount = guarantorRequests.loanRequest.amount.toString(),
                                             requestsDate = guarantorRequests.loanRequest.loanDate,
                                             onClickContainer = {
-                                                loanRequestRefId =
-                                                    guarantorRequests.loanRequest.refId
+                                                loanRequestRefId = guarantorRequests.loanRequest.refId
                                                 guarantorshipRequestRefId = guarantorRequests.refId
-                                                amountToGuarantee =
-                                                    guarantorRequests.loanRequest.amount.toString()
-                                                loanNumber =
-                                                    guarantorRequests.loanRequest.loanNumber
+                                                amountToGuarantee = guarantorRequests.loanRequest.amount.toString()
+                                                loanNumber = guarantorRequests.loanRequest.loanNumber
+                                                guarantorRefIdRefId=guarantorRequests.refId
                                                 println("Test Data" + state.prestaLongTermLoanrequestBYRefId?.memberFirstName)
                                                 modalBottomScope.launch { modalBottomState.show() }
                                             }

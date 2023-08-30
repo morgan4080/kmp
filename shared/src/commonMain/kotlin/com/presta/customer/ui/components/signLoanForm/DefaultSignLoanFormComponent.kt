@@ -33,7 +33,6 @@ class DefaultSignLoanFormComponent(
     mainContext: CoroutineContext,
     private val onItemClicked: () -> Unit,
     private val onDocumentSignedClicked: () -> Unit,
-    private val onDocumentSignedNavClicked: () -> Unit,
     private val onProductClicked: () -> Unit,
     override val loanNumber: String,
     override val amount: Double,
@@ -98,7 +97,6 @@ class DefaultSignLoanFormComponent(
             }
         }
     }
-
     override fun onBackNavClicked() {
         onItemClicked()
     }
@@ -107,8 +105,7 @@ class DefaultSignLoanFormComponent(
         onProductClicked()
     }
 
-    override fun onDocumentSigned(
-    ) {
+    override fun onDocumentSigned() {
         onDocumentSignedClicked()
     }
 
@@ -120,22 +117,6 @@ class DefaultSignLoanFormComponent(
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         checkAuthenticatedUser()
-        lifecycle.subscribe(object : Lifecycle.Callbacks {
-            //Todo-- Trigger an action to check loan Signing  Status
-            override fun onResume() {
-                //onDocumentSignedClicked()
-            }
-        })
-
-//        lifecycle.subscribe(
-//            object : Lifecycle.Callbacks {
-//                override fun onResume() {
-//                    super.onResume()
-//                      onDocumentSigned()
-//
-//                }
-//            }
-//        )
     }
 
 }

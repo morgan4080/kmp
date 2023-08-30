@@ -28,8 +28,8 @@ class DefaultGuarantorshipRequestComponent(
         loanNumber: String,
         amount: Double,
         loanRequestRefId: String,
-        memberRefId: String
-
+        memberRefId: String,
+        guarantorRefId: String
     ) -> Unit
 ) : GuarantorshipRequestComponent, ComponentContext by componentContext {
 
@@ -115,13 +115,15 @@ class DefaultGuarantorshipRequestComponent(
         loanNumber: String,
         amount: Double,
         loanRequestRefId: String,
-        memberRefId: String
+        memberRefId: String,
+        guarantorRefId: String
     ) {
         onAcceptClicked(
             loanNumber,
             amount,
             loanRequestRefId,
-            memberRefId
+            memberRefId,
+            guarantorRefId
         )
     }
 

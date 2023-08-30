@@ -10,6 +10,7 @@ interface SignGuarantorFormComponent {
     val amount: Double
     val loanRequestRefId: String
     val memberRefId: String
+    val guarantorRefId: String
     val authStore: AuthStore
     val authState: StateFlow<AuthStore.State>
     var sign: Boolean
@@ -20,5 +21,5 @@ interface SignGuarantorFormComponent {
     val platform: Platform
     fun onBackNavClicked()
     fun onProductSelected()
-    fun onDocumentSigned(sign : Boolean)
+    fun onDocumentSigned()
 }

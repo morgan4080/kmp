@@ -31,13 +31,14 @@ class DefaultSignGuarantorFormComponent (
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     private val onItemClicked: () -> Unit,
-    private val onDocumentSignedClicked: (sign: Boolean) -> Unit,
+    private val onDocumentSignedClicked: () -> Unit,
     private val onProductClicked: () -> Unit,
     override val loanNumber: String,
     override val amount: Double,
     override val loanRequestRefId: String,
     override var sign: Boolean,
     override val memberRefId: String,
+    override val guarantorRefId: String,
 ): SignGuarantorFormComponent, ComponentContext by componentContext, KoinComponent {
     override val platform by inject<Platform>()
     private val scope = coroutineScope(mainContext + SupervisorJob())
@@ -104,22 +105,11 @@ class DefaultSignGuarantorFormComponent (
       onProductClicked()
     }
 
-    override fun onDocumentSigned(
-        sign: Boolean) {
-    onDocumentSignedClicked(sign)
+    override fun onDocumentSigned() {
+    onDocumentSignedClicked()
     }
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         checkAuthenticatedUser()
-//        lifecycle.subscribe(
-//            object : Lifecycle.Callbacks {
-//                override fun onResume() {
-//                    super.onResume()
-//                        onDocumentSigned(sign = sign)
-//
-//                }
-//            }
-//        )
     }
-
 }
