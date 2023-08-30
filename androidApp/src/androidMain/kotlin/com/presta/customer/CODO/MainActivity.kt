@@ -1,4 +1,4 @@
-package com.presta.customer.codo
+package com.presta.customer.CODO
 import android.app.Activity
 import android.os.Bundle
 import androidx.activity.compose.setContent
