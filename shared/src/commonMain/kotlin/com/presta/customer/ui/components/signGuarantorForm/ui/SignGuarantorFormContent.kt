@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.presta.customer.ImageConverter
 import com.presta.customer.MR
 import com.presta.customer.network.longTermLoans.model.ActorType
+import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signGuarantorForm.SignGuarantorFormComponent
@@ -38,7 +40,6 @@ import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignGuarantorFormContent(
@@ -47,7 +48,8 @@ fun SignGuarantorFormContent(
     authState: AuthStore.State,
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
 ) {
-    val launchPopUp by remember { mutableStateOf(false) }
+    var filteredResponse by remember { mutableStateOf<List<PrestaGuarantorResponse>>(emptyList()) }
+
     if (component.loanRequestRefId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -66,7 +68,6 @@ fun SignGuarantorFormContent(
             }
         }
     }
-    //Todo --Test
     LaunchedEffect(
         authState.cachedMemberData
     ) {
@@ -83,17 +84,41 @@ fun SignGuarantorFormContent(
             )
         }
     }
+
+    if (component.memberRefId != "") {
+        LaunchedEffect(
+            authState.cachedMemberData,
+            component.memberRefId
+        ) {
+            authState.cachedMemberData?.let {
+                ApplyLongTermLoansStore.Intent.GetPrestaGuarantorshipRequests(
+                    token = it.accessToken,
+                    memberRefId = component.memberRefId //memberRefId//memberRefId
+                )
+            }?.let {
+                onEvent(
+                    it
+                )
+            }
+        }
+    }
     LaunchedEffect(
-        state.prestaGuarontorAcceptanceStatus?.isSigned
+        state.prestaGuarontorshipRequests
     ) {
-        if (state.prestaGuarontorAcceptanceStatus?.isSigned == true) {
-            component.onDocumentSigned()
+        filteredResponse = state.prestaGuarontorshipRequests.filter { guarantorRequest ->
+            guarantorRequest.loanRequest.loanNumber.contains(component.loanNumber)
+        }
+        if (filteredResponse.isNotEmpty()) {
+            filteredResponse.map { filteredData ->
+                if (filteredData.isSigned) {
+                    component.onDocumentSigned()
+                }
+            }
         }
     }
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Sign Document", onClickContainer = {
             component.onBackNavClicked()
-
         })
     }, content = { innerPadding ->
         if (state.prestaLoanByLoanRequestRefId?.pdfThumbNail == null) {
@@ -165,14 +190,9 @@ fun SignGuarantorFormContent(
                     ActionButton(
                         label = "SIGN DOCUMENT",
                         onClickContainer = {
-                            //when succesfully signed navigate to sign successfull
-                            //else  failed
                             if (state.prestaZohoSignUrl?.signURL != null) {
                                 component.platform.openUrl(state.prestaZohoSignUrl.signURL)
                             }
-                            // component.onDocumentSigned(sign = true)
-                            //launchPopUp = true
-
                         },
                         loading = state.prestaZohoSignUrl == null
                     )

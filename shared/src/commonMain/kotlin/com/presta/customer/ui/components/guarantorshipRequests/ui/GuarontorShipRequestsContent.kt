@@ -114,7 +114,7 @@ fun GuarantorShipRequestsContent(
             authState.cachedMemberData?.let {
                 ApplyLongTermLoansStore.Intent.GetPrestaGuarantorshipRequests(
                     token = it.accessToken,
-                    memberRefId = memberRefId//memberRefId
+                    memberRefId = memberRefId //memberRefId
                 )
             }?.let {
                 onEvent(
@@ -239,23 +239,25 @@ fun GuarantorShipRequestsContent(
                             modifier = Modifier
                                 .size(70.dp)
                                 .clickable {
-                                    authState.cachedMemberData?.let {
-                                        ApplyLongTermLoansStore.Intent.GetGuarantorAcceptanceStatus(
-                                            token = it.accessToken,
-                                            guarantorshipRequestRefId = guarantorshipRequestRefId,
-                                            isAccepted = true
-                                        )
-                                    }?.let {
-                                        onEvent(
-                                            it
-                                        )
-                                    }
+                                    //Todo--commented for test
+//                                    authState.cachedMemberData?.let {
+//                                        ApplyLongTermLoansStore.Intent.GetGuarantorAcceptanceStatus(
+//                                            token = it.accessToken,
+//                                            guarantorshipRequestRefId = guarantorshipRequestRefId,
+//                                            isAccepted = true
+//                                        )
+//                                    }?.let {
+//                                        onEvent(
+//                                            it
+//                                        )
+//                                    }
                                     signHomeState.prestaTenantByPhoneNumber?.refId?.let {
                                         component.onAcceptSelected(
                                             loanNumber = loanNumber,
                                             amount = if (amountToGuarantee != "") amountToGuarantee.toDouble() else 0.0,
                                             loanRequestRefId = loanRequestRefId,
-                                            memberRefId = it
+                                            memberRefId = it,
+                                            guarantorRefId = guarantorRefIdRefId
                                         )
                                     }
                                     modalBottomScope.launch { modalBottomState.hide() }
@@ -279,6 +281,7 @@ fun GuarantorShipRequestsContent(
                             modifier = Modifier
                                 .size(70.dp)
                                 .clickable {
+                                    //Todo----commented for test
                                     //Request Declined
 //                                    authState.cachedMemberData?.let {
 //                                        ApplyLongTermLoansStore.Intent.GetGuarantorAcceptanceStatus(
@@ -395,11 +398,14 @@ fun GuarantorShipRequestsContent(
                                             loanAmount = guarantorRequests.loanRequest.amount.toString(),
                                             requestsDate = guarantorRequests.loanRequest.loanDate,
                                             onClickContainer = {
-                                                loanRequestRefId = guarantorRequests.loanRequest.refId
+                                                loanRequestRefId =
+                                                    guarantorRequests.loanRequest.refId
                                                 guarantorshipRequestRefId = guarantorRequests.refId
-                                                amountToGuarantee = guarantorRequests.loanRequest.amount.toString()
-                                                loanNumber = guarantorRequests.loanRequest.loanNumber
-                                                guarantorRefIdRefId=guarantorRequests.refId
+                                                amountToGuarantee =
+                                                    guarantorRequests.loanRequest.amount.toString()
+                                                loanNumber =
+                                                    guarantorRequests.loanRequest.loanNumber
+                                                guarantorRefIdRefId = guarantorRequests.refId
                                                 println("Test Data" + state.prestaLongTermLoanrequestBYRefId?.memberFirstName)
                                                 modalBottomScope.launch { modalBottomState.show() }
                                             }
