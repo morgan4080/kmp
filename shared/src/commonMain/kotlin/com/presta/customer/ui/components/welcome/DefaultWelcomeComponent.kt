@@ -40,8 +40,6 @@ class DefaultWelcomeComponent (
     )
 
     override fun onGetStarted(onBoardingContext: DefaultRootComponent.OnBoardingContext) {
-        println(":::::onBoardingContext:::::::")
-        println(onBoardingContext)
         onGetStartedSelected(onBoardingContext)
     }
 }

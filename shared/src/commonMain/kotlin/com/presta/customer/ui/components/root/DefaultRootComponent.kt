@@ -18,7 +18,6 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.network.payments.model.PaymentStatuses
-import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.prestaDispatchers
 import com.presta.customer.ui.components.auth.AuthComponent
 import com.presta.customer.ui.components.auth.DefaultAuthComponent
@@ -159,19 +158,11 @@ class DefaultRootComponent(
             componentContext = componentContext,
             onBoardingContext = config.context,
             onGetStartedSelected = {
-                if (OrganisationModel.organisation.sandbox) {
-                    navigation.push(
-                        Config.Tenant(
-                            onBoardingContext = it
-                        )
+                navigation.push(
+                    Config.OnBoarding(
+                        onBoardingContext = it
                     )
-                } else {
-                    navigation.push(
-                        Config.OnBoarding(
-                            onBoardingContext = it
-                        )
-                    )
-                }
+                )
             },
         )
 
