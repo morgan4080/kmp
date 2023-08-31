@@ -76,7 +76,7 @@ data class DetailsData(
     val disbursement_mode: String,
     val repayment_mode: String,
     val loan_type: String,
-    val kraPin: String
+    val kra_pin: String
 )
 
 @Serializable
@@ -303,6 +303,8 @@ class PrestaLongTermLoansClient(
                 contentType(ContentType.Application.Json)
                 url {
                     encodedParameters.append("memberRefId", memberRefId)
+                    encodedParameters.append("order", "ASC")
+                    encodedParameters.append("isActive", "true")
                    // encodedParameters.append("loanReqStatus", "OPEN")
                 }
             }
@@ -379,7 +381,18 @@ class PrestaLongTermLoansClient(
             }
         }
     }
-
+    suspend fun sendWitnessAcceptanceStatus(
+        token: String,
+        loanRequestRefId: String,
+        isAccepted: Boolean
+    ): PrestaWitnessRequestResponse {
+        return loanRequestErrorHandler {
+            httpClient.post("${NetworkConstants.PrestaWitnessRequests.route}/${loanRequestRefId}/${isAccepted}") {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                contentType(ContentType.Application.Json)
+            }
+        }
+    }
     suspend fun addFavouriteGuarantor(
         token: String,
         memberRefId: String,

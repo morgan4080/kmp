@@ -852,6 +852,18 @@ class DefaultRootComponent(
             },
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
+            onAcceptClicked = { loanNumber, amount, loanRequestRefId, memberRefId,witnessRefId->
+                //Navigate to sign
+                navigation.push(
+                    Config.SignDocument(
+                        loanNumber = loanNumber,
+                        amount = amount,
+                        loanRequestRefId = loanRequestRefId,
+                        memberRefId = memberRefId,
+                        guarantorRefId = witnessRefId
+                    )
+                )
+            }
         )
 
     private fun addWitnessComponent(

@@ -107,6 +107,12 @@ interface ApplyLongTermLoansStore :
             val memberRefId: String
         ) : Intent()
 
+        data class GetWitnessAcceptanceStatus(
+            val token: String,
+            val loanRequestRefId: String,
+            val isAccepted: Boolean
+        ) : Intent()
+
         data class GetPrestaFavouriteGuarantor(
             val token: String,
             val memberRefId: String
@@ -156,6 +162,7 @@ interface ApplyLongTermLoansStore :
         val prestaLongTermLoansRequestsSpecificProduct: PrestaLongTermLoansRequestsListResponse? = null,
         val prestaUpdatedGuarantorData: LongTermLoanRequestResponse? = null,
         val prestaWitnessRequests: List<PrestaWitnessRequestResponse> = emptyList(),
+        val prestaWitnessAcceptanceStatus: PrestaWitnessRequestResponse? = null,
         val prestaFavouriteGuarantor: List<PrestaFavouriteGuarantorResponse> = emptyList(),
         val prestaAdedFavouriteGuarantor: PrestaFavouriteGuarantorResponse? = null,
         val deleteFavouriteGuarantorResponse: String? = null,

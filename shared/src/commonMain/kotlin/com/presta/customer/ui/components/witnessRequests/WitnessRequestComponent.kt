@@ -17,5 +17,12 @@ interface WitnessRequestComponent {
     val signHomeState: StateFlow<SignHomeStore.State>
     fun onBackNavClicked()
     fun onProductSelected()
+    fun onAcceptSelected(
+        loanNumber: String,
+        amount: Double,
+        loanRequestRefId: String,
+        memberRefId: String,
+        witnessRefId: String
+    )
 
 }

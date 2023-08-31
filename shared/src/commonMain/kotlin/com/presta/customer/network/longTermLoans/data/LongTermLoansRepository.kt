@@ -117,6 +117,11 @@ interface LongTermLoansRepository {
         token: String,
         memberRefId: String,
     ): Result<List<PrestaWitnessRequestResponse>>
+    suspend fun getWitnessAcceptanceStatus(
+        token: String,
+        loanRequestRefId: String,
+        isAccepted: Boolean
+    ): Result<PrestaWitnessRequestResponse>
 
     suspend fun getFavouriteGuarantor(
         token: String,

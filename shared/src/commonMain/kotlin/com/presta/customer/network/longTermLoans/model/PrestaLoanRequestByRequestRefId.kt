@@ -1,9 +1,11 @@
 package com.presta.customer.network.longTermLoans.model
 
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PrestaLoanRequestByRequestRefId(
+data class PrestaLoanRequestByRequestRefId @OptIn(ExperimentalSerializationApi::class) constructor(
     val refId: String,
     val loanDate: String,
     val loanRequestNumber: String,
@@ -21,18 +23,19 @@ data class PrestaLoanRequestByRequestRefId(
     val applicantSigned: Boolean,
     val witnessAccepted: Boolean,
     val witnessSigned: Boolean,
-    val pdfThumbNail: String,
+    @EncodeDefault val pdfThumbNail: String? = null,
     val guarantorList: List<GuarantorDataResponse>,
     //val acceptanceStatus: String,
     //val applicationStatus: String,
-  //  val pendingReason: String,
+    //  val pendingReason: String,
     //val signingStatus: String,
     //val status: String,
     //val witnessMemberNo: String,
-   // val witnessName: String,
+    // val witnessName: String,
     //val witnessRefId: String,
     //val zohoDocumentId: String,
     //val zohoRequest: String,
     //val zohoRequestId: String,
-    )
+)
+
 

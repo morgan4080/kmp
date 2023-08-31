@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -39,8 +40,13 @@ import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, DelicateCoroutinesApi::class)
 @Composable
 fun SignLoanFormContent(
     component: SignLoanFormComponent,
@@ -48,11 +54,17 @@ fun SignLoanFormContent(
     authState: AuthStore.State,
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
 ) {
+    var loanScope = rememberCoroutineScope()
+    var activestate by remember { mutableStateOf(0) }
+
+    val list = ArrayList<String>()
+    list.add(component.loanRequestRefId)
+
     if (component.loanRequestRefId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
-            component.loanRequestRefId
-
+            component.loanRequestRefId,
+            activestate
         ) {
             authState.cachedMemberData?.let {
                 ApplyLongTermLoansStore.Intent.GetPrestaLoanByLoanRequestRefId(
@@ -85,14 +97,42 @@ fun SignLoanFormContent(
     }
     //Todo --- test
     //Check also if the guarantor has signed
+//    LaunchedEffect(
+//        state.prestaLoanByLoanRequestRefId?.applicantSigned
+//    ) {
+//        println("launch effect called " + list[0])
+//        println("Current id is:::::;" + component.loanRequestRefId)
+//
+//        if (state.prestaLoanByLoanRequestRefId?.applicantSigned == true) {
+//            component.onDocumentSigned()
+//        }
+//    }
+
+    loanScope.launch {
+        println("launch effect called " + list[0])
+        println("Current id is:::::;" + component.loanRequestRefId)
+
+    }
+
+    GlobalScope.launch {
+        while (true) {
+            delay(7000)
+            activestate++
+            if (state.prestaLoanByLoanRequestRefId?.applicantSigned == true) {
+                cancel()
+            }
+        }
+    }
+
     LaunchedEffect(
         state.prestaLoanByLoanRequestRefId?.applicantSigned
     ) {
         if (state.prestaLoanByLoanRequestRefId?.applicantSigned == true) {
             component.onDocumentSigned()
-            println("scope launched:::::::::::::")
         }
+
     }
+
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Sign Loan Form", onClickContainer = {
             component.onBackNavClicked()
@@ -172,6 +212,7 @@ fun SignLoanFormContent(
                             if (state.prestaZohoSignUrl?.signURL != null) {
                                 component.platform.openUrl(state.prestaZohoSignUrl.signURL)
                             }
+
                         },
                         loading = state.prestaZohoSignUrl == null
                     )

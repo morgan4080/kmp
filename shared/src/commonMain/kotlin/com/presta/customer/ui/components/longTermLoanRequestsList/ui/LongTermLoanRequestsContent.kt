@@ -203,7 +203,7 @@ fun LongTermLoanRequestsContent(
                             )
 
                         }
-                        if (!appliCantSigned) {
+                        if (state.prestaLoanByLoanRequestRefId?.applicantSigned==false) {
                             Row(
                                 modifier = Modifier
                                     .padding(top = 10.dp)
@@ -380,6 +380,7 @@ fun LongTermLoanRequestsContent(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .fillMaxHeight(0.95f)
                         .padding(start = 16.dp, end = 16.dp)
                 ) {
                     //Requests List
@@ -481,6 +482,11 @@ fun LongTermLoanRequestsContent(
 
                                 }
                             }
+
+                            item {
+                                Spacer(modifier = Modifier.padding(top = 100.dp))
+                            }
+
                         }
                     }
                 }

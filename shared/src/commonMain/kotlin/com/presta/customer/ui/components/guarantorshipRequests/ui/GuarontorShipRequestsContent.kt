@@ -114,12 +114,33 @@ fun GuarantorShipRequestsContent(
             authState.cachedMemberData?.let {
                 ApplyLongTermLoansStore.Intent.GetPrestaGuarantorshipRequests(
                     token = it.accessToken,
-                    memberRefId = memberRefId //memberRefId
+                    memberRefId = "tvzGHXVGkkxGJizi" //memberRefId //memberRefId
                 )
             }?.let {
                 onEvent(
                     it
                 )
+            }
+        }
+    }
+    //Todo-- if  the guarantorship Request is  Accepted proceed to sign
+    if (loanRequestRefId != "") {
+        LaunchedEffect(
+            state.prestaGuarontorAcceptanceStatus
+        ) {
+            if (loanRequestRefId == state.prestaGuarontorAcceptanceStatus?.loanRequest?.refId) {
+                if (state.prestaGuarontorAcceptanceStatus.isAccepted) {
+                    signHomeState.prestaTenantByPhoneNumber?.refId?.let {
+                        component.onAcceptSelected(
+                            loanNumber = loanNumber,
+                            amount = if (amountToGuarantee != "") amountToGuarantee.toDouble() else 0.0,
+                            loanRequestRefId = loanRequestRefId,
+                            memberRefId = it,
+                            guarantorRefId = guarantorRefIdRefId
+                        )
+                    }
+                    modalBottomScope.launch { modalBottomState.hide() }
+                }
             }
         }
     }
@@ -240,27 +261,17 @@ fun GuarantorShipRequestsContent(
                                 .size(70.dp)
                                 .clickable {
                                     //Todo--commented for test
-//                                    authState.cachedMemberData?.let {
-//                                        ApplyLongTermLoansStore.Intent.GetGuarantorAcceptanceStatus(
-//                                            token = it.accessToken,
-//                                            guarantorshipRequestRefId = guarantorshipRequestRefId,
-//                                            isAccepted = true
-//                                        )
-//                                    }?.let {
-//                                        onEvent(
-//                                            it
-//                                        )
-//                                    }
-                                    signHomeState.prestaTenantByPhoneNumber?.refId?.let {
-                                        component.onAcceptSelected(
-                                            loanNumber = loanNumber,
-                                            amount = if (amountToGuarantee != "") amountToGuarantee.toDouble() else 0.0,
-                                            loanRequestRefId = loanRequestRefId,
-                                            memberRefId = it,
-                                            guarantorRefId = guarantorRefIdRefId
+                                    authState.cachedMemberData?.let {
+                                        ApplyLongTermLoansStore.Intent.GetGuarantorAcceptanceStatus(
+                                            token = it.accessToken,
+                                            guarantorshipRequestRefId = guarantorshipRequestRefId,
+                                            isAccepted = true
+                                        )
+                                    }?.let {
+                                        onEvent(
+                                            it
                                         )
                                     }
-                                    modalBottomScope.launch { modalBottomState.hide() }
                                 }
                                 .clip(shape = CircleShape),
                             tint = Color.Green.copy(alpha = 0.5f)

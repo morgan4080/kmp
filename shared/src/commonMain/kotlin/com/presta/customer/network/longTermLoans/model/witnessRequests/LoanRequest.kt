@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class LoanRequest(
-    val amount: Double,
     val loanDate: String,
+    val refId: String,
     val loanNumber: String,
-    val refId: String
+    val amount: Double,
 )

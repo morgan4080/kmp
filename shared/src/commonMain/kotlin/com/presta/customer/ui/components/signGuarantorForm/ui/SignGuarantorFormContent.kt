@@ -40,6 +40,7 @@ import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignGuarantorFormContent(
@@ -54,7 +55,6 @@ fun SignGuarantorFormContent(
         LaunchedEffect(
             authState.cachedMemberData,
             component.loanRequestRefId
-
         ) {
             authState.cachedMemberData?.let {
                 ApplyLongTermLoansStore.Intent.GetPrestaLoanByLoanRequestRefId(
@@ -75,7 +75,7 @@ fun SignGuarantorFormContent(
             ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
                 token = it.accessToken,
                 loanRequestRefId = component.loanRequestRefId,
-                actorRefId = component.memberRefId,
+                actorRefId =component.memberRefId,
                 actorType = ActorType.GUARANTOR
             )
         }?.let {
@@ -93,7 +93,7 @@ fun SignGuarantorFormContent(
             authState.cachedMemberData?.let {
                 ApplyLongTermLoansStore.Intent.GetPrestaGuarantorshipRequests(
                     token = it.accessToken,
-                    memberRefId = component.memberRefId //memberRefId//memberRefId
+                    memberRefId =component.memberRefId
                 )
             }?.let {
                 onEvent(
@@ -103,7 +103,8 @@ fun SignGuarantorFormContent(
         }
     }
     LaunchedEffect(
-        state.prestaGuarontorshipRequests
+        state.prestaGuarontorshipRequests,
+        component.loanRequestRefId
     ) {
         filteredResponse = state.prestaGuarontorshipRequests.filter { guarantorRequest ->
             guarantorRequest.loanRequest.loanNumber.contains(component.loanNumber)
@@ -112,6 +113,10 @@ fun SignGuarantorFormContent(
             filteredResponse.map { filteredData ->
                 if (filteredData.isSigned) {
                     component.onDocumentSigned()
+                    //Test if loan is Signed
+                    println("Loan is Signed::::::;" + filteredData.isSigned)
+
+
                 }
             }
         }
@@ -190,9 +195,20 @@ fun SignGuarantorFormContent(
                     ActionButton(
                         label = "SIGN DOCUMENT",
                         onClickContainer = {
-                            if (state.prestaZohoSignUrl?.signURL != null) {
-                                component.platform.openUrl(state.prestaZohoSignUrl.signURL)
+
+//                            if (state.prestaZohoSignUrl?.signURL != null) {
+//                                component.platform.openUrl(state.prestaZohoSignUrl.signURL)
+//                            }
+                            filteredResponse.map { filteredData ->
+                                if (filteredData.isSigned) {
+                                    component.onDocumentSigned()
+                                    //Test if loan is Signed
+                                    println("Loan is Signed::::::;" + filteredData.isSigned)
+
+                                }
                             }
+
+
                         },
                         loading = state.prestaZohoSignUrl == null
                     )

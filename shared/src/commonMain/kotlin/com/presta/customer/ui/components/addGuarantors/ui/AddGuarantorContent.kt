@@ -144,8 +144,6 @@ fun AddGuarantorContent(
     val snackbarHostState = remember { SnackbarHostState() }
     val snackBarScope = rememberCoroutineScope()
     var launchAddAmountToGuarantee by remember { mutableStateOf(false) }
-    val businessLocationData by remember { mutableStateOf("") }
-    val businessTypeData by remember { mutableStateOf("") }
     var employer by remember { mutableStateOf("") }
     var employerkey by remember { mutableStateOf("") }
     var grossSalary by remember { mutableStateOf("") }
@@ -227,8 +225,6 @@ fun AddGuarantorContent(
             businessType = it.value.value.toString()
         }
     }
-
-
     val scope = rememberCoroutineScope()
     var guarantorDataListed by remember { mutableStateOf(emptySet<GuarantorDataListing>()) }
     //Call-back to delete the selected  gaurantor from the list
@@ -846,8 +842,8 @@ fun AddGuarantorContent(
                                                     component.loanCategory,
                                                     component.loanPurpose,
                                                     component.loanPurposeCategory,
-                                                    businessType = businessTypeData,
-                                                    businessLocation = businessLocationData,
+                                                    businessType = businessType,
+                                                    businessLocation = businessLocation,
                                                     kraPin = kraPin,
                                                     employer = employer,
                                                     employmentNumber = employmentNumber,
@@ -873,8 +869,8 @@ fun AddGuarantorContent(
                                                     component.loanCategory,
                                                     component.loanPurpose,
                                                     component.loanPurposeCategory,
-                                                    businessType = businessTypeData,
-                                                    businessLocation = businessLocationData,
+                                                    businessType = businessType,
+                                                    businessLocation = businessLocation,
                                                     kraPin = kraPin,
                                                     employer = employer,
                                                     employmentNumber = employmentNumber,

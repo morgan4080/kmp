@@ -393,8 +393,6 @@ fun AddWitnessContent(
                             ) {
                                 androidx.compose.material3.IconButton(
                                     modifier = Modifier
-                                        .clip(CircleShape)
-                                        .background(Color(0xFFE5F1F5))
                                         .size(25.dp),
                                     onClick = {
                                         //Todo----open Contacts Library
@@ -408,7 +406,6 @@ fun AddWitnessContent(
                                     content = {
                                         Icon(
                                             imageVector = Icons.Outlined.Person,
-                                            modifier = Modifier,
                                             contentDescription = null,
                                             tint = MaterialTheme.colorScheme.primary
                                         )

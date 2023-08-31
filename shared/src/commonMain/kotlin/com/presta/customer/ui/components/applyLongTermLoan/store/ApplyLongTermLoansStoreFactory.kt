@@ -79,7 +79,7 @@ class ApplyLongTermLoansStoreFactory(
         data class GuarantorAcceptanceResponseLoaded(val guarantorAcceptanceResponse: PrestaGuarantorAcceptanceResponse) :
             Msg()
 
-        data class LoanByLoanRequestRefIdLoaded(val loanRequestByRefIdResponse: PrestaLoanRequestByRequestRefId) :
+        data class LoanByLoanRequestRefIdLoaded(val loanByLoanRequestRefId: PrestaLoanRequestByRequestRefId) :
             Msg()
 
         data class ZohoSignUrlLoaded(val zohoSignUrlResponse: PrestaZohoSignUrlResponse) :
@@ -90,6 +90,7 @@ class ApplyLongTermLoansStoreFactory(
 
         data class LongTermLoansRequestsFilteredListLoaded(val longTermLoansRequestsFilteredListResponse: PrestaLongTermLoansRequestsListResponse) :
             Msg()
+
         data class LongTermLoansRequestsSpecificProductLoaded(val longTermLoansRequestsSpecificProduct: PrestaLongTermLoansRequestsListResponse) :
             Msg()
 
@@ -97,6 +98,9 @@ class ApplyLongTermLoansStoreFactory(
             Msg()
 
         data class WitnessRequestsLoaded(val witnessRequestsLoaded: List<PrestaWitnessRequestResponse> = listOf()) :
+            Msg()
+
+        data class WitnessAcceptanceStatusLoaded(val witnessAcceptanceResponseLoaded: PrestaWitnessRequestResponse) :
             Msg()
 
         data class FavouriteGuarantorLoaded(val favouriteGuarantorLoaded: List<PrestaFavouriteGuarantorResponse> = listOf()) :
@@ -110,6 +114,7 @@ class ApplyLongTermLoansStoreFactory(
 
         data class LoanRequestDeleted(val loanRequestDeleted: String) :
             Msg()
+
         data class LoadedSignTenantByPhoneNumber(val signTenantByPhoneNumberResponse: PrestaSignUserDetailsResponse) :
             Msg()
 
@@ -210,6 +215,7 @@ class ApplyLongTermLoansStoreFactory(
                     token = intent.token,
                     memberRefId = intent.memberRefId
                 )
+
                 is ApplyLongTermLoansStore.Intent.GetPrestaLongTermLoansRequestsSpecificProduct -> getprestaLongTermLoansRequestsSpecificProduct(
                     token = intent.token,
                     productRefId = intent.productRefId,
@@ -226,6 +232,12 @@ class ApplyLongTermLoansStoreFactory(
                 is ApplyLongTermLoansStore.Intent.GetPrestaWitnessRequests -> getprestaWitnessRequests(
                     token = intent.token,
                     memberRefId = intent.memberRefId
+                )
+
+                is ApplyLongTermLoansStore.Intent.GetWitnessAcceptanceStatus -> getprestaWitnessAcceptanceStatus (
+                    token = intent.token,
+                    loanRequestRefId = intent.loanRequestRefId,
+                    isAccepted = intent.isAccepted
                 )
 
                 is ApplyLongTermLoansStore.Intent.GetPrestaFavouriteGuarantor -> getprestaFavouriteGuarantor(
@@ -249,10 +261,11 @@ class ApplyLongTermLoansStoreFactory(
                     token = intent.token,
                     loanRequestNumber = intent.loanRequestNumber
                 )
-                 is  ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber -> loadPrestaTenantByPhoneNumber(
-                     token = intent.token,
-                     phoneNumber = intent.phoneNumber
-                 )
+
+                is ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber -> loadPrestaTenantByPhoneNumber(
+                    token = intent.token,
+                    phoneNumber = intent.phoneNumber
+                )
             }
 
         private var getPrestaLongTermLoansProductsJob: Job? = null
@@ -703,6 +716,31 @@ class ApplyLongTermLoansStoreFactory(
             }
         }
 
+        private var getprestaWitnessAcceptanceStatusJob: Job? = null
+        private fun getprestaWitnessAcceptanceStatus(
+            token: String,
+            loanRequestRefId: String,
+            isAccepted: Boolean
+        ) {
+            if (getprestaWitnessAcceptanceStatusJob?.isActive == true) return
+
+            dispatch(Msg.LongTermLoansLoading())
+            getprestaWitnessAcceptanceStatusJob = scope.launch {
+                longTermLoansRepository.getWitnessAcceptanceStatus(
+                    token = token,
+                   loanRequestRefId=loanRequestRefId,
+                    isAccepted=isAccepted
+                ).onSuccess { response ->
+                    dispatch(Msg.WitnessAcceptanceStatusLoaded(response))
+
+                }.onFailure { e ->
+                    dispatch(Msg.LongTermLoansFailed(e.message))
+                }
+
+                dispatch(Msg.LongTermLoansLoading(false))
+            }
+        }
+
         private var getprestaFavouriteGuarantorJob: Job? = null
         private fun getprestaFavouriteGuarantor(
             token: String,
@@ -791,6 +829,7 @@ class ApplyLongTermLoansStoreFactory(
                 dispatch(Msg.LongTermLoansLoading(false))
             }
         }
+
         private var loadTenantByPhoneNumberJob: Job? = null
         private fun loadPrestaTenantByPhoneNumber(
             token: String,
@@ -811,6 +850,7 @@ class ApplyLongTermLoansStoreFactory(
             }
         }
     }
+
     private object ReducerImpl :
         Reducer<ApplyLongTermLoansStore.State, Msg> {
         override fun ApplyLongTermLoansStore.State.reduce(msg: Msg): ApplyLongTermLoansStore.State =
@@ -823,23 +863,27 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.LongTermLoansSubCategoriesLoaded -> copy(
                     prestaLongTermLoanProductsSubCategories = msg.longTermLoansSubCategoryLoaded
                 )
+
                 is Msg.LongTermLoansSubCategoriesChildrenLoaded -> copy(
                     prestaLongTermLoanProductsSubCategoriesChildren = msg.longTermLoansSubCategoryChildrenLoaded
                 )
+
                 is Msg.ClientSettingsLoaded -> copy(prestaClientSettings = msg.clientSettingsLoaded)
                 is Msg.LongTermLoanRequestLoaded -> copy(prestaLongTermLoanRequestData = msg.longTermLoanRequestResponse)
                 is Msg.GuarontorshipRequestsLoaded -> copy(prestaGuarontorshipRequests = msg.guarantorShipRequestsLoaded)
                 is Msg.LongTermLoanRequestByRefIdLoaded -> copy(prestaLongTermLoanrequestBYRefId = msg.longTermLoanRequestByRefIdResponse)
                 is Msg.GuarantorAcceptanceResponseLoaded -> copy(prestaGuarontorAcceptanceStatus = msg.guarantorAcceptanceResponse)
-                is Msg.LoanByLoanRequestRefIdLoaded -> copy(prestaLoanByLoanRequestRefId = msg.loanRequestByRefIdResponse)
+                is Msg.LoanByLoanRequestRefIdLoaded -> copy(prestaLoanByLoanRequestRefId = msg.loanByLoanRequestRefId)
                 is Msg.ZohoSignUrlLoaded -> copy(prestaZohoSignUrl = msg.zohoSignUrlResponse)
                 is Msg.LongTermLoansRequestsListLoaded -> copy(prestaLongTermLoansRequestsList = msg.longTermLoansRequestsListResponse)
                 is Msg.LongTermLoansRequestsFilteredListLoaded -> copy(
                     prestaLongTermLoansRequestsFilteredList = msg.longTermLoansRequestsFilteredListResponse
                 )
+
                 is Msg.LongTermLoansRequestsSpecificProductLoaded -> copy(
                     prestaLongTermLoansRequestsSpecificProduct = msg.longTermLoansRequestsSpecificProduct
                 )
+
                 is Msg.UpdatedGuarantorLoaded -> copy(prestaUpdatedGuarantorData = msg.replacedGuarantorResponse)
                 is Msg.WitnessRequestsLoaded -> copy(prestaWitnessRequests = msg.witnessRequestsLoaded)
                 is Msg.FavouriteGuarantorLoaded -> copy(prestaFavouriteGuarantor = msg.favouriteGuarantorLoaded)
@@ -847,6 +891,7 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.FavouriteGuarantorDeleted -> copy(deleteFavouriteGuarantorResponse = msg.favouriteGuarantorDeletedResponse)
                 is Msg.LoanRequestDeleted -> copy(deleteLoanRequestResponse = msg.loanRequestDeleted)
                 is Msg.LoadedSignTenantByPhoneNumber -> copy(prestaLoadTenantByPhoneNumber = msg.signTenantByPhoneNumberResponse)
+                is Msg.WitnessAcceptanceStatusLoaded -> copy(prestaWitnessAcceptanceStatus = msg.witnessAcceptanceResponseLoaded )
             }
     }
 

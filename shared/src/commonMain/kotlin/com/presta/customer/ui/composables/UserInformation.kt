@@ -47,13 +47,13 @@ import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
-data class Disbursement_modes(
+data class DisbursementModes(
     val name: String,
     val value: String,
     val selected: Boolean
 )
 
-data class Repayment_modes(
+data class RepaymentModes(
     val name: String,
     val value: String,
     val selected: Boolean
@@ -70,6 +70,7 @@ fun UserInformation(
     var selectedIndex by remember { mutableStateOf(-1) }
     var launchDisbursementModePopUp by remember { mutableStateOf(false) }
     var launchPaymentModePopUp by remember { mutableStateOf(false) }
+    var sendLoanRequest by remember { mutableStateOf(false) }
     var launchHandleLoanRequestPopUp by remember { mutableStateOf(false) }
     var lastName by remember { mutableStateOf(TextFieldValue()) }
     var disbursementMode by remember { mutableStateOf("") }
@@ -83,23 +84,26 @@ fun UserInformation(
         val guarantorName = item.guarantorFirstName
         guarantorList.add(Guarantor(refId, amount, guarantorName))
     }
-    //Todo---Pop up to handle the failed requsts message
-    LaunchedEffect(state.prestaLongTermLoanRequestData?.refId){
-        if (state.prestaLongTermLoanRequestData?.refId != null) {
-            component.navigateToSignLoanForm(
-                loanNumber =  state.prestaLongTermLoanRequestData.loanRequestNumber,
-                amount = state.prestaLongTermLoanRequestData.loanAmount,
-                loanRequestRefId = state.prestaLongTermLoanRequestData.refId,
-                memberRefId = ""
-            )
+    LaunchedEffect(state.prestaLongTermLoanRequestData?.refId) {
+        if (!state.prestaLongTermLoanRequestData?.refId.isNullOrEmpty()) {
+            state.prestaLongTermLoanRequestData?.let {
+                sendLoanRequest = false
+                component.navigateToSignLoanForm(
+                    loanNumber = it.loanRequestNumber,
+                    amount = state.prestaLongTermLoanRequestData.loanAmount,
+                    loanRequestRefId = state.prestaLongTermLoanRequestData.refId,
+                    memberRefId = component.memberRefId
+                )
+            }
+
         } else {
             //launch pop up to show reason of loan failure
-            launchHandleLoanRequestPopUp = true
-
+            if (state.prestaLongTermLoanRequestData?.refId.isNullOrEmpty() && sendLoanRequest) {
+                launchHandleLoanRequestPopUp = true
+                sendLoanRequest = false
+            }
         }
-
     }
-
 
     Column(modifier = Modifier.padding(top = 20.dp)) {
         //popup Disbursement mode
@@ -107,9 +111,9 @@ fun UserInformation(
         if (launchDisbursementModePopUp) {
 
             val disburementModeListing = listOf(
-                Disbursement_modes("Cheques", "Cheques", selected = true),
-                Disbursement_modes("My Account", "My Account", selected = true),
-                Disbursement_modes("EFT", "EFT", selected = true)
+                DisbursementModes("Cheques", "Cheques", selected = true),
+                DisbursementModes("My Account", "My Account", selected = true),
+                DisbursementModes("EFT", "EFT", selected = true)
             )
             Popup {
                 Column(
@@ -260,9 +264,9 @@ fun UserInformation(
         //popup Repayment mode
         if (launchPaymentModePopUp) {
             val repaymentmentModeListing = listOf(
-                Repayment_modes("Check Off ", "Check Off", selected = true),
-                Repayment_modes("Paybill", "Paybill", selected = true),
-                Repayment_modes("Standing Order", "Standing Order", selected = true)
+                RepaymentModes("Check Off ", "Check Off", selected = true),
+                RepaymentModes("Paybill", "Paybill", selected = true),
+                RepaymentModes("Standing Order", "Standing Order", selected = true)
             )
             Popup {
                 Column(
@@ -530,7 +534,6 @@ fun UserInformation(
                         ) {
                             ActionButton(
                                 label = "Submit  Loan Request", onClickContainer = {
-                                    //Todo show pop up to handle loanreQuest Errors
                                     authState.cachedMemberData?.let {
                                         ApplyLongTermLoansStore.Intent.RequestLongTermLoan(
                                             token = it.accessToken,
@@ -540,7 +543,7 @@ fun UserInformation(
                                                 loan_purpose_3 = component.loanPurposeCategory,
                                                 loanPurposeCode = component.loanPurposeCategoryCode,
                                                 loanPeriod = component.loanPeriod.toString(),
-                                                repayment_period =  component.loanPeriod.toString(),
+                                                repayment_period = component.loanPeriod.toString(),
                                                 employer_name = component.employer,
                                                 employment_type = "",
                                                 employment_number = component.employmentNumber,
@@ -551,15 +554,15 @@ fun UserInformation(
                                                 disbursement_mode = disbursementMode,
                                                 repayment_mode = repaymentMode,
                                                 loan_type = component.loanType,
-                                                kraPin = component.kraPin
+                                                kra_pin = component.kraPin
                                             ),
                                             loanProductName = component.loanType,
-                                            loanProductRefId ="", //component.loanRefId,
+                                            loanProductRefId = component.loanRefId,
                                             selfCommitment = 0.0,
                                             loanAmount = component.desiredAmount,
                                             memberRefId = component.memberRefId,
                                             memberNumber = signProfileState.prestaTenantByPhoneNumber.memberNumber,
-                                            witnessRefId = "",//component.witnessRefId,
+                                            witnessRefId = component.witnessRefId,
                                             guarantorList = guarantorList,
                                         )
                                     }?.let {
@@ -567,24 +570,10 @@ fun UserInformation(
                                             it
                                         )
                                     }
-                                    //Navigate to show the application Status
-                                    //Todo--handle reason of loan failure on a pop up navigate to sign form
-                                    //component.onProductSelected()
-                                    if (state.prestaLongTermLoanRequestData?.refId == null) {
-                                        component.navigateToSignLoanForm(
-                                            loanNumber ="" ,// state.prestaLongTermLoanRequestData.loanRequestNumber,
-                                            amount =0.0 ,//state.prestaLongTermLoanRequestData.loanAmount,
-                                            loanRequestRefId = "JOHiFKA6uPAWkWGw",//state.prestaLongTermLoanRequestData.refId,
-                                            memberRefId = "",
-                                        )
-                                    } else {
-                                        //launch pop up to show reason of loan failure
-                                        launchHandleLoanRequestPopUp = true
-
-                                    }
+                                    sendLoanRequest = true
                                 },
-                                enabled = true,
-                                loading = false
+                                enabled = repaymentMode != "" && disbursementMode != "",
+                                loading = state.isLoading
                             )
                         }
                     }
@@ -627,7 +616,7 @@ fun UserInformation(
                                             fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
                                         )
                                         Text(
-                                            text = state.error.toString(),
+                                            text = if (state.error != null || state.prestaLongTermLoanRequestData?.pendingReason != null) state.error.toString() + state.prestaLongTermLoanRequestData?.pendingReason else "",
                                             modifier = Modifier.padding(top = 10.dp),
                                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                         )

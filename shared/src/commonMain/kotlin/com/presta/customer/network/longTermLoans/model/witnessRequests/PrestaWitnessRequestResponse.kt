@@ -4,13 +4,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PrestaWitnessRequestResponse(
-    val applicant: Applicant,
+    val loanDate: String,
+    val memberRefId: String,
     val firstName: String,
     val lastName: String,
-    val loanDate: String,
-    val loanRequest: LoanRequest,
-    val memberRefId: String,
     val witnessAcceptanceStatus: String,
+    val witnessSigned: Boolean,
     val witnessAccepted: Boolean,
-    val witnessSigned: Boolean
+    val applicant: Applicant,
+    val loanRequest: LoanRequest,
 )
+

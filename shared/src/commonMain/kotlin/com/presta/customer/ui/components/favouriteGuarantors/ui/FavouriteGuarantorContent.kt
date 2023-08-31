@@ -40,6 +40,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Contacts
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -418,8 +419,6 @@ fun FavouriteGuarantorContent(
                                     ) {
                                         androidx.compose.material3.IconButton(
                                             modifier = Modifier
-                                                .clip(CircleShape)
-                                                .background(Color(0xFFE5F1F5))
                                                 .size(25.dp),
                                             onClick = {
 //                                            snackBarScope.launch {
@@ -435,7 +434,7 @@ fun FavouriteGuarantorContent(
                                             },
                                             content = {
                                                 Icon(
-                                                    imageVector = Icons.Outlined.Contacts,
+                                                    imageVector = Icons.Outlined.Person,
                                                     modifier = Modifier,
                                                     contentDescription = null,
                                                     tint = MaterialTheme.colorScheme.primary

@@ -24,7 +24,14 @@ class DefaultWitnessRequestComponent(
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     private val onItemClicked: () -> Unit,
-    private val onProductClicked: () -> Unit
+    private val onProductClicked: () -> Unit,
+    private val onAcceptClicked: (
+        loanNumber: String,
+        amount: Double,
+        loanRequestRefId: String,
+        memberRefId: String,
+        witnessRefId: String
+    ) -> Unit
 ) : WitnessRequestComponent, ComponentContext by componentContext {
 
     private val scope = coroutineScope(mainContext + SupervisorJob())
@@ -107,6 +114,22 @@ class DefaultWitnessRequestComponent(
 
     override fun onProductSelected() {
         onProductClicked()
+    }
+
+    override fun onAcceptSelected(
+        loanNumber: String,
+        amount: Double,
+        loanRequestRefId: String,
+        memberRefId: String,
+        witnessRefId: String
+    ) {
+        onAcceptClicked(
+            loanNumber,
+            amount,
+            loanRequestRefId,
+            memberRefId,
+            witnessRefId
+        )
     }
 
     init {

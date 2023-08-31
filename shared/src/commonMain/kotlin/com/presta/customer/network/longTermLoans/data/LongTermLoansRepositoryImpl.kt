@@ -339,6 +339,24 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
             Result.failure(e)
         }
     }
+    override suspend fun getWitnessAcceptanceStatus(
+        token: String,
+        loanRequestRefId: String,
+        isAccepted: Boolean
+    ): Result<PrestaWitnessRequestResponse> {
+        return try {
+            val response = prestaLongTermLoansClient.sendWitnessAcceptanceStatus(
+                token = token,
+                loanRequestRefId = loanRequestRefId,
+                isAccepted = isAccepted
+            )
+            Result.success(response)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
 
     override suspend fun getFavouriteGuarantor(
         token: String,
