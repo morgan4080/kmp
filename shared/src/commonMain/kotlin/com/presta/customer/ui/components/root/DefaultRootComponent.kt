@@ -1285,6 +1285,8 @@ class DefaultRootComponent(
                     is Config.SignDocument -> {
                         super.onResume()
                         //if signed navigate
+                        onCreate()
+                        println("Sign Document has resumed:::::::;;;;;;;;;")
 
                     }
 
