@@ -6,13 +6,17 @@ import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.Platform
+import com.presta.customer.network.longTermLoans.data.LongTermLoansRepository
 import com.presta.customer.network.onBoarding.model.PinStatus
+import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStoreFactory
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.profile.CoroutineScope
 import com.presta.customer.ui.components.profile.coroutineScope
+import com.presta.customer.ui.components.signGuarantorForm.poller.GuarantorSigningStatusPoller
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -30,6 +34,7 @@ class DefaultSignGuarantorFormComponent (
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
+    coroutinetineDispatcher: CoroutineDispatcher,
     private val onItemClicked: () -> Unit,
     private val onDocumentSignedClicked: () -> Unit,
     private val onProductClicked: () -> Unit,
@@ -38,9 +43,10 @@ class DefaultSignGuarantorFormComponent (
     override val loanRequestRefId: String,
     override var sign: Boolean,
     override val memberRefId: String,
-    override val guarantorRefId: String,
+    override val guarantorRefId: String
 ): SignGuarantorFormComponent, ComponentContext by componentContext, KoinComponent {
     override val platform by inject<Platform>()
+    private val longTermLoanRepository by inject<LongTermLoansRepository>()
     private val scope = coroutineScope(mainContext + SupervisorJob())
     override val authStore: AuthStore =
         instanceKeeper.getStore {
@@ -108,7 +114,41 @@ class DefaultSignGuarantorFormComponent (
     override fun onDocumentSigned() {
     onDocumentSignedClicked()
     }
+
+
+    private val loanScope = coroutineScope(coroutinetineDispatcher + SupervisorJob())
+
+    private val poller = GuarantorSigningStatusPoller(longTermLoanRepository, coroutinetineDispatcher)
+    private fun refreshToken() {
+        scope.launch {
+            authState.collect { state ->
+                if (state.cachedMemberData !== null) {
+                        onAuthEvent(AuthStore.Intent.RefreshToken(
+                            tenantId = OrganisationModel.organisation.tenant_id,
+                            refId = state.cachedMemberData.refId
+                        ))
+
+
+                    val flow = poller.poll(1_000L, state.cachedMemberData.accessToken, memberRefId)
+
+                    flow.collect {
+                        it.onSuccess { response ->
+                          //  onEvent(ApplyLongTermLoansStore.Intent.GetPrestaGuarantorshipRequests(response))
+                        }.onFailure { error ->
+                           // onEvent(ApplyLongTermLoansStore.Intent.Er(error.message))
+                        }
+                    }
+
+                    poller.close()
+                } else {
+                    onAuthEvent(AuthStore.Intent.GetCachedMemberData)
+                }
+            }
+        }
+    }
+
     init {
+        refreshToken()
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         checkAuthenticatedUser()
     }

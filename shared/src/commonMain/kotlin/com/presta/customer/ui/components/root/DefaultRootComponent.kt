@@ -16,6 +16,7 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.presta.customer.PrestaDispatchers
 import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.payments.data.PaymentTypes
@@ -1027,7 +1028,8 @@ class DefaultRootComponent(
             },
             sign = false,
             memberRefId = config.memberRefId,
-            guarantorRefId = config.guarantorRefId
+            guarantorRefId = config.guarantorRefId,
+            coroutinetineDispatcher = prestaDispatchers.main
         )
 
     private fun signLoanForm(

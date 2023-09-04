@@ -3,6 +3,11 @@ package com.presta.customer.ui.components.signGuarantorForm
 import com.presta.customer.Platform
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.processingTransaction.poller.CoroutinePoller
+import com.presta.customer.ui.components.root.CoroutineScope
+import com.presta.customer.ui.components.signGuarantorForm.poller.GuarantorSigningStatusPoller
+import com.presta.customer.ui.components.signGuarantorForm.poller.SignGuarantorFormPoller
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 
 interface SignGuarantorFormComponent {
@@ -22,4 +27,6 @@ interface SignGuarantorFormComponent {
     fun onBackNavClicked()
     fun onProductSelected()
     fun onDocumentSigned()
+
+
 }

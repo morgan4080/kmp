@@ -40,15 +40,8 @@ import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, DelicateCoroutinesApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignGuarantorFormContent(
     component: SignGuarantorFormComponent,
@@ -56,8 +49,7 @@ fun SignGuarantorFormContent(
     authState: AuthStore.State,
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
 ) {
-    val coroutineScope = CoroutineScope(Dispatchers.Default)
-    var activestate by remember { mutableStateOf(0) }
+
     var filteredResponse by remember { mutableStateOf<List<PrestaGuarantorResponse>>(emptyList()) }
 
     if (component.loanRequestRefId != "") {
@@ -84,7 +76,7 @@ fun SignGuarantorFormContent(
             ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
                 token = it.accessToken,
                 loanRequestRefId = component.loanRequestRefId,
-                actorRefId = component.memberRefId,
+                actorRefId = "XMazvHXCRt8WFv3N", //component.memberRefId,
                 actorType = ActorType.GUARANTOR
             )
         }?.let {
@@ -94,6 +86,9 @@ fun SignGuarantorFormContent(
         }
     }
 
+
+    //Todo---- poll this state  to capture  guarantor signing
+
     if (component.memberRefId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -102,7 +97,7 @@ fun SignGuarantorFormContent(
             authState.cachedMemberData?.let {
                 ApplyLongTermLoansStore.Intent.GetPrestaGuarantorshipRequests(
                     token = it.accessToken,
-                    memberRefId = component.memberRefId
+                    memberRefId = "XMazvHXCRt8WFv3N"//component.memberRefId
                 )
             }?.let {
                 onEvent(
@@ -129,20 +124,6 @@ fun SignGuarantorFormContent(
             }
         }
     }
-
-    GlobalScope.launch {
-        delay(10000)
-        GlobalScope.launch {
-            while (true) {
-                //delay(10000)
-                activestate++
-                if (state.prestaLoanByLoanRequestRefId?.applicantSigned == true) {
-                    cancel()
-                }
-            }
-        }
-    }
-
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Sign Document", onClickContainer = {
             component.onBackNavClicked()
@@ -218,21 +199,18 @@ fun SignGuarantorFormContent(
                         label = "SIGN DOCUMENT",
                         onClickContainer = {
 
-//                            if (state.prestaZohoSignUrl?.signURL != null) {
-//                                component.platform.openUrl(state.prestaZohoSignUrl.signURL)
-//                            }
-                            filteredResponse.map { filteredData ->
-                                if (filteredData.isSigned) {
-                                    //component.onDocumentSigned()
-                                    //Test if loan is Signed
-                                    println("Loan is Signed::::::;" + filteredData.isSigned)
-
-                                }
+                            if (state.prestaZohoSignUrl?.signURL != null) {
+                                component.platform.openUrl(state.prestaZohoSignUrl.signURL)
+                            }
+                            //check the loan Number
+                            filteredResponse.map { loadedData ->
+                                println("The loan Number::;;;;;" + loadedData.loanRequest.loanNumber)
+                                println("The loan RefId:::::::; " + loadedData.loanRequest.refId)
                             }
 
 
                         },
-                        loading = false,//state.prestaZohoSignUrl == null
+                        loading = state.prestaZohoSignUrl == null
                     )
                 }
             }

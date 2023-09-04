@@ -12,6 +12,7 @@ data class PrestaLoanRequestByRequestRefId @OptIn(ExperimentalSerializationApi::
     val loanProductName: String,
     val loanProductRefId: String,
     val loanAmount: Double,
+    val applicationStatus: String,
     val memberRefId: String,
     val isActive: Boolean,
     val memberNumber: String,
