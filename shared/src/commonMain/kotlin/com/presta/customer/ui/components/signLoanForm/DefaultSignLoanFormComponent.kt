@@ -1,19 +1,22 @@
 package com.presta.customer.ui.components.signLoanForm
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.Platform
+import com.presta.customer.network.longTermLoans.data.LongTermLoansRepository
 import com.presta.customer.network.onBoarding.model.PinStatus
+import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStoreFactory
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.profile.CoroutineScope
 import com.presta.customer.ui.components.profile.coroutineScope
+import com.presta.customer.ui.components.signLoanForm.poller.ApplicantSigningStatusPoller
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -23,7 +26,6 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.coroutines.CoroutineContext
-
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
 
@@ -31,6 +33,7 @@ class DefaultSignLoanFormComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
+    coroutinetineDispatcher: CoroutineDispatcher,
     private val onItemClicked: () -> Unit,
     private val onDocumentSignedClicked: () -> Unit,
     private val onProductClicked: () -> Unit,
@@ -42,6 +45,7 @@ class DefaultSignLoanFormComponent(
 ) : SignLoanFormComponent, ComponentContext by componentContext, KoinComponent {
     override val platform by inject<Platform>()
     private val scope = coroutineScope(mainContext + SupervisorJob())
+    private val longTermLoanRepository by inject<LongTermLoansRepository>()
     override val authStore: AuthStore =
         instanceKeeper.getStore {
             AuthStoreFactory(
@@ -97,6 +101,7 @@ class DefaultSignLoanFormComponent(
             }
         }
     }
+
     override fun onBackNavClicked() {
         onItemClicked()
     }
@@ -109,12 +114,41 @@ class DefaultSignLoanFormComponent(
         onDocumentSignedClicked()
     }
 
-    override fun onDocumentSignedNav(signed: Boolean) {
-        TODO("Not yet implemented")
-    }
+    private val loanScope = coroutineScope(coroutinetineDispatcher + SupervisorJob())
 
-    //Todo-- when activity resumes check if the document is signed
+    private val poller = ApplicantSigningStatusPoller(longTermLoanRepository, coroutinetineDispatcher)
+
+    private fun refreshToken() {
+        loanScope.launch {
+            authState.collect { state ->
+                if (state.cachedMemberData !== null) {
+                    onAuthEvent(
+                        AuthStore.Intent.RefreshToken(
+                            tenantId = OrganisationModel.organisation.tenant_id,
+                            refId = state.cachedMemberData.refId
+                        )
+                    )
+                    val flow = poller.poll(5_000L, state.cachedMemberData.accessToken, loanRequestRefId)
+
+                    flow.collect {
+                        it.onSuccess { response ->
+                            if (response.applicantSigned) {
+                                onDocumentSigned()
+                            }
+                            println("Poll has Succeded ::::::")
+                        }.onFailure { error ->
+                            println("Poll has   Failed  ::::::")
+                        }
+                    }
+                    poller.close()
+                } else {
+                    onAuthEvent(AuthStore.Intent.GetCachedMemberData)
+                }
+            }
+        }
+    }
     init {
+        refreshToken()
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         checkAuthenticatedUser()
     }

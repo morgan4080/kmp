@@ -1,11 +1,11 @@
-package com.presta.customer.ui.components.signGuarantorForm
+package com.presta.customer.ui.components.signWitnessForm
 
 import com.presta.customer.Platform
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import kotlinx.coroutines.flow.StateFlow
 
-interface SignGuarantorFormComponent {
+interface SignWitnessFormComponent {
     val loanNumber: String
     val amount: Double
     val loanRequestRefId: String

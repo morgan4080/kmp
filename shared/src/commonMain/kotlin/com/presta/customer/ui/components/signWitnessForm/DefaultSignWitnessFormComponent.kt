@@ -1,4 +1,4 @@
-package com.presta.customer.ui.components.signGuarantorForm
+package com.presta.customer.ui.components.signWitnessForm
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
@@ -8,6 +8,7 @@ import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.Platform
 import com.presta.customer.network.longTermLoans.data.LongTermLoansRepository
 import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
+import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
@@ -16,7 +17,7 @@ import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.profile.CoroutineScope
 import com.presta.customer.ui.components.profile.coroutineScope
-import com.presta.customer.ui.components.signGuarantorForm.poller.GuarantorSigningStatusPoller
+import com.presta.customer.ui.components.signWitnessForm.poller.WitnessSigningStatusPoller
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,7 +32,7 @@ import kotlin.coroutines.CoroutineContext
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
 
-class DefaultSignGuarantorFormComponent(
+class DefaultSignWitnessFormComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
@@ -45,7 +46,7 @@ class DefaultSignGuarantorFormComponent(
     override var sign: Boolean,
     override val memberRefId: String,
     override val guarantorRefId: String
-) : SignGuarantorFormComponent, ComponentContext by componentContext, KoinComponent {
+) : SignWitnessFormComponent, ComponentContext by componentContext, KoinComponent {
     override val platform by inject<Platform>()
     private val longTermLoanRepository by inject<LongTermLoansRepository>()
     private val scope = coroutineScope(mainContext + SupervisorJob())
@@ -119,7 +120,7 @@ class DefaultSignGuarantorFormComponent(
 
     private val loanScope = coroutineScope(coroutinetineDispatcher + SupervisorJob())
 
-    private val poller = GuarantorSigningStatusPoller(longTermLoanRepository, coroutinetineDispatcher)
+    private val poller = WitnessSigningStatusPoller(longTermLoanRepository, coroutinetineDispatcher)
 
     //Todo--use the new token while polling for result
     private fun refreshToken() {
@@ -137,12 +138,12 @@ class DefaultSignGuarantorFormComponent(
 
                     flow.collect {
                         it.onSuccess { response ->
-                            val filteredResponse: List<PrestaGuarantorResponse> =
+                            val filteredResponse: List<PrestaWitnessRequestResponse> =
                                 response.filter { loadedData ->
                                     loadedData.loanRequest.loanNumber.contains(loanNumber)
                                 }
                             filteredResponse.map { filter ->
-                                if (filter.isSigned) {
+                                if (filter.witnessSigned) {
                                     onDocumentSigned()
                                 }
                                 println("The loaded data is " + filter.loanRequest.loanNumber)
@@ -160,6 +161,7 @@ class DefaultSignGuarantorFormComponent(
             }
         }
     }
+
     init {
         refreshToken()
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)

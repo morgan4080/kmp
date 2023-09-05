@@ -1,4 +1,4 @@
-package com.presta.customer.ui.components.signLoanForm.ui
+package com.presta.customer.ui.components.signWitnessForm.ui
 
 import ShimmerBrush
 import androidx.compose.foundation.Image
@@ -30,7 +30,7 @@ import com.presta.customer.MR
 import com.presta.customer.network.longTermLoans.model.ActorType
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
-import com.presta.customer.ui.components.signLoanForm.SignLoanFormComponent
+import com.presta.customer.ui.components.signGuarantorForm.SignGuarantorFormComponent
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
@@ -38,8 +38,8 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignLoanFormContent(
-    component: SignLoanFormComponent,
+fun SignWitnessFormContent(
+    component: SignGuarantorFormComponent,
     state: ApplyLongTermLoansStore.State,
     authState: AuthStore.State,
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
@@ -47,7 +47,8 @@ fun SignLoanFormContent(
     if (component.loanRequestRefId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
-            component.loanRequestRefId
+            component.loanRequestRefId,
+            state.prestaGuarontorshipRequests
         ) {
             authState.cachedMemberData?.let {
                 ApplyLongTermLoansStore.Intent.GetPrestaLoanByLoanRequestRefId(
@@ -68,8 +69,8 @@ fun SignLoanFormContent(
             ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
                 token = it.accessToken,
                 loanRequestRefId = component.loanRequestRefId,
-                actorRefId = component.memberRefId,
-                actorType = ActorType.APPLICANT
+                actorRefId = "XMazvHXCRt8WFv3N", //component.memberRefId,
+                actorType = ActorType.GUARANTOR
             )
         }?.let {
             onEvent(
@@ -78,9 +79,8 @@ fun SignLoanFormContent(
         }
     }
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
-        NavigateBackTopBar("Sign Loan Form", onClickContainer = {
+        NavigateBackTopBar("Sign Document", onClickContainer = {
             component.onBackNavClicked()
-
         })
     }, content = { innerPadding ->
         if (state.prestaLoanByLoanRequestRefId?.pdfThumbNail == null) {
@@ -131,14 +131,14 @@ fun SignLoanFormContent(
                             .fillMaxWidth()
                     ) {
                         Text(
-                            "Proceed to Sign your Loan " + component.loanNumber + " of Kes " + component.amount,
+                            "Your guarantorship " + component.loanNumber + " of Kes " + component.amount + " has been confirmed",
                             fontSize = 16.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
                             color = MaterialTheme.colorScheme.primary
                         )
                     }
                     Text(
-                        "Proceed Below to sign your Loan form",
+                        "Proceed Below to sign your form",
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                         fontSize = 12.sp,
                         modifier = Modifier.padding(top = 10.dp)
@@ -152,11 +152,11 @@ fun SignLoanFormContent(
                     ActionButton(
                         label = "SIGN DOCUMENT",
                         onClickContainer = {
-                            //Todo=--already fixed this implementation
+
                             if (state.prestaZohoSignUrl?.signURL != null) {
                                 component.platform.openUrl(state.prestaZohoSignUrl.signURL)
                             }
-
+                            //check the loan Number
                         },
                         loading = state.prestaZohoSignUrl == null
                     )

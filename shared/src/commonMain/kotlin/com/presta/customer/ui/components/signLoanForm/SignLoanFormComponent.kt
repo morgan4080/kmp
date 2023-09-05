@@ -21,6 +21,5 @@ interface SignLoanFormComponent {
     fun onBackNavClicked()
     fun onProductSelected()
     fun onDocumentSigned()
-    fun onDocumentSignedNav(signed: Boolean)
 
 }

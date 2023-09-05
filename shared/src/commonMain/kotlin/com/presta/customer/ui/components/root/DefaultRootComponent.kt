@@ -1070,6 +1070,7 @@ class DefaultRootComponent(
             },
             sign = false,
             memberRefId = config.memberRefId,
+            coroutinetineDispatcher = prestaDispatchers.main
         )
 
     private fun replaceGuarantorComponent(
