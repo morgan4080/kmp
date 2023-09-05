@@ -43,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -56,6 +57,11 @@ import com.presta.customer.ui.composables.SignProductSelection
 import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.helpers.formatMoney
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,16 +72,23 @@ fun SignHomeContent(
     authState: AuthStore.State,
     onApplyLongTermLoanEvent: (ApplyLongTermLoansStore.Intent) -> Unit
 ) {
-    val progressPercentage = 0.75f // Example progress percentage
-    var progress by remember { mutableStateOf(0.5f) }
-    val progress2 = remember { mutableStateOf(0.75f) }
     var memBerRefId by remember { mutableStateOf("") }
-    val greeting = if (component.platform.getCurrentTimeMillis() / (1000 * 60 * 60) in 6..11) {
-        "Good morning!"
-    } else if (component.platform.getCurrentTimeMillis() / (1000 * 60 * 60) in 12..17) {
-        "Good afternoon!"
-    } else {
-        "Good evening!"
+    var great by remember { mutableStateOf("") }
+    val pattern = Regex("(\\d{2}):\\d{2}:\\d{2}\\.\\d+")
+    val thisTime: LocalTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
+    val matchResult = pattern.find(thisTime.toString())
+    val hours = matchResult?.groups?.get(1)?.value?.toInt()
+    great = when (hours) {
+        in 6..11 -> {
+            "Good Morning"
+        }
+
+        in 12..17 -> {
+            "Good Afternoon"
+        }
+        else -> {
+            "Good Evening"
+        }
     }
     if (state.prestaTenantByPhoneNumber?.refId != null) {
         memBerRefId = state.prestaTenantByPhoneNumber.refId
@@ -166,7 +179,7 @@ fun SignHomeContent(
                             ) {
                                 Column(modifier = Modifier.fillMaxWidth()) {
                                     Text(
-                                        text = "GOOD MORNING",
+                                        text = great.uppercase(),
                                         fontSize = 14.sp,
                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                     )
@@ -287,22 +300,27 @@ fun SignHomeContent(
                                         }
 
                                     } else {
-                                        if (applyLongTermLoanState.prestaLongTermLoansRequestsFilteredList?.content.isNullOrEmpty()){
-                                            Row(modifier = Modifier
-                                                .fillMaxWidth(),
-                                                horizontalArrangement = Arrangement.Center){
-                                                Text(text = "You don't have Loan Requests",
+                                        if (applyLongTermLoanState.prestaLongTermLoansRequestsFilteredList?.content.isNullOrEmpty()) {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.Center
+                                            ) {
+                                                Text(
+                                                    text = "You don't have Loan Requests",
                                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                                     fontSize = 12.sp
                                                 )
                                             }
-                                        }else{
+                                        } else {
                                             applyLongTermLoanState.prestaLongTermLoansRequestsFilteredList?.content?.map { filteredLoanRequests ->
                                                 Row(modifier = Modifier.padding(top = 10.dp)) {
                                                     LoanRequestsListing(
                                                         loanName = filteredLoanRequests.loanProductName,
                                                         loanRequestDate = filteredLoanRequests.loanDate,
-                                                        loanAmount = formatMoney(filteredLoanRequests.loanAmount) + " KES",
+                                                        loanAmount = formatMoney(
+                                                            filteredLoanRequests.loanAmount
+                                                        ) + " KES",
                                                         loanProgress = filteredLoanRequests.loanRequestProgress.toFloat() / 100,
                                                     )
                                                 }

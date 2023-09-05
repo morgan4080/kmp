@@ -7,6 +7,7 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.Platform
 import com.presta.customer.network.longTermLoans.data.LongTermLoansRepository
+import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
@@ -30,7 +31,7 @@ import kotlin.coroutines.CoroutineContext
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
 
-class DefaultSignGuarantorFormComponent (
+class DefaultSignGuarantorFormComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
@@ -44,7 +45,7 @@ class DefaultSignGuarantorFormComponent (
     override var sign: Boolean,
     override val memberRefId: String,
     override val guarantorRefId: String
-): SignGuarantorFormComponent, ComponentContext by componentContext, KoinComponent {
+) : SignGuarantorFormComponent, ComponentContext by componentContext, KoinComponent {
     override val platform by inject<Platform>()
     private val longTermLoanRepository by inject<LongTermLoansRepository>()
     private val scope = coroutineScope(mainContext + SupervisorJob())
@@ -103,42 +104,56 @@ class DefaultSignGuarantorFormComponent (
             }
         }
     }
+
     override fun onBackNavClicked() {
         onItemClicked()
     }
 
     override fun onProductSelected() {
-      onProductClicked()
+        onProductClicked()
     }
 
     override fun onDocumentSigned() {
-    onDocumentSignedClicked()
+        onDocumentSignedClicked()
     }
-
 
     private val loanScope = coroutineScope(coroutinetineDispatcher + SupervisorJob())
 
-    private val poller = GuarantorSigningStatusPoller(longTermLoanRepository, coroutinetineDispatcher)
+    private val poller =
+        GuarantorSigningStatusPoller(longTermLoanRepository, coroutinetineDispatcher)
+
+    //Todo--use the new token while polling for result
     private fun refreshToken() {
-        scope.launch {
+        loanScope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
-                        onAuthEvent(AuthStore.Intent.RefreshToken(
+                    onAuthEvent(
+                        AuthStore.Intent.RefreshToken(
                             tenantId = OrganisationModel.organisation.tenant_id,
                             refId = state.cachedMemberData.refId
-                        ))
-
-
-                    val flow = poller.poll(1_000L, state.cachedMemberData.accessToken, memberRefId)
+                        )
+                    )
+                    val flow =
+                        poller.poll(5_000L, state.cachedMemberData.accessToken, "XMazvHXCRt8WFv3N")
 
                     flow.collect {
                         it.onSuccess { response ->
-                          //  onEvent(ApplyLongTermLoansStore.Intent.GetPrestaGuarantorshipRequests(response))
+                            val filteredResponse: List<PrestaGuarantorResponse> =
+                                response.filter { loadedData ->
+                                    loadedData.loanRequest.loanNumber.contains(loanNumber)
+                                }
+                            filteredResponse.map { filter ->
+                                if (filter.isSigned) {
+                                    onDocumentSigned()
+                                }
+                                println("The loaded data is " + filter.loanRequest.loanNumber)
+                                println("The initial data is  $loanNumber")
+                            }
+                            println("Poll has Succeded ::::::")
                         }.onFailure { error ->
-                           // onEvent(ApplyLongTermLoansStore.Intent.Er(error.message))
+                            println("Poll has   Failed  ::::::")
                         }
                     }
-
                     poller.close()
                 } else {
                     onAuthEvent(AuthStore.Intent.GetCachedMemberData)

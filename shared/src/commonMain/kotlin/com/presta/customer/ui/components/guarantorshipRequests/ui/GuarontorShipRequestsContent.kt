@@ -275,6 +275,7 @@ fun GuarantorShipRequestsContent(
                                         memberRefId = memberRefId,
                                         guarantorRefId = guarantorRefIdRefId
                                     )
+                                    modalBottomScope.launch { modalBottomState.hide() }
                                 }
                                 .clip(shape = CircleShape),
                             tint = Color.Green.copy(alpha = 0.5f)

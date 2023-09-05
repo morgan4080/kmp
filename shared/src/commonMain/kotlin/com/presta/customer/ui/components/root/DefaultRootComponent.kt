@@ -1,5 +1,9 @@
 package com.presta.customer.ui.components.root
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
@@ -13,6 +17,7 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.doOnDestroy
+import com.arkivanov.essenty.lifecycle.doOnResume
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
@@ -102,7 +107,11 @@ class DefaultRootComponent(
     val storeFactory: StoreFactory
 
 ) : RootComponent, ComponentContext by componentContext {
-
+    lateinit var loanRefid: String
+    lateinit var passedLoanNumber: String
+    lateinit var passedAmount: String
+    lateinit var passedGuarantorRefId: String
+    lateinit var passedMemberRefid: String
     private val navigation = StackNavigation<Config>()
 
     private val _childStack = childStack(
@@ -812,7 +821,12 @@ class DefaultRootComponent(
                 navigation.pop()
 
             },
-            onAcceptClicked = { loanNumber, amount, loanRequestRefId, memberRefId,guarantorRefId ->
+            onAcceptClicked = { loanNumber, amount, loanRequestRefId, memberRefId, guarantorRefId ->
+                loanRefid = loanRequestRefId
+                passedLoanNumber = loanNumber
+                passedAmount = amount.toString()
+                passedGuarantorRefId = guarantorRefId
+                passedMemberRefid = memberRefId
                 //Navigate to sign
                 navigation.push(
                     Config.SignDocument(
@@ -853,7 +867,7 @@ class DefaultRootComponent(
             },
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
-            onAcceptClicked = { loanNumber, amount, loanRequestRefId, memberRefId,witnessRefId->
+            onAcceptClicked = { loanNumber, amount, loanRequestRefId, memberRefId, witnessRefId ->
                 //Navigate to sign
                 navigation.push(
                     Config.SignDocument(
@@ -1287,9 +1301,16 @@ class DefaultRootComponent(
                     is Config.SignDocument -> {
                         super.onResume()
                         //if signed navigate
-                        onCreate()
+                        navigation.bringToFront(
+                            Config.SignDocument(
+                                loanNumber = passedLoanNumber,
+                                amount = passedAmount.toDouble(),
+                                loanRequestRefId = loanRefid,
+                                memberRefId = passedMemberRefid,
+                                guarantorRefId = passedGuarantorRefId
+                            )
+                        )
                         println("Sign Document has resumed:::::::;;;;;;;;;")
-
                     }
 
                     is Config.SignLoanForm -> {
@@ -1297,6 +1318,7 @@ class DefaultRootComponent(
                         //if signed navigate
 
                     }
+
                     else -> {
                         super.onResume()
                         navigation.replaceAll(Config.Splash)

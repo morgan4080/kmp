@@ -20,10 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -32,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import com.presta.customer.ImageConverter
 import com.presta.customer.MR
 import com.presta.customer.network.longTermLoans.model.ActorType
-import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signGuarantorForm.SignGuarantorFormComponent
@@ -40,8 +35,9 @@ import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import kotlinx.coroutines.DelicateCoroutinesApi
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, DelicateCoroutinesApi::class)
 @Composable
 fun SignGuarantorFormContent(
     component: SignGuarantorFormComponent,
@@ -49,13 +45,11 @@ fun SignGuarantorFormContent(
     authState: AuthStore.State,
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
 ) {
-
-    var filteredResponse by remember { mutableStateOf<List<PrestaGuarantorResponse>>(emptyList()) }
-
     if (component.loanRequestRefId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
             component.loanRequestRefId,
+            state.prestaGuarontorshipRequests
         ) {
             authState.cachedMemberData?.let {
                 ApplyLongTermLoansStore.Intent.GetPrestaLoanByLoanRequestRefId(
@@ -83,45 +77,6 @@ fun SignGuarantorFormContent(
             onEvent(
                 it
             )
-        }
-    }
-
-
-    //Todo---- poll this state  to capture  guarantor signing
-
-    if (component.memberRefId != "") {
-        LaunchedEffect(
-            authState.cachedMemberData,
-            component.memberRefId,
-        ) {
-            authState.cachedMemberData?.let {
-                ApplyLongTermLoansStore.Intent.GetPrestaGuarantorshipRequests(
-                    token = it.accessToken,
-                    memberRefId = "XMazvHXCRt8WFv3N"//component.memberRefId
-                )
-            }?.let {
-                onEvent(
-                    it
-                )
-            }
-        }
-    }
-    LaunchedEffect(
-        state.prestaGuarontorshipRequests,
-        component.loanRequestRefId,
-    ) {
-        filteredResponse = state.prestaGuarontorshipRequests.filter { guarantorRequest ->
-            guarantorRequest.loanRequest.loanNumber.contains(component.loanNumber)
-        }
-        if (filteredResponse.isNotEmpty()) {
-            filteredResponse.map { filteredData ->
-                if (filteredData.isSigned) {
-                    component.onDocumentSigned()
-                    //Test if loan is Signed
-                    println("Loan is Signed:;;;;:::::;" + filteredData.isSigned)
-
-                }
-            }
         }
     }
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
@@ -203,12 +158,6 @@ fun SignGuarantorFormContent(
                                 component.platform.openUrl(state.prestaZohoSignUrl.signURL)
                             }
                             //check the loan Number
-                            filteredResponse.map { loadedData ->
-                                println("The loan Number::;;;;;" + loadedData.loanRequest.loanNumber)
-                                println("The loan RefId:::::::; " + loadedData.loanRequest.refId)
-                            }
-
-
                         },
                         loading = state.prestaZohoSignUrl == null
                     )
