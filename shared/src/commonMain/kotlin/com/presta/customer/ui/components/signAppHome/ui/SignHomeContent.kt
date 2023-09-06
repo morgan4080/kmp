@@ -43,7 +43,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,7 +57,6 @@ import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.helpers.formatMoney
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -71,11 +69,13 @@ fun SignHomeContent(
     applyLongTermLoanState: ApplyLongTermLoansStore.State,
     authState: AuthStore.State,
     onApplyLongTermLoanEvent: (ApplyLongTermLoansStore.Intent) -> Unit
+
 ) {
     var memBerRefId by remember { mutableStateOf("") }
     var great by remember { mutableStateOf("") }
     val pattern = Regex("(\\d{2}):\\d{2}:\\d{2}\\.\\d+")
-    val thisTime: LocalTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
+    val thisTime: LocalTime =
+        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
     val matchResult = pattern.find(thisTime.toString())
     val hours = matchResult?.groups?.get(1)?.value?.toInt()
     great = when (hours) {
@@ -86,6 +86,7 @@ fun SignHomeContent(
         in 12..17 -> {
             "Good Afternoon"
         }
+
         else -> {
             "Good Evening"
         }

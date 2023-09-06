@@ -21,7 +21,8 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.coroutines.CoroutineContext
-class DefaultSignHomeComponent (
+
+class DefaultSignHomeComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
@@ -30,7 +31,7 @@ class DefaultSignHomeComponent (
     private val onFavouriteGuarantorsClicked: () -> Unit,
     private val witnessRequestClicked: () -> Unit,
     private val onGotoLoanRequestsClicked: () -> Unit,
-): SignHomeComponent, ComponentContext by componentContext,KoinComponent {
+) : SignHomeComponent, ComponentContext by componentContext, KoinComponent {
     override val platform by inject<Platform>()
     private val scope = coroutineScope(mainContext + SupervisorJob())
     override val authStore: AuthStore =
@@ -54,8 +55,9 @@ class DefaultSignHomeComponent (
                 storeFactory = storeFactory
             ).create()
         }
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val  signHomeState: StateFlow<SignHomeStore.State> =
+    override val signHomeState: StateFlow<SignHomeStore.State> =
         sigHomeStore.stateFlow
 
     override val applyLongTermLoansStore: ApplyLongTermLoansStore =
@@ -68,19 +70,23 @@ class DefaultSignHomeComponent (
     @OptIn(ExperimentalCoroutinesApi::class)
     override val applyLongTermLoansState: StateFlow<ApplyLongTermLoansStore.State> =
         applyLongTermLoansStore.stateFlow
+
     override fun onApplyLongTermLoanEvent(event: ApplyLongTermLoansStore.Intent) {
         applyLongTermLoansStore.accept(event)
     }
+
     override fun goToLoanRequests() {
-    onGotoLoanRequestsClicked()
+        onGotoLoanRequestsClicked()
     }
 
     override fun onAuthEvent(event: AuthStore.Intent) {
         authStore.accept(event)
     }
+
     override fun onEvent(event: SignHomeStore.Intent) {
         sigHomeStore.accept(event)
     }
+
     private var authUserScopeJob: Job? = null
 
     private fun checkAuthenticatedUser() {
@@ -110,11 +116,11 @@ class DefaultSignHomeComponent (
     }
 
     override fun guarantorshipRequestsSelected() {
-      onGuarantorshipRequestsClicked()
+        onGuarantorshipRequestsClicked()
     }
 
     override fun favouriteGuarantorsSelected() {
-       onFavouriteGuarantorsClicked()
+        onFavouriteGuarantorsClicked()
     }
 
     override fun witnessRequestSelected() {

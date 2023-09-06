@@ -1,9 +1,5 @@
 package com.presta.customer.ui.components.root
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
@@ -17,11 +13,9 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.doOnDestroy
-import com.arkivanov.essenty.lifecycle.doOnResume
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
-import com.presta.customer.PrestaDispatchers
 import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.payments.data.PaymentTypes
@@ -77,6 +71,8 @@ import com.presta.customer.ui.components.signGuarantorForm.DefaultSignGuarantorF
 import com.presta.customer.ui.components.signGuarantorForm.SignGuarantorFormComponent
 import com.presta.customer.ui.components.signLoanForm.DefaultSignLoanFormComponent
 import com.presta.customer.ui.components.signLoanForm.SignLoanFormComponent
+import com.presta.customer.ui.components.signWitnessForm.DefaultSignWitnessFormComponent
+import com.presta.customer.ui.components.signWitnessForm.SignWitnessFormComponent
 import com.presta.customer.ui.components.splash.DefaultSplashComponent
 import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.tenant.DefaultTenantComponent
@@ -243,8 +239,14 @@ class DefaultRootComponent(
             longTermLoanSigningStatusComponent(componentContext)
         )
 
-        is Config.SignDocument -> RootComponent.Child.SignDocumentChild(
-            signDocumentComponent(
+        is Config.SignDocument -> RootComponent.Child.SignGuarantorDocumentChild(
+            signGuarantorDocumentComponent(
+                componentContext, config
+            )
+        )
+
+        is Config.SignWitnessDocument -> RootComponent.Child.SignWitnessDocumentChild(
+            signWitnessDocumentComponent(
                 componentContext, config
             )
         )
@@ -870,7 +872,7 @@ class DefaultRootComponent(
             onAcceptClicked = { loanNumber, amount, loanRequestRefId, memberRefId, witnessRefId ->
                 //Navigate to sign
                 navigation.push(
-                    Config.SignDocument(
+                    Config.SignWitnessDocument(
                         loanNumber = loanNumber,
                         amount = amount,
                         loanRequestRefId = loanRequestRefId,
@@ -1019,11 +1021,38 @@ class DefaultRootComponent(
             }
         )
 
-    private fun signDocumentComponent(
+    private fun signGuarantorDocumentComponent(
         componentContext: ComponentContext,
         config: Config.SignDocument
     ): SignGuarantorFormComponent =
         DefaultSignGuarantorFormComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
+
+            },
+            onProductClicked = {
+            },
+            loanNumber = config.loanNumber,
+            amount = config.amount,
+            loanRequestRefId = config.loanRequestRefId,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            onDocumentSignedClicked = {
+                //when doc is signed navigate
+                navigation.bringToFront(Config.LongTermLoanSigningStatus)
+            },
+            sign = false,
+            memberRefId = config.memberRefId,
+            guarantorRefId = config.guarantorRefId,
+            coroutinetineDispatcher = prestaDispatchers.main
+        )
+
+    private fun signWitnessDocumentComponent(
+        componentContext: ComponentContext,
+        config: Config.SignWitnessDocument
+    ): SignWitnessFormComponent =
+        DefaultSignWitnessFormComponent(
             componentContext = componentContext,
             onItemClicked = {
                 navigation.pop()
@@ -1143,8 +1172,6 @@ class DefaultRootComponent(
         @Parcelize
         object AllTransactions : Config()
 
-        //        @Parcelize
-//        object SignApp : Config()
         @Parcelize
         data class SignApp(
             val loanRefId: () -> String,
@@ -1274,6 +1301,15 @@ class DefaultRootComponent(
         ) : Config()
 
         @Parcelize
+        data class SignWitnessDocument(
+            val loanNumber: String,
+            val amount: Double,
+            val loanRequestRefId: String,
+            val memberRefId: String,
+            val guarantorRefId: String
+        ) : Config()
+
+        @Parcelize
         data class SignLoanForm(
             val loanNumber: String,
             val amount: Double,
@@ -1311,13 +1347,20 @@ class DefaultRootComponent(
                                 guarantorRefId = passedGuarantorRefId
                             )
                         )
-                        println("Sign Document has resumed:::::::;;;;;;;;;")
                     }
 
                     is Config.SignLoanForm -> {
                         super.onResume()
-                        //if signed navigate
 
+                    }
+
+                    is Config.SignWitnessDocument -> {
+                        super.onResume()
+
+                    }
+
+                    is Config.LongTermLoanSigningStatus -> {
+                        super.onResume()
                     }
 
                     else -> {

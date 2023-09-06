@@ -36,6 +36,7 @@ import com.presta.customer.ui.components.rootBottomStack.RootBottomScreen
 import com.presta.customer.ui.components.selectLoanPurpose.ui.SelectLoanPurposeScreen
 import com.presta.customer.ui.components.signGuarantorForm.ui.SignGuarantorFormScreen
 import com.presta.customer.ui.components.signLoanForm.ui.SignLoanFormScreen
+import com.presta.customer.ui.components.signWitnessForm.ui.SignWitnessFormScreen
 import com.presta.customer.ui.components.splash.SplashScreen
 import com.presta.customer.ui.components.tenant.ui.TenantScreen
 import com.presta.customer.ui.components.transactionHistory.ui.TransactionHistoryScreen
@@ -93,7 +94,8 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
             is RootComponent.Child.WitnessRequestChild-> WitnessRequestScreen(child.component)
             is RootComponent.Child.LongTermLoanConfirmationChild-> LongTermLoanConfirmationScreen(child.component)
             is RootComponent.Child.LongTermLoanSigningStatusChild-> LongTermLoanSigningStatusScreen(child.component)
-            is RootComponent.Child.SignDocumentChild-> SignGuarantorFormScreen(child.component)
+            is RootComponent.Child.SignGuarantorDocumentChild-> SignGuarantorFormScreen(child.component)
+            is RootComponent.Child.SignWitnessDocumentChild-> SignWitnessFormScreen(child.component)
             is RootComponent.Child.SignLoanFormChild-> SignLoanFormScreen(child.component)
             is RootComponent.Child.ReplaceGuarantorChild-> ReplaceGuarantorScreen(child.component)
         }

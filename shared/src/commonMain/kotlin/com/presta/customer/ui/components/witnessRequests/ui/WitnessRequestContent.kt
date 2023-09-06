@@ -2,7 +2,6 @@ package com.presta.customer.ui.components.witnessRequests.ui
 
 import ShimmerBrush
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,9 +20,9 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Contacts
 import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.CardDefaults
@@ -56,7 +55,6 @@ import com.presta.customer.ui.components.witnessRequests.WitnessRequestComponent
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.helpers.formatMoney
-import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.launch
 
@@ -81,7 +79,24 @@ fun WitnessRequestContent(
         skipHalfExpanded = skipHalfExpanded
     )
     val modalBottomScope = rememberCoroutineScope()
+    if (loanRequestRefId != "") {
+        LaunchedEffect(
+            authState.cachedMemberData,
+            loanRequestRefId
 
+        ) {
+            authState.cachedMemberData?.let {
+                ApplyLongTermLoansStore.Intent.GetPrestaLoanByLoanRequestRefId(
+                    token = it.accessToken,
+                    loanRequestRefId = loanRequestRefId
+                )
+            }?.let {
+                onEvent(
+                    it
+                )
+            }
+        }
+    }
     if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         memberRefId = signHomeState.prestaTenantByPhoneNumber.refId
     }
@@ -144,13 +159,12 @@ fun WitnessRequestContent(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.Contacts,
+                        imageVector = Icons.Filled.AccountCircle,
                         contentDescription = null,
                         modifier = Modifier
-                            .size(40.dp)
-                            .clip(shape = CircleShape)
-                            .border(width = 1.dp, color = actionButtonColor),
-                        tint = actionButtonColor
+                            .size(70.dp)
+                            .clip(shape = CircleShape),
+                        tint = MaterialTheme.colorScheme.outline.copy(0.5f)
                     )
                 }
                 Text(
@@ -160,11 +174,11 @@ fun WitnessRequestContent(
                         .background(
                             brush = ShimmerBrush(
                                 targetValue = 1300f,
-                                showShimmer = state.prestaLongTermLoanrequestBYRefId?.memberFirstName == null
+                                showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null
                             ),
                             shape = RoundedCornerShape(12.dp),
                         ).defaultMinSize(200.dp),
-                    text = if (state.prestaLongTermLoanrequestBYRefId?.memberFirstName !== null) "${state.prestaLongTermLoanrequestBYRefId.memberFirstName.uppercase()} ${state.prestaLongTermLoanrequestBYRefId.memberLastName.uppercase()}" else "",
+                    text = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) "${state.prestaLoanByLoanRequestRefId.memberFirstName.uppercase()} ${state.prestaLoanByLoanRequestRefId.memberLastName.uppercase()}" else "",
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 14.sp,
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
@@ -205,7 +219,7 @@ fun WitnessRequestContent(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        " as a guarantor for this loan product valued:",
+                        " as a  Witness for this loan product valued:",
                         modifier = Modifier,
                         fontSize = 12.sp,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
@@ -217,12 +231,12 @@ fun WitnessRequestContent(
                         .background(
                             brush = ShimmerBrush(
                                 targetValue = 1300f,
-                                showShimmer = state.prestaLongTermLoanrequestBYRefId?.loanAmount == null
+                                showShimmer = state.prestaLoanByLoanRequestRefId?.loanAmount == null
                             ),
                             shape = RoundedCornerShape(12.dp)
                         ).defaultMinSize(200.dp),
-                    text = if (state.prestaLongTermLoanrequestBYRefId?.loanAmount !== null) "KES " + formatMoney(
-                        state.prestaLongTermLoanrequestBYRefId.loanAmount
+                    text = if (state.prestaLoanByLoanRequestRefId?.loanAmount !== null) "KES " + formatMoney(
+                        state.prestaLoanByLoanRequestRefId.loanAmount
                     ) else "",
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 14.sp,
@@ -254,7 +268,6 @@ fun WitnessRequestContent(
                                             it
                                         )
                                     }
-                                    //Todo-- proceed to sign the form
                                 }
                                 .clip(shape = CircleShape),
                             tint = Color.Green.copy(alpha = 0.5f)
@@ -287,7 +300,6 @@ fun WitnessRequestContent(
                                             it
                                         )
                                     }
-                                    modalBottomScope.launch { modalBottomState.hide() }
                                 }
                                 .clip(shape = CircleShape),
                             tint = MaterialTheme.colorScheme.error.copy(alpha = 0.8f)
@@ -310,102 +322,110 @@ fun WitnessRequestContent(
                 component.onBackNavClicked()
             })
         }, content = { innerPadding ->
-            LazyColumn(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(innerPadding)
+                    .padding(start = 16.dp, end = 16.dp)
             ) {
-                if (state.isLoading) {
-                    items(5) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 10.dp, start = 16.dp, end = 16.dp)
-                                .background(color = MaterialTheme.colorScheme.background),
-                        ) {
-                            ElevatedCard(
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(innerPadding)
+                ) {
+                    if (state.isLoading) {
+                        items(5) {
+                            Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
+                                    .padding(bottom = 10.dp, start = 16.dp, end = 16.dp)
                                     .background(color = MaterialTheme.colorScheme.background),
-                                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .defaultMinSize(40.dp, 40.dp)
-                                        .background(
-                                            ShimmerBrush(
-                                                targetValue = 1300f,
-                                                showShimmer = true
-                                            )
-                                        )
-                                        .fillMaxWidth()
-                                ) {
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    if (state.prestaWitnessRequests.isEmpty()) {
-                        item {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Row(
+                                ElevatedCard(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(top = 70.dp),
-                                    horizontalArrangement = Arrangement.Center
+                                        .background(color = MaterialTheme.colorScheme.background),
+                                    colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Inventory2,
+                                    Box(
                                         modifier = Modifier
-                                            .size(70.dp),
-                                        contentDescription = "No data",
-                                        tint = MaterialTheme.colorScheme.outline
-                                    )
+                                            .defaultMinSize(40.dp, 40.dp)
+                                            .background(
+                                                ShimmerBrush(
+                                                    targetValue = 1300f,
+                                                    showShimmer = true
+                                                )
+                                            )
+                                            .fillMaxWidth()
+                                    ) {
+                                    }
                                 }
-                                Text(
-                                    "Whoops",
-                                    fontSize = 13.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                                )
-                                Text(
-                                    "No Data",
-                                    fontSize = 10.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                                )
                             }
                         }
                     } else {
-                        state.prestaWitnessRequests.map { witnessRequestResponse ->
+                        if (state.prestaWitnessRequests.isEmpty()) {
                             item {
-                                Row(modifier = Modifier.padding(top = 10.dp)) {
-                                    GuarantorsRequestsView(
-                                        applicant = "${witnessRequestResponse.applicant.firstName} ${witnessRequestResponse.applicant.lastName}",
-                                        loanNumber = witnessRequestResponse.loanRequest.loanNumber,
-                                        loanAmount = witnessRequestResponse.loanRequest.amount.toString(),
-                                        requestsDate = witnessRequestResponse.loanRequest.loanDate,
-                                        onClickContainer = {
-                                            loanRequestRefId =
-                                                witnessRequestResponse.loanRequest.refId
-                                            witnessRequestRefId = witnessRequestResponse.memberRefId
-                                            amountToGuarantee =
-                                                witnessRequestResponse.loanRequest.amount.toString()
-                                            loanNumber =
-                                                witnessRequestResponse.loanRequest.loanNumber
-                                            println("Test Data" + state.prestaLongTermLoanrequestBYRefId?.memberFirstName)
-                                            //modalBottomScope.launch { modalBottomState.show() }
-                                        }
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 70.dp),
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Inventory2,
+                                            modifier = Modifier
+                                                .size(70.dp),
+                                            contentDescription = "No data",
+                                            tint = MaterialTheme.colorScheme.outline
+                                        )
+                                    }
+                                    Text(
+                                        "Whoops",
+                                        fontSize = 13.sp,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                     )
+                                    Text(
+                                        "No Data",
+                                        fontSize = 10.sp,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                    )
+                                }
+                            }
+                        } else {
+                            state.prestaWitnessRequests.map { witnessRequestResponse ->
+                                item {
+                                    Row(modifier = Modifier.padding(top = 10.dp)) {
+                                        GuarantorsRequestsView(
+                                            applicant = "${witnessRequestResponse.applicant.firstName} ${witnessRequestResponse.applicant.lastName}",
+                                            loanNumber = witnessRequestResponse.loanRequest.loanNumber,
+                                            loanAmount = witnessRequestResponse.loanRequest.amount.toString(),
+                                            requestsDate = witnessRequestResponse.loanDate,
+                                            onClickContainer = {
+                                                loanRequestRefId =
+                                                    witnessRequestResponse.loanRequest.refId
+                                                witnessRequestRefId =
+                                                    witnessRequestResponse.memberRefId
+                                                amountToGuarantee =
+                                                    witnessRequestResponse.loanRequest.amount.toString()
+                                                loanNumber =
+                                                    witnessRequestResponse.loanRequest.loanNumber
+                                                println("Test Data" + state.prestaLongTermLoanrequestBYRefId?.memberFirstName)
+                                                modalBottomScope.launch { modalBottomState.show() }
+                                            },
+                                            action = "witness"
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                item {
-                    Spacer(modifier = Modifier.padding(bottom = 100.dp))
+                    item {
+                        Spacer(modifier = Modifier.padding(bottom = 100.dp))
+                    }
                 }
             }
         })

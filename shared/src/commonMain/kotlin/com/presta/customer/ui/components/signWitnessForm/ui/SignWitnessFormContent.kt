@@ -30,7 +30,7 @@ import com.presta.customer.MR
 import com.presta.customer.network.longTermLoans.model.ActorType
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
-import com.presta.customer.ui.components.signGuarantorForm.SignGuarantorFormComponent
+import com.presta.customer.ui.components.signWitnessForm.SignWitnessFormComponent
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
@@ -39,7 +39,7 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignWitnessFormContent(
-    component: SignGuarantorFormComponent,
+    component: SignWitnessFormComponent,
     state: ApplyLongTermLoansStore.State,
     authState: AuthStore.State,
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
@@ -69,8 +69,8 @@ fun SignWitnessFormContent(
             ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
                 token = it.accessToken,
                 loanRequestRefId = component.loanRequestRefId,
-                actorRefId = "XMazvHXCRt8WFv3N", //component.memberRefId,
-                actorType = ActorType.GUARANTOR
+                actorRefId = component.memberRefId,
+                actorType = ActorType.WITNESS
             )
         }?.let {
             onEvent(
@@ -131,7 +131,7 @@ fun SignWitnessFormContent(
                             .fillMaxWidth()
                     ) {
                         Text(
-                            "Your guarantorship " + component.loanNumber + " of Kes " + component.amount + " has been confirmed",
+                            "Being a Witness for  " + component.loanNumber + " of Kes " + component.amount + " has been confirmed",
                             fontSize = 16.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
                             color = MaterialTheme.colorScheme.primary

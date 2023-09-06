@@ -90,7 +90,7 @@ fun GuarantorShipRequestsContent(
 
         ) {
             authState.cachedMemberData?.let {
-                ApplyLongTermLoansStore.Intent.GetPrestaLongTermLoanRequestByRefId(
+                ApplyLongTermLoansStore.Intent.GetPrestaLoanByLoanRequestRefId(
                     token = it.accessToken,
                     loanRequestRefId = loanRequestRefId
                 )
@@ -174,11 +174,11 @@ fun GuarantorShipRequestsContent(
                         .background(
                             brush = ShimmerBrush(
                                 targetValue = 1300f,
-                                showShimmer = state.prestaLongTermLoanrequestBYRefId?.memberFirstName == null
+                                showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null
                             ),
                             shape = RoundedCornerShape(12.dp),
                         ).defaultMinSize(200.dp),
-                    text = if (state.prestaLongTermLoanrequestBYRefId?.memberFirstName !== null) "${state.prestaLongTermLoanrequestBYRefId.memberFirstName.uppercase()} ${state.prestaLongTermLoanrequestBYRefId.memberLastName.uppercase()}" else "",
+                    text = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) "${state.prestaLoanByLoanRequestRefId.memberFirstName.uppercase()} ${state.prestaLoanByLoanRequestRefId.memberLastName.uppercase()}" else "",
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 14.sp,
                     fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
@@ -231,12 +231,12 @@ fun GuarantorShipRequestsContent(
                         .background(
                             brush = ShimmerBrush(
                                 targetValue = 1300f,
-                                showShimmer = state.prestaLongTermLoanrequestBYRefId?.loanAmount == null
+                                showShimmer = state.prestaLoanByLoanRequestRefId?.loanAmount == null
                             ),
                             shape = RoundedCornerShape(12.dp)
                         ).defaultMinSize(200.dp),
-                    text = if (state.prestaLongTermLoanrequestBYRefId?.loanAmount !== null) "KES " + formatMoney(
-                        state.prestaLongTermLoanrequestBYRefId.loanAmount
+                    text = if (state.prestaLoanByLoanRequestRefId?.loanAmount !== null) "KES " + formatMoney(
+                        state.prestaLoanByLoanRequestRefId.loanAmount
                     ) else "",
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 14.sp,
@@ -423,7 +423,8 @@ fun GuarantorShipRequestsContent(
                                                 guarantorRefIdRefId = guarantorRequests.refId
                                                 println("Test Data" + state.prestaLongTermLoanrequestBYRefId?.memberFirstName)
                                                 modalBottomScope.launch { modalBottomState.show() }
-                                            }
+                                            },
+                                            action = "guarantee"
                                         )
                                     }
                                 }
@@ -447,7 +448,8 @@ fun GuarantorsRequestsView(
     loanNumber: String,
     loanAmount: String,
     requestsDate: String,
-    onClickContainer: () -> Unit
+    onClickContainer: () -> Unit,
+    action: String
 ) {
     ElevatedCard(
         onClick = onClickContainer,
@@ -488,7 +490,7 @@ fun GuarantorsRequestsView(
                         )
                     }
                     Text(
-                        "guarantee their loan $loanNumber of",
+                        "$action their loan $loanNumber of",
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.outline

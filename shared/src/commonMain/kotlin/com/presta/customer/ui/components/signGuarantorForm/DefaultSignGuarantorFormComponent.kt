@@ -119,7 +119,8 @@ class DefaultSignGuarantorFormComponent(
 
     private val loanScope = coroutineScope(coroutinetineDispatcher + SupervisorJob())
 
-    private val poller = GuarantorSigningStatusPoller(longTermLoanRepository, coroutinetineDispatcher)
+    private val poller =
+        GuarantorSigningStatusPoller(longTermLoanRepository, coroutinetineDispatcher)
 
     //Todo--use the new token while polling for result
     private fun refreshToken() {
@@ -160,6 +161,7 @@ class DefaultSignGuarantorFormComponent(
             }
         }
     }
+
     init {
         refreshToken()
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)

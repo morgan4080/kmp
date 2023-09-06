@@ -12,6 +12,9 @@ data class PrestaWitnessRequestResponse(
     val witnessSigned: Boolean,
     val witnessAccepted: Boolean,
     val applicant: Applicant,
-    val loanRequest: LoanRequest,
+    val loanRequest: WitnessListedLoanRequests,
 )
+
+
+
 
