@@ -236,7 +236,7 @@ class DefaultRootComponent(
         )
 
         is Config.LongTermLoanSigningStatus -> RootComponent.Child.LongTermLoanSigningStatusChild(
-            longTermLoanSigningStatusComponent(componentContext)
+            longTermLoanSigningStatusComponent(componentContext, config)
         )
 
         is Config.SignDocument -> RootComponent.Child.SignGuarantorDocumentChild(
@@ -974,7 +974,7 @@ class DefaultRootComponent(
             },
             onProductClicked = {
                 //navigate to Application Status
-                navigation.push(Config.LongTermLoanSigningStatus)
+                navigation.push(Config.LongTermLoanSigningStatus(loanNumber = "", amount = 0.0))
             },
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
@@ -1010,12 +1010,16 @@ class DefaultRootComponent(
             }
         )
 
-    private fun longTermLoanSigningStatusComponent(componentContext: ComponentContext): LongtermLoanSigningStatusComponent =
+    private fun longTermLoanSigningStatusComponent(
+        componentContext: ComponentContext,
+        config: Config.LongTermLoanSigningStatus
+    ): LongtermLoanSigningStatusComponent =
         DefaultLongTermLoanSigningStatusComponent(componentContext = componentContext,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
             correlationId = "",
-            amount = 0.0,
+            amount = config.amount,
+            loanNumber = config.loanNumber,
             navigateToProfileClicked = {
                 navigation.replaceAll(Config.SignApp(loanRefId = { "" }))
             }
@@ -1038,9 +1042,9 @@ class DefaultRootComponent(
             loanRequestRefId = config.loanRequestRefId,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
-            onDocumentSignedClicked = {
+            onDocumentSignedClicked = { loanNumber, amount ->
                 //when doc is signed navigate
-                navigation.bringToFront(Config.LongTermLoanSigningStatus)
+                navigation.bringToFront(Config.LongTermLoanSigningStatus(loanNumber, amount))
             },
             sign = false,
             memberRefId = config.memberRefId,
@@ -1065,9 +1069,14 @@ class DefaultRootComponent(
             loanRequestRefId = config.loanRequestRefId,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
-            onDocumentSignedClicked = {
+            onDocumentSignedClicked = { loanNumber, amount ->
                 //when doc is signed navigate
-                navigation.bringToFront(Config.LongTermLoanSigningStatus)
+                navigation.bringToFront(
+                    Config.LongTermLoanSigningStatus(
+                        loanNumber = loanNumber,
+                        amount = amount
+                    )
+                )
             },
             sign = false,
             memberRefId = config.memberRefId,
@@ -1092,9 +1101,14 @@ class DefaultRootComponent(
             loanRequestRefId = config.loanRequestRefId,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
-            onDocumentSignedClicked = {
+            onDocumentSignedClicked = { loanNumber, amount ->
                 //when doc is signed navigate
-                navigation.bringToFront(Config.LongTermLoanSigningStatus)
+                navigation.bringToFront(
+                    Config.LongTermLoanSigningStatus(
+                        loanNumber = loanNumber,
+                        amount = amount
+                    )
+                )
 
             },
             sign = false,
@@ -1289,7 +1303,10 @@ class DefaultRootComponent(
         ) : Config()
 
         @Parcelize
-        object LongTermLoanSigningStatus : Config()
+        data class LongTermLoanSigningStatus(
+            val loanNumber: String,
+            val amount: Double,
+        ) : Config()
 
         @Parcelize
         data class SignDocument(

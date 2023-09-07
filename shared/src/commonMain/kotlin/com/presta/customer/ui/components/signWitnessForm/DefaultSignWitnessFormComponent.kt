@@ -7,7 +7,6 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.Platform
 import com.presta.customer.network.longTermLoans.data.LongTermLoansRepository
-import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
@@ -38,7 +37,10 @@ class DefaultSignWitnessFormComponent(
     mainContext: CoroutineContext,
     coroutinetineDispatcher: CoroutineDispatcher,
     private val onItemClicked: () -> Unit,
-    private val onDocumentSignedClicked: () -> Unit,
+    private val onDocumentSignedClicked: (
+        loanNumber: String,
+        amount: Double
+    ) -> Unit,
     private val onProductClicked: () -> Unit,
     override val loanNumber: String,
     override val amount: Double,
@@ -114,8 +116,11 @@ class DefaultSignWitnessFormComponent(
         onProductClicked()
     }
 
-    override fun onDocumentSigned() {
-        onDocumentSignedClicked()
+    override fun onDocumentSigned(
+        loanNumber: String,
+        amount: Double
+    ) {
+        onDocumentSignedClicked(loanNumber, amount)
     }
 
     private val loanScope = coroutineScope(coroutinetineDispatcher + SupervisorJob())
@@ -144,7 +149,7 @@ class DefaultSignWitnessFormComponent(
                                 }
                             filteredResponse.map { filter ->
                                 if (filter.witnessSigned) {
-                                    onDocumentSigned()
+                                    onDocumentSigned(loanNumber, amount)
                                 }
                                 println("The loaded data is " + filter.loanRequest.loanNumber)
                                 println("The initial data is  $loanNumber")

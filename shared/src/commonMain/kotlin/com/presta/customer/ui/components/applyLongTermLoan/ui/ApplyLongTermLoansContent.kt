@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -47,6 +46,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
+import com.presta.customer.network.longTermLoans.model.LoanApplicationStatus
+import com.presta.customer.network.longTermLoans.model.LoanRequestListData
 import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComponent
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
@@ -68,7 +69,7 @@ class CustomSnackBar(
         get() = SnackbarDuration.Indefinite
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ApplyLongTermLoansContent(
     component: ApplyLongTermLoanComponent,
@@ -81,9 +82,9 @@ fun ApplyLongTermLoansContent(
     var memberRefId by remember { mutableStateOf("") }
     var productRefId by remember { mutableStateOf("") }
     var loanName by remember { mutableStateOf("") }
-    var loanAmount by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
     val snackBarScope = rememberCoroutineScope()
+    var filteredResponse: List<LoanRequestListData> = emptyList()
     if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         memberRefId = signHomeState.prestaTenantByPhoneNumber.refId
     }
@@ -93,21 +94,25 @@ fun ApplyLongTermLoansContent(
             state.prestaLongTermLoansRequestsSpecificProduct,
             productRefId
         ) {
-            if (state.prestaLongTermLoansRequestsSpecificProduct?.empty != null) {
+            if (state.prestaLongTermLoansRequestsSpecificProduct?.content?.isEmpty() == false) {
                 snackbarHostState.currentSnackbarData?.dismiss()
-                if (!state.prestaLongTermLoansRequestsSpecificProduct.empty) {
-                    state.prestaLongTermLoansRequestsSpecificProduct.content.map {existingLoan->
+                filteredResponse = state.prestaLongTermLoansRequestsSpecificProduct.content.filter { existingLoan ->
+                        existingLoan.loanProductRefId.contains(productRefId)
+                    }
+                filteredResponse.map { filteredResponse ->
+                    if (filteredResponse.applicationStatus == LoanApplicationStatus.INPROGRESS) {
                         snackBarScope.launch {
                             snackbarHostState.showSnackbar(
                                 CustomSnackBar(
-                                    "${existingLoan.loanProductName} of ${existingLoan.loanAmount} is in progress from: ${existingLoan.loanDate}",
+                                    "${filteredResponse.loanProductName} of ${filteredResponse.loanAmount} is in progress from: ${filteredResponse.loanDate}",
                                     isError = true
                                 )
                             )
                         }
                     }
-
-                } else {
+                }
+            } else {
+                if (state.prestaLongTermLoansRequestsSpecificProduct?.content?.isEmpty() ==true && filteredResponse.isEmpty()) {
                     snackbarHostState.currentSnackbarData?.dismiss()
                     component.onProductSelected(
                         loanRefId = productRefId
@@ -332,8 +337,8 @@ fun ApplyLongTermLoansContent(
                                             onClickContainer = {
                                                 productRefId = longTermLoanResponse.refId.toString()
                                                 loanName = longTermLoanResponse.name.toString()
-                                                loanAmount = ""
                                                 //Todo---withhold navigation until a response is returned
+                                                snackbarHostState.currentSnackbarData?.dismiss()
                                                 authState.cachedMemberData?.let {
                                                     ApplyLongTermLoansStore.Intent.GetPrestaLongTermLoansRequestsSpecificProduct(
                                                         token = it.accessToken,

@@ -111,7 +111,7 @@ fun GuarantorShipRequestsContent(
             authState.cachedMemberData?.let {
                 ApplyLongTermLoansStore.Intent.GetPrestaGuarantorshipRequests(
                     token = it.accessToken,
-                    memberRefId = "XMazvHXCRt8WFv3N" //memberRefId //memberRefId
+                    memberRefId = memberRefId, //memberRefId
                 )
             }?.let {
                 onEvent(

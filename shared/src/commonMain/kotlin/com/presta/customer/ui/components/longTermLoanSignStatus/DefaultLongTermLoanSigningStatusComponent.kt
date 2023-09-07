@@ -33,6 +33,7 @@ class DefaultLongTermLoanSigningStatusComponent(
     mainContext: CoroutineDispatcher,
     val navigateToProfileClicked: () -> Unit,
     override val correlationId: String,
+    override val loanNumber: String,
     override val amount: Double,
 ) : LongtermLoanSigningStatusComponent, ComponentContext by componentContext, KoinComponent {
 

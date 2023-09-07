@@ -20,6 +20,9 @@ interface SignLoanFormComponent {
     val platform: Platform
     fun onBackNavClicked()
     fun onProductSelected()
-    fun onDocumentSigned()
+    fun onDocumentSigned(
+        loanNumber: String,
+        amount: Double
+    )
 
 }

@@ -452,7 +452,7 @@ class ApplyLongTermLoansStoreFactory(
                     guarantorList,
                 ).onSuccess { response ->
                     dispatch(Msg.LongTermLoanRequestLoaded(response))
-                    println("LongTerm Loan Request  Success Success" + response)
+                    println("LongTerm Loan Request  Success Success:::::;;;" + response)
                 }.onFailure { e ->
                     dispatch(Msg.LongTermLoansFailed(e.message))
                     println("Reason of failure" + e.message)

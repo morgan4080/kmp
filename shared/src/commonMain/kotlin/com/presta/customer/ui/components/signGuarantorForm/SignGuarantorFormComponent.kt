@@ -21,7 +21,10 @@ interface SignGuarantorFormComponent {
     val platform: Platform
     fun onBackNavClicked()
     fun onProductSelected()
-    fun onDocumentSigned()
+    fun onDocumentSigned(
+        loanNumber: String,
+        amount: Double
+    )
 
 
 }

@@ -35,9 +35,8 @@ import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
-import kotlinx.coroutines.DelicateCoroutinesApi
 
-@OptIn(ExperimentalMaterial3Api::class, DelicateCoroutinesApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignGuarantorFormContent(
     component: SignGuarantorFormComponent,
@@ -70,7 +69,7 @@ fun SignGuarantorFormContent(
             ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
                 token = it.accessToken,
                 loanRequestRefId = component.loanRequestRefId,
-                actorRefId = "XMazvHXCRt8WFv3N", //component.memberRefId,
+                actorRefId = component.memberRefId,
                 actorType = ActorType.GUARANTOR
             )
         }?.let {

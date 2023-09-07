@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.coroutines.CoroutineContext
+
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
 
@@ -35,7 +36,10 @@ class DefaultSignLoanFormComponent(
     mainContext: CoroutineContext,
     coroutinetineDispatcher: CoroutineDispatcher,
     private val onItemClicked: () -> Unit,
-    private val onDocumentSignedClicked: () -> Unit,
+    private val onDocumentSignedClicked: (
+        loanNumber: String,
+        amount: Double
+    ) -> Unit,
     private val onProductClicked: () -> Unit,
     override val loanNumber: String,
     override val amount: Double,
@@ -110,13 +114,17 @@ class DefaultSignLoanFormComponent(
         onProductClicked()
     }
 
-    override fun onDocumentSigned() {
-        onDocumentSignedClicked()
+    override fun onDocumentSigned(
+        loanNumber: String,
+        amount: Double
+    ) {
+        onDocumentSignedClicked(loanNumber,amount)
     }
 
     private val loanScope = coroutineScope(coroutinetineDispatcher + SupervisorJob())
 
-    private val poller = ApplicantSigningStatusPoller(longTermLoanRepository, coroutinetineDispatcher)
+    private val poller =
+        ApplicantSigningStatusPoller(longTermLoanRepository, coroutinetineDispatcher)
 
     private fun refreshToken() {
         loanScope.launch {
@@ -128,12 +136,13 @@ class DefaultSignLoanFormComponent(
                             refId = state.cachedMemberData.refId
                         )
                     )
-                    val flow = poller.poll(5_000L, state.cachedMemberData.accessToken, loanRequestRefId)
+                    val flow =
+                        poller.poll(5_000L, state.cachedMemberData.accessToken, loanRequestRefId)
 
                     flow.collect {
                         it.onSuccess { response ->
                             if (response.applicantSigned) {
-                                onDocumentSigned()
+                                onDocumentSigned(loanNumber,amount)
                             }
                             println("Poll has Succeded ::::::")
                         }.onFailure { error ->
@@ -147,6 +156,7 @@ class DefaultSignLoanFormComponent(
             }
         }
     }
+
     init {
         refreshToken()
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)

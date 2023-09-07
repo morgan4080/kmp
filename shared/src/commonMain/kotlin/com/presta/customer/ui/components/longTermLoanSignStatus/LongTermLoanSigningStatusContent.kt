@@ -1,9 +1,7 @@
 package com.presta.customer.ui.components.longTermLoanSignStatus
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,24 +10,18 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,13 +37,6 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 fun LongTermLoanSigningStatusContent(
     component: LongtermLoanSigningStatusComponent
 ) {
-   //Todo---
-   //add more info about the loan
-   //loan amount  and  loan Number
-
-
-    var showprocessing by remember { mutableStateOf(true) }
-    //show that the loan has been signed
     Scaffold(
         modifier = Modifier.fillMaxHeight().fillMaxWidth()
     ) {
@@ -84,21 +69,12 @@ fun LongTermLoanSigningStatusContent(
                                     .background(MaterialTheme.colorScheme.background),
                                 contentAlignment = Alignment.Center
                             ) {
-                                if (showprocessing) {
-                                    Icon(
-                                        imageVector = Icons.Filled.CheckCircle,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(150.dp),
-                                        tint = Color.Green
-                                    )
-                                } else {
-                                    Icon(
-                                        imageVector = Icons.Filled.Cancel,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(150.dp),
-                                        tint = Color.Green
-                                    )
-                                }
+                                Icon(
+                                    imageVector = Icons.Filled.CheckCircle,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(150.dp),
+                                    tint = MaterialTheme.colorScheme.tertiaryContainer
+                                )
                             }
                         }
                         AnimatedVisibility(
@@ -117,35 +93,36 @@ fun LongTermLoanSigningStatusContent(
                         modifier = Modifier.fillMaxWidth()
                             .padding(start = 80.dp, end = 80.dp, top = 50.dp),
                     ) {
-                        if (showprocessing) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = "Loan Signed  SUCCESSFULLY!",
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 22.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                                    textAlign = TextAlign.Center,
-                                    lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
-                                )
-                            }
-
-                        } else {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = "Loan not Signed!",
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 22.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                                    textAlign = TextAlign.Center,
-                                    lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
-                                )
-                            }
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "LOAN NUMBER " + component.loanNumber,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 15.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                                textAlign = TextAlign.Center,
+                                lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
+                            )
+                            Text(
+                                text = "AMOUNT " + component.amount.toString(),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 15.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                                textAlign = TextAlign.Center,
+                                lineHeight = MaterialTheme.typography.headlineLarge.lineHeight,
+                                modifier = Modifier.padding(top = 10.dp)
+                            )
+                            Text(
+                                text = "SIGNED SUCCESSFULLY!",
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 15.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                                textAlign = TextAlign.Center,
+                                lineHeight = MaterialTheme.typography.headlineLarge.lineHeight,
+                                modifier = Modifier.padding(top = 10.dp)
+                            )
                         }
                     }
                 }
@@ -156,64 +133,19 @@ fun LongTermLoanSigningStatusContent(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        if (showprocessing) {
-                            Button(
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(size = 12.dp),
-                                onClick = {
-                                    // Todo---Go back to profile
-                                    component.navigateToProfile()
-
-                                    //navigateBack()
-                                }
-                            ) {
-                                Text(
-                                    text = "Done",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
-                                )
+                        Button(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(size = 12.dp),
+                            onClick = {
+                                // Todo---Go back to profile
+                                component.navigateToProfile()
                             }
-                        } else {
-                            Button(
-                                modifier = Modifier.width(150.dp)
-                                    .border(
-                                        border = BorderStroke(
-                                            1.dp,
-                                            MaterialTheme.colorScheme.outline
-                                        ),
-                                        shape = RoundedCornerShape(size = 12.dp)
-                                    ),
-                                shape = RoundedCornerShape(size = 12.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color.Transparent,
-                                    contentColor = MaterialTheme.colorScheme.primary
-                                ),
-                                onClick = {
-                                    //Todo-----Go back to profile
-                                   component.navigateToProfile()
-                                }
-                            ) {
-                                Text(
-                                    text = "Close",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
-                                )
-                            }
-                            Button(
-                                modifier = Modifier.width(150.dp),
-                                shape = RoundedCornerShape(size = 12.dp),
-                                onClick = {
-                                    //Todo----Execute  the action to check sign  status triggered by life cycle
-                                    //navigate back to retry signing
-                                    //retryTransaction()
-                                }
-                            ) {
-                                Text(
-                                    text = "Retry",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
-                                )
-                            }
+                        ) {
+                            Text(
+                                text = "Done",
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                            )
                         }
                     }
                 }

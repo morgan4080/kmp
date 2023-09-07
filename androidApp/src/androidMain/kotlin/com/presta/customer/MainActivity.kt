@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     private fun getCurrentActivity(): Activity? {
         return currentActivity
     }
+
     private fun setCurrentActivity(activity: Activity) {
         currentActivity = activity
     }
@@ -110,6 +111,7 @@ class MainActivity : AppCompatActivity() {
             println("No contacts found.")
         }
     }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,

@@ -323,6 +323,7 @@ class PrestaLongTermLoansClient(
                 url {
                     encodedParameters.append("memberRefId", memberRefId)
                     encodedParameters.append("order", "ASC")
+                    encodedParameters.append("isActive", "true")
                     encodedParameters.append("pageSize", "2")
                 }
             }

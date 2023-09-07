@@ -37,7 +37,10 @@ class DefaultSignGuarantorFormComponent(
     mainContext: CoroutineContext,
     coroutinetineDispatcher: CoroutineDispatcher,
     private val onItemClicked: () -> Unit,
-    private val onDocumentSignedClicked: () -> Unit,
+    private val onDocumentSignedClicked: (
+        loanNumber: String,
+        amount: Double
+    ) -> Unit,
     private val onProductClicked: () -> Unit,
     override val loanNumber: String,
     override val amount: Double,
@@ -113,8 +116,11 @@ class DefaultSignGuarantorFormComponent(
         onProductClicked()
     }
 
-    override fun onDocumentSigned() {
-        onDocumentSignedClicked()
+    override fun onDocumentSigned(
+        loanNumber: String,
+        amount: Double
+    ) {
+        onDocumentSignedClicked(loanNumber, amount)
     }
 
     private val loanScope = coroutineScope(coroutinetineDispatcher + SupervisorJob())
@@ -134,7 +140,7 @@ class DefaultSignGuarantorFormComponent(
                         )
                     )
                     val flow =
-                        poller.poll(5_000L, state.cachedMemberData.accessToken, "XMazvHXCRt8WFv3N")
+                        poller.poll(5_000L, state.cachedMemberData.accessToken, memberRefId)
 
                     flow.collect {
                         it.onSuccess { response ->
@@ -144,7 +150,7 @@ class DefaultSignGuarantorFormComponent(
                                 }
                             filteredResponse.map { filter ->
                                 if (filter.isSigned) {
-                                    onDocumentSigned()
+                                    onDocumentSigned(loanNumber, amount)
                                 }
                                 println("The loaded data is " + filter.loanRequest.loanNumber)
                                 println("The initial data is  $loanNumber")
@@ -161,7 +167,6 @@ class DefaultSignGuarantorFormComponent(
             }
         }
     }
-
     init {
         refreshToken()
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)

@@ -17,14 +17,7 @@ data class LongTermLoanRequestResponse @OptIn(ExperimentalSerializationApi::clas
     val memberNumber: String,
     val memberFirstName: String,
     val memberLastName: String,
-    val phoneNumber: String,
-    val loanRequestProgress: Double,
-    val totalDeposits: Double,
-    val applicantSigned: Boolean,
-    val witnessAccepted: Boolean,
-    val witnessSigned: Boolean,
-    @EncodeDefault val pendingReason: String? = null,
-    val pdfThumbNail: String,
-    val guarantorList: List<GuarantorDataResponse>,
+    @EncodeDefault val pendingReason: String?=null,
 )
+
 

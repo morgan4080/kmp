@@ -7,6 +7,7 @@ interface LongtermLoanSigningStatusComponent {
     val correlationId: String
     val authStore: AuthStore
     val authState: StateFlow<AuthStore.State>
+   val  loanNumber: String
     val amount: Double
     fun onAuthEvent(event: AuthStore.Intent)
     fun navigateToProfile()

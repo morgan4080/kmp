@@ -22,7 +22,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -200,8 +199,7 @@ fun SelectLoanPurposeContent(
                                                             if (selectedSubCategoryIndex == subIndex) {
                                                                 childId =
                                                                     state.prestaLongTermLoanProductsSubCategories[selectedSubCategoryIndex].code
-                                                                loanPurpose =
-                                                                    state.prestaLongTermLoanProductsSubCategories[selectedSubCategoryIndex].name
+                                                                loanPurpose = state.prestaLongTermLoanProductsSubCategories[selectedSubCategoryIndex].name
                                                             }
                                                         },
                                                         expandContent = selectedSubCategoryIndex == subIndex,
@@ -216,8 +214,10 @@ fun SelectLoanPurposeContent(
                                                                                 if (selectedSubCategoryChildrenIndex == subCatsChildIndex) -1 else subCatChildIndex
                                                                             if (selectedSubCategoryChildrenIndex > -1) {
                                                                                 if (selectedSubCategoryChildrenIndex == subCatChildIndex) {
-                                                                                    loanPurposeCategory = state.prestaLongTermLoanProductsSubCategoriesChildren[selectedSubCategoryChildrenIndex].name
-                                                                                    loanPurposeCategoryCode=state.prestaLongTermLoanProductsSubCategoriesChildren[selectedSubCategoryChildrenIndex].code
+                                                                                    loanPurposeCategory =
+                                                                                        state.prestaLongTermLoanProductsSubCategoriesChildren[selectedSubCategoryChildrenIndex].name
+                                                                                    loanPurposeCategoryCode =
+                                                                                        state.prestaLongTermLoanProductsSubCategoriesChildren[selectedSubCategoryChildrenIndex].code
                                                                                 }
                                                                             }
 
@@ -265,11 +265,9 @@ fun SelectLoanPurposeContent(
                         loanCategory = loanCategory,
                         loanPurpose = loanPurpose,
                         loanPurposeCategory = loanPurposeCategory,
-                        loanPurposeCategoryCode =loanPurposeCategoryCode
-
-//                                loanCategory!="" && loanPurpose!="" && loanPurposeCategory!=""
+                        loanPurposeCategoryCode = loanPurposeCategoryCode
                     )
-                }, enabled = true)
+                }, enabled = loanCategory != "" && loanPurpose != "" && loanPurposeCategory != "")
             }
         }
     })
