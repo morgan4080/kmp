@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.ui.helpers.formatMoney
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -106,7 +107,7 @@ fun LongTermLoanSigningStatusContent(
                                 lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
                             )
                             Text(
-                                text = "AMOUNT " + component.amount.toString(),
+                                text = "AMOUNT " +"KES "+ formatMoney(component.amount) ,
                                 color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 15.sp,
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),

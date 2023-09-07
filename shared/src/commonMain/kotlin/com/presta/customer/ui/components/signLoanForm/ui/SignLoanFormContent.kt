@@ -61,9 +61,8 @@ fun SignLoanFormContent(
             }
         }
     }
-    LaunchedEffect(
-        authState.cachedMemberData
-    ) {
+
+    if (component.loanRequestRefId != "") {
         authState.cachedMemberData?.let {
             ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
                 token = it.accessToken,
@@ -77,6 +76,7 @@ fun SignLoanFormContent(
             )
         }
     }
+
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Sign Loan Form", onClickContainer = {
             component.onBackNavClicked()

@@ -278,7 +278,7 @@ fun GuarantorShipRequestsContent(
                                     modalBottomScope.launch { modalBottomState.hide() }
                                 }
                                 .clip(shape = CircleShape),
-                            tint = Color.Green.copy(alpha = 0.5f)
+                            tint = MaterialTheme.colorScheme.tertiaryContainer
                         )
                         Text(
                             "Accept ",
@@ -286,7 +286,7 @@ fun GuarantorShipRequestsContent(
                                 .padding(top = 10.dp),
                             fontSize = 12.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                            color = Color.Green.copy(alpha = 0.5f)
+                            color = MaterialTheme.colorScheme.tertiaryContainer
                         )
                     }
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -320,7 +320,7 @@ fun GuarantorShipRequestsContent(
                                 .padding(top = 10.dp),
                             fontSize = 12.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                            color = MaterialTheme.colorScheme.error.copy(alpha = 0.8f)
+                            color = MaterialTheme.colorScheme.error
                         )
                     }
                 }
