@@ -33,7 +33,6 @@ class MainActivity : AppCompatActivity() {
         const val READ_CONTACTS_PERMISSION_REQUEST_CODE = 123
     }
 
-    private val contactPicker = AndroidContactPicker()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,19 +65,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun pickContact() {
-        contactPicker.pickContact { name, phoneNumber ->
-            // Use the 'name' and 'phoneNumber' here as needed
-        }
-    }
-
-
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        contactPicker.handleActivityResult(requestCode, resultCode, data) { name, phoneNumber ->
-            // Use the 'name' and 'phoneNumber' here as needed
-        }
+//        contactPicker.handleActivityResult(requestCode, resultCode, data) { name, phoneNumber ->
+//            // Use the 'name' and 'phoneNumber' here as needed
+//        }
     }
 
     private fun checkContactsPermission() {
