@@ -39,7 +39,6 @@ import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Contacts
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ButtonDefaults
@@ -79,7 +78,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
-import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.ui.components.addGuarantors.ui.SelectGuarantorsView
 import com.presta.customer.ui.components.addGuarantors.ui.SnackbarVisualsWithError
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
@@ -95,6 +93,8 @@ import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import readContacts.ContactListEvent
+import readContacts.ImagePicker
 
 @Serializable
 data class FavouriteGuarantorDetails(
@@ -112,6 +112,8 @@ fun FavouriteGuarantorContent(
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
     signHomeState: SignHomeStore.State,
     onProfileEvent: (SignHomeStore.Intent) -> Unit,
+    imagePicker: ImagePicker? = null,
+    onEvent3: ((ContactListEvent) -> Unit?)? =null,
 ) {
     var launchPopUp by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
@@ -203,6 +205,15 @@ fun FavouriteGuarantorContent(
     val scope = rememberCoroutineScope()
     val clearItemClicked: (FavouriteGuarantorDetails) -> Unit = { item ->
         guarantorDataListed -= item
+    }
+
+    //Todo----- Handle native feature
+
+    //Handle native feature
+    imagePicker?.registerPicker { imageBytes ->
+        if (onEvent3 != null) {
+            onEvent3(ContactListEvent.OnPhotoPicked(imageBytes))
+        }
     }
 
     ModalBottomSheetLayout(
@@ -421,6 +432,13 @@ fun FavouriteGuarantorContent(
                                             modifier = Modifier
                                                 .size(25.dp),
                                             onClick = {
+//                                                readPhonenumber?.picknumber(context = AppContext())
+                                                if (onEvent3 != null) {
+                                                    onEvent3(ContactListEvent.OnAddNewContactClick)
+                                                }
+                                                imagePicker?.pickImage()
+                                                println("Read phone number invoked :::::::")
+
 //                                            snackBarScope.launch {
 //                                                snackbarHostState.showSnackbar(
 //                                                    "member data"
@@ -887,3 +905,4 @@ fun FavouriteGuarantorView(
         }
     }
 }
+

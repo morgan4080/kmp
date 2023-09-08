@@ -10,6 +10,7 @@ data class Contact(
     val name: String,
     val phoneNumber: String
 )
+
 expect class Platform(context: AppContext) {
     val platformName: String
 
@@ -20,8 +21,8 @@ expect class Platform(context: AppContext) {
     fun openUrl(url: String)
     fun logErrorsToFirebase(Error: Exception)
     fun getContact(): List<Contact>
+
     //fun requestReadContactsPermission(callback: (Boolean) -> Unit)
     fun convertBase64ToImage(base64String: String): Any
-    fun getCurrentTimeMillis(): Long
 }
 

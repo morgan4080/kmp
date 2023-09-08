@@ -18,7 +18,7 @@ fun FavouriteGaurantorsScreen(
         authState = authState,
         onEvent = component::onEvent,
         signHomeState = profileState,
-        onProfileEvent = component::onProfileEvent,
+        onProfileEvent = component::onProfileEvent
     )
 
 

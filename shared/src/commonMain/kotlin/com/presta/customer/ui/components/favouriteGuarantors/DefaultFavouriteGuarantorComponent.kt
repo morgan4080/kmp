@@ -24,7 +24,7 @@ class DefaultFavouriteGuarantorsComponent (
     storeFactory: StoreFactory,
     mainContext: CoroutineContext,
     private val onItemClicked: () -> Unit,
-    private val onProductClicked: () -> Unit
+    private val onProductClicked: () -> Unit,
 ): FavouriteGuarantorsComponent, ComponentContext by componentContext {
     private val scope = coroutineScope(mainContext + SupervisorJob())
     override val authStore: AuthStore =

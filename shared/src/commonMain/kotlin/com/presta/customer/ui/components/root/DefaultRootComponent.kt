@@ -87,6 +87,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import readContacts.ReadPhonenumber
 import kotlin.coroutines.CoroutineContext
 
 fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineScope {
@@ -855,7 +856,7 @@ class DefaultRootComponent(
             onProductClicked = {
             },
             storeFactory = storeFactory,
-            mainContext = prestaDispatchers.main,
+            mainContext = prestaDispatchers.main
         )
 
     private fun witnessRequestComponent(componentContext: ComponentContext): WitnessRequestComponent =
