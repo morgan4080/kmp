@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -175,11 +174,9 @@ fun Base64ToImage(base64String: String) {
         contentDescription = null,
         contentScale = ContentScale.Crop,
         modifier = Modifier
-            .size(
-                width = 400.dp,
-                height = 400.dp
-            )
             .padding(top = 20.dp)
+            .fillMaxHeight(0.9f)
+            .fillMaxWidth()
 
     )
 }

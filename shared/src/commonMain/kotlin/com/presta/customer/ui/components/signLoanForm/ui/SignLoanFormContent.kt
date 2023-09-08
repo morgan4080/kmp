@@ -175,11 +175,10 @@ fun Base64ToImage(base64String: String) {
         contentDescription = null,
         contentScale = ContentScale.Crop,
         modifier = Modifier
-            .size(
-                width = 400.dp,
-                height = 400.dp
-            )
             .padding(top = 20.dp)
+            .padding(top = 20.dp)
+            .fillMaxHeight(0.9f)
+            .fillMaxWidth()
 
     )
 }

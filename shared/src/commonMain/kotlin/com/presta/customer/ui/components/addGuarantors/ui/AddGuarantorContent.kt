@@ -89,7 +89,6 @@ import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.EmployedDetails
-import com.presta.customer.ui.composables.LiveTextContainer
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.SelfEmployedDetails
 import com.presta.customer.ui.helpers.LocalSafeArea
@@ -155,15 +154,7 @@ fun AddGuarantorContent(
     var amountToGuarantee by remember { mutableStateOf(TextFieldValue()) }
     var launchGuarantorListing by remember { mutableStateOf(false) }
     val pattern = remember { Regex("^\\d+\$") }
-    var tenantPhoneNumber by remember { mutableStateOf("") }
-    LaunchedEffect(
-        ""
-    ) {
-        if (signHomeState.prestaTenantByPhoneNumber?.phoneNumber != null) {
-            tenantPhoneNumber = signHomeState.prestaTenantByPhoneNumber.phoneNumber
-        }
-    }
-
+    var userInputs by remember { mutableStateOf(TextFieldValue()) }
     if (memberNumber != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -291,17 +282,19 @@ fun AddGuarantorContent(
             }
         }
     }
+    var amountDesired by remember { mutableStateOf(0) }
+    var amountaken by remember { mutableStateOf(0) }
+    var diferences by remember { mutableStateOf(0) }
+
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-        sheetBackgroundColor = MaterialTheme.colorScheme.background,
         sheetContent = {
             if (launchCheckSelfAndEmPloyedPopUp) {
                 val tabs = listOf("Employed", "Business/Self Employed")
                 var tabIndex by remember { mutableStateOf(0) }
                 Column(
                     modifier = Modifier
-                        .background(MaterialTheme.colorScheme.background)
                         .padding(horizontal = 16.dp, vertical = 10.dp)
                         .fillMaxHeight()
                 ) {
@@ -353,12 +346,10 @@ fun AddGuarantorContent(
             } else if (launchAddAmountToGuarantee && (signHomeState.prestaTenantByMemberNumber?.firstName != null || state.prestaLoadTenantByPhoneNumber?.firstName != null)) {
                 Column(
                     modifier = Modifier
-                        .background(MaterialTheme.colorScheme.background)
                 ) {
                     Column(
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 10.dp)
-                            .background(MaterialTheme.colorScheme.background)
                     ) {
                         //Todo----Dismiss focus requester when the modal bottomsheet is dismissed
                         Row(
@@ -385,7 +376,6 @@ fun AddGuarantorContent(
                                 text = "Guarantor: " + if (searchGuarantorByMemberNumber) signHomeState.prestaTenantByMemberNumber?.firstName else state.prestaLoadTenantByPhoneNumber?.firstName,
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onBackground
                             )
                         }
                         Row(
@@ -393,81 +383,143 @@ fun AddGuarantorContent(
                                 .padding(top = 10.dp)
                                 .fillMaxWidth()
                         ) {
+                            amountDesired = component.desiredAmount.toInt()
+                            amountaken = guarantorDataListed.sumOf { it.amount.toInt() }
+                            diferences = amountDesired - amountaken
                             Text(
-                                text = "Remaining Amount: 10.00",
+                                text = "Remaining Amount : ${ formatMoney(diferences.toDouble()) }",
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onBackground
+                                fontSize = 12.sp
                             )
                         }
+                        //modified Text container  to support dark mode
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 20.dp)
                         ) {
-                            LiveTextContainer(
-                                userInput = amountToGuarantee.text,
-                                label = "Amount to Guarantee",
-                                keyboardType = KeyboardType.Number,
-                                pattern = pattern
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .shadow(0.5.dp, RoundedCornerShape(10.dp))
+                                    .background(
+                                        color = MaterialTheme.colorScheme.background,
+                                        shape = RoundedCornerShape(10.dp)
+                                    ),
                             ) {
-                                val inputValue: String = TextFieldValue(it).text
-                                if (inputValue != "") {
-                                    if (TextFieldValue(it).text !== "") {
-                                        amountToGuarantee = TextFieldValue(it)
-                                    } else {
-                                        //Throw error
-                                    }
-                                }
-                            }
+                                BasicTextField(
+                                    modifier = Modifier
+                                        .focusRequester(focusRequester)
+                                        .height(65.dp)
+                                        .padding(
+                                            top = 20.dp,
+                                            bottom = 16.dp,
+                                            start = 16.dp,
+                                            end = 16.dp
+                                        )
+                                        .absoluteOffset(y = 2.dp),
+                                    enabled = true,
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Number
+                                    ),
+                                    value = amountToGuarantee,
+                                    onValueChange = { textValue ->
+                                        if (textValue.text.isEmpty() || (textValue.text.matches(
+                                                pattern
+                                            ) &&
+                                                    (textValue.text.toInt() in (1..diferences)))
+                                        ) {
+                                            amountToGuarantee = textValue
+                                        }
+                                    },
+                                    singleLine = true,
+                                    textStyle = TextStyle(
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
+                                        fontSize = 13.sp,
+                                        fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
+                                        letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
+                                        lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                                        fontFamily = MaterialTheme.typography.bodySmall.fontFamily
+                                    ),
+                                    decorationBox = { innerTextField ->
+                                        if (amountToGuarantee.text.isEmpty()
+                                        ) {
+                                            Text(
+                                                modifier = Modifier.alpha(.3f),
+                                                text = "Amount to Guarantee",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.outline
+                                            )
+                                        }
 
+                                        AnimatedVisibility(
+                                            visible = amountToGuarantee.text.isNotEmpty(),
+                                            modifier = Modifier.absoluteOffset(y = -(16).dp),
+                                            enter = fadeIn() + expandVertically(),
+                                            exit = fadeOut() + shrinkVertically(),
+                                        ) {
+                                            Text(
+                                                text = "Amount to Guarantee",
+                                                color = primaryColor,
+                                                style = MaterialTheme.typography.labelSmall,
+                                                fontSize = 11.sp
+                                            )
+                                        }
+
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                            ) {
+
+                                                innerTextField()
+                                            }
+
+                                            AnimatedVisibility(
+                                                visible = amountToGuarantee.text.isNotEmpty(),
+                                                enter = fadeIn() + expandVertically(),
+                                                exit = fadeOut() + shrinkVertically(),
+                                            ) {
+                                                IconButton(
+                                                    modifier = Modifier.size(18.dp),
+                                                    onClick = { userInputs = emptyTextContainer },
+                                                    content = {
+                                                        Icon(
+                                                            modifier = Modifier.alpha(0.4f),
+                                                            imageVector = Icons.Filled.Cancel,
+                                                            contentDescription = null,
+                                                            tint = actionButtonColor
+                                                        )
+                                                    }
+                                                )
+                                            }
+                                        }
+                                    }
+                                )
+                            }
                         }
                         Row(
                             modifier = Modifier.fillMaxWidth()
                                 .padding(top = 50.dp, bottom = 50.dp)
                         ) {
-                            ActionButton("SUBMIT", onClickContainer = {
-                                if (guarantorDataListed.size != component.requiredGuarantors && searchGuarantorByMemberNumber && signHomeState.prestaTenantByMemberNumber?.firstName != null) {
-                                    //Todo-- handle self guarantee case
-                                    val apiResponse = listOf(
-                                        GuarantorDataListing(
-                                            signHomeState.prestaTenantByMemberNumber.firstName,
-                                            signHomeState.prestaTenantByMemberNumber.lastName,
-                                            signHomeState.prestaTenantByMemberNumber.phoneNumber,
-                                            signHomeState.prestaTenantByMemberNumber.memberNumber,
-                                            amountToGuarantee.text,
-                                            signHomeState.prestaTenantByMemberNumber.refId,
-                                        )
-                                    )
-                                    val existingItems = guarantorDataListed.toSet()
-                                    val duplicateItems = apiResponse.filter { it in existingItems }
-                                    if (duplicateItems.isNotEmpty()) {
-                                        snackBarScope.launch {
-                                            snackbarHostState.showSnackbar(
-                                                SnackbarVisualsWithError(
-                                                    "Duplicate Entries not  allowed",
-                                                    isError = true
-                                                )
-                                            )
-                                        }
-                                    } else {
-                                        guarantorDataListed =
-                                            guarantorDataListed.toMutableSet().apply {
-                                                addAll(apiResponse)
-                                            }
-                                    }
-                                } else {
-                                    if (guarantorDataListed.size != component.requiredGuarantors && searchGuarantorByPhoneNumber && state.prestaLoadTenantByPhoneNumber?.phoneNumber != null) {
+                            ActionButton(
+                                "SUBMIT",
+                                onClickContainer = {
+                                    if (guarantorDataListed.size != component.requiredGuarantors && searchGuarantorByMemberNumber && signHomeState.prestaTenantByMemberNumber?.firstName != null) {
+                                        //Todo-- handle self guarantee case
                                         val apiResponse = listOf(
                                             GuarantorDataListing(
-                                                state.prestaLoadTenantByPhoneNumber.firstName,
-                                                state.prestaLoadTenantByPhoneNumber.lastName,
-                                                state.prestaLoadTenantByPhoneNumber.phoneNumber,
-                                                state.prestaLoadTenantByPhoneNumber.memberNumber,
+                                                signHomeState.prestaTenantByMemberNumber.firstName,
+                                                signHomeState.prestaTenantByMemberNumber.lastName,
+                                                signHomeState.prestaTenantByMemberNumber.phoneNumber,
+                                                signHomeState.prestaTenantByMemberNumber.memberNumber,
                                                 amountToGuarantee.text,
-                                                state.prestaLoadTenantByPhoneNumber.refId,
+                                                signHomeState.prestaTenantByMemberNumber.refId,
                                             )
-
                                         )
                                         val existingItems = guarantorDataListed.toSet()
                                         val duplicateItems =
@@ -487,16 +539,45 @@ fun AddGuarantorContent(
                                                     addAll(apiResponse)
                                                 }
                                         }
+                                    } else {
+                                        if (guarantorDataListed.size != component.requiredGuarantors && searchGuarantorByPhoneNumber && state.prestaLoadTenantByPhoneNumber?.phoneNumber != null) {
+                                            val apiResponse = listOf(
+                                                GuarantorDataListing(
+                                                    state.prestaLoadTenantByPhoneNumber.firstName,
+                                                    state.prestaLoadTenantByPhoneNumber.lastName,
+                                                    state.prestaLoadTenantByPhoneNumber.phoneNumber,
+                                                    state.prestaLoadTenantByPhoneNumber.memberNumber,
+                                                    amountToGuarantee.text,
+                                                    state.prestaLoadTenantByPhoneNumber.refId,
+                                                )
+
+                                            )
+                                            val existingItems = guarantorDataListed.toSet()
+                                            val duplicateItems =
+                                                apiResponse.filter { it in existingItems }
+                                            if (duplicateItems.isNotEmpty()) {
+                                                snackBarScope.launch {
+                                                    snackbarHostState.showSnackbar(
+                                                        SnackbarVisualsWithError(
+                                                            "Duplicate Entries not  allowed",
+                                                            isError = true
+                                                        )
+                                                    )
+                                                }
+                                            } else {
+                                                guarantorDataListed =
+                                                    guarantorDataListed.toMutableSet().apply {
+                                                        addAll(apiResponse)
+                                                    }
+                                            }
+                                        }
                                     }
-                                }
-                                scope.launch { modalBottomSheetState.hide() }
-                                launchGuarantorListing = true
+                                    scope.launch { modalBottomSheetState.hide() }
+                                    launchGuarantorListing = true
 
-                                //Test
-                                println("::::::::::::::;; " + tenantPhoneNumber)
-
-
-                            }, enabled = true)
+                                },
+                                enabled = amountToGuarantee.text != "" && diferences > 0 && amountToGuarantee.text.toInt() > 0 && amountToGuarantee.text.toInt() <= diferences
+                            )
                         }
                     }
                 }
@@ -1195,7 +1276,7 @@ fun GuarantorsDetailsView(
         },
         modifier = Modifier.fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.background),
-        elevation = CardDefaults.cardElevation(defaultElevation = 20.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
     ) {
         Box(
             modifier = Modifier

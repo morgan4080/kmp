@@ -85,18 +85,20 @@ fun ApplyLongTermLoansContent(
     val snackbarHostState = remember { SnackbarHostState() }
     val snackBarScope = rememberCoroutineScope()
     var filteredResponse: List<LoanRequestListData> = emptyList()
+    val contentList = state.prestaLongTermLoansRequestsSpecificProduct?.content
     if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         memberRefId = signHomeState.prestaTenantByPhoneNumber.refId
     }
-    //Delegate navigation until a  response is found
     if (productRefId != "") {
         LaunchedEffect(
             state.prestaLongTermLoansRequestsSpecificProduct,
             productRefId
         ) {
             if (state.prestaLongTermLoansRequestsSpecificProduct?.content?.isEmpty() == false) {
+                println("The value of the list is;;;;;;; " + contentList)
                 snackbarHostState.currentSnackbarData?.dismiss()
-                filteredResponse = state.prestaLongTermLoansRequestsSpecificProduct.content.filter { existingLoan ->
+                filteredResponse =
+                    state.prestaLongTermLoansRequestsSpecificProduct.content.filter { existingLoan ->
                         existingLoan.loanProductRefId.contains(productRefId)
                     }
                 filteredResponse.map { filteredResponse ->
@@ -109,10 +111,13 @@ fun ApplyLongTermLoansContent(
                                 )
                             )
                         }
+
                     }
                 }
             } else {
-                if (state.prestaLongTermLoansRequestsSpecificProduct?.content?.isEmpty() ==true && filteredResponse.isEmpty()) {
+                if (contentList!=null && contentList.isEmpty() && filteredResponse.isEmpty()) {
+                    //Test
+                    println("The value of the list is;;;;;;; " + contentList)
                     snackbarHostState.currentSnackbarData?.dismiss()
                     component.onProductSelected(
                         loanRefId = productRefId
@@ -260,10 +265,7 @@ fun ApplyLongTermLoansContent(
                                         ),
                                         onClick = {
                                             launchHandleLoanRequestPopUp = false
-                                            //Navigate to resolve the loan
-                                            //Take the loan refid to launch the laon
-                                            //Directly  invoke loan Requests
-                                            component.onResolveLoanSelected(loanRefId = "ds")
+                                            component.onResolveLoanSelected(loanRefId = productRefId)
 
                                         },
                                         modifier = Modifier
@@ -335,10 +337,10 @@ fun ApplyLongTermLoansContent(
                                         ProductSelectionCard(longTermLoanResponse.name.toString(),
                                             description = longTermLoanResponse.interestRate.toString(),
                                             onClickContainer = {
+                                                snackbarHostState.currentSnackbarData?.dismiss()
+                                                productRefId = ""
                                                 productRefId = longTermLoanResponse.refId.toString()
                                                 loanName = longTermLoanResponse.name.toString()
-                                                //Todo---withhold navigation until a response is returned
-                                                snackbarHostState.currentSnackbarData?.dismiss()
                                                 authState.cachedMemberData?.let {
                                                     ApplyLongTermLoansStore.Intent.GetPrestaLongTermLoansRequestsSpecificProduct(
                                                         token = it.accessToken,
@@ -359,7 +361,6 @@ fun ApplyLongTermLoansContent(
                         item {
                             Spacer(modifier = Modifier.padding(bottom = 100.dp))
                         }
-                        //Pop up-- check if a loan has been previously applied, proceed or resolve
                     }
                 }
             }

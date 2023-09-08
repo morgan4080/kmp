@@ -64,9 +64,6 @@ import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.helpers.formatMoney
 import com.presta.customer.ui.theme.backArrowColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
@@ -92,19 +89,19 @@ fun LongTermLoanRequestsContent(
     var guarantorFirstName by remember { mutableStateOf("") }
     var guarantorLastName by remember { mutableStateOf("") }
     var guarantorRefId by remember { mutableStateOf("") }
-    var appliCantSigned by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val snackBarScope = rememberCoroutineScope()
-    val coroutineScope = CoroutineScope(Dispatchers.Main)
     if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         memBerRefId = signHomeState.prestaTenantByPhoneNumber.refId
     }
+    var deleteInitiated by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
     if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         LaunchedEffect(
             authState.cachedMemberData,
-            memBerRefId
+            memBerRefId,
+            state.deleteLoanRequestResponse
 
         ) {
             authState.cachedMemberData?.let {
@@ -138,6 +135,23 @@ fun LongTermLoanRequestsContent(
             }
         }
     }
+    if (deleteInitiated) {
+        LaunchedEffect(state.deleteLoanRequestResponse) {
+            if (state.deleteLoanRequestResponse.toString() == "SUCCESS") {
+                snackBarScope.launch {
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsWithError(
+                            "Loan Deleted successfully",
+                            isError = true
+                        )
+                    )
+                }
+                deleteInitiated = false
+                scope.launch { modalBottomSheetState.hide() }
+            }
+        }
+    }
+
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -252,8 +266,6 @@ fun LongTermLoanRequestsContent(
                         }
                         OutlinedButton(
                             onClick = {
-                                //Todo---delete loan Request---delay checking condition to wait for execution
-                                //Delete the loan request
                                 if (loanRequestNumber != "") {
                                     authState.cachedMemberData?.let {
                                         ApplyLongTermLoansStore.Intent.DeleteLoanRequest(
@@ -267,20 +279,7 @@ fun LongTermLoanRequestsContent(
                                         )
                                     }
                                 }
-                                coroutineScope.launch {
-                                    delay(500)
-                                    if (state.deleteLoanRequestResponse.toString() == "SUCCESS") {
-                                        snackBarScope.launch {
-                                            snackbarHostState.showSnackbar(
-                                                SnackbarVisualsWithError(
-                                                    "Loan Deleted successfully",
-                                                    isError = true
-                                                )
-                                            )
-                                        }
-                                    }
-                                }
-                                scope.launch { modalBottomSheetState.hide() }
+                                deleteInitiated = true
                             },
                             modifier = Modifier
                                 .padding(

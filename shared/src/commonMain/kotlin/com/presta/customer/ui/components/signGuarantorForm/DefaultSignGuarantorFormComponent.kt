@@ -167,6 +167,7 @@ class DefaultSignGuarantorFormComponent(
             }
         }
     }
+
     init {
         refreshToken()
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
