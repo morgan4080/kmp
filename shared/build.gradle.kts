@@ -127,7 +127,7 @@ kotlin {
                 // Koin
                 implementation(deps.koin.android)
 
-                implementation("com.google.android.gms:play-services-auth:20.6.0")
+                implementation("com.google.android.gms:play-services-auth:20.7.0")
 
                 implementation("com.google.android.gms:play-services-auth-api-phone:18.0.1")
 
@@ -136,6 +136,7 @@ kotlin {
                 implementation ("com.google.firebase:firebase-bom:32.1.1")
                 implementation (deps.analytics.firebase)
                 implementation (deps.crashlytics.firebase)
+                implementation("com.googlecode.libphonenumber:libphonenumber:8.2.0")
             }
         }
 
@@ -181,6 +182,9 @@ android {
     kotlin {
         jvmToolchain(17)
     }
+}
+dependencies {
+    implementation("com.google.android.material:material:1.9.0")
 }
 
 sqldelight {

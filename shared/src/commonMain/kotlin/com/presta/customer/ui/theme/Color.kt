@@ -39,7 +39,7 @@ val labelTextColor = Color(0xFF002C56)
 
 val bankContainerColor = Color(0xFFE7EAEB)
 
-val containerColor = Color(0xFFF7F7F7)
+val containerColor = Color(0xFFFFFFFF)
 
 val transparentContainer = Color(0xFFE5F1F5)
 val activeCard = Color(0xFFDCF1FF)

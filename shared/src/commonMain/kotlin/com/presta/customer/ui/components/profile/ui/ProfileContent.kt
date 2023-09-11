@@ -178,7 +178,9 @@ fun ProfileContent(
 
     val refreshState = rememberPullRefreshState(refreshing, ::refresh)
 
-    val items = listOf("Log Out" to Icons.Outlined.Logout)
+    val items = listOf(
+        "Log Out" to Icons.Outlined.Logout,
+    )
     var selectedItem by remember { mutableStateOf("Log Out" to Icons.Outlined.Logout) }
 
     val scopeDrawer = rememberCoroutineScope()
@@ -198,7 +200,7 @@ fun ProfileContent(
                 selectedItem,
                 onItemsClick = { item ->
                     scopeDrawer.launch { drawerState.close() }
-                    selectedItem = item
+                    if (item !== null) selectedItem = item
                 }
             )
         },

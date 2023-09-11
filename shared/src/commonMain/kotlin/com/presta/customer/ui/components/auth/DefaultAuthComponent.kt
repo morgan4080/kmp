@@ -137,6 +137,39 @@ class DefaultAuthComponent(
                             )
                         )
                     }
+
+                    onBoardingState.collect { onBoard ->
+                        if (onBoard.member?.authenticationInfo?.pinStatus == PinStatus.SET) {
+                            val title: String = if (it.cachedMemberData.firstName !== null && it.cachedMemberData.lastName !== null) {
+                                "${it.cachedMemberData.firstName} ${it.cachedMemberData.lastName}"
+                            } else {
+                                "Enter pin code to login"
+                            }
+                            val label: String = if (OrganisationModel.organisation.tenant_name!="") {
+                                 "${OrganisationModel.organisation.tenant_name} LOGIN"
+                            } else {
+                                ""
+                            }
+                            onEvent(AuthStore.Intent.UpdateContext(
+                                context = Contexts.LOGIN,
+                                title = title,
+                                label = label,
+                                pinCreated = true,
+                                pinConfirmed = true,
+                                error = null
+                            ))
+
+                        } else {
+                            AuthStore.Intent.UpdateContext(
+                                context = Contexts.CREATE_PIN,
+                                title = "Create pin code",
+                                label = if (OrganisationModel.organisation.tenant_name != "") "You'll be able to login to " + OrganisationModel.organisation.tenant_name + "using the following pin code" else "",
+                                pinCreated = false,
+                                pinConfirmed = false,
+                                error = null
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -152,31 +185,6 @@ class DefaultAuthComponent(
                             MR.images.logodark,
                             true
                         )
-                    )
-                }
-            }
-        }
-
-        scope.launch {
-            onBoardingState.collect {
-                if (it.member?.authenticationInfo?.pinStatus == PinStatus.SET) {
-                    onEvent(AuthStore.Intent.UpdateContext(
-                        context = Contexts.LOGIN,
-                        title = "Enter pin code to login",
-                        label = if (OrganisationModel.organisation.tenant_name!="")"Login to "+OrganisationModel.organisation.tenant_name+ " App using the following pin code" else "",
-                        pinCreated = true,
-                        pinConfirmed = true,
-                        error = null
-                    ))
-
-                } else {
-                    AuthStore.Intent.UpdateContext(
-                        context = Contexts.CREATE_PIN,
-                        title = "Create pin code",
-                        label =if (OrganisationModel.organisation.tenant_name!="") "You'll be able to login to "+OrganisationModel.organisation.tenant_name+"using the following pin code" else "",
-                        pinCreated = false,
-                        pinConfirmed = false,
-                        error = null
                     )
                 }
             }

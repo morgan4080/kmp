@@ -157,7 +157,8 @@ class DefaultLoanTopUpComponent(
                 if (state.cachedMemberData !== null) {
                     onAuthEvent(
                         AuthStore.Intent.CheckAuthenticatedUser(
-                            token = state.cachedMemberData.accessToken
+                            token = state.cachedMemberData.accessToken,
+                            state.cachedMemberData.refId
                         )
                     )
 
@@ -203,14 +204,12 @@ class DefaultLoanTopUpComponent(
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
 
-                    if (OrganisationModel.organisation.tenant_id!=null){
-                        onAuthEvent(
-                            AuthStore.Intent.RefreshToken(
-                                tenantId = OrganisationModel.organisation.tenant_id!!,
-                                refId = state.cachedMemberData.refId
-                            )
+                    onAuthEvent(
+                        AuthStore.Intent.RefreshToken(
+                            tenantId = OrganisationModel.organisation.tenant_id,
+                            refId = state.cachedMemberData.refId
                         )
-                    }
+                    )
                 }
                 this.cancel()
             }

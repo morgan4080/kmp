@@ -8,7 +8,12 @@ CREATE TABLE IF NOT EXISTS userAuthEntity (
   phoneNumber TEXT NOT NULL,
   expires_in INTEGER NOT NULL,
   refresh_expires_in INTEGER NOT NULL,
-  tenant_id TEXT NOT NULL
+  tenant_id TEXT NOT NULL,
+  keycloakId TEXT DEFAULT NULL,
+  email TEXT DEFAULT NULL,
+  username TEXT DEFAULT NULL,
+  firstName TEXT DEFAULT NULL,
+  lastName TEXT DEFAULT NULL
 );
 
 getUserAuthCredentials:
@@ -16,11 +21,14 @@ SELECT *
 FROM userAuthEntity;
 
 insertOrReplaceFullObject:
-INSERT OR REPLACE INTO userAuthEntity(refId, session_id, access_token, refresh_token, registrationFees, registrationFeeStatus, phoneNumber, expires_in, refresh_expires_in, tenant_id)
+INSERT OR REPLACE INTO userAuthEntity(refId, session_id, access_token, refresh_token, registrationFees, registrationFeeStatus, phoneNumber, expires_in, refresh_expires_in, tenant_id, keycloakId, email, username, firstName, lastName)
 VALUES ?;
 
 updateAccessToken:
 UPDATE userAuthEntity SET access_token = :access_token, refresh_token = :refresh_token, session_id = :session_id , expires_in = :expires_in, refresh_expires_in = :refresh_expires_in, tenant_id = :tenant_id  WHERE refId = :refId;
+
+updateMetaData:
+UPDATE userAuthEntity SET keycloakId = :keycloakId, email = :email, username = :username, firstName = :firstName , lastName = :lastName WHERE refId = :refId;
 
 removeUserAuthCredentials:
 DELETE FROM userAuthEntity;

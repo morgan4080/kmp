@@ -1,7 +1,6 @@
 package com.presta.customer.ui.components.processLoanDisbursement
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.essenty.backhandler.BackCallback
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.doOnDestroy
@@ -9,7 +8,6 @@ import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.network.loanRequest.data.LoanRequestRepository
-import com.presta.customer.network.loanRequest.model.LoanApplicationStatus
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.auth.store.AuthStore
@@ -97,15 +95,10 @@ class DefaultProcessLoanDisbursementComponent(
         refreshTokenScopeJob = scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
-                    if (OrganisationModel.organisation.tenant_id!=null){
-                        onAuthEvent(AuthStore.Intent.RefreshToken(
-                            tenantId = OrganisationModel.organisation.tenant_id!!,
-                            refId = state.cachedMemberData.refId
-                        ))
-
-                    }
-                    println("::::::::::requestId:::::::::::::")
-                    println(requestId)
+                    onAuthEvent(AuthStore.Intent.RefreshToken(
+                        tenantId = OrganisationModel.organisation.tenant_id,
+                        refId = state.cachedMemberData.refId
+                    ))
 
                     val flow = poller.poll(2_000L, state.cachedMemberData.accessToken, requestId)
 

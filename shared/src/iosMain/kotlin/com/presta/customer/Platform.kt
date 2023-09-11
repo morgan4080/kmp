@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 actual class Platform {
 
     actual val otpCode = MutableStateFlow("")
+    actual val resultFromContact: MutableStateFlow<Map<String, String>> = MutableStateFlow(emptyMap())
     actual fun showToast(text: String, duration: Durations) {
 
     }
@@ -17,6 +18,10 @@ actual class Platform {
     }
 
     actual fun logErrorsToFirebase(Error: Exception) {
+    }
+
+    actual fun getContact(contactRequestCode: Int, alpha2Code: String): MutableStateFlow<Map<String, String>> {
+        return resultFromContact
     }
 }
 

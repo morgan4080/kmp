@@ -27,6 +27,11 @@ data class CachedMemberData(
     val registrationFeeStatus: String,
     val phoneNumber: String,
     val tenantId: String,
+    val keycloakId: String?,
+    val username: String?,
+    val email: String?,
+    val firstName: String?,
+    val lastName: String?
 )
 interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
     sealed class Intent {
@@ -34,7 +39,7 @@ interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
         data class  RefreshToken(val tenantId: String, val refId: String): Intent()
         object GetCachedMemberData: Intent()
         object UpdateLoading: Intent()
-        data class CheckAuthenticatedUser(val token: String): Intent()
+        data class CheckAuthenticatedUser(val token: String, val refId: String): Intent()
         data class UpdateError(val error: String?): Intent()
         data class UpdateContext(val context: Contexts, val title: String, val label: String, val pinCreated: Boolean, val pinConfirmed: Boolean, val error: String?): Intent()
         object LogOutUser: Intent()
@@ -63,7 +68,7 @@ interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
         val context: Contexts = Contexts.CREATE_PIN,
         //This is checked when the app logs itself out
         //user sees a brief instance  of this label
-        val label: String = "You'll be able to login to "+OrganisationModel.organisation.tenant_name+" using the following pin code",
+        val label: String = "${OrganisationModel.organisation.tenant_name} LOGIN",
         val title: String = "Create pin code",
         val inputs: List<InputMethod> = listOf(
             InputMethod(

@@ -9,6 +9,7 @@ import com.presta.customer.network.authDevice.model.TenantServicesResponse
 interface AuthRepository {
     suspend fun loginUser(phoneNumber: String, pin: String, tenantId: String, refId: String, registrationFees: Double, registrationFeeStatus: String): Result<PrestaLogInResponse>
     suspend fun updateAuthToken(tenantId: String, refId: String): Result<RefreshTokenResponse>
+    suspend fun updateUserMetadata(data: PrestaCheckAuthUserResponse, refId: String)
     suspend fun checkTenantServices(token: String, tenantId: String): Result<List<TenantServicesResponse>>
     suspend fun checkTenantServicesConfig(token: String, tenantId: String): Result<List<TenantServiceConfigResponse>>
     suspend fun checkAuthenticatedUser(token: String): Result<PrestaCheckAuthUserResponse>
@@ -29,6 +30,11 @@ interface AuthRepository {
         val phoneNumber: String,
         val expires_in: Long,
         val refresh_expires_in: Long,
-        val tenantId: String
+        val tenantId: String,
+        val keycloakId: String?,
+        val username: String?,
+        val email: String?,
+        val firstName: String?,
+        val lastName: String?
     )
 }

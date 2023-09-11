@@ -1,6 +1,7 @@
 package com.presta.customer
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.KeyguardManager
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -9,11 +10,16 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.pm.Signature
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
+import android.provider.ContactsContract
 import android.util.Base64
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +31,8 @@ import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.i18n.phonenumbers.PhoneNumberUtil
+import com.google.i18n.phonenumbers.Phonenumber
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
@@ -53,7 +61,13 @@ data class LocalAuthenticationResult (
 actual class Platform(
     private val context: Context
 ) {
+    private val phoneUtil = PhoneNumberUtil.getInstance()
+    private val currentActivity: AppCompatActivity = (context as AppCompatActivity)
+    private val contactRequestCode = 421
+    private var contactRequestCodeValue: Int? = null
+    private var alpha2CodeValue: String? = null
     actual val otpCode = MutableStateFlow("")
+    actual val resultFromContact: MutableStateFlow<Map<String, String>> = MutableStateFlow(emptyMap())
     actual fun showToast(text: String, duration: Durations) {
         Toast.makeText(
             context, text, when (duration) {
@@ -62,13 +76,11 @@ actual class Platform(
             }
         ).show()
     }
-
     actual fun openUrl(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
         context.startActivity(intent)
     }
-
     actual  fun logErrorsToFirebase(Error: Exception){
         //Firebase.crashlytics.log(Error)
         FirebaseCrashlytics.getInstance().recordException(Error)
@@ -111,6 +123,93 @@ actual class Platform(
         }
         return hash.value
     }
+
+    private fun handleOnActivityResult(activity: Activity?, requestCode: Int?, country: String?, resultCode: Int, data: Intent?) {
+        if (requestCode == contactRequestCode) {
+            if (resultCode == Activity.RESULT_OK && data !== null) {
+                var cursor: Cursor? = null
+
+                try {
+                    val contactUri: Uri? = data.data
+
+                    val projection = arrayOf(
+                        ContactsContract.CommonDataKinds.Phone.NUMBER,
+                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
+                    )
+
+                    if (contactUri !== null) {
+                        cursor = activity!!.contentResolver
+                            .query(contactUri, projection, null, null, null)
+
+                        var number: String? = ""
+
+                        var name: String? = ""
+
+                        if (cursor !== null && cursor.count > 0) {
+                            if (cursor.moveToFirst()) {
+                                val column =
+                                    cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                                number = cursor.getString(column)
+                                val column0 =
+                                    cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+                                name = cursor.getString(column0)
+                            }
+                        }
+
+                        val phoneNumber: Phonenumber.PhoneNumber = phoneUtil.parseAndKeepRawInput(number, country)
+
+                        if (name !== null) {
+                            resultFromContact.value = mapOf(name to "${phoneNumber.countryCode}${phoneNumber.nationalNumber}")
+                        }
+
+                    }
+
+
+                } catch (e: Exception) {
+                    resultFromContact.value = mapOf("CONTACT_PICKER_FAILED" to e.stackTraceToString())
+                } finally {
+                    if (cursor !== null) {
+                        cursor.close()
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    private val startForResult = currentActivity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data
+
+            if (intent != null) {
+                println(intent.extras)
+
+                handleOnActivityResult(currentActivity, contactRequestCodeValue, alpha2CodeValue, result.resultCode, intent)
+            }
+        }
+    }
+
+    actual fun getContact(contactRequestCode: Int, alpha2Code: String): MutableStateFlow<Map<String, String>> {
+        return try {
+            alpha2CodeValue = alpha2Code
+            contactRequestCodeValue = contactRequestCode
+            val contacts = Intent(Intent.ACTION_PICK).apply {
+                setDataAndType( ContactsContract.Contacts.CONTENT_URI, ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE)
+            }
+            startForResult.apply {
+                launch(contacts)
+            }
+            resultFromContact.value = mapOf("ACTIVITY_STARTED" to "TRUE")
+            resultFromContact
+        } catch (e: Exception) {
+            e.printStackTrace()
+            resultFromContact.value = mapOf("E_FAILED_TO_SHOW_PICKER" to e.stackTraceToString())
+            resultFromContact
+        }
+    }
+
+
     init {
         val intentFilter = IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION)
         context.registerReceiver(
@@ -173,6 +272,8 @@ class AppSignatureHelper(
         return null
     }
 }
+
+actual fun getPlatformName(): String = "Android"
 
 class BiometricAuthenticator(
     private val context: AppContext
@@ -396,7 +497,5 @@ class BiometricAuthenticator(
 
 
 }
-
-actual fun getPlatformName(): String = "Android"
 
 

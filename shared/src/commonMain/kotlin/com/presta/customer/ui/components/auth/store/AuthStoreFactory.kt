@@ -62,7 +62,23 @@ internal class AuthStoreFactory(
         data class ScreensChanged(val screens: List<ScreensBottom>): Msg()
         data class AuthFailed(val error: String?) : Msg()
 
-        data class CachedMemberData(val accessToken: String, val refreshToken: String, val refId: String, val session_id: String, val registrationFees: Double, val registrationFeeStatus: String, val phoneNumber: String, val expires_in: Long, val refresh_expires_in: Long, val tenantId: String): Msg()
+        data class CachedMemberData(
+            val accessToken: String,
+            val refreshToken: String,
+            val session_id: String,
+            val expires_in: Long,
+            val refresh_expires_in: Long,
+            val refId: String,
+            val registrationFees: Double,
+            val registrationFeeStatus: String,
+            val phoneNumber: String,
+            val tenantId: String,
+            val keycloakId: String?,
+            val username: String?,
+            val email: String?,
+            val firstName: String?,
+            val lastName: String?
+        ): Msg()
     }
 
     private inner class ExecutorImpl : CoroutineExecutor<AuthStore.Intent, Unit, AuthStore.State, Msg, Nothing>(
@@ -82,7 +98,7 @@ internal class AuthStoreFactory(
                     intent.registrationFees,
                     intent.registrationFeeStatus
                 )
-                is AuthStore.Intent.CheckAuthenticatedUser -> checkAuthenticatedUser(intent.token)
+                is AuthStore.Intent.CheckAuthenticatedUser -> checkAuthenticatedUser(intent.token, intent.refId)
                 is AuthStore.Intent.UpdateError -> updateError(error = intent.error)
                 is AuthStore.Intent.GetCachedMemberData -> getCachedMemberData()
                 is AuthStore.Intent.UpdateContext -> dispatch(Msg.UpdateContext(
@@ -146,7 +162,7 @@ internal class AuthStoreFactory(
 
         private var checkAuthenticatedUserJob: Job? = null
 
-        private fun checkAuthenticatedUser(token: String) {
+        private fun checkAuthenticatedUser(token: String, refId: String) {
             if (checkAuthenticatedUserJob?.isActive == true) return
 
             dispatch(Msg.AuthLoading())
@@ -155,6 +171,7 @@ internal class AuthStoreFactory(
                 authRepository.checkAuthenticatedUser(token)
                     .onSuccess { response ->
                         dispatch(Msg.CheckAuthenticatedUserLoaded(response))
+                        authRepository.updateUserMetadata(response, refId)
                     }
                     .onFailure { e ->
                         dispatch(Msg.AuthFailed(e.message))
@@ -181,7 +198,12 @@ internal class AuthStoreFactory(
                     phoneNumber = response.phoneNumber,
                     expires_in = response.expires_in,
                     refresh_expires_in = response.refresh_expires_in,
-                    tenantId = response.tenantId
+                    tenantId = response.tenantId,
+                    keycloakId = response.keycloakId,
+                    username = response.username,
+                    email = response.email,
+                    firstName = response.firstName,
+                    lastName = response.lastName
                 ))
             }
         }
@@ -315,7 +337,12 @@ internal class AuthStoreFactory(
                     phoneNumber = msg.phoneNumber,
                     expires_in = msg.expires_in,
                     refresh_expires_in = msg.refresh_expires_in,
-                    tenantId = msg.tenantId
+                    tenantId = msg.tenantId,
+                    keycloakId = msg.keycloakId,
+                    username = msg.username,
+                    email = msg.email,
+                    firstName = msg.firstName,
+                    lastName = msg.lastName
                 ))
                 is Msg.ClearAuthDetails -> copy(
                     loginResponse = null,

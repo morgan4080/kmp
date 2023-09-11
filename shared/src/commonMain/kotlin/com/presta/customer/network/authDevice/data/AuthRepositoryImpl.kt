@@ -90,6 +90,17 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
         }
     }
 
+    override suspend fun updateUserMetadata(data: PrestaCheckAuthUserResponse, refId: String) {
+        userAuthDao.updateMetaData(
+            keycloakId = data.keycloakId,
+            username = data.username,
+            email = data.email,
+            firstName = data.firstName,
+            lastName = data.lastName,
+            refId
+        )
+    }
+
     override suspend fun checkTenantServices(token: String, tenantId: String): Result<List<TenantServicesResponse>> {
         return try {
             val response = prestaAuthClient.checkTenantServices(token, tenantId)
@@ -128,6 +139,11 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
         var registrationFees = 0.0
         var registrationFeeStatus = "NOT_PAID"
         var tenantId = OrganisationModel.organisation.tenant_id
+        var keycloakId: String? = null
+        var username: String? = null
+        var email: String? = null
+        var firstName: String? = null
+        var lastName: String? = null
 
         userAuthDao.selectUserAuthCredentials().map {
             accessToken = it.access_token
@@ -140,6 +156,11 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
             registrationFeeStatus = it.registrationFeeStatus
             phoneNumber = it.phoneNumber
             tenantId = if (it.tenant_id != "") it.tenant_id else tenantId
+            keycloakId = it.keycloakId
+            username = it.username
+            email = it.email
+            firstName = it.firstName
+            lastName = it.lastName
         }
 
         return AuthRepository.ResponseTransform(
@@ -152,7 +173,12 @@ class AuthRepositoryImpl: AuthRepository, KoinComponent {
             registrationFees = registrationFees,
             registrationFeeStatus = registrationFeeStatus,
             phoneNumber = phoneNumber,
-            tenantId = tenantId
+            tenantId = tenantId,
+            keycloakId = keycloakId,
+            username = username,
+            email = email,
+            firstName = firstName,
+            lastName = lastName,
         )
     }
 
