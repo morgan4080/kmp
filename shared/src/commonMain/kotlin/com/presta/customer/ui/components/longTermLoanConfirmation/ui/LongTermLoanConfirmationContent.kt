@@ -45,7 +45,7 @@ fun LongTermLoanConfirmationContent(
     onLongTermLoanEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
     state: ApplyLongTermLoansStore.State,
 ) {
-    var tabs = listOf("User Information", "Loan Information")
+    val tabs = listOf("User Information", "Loan Information")
     var tabIndex by remember { mutableStateOf(0) }
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Confirmation", onClickContainer = {

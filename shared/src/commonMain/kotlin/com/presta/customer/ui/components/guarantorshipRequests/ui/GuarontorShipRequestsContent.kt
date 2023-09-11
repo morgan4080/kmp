@@ -257,25 +257,25 @@ fun GuarantorShipRequestsContent(
                                 .size(70.dp)
                                 .clickable {
                                     //Todo--commented for test
-//                                    authState.cachedMemberData?.let {
-//                                        ApplyLongTermLoansStore.Intent.GetGuarantorAcceptanceStatus(
-//                                            token = it.accessToken,
-//                                            guarantorshipRequestRefId = guarantorshipRequestRefId,
-//                                            isAccepted = true
-//                                        )
-//                                    }?.let {
-//                                        onEvent(
-//                                            it
-//                                        )
-//                                    }
-                                    component.onAcceptSelected(
-                                        loanNumber = loanNumber,
-                                        amount = if (amountToGuarantee != "") amountToGuarantee.toDouble() else 0.0,
-                                        loanRequestRefId = loanRequestRefId,
-                                        memberRefId = memberRefId,
-                                        guarantorRefId = guarantorRefIdRefId
-                                    )
-                                    modalBottomScope.launch { modalBottomState.hide() }
+                                    authState.cachedMemberData?.let {
+                                        ApplyLongTermLoansStore.Intent.GetGuarantorAcceptanceStatus(
+                                            token = it.accessToken,
+                                            guarantorshipRequestRefId = guarantorshipRequestRefId,
+                                            isAccepted = true
+                                        )
+                                    }?.let {
+                                        onEvent(
+                                            it
+                                        )
+                                    }
+//                                    component.onAcceptSelected(
+//                                        loanNumber = loanNumber,
+//                                        amount = if (amountToGuarantee != "") amountToGuarantee.toDouble() else 0.0,
+//                                        loanRequestRefId = loanRequestRefId,
+//                                        memberRefId = memberRefId,
+//                                        guarantorRefId = guarantorRefIdRefId
+//                                    )
+//                                    modalBottomScope.launch { modalBottomState.hide() }
                                 }
                                 .clip(shape = CircleShape),
                             tint = MaterialTheme.colorScheme.tertiaryContainer
@@ -298,17 +298,17 @@ fun GuarantorShipRequestsContent(
                                 .clickable {
                                     //Todo----commented for test
                                     //Request Declined
-//                                    authState.cachedMemberData?.let {
-//                                        ApplyLongTermLoansStore.Intent.GetGuarantorAcceptanceStatus(
-//                                            token = it.accessToken,
-//                                            guarantorshipRequestRefId = guarantorshipRequestRefId,
-//                                            isAccepted = false
-//                                        )
-//                                    }?.let {
-//                                        onEvent(
-//                                            it
-//                                        )
-//                                    }
+                                    authState.cachedMemberData?.let {
+                                        ApplyLongTermLoansStore.Intent.GetGuarantorAcceptanceStatus(
+                                            token = it.accessToken,
+                                            guarantorshipRequestRefId = guarantorshipRequestRefId,
+                                            isAccepted = false
+                                        )
+                                    }?.let {
+                                        onEvent(
+                                            it
+                                        )
+                                    }
                                     modalBottomScope.launch { modalBottomState.hide() }
                                 }
                                 .clip(shape = CircleShape),

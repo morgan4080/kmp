@@ -1,9 +1,11 @@
 package com.presta.customer.network.longTermLoans.model
 
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LoanRequestListData(
+data class LoanRequestListData @OptIn(ExperimentalSerializationApi::class) constructor(
     val refId: String,
     val loanDate: String,
     val loanRequestNumber: String,
@@ -11,7 +13,7 @@ data class LoanRequestListData(
     val loanProductRefId: String,
     val loanAmount: Double,
     val status: String,
-    val signingStatus: String,
+    @EncodeDefault val signingStatus: String?=null,
     val acceptanceStatus: String,
     val applicationStatus: LoanApplicationStatus,
     val memberRefId: String,
@@ -21,5 +23,5 @@ data class LoanRequestListData(
     val memberLastName: String,
     val phoneNumber: String,
     val loanRequestProgress: Double,
-    val applicantSigned: Boolean
+    @EncodeDefault val applicantSigned: Boolean?=null
 )

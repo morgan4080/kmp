@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -63,17 +62,22 @@ fun SignLoanFormContent(
     }
 
     if (component.loanRequestRefId != "") {
-        authState.cachedMemberData?.let {
-            ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
-                token = it.accessToken,
-                loanRequestRefId = component.loanRequestRefId,
-                actorRefId = component.memberRefId,
-                actorType = ActorType.APPLICANT
-            )
-        }?.let {
-            onEvent(
-                it
-            )
+        LaunchedEffect(
+            component.loanRequestRefId,
+            state.prestaLoanByLoanRequestRefId
+        ) {
+            authState.cachedMemberData?.let {
+                ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
+                    token = it.accessToken,
+                    loanRequestRefId = component.loanRequestRefId,
+                    actorRefId = component.memberRefId,
+                    actorType = ActorType.APPLICANT
+                )
+            }?.let {
+                onEvent(
+                    it
+                )
+            }
         }
     }
 

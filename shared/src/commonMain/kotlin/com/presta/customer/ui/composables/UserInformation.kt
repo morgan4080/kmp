@@ -98,6 +98,7 @@ fun UserInformation(
 
         } else {
             //launch pop up to show reason of loan failure
+            //Todo--if loan pending reason is not null
             if (state.prestaLongTermLoanRequestData?.refId.isNullOrEmpty() && sendLoanRequest) {
                 launchHandleLoanRequestPopUp = true
                 sendLoanRequest = false

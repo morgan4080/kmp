@@ -141,8 +141,10 @@ class DefaultSignLoanFormComponent(
 
                     flow.collect {
                         it.onSuccess { response ->
-                            if (response.applicantSigned) {
-                                onDocumentSigned(loanNumber,amount)
+                            if (response.applicantSigned!=null) {
+                                if (response.applicantSigned){
+                                    onDocumentSigned(loanNumber,amount)
+                                }
                             }
                             println("Poll has Succeded ::::::")
                         }.onFailure { error ->

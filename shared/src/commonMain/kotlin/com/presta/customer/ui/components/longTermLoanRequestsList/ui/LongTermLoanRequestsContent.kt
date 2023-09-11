@@ -208,7 +208,7 @@ fun LongTermLoanRequestsContent(
                         )
 
                         Text(
-                            text = if (state.prestaLoanByLoanRequestRefId?.applicationStatus != null) state.prestaLoanByLoanRequestRefId.applicationStatus.lowercase() else "",
+                            text = state.prestaLoanByLoanRequestRefId.applicationStatus.lowercase(),
                             fontSize = 14.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                             color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f)
