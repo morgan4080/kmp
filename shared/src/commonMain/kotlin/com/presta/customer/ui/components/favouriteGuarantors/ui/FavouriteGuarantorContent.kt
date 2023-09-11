@@ -93,8 +93,6 @@ import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import readContacts.ContactListEvent
-import readContacts.ImagePicker
 
 @Serializable
 data class FavouriteGuarantorDetails(
@@ -112,8 +110,6 @@ fun FavouriteGuarantorContent(
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
     signHomeState: SignHomeStore.State,
     onProfileEvent: (SignHomeStore.Intent) -> Unit,
-    imagePicker: ImagePicker? = null,
-    onEvent3: ((ContactListEvent) -> Unit?)? =null,
 ) {
     var launchPopUp by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
@@ -210,11 +206,6 @@ fun FavouriteGuarantorContent(
     //Todo----- Handle native feature
 
     //Handle native feature
-    imagePicker?.registerPicker { imageBytes ->
-        if (onEvent3 != null) {
-            onEvent3(ContactListEvent.OnPhotoPicked(imageBytes))
-        }
-    }
 
     ModalBottomSheetLayout(
         sheetState = modalBottomState,
@@ -433,10 +424,6 @@ fun FavouriteGuarantorContent(
                                                 .size(25.dp),
                                             onClick = {
 //                                                readPhonenumber?.picknumber(context = AppContext())
-                                                if (onEvent3 != null) {
-                                                    onEvent3(ContactListEvent.OnAddNewContactClick)
-                                                }
-                                                imagePicker?.pickImage()
                                                 println("Read phone number invoked :::::::")
 
 //                                            snackBarScope.launch {

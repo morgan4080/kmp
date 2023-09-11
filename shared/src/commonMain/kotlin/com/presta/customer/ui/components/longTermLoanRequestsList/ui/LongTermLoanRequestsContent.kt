@@ -152,6 +152,7 @@ fun LongTermLoanRequestsContent(
         }
     }
 
+
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -193,12 +194,34 @@ fun LongTermLoanRequestsContent(
                         .padding(top = 20.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = if (state.prestaLoanByLoanRequestRefId?.loanProductName != null) state.prestaLoanByLoanRequestRefId.loanProductName else "",
-                        fontSize = 14.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f)
-                    )
+                    if (state.isLoading || state.prestaLoanByLoanRequestRefId?.loanProductName==null) {
+//                        Text(
+//                            modifier = Modifier.background(
+//                                brush = ShimmerBrush(
+//                                    targetValue = 1300f,
+//                                    showShimmer = state.isLoading
+//                                ),
+//                                shape = RoundedCornerShape(12.dp)
+//                            ).defaultMinSize(200.dp),
+//                            text = "",
+//                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f),
+//                            fontSize = 14.sp
+//                        )
+
+                        shimmerTextContainer(showLoadingShimmer = state.isLoading)
+                        shimmerTextContainer(showLoadingShimmer = state.isLoading)
+
+
+                    } else {
+                        Text(
+                            text = state.prestaLoanByLoanRequestRefId.loanProductName,
+                            fontSize = 14.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f)
+                        )
+
+                    }
+
                     Text(
                         text = if (state.prestaLoanByLoanRequestRefId?.applicationStatus != null) state.prestaLoanByLoanRequestRefId.applicationStatus.lowercase() else "",
                         fontSize = 14.sp,
@@ -873,5 +896,21 @@ fun GuarantorDataCard(
     }
 }
 
+@Composable
+fun shimmerTextContainer(showLoadingShimmer: Boolean){
+    Text(
+        modifier = Modifier.background(
+            brush = ShimmerBrush(
+                targetValue = 1300f,
+                showShimmer =showLoadingShimmer
+            ),
+            shape = RoundedCornerShape(12.dp)
+        ).defaultMinSize(100.dp),
+        text = "",
+        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f),
+        fontSize = 14.sp
+    )
+
+}
 
 

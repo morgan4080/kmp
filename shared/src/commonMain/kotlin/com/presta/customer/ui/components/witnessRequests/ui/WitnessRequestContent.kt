@@ -42,7 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -270,7 +269,7 @@ fun WitnessRequestContent(
                                     }
                                 }
                                 .clip(shape = CircleShape),
-                            tint = Color.Green.copy(alpha = 0.5f)
+                            tint =MaterialTheme.colorScheme.tertiaryContainer
                         )
                         Text(
                             "Accept ",
@@ -278,7 +277,7 @@ fun WitnessRequestContent(
                                 .padding(top = 10.dp),
                             fontSize = 12.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                            color = Color.Green.copy(alpha = 0.5f)
+                            color = MaterialTheme.colorScheme.tertiaryContainer
                         )
                     }
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -310,7 +309,7 @@ fun WitnessRequestContent(
                                 .padding(top = 10.dp),
                             fontSize = 12.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                            color = MaterialTheme.colorScheme.error.copy(alpha = 0.8f)
+                            color = MaterialTheme.colorScheme.error
                         )
                     }
                 }

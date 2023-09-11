@@ -4,7 +4,6 @@ import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLo
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import kotlinx.coroutines.flow.StateFlow
-import readContacts.ReadPhonenumber
 
 interface FavouriteGuarantorsComponent {
     val authStore: AuthStore

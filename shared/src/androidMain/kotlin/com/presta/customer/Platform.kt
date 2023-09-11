@@ -73,13 +73,6 @@ actual class Platform actual constructor(
         context.startActivity(intent)
     }
 
-    actual fun convertBase64ToImage(base64String: String): Any {
-        val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
-        val bitmap = android.graphics.BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-        return bitmap
-    }
-
-
     @SuppressLint("Range")
     actual fun getContact(): List<Contact> {
         //open library
