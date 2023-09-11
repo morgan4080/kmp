@@ -195,19 +195,6 @@ fun LongTermLoanRequestsContent(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     if (state.isLoading || state.prestaLoanByLoanRequestRefId?.loanProductName == null) {
-//                        Text(
-//                            modifier = Modifier.background(
-//                                brush = ShimmerBrush(
-//                                    targetValue = 1300f,
-//                                    showShimmer = state.isLoading
-//                                ),
-//                                shape = RoundedCornerShape(12.dp)
-//                            ).defaultMinSize(200.dp),
-//                            text = "",
-//                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f),
-//                            fontSize = 14.sp
-//                        )
-
                         shimmerTextContainer(showLoadingShimmer = state.isLoading)
                         shimmerTextContainer(showLoadingShimmer = state.isLoading)
 
