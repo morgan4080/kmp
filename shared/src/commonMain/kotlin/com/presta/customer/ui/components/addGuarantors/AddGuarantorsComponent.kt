@@ -1,6 +1,5 @@
 package com.presta.customer.ui.components.addGuarantors
 
-import com.presta.customer.ContactsUtils
 import com.presta.customer.Platform
 import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
@@ -19,7 +18,6 @@ interface AddGuarantorsComponent {
     val loanPurposeCategoryCode: String
     val loanPurpose: String
     val platform: Platform
-    val contactlist: ContactsUtils
     fun onBackNavClicked()
     fun onContinueSelected(
         loanRefId: String,

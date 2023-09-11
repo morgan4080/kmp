@@ -15,12 +15,30 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.network.payments.model.PaymentStatuses
+import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.prestaDispatchers
+import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
+import com.presta.customer.ui.components.addGuarantors.DefaultAddGuarantorsComponent
+import com.presta.customer.ui.components.addWitness.AddWitnessComponent
+import com.presta.customer.ui.components.addWitness.DefaultAddWitnessComponent
+import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComponent
+import com.presta.customer.ui.components.applyLongTermLoan.DefaultApplyLongtermLoanComponent
 import com.presta.customer.ui.components.auth.AuthComponent
 import com.presta.customer.ui.components.auth.DefaultAuthComponent
+import com.presta.customer.ui.components.favouriteGuarantors.DefaultFavouriteGuarantorsComponent
+import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGuarantorsComponent
+import com.presta.customer.ui.components.guarantorshipRequests.DefaultGuarantorshipRequestComponent
+import com.presta.customer.ui.components.guarantorshipRequests.GuarantorshipRequestComponent
+import com.presta.customer.ui.components.longTermLoanConfirmation.DefaultLongTermLoanConfirmationComponent
+import com.presta.customer.ui.components.longTermLoanConfirmation.LongTermLoanConfirmationComponent
+import com.presta.customer.ui.components.longTermLoanDetails.DefaultLongTermLoanDetailsComponent
+import com.presta.customer.ui.components.longTermLoanDetails.LongTermLoanDetailsComponent
+import com.presta.customer.ui.components.longTermLoanSignStatus.DefaultLongTermLoanSigningStatusComponent
+import com.presta.customer.ui.components.longTermLoanSignStatus.LongtermLoanSigningStatusComponent
 import com.presta.customer.ui.components.onBoarding.DefaultOnboardingComponent
 import com.presta.customer.ui.components.onBoarding.OnBoardingComponent
 import com.presta.customer.ui.components.otp.DefaultOtpComponent
@@ -40,8 +58,20 @@ import com.presta.customer.ui.components.processingTransaction.ProcessingTransac
 import com.presta.customer.ui.components.profile.coroutineScope
 import com.presta.customer.ui.components.registration.DefaultRegistrationComponent
 import com.presta.customer.ui.components.registration.RegistrationComponent
+import com.presta.customer.ui.components.replaceGuarantor.DefaultReplaceGuarantorComponent
+import com.presta.customer.ui.components.replaceGuarantor.ReplaceGuarantorComponent
+import com.presta.customer.ui.components.rootBottomSign.DefaultRootBottomSignComponent
+import com.presta.customer.ui.components.rootBottomSign.RootBottomSignComponent
 import com.presta.customer.ui.components.rootBottomStack.DefaultRootBottomComponent
 import com.presta.customer.ui.components.rootBottomStack.RootBottomComponent
+import com.presta.customer.ui.components.selectLoanPurpose.DefaultSelectLoanPurposeComponent
+import com.presta.customer.ui.components.selectLoanPurpose.SelectLoanPurposeComponent
+import com.presta.customer.ui.components.signGuarantorForm.DefaultSignGuarantorFormComponent
+import com.presta.customer.ui.components.signGuarantorForm.SignGuarantorFormComponent
+import com.presta.customer.ui.components.signLoanForm.DefaultSignLoanFormComponent
+import com.presta.customer.ui.components.signLoanForm.SignLoanFormComponent
+import com.presta.customer.ui.components.signWitnessForm.DefaultSignWitnessFormComponent
+import com.presta.customer.ui.components.signWitnessForm.SignWitnessFormComponent
 import com.presta.customer.ui.components.splash.DefaultSplashComponent
 import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.tenant.DefaultTenantComponent
@@ -50,6 +80,8 @@ import com.presta.customer.ui.components.transactionHistory.DefaultTransactionHi
 import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
 import com.presta.customer.ui.components.welcome.DefaultWelcomeComponent
 import com.presta.customer.ui.components.welcome.WelcomeComponent
+import com.presta.customer.ui.components.witnessRequests.DefaultWitnessRequestComponent
+import com.presta.customer.ui.components.witnessRequests.WitnessRequestComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -68,6 +100,12 @@ class DefaultRootComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
 ) : RootComponent, ComponentContext by componentContext {
+
+    lateinit var loanRefid: String
+    lateinit var passedLoanNumber: String
+    lateinit var passedAmount: String
+    lateinit var passedGuarantorRefId: String
+    lateinit var passedMemberRefid: String
 
     private val navigation = StackNavigation<Config>()
 
@@ -102,6 +140,77 @@ class DefaultRootComponent(
             )
             is Config.LoanPendingApprovals ->  RootComponent.Child.LoanPendingApprovalsChild(
                 loansPendingApprovalComponent(componentContext)
+            )
+            is Config.SignApp -> RootComponent.Child.SignAppChild(
+                signApplication(
+                    componentContext,
+                    config
+                )
+            )
+
+            is Config.ApplyLongTermLoans -> RootComponent.Child.ApplyLongtermLoanChild(
+                applyLongTermLoanComponent(componentContext)
+            )
+
+            is Config.LongTermLoanDetails -> RootComponent.Child.LongTermLoanDetailsChild(
+                longTermLoanDetailsComponent(componentContext, config)
+            )
+
+            is Config.SelectLoanPurpose -> RootComponent.Child.SelectLoanPurposeChild(
+                selectLoanPurposeComponent(componentContext, config)
+            )
+
+            is Config.AddGuarantors -> RootComponent.Child.AddGuarantorsChild(
+                addGuarantorsComponent(
+                    componentContext,
+                    config
+                )
+            )
+
+            is Config.GuarantorshipRequest -> RootComponent.Child.GuarantorshipRequestChild(
+                guarantorshipRequestComponent(componentContext)
+            )
+
+            is Config.FavouriteGuarantors -> RootComponent.Child.FavouriteGuarantorsChild(
+                favouriteGuarantorsComponent(componentContext)
+            )
+
+            is Config.WitnessRequests -> RootComponent.Child.WitnessRequestChild(
+                witnessRequestComponent(componentContext)
+            )
+
+            is Config.AddWitness -> RootComponent.Child.AddWitnessChild(
+                addWitnessComponent(componentContext, config)
+            )
+
+            is Config.LongTermLoanConfirmation -> RootComponent.Child.LongTermLoanConfirmationChild(
+                longTermLoanConfirmationComponent(componentContext, config)
+            )
+
+            is Config.LongTermLoanSigningStatus -> RootComponent.Child.LongTermLoanSigningStatusChild(
+                longTermLoanSigningStatusComponent(componentContext, config)
+            )
+
+            is Config.SignDocument -> RootComponent.Child.SignGuarantorDocumentChild(
+                signGuarantorDocumentComponent(
+                    componentContext, config
+                )
+            )
+
+            is Config.SignWitnessDocument -> RootComponent.Child.SignWitnessDocumentChild(
+                signWitnessDocumentComponent(
+                    componentContext, config
+                )
+            )
+
+            is Config.SignLoanForm -> RootComponent.Child.SignLoanFormChild(
+                signLoanForm(
+                    componentContext, config
+                )
+            )
+
+            is Config.ReplaceGuarantor -> RootComponent.Child.ReplaceGuarantorChild(
+                replaceGuarantorComponent(componentContext, config)
             )
         }
 
@@ -158,11 +267,20 @@ class DefaultRootComponent(
             componentContext = componentContext,
             onBoardingContext = config.context,
             onGetStartedSelected = {
-                navigation.push(
-                    Config.OnBoarding(
-                        onBoardingContext = it
+                // TODO REMOVE ON WHITE LABEL
+                if (OrganisationModel.organisation.sandbox) {
+                    navigation.push(
+                        Config.Tenant(
+                            onBoardingContext = it
+                        )
                     )
-                )
+                } else {
+                    navigation.push(
+                        Config.OnBoarding(
+                            onBoardingContext = it
+                        )
+                    )
+                }
             },
         )
 
@@ -273,7 +391,6 @@ class DefaultRootComponent(
                 navigation.push(Config.LoanPendingApprovals)
             },
             logoutToSplash = {
-                println("::::::should logout here::::::")
                 scope.launch {
                     if (it) {
                         navigation.replaceAll(Config.Splash)
@@ -300,7 +417,10 @@ class DefaultRootComponent(
                     }
                 }
             },
-            backTopProfile = config.backTopProfile
+            backTopProfile = config.backTopProfile,
+            gotoSignApp = {
+                navigation.bringToFront(Config.SignApp(loanRefId = { "" }))
+            }
         )
 
     private fun allTransactionHistory(componentContext: ComponentContext): TransactionHistoryComponent =
@@ -390,6 +510,584 @@ class DefaultRootComponent(
             }
         )
 
+
+
+
+
+    // GUARANTORSHIP
+
+
+    private fun signApplication(
+        componentContext: ComponentContext,
+        config: Config.SignApp
+    ): RootBottomSignComponent =
+        DefaultRootBottomSignComponent(
+            componentContext = componentContext,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            gotoApplyAllLoans = {
+                //navigate to all  loans outside  bottom scope
+                navigation.bringToFront(Config.ApplyLongTermLoans)
+            },
+            gotoGuarantorshipRequests = {
+                navigation.push(Config.GuarantorshipRequest)
+            },
+            gotoFavouriteGuarantors = {
+                navigation.push(Config.FavouriteGuarantors)
+
+            },
+            gotoWitnessRequests = {
+                navigation.push(Config.WitnessRequests)
+            },
+            goBackToLMs = {
+                //navigate to  Lms
+                navigation.bringToFront(Config.RootBottom(backTopProfile = false))
+            },
+            gotoReplaceGuarantor = { loanRequestRefId, guarantorRefId, guarantorFirstName, guarantorLastName ->
+                //navigate  to replace  guarantor
+                navigation.push(
+                    Config.ReplaceGuarantor(
+                        loanRequestRefId,
+                        guarantorRefId,
+                        guarantorFirstName,
+                        guarantorLastName
+                    )
+                )
+
+            },
+            //Todo--- handle the sign loan form  state--------
+            gotoSignLoanForm = { loanNumber, amount, loanRequestRefId, memberRefId ->
+                navigation.push(
+                    Config.SignLoanForm(
+                        loanNumber = loanNumber,
+                        amount = amount,
+                        loanRequestRefId = loanRequestRefId,
+                        memberRefId = memberRefId
+                    )
+                )
+            },
+            loanRefId = config.loanRefId
+        )
+
+    private fun applyLongTermLoanComponent(componentContext: ComponentContext): ApplyLongTermLoanComponent =
+        DefaultApplyLongtermLoanComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
+
+            },
+            onProductClicked = { loanRefid ->
+                navigation.push(Config.LongTermLoanDetails(loanRefId = loanRefid))
+
+            },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            onResolveLoanClicked = { loanRequestRefId ->
+                //Todo navigate to bottom sign  and launch requests  if refid is not null
+                navigation.bringToFront(Config.SignApp(loanRefId = {
+                    loanRequestRefId
+                }))
+
+            }
+        )
+
+    private fun longTermLoanDetailsComponent(
+        componentContext: ComponentContext,
+        config: Config.LongTermLoanDetails
+    ): LongTermLoanDetailsComponent =
+        DefaultLongTermLoanDetailsComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
+            },
+            onConfirmClicked = { loanRefid, loanType, desireAmount, loanPeriod, requiredGuarantors ->
+                //navigate  to select Loan Details
+                navigation.push(
+                    Config.SelectLoanPurpose(
+                        loanRefId = loanRefid,
+                        loanType = loanType,
+                        desiredAmount = desireAmount,
+                        loanPeriod = loanPeriod,
+                        requiredGuarantors = requiredGuarantors
+                    )
+                )
+            },
+            loanRefId = config.loanRefId,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+        )
+
+    private fun selectLoanPurposeComponent(
+        componentContext: ComponentContext,
+        config: Config.SelectLoanPurpose
+    ): SelectLoanPurposeComponent =
+        DefaultSelectLoanPurposeComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                //signHomeNavigation.pop()
+                navigation.pop()
+            },
+            onContinueClicked = { loanRefId, loanType, desiredAmount, loanPeriod, requiredGuarantors, loanCategory, loanPurpose, loanPurposeCategory, loanPurposeCategoryCode ->
+                navigation.push(
+                    Config.AddGuarantors(
+                        loanRefId = loanRefId,
+                        loanType = loanType,
+                        desiredAmount = desiredAmount,
+                        loanPeriod = loanPeriod,
+                        requiredGuarantors = requiredGuarantors,
+                        loanCategory = loanCategory,
+                        loanPurpose = loanPurpose,
+                        loanPurposeCategory = loanPurposeCategory,
+                        loanPurposeCategoryCode = loanPurposeCategoryCode
+                    )
+                )
+            },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            loanRefId = config.loanRefId,
+            loanType = config.loanType,
+            desiredAmount = config.desiredAmount,
+            loanPeriod = config.loanPeriod,
+            requiredGuarantors = config.requiredGuarantors
+        )
+
+    private fun addGuarantorsComponent(
+        componentContext: ComponentContext,
+        config: Config.AddGuarantors
+    ): AddGuarantorsComponent =
+        DefaultAddGuarantorsComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                //signHomeNavigation.pop()
+                navigation.pop()
+            },
+            onContinueClicked = { loanRefId,
+                                  loanType,
+                                  desiredAmount,
+                                  loanPeriod,
+                                  requiredGuarantors,
+                                  loanCategory,
+                                  loanPurpose,
+                                  loanPurposeCategory,
+                                  businessType,
+                                  businessLocation,
+                                  kraPin,
+                                  employer,
+                                  employmentNumber,
+                                  grossSalary,
+                                  netSalary,
+                                  memberRefId,
+                                  guarantorList,
+                                  loanPurposeCategoryCode,
+                                  witnessRefid ->
+                //Navigate to confirm
+                navigation.push(
+                    Config.LongTermLoanConfirmation(
+                        loanRefId = loanRefId,
+                        loanType = loanType,
+                        desiredAmount = desiredAmount,
+                        loanPeriod = loanPeriod,
+                        requiredGuarantors = requiredGuarantors,
+                        loanCategory = loanCategory,
+                        loanPurpose = loanPurpose,
+                        loanPurposeCategory = loanPurposeCategory,
+                        businessType = businessType,
+                        businessLocation = businessLocation,
+                        kraPin = kraPin,
+                        employer = employer,
+                        employmentNumber = employmentNumber,
+                        grossSalary = grossSalary,
+                        netSalary = netSalary,
+                        memberRefId = memberRefId,
+                        guarantorList = guarantorList,
+                        loanPurposeCategoryCode = loanPurposeCategoryCode,
+                        witnessRefId = witnessRefid,
+                        witnessName = ""
+                    )
+                )
+            },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            loanRefId = config.loanRefId,
+            loanType = config.loanType,
+            desiredAmount = config.desiredAmount,
+            loanPeriod = config.loanPeriod,
+            requiredGuarantors = config.requiredGuarantors,
+            loanCategory = config.loanCategory,
+            loanPurpose = config.loanPurpose,
+            loanPurposeCategory = config.loanPurposeCategory,
+            loanPurposeCategoryCode = config.loanPurposeCategoryCode,
+            onNavigateToAddWitnessClicked = { loanRefId,
+                                              loanType,
+                                              desiredAmount,
+                                              loanPeriod,
+                                              requiredGuarantors,
+                                              loanCategory,
+                                              loanPurpose,
+                                              loanPurposeCategory,
+                                              businessType,
+                                              businessLocation,
+                                              kraPin,
+                                              employer,
+                                              employmentNumber,
+                                              grossSalary,
+                                              netSalary,
+                                              memberRefId,
+                                              guarantorList,
+                                              loanPurposeCategoryCode,
+                                              witnessRefid ->
+                //navigate to add Witness
+                navigation.push(
+                    Config.AddWitness(
+                        loanRefId = loanRefId,
+                        loanType = loanType,
+                        desiredAmount = desiredAmount,
+                        loanPeriod = loanPeriod,
+                        requiredGuarantors = requiredGuarantors,
+                        loanCategory = loanCategory,
+                        loanPurpose = loanPurpose,
+                        loanPurposeCategory = loanPurposeCategory,
+                        businessType = businessType,
+                        businessLocation = businessLocation,
+                        kraPin = kraPin,
+                        employer = employer,
+                        employmentNumber = employmentNumber,
+                        grossSalary = grossSalary,
+                        netSalary = netSalary,
+                        memberRefId = memberRefId,
+                        guarantorList = guarantorList,
+                        loanPurposeCategoryCode = loanPurposeCategoryCode,
+                        witnessRefId = witnessRefid
+                    )
+                )
+            }
+        )
+
+    private fun guarantorshipRequestComponent(componentContext: ComponentContext): GuarantorshipRequestComponent =
+        DefaultGuarantorshipRequestComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
+
+            },
+            onAcceptClicked = { loanNumber, amount, loanRequestRefId, memberRefId, guarantorRefId ->
+                loanRefid = loanRequestRefId
+                passedLoanNumber = loanNumber
+                passedAmount = amount.toString()
+                passedGuarantorRefId = guarantorRefId
+                passedMemberRefid = memberRefId
+                //Navigate to sign
+                navigation.push(
+                    Config.SignDocument(
+                        loanNumber = loanNumber,
+                        amount = amount,
+                        loanRequestRefId = loanRequestRefId,
+                        memberRefId = memberRefId,
+                        guarantorRefId = guarantorRefId
+                    )
+                )
+
+            },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+        )
+
+    private fun favouriteGuarantorsComponent(componentContext: ComponentContext): FavouriteGuarantorsComponent =
+        DefaultFavouriteGuarantorsComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
+
+            },
+            onProductClicked = {
+            },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main
+        )
+
+    private fun witnessRequestComponent(componentContext: ComponentContext): WitnessRequestComponent =
+        DefaultWitnessRequestComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
+
+            },
+            onProductClicked = {
+            },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            onAcceptClicked = { loanNumber, amount, loanRequestRefId, memberRefId, witnessRefId ->
+                //Navigate to sign
+                navigation.push(
+                    Config.SignWitnessDocument(
+                        loanNumber = loanNumber,
+                        amount = amount,
+                        loanRequestRefId = loanRequestRefId,
+                        memberRefId = memberRefId,
+                        guarantorRefId = witnessRefId
+                    )
+                )
+            }
+        )
+
+    private fun addWitnessComponent(
+        componentContext: ComponentContext,
+        config: Config.AddWitness
+    ): AddWitnessComponent =
+        DefaultAddWitnessComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
+
+            },
+            onProductClicked = {
+            },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            loanRefId = config.loanRefId,
+            loanType = config.loanType,
+            desiredAmount = config.desiredAmount,
+            loanPeriod = config.loanPeriod,
+            requiredGuarantors = config.requiredGuarantors,
+            loanCategory = config.loanCategory,
+            loanPurpose = config.loanPurpose,
+            loanPurposeCategory = config.loanPurposeCategory,
+            businessType = config.businessType,
+            businessLocation = config.businessLocation,
+            kraPin = config.kraPin,
+            employer = config.employer,
+            employmentNumber = config.employmentNumber,
+            grossSalary = config.grossSalary,
+            netSalary = config.netSalary,
+            memberRefId = config.memberRefId,
+            guarantorList = config.guarantorList,
+            loanPurposeCategoryCode = config.loanPurposeCategoryCode,
+            witnessRefId = config.witnessRefId,
+            onAddWitnessClicked = { loanRefId,
+                                    loanType,
+                                    desiredAmount,
+                                    loanPeriod,
+                                    requiredGuarantors,
+                                    loanCategory,
+                                    loanPurpose,
+                                    loanPurposeCategory,
+                                    businessType,
+                                    businessLocation,
+                                    kraPin,
+                                    employer,
+                                    employmentNumber,
+                                    grossSalary,
+                                    netSalary,
+                                    memberRefId,
+                                    guarantorList,
+                                    loanPurposeCategoryCode,
+                                    witnessRefid,
+                                    witnessName ->
+                navigation.push(
+                    Config.LongTermLoanConfirmation(
+                        loanRefId = loanRefId,
+                        loanType = loanType,
+                        desiredAmount = desiredAmount,
+                        loanPeriod = loanPeriod,
+                        requiredGuarantors = requiredGuarantors,
+                        loanCategory = loanCategory,
+                        loanPurpose = loanPurpose,
+                        loanPurposeCategory = loanPurposeCategory,
+                        businessType = businessType,
+                        businessLocation = businessLocation,
+                        kraPin = kraPin,
+                        employer = employer,
+                        employmentNumber = employmentNumber,
+                        grossSalary = grossSalary,
+                        netSalary = netSalary,
+                        memberRefId = memberRefId,
+                        guarantorList = guarantorList,
+                        loanPurposeCategoryCode = loanPurposeCategoryCode,
+                        witnessRefId = witnessRefid,
+                        witnessName = witnessName
+                    )
+                )
+            }
+        )
+
+    private fun longTermLoanConfirmationComponent(
+        componentContext: ComponentContext,
+        config: Config.LongTermLoanConfirmation
+    ): LongTermLoanConfirmationComponent =
+        DefaultLongTermLoanConfirmationComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
+            },
+            onProductClicked = {
+                //navigate to Application Status
+                navigation.push(Config.LongTermLoanSigningStatus(loanNumber = "", amount = 0.0))
+            },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            loanRefId = config.loanRefId,
+            loanType = config.loanType,
+            desiredAmount = config.desiredAmount,
+            loanPeriod = config.loanPeriod,
+            requiredGuarantors = config.requiredGuarantors,
+            loanCategory = config.loanCategory,
+            loanPurpose = config.loanPurpose,
+            loanPurposeCategory = config.loanPurposeCategory,
+            businessType = config.businessType,
+            businessLocation = config.businessLocation,
+            kraPin = config.kraPin,
+            employer = config.employer,
+            employmentNumber = config.employmentNumber,
+            grossSalary = config.grossSalary,
+            netSalary = config.netSalary,
+            memberRefId = config.memberRefId,
+            guarantorList = config.guarantorList,
+            loanPurposeCategoryCode = config.loanPurposeCategoryCode,
+            witnessRefId = config.witnessRefId,
+            witnessName = config.witnessName,
+            navigateToSignLoanFormCLicked = { loanNumber, amount, loanRequestRefId, memberRefId ->
+                navigation.push(
+                    Config.SignLoanForm(
+                        loanNumber = loanNumber,
+                        amount = amount,
+                        loanRequestRefId = loanRequestRefId,
+                        memberRefId = memberRefId
+                    )
+                )
+            }
+        )
+
+    private fun longTermLoanSigningStatusComponent(
+        componentContext: ComponentContext,
+        config: Config.LongTermLoanSigningStatus
+    ): LongtermLoanSigningStatusComponent =
+        DefaultLongTermLoanSigningStatusComponent(componentContext = componentContext,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            correlationId = "",
+            amount = config.amount,
+            loanNumber = config.loanNumber,
+            navigateToProfileClicked = {
+                navigation.replaceAll(Config.SignApp(loanRefId = { "" }))
+            }
+        )
+
+    private fun signGuarantorDocumentComponent(
+        componentContext: ComponentContext,
+        config: Config.SignDocument
+    ): SignGuarantorFormComponent =
+        DefaultSignGuarantorFormComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
+
+            },
+            onProductClicked = {
+            },
+            loanNumber = config.loanNumber,
+            amount = config.amount,
+            loanRequestRefId = config.loanRequestRefId,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            onDocumentSignedClicked = { loanNumber, amount ->
+                //when doc is signed navigate
+                navigation.bringToFront(Config.LongTermLoanSigningStatus(loanNumber, amount))
+            },
+            sign = false,
+            memberRefId = config.memberRefId,
+            guarantorRefId = config.guarantorRefId,
+            coroutinetineDispatcher = prestaDispatchers.main
+        )
+
+    private fun signWitnessDocumentComponent(
+        componentContext: ComponentContext,
+        config: Config.SignWitnessDocument
+    ): SignWitnessFormComponent =
+        DefaultSignWitnessFormComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
+
+            },
+            onProductClicked = {
+            },
+            loanNumber = config.loanNumber,
+            amount = config.amount,
+            loanRequestRefId = config.loanRequestRefId,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            onDocumentSignedClicked = { loanNumber, amount ->
+                //when doc is signed navigate
+                navigation.bringToFront(
+                    Config.LongTermLoanSigningStatus(
+                        loanNumber = loanNumber,
+                        amount = amount
+                    )
+                )
+            },
+            sign = false,
+            memberRefId = config.memberRefId,
+            guarantorRefId = config.guarantorRefId,
+            coroutinetineDispatcher = prestaDispatchers.main
+        )
+
+    private fun signLoanForm(
+        componentContext: ComponentContext,
+        config: Config.SignLoanForm
+    ): SignLoanFormComponent =
+        DefaultSignLoanFormComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
+
+            },
+            onProductClicked = {
+            },
+            loanNumber = config.loanNumber,
+            amount = config.amount,
+            loanRequestRefId = config.loanRequestRefId,
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            onDocumentSignedClicked = { loanNumber, amount ->
+                //when doc is signed navigate
+                navigation.bringToFront(
+                    Config.LongTermLoanSigningStatus(
+                        loanNumber = loanNumber,
+                        amount = amount
+                    )
+                )
+
+            },
+            sign = false,
+            memberRefId = config.memberRefId,
+            coroutinetineDispatcher = prestaDispatchers.main
+        )
+
+    private fun replaceGuarantorComponent(
+        componentContext: ComponentContext,
+        config: Config.ReplaceGuarantor
+    ): ReplaceGuarantorComponent =
+        DefaultReplaceGuarantorComponent(
+            componentContext = componentContext,
+            onItemClicked = {
+                navigation.pop()
+            },
+            onProductClicked = {
+            },
+            storeFactory = storeFactory,
+            mainContext = prestaDispatchers.main,
+            loanRequestRefId = config.loanRequestRefId,
+            guarantorRefId = config.guarantorRefId,
+            guarantorFirstName = config.guarantorFirstname,
+            guarantorLastName = config.guarantorLastName
+        )
+
+
+
+
+
+
+
     enum class OnBoardingContext {
         LOGIN,
         REGISTRATION
@@ -426,6 +1124,145 @@ class DefaultRootComponent(
         data class ProcessingTransaction(val correlationId: String, val amount: Double, val mode: PaymentTypes) :Config()
         @Parcelize
         data class ProcessingLoanLoanDisbursement(val correlationId: String, val amount: Double, val fees: Double) : Config()
+        @Parcelize
+        data class SignApp(
+            val loanRefId: () -> String,
+        ) : Config()
+
+
+
+
+
+        // GUARANTORSHIP
+
+
+
+
+        @Parcelize
+        object ApplyLongTermLoans : Config()
+
+        @Parcelize
+        data class LongTermLoanDetails(
+            val loanRefId: String,
+        ) : Config()
+
+        @Parcelize
+        data class SelectLoanPurpose(
+            val loanRefId: String,
+            val loanType: String,
+            val desiredAmount: Double,
+            val loanPeriod: Int,
+            val requiredGuarantors: Int,
+        ) : Config()
+
+        @Parcelize
+        data class AddGuarantors(
+            val loanRefId: String,
+            val loanType: String,
+            val desiredAmount: Double,
+            val loanPeriod: Int,
+            val requiredGuarantors: Int,
+            val loanCategory: String,
+            val loanPurpose: String,
+            val loanPurposeCategory: String,
+            val loanPurposeCategoryCode: String,
+        ) : Config()
+
+        @Parcelize
+        object GuarantorshipRequest : Config()
+
+        @Parcelize
+        object FavouriteGuarantors : Config()
+
+        @Parcelize
+        object WitnessRequests : Config()
+
+        @Parcelize
+        data class LongTermLoanConfirmation(
+            val loanRefId: String,
+            val loanType: String,
+            val desiredAmount: Double,
+            val loanPeriod: Int,
+            val requiredGuarantors: Int,
+            val loanCategory: String,
+            val loanPurpose: String,
+            val loanPurposeCategory: String,
+            val businessType: String,
+            val businessLocation: String,
+            val kraPin: String,
+            val employer: String,
+            val employmentNumber: String,
+            val grossSalary: Double,
+            val netSalary: Double,
+            val memberRefId: String,
+            val guarantorList: Set<GuarantorDataListing>,
+            val loanPurposeCategoryCode: String,
+            val witnessRefId: String,
+            val witnessName: String,
+        ) : Config()
+
+        @Parcelize
+        data class AddWitness(
+            val loanRefId: String,
+            val loanType: String,
+            val desiredAmount: Double,
+            val loanPeriod: Int,
+            val requiredGuarantors: Int,
+            val loanCategory: String,
+            val loanPurpose: String,
+            val loanPurposeCategory: String,
+            val businessType: String,
+            val businessLocation: String,
+            val kraPin: String,
+            val employer: String,
+            val employmentNumber: String,
+            val grossSalary: Double,
+            val netSalary: Double,
+            val memberRefId: String,
+            val guarantorList: Set<GuarantorDataListing>,
+            val loanPurposeCategoryCode: String,
+            val witnessRefId: String,
+        ) : Config()
+
+        @Parcelize
+        data class LongTermLoanSigningStatus(
+            val loanNumber: String,
+            val amount: Double,
+        ) : Config()
+
+        @Parcelize
+        data class SignDocument(
+            val loanNumber: String,
+            val amount: Double,
+            val loanRequestRefId: String,
+            val memberRefId: String,
+            val guarantorRefId: String
+        ) : Config()
+
+        @Parcelize
+        data class SignWitnessDocument(
+            val loanNumber: String,
+            val amount: Double,
+            val loanRequestRefId: String,
+            val memberRefId: String,
+            val guarantorRefId: String
+        ) : Config()
+
+        @Parcelize
+        data class SignLoanForm(
+            val loanNumber: String,
+            val amount: Double,
+            val loanRequestRefId: String,
+            val memberRefId: String,
+        ) : Config()
+
+        @Parcelize
+        data class ReplaceGuarantor(
+            val loanRequestRefId: String,
+            val guarantorRefId: String,
+            val guarantorFirstname: String,
+            val guarantorLastName: String
+        ) : Config()
     }
 
     init {

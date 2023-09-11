@@ -4,6 +4,8 @@ object NetworkConstants {
     const val applicationV2BaseUrl = "https://lending.presta.co.ke/applications/api/v2/"
     const val accountsBaseUrl = "https://accounts.presta.co.ke/"
     const val applicationV1BaseUrl="https://lending.presta.co.ke/applications/api/v1/"
+    const val eguarantorshipApplicationV1BaseUrl = "https://eguarantorship-api.presta.co.ke/api/v1/"
+    const val eguarantorshipApplicationV2BaseUrl = "https://eguarantorship-api.presta.co.ke/api/v2/"
 
 
     object PrestaAuthenticateUser {
@@ -98,5 +100,51 @@ object NetworkConstants {
     }
     object PrestaServices {
         const val route = applicationV2BaseUrl + "tenants-query/apps"
+    }
+    object PrestaGetLongTermLoansProducts {
+        const val route = eguarantorshipApplicationV1BaseUrl + "loans-products"
+    }
+    object PrestaGetTenantByPhoneNumber {
+        const val route = eguarantorshipApplicationV1BaseUrl + "members/search/by-phone"
+    }
+
+    object PrestaGetTenantByMemberNumber {
+        const val route = eguarantorshipApplicationV1BaseUrl + "members/member"
+    }
+
+    object PrestaGetLoanCategories {
+        const val route = eguarantorshipApplicationV1BaseUrl + "core-banking/sasra-code"
+    }
+
+    object PrestaGetClientSettings {
+        const val route = eguarantorshipApplicationV1BaseUrl + "clientSettings"
+    }
+    object PrestaLongTermLoanRequest {
+        const val route =  eguarantorshipApplicationV2BaseUrl + "loan-request"
+
+    }
+    object PrestaUpdateMemberDetails {
+        const val route =  eguarantorshipApplicationV1BaseUrl + "members"
+    }
+    object PrestaGetGuarantorshipRequests {
+        const val route =  eguarantorshipApplicationV1BaseUrl + "guarantorship-request"
+    }
+    object PrestaLongTermLoanRequestByRefId {
+        const val route = eguarantorshipApplicationV1BaseUrl+ "loan-request"
+    }
+    object PrestaGetLoanByLoanRequestId {
+        const val route =  eguarantorshipApplicationV1BaseUrl + "loan-request"
+    }
+    object PrestaGetZohoSignUrl {
+        const val route =  eguarantorshipApplicationV1BaseUrl + "zoho/get-sign-url"
+    }
+    object PrestaLongTermLoansRequetsList {
+        const val route =  eguarantorshipApplicationV1BaseUrl + "loan-request/query"
+    }
+    object PrestaWitnessRequests {
+        const val route =  eguarantorshipApplicationV1BaseUrl + "witness-request"
+    }
+    object PrestaFavouriteGuarantor {
+        const val route =  eguarantorshipApplicationV1BaseUrl + "favorite-guarantor"
     }
 }

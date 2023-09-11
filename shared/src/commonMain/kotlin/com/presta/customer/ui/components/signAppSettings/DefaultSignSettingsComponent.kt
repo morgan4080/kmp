@@ -66,7 +66,8 @@ class DefaultSignSettingsComponent (
                 if (state.cachedMemberData !== null) {
                     onAuthEvent(
                         AuthStore.Intent.CheckAuthenticatedUser(
-                            token = state.cachedMemberData.accessToken
+                            token = state.cachedMemberData.accessToken,
+                            state.cachedMemberData.refId
                         )
                     )
                     onEvent(

@@ -4,7 +4,6 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
-import com.presta.customer.ContactsUtils
 import com.presta.customer.Platform
 import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.network.onBoarding.model.PinStatus
@@ -142,7 +141,8 @@ class DefaultAddGuarantorsComponent(
                 if (state.cachedMemberData !== null) {
                     onAuthEvent(
                         AuthStore.Intent.CheckAuthenticatedUser(
-                            token = state.cachedMemberData.accessToken
+                            token = state.cachedMemberData.accessToken,
+                            state.cachedMemberData.refId
                         )
                     )
                     onProfileEvent(
@@ -162,7 +162,6 @@ class DefaultAddGuarantorsComponent(
     }
 
     override val platform by inject<Platform>()
-    override val contactlist by inject<ContactsUtils>()
     override fun onBackNavClicked() {
         onItemClicked()
     }

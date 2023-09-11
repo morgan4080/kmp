@@ -11,7 +11,7 @@ class OrganisationModel {
             "t11813",
             MR.images.logo,
             MR.images.logodark,
-            false,
+            true,
         )
 
         fun  loadOrganisation(org: Organisation) {
