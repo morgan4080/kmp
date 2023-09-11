@@ -194,7 +194,7 @@ fun LongTermLoanRequestsContent(
                         .padding(top = 20.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    if (state.isLoading || state.prestaLoanByLoanRequestRefId?.loanProductName==null) {
+                    if (state.isLoading || state.prestaLoanByLoanRequestRefId?.loanProductName == null) {
 //                        Text(
 //                            modifier = Modifier.background(
 //                                brush = ShimmerBrush(
@@ -220,14 +220,15 @@ fun LongTermLoanRequestsContent(
                             color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f)
                         )
 
+                        Text(
+                            text = if (state.prestaLoanByLoanRequestRefId?.applicationStatus != null) state.prestaLoanByLoanRequestRefId.applicationStatus.lowercase() else "",
+                            fontSize = 14.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f)
+                        )
+
                     }
 
-                    Text(
-                        text = if (state.prestaLoanByLoanRequestRefId?.applicationStatus != null) state.prestaLoanByLoanRequestRefId.applicationStatus.lowercase() else "",
-                        fontSize = 14.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f)
-                    )
 
                 }
                 Row(
@@ -897,12 +898,12 @@ fun GuarantorDataCard(
 }
 
 @Composable
-fun shimmerTextContainer(showLoadingShimmer: Boolean){
+fun shimmerTextContainer(showLoadingShimmer: Boolean) {
     Text(
         modifier = Modifier.background(
             brush = ShimmerBrush(
                 targetValue = 1300f,
-                showShimmer =showLoadingShimmer
+                showShimmer = showLoadingShimmer
             ),
             shape = RoundedCornerShape(12.dp)
         ).defaultMinSize(100.dp),
