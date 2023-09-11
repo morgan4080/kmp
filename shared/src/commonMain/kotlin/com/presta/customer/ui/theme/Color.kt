@@ -5,7 +5,7 @@ val Black = Color(0xFF090f0b)
 
 val Green200 = Color(0xFFbbf7d0)
 val Green300 = Color(0xFF2EB688)
-val Green400 = Color(0xFF145526)
+val Green400 = Color(0xFF46bd61)
 val Green500 = Color(0xFF046D4A)
 
 val Red300 = Color(0xFFF33736)

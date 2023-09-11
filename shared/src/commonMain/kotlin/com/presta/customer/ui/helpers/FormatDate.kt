@@ -1,6 +1,7 @@
 package com.presta.customer.ui.helpers
 
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 
 fun formatDate(date: String): String {
     val replacementPattern = Regex("\\s")
@@ -13,4 +14,5 @@ fun formatDDMMYY(date: String): String {
     val localDateTime = LocalDateTime.parse(date.replace(regex = replacementPattern, replacement = "T"))
     return "${localDateTime.dayOfMonth} ${localDateTime.month.toString().substring(0..2)} ${localDateTime.year}"
 }
+
 

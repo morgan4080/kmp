@@ -82,7 +82,6 @@ class PrestaShortTermLoansClient(
         }
     }
     //Get loan  product By id
-
     suspend fun getLoanProductById(
         token: String,
         loanRefId: String,

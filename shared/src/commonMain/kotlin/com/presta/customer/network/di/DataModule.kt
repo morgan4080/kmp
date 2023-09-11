@@ -4,6 +4,8 @@ import com.presta.customer.network.authDevice.data.AuthRepository
 import com.presta.customer.network.authDevice.data.AuthRepositoryImpl
 import com.presta.customer.network.loanRequest.data.LoanRequestRepository
 import com.presta.customer.network.loanRequest.data.LoanRequestRepositoryImpl
+import com.presta.customer.network.longTermLoans.data.LongTermLoansRepository
+import com.presta.customer.network.longTermLoans.data.LongTermLoansRepositoryImpl
 import com.presta.customer.network.onBoarding.data.OnBoardingRepository
 import com.presta.customer.network.onBoarding.data.OnBoardingRepositoryImpl
 import com.presta.customer.network.otp.data.OtpRepository
@@ -16,6 +18,8 @@ import com.presta.customer.network.registration.data.RegistrationRepository
 import com.presta.customer.network.registration.data.RegistrationRepositoryImpl
 import com.presta.customer.network.shortTermLoans.data.ShortTermLoansRepository
 import com.presta.customer.network.shortTermLoans.data.ShortTermLoansRepositoryImpl
+import com.presta.customer.network.signHome.data.SignHomeRepository
+import com.presta.customer.network.signHome.data.SignHomeRepositoryImpl
 import com.presta.customer.network.tenant.data.TenantRepository
 import com.presta.customer.network.tenant.data.TenantRepositoryImpl
 import org.koin.dsl.module
@@ -30,4 +34,6 @@ val dataModule = module {
     single<ShortTermLoansRepository> { ShortTermLoansRepositoryImpl() }
     single<LoanRequestRepository>{ LoanRequestRepositoryImpl() }
     single<TenantRepository>{ TenantRepositoryImpl()}
+    single<SignHomeRepository>{ SignHomeRepositoryImpl()}
+    single<LongTermLoansRepository>{ LongTermLoansRepositoryImpl()}
 }

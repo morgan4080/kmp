@@ -1,0 +1,63 @@
+package com.presta.customer.ui.components.addWitness
+
+import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
+import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
+import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
+import kotlinx.coroutines.flow.StateFlow
+
+interface AddWitnessComponent {
+    val loanRefId: String
+    val loanType: String
+    val desiredAmount: Double
+    val loanPeriod: Int
+    val requiredGuarantors: Int
+    val loanCategory: String
+    val loanPurpose: String
+    val loanPurposeCategory: String
+    val businessType: String
+    val businessLocation: String
+    val kraPin: String
+    val employer: String
+    val employmentNumber: String
+    val grossSalary: Double
+    val netSalary: Double
+    val memberRefId: String
+    val guarantorList: Set<GuarantorDataListing>
+    val loanPurposeCategoryCode: String
+    val witnessRefId: String
+    fun onAddWitnessSelected(
+        loanRefId: String,
+        loanType: String,
+        desiredAmount: Double,
+        loanPeriod: Int,
+        requiredGuarantors: Int,
+        loanCategory: String,
+        loanPurpose: String,
+        loanPurposeCategory: String,
+        businessType: String,
+        businessLocation: String,
+        kraPin: String,
+        employer: String,
+        employmentNumber: String,
+        grossSalary: Double,
+        netSalary: Double,
+        memberRefId: String,
+        guarantorList: Set<GuarantorDataListing>,
+        loanPurposeCategoryCode: String,
+        witnessRefId: String,
+        witnessName: String,
+    )
+
+    val authStore: AuthStore
+    val authState: StateFlow<AuthStore.State>
+    fun onAuthEvent(event: AuthStore.Intent)
+    fun onEvent(event: ApplyLongTermLoansStore.Intent)
+    val applyLongTermLoansStore: ApplyLongTermLoansStore
+    val applyLongTermLoansState: StateFlow<ApplyLongTermLoansStore.State>
+    fun onProfileEvent(event: SignHomeStore.Intent)
+    val sigHomeStore: SignHomeStore
+    val signHomeState: StateFlow<SignHomeStore.State>
+    fun onBackNavClicked()
+    fun onProductSelected()
+}

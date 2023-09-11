@@ -1,6 +1,5 @@
 package com.presta.customer.ui.components.shortTermLoans
 
-import com.arkivanov.decompose.value.Value
 import com.presta.customer.Platform
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.shortTermLoans.store.ShortTermLoansStore
