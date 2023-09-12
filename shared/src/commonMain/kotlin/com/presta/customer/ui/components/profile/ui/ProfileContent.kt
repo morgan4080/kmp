@@ -206,60 +206,64 @@ fun ProfileContent(
         },
         content = {
             ModalBottomSheetLayout(
-                modifier = Modifier.padding(bottom = 100.dp),
+                modifier = Modifier.padding(bottom = if (authState.isLoading) 0.dp else 88.dp),
                 sheetState = sheetState,
                 sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                 sheetContent = {
-                    Column (
-                        modifier = Modifier.background(MaterialTheme.colorScheme.inverseOnSurface)
+                    AnimatedVisibility(
+                        visible = !authState.isLoading
                     ) {
-                        Column (modifier = Modifier.padding(horizontal = 16.dp, vertical = 26.dp)) {
-                            Row(
-                                modifier = Modifier
-                                    .padding(top = 17.dp)
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(
-                                    text = "Activate  Account",
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
-                                    fontSize = 14.sp
-                                )
-                                Icon(
-                                    Icons.Filled.Cancel,
-                                    contentDescription = "Cancel  Arrow",
-                                    tint = backArrowColor,
-                                    modifier = Modifier.absoluteOffset(y = -(20).dp).clickable {
-                                        scope.launch { sheetState.hide() }
-                                    }
-                                )
-                            }
+                        Column (
+                            modifier = Modifier.background(MaterialTheme.colorScheme.inverseOnSurface)
+                        ) {
+                            Column (modifier = Modifier.padding(horizontal = 16.dp, vertical = 26.dp)) {
+                                Row(
+                                    modifier = Modifier
+                                        .padding(top = 17.dp)
+                                        .fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = "Activate  Account",
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                        fontSize = 14.sp
+                                    )
+                                    Icon(
+                                        Icons.Filled.Cancel,
+                                        contentDescription = "Cancel  Arrow",
+                                        tint = backArrowColor,
+                                        modifier = Modifier.absoluteOffset(y = -(20).dp).clickable {
+                                            scope.launch { sheetState.hide() }
+                                        }
+                                    )
+                                }
 
-                            Row(
-                                modifier = Modifier
-                                    .padding(top = 17.dp)
-                                    .fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = "Welcome to ${if (authState.authUserResponse !== null) authState.authUserResponse.companyName else ""}," +
-                                            " please pay a registration fee of KSH ${if (authState.cachedMemberData !== null) authState.cachedMemberData.registrationFees else ""} to activate your account",
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                    fontSize = 12.sp
-                                )
+                                Row(
+                                    modifier = Modifier
+                                        .padding(top = 17.dp)
+                                        .fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = "Welcome to ${if (authState.authUserResponse !== null) authState.authUserResponse.companyName else ""}," +
+                                                " please pay a registration fee of KSH ${if (authState.cachedMemberData !== null) authState.cachedMemberData.registrationFees else ""} to activate your account",
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                        fontSize = 12.sp
+                                    )
 
-                            }
+                                }
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth()
-                                    .padding(top = 22.dp, bottom = 22.dp)
-                            ) {
-                                ActionButton("Activate Now!", onClickContainer = {
-                                    if (authState.cachedMemberData !== null) {
-                                        activateAccount(
-                                            authState.cachedMemberData.registrationFees
-                                        )
-                                    }
-                                }, enabled = authState.cachedMemberData !== null, loading = addSavingsState.isLoading)
+                                Row(
+                                    modifier = Modifier.fillMaxWidth()
+                                        .padding(top = 22.dp, bottom = 22.dp)
+                                ) {
+                                    ActionButton("Activate Now!", onClickContainer = {
+                                        if (authState.cachedMemberData !== null) {
+                                            activateAccount(
+                                                authState.cachedMemberData.registrationFees
+                                            )
+                                        }
+                                    }, enabled = authState.cachedMemberData !== null, loading = addSavingsState.isLoading)
+                                }
                             }
                         }
                     }
