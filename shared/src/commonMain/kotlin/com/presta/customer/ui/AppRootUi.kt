@@ -8,7 +8,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -16,7 +15,6 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
-import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimator
 import com.moriatsushi.insetsx.SystemBarsBehavior
@@ -54,12 +52,9 @@ import com.presta.customer.ui.components.transactionHistory.ui.TransactionHistor
 import com.presta.customer.ui.components.welcome.WelcomeScreen
 import com.presta.customer.ui.components.witnessRequests.ui.WitnessRequestScreen
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
-    val scope = rememberCoroutineScope()
-    var rotated by remember { mutableStateOf(false) }
     val windowInsetsController = rememberWindowInsetsController()
     val isDark = isSystemInDarkTheme()
     LaunchedEffect(Unit) {
@@ -77,30 +72,40 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
         }
     }
 
+    var rotated by remember { mutableStateOf(false) }
+
     val rotation by animateFloatAsState(
         targetValue = if (rotated) 180f else 0f,
         animationSpec = tween(2000)
     )
 
+
     Children(
         stack = component.childStack,
-        animation = stackAnimation { child, _, _ ->
-           when(child.instance) {
-               is RootComponent.Child.SignAppChild -> slide() + stackAnimator { factor, _, content ->
-                   content(
-                       Modifier.graphicsLayer {
-                           rotationY = if (factor >= 0F) {
-                               factor * (rotation - 1F) + 1F
-                           } else {
-                               factor * (1F - rotation) + 1F
-                           }
-                       }
-                   )
-               }
-               else -> fade() + scale()
-           }
-        },
+        animation = stackAnimation { child ->
+            when (child.instance) {
+                is RootComponent.Child.SignAppChild -> stackAnimator { factor, _, content ->
+                    content(
+                        Modifier.graphicsLayer {
+                            rotationY = if (factor >= 0F) {
+                                factor * (rotation - 1F) + 1F
+                            } else {
+                                factor * (1F - rotation) + 1F
+                            }
+                        }
+                    )
+                }
+                else -> fade() + scale()
+            }
+        },// tabAnimation()
     ) {
+        LaunchedEffect(Unit) {
+           if (it.instance is RootComponent.Child.SignAppChild) {
+               rotated = true
+               delay(500)
+               rotated = false
+           }
+        }
         when (val child = it.instance) {
             is RootComponent.Child.TenantChild -> TenantScreen(child.component)
             is RootComponent.Child.SplashChild -> SplashScreen(child.component, connectivityStatus)
@@ -118,14 +123,7 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
             is RootComponent.Child.ProcessingTransactionChild-> ProcessingTransactionScreen(child.component)
             is RootComponent.Child.ProcessingLoanDisbursementChild-> ProcessLoanDisbursementScreen(child.component)
             is RootComponent.Child.LoanPendingApprovalsChild-> PendingApprovalsScreen(child.component)
-            is RootComponent.Child.SignAppChild-> {
-                scope.launch {
-                    rotated = true
-                    delay(500)
-                    rotated = false
-                }
-                RootBottomSignScreen(child.component)
-            }
+            is RootComponent.Child.SignAppChild-> RootBottomSignScreen(child.component)
             is RootComponent.Child.ApplyLongtermLoanChild -> ApplyLongTermLoanScreen(child.component)
             is RootComponent.Child.LongTermLoanDetailsChild -> LongTermLoanDetailsScreen(child.component)
             is RootComponent.Child.SelectLoanPurposeChild-> SelectLoanPurposeScreen(child.component)
