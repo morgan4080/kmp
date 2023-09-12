@@ -6,5 +6,5 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.scope.Scope
 
 actual fun Scope.sqlDriverFactory(): SqlDriver {
-    return AndroidSqliteDriver(PrestaCustomerDatabase.Schema, androidContext(), "${DatabaseConstants.name}.db")
+    return AndroidSqliteDriver(PrestaCustomerDB.Schema, androidContext(), "${DatabaseConstants.name}.db")
 }

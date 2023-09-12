@@ -189,7 +189,7 @@ dependencies {
 
 sqldelight {
     databases {
-        create("PrestaCustomerDatabase") {
+        create("PrestaCustomerDB") {
             packageName.set("com.presta.customer.database")
         }
     }

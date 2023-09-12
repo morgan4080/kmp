@@ -271,7 +271,7 @@ fun OnBoardingContent(
                                 text = state.label
                                         + " "
                                         + if (state.onBoardingContext == DefaultRootComponent.OnBoardingContext.LOGIN)
-                                    "login"
+                                    "log in"
                                 else
                                     "sign up",
                                 style = MaterialTheme.typography.bodySmall,

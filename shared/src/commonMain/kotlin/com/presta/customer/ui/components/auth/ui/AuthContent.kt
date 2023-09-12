@@ -1,6 +1,11 @@
 package com.presta.customer.ui.components.auth.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -49,6 +54,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -120,14 +126,14 @@ fun AuthContent(
                 if (state.cachedMemberData.firstName !== null && state.cachedMemberData.lastName !== null) {
                     "${state.cachedMemberData.firstName} ${state.cachedMemberData.lastName}"
                 }
-                "Enter pin code to login"
+                "log in"
             } else {
-                "Enter pin code to login"
+                "log in"
             }
             onEvent(AuthStore.Intent.UpdateContext(
                 context = Contexts.LOGIN,
                 title = title,
-                label = if (state.authUserResponse?.companyName != null ) "${state.authUserResponse.companyName} LOGIN" else "",
+                label = if (state.authUserResponse?.companyName != null ) state.authUserResponse.companyName else "",
                 pinCreated = true,
                 pinConfirmed = true,
                 error = null
@@ -190,7 +196,6 @@ fun AuthContent(
                             ))
                         }
                     }
-                    clearPinCharacters()
                 }
             }
         }
@@ -209,8 +214,6 @@ fun AuthContent(
                         registrationFees = onBoardingState.member.registrationFeeInfo.registrationFees,
                         registrationFeeStatus = onBoardingState.member.registrationFeeInfo.registrationFeeStatus.toString()
                     ))
-
-                    clearPinCharacters()
                 }
             }
         }
@@ -281,7 +284,7 @@ fun AuthContent(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            if (state.isLoading || onBoardingState.isLoading) {
+            if ((state.isLoading || onBoardingState.isLoading) && pinInput.isEmpty()) {
                 Column(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                 ) {
@@ -313,7 +316,7 @@ fun AuthContent(
                                     .padding(top = 50.dp, start = 16.dp, end = 16.dp)
                             ) {
                                 Text(
-                                    text = state.title,
+                                    text = state.title.uppercase(),
                                     style = MaterialTheme.typography.headlineSmall,
                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                                     fontSize = 14.0.sp
@@ -411,10 +414,21 @@ fun AuthContent(
                                         .padding(horizontal = 16.dp),
                                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                                 ) {
+                                    val transition = rememberInfiniteTransition()
+                                    val translateAnimation = transition.animateFloat(
+                                        initialValue = 0f,
+                                        targetValue = 400f,
+                                        animationSpec = infiniteRepeatable(
+                                            animation = tween(800), repeatMode = RepeatMode.Restart
+                                        )
+                                    )
                                     for ((index, _) in state.inputs.withIndex()) {
                                         BasicTextField(
                                             modifier = Modifier
                                                 .shadow(1.dp, CircleShape)
+                                                .graphicsLayer {
+                                                    // translateAnimation.value
+                                                }
                                                 .width(50.dp)
                                                 .height(50.dp)
                                                 .background(

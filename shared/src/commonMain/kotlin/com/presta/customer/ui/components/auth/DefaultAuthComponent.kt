@@ -143,10 +143,10 @@ class DefaultAuthComponent(
                             val title: String = if (it.cachedMemberData.firstName !== null && it.cachedMemberData.lastName !== null) {
                                 "${it.cachedMemberData.firstName} ${it.cachedMemberData.lastName}"
                             } else {
-                                "Enter pin code to login"
+                                "log in"
                             }
                             val label: String = if (OrganisationModel.organisation.tenant_name!="") {
-                                 "${OrganisationModel.organisation.tenant_name} LOGIN"
+                                OrganisationModel.organisation.tenant_name
                             } else {
                                 ""
                             }

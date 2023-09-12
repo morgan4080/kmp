@@ -68,7 +68,7 @@ interface AuthStore: Store<AuthStore.Intent, AuthStore.State, Nothing> {
         val context: Contexts = Contexts.CREATE_PIN,
         //This is checked when the app logs itself out
         //user sees a brief instance  of this label
-        val label: String = "${OrganisationModel.organisation.tenant_name} LOGIN",
+        val label: String = OrganisationModel.organisation.tenant_name,
         val title: String = "Create pin code",
         val inputs: List<InputMethod> = listOf(
             InputMethod(

@@ -1,12 +1,12 @@
 package com.presta.customer.database.dao
 
-import com.presta.customer.database.PrestaCustomerDatabase
+import com.presta.customer.database.PrestaCustomerDB
 import com.presta.customer.prestaDispatchers
 import comprestacustomer.UserAuthEntity
 import kotlinx.coroutines.withContext
 
 class UserAuthDao(
-    private val prestaCustomerDatabase: PrestaCustomerDatabase
+    private val prestaCustomerDatabase: PrestaCustomerDB
 ) {
     // get query
     private val query get() = prestaCustomerDatabase.userAuthEntityQueries

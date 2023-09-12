@@ -213,8 +213,7 @@ fun ProfileContent(
                     AnimatedVisibility(
                         modifier = Modifier.padding(bottom = 85.dp),
                         visible = !authState.isLoading,
-                        enter = fadeIn() + expandVertically(),
-                        exit = fadeOut() + shrinkVertically()
+                        enter = fadeIn() + expandVertically()
                     ) {
                         Column (
                             modifier = Modifier.background(MaterialTheme.colorScheme.inverseOnSurface)
