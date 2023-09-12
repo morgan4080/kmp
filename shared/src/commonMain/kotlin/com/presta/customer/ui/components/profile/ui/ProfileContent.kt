@@ -206,12 +206,15 @@ fun ProfileContent(
         },
         content = {
             ModalBottomSheetLayout(
-                modifier = Modifier.padding(bottom = if (authState.isLoading) 0.dp else 88.dp),
+                modifier = Modifier,
                 sheetState = sheetState,
                 sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                 sheetContent = {
                     AnimatedVisibility(
-                        visible = !authState.isLoading
+                        modifier = Modifier.padding(bottom = 85.dp),
+                        visible = !authState.isLoading,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
                     ) {
                         Column (
                             modifier = Modifier.background(MaterialTheme.colorScheme.inverseOnSurface)
