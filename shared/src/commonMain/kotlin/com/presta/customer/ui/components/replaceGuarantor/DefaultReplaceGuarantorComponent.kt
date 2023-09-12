@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.presta.customer.Platform
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStoreFactory
@@ -17,6 +18,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import kotlin.coroutines.CoroutineContext
 
 class DefaultReplaceGuarantorComponent (
@@ -29,9 +32,10 @@ class DefaultReplaceGuarantorComponent (
     override val guarantorRefId: String,
     override val guarantorFirstName: String,
     override val guarantorLastName: String
-): ReplaceGuarantorComponent, ComponentContext by componentContext {
+): ReplaceGuarantorComponent, ComponentContext by componentContext, KoinComponent {
 
     private val scope = coroutineScope(mainContext + SupervisorJob())
+    override val platform by inject<Platform>()
     override val authStore: AuthStore =
         instanceKeeper.getStore {
             AuthStoreFactory(

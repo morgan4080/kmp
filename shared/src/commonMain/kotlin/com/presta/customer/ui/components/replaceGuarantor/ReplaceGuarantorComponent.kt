@@ -1,5 +1,6 @@
 package com.presta.customer.ui.components.replaceGuarantor
 
+import com.presta.customer.Platform
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
@@ -21,4 +22,5 @@ interface ReplaceGuarantorComponent {
     val signHomeState: StateFlow<SignHomeStore.State>
     fun onBackNavClicked()
     fun onProductSelected()
+    val platform: Platform
 }

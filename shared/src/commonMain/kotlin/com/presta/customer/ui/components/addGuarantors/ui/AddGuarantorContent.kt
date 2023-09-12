@@ -918,16 +918,6 @@ fun AddGuarantorContent(
                         ActionButton(
                             label = if (guarantorDataListed.size != component.requiredGuarantors) "Search" else "Continue",
                             onClickContainer = {
-                                authState.cachedMemberData?.let {
-                                    ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber(
-                                        token = it.accessToken,
-                                        phoneNumber = memberNumber
-                                    )
-                                }?.let {
-                                    onEvent(
-                                        it
-                                    )
-                                }
                                 if (guarantorDataListed.size != component.requiredGuarantors) {
                                     launchCheckSelfAndEmPloyedPopUp = false
                                     launchAddAmountToGuarantee = true

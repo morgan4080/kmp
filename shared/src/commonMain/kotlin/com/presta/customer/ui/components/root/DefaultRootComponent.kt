@@ -102,7 +102,6 @@ class DefaultRootComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
 ) : RootComponent, ComponentContext by componentContext {
-
     lateinit var loanRefid: String
     lateinit var passedLoanNumber: String
     lateinit var passedAmount: String
@@ -1398,6 +1397,7 @@ class DefaultRootComponent(
             val guarantorLastName: String
         ) : Config()
     }
+
     init {
         lifecycle.subscribe(object : Lifecycle.Callbacks {
             override fun onResume() {
@@ -1429,15 +1429,22 @@ class DefaultRootComponent(
                         super.onResume()
 
                     }
+
                     is Config.LongTermLoanSigningStatus -> {
                         super.onResume()
                     }
+
                     is Config.AddWitness -> {
                         super.onResume()
                     }
+
+                    is Config.ReplaceGuarantor -> {
+                        super.onResume()
+                    }
+
                     else -> {
                         super.onResume()
-                        navigation.replaceAll(Config.Splash)
+                        navigation.replaceAll(Config.Splashus)
                     }
                 }
             }

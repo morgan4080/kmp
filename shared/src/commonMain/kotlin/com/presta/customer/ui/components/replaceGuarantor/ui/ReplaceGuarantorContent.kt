@@ -26,7 +26,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
@@ -66,6 +65,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
 import com.presta.customer.ui.components.addGuarantors.ui.SelectGuarantorsView
 import com.presta.customer.ui.components.addGuarantors.ui.SnackbarVisualsWithError
@@ -81,8 +81,8 @@ import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.backArrowColor
 import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import androidx.compose.ui.window.Popup
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -175,7 +175,7 @@ fun ReplaceGuarantorContent(
             witnessDataListed,
             memberNumber,
         ) {
-            if (signHomeState.prestaTenantByMemberNumber?.refId != null || applyLongTermLoanState.prestaLoadTenantByPhoneNumber?.refId !=null ) {
+            if (signHomeState.prestaTenantByMemberNumber?.refId != null || applyLongTermLoanState.prestaLoadTenantByPhoneNumber?.refId != null) {
                 witnessDataListed.map { datas ->
                     applyLongTermLoanState.prestaLoanByLoanRequestRefId?.guarantorList?.map { existingGuarantor ->
                         if (datas.memberNumber == signHomeState.prestaTenantByPhoneNumber?.memberNumber) {
@@ -201,14 +201,18 @@ fun ReplaceGuarantorContent(
                                 )
                             }
                         } else {
-                            conditionChecked = datas.memberNumber != signHomeState.prestaTenantByPhoneNumber?.memberNumber && datas.refId != existingGuarantor.memberRefId
-                                    && witnessDataListed.size == 1
+                            conditionChecked =
+                                datas.memberNumber != signHomeState.prestaTenantByPhoneNumber?.memberNumber && datas.refId != existingGuarantor.memberRefId
+                                        && witnessDataListed.size == 1
                         }
                     }
                 }
             }
         }
     }
+    var launchContacts by remember { mutableStateOf(false) }
+    val contactsScope = rememberCoroutineScope()
+    val numberPattern = remember { Regex("^\\d+\$") }
 
     Scaffold(
         modifier = Modifier
@@ -424,13 +428,37 @@ fun ReplaceGuarantorContent(
                                         .size(25.dp),
                                     onClick = {
                                         //Todo----open Contacts Library
-                                        confirmGuarantorReplacementPopUp = true
+                                        launchContacts = true
+                                        //Todo----open  the contacts library and take the selected contact
+                                        if (launchContacts) {
+                                            contactsScope.launch {
+                                                val content =
+                                                    component.platform.getContact(421, "KE")
+                                                content.collect { contactData ->
+                                                    contactData.map { item ->
+                                                        if (item.key == "E_FAILED_TO_SHOW_PICKER") {
+                                                            println("GETTING KEY FAILED")
+                                                            println(item.value)
+                                                            this.cancel()
+                                                        }
+                                                        if (item.key == "CONTACT_PICKER_FAILED") {
+                                                            println("GETTING KEY FAILED")
+                                                            println(item.value)
+                                                            this.cancel()
+                                                        }
+                                                        if (item.key == "ACTIVITY_STARTED") {
+                                                            println("GETTING CONTACT")
+                                                            println("Selected data:::::::" + item.value)
+                                                        }
+                                                        if (item.value.matches(numberPattern)) {
+                                                            memberNumber = item.value
+                                                        }
 
-                                        //open contacts Library
-//                                        component.platform.getContact().map { contact ->
-//                                            println("Test Contact")
-//                                            println(contact.phoneNumber)
-//                                        }
+                                                    }
+                                                }
+                                            }
+                                            launchContacts = false
+                                        }
                                     },
                                     content = {
                                         Icon(
@@ -497,7 +525,7 @@ fun ReplaceGuarantorContent(
                         label = if (witnessDataListed.size != 1) "Search" else "Add  Guarantor",
                         onClickContainer = {
                             witnessDataListed = emptySet()
-                            if ( searchGuarantorByMemberNumber && signHomeState.prestaTenantByMemberNumber?.refId != null) {
+                            if (searchGuarantorByMemberNumber && signHomeState.prestaTenantByMemberNumber?.refId != null) {
                                 if (witnessDataListed.size != 1) {
                                     val apiResponse = listOf(
                                         FavouriteGuarantorDetails(
@@ -536,7 +564,7 @@ fun ReplaceGuarantorContent(
                                     }
                                 }
                             } else {
-                                if (searchGuarantorByMemberNumber && signHomeState.prestaTenantByMemberNumber?.refId == null){
+                                if (searchGuarantorByMemberNumber && signHomeState.prestaTenantByMemberNumber?.refId == null) {
                                     snackBarScope.launch {
                                         snackbarHostState.showSnackbar(
                                             SnackbarVisualsWithError(
@@ -547,7 +575,7 @@ fun ReplaceGuarantorContent(
                                     }
                                 }
                             }
-                            if ( searchGuarantorByPhoneNumber && applyLongTermLoanState.prestaLoadTenantByPhoneNumber?.refId != null) {
+                            if (searchGuarantorByPhoneNumber && applyLongTermLoanState.prestaLoadTenantByPhoneNumber?.refId != null) {
                                 if (witnessDataListed.size != 1) {
                                     val apiResponse = listOf(
                                         FavouriteGuarantorDetails(
@@ -586,7 +614,7 @@ fun ReplaceGuarantorContent(
                                     }
                                 }
                             } else {
-                                if (searchGuarantorByPhoneNumber &&  applyLongTermLoanState.prestaLoadTenantByPhoneNumber == null){
+                                if (searchGuarantorByPhoneNumber && applyLongTermLoanState.prestaLoadTenantByPhoneNumber == null) {
                                     snackBarScope.launch {
                                         snackbarHostState.showSnackbar(
                                             SnackbarVisualsWithError(
@@ -684,8 +712,10 @@ fun ReplaceGuarantorContent(
                                                                     guarantorOption =
                                                                         guarantorList[selectedIndex]
                                                                 }
-                                                                searchGuarantorByMemberNumber = guarantorOption == applyLongTermLoanState.memberNo
-                                                                searchGuarantorByPhoneNumber = guarantorOption ==  applyLongTermLoanState.phoneNo
+                                                                searchGuarantorByMemberNumber =
+                                                                    guarantorOption == applyLongTermLoanState.memberNo
+                                                                searchGuarantorByPhoneNumber =
+                                                                    guarantorOption == applyLongTermLoanState.phoneNo
                                                             },
                                                             label = guarantorOptions
                                                         )
@@ -715,7 +745,7 @@ fun ReplaceGuarantorContent(
                                     ),
                                     onClick = {
                                         launchPopUp = false
-                                        allowedToUpdateGuarantor=false
+                                        allowedToUpdateGuarantor = false
                                     },
                                     modifier = Modifier
                                         .padding(start = 16.dp)
@@ -743,7 +773,7 @@ fun ReplaceGuarantorContent(
                                         launchPopUp = false
                                         //Execute Replace Guarantor
                                         //set to add guarantor
-                                        allowedToUpdateGuarantor=true
+                                        allowedToUpdateGuarantor = true
                                     },
                                     modifier = Modifier
                                         .padding(end = 16.dp)
@@ -846,7 +876,7 @@ fun ReplaceGuarantorContent(
                                 confirmGuarantorReplacementPopUp = false
                                 if (allowedToUpdateGuarantor) {
                                     //confirmGuarantorReplacementPopUp =false
-                                    witnessDataListed.map {newguarantor->
+                                    witnessDataListed.map { newguarantor ->
                                         authState.cachedMemberData?.let {
                                             ApplyLongTermLoansStore.Intent.ReplaceLoanGuarantor(
                                                 token = it.accessToken,
