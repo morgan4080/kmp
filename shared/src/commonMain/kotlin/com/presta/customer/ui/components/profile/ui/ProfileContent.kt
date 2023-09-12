@@ -189,7 +189,6 @@ fun ProfileContent(
     val savingsIsFalse = authState.tenantServicesConfig.contains(
         TenantServiceConfigResponse(TenantServiceConfig.savings, false)
     )
-
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {

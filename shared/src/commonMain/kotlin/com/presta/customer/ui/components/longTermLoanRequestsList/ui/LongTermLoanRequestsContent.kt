@@ -8,8 +8,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,6 +28,9 @@ import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.outlined.Inventory2
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
@@ -53,6 +58,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.presta.customer.MR
 import com.presta.customer.ui.components.addGuarantors.ui.SnackbarVisualsWithError
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
@@ -62,11 +68,16 @@ import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.helpers.formatMoney
+import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.backArrowColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalLayoutApi::class
+)
 @Composable
 fun LongTermLoanRequestsContent(
     component: LongTermLoanRequestsComponent,
@@ -91,6 +102,8 @@ fun LongTermLoanRequestsContent(
     var guarantorRefId by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
     val snackBarScope = rememberCoroutineScope()
+    var refreshing by remember { mutableStateOf(false) }
+    val refreshScope = rememberCoroutineScope()
     if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         memBerRefId = signHomeState.prestaTenantByPhoneNumber.refId
     }
@@ -101,8 +114,8 @@ fun LongTermLoanRequestsContent(
         LaunchedEffect(
             authState.cachedMemberData,
             memBerRefId,
-            state.deleteLoanRequestResponse
-
+            state.deleteLoanRequestResponse,
+            refreshing
         ) {
             authState.cachedMemberData?.let {
                 ApplyLongTermLoansStore.Intent.GetPrestaLongTermLoansRequestsList(
@@ -152,7 +165,15 @@ fun LongTermLoanRequestsContent(
         }
     }
 
+    //Todo ---add pull to refresh
 
+    fun refresh() = refreshScope.launch {
+        refreshing = true
+        //  reloadModels()
+        delay(1500)
+        refreshing = false
+    }
+    val refreshState = rememberPullRefreshState(refreshing, ::refresh)
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -329,9 +350,9 @@ fun LongTermLoanRequestsContent(
                 ) {
                     state.prestaLoanByLoanRequestRefId?.guarantorList?.mapIndexed { index, guarantorDataResponse ->
                         val guarantorProgress =
-                            if (guarantorDataResponse.isAccepted && !guarantorDataResponse.isSigned && guarantorDataResponse.isApproved==false) {
+                            if (guarantorDataResponse.isAccepted && !guarantorDataResponse.isSigned && guarantorDataResponse.isApproved == false) {
                                 0.3f
-                            } else if (guarantorDataResponse.isSigned && guarantorDataResponse.isAccepted && guarantorDataResponse.isApproved==false ) {
+                            } else if (guarantorDataResponse.isSigned && guarantorDataResponse.isAccepted && guarantorDataResponse.isApproved == false) {
                                 0.6f
                             } else if (guarantorDataResponse.isApproved == true && guarantorDataResponse.isSigned && guarantorDataResponse.isAccepted) {
                                 1f
@@ -578,109 +599,119 @@ fun LongTermLoanRequestsContent(
                 })
             },
             content = { innerPadding ->
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.95f)
-                        .padding(start = 16.dp, end = 16.dp)
-                ) {
-                    //Requests List
-                    item {
-                        Spacer(modifier = Modifier.padding(innerPadding))
-                    }
-                    if (state.isLoading) {
-                        items(6) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(bottom = 10.dp, start = 16.dp, end = 16.dp)
-                                    .background(color = MaterialTheme.colorScheme.background),
-                            ) {
-                                ElevatedCard(
+                Box(Modifier.consumeWindowInsets(innerPadding).pullRefresh(refreshState)) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(0.95f)
+                            .padding(start = 16.dp, end = 16.dp)
+                    ) {
+                        //Requests List
+                        item {
+                            Spacer(modifier = Modifier.padding(innerPadding))
+                        }
+                        if (state.isLoading) {
+                            items(6) {
+                                Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
+                                        .padding(bottom = 10.dp, start = 16.dp, end = 16.dp)
                                         .background(color = MaterialTheme.colorScheme.background),
-                                    colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                                 ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .defaultMinSize(40.dp, 40.dp)
-                                            .background(
-                                                ShimmerBrush(
-                                                    targetValue = 1300f,
-                                                    showShimmer = true
-                                                )
-                                            )
-                                            .fillMaxWidth()
-                                    ) {
-                                    }
-                                }
-                            }
-
-                        }
-                    } else {
-                        if (state.prestaLongTermLoansRequestsList?.content.isNullOrEmpty()) {
-                            item {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Row(
+                                    ElevatedCard(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(top = 70.dp),
-                                        horizontalArrangement = Arrangement.Center
+                                            .background(color = MaterialTheme.colorScheme.background),
+                                        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                                     ) {
-                                        Icon(
-                                            imageVector = Icons.Outlined.Inventory2,
+                                        Box(
                                             modifier = Modifier
-                                                .size(70.dp),
-                                            contentDescription = "No data",
-                                            tint = MaterialTheme.colorScheme.outline
-                                        )
+                                                .defaultMinSize(40.dp, 40.dp)
+                                                .background(
+                                                    ShimmerBrush(
+                                                        targetValue = 1300f,
+                                                        showShimmer = true
+                                                    )
+                                                )
+                                                .fillMaxWidth()
+                                        ) {
+                                        }
                                     }
-                                    Text(
-                                        "Whoops",
-                                        fontSize = 13.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                                    )
-                                    Text(
-                                        "No Data",
-                                        fontSize = 10.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                                    )
                                 }
+
                             }
                         } else {
-                            state.prestaLongTermLoansRequestsList?.content?.map { loanlistingData ->
+                            if (state.prestaLongTermLoansRequestsList?.content.isNullOrEmpty()) {
                                 item {
-                                    Row(modifier = Modifier.padding(bottom = 20.dp)) {
-                                        LoanApplicationProgressCard(
-                                            loanProductName = loanlistingData.loanProductName,
-                                            loanAmount = "Kes " + loanlistingData.loanAmount.toString(),
-                                            loanApplicationDate = loanlistingData.loanDate,
-                                            loanProgress = "${loanlistingData.loanRequestProgress}% ${loanlistingData.applicationStatus}",
-                                            loanApplicationProgress = loanlistingData.loanRequestProgress.toFloat() / 100,
-                                            onClickContainer = {
-                                                loanRequestRefId = loanlistingData.refId
-                                                loanAmount = loanlistingData.loanAmount.toString()
-                                                loanNumber = loanlistingData.loanRequestNumber
-                                                loanRequestNumber =
-                                                    loanlistingData.loanRequestNumber
-                                                scope.launch { modalBottomSheetState.show() }
-
-                                            })
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(top = 70.dp),
+                                            horizontalArrangement = Arrangement.Center
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Outlined.Inventory2,
+                                                modifier = Modifier
+                                                    .size(70.dp),
+                                                contentDescription = "No data",
+                                                tint = MaterialTheme.colorScheme.outline
+                                            )
+                                        }
+                                        Text(
+                                            "Whoops",
+                                            fontSize = 13.sp,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                        )
+                                        Text(
+                                            "No Data",
+                                            fontSize = 10.sp,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                        )
                                     }
+                                }
+                            } else {
+                                state.prestaLongTermLoansRequestsList?.content?.map { loanlistingData ->
+                                    item {
+                                        Row(modifier = Modifier.padding(bottom = 20.dp)) {
+                                            LoanApplicationProgressCard(
+                                                loanProductName = loanlistingData.loanProductName,
+                                                loanAmount = "Kes " + loanlistingData.loanAmount.toString(),
+                                                loanApplicationDate = loanlistingData.loanDate,
+                                                loanProgress = "${loanlistingData.loanRequestProgress}% ${loanlistingData.applicationStatus}",
+                                                loanApplicationProgress = loanlistingData.loanRequestProgress.toFloat() / 100,
+                                                onClickContainer = {
+                                                    loanRequestRefId = loanlistingData.refId
+                                                    loanAmount =
+                                                        loanlistingData.loanAmount.toString()
+                                                    loanNumber = loanlistingData.loanRequestNumber
+                                                    loanRequestNumber =
+                                                        loanlistingData.loanRequestNumber
+                                                    scope.launch { modalBottomSheetState.show() }
+
+                                                })
+                                        }
+                                    }
+
+                                }
+                                item {
+                                    Spacer(modifier = Modifier.padding(top = 100.dp))
                                 }
 
                             }
-                            item {
-                                Spacer(modifier = Modifier.padding(top = 100.dp))
-                            }
-
                         }
                     }
+                    PullRefreshIndicator(
+                        refreshing, refreshState,
+                        Modifier
+                            .padding(innerPadding)
+                            .align(Alignment.TopCenter).zIndex(1f),
+                        contentColor = actionButtonColor
+                    )
                 }
             })
     }

@@ -16,9 +16,8 @@ fun ProfileScreen(
     val profileState by component.profileState.collectAsState()
     val addSavingsState by component.addSavingsState.collectAsState()
     val modeOfDisbursementState by component.modeOfDisbursementState.collectAsState()
-
     ProfileContent(
-        authState= authState,
+        authState = authState,
         state = profileState,
         addSavingsState = addSavingsState,
         modeOfDisbursementState = modeOfDisbursementState,

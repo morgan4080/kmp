@@ -172,7 +172,7 @@ fun SignHomeContent(
                                     IconButton(
                                         modifier = Modifier.absoluteOffset(x = 6.dp).zIndex(1f),
                                         onClick = {
-                                            //scopeDrawer.launch { drawerState.open() }
+                                            scopeDrawer.launch { drawerState.open() }
                                         },
                                         content = {
                                             Icon(
