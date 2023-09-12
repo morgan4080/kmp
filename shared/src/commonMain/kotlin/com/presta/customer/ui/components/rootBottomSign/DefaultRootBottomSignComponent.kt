@@ -6,6 +6,7 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
@@ -27,6 +28,7 @@ import com.presta.customer.ui.components.rootSignHome.DefaultRootSignHomeCompone
 import com.presta.customer.ui.components.rootSignHome.RootSignHomeComponent
 import com.presta.customer.ui.components.longTermLoanRequestsList.DefaultLongTermLoansRequestsComponent
 import com.presta.customer.ui.components.longTermLoanRequestsList.LongTermLoanRequestsComponent
+import com.presta.customer.ui.components.root.DefaultRootComponent
 import com.presta.customer.ui.components.signAppSettings.DefaultSignSettingsComponent
 import com.presta.customer.ui.components.signAppSettings.SignSettingsComponent
 import kotlinx.coroutines.CoroutineDispatcher
@@ -72,6 +74,7 @@ class DefaultRootBottomSignComponent(
     ) -> Unit,
     backTopProfile: Boolean = false,
     loanRefId: () -> String,
+    val logoutToSplash: (state: Boolean) -> Unit = {},
 ) : RootBottomSignComponent, ComponentContext by componentContext, KoinComponent {
     private val authRepository by inject<AuthRepository>()
 
@@ -130,7 +133,12 @@ class DefaultRootBottomSignComponent(
             onLoanRequestsListClicked = {
                 navigationBottomStackNavigation.bringToFront(ConfigBottom.Request(""))
 
+            },
+            logoutToSplash = {
+                logoutToSplash(true)
             }
+
+
         )
 
     private fun longTermLoansrequestsListComponent(componentContext: ComponentContext, config: ConfigBottom.Request): LongTermLoanRequestsComponent =

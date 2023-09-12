@@ -22,5 +22,6 @@ interface SignHomeComponent {
     val applyLongTermLoansState: StateFlow<ApplyLongTermLoansStore.State>
     fun goToLoanRequests()
     val platform: Platform
+    fun logout()
 
 }

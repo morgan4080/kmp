@@ -76,9 +76,9 @@ fun SignHomeContent(
     applyLongTermLoanState: ApplyLongTermLoansStore.State,
     authState: AuthStore.State,
     onApplyLongTermLoanEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
-    logout: (() -> Unit?)? = null
+    logout: () -> Unit,
 
-) {
+    ) {
     var memBerRefId by remember { mutableStateOf("") }
     var great by remember { mutableStateOf("") }
     val pattern = Regex("(\\d{2}):\\d{2}:\\d{2}\\.\\d+")
@@ -129,20 +129,21 @@ fun SignHomeContent(
     )
     var selectedItem by remember { mutableStateOf("Log Out" to Icons.Outlined.Logout) }
 
-
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             MainModalDrawerSheet(
                 items,
                 authState,
-                { logout },
+                logout,
                 selectedItem,
                 onItemsClick = { item ->
                     scopeDrawer.launch { drawerState.close() }
                     if (item !== null) selectedItem = item
                 }
             )
+
+
         },
         content = {
             Scaffold(
@@ -526,3 +527,8 @@ fun CircularProgressBarWithText(
         )
     }
 }
+
+
+
+
+

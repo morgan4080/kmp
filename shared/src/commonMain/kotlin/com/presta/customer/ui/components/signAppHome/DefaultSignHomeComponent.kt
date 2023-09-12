@@ -16,6 +16,7 @@ import com.presta.customer.ui.components.signAppHome.store.SignHomeStoreFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -31,6 +32,7 @@ class DefaultSignHomeComponent(
     private val onFavouriteGuarantorsClicked: () -> Unit,
     private val witnessRequestClicked: () -> Unit,
     private val onGotoLoanRequestsClicked: () -> Unit,
+    private val logoutToSplash: () -> Unit,
 ) : SignHomeComponent, ComponentContext by componentContext, KoinComponent {
     override val platform by inject<Platform>()
     private val scope = coroutineScope(mainContext + SupervisorJob())
@@ -42,7 +44,8 @@ class DefaultSignHomeComponent(
                 phoneNumber = null,
                 isTermsAccepted = false,
                 isActive = false,
-                pinStatus = PinStatus.SET
+                pinStatus = PinStatus.SET,
+                onLogOut = logoutToSplash
             ).create()
         }
 
@@ -126,6 +129,16 @@ class DefaultSignHomeComponent(
 
     override fun witnessRequestSelected() {
         witnessRequestClicked()
+    }
+    override fun logout() {
+        scope.launch {
+            authState.collect { state ->
+                if (state.cachedMemberData !== null) {
+                    onAuthEvent(AuthStore.Intent.LogOutUser)
+                    this.cancel()
+                }
+            }
+        }
     }
 
     init {

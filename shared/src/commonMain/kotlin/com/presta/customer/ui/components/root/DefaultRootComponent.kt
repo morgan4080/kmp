@@ -663,7 +663,16 @@ class DefaultRootComponent(
                     )
                 )
             },
-            loanRefId = config.loanRefId
+            loanRefId = config.loanRefId,
+            logoutToSplash = {
+                //Todo handle logout
+                scope.launch {
+                    if (it) {
+                        navigation.replaceAll(Config.Splash)
+                    }
+                }
+
+            }
         )
 
     private fun applyLongTermLoanComponent(componentContext: ComponentContext): ApplyLongTermLoanComponent =
@@ -1444,7 +1453,7 @@ class DefaultRootComponent(
 
                     else -> {
                         super.onResume()
-                        navigation.replaceAll(Config.Splashus)
+                        navigation.replaceAll(Config.Splash)
                     }
                 }
             }

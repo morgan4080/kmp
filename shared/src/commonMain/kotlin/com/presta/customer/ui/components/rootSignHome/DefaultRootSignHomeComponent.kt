@@ -22,7 +22,8 @@ class DefaultRootSignHomeComponent(
     private val onLoanRequestsListClicked: () -> Unit = {},
     private val onGuarantorshipRequestsClicked: () -> Unit = {},
     private val onFavouriteGuarantorsClicked: () -> Unit = {},
-    private val onWitnessRequestClicked: () -> Unit = {}
+    private val onWitnessRequestClicked: () -> Unit = {},
+    val logoutToSplash: () -> Unit = {},
 ) : RootSignHomeComponent, ComponentContext by componentContext {
     private val signHomeNavigation = StackNavigation<ConfigSignHome>()
 
@@ -74,6 +75,10 @@ class DefaultRootSignHomeComponent(
             mainContext = prestaDispatchers.main,
             onGotoLoanRequestsClicked = {
                 onLoanRequestsListClicked()
+
+            },
+            logoutToSplash = {
+                logoutToSplash()
 
             }
         )
