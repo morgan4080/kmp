@@ -138,7 +138,7 @@ fun ProfileContent(
     )
 
     val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden
+        initialValue = ModalBottomSheetValue.Expanded
     )
 
     LaunchedEffect(authState.cachedMemberData) {
@@ -206,6 +206,7 @@ fun ProfileContent(
         },
         content = {
             ModalBottomSheetLayout(
+                modifier = Modifier.padding(bottom = 100.dp),
                 sheetState = sheetState,
                 sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                 sheetContent = {

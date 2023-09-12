@@ -1,14 +1,13 @@
 package com.presta.customer.network.authDevice.errorHandler
 
+import com.presta.customer.network.authDevice.errors.AuthClientError
+import com.presta.customer.network.authDevice.errors.AuthClientException
+import com.presta.customer.prestaDispatchers
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.withContext
-import com.presta.customer.network.authDevice.errors.AuthClientError
-import com.presta.customer.network.authDevice.errors.AuthClientException
 import kotlinx.serialization.Serializable
-import com.presta.customer.prestaDispatchers
-import io.ktor.client.statement.request
 
 @Serializable
 data class Message(val message: String, val code: Int, val timestamp: String)
@@ -30,7 +29,7 @@ suspend inline fun <reified T> authErrorHandler(
         }
         500 -> {
             val data: Message = result.body()
-            throw AuthClientException(AuthClientError.ServerError, "${data.message}: \n ${result.request.url}")
+            throw AuthClientException(AuthClientError.ServerError, data.message)
         }
         else -> {
             throw AuthClientException(AuthClientError.UnknownError, null)

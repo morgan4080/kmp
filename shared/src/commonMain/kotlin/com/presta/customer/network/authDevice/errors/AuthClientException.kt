@@ -8,5 +8,5 @@ enum class AuthClientError {
 }
 
 class AuthClientException(error: AuthClientError, message: String?): Exception(
-    "Auth Error: ${if (message !== null) message else error}"
+    "${if (message !== null) message else error}"
 )

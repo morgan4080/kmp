@@ -1,5 +1,10 @@
 package com.presta.customer.ui.components.auth.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -333,31 +338,66 @@ fun AuthContent(
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Column (
+                                modifier = Modifier.padding(bottom = 10.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Row (
+                                Row(
                                     modifier = Modifier
                                         .padding(
-                                            horizontal = 16.dp)
+                                            horizontal = 16.dp
+                                        )
                                 ) {
                                     Text(
-                                        text = state.label,
+                                        text = state.label.uppercase(),
                                         style = MaterialTheme.typography.bodySmall,
                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                        fontSize = 12.0.sp
+                                        fontSize = 12.0.sp,
+                                        textAlign = TextAlign.Center
                                     )
                                 }
-                                Row (
-                                    modifier = Modifier
-                                        .padding(
-                                            horizontal = 16.dp)
+
+                                AnimatedVisibility(
+                                    visible = state.error == null,
+                                    enter = fadeIn() + expandVertically(),
+                                    exit = fadeOut() + shrinkVertically()
                                 ) {
-                                    Text(
-                                        text = "ENTER PIN",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                        fontSize = 12.0.sp
-                                    )
+                                    Row(
+                                        modifier = Modifier
+                                            .padding(
+                                                horizontal = 16.dp
+                                            )
+                                    ) {
+                                        Text(
+                                            text = "ENTER PIN",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                            fontSize = 12.0.sp,
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+                                }
+
+                                AnimatedVisibility(
+                                    visible = state.error !== null,
+                                    enter = fadeIn() + expandVertically(),
+                                    exit = fadeOut() + shrinkVertically()
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .padding(
+                                                horizontal = 16.dp
+                                            )
+                                    ) {
+                                        Text(
+                                            modifier = Modifier.fillMaxWidth(.6f),
+                                            text = if (state.error !== null) state.error.uppercase() else "",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                            fontSize = 10.0.sp,
+                                            color = Color.Red.copy(alpha = 0.6f),
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
                                 }
                             }
 
@@ -382,7 +422,7 @@ fun AuthContent(
                                                 ).border(
                                                     border = BorderStroke(
                                                         0.2.dp,
-                                                        MaterialTheme.colorScheme.outline
+                                                        if (state.error !== null && pinInput.isEmpty()) Color.Red else MaterialTheme.colorScheme.outline
                                                     ),
                                                     shape = CircleShape
                                                 ).padding(horizontal = 10.dp),
