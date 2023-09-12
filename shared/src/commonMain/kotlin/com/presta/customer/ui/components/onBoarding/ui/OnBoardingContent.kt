@@ -370,7 +370,9 @@ fun OnBoardingContent(
                             })
                         }
 
-                        Row {
+                        Row (
+                            modifier = Modifier.padding(bottom = 30.dp)
+                        ) {
                             ActionButton("Submit", onClickContainer = {
                                 when(state.onBoardingContext) {
                                     DefaultRootComponent.OnBoardingContext.REGISTRATION -> {

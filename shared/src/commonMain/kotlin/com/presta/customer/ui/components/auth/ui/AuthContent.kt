@@ -58,7 +58,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -81,6 +80,8 @@ fun AuthContent(
     navigate: () -> Unit,
     platform: Platform
 ) {
+
+    println(state.cachedMemberData)
 
     val focusRequester = remember { FocusRequester() }
 
@@ -151,8 +152,6 @@ fun AuthContent(
                 Contexts.CREATE_PIN -> {
                     pinToConfirm = pinInput
 
-                    clearPinCharacters()
-
                     onEvent(AuthStore.Intent.UpdateContext(
                         context = Contexts.CONFIRM_PIN,
                         title = "Confirm pin code",
@@ -161,6 +160,8 @@ fun AuthContent(
                         pinConfirmed = state.pinConfirmed,
                         error = null
                     ))
+
+                    clearPinCharacters()
                 }
                 Contexts.CONFIRM_PIN -> {
                     if (pinToConfirm == pinInput && onBoardingState.member.refId !== null) {
@@ -205,9 +206,18 @@ fun AuthContent(
             platform.showToast("Pin Created Successfully!")
 
             if (onBoardingState.member?.refId !== null && onBoardingState.member.registrationFeeInfo !== null) {
-                if (state.cachedMemberData !== null && state.cachedMemberData.tenantId !== "") {
+                if (state.cachedMemberData !== null && state.cachedMemberData.tenantId !== "" && state.cachedMemberData.phoneNumber !== "") {
                     onEvent(AuthStore.Intent.LoginUser(
                         phoneNumber = state.cachedMemberData.phoneNumber,
+                        pin = pinInput,
+                        tenantId = state.cachedMemberData.tenantId,
+                        refId = onBoardingState.member.refId,
+                        registrationFees = onBoardingState.member.registrationFeeInfo.registrationFees,
+                        registrationFeeStatus = onBoardingState.member.registrationFeeInfo.registrationFeeStatus.toString()
+                    ))
+                } else if (state.phoneNumber !== null && state.cachedMemberData !== null && state.cachedMemberData.tenantId !== "") {
+                    onEvent(AuthStore.Intent.LoginUser(
+                        phoneNumber = state.phoneNumber,
                         pin = pinInput,
                         tenantId = state.cachedMemberData.tenantId,
                         refId = onBoardingState.member.refId,
@@ -326,9 +336,9 @@ fun AuthContent(
                                 modifier = Modifier
                                     .padding(top = 5.dp, start = 16.dp, end = 16.dp)
                             ) {
-                                state.cachedMemberData?.let { it1 ->
+                                state.cachedMemberData.let { it1 ->
                                     Text(
-                                        text = it1.phoneNumber,
+                                        text = if (it1 !== null && it1.phoneNumber !== "") it1.phoneNumber else "${state.phoneNumber}",
                                         style = MaterialTheme.typography.headlineSmall,
                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                         fontSize = 14.0.sp
@@ -441,13 +451,13 @@ fun AuthContent(
                                                     ),
                                                     shape = CircleShape
                                                 ).padding(horizontal = 10.dp),
-                                            visualTransformation = if (state.pinStatus == PinStatus.SET) PasswordVisualTransformation('\u2731') else VisualTransformation.None,
+                                            visualTransformation = PasswordVisualTransformation('\u2731'),
                                             value = pinCharList[index],
                                             textStyle = TextStyle(
                                                 color = MaterialTheme.colorScheme.onBackground,
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                                                 fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
-                                                fontSize = MaterialTheme.typography.headlineLarge.fontSize,
+                                                fontSize = MaterialTheme.typography.headlineMedium.fontSize,
                                                 fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
                                                 letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
                                                 lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
