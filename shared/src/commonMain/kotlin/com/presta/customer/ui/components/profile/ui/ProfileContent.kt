@@ -210,7 +210,6 @@ fun ProfileContent(
                 sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                 sheetContent = {
                     AnimatedVisibility(
-                        modifier = Modifier.padding(bottom = 85.dp),
                         visible = !authState.isLoading,
                         enter = fadeIn() + expandVertically()
                     ) {
@@ -255,7 +254,7 @@ fun ProfileContent(
 
                                 Row(
                                     modifier = Modifier.fillMaxWidth()
-                                        .padding(top = 22.dp, bottom = 22.dp)
+                                        .padding(top = 22.dp, bottom = 100.dp)
                                 ) {
                                     ActionButton("Activate Now!", onClickContainer = {
                                         if (authState.cachedMemberData !== null) {
