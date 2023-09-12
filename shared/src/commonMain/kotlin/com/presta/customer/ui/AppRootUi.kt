@@ -1,7 +1,5 @@
 package com.presta.customer.ui
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,7 +8,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
@@ -51,7 +48,7 @@ import com.presta.customer.ui.components.tenant.ui.TenantScreen
 import com.presta.customer.ui.components.transactionHistory.ui.TransactionHistoryScreen
 import com.presta.customer.ui.components.welcome.WelcomeScreen
 import com.presta.customer.ui.components.witnessRequests.ui.WitnessRequestScreen
-import kotlinx.coroutines.delay
+import com.presta.customer.ui.composables.SplashLogo
 
 @Composable
 fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
@@ -74,37 +71,30 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
 
     var rotated by remember { mutableStateOf(false) }
 
-    val rotation by animateFloatAsState(
-        targetValue = if (rotated) 180f else 0f,
-        animationSpec = tween(2000)
-    )
-
 
     Children(
         stack = component.childStack,
         animation = stackAnimation { child ->
             when (child.instance) {
                 is RootComponent.Child.SignAppChild -> stackAnimator { factor, _, content ->
-                    content(
-                        Modifier.graphicsLayer {
-                            rotationY = if (factor >= 0F) {
-                                factor * (rotation - 1F) + 1F
-                            } else {
-                                factor * (1F - rotation) + 1F
+                    if (rotated) {
+                        content(
+                            Modifier
+                        )
+                    } else {
+                        SplashLogo(
+                            callback = {
+                                rotated = child.instance is RootComponent.Child.SignAppChild
                             }
-                        }
-                    )
+                        )
+                    }
                 }
                 else -> fade() + scale()
             }
         },// tabAnimation()
     ) {
-        LaunchedEffect(Unit) {
-           if (it.instance is RootComponent.Child.SignAppChild) {
-               rotated = true
-               delay(500)
-               rotated = false
-           }
+        if (it.instance !is RootComponent.Child.SignAppChild) {
+            rotated = false
         }
         when (val child = it.instance) {
             is RootComponent.Child.TenantChild -> TenantScreen(child.component)
