@@ -329,9 +329,9 @@ fun LongTermLoanRequestsContent(
                 ) {
                     state.prestaLoanByLoanRequestRefId?.guarantorList?.mapIndexed { index, guarantorDataResponse ->
                         val guarantorProgress =
-                            if (guarantorDataResponse.isAccepted && !guarantorDataResponse.isSigned) {
+                            if (guarantorDataResponse.isAccepted && !guarantorDataResponse.isSigned && guarantorDataResponse.isApproved==false) {
                                 0.3f
-                            } else if (guarantorDataResponse.isSigned && guarantorDataResponse.isAccepted) {
+                            } else if (guarantorDataResponse.isSigned && guarantorDataResponse.isAccepted && guarantorDataResponse.isApproved==false ) {
                                 0.6f
                             } else if (guarantorDataResponse.isApproved == true && guarantorDataResponse.isSigned && guarantorDataResponse.isAccepted) {
                                 1f

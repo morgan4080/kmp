@@ -85,6 +85,7 @@ import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.backArrowColor
 import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
@@ -182,6 +183,9 @@ fun AddWitnessContent(
 
         }
     }
+    var launchContacts by remember { mutableStateOf(false) }
+    val contactsScope = rememberCoroutineScope()
+    val numberPattern = remember { Regex("^\\d+\$") }
     Scaffold(
         modifier = Modifier
             .fillMaxWidth()
@@ -396,12 +400,39 @@ fun AddWitnessContent(
                                         .size(25.dp),
                                     onClick = {
                                         //Todo----open Contacts Library
+                                        launchContacts = true
+                                        //Todo----open  the contacts library and take the selected contact
+                                        if (launchContacts) {
+                                            contactsScope.launch {
+                                                val content =
+                                                    component.platform.getContact(421, "KE")
+                                                content.collect { contactData ->
+                                                    contactData.map { item ->
+                                                        if (item.key == "E_FAILED_TO_SHOW_PICKER") {
+                                                            println("GETTING KEY FAILED")
+                                                            println(item.value)
+                                                            this.cancel()
+                                                        }
+                                                        if (item.key == "CONTACT_PICKER_FAILED") {
+                                                            println("GETTING KEY FAILED")
+                                                            println(item.value)
+                                                            this.cancel()
+                                                        }
+                                                        if (item.key == "ACTIVITY_STARTED") {
+                                                            println("GETTING CONTACT")
+                                                            println("Selected data:::::::" + item.value)
+                                                        }
+                                                        if (item.value.matches(numberPattern)) {
+                                                            memberNumber = item.value
+                                                        }
 
-                                        //open contacts Library
-//                                        component.platform.getContact().map { contact ->
-//                                            println("Test Contact")
-//                                            println(contact.phoneNumber)
-//                                        }
+                                                    }
+                                                }
+                                            }
+                                            launchContacts = false
+                                        }
+
+
                                     },
                                     content = {
                                         Icon(

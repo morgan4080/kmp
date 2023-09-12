@@ -82,6 +82,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
+import com.presta.customer.Platform
 import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
@@ -97,7 +98,9 @@ import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.backArrowColor
 import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.JsonNull.content
 
 class SnackbarVisualsWithError(
     override val message: String,
@@ -110,8 +113,6 @@ class SnackbarVisualsWithError(
     override val duration: SnackbarDuration
         get() = SnackbarDuration.Short
 }
-
-data class GuarantorData(val name: String, val memberNum: String)
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -285,7 +286,9 @@ fun AddGuarantorContent(
     var amountDesired by remember { mutableStateOf(0) }
     var amountaken by remember { mutableStateOf(0) }
     var diferences by remember { mutableStateOf(0) }
-
+    var launchContacts by remember { mutableStateOf(false) }
+    val contactsScope = rememberCoroutineScope()
+    val numberPattern = remember { Regex("^\\d+\$") }
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -387,7 +390,7 @@ fun AddGuarantorContent(
                             amountaken = guarantorDataListed.sumOf { it.amount.toInt() }
                             diferences = amountDesired - amountaken
                             Text(
-                                text = "Remaining Amount : ${ formatMoney(diferences.toDouble()) }",
+                                text = "Remaining Amount : ${formatMoney(diferences.toDouble())}",
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 fontSize = 12.sp
                             )
@@ -794,14 +797,38 @@ fun AddGuarantorContent(
                                             .clip(shape = CircleShape)
                                             .background(Color(0xFFE5F1F5)),
                                         onClick = {
-                                            //load Contacts
+                                            launchContacts = true
                                             //Todo----open  the contacts library and take the selected contact
-//                                            val androidContactsPicker = AndroidContactPicker()
-//                                            androidContactsPicker.pickContact(onContactPicked = { name, phoneNumber ->
-//
-//                                                println("name is;;; " + name)
-//                                                println("phone number is is;;; " + phoneNumber)
-//                                            })
+                                            if (launchContacts) {
+                                                contactsScope.launch {
+                                                    val content =
+                                                        component.platform.getContact(421, "KE")
+                                                    content.collect { contactData ->
+                                                        contactData.map { item ->
+                                                            if (item.key == "E_FAILED_TO_SHOW_PICKER") {
+                                                                println("GETTING KEY FAILED")
+                                                                println(item.value)
+                                                                this.cancel()
+                                                            }
+                                                            if (item.key == "CONTACT_PICKER_FAILED") {
+                                                                println("GETTING KEY FAILED")
+                                                                println(item.value)
+                                                                this.cancel()
+                                                            }
+                                                            if (item.key == "ACTIVITY_STARTED") {
+                                                                println("GETTING CONTACT")
+                                                                println("Selected data:::::::" + item.value)
+                                                            }
+                                                            if (item.value.matches(numberPattern)) {
+                                                                memberNumber = item.value
+                                                            }
+
+                                                        }
+                                                    }
+                                                }
+                                                launchContacts = false
+                                            }
+
                                         },
                                         content = {
                                             Icon(

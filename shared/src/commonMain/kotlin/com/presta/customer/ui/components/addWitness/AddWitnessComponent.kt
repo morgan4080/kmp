@@ -1,5 +1,6 @@
 package com.presta.customer.ui.components.addWitness
 
+import com.presta.customer.Platform
 import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
@@ -60,4 +61,5 @@ interface AddWitnessComponent {
     val signHomeState: StateFlow<SignHomeStore.State>
     fun onBackNavClicked()
     fun onProductSelected()
+    val platform: Platform
 }

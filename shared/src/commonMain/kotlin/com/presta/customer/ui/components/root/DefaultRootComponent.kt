@@ -3,6 +3,7 @@ package com.presta.customer.ui.components.root
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.active
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
@@ -96,6 +97,7 @@ fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineSc
 
 fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
     CoroutineScope(context, lifecycle)
+
 class DefaultRootComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
@@ -120,27 +122,77 @@ class DefaultRootComponent(
 
     override val childStack: Value<ChildStack<*, RootComponent.Child>> = _childStack
 
-    private fun createChild(config: Config, componentContext: ComponentContext): RootComponent.Child =
+    private fun createChild(
+        config: Config,
+        componentContext: ComponentContext
+    ): RootComponent.Child =
         when (config) {
-            is Config.Tenant -> RootComponent.Child.TenantChild(tenantComponent(componentContext, config))
+            is Config.Tenant -> RootComponent.Child.TenantChild(
+                tenantComponent(
+                    componentContext,
+                    config
+                )
+            )
+
             is Config.Splash -> RootComponent.Child.SplashChild(splashComponent(componentContext))
-            is Config.Welcome -> RootComponent.Child.WelcomeChild(welcomeComponent(componentContext, config))
-            is Config.OnBoarding -> RootComponent.Child.OnboardingChild(onBoardingComponent(componentContext, config))
+            is Config.Welcome -> RootComponent.Child.WelcomeChild(
+                welcomeComponent(
+                    componentContext,
+                    config
+                )
+            )
+
+            is Config.OnBoarding -> RootComponent.Child.OnboardingChild(
+                onBoardingComponent(
+                    componentContext,
+                    config
+                )
+            )
+
             is Config.OTP -> RootComponent.Child.OTPChild(otpComponent(componentContext, config))
-            is Config.Register -> RootComponent.Child.RegisterChild(registerComponent(componentContext, config))
+            is Config.Register -> RootComponent.Child.RegisterChild(
+                registerComponent(
+                    componentContext,
+                    config
+                )
+            )
+
             is Config.Auth -> RootComponent.Child.AuthChild(authComponent(componentContext, config))
-            is Config.RootBottom -> RootComponent.Child.RootBottomChild(rootBottomComponent(componentContext, config))
-            is Config.AllTransactions -> RootComponent.Child.AllTransactionsChild(allTransactionHistory(componentContext))
-            is Config.PayLoanPrompt->RootComponent.Child.PayLoanPromptChild(payLoanPromptComponent(componentContext, config))
-            is Config.PayRegistrationFee->RootComponent.Child.PayRegistrationFeeChild(payRegistrationFeeComponent(componentContext, config))
-            is Config.PayLoan->RootComponent.Child.PayLoanChild(payLoanComponent(componentContext))
-            is Config.ProcessingTransaction->RootComponent.Child.ProcessingTransactionChild(processingTransactionComponent(componentContext, config))
+            is Config.RootBottom -> RootComponent.Child.RootBottomChild(
+                rootBottomComponent(
+                    componentContext,
+                    config
+                )
+            )
+
+            is Config.AllTransactions -> RootComponent.Child.AllTransactionsChild(
+                allTransactionHistory(componentContext)
+            )
+
+            is Config.PayLoanPrompt -> RootComponent.Child.PayLoanPromptChild(
+                payLoanPromptComponent(
+                    componentContext,
+                    config
+                )
+            )
+
+            is Config.PayRegistrationFee -> RootComponent.Child.PayRegistrationFeeChild(
+                payRegistrationFeeComponent(componentContext, config)
+            )
+
+            is Config.PayLoan -> RootComponent.Child.PayLoanChild(payLoanComponent(componentContext))
+            is Config.ProcessingTransaction -> RootComponent.Child.ProcessingTransactionChild(
+                processingTransactionComponent(componentContext, config)
+            )
+
             is Config.ProcessingLoanLoanDisbursement -> RootComponent.Child.ProcessingLoanDisbursementChild(
                 processingLoanLoanDisbursementComponent(componentContext, config)
             )
-            is Config.LoanPendingApprovals ->  RootComponent.Child.LoanPendingApprovalsChild(
+
+            is Config.LoanPendingApprovals -> RootComponent.Child.LoanPendingApprovalsChild(
                 loansPendingApprovalComponent(componentContext)
             )
+
             is Config.SignApp -> RootComponent.Child.SignAppChild(
                 signApplication(
                     componentContext,
@@ -224,20 +276,25 @@ class DefaultRootComponent(
             }
         )
 
-    private fun tenantComponent(componentContext: ComponentContext, config: Config.Tenant): TenantComponent =
+    private fun tenantComponent(
+        componentContext: ComponentContext,
+        config: Config.Tenant
+    ): TenantComponent =
         DefaultTenantComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
             onBoardingContext = config.onBoardingContext,
             onSubmit = { onBoardingContext, tenantId ->
-                navigation.push(Config.OnBoarding(
-                    onBoardingContext = onBoardingContext,
-                    tenantId = tenantId
-                ))
+                navigation.push(
+                    Config.OnBoarding(
+                        onBoardingContext = onBoardingContext,
+                        tenantId = tenantId
+                    )
+                )
             },
 
-        )
+            )
 
     private fun splashComponent(componentContext: ComponentContext): SplashComponent =
         DefaultSplashComponent(
@@ -251,18 +308,23 @@ class DefaultRootComponent(
                 navigation.push(Config.Welcome(context = OnBoardingContext.LOGIN))
             },
             navigateToAuth = { memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext, pinStatus ->
-                navigation.replaceAll(Config.Auth(
-                    memberRefId = memberRefId,
-                    phoneNumber = phoneNumber,
-                    isTermsAccepted = isTermsAccepted,
-                    isActive = isActive,
-                    onBoardingContext = onBoardingContext,
-                    pinStatus = pinStatus
-                ))
+                navigation.replaceAll(
+                    Config.Auth(
+                        memberRefId = memberRefId,
+                        phoneNumber = phoneNumber,
+                        isTermsAccepted = isTermsAccepted,
+                        isActive = isActive,
+                        onBoardingContext = onBoardingContext,
+                        pinStatus = pinStatus
+                    )
+                )
             }
         )
 
-    private fun welcomeComponent(componentContext: ComponentContext, config: Config.Welcome): WelcomeComponent =
+    private fun welcomeComponent(
+        componentContext: ComponentContext,
+        config: Config.Welcome
+    ): WelcomeComponent =
         DefaultWelcomeComponent(
             componentContext = componentContext,
             onBoardingContext = config.context,
@@ -284,23 +346,26 @@ class DefaultRootComponent(
             },
         )
 
-    private fun onBoardingComponent(componentContext: ComponentContext, config: Config.OnBoarding): OnBoardingComponent =
+    private fun onBoardingComponent(
+        componentContext: ComponentContext,
+        config: Config.OnBoarding
+    ): OnBoardingComponent =
         DefaultOnboardingComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
             onBoardingContext = config.onBoardingContext,
             tenantId = config.tenantId,
             onPush = { memberRefId, phoneNumber, isActive, isTermsAccepted, onBoardingContext, pinStatus ->
-                 navigation.push(
-                     Config.OTP(
-                         memberRefId = memberRefId,
-                         onBoardingContext = onBoardingContext,
-                         phoneNumber = phoneNumber,
-                         isActive = isActive,
-                         isTermsAccepted = isTermsAccepted,
-                         pinStatus = pinStatus
+                navigation.push(
+                    Config.OTP(
+                        memberRefId = memberRefId,
+                        onBoardingContext = onBoardingContext,
+                        phoneNumber = phoneNumber,
+                        isActive = isActive,
+                        isTermsAccepted = isTermsAccepted,
+                        pinStatus = pinStatus
                     )
-                 )
+                )
             },
         )
 
@@ -341,7 +406,10 @@ class DefaultRootComponent(
             }
         }
 
-    private fun registerComponent(componentContext: ComponentContext, config: Config.Register): RegistrationComponent =
+    private fun registerComponent(
+        componentContext: ComponentContext,
+        config: Config.Register
+    ): RegistrationComponent =
         DefaultRegistrationComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
@@ -351,18 +419,23 @@ class DefaultRootComponent(
             pinStatus = config.pinStatus,
             onBoardingContext = config.onBoardingContext,
             onRegistered = { memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext, pinStatus ->
-                navigation.push(Config.Auth(
-                    memberRefId = memberRefId,
-                    phoneNumber = phoneNumber,
-                    isTermsAccepted = isTermsAccepted,
-                    isActive = isActive,
-                    onBoardingContext = onBoardingContext,
-                    pinStatus = pinStatus
-                ))
+                navigation.push(
+                    Config.Auth(
+                        memberRefId = memberRefId,
+                        phoneNumber = phoneNumber,
+                        isTermsAccepted = isTermsAccepted,
+                        isActive = isActive,
+                        onBoardingContext = onBoardingContext,
+                        pinStatus = pinStatus
+                    )
+                )
             }
         )
 
-    private fun authComponent(componentContext: ComponentContext, config: Config.Auth): AuthComponent =
+    private fun authComponent(
+        componentContext: ComponentContext,
+        config: Config.Auth
+    ): AuthComponent =
         DefaultAuthComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
@@ -379,7 +452,10 @@ class DefaultRootComponent(
 
     val scope = coroutineScope(prestaDispatchers.main + SupervisorJob())
 
-    private fun rootBottomComponent(componentContext: ComponentContext, config: Config.RootBottom): RootBottomComponent =
+    private fun rootBottomComponent(
+        componentContext: ComponentContext,
+        config: Config.RootBottom
+    ): RootBottomComponent =
         DefaultRootBottomComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
@@ -401,19 +477,27 @@ class DefaultRootComponent(
                 navigation.bringToFront(Config.PayLoan)
             },
             gotoPayRegistrationFees = { correlationId, amount ->
-                navigation.bringToFront(Config.ProcessingTransaction(amount = amount, correlationId = correlationId, mode = PaymentTypes.MEMBERSHIPFEES))
+                navigation.bringToFront(
+                    Config.ProcessingTransaction(
+                        amount = amount,
+                        correlationId = correlationId,
+                        mode = PaymentTypes.MEMBERSHIPFEES
+                    )
+                )
             },
-            processTransaction = {correlationId, amount, mode ->
+            processTransaction = { correlationId, amount, mode ->
                 navigation.bringToFront(Config.ProcessingTransaction(correlationId, amount, mode))
             },
             processLoanState = {
                 scope.launch {
                     if (it !== null) {
-                        navigation.bringToFront(Config.ProcessingLoanLoanDisbursement(
-                            it.correlationId,
-                            it.amount,
-                            it.fees
-                        ))
+                        navigation.bringToFront(
+                            Config.ProcessingLoanLoanDisbursement(
+                                it.correlationId,
+                                it.amount,
+                                it.fees
+                            )
+                        )
                     }
                 }
             },
@@ -439,33 +523,47 @@ class DefaultRootComponent(
             mainContext = prestaDispatchers.main,
             componentContext = componentContext,
             onPayClicked = { amount, correlationId ->
-                navigation.push(Config.ProcessingTransaction(amount = amount.toDouble(), correlationId = correlationId, mode = PaymentTypes.LOAN))
+                navigation.push(
+                    Config.ProcessingTransaction(
+                        amount = amount.toDouble(),
+                        correlationId = correlationId,
+                        mode = PaymentTypes.LOAN
+                    )
+                )
             },
             onPop = {
                 navigation.pop()
             }
         )
-    private fun payLoanPromptComponent(componentContext: ComponentContext, config: Config.PayLoanPrompt): PayLoanPromptComponent =
+
+    private fun payLoanPromptComponent(
+        componentContext: ComponentContext,
+        config: Config.PayLoanPrompt
+    ): PayLoanPromptComponent =
         DefaultPayLoanPromptComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
             amount = config.amount,
             correlationId = config.correlationId,
-            navigateToCompleteFailure =  { paymentStatus ->
+            navigateToCompleteFailure = { paymentStatus ->
                 if (paymentStatus == PaymentStatuses.COMPLETED) {
                     println("navigate to success")
                 }
             }
         )
-    private fun payRegistrationFeeComponent(componentContext: ComponentContext, config: Config.PayRegistrationFee): PayRegistrationFeeComponent =
+
+    private fun payRegistrationFeeComponent(
+        componentContext: ComponentContext,
+        config: Config.PayRegistrationFee
+    ): PayRegistrationFeeComponent =
         DefaultPayRegistrationFeeComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
             amount = config.amount,
             correlationId = config.correlationId,
-            navigateToCompleteFailure =  { paymentStatus ->
+            navigateToCompleteFailure = { paymentStatus ->
                 if (paymentStatus == PaymentStatuses.COMPLETED) {
                     println("navigate to success")
                 }
@@ -473,7 +571,10 @@ class DefaultRootComponent(
         )
 
 
-    private fun processingTransactionComponent(componentContext: ComponentContext, config: Config.ProcessingTransaction): ProcessingTransactionComponent =
+    private fun processingTransactionComponent(
+        componentContext: ComponentContext,
+        config: Config.ProcessingTransaction
+    ): ProcessingTransactionComponent =
         DefaultProcessingTransactionComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
@@ -509,9 +610,6 @@ class DefaultRootComponent(
                 navigation.replaceAll(Config.RootBottom(true))
             }
         )
-
-
-
 
 
     // GUARANTORSHIP
@@ -1083,11 +1181,6 @@ class DefaultRootComponent(
         )
 
 
-
-
-
-
-
     enum class OnBoardingContext {
         LOGIN,
         REGISTRATION
@@ -1096,46 +1189,87 @@ class DefaultRootComponent(
     private sealed class Config : Parcelable {
         @Parcelize
         data class Tenant(val onBoardingContext: OnBoardingContext) : Config()
+
         @Parcelize
         object Splash : Config()
+
         @Parcelize
-        data class Welcome (val context: OnBoardingContext) : Config()
+        data class Welcome(val context: OnBoardingContext) : Config()
+
         @Parcelize
-        data class OnBoarding (val onBoardingContext: OnBoardingContext, val tenantId: String? = null) : Config()
+        data class OnBoarding(
+            val onBoardingContext: OnBoardingContext,
+            val tenantId: String? = null
+        ) : Config()
+
         @Parcelize
-        data class OTP (val memberRefId: String?, val onBoardingContext: OnBoardingContext, val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean, val pinStatus: PinStatus?) : Config()
+        data class OTP(
+            val memberRefId: String?,
+            val onBoardingContext: OnBoardingContext,
+            val phoneNumber: String,
+            val isActive: Boolean,
+            val isTermsAccepted: Boolean,
+            val pinStatus: PinStatus?
+        ) : Config()
+
         @Parcelize
-        data class Auth(val memberRefId: String?, val phoneNumber: String, val isTermsAccepted: Boolean, val isActive: Boolean, val onBoardingContext: OnBoardingContext, val pinStatus: PinStatus?) : Config()
+        data class Auth(
+            val memberRefId: String?,
+            val phoneNumber: String,
+            val isTermsAccepted: Boolean,
+            val isActive: Boolean,
+            val onBoardingContext: OnBoardingContext,
+            val pinStatus: PinStatus?
+        ) : Config()
+
         @Parcelize
-        data class Register(val phoneNumber: String, val isActive: Boolean, val isTermsAccepted: Boolean, val onBoardingContext: OnBoardingContext, val pinStatus: PinStatus?) : Config()
+        data class Register(
+            val phoneNumber: String,
+            val isActive: Boolean,
+            val isTermsAccepted: Boolean,
+            val onBoardingContext: OnBoardingContext,
+            val pinStatus: PinStatus?
+        ) : Config()
+
         @Parcelize
         object AllTransactions : Config()
+
         @Parcelize
         object LoanPendingApprovals : Config()
+
         @Parcelize
         data class RootBottom(val backTopProfile: Boolean) : Config()
+
         @Parcelize
-        object PayLoan :Config()
+        object PayLoan : Config()
+
         @Parcelize
-        data class PayLoanPrompt(val amount: String, val correlationId: String) :Config()
+        data class PayLoanPrompt(val amount: String, val correlationId: String) : Config()
+
         @Parcelize
-        data class PayRegistrationFee(val amount: Double, val correlationId: String) :Config()
+        data class PayRegistrationFee(val amount: Double, val correlationId: String) : Config()
+
         @Parcelize
-        data class ProcessingTransaction(val correlationId: String, val amount: Double, val mode: PaymentTypes) :Config()
+        data class ProcessingTransaction(
+            val correlationId: String,
+            val amount: Double,
+            val mode: PaymentTypes
+        ) : Config()
+
         @Parcelize
-        data class ProcessingLoanLoanDisbursement(val correlationId: String, val amount: Double, val fees: Double) : Config()
+        data class ProcessingLoanLoanDisbursement(
+            val correlationId: String,
+            val amount: Double,
+            val fees: Double
+        ) : Config()
+
         @Parcelize
         data class SignApp(
             val loanRefId: () -> String,
         ) : Config()
 
 
-
-
-
         // GUARANTORSHIP
-
-
 
 
         @Parcelize
@@ -1264,15 +1398,49 @@ class DefaultRootComponent(
             val guarantorLastName: String
         ) : Config()
     }
-
     init {
-        lifecycle.subscribe(
-            object : Lifecycle.Callbacks {
-                override fun onResume() {
-                    super.onResume()
-                    navigation.replaceAll(Config.Splash)
+        lifecycle.subscribe(object : Lifecycle.Callbacks {
+            override fun onResume() {
+                when (childStack.active.configuration) {
+                    is Config.AddGuarantors -> {
+                        super.onResume()
+                    }
+
+                    is Config.SignDocument -> {
+                        super.onResume()
+                        //if signed navigate
+                        navigation.bringToFront(
+                            Config.SignDocument(
+                                loanNumber = passedLoanNumber,
+                                amount = passedAmount.toDouble(),
+                                loanRequestRefId = loanRefid,
+                                memberRefId = passedMemberRefid,
+                                guarantorRefId = passedGuarantorRefId
+                            )
+                        )
+                    }
+
+                    is Config.SignLoanForm -> {
+                        super.onResume()
+
+                    }
+
+                    is Config.SignWitnessDocument -> {
+                        super.onResume()
+
+                    }
+                    is Config.LongTermLoanSigningStatus -> {
+                        super.onResume()
+                    }
+                    is Config.AddWitness -> {
+                        super.onResume()
+                    }
+                    else -> {
+                        super.onResume()
+                        navigation.replaceAll(Config.Splash)
+                    }
                 }
             }
-        )
+        })
     }
 }

@@ -81,6 +81,7 @@ class DefaultAddGuarantorsComponent(
     override val loanPurposeCategoryCode: String,
 ) : AddGuarantorsComponent, ComponentContext by componentContext, KoinComponent {
     private val scope = coroutineScope(mainContext + SupervisorJob())
+    override val platform by inject<Platform>()
     override val authStore: AuthStore =
         instanceKeeper.getStore {
             AuthStoreFactory(
@@ -161,7 +162,7 @@ class DefaultAddGuarantorsComponent(
         }
     }
 
-    override val platform by inject<Platform>()
+
     override fun onBackNavClicked() {
         onItemClicked()
     }
