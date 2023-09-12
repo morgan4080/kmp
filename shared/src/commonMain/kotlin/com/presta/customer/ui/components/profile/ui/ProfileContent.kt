@@ -138,7 +138,7 @@ fun ProfileContent(
     )
 
     val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Expanded
+        initialValue = ModalBottomSheetValue.Hidden
     )
 
     LaunchedEffect(authState.cachedMemberData) {
@@ -514,7 +514,7 @@ fun ProfileContent(
                                 }
                                 item {
                                     Column (modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 30.dp)) {
-                                        singleTransaction(state.transactionHistory)
+                                        singleTransaction(state.transactionHistory, authState.isLoading)
                                     }
                                 }
                                 item {

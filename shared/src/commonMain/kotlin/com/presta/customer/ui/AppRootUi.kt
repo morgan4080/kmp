@@ -1,13 +1,24 @@
 package com.presta.customer.ui
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimator
 import com.moriatsushi.insetsx.SystemBarsBehavior
 import com.moriatsushi.insetsx.rememberWindowInsetsController
 import com.presta.customer.SharedStatus
@@ -17,9 +28,9 @@ import com.presta.customer.ui.components.applyLongTermLoan.ui.ApplyLongTermLoanS
 import com.presta.customer.ui.components.auth.ui.AuthScreen
 import com.presta.customer.ui.components.favouriteGuarantors.ui.FavouriteGaurantorsScreen
 import com.presta.customer.ui.components.guarantorshipRequests.ui.GuarantorshipRequestScreen
-import com.presta.customer.ui.components.longTermLoanSignStatus.LongTermLoanSigningStatusScreen
 import com.presta.customer.ui.components.longTermLoanConfirmation.ui.LongTermLoanConfirmationScreen
 import com.presta.customer.ui.components.longTermLoanDetails.ui.LongTermLoanDetailsScreen
+import com.presta.customer.ui.components.longTermLoanSignStatus.LongTermLoanSigningStatusScreen
 import com.presta.customer.ui.components.onBoarding.ui.OnBoardingScreen
 import com.presta.customer.ui.components.otp.ui.OtpScreen
 import com.presta.customer.ui.components.payLoan.ui.PayLoanScreen
@@ -42,10 +53,13 @@ import com.presta.customer.ui.components.tenant.ui.TenantScreen
 import com.presta.customer.ui.components.transactionHistory.ui.TransactionHistoryScreen
 import com.presta.customer.ui.components.welcome.WelcomeScreen
 import com.presta.customer.ui.components.witnessRequests.ui.WitnessRequestScreen
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
-
+    val scope = rememberCoroutineScope()
+    var rotated by remember { mutableStateOf(false) }
     val windowInsetsController = rememberWindowInsetsController()
     val isDark = isSystemInDarkTheme()
     LaunchedEffect(Unit) {
@@ -62,9 +76,30 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
             setNavigationBarsContentColor(dark = isDark)
         }
     }
+
+    val rotation by animateFloatAsState(
+        targetValue = if (rotated) 180f else 0f,
+        animationSpec = tween(2000)
+    )
+
     Children(
         stack = component.childStack,
-        animation = stackAnimation(fade() + scale()),// tabAnimation()
+        animation = stackAnimation { child, _, _ ->
+           when(child.instance) {
+               is RootComponent.Child.SignAppChild -> slide() + stackAnimator { factor, _, content ->
+                   content(
+                       Modifier.graphicsLayer {
+                           rotationY = if (factor >= 0F) {
+                               factor * (rotation - 1F) + 1F
+                           } else {
+                               factor * (1F - rotation) + 1F
+                           }
+                       }
+                   )
+               }
+               else -> fade() + scale()
+           }
+        },
     ) {
         when (val child = it.instance) {
             is RootComponent.Child.TenantChild -> TenantScreen(child.component)
@@ -83,7 +118,14 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
             is RootComponent.Child.ProcessingTransactionChild-> ProcessingTransactionScreen(child.component)
             is RootComponent.Child.ProcessingLoanDisbursementChild-> ProcessLoanDisbursementScreen(child.component)
             is RootComponent.Child.LoanPendingApprovalsChild-> PendingApprovalsScreen(child.component)
-            is RootComponent.Child.SignAppChild-> RootBottomSignScreen(child.component)
+            is RootComponent.Child.SignAppChild-> {
+                scope.launch {
+                    rotated = true
+                    delay(500)
+                    rotated = false
+                }
+                RootBottomSignScreen(child.component)
+            }
             is RootComponent.Child.ApplyLongtermLoanChild -> ApplyLongTermLoanScreen(child.component)
             is RootComponent.Child.LongTermLoanDetailsChild -> LongTermLoanDetailsScreen(child.component)
             is RootComponent.Child.SelectLoanPurposeChild-> SelectLoanPurposeScreen(child.component)

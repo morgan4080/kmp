@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
@@ -15,13 +14,10 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.Direction
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
@@ -29,13 +25,12 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
+import com.presta.customer.MR
 import com.presta.customer.ui.components.longTermLoanRequestsList.ui.LongTermLoanRequestsScreen
+import com.presta.customer.ui.components.signAppSettings.ui.SignSettingsScreen
 import com.presta.customer.ui.composables.GetIconForSignScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
-import com.presta.customer.ui.components.signAppSettings.ui.SignSettingsScreen
-
-
-@OptIn(ExperimentalMaterial3Api::class)
+import dev.icerock.moko.resources.compose.fontFamilyResource
 @Composable
 fun RootBottomSignScreen(component: RootBottomSignComponent) {
     val childStackBottom by component.childStackBottom.subscribeAsState()
@@ -72,8 +67,8 @@ fun RootBottomSignScreen(component: RootBottomSignComponent) {
                             Text(
                                 text = screens[0],
                                 color = if (activeComponentStackBottom is RootBottomSignComponent.ChildBottom.ProfileChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Light,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
@@ -97,8 +92,8 @@ fun RootBottomSignScreen(component: RootBottomSignComponent) {
                             Text(
                                 text = screens[1],
                                 color = if (activeComponentStackBottom is RootBottomSignComponent.ChildBottom.RequestChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Light,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
@@ -122,8 +117,8 @@ fun RootBottomSignScreen(component: RootBottomSignComponent) {
                             Text(
                                 text = screens[2],
                                 color = if (activeComponentStackBottom is RootBottomSignComponent.ChildBottom.SettingsChild) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Light,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
@@ -147,8 +142,8 @@ fun RootBottomSignScreen(component: RootBottomSignComponent) {
                             Text(
                                 text = screens[3],
                                 color = MaterialTheme.colorScheme.outline,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Light,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 modifier = Modifier.absoluteOffset(y = 30.dp)
                             )
                         },
@@ -173,7 +168,6 @@ fun RootBottomSignScreen(component: RootBottomSignComponent) {
                     is RootBottomSignComponent.ChildBottom.RequestChild -> LongTermLoanRequestsScreen(
                         childX.component
                     )
-
                     is RootBottomSignComponent.ChildBottom.SettingsChild -> SignSettingsScreen(
                         childX.component
                     )
@@ -191,7 +185,6 @@ private val RootBottomSignComponent.ChildBottom.index: Int
             is RootBottomSignComponent.ChildBottom.SettingsChild -> 2
         }
 
-@Suppress("OPT_IN_USAGE")
 private fun Direction.flipSide(): Direction =
     when (this) {
         Direction.ENTER_FRONT -> Direction.ENTER_BACK

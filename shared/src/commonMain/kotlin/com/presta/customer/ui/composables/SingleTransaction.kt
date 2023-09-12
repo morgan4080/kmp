@@ -3,7 +3,6 @@ package com.presta.customer.ui.composables
 import ShimmerBrush
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
@@ -35,8 +34,8 @@ import com.presta.customer.ui.helpers.formatMoney
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
-fun singleTransaction(transactionHistory:  List<PrestaTransactionHistoryResponse>?) {
-    if (transactionHistory !== null) {
+fun singleTransaction(transactionHistory:  List<PrestaTransactionHistoryResponse>?, loading: Boolean = false) {
+    if (transactionHistory !== null && !loading) {
         transactionHistory.map { transaction ->
             Row(
                 modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
@@ -79,7 +78,7 @@ fun singleTransaction(transactionHistory:  List<PrestaTransactionHistoryResponse
                             modifier = Modifier.background(
                                 brush = ShimmerBrush(
                                     targetValue = 1300f,
-                                    showShimmer = transaction.purpose === null
+                                    showShimmer = transaction.purpose === null || loading
                                 ),
                                 shape = RoundedCornerShape(12.dp)
                             )

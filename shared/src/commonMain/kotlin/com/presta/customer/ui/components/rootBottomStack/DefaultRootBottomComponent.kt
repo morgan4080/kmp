@@ -131,7 +131,8 @@ class DefaultRootBottomComponent(
                 navigationBottomStackNavigation.bringToFront(ConfigBottom.Profile)
             },
             navigateToSign = {
-                navigationBottomStackNavigation.bringToFront(ConfigBottom.Sign)
+                // TODO NAV TO SIGN
+                gotoSignApp()
             },
             processLoanState = {
                 processLoanState(it)
