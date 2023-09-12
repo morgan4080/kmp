@@ -68,6 +68,7 @@ class DefaultSelectLoanPurposeComponent(
     override val applyLongTermLoansState: StateFlow<ApplyLongTermLoansStore.State> =
         applyLongTermLoansStore.stateFlow
 
+
     override fun onAuthEvent(event: AuthStore.Intent) {
         authStore.accept(event)
     }
@@ -102,6 +103,9 @@ class DefaultSelectLoanPurposeComponent(
 
     override fun onBackNavClicked() {
         onItemClicked()
+    }
+    override fun reloadModels() {
+        checkAuthenticatedUser()
     }
 
     override fun onContinueSelected(

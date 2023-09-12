@@ -28,4 +28,5 @@ interface SelectLoanPurposeComponent {
     fun onEvent(event: ApplyLongTermLoansStore.Intent)
     val applyLongTermLoansStore: ApplyLongTermLoansStore
     val applyLongTermLoansState: StateFlow<ApplyLongTermLoansStore.State>
+    fun reloadModels()
 }

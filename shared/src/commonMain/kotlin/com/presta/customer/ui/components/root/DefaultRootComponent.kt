@@ -1450,6 +1450,9 @@ class DefaultRootComponent(
                     is Config.ReplaceGuarantor -> {
                         super.onResume()
                     }
+                    is Config.FavouriteGuarantors -> {
+                        super.onResume()
+                    }
 
                     else -> {
                         super.onResume()

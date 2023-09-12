@@ -1,5 +1,6 @@
 package com.presta.customer.ui.components.favouriteGuarantors
 
+import com.presta.customer.Platform
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
@@ -17,4 +18,5 @@ interface FavouriteGuarantorsComponent {
     val signHomeState: StateFlow<SignHomeStore.State>
     fun onBackNavClicked()
     fun onProductSelected()
+    val platform: Platform
 }

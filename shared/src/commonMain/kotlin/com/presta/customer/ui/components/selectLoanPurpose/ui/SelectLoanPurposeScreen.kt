@@ -15,7 +15,8 @@ fun SelectLoanPurposeScreen(
         component = component,
         state = applyLongTermLoansState,
         authState = authState,
-        onEvent = component::onEvent
+        onEvent = component::onEvent,
+        reloadModels = component::reloadModels
     )
 }
 

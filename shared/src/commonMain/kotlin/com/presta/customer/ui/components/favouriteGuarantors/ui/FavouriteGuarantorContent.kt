@@ -80,6 +80,7 @@ import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
 import com.presta.customer.ui.components.addGuarantors.ui.SelectGuarantorsView
 import com.presta.customer.ui.components.addGuarantors.ui.SnackbarVisualsWithError
+import com.presta.customer.ui.components.addWitness.WitnessDetailsView
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGuarantorsComponent
@@ -91,14 +92,17 @@ import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.backArrowColor
 import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class FavouriteGuarantorDetails(
     val refId: String,
-    val memberName: String,
-    val memberNumber: String
+    val memberFirstName: String,
+    val memberLastName: String,
+    val memberNumber: String,
+    val memberPhoneNumber: String
 )
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
@@ -118,18 +122,18 @@ fun FavouriteGuarantorContent(
     var firstName by remember { mutableStateOf(TextFieldValue()) }
     val emptyTextContainer by remember { mutableStateOf(TextFieldValue()) }
     var selectedIndex by remember { mutableStateOf(-1) }
-    var searchGuarantorByMemberNumber by remember { mutableStateOf(false) }
+    var searchWitnessByMemberNumber by remember { mutableStateOf(false) }
+    var searchWitnessByPhoneNumber by remember { mutableStateOf(false) }
     val skipHalfExpanded by remember { mutableStateOf(true) }
     val modalBottomState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = skipHalfExpanded
     )
     var memberRefId by remember { mutableStateOf("") }
-    var memberUpdated by remember { mutableStateOf(0) }
     val snackbarHostState = remember { SnackbarHostState() }
     val snackBarScope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
     var guarantorDataListed by remember { mutableStateOf(emptySet<FavouriteGuarantorDetails>()) }
-
     if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         memberRefId = signHomeState.prestaTenantByPhoneNumber.refId
 
@@ -138,7 +142,8 @@ fun FavouriteGuarantorContent(
         LaunchedEffect(
             authState.cachedMemberData,
             memberRefId,
-            memberUpdated
+            state.deleteFavouriteGuarantorResponse,
+            state.prestaAdedFavouriteGuarantor
         ) {
             authState.cachedMemberData?.let {
                 ApplyLongTermLoansStore.Intent.GetPrestaFavouriteGuarantor(
@@ -169,44 +174,63 @@ fun FavouriteGuarantorContent(
             }
         }
     }
-    if (signHomeState.prestaTenantByMemberNumber != null) {
-        if (guarantorDataListed.size != 1) {
-            val apiResponse = listOf(
-                FavouriteGuarantorDetails(
-                    refId = signHomeState.prestaTenantByMemberNumber.refId,
-                    memberName = signHomeState.prestaTenantByMemberNumber.firstName,
-                    memberNumber = signHomeState.prestaTenantByMemberNumber.memberNumber
-                )
-            )
-            val existingItems = guarantorDataListed.toSet()
-            val duplicateItems = apiResponse.filter { it in existingItems }
-            if (duplicateItems.isNotEmpty()) {
-                snackBarScope.launch {
-                    snackbarHostState.showSnackbar(
-                        SnackbarVisualsWithError(
-                            "Duplicate Entries not  allowed",
-                            isError = true
-                        )
-                    )
-                }
+    if (memberNumber != "") {
+        LaunchedEffect(
+            authState.cachedMemberData,
+            memberNumber
 
-            } else {
-                guarantorDataListed =
-                    guarantorDataListed.toMutableSet().apply {
-                        addAll(apiResponse)
-                    }
+        ) {
+            authState.cachedMemberData?.let {
+                ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber(
+                    token = it.accessToken,
+                    phoneNumber = memberNumber
+                )
+            }?.let {
+                onEvent(
+                    it
+                )
             }
         }
     }
-    val scope = rememberCoroutineScope()
     val clearItemClicked: (FavouriteGuarantorDetails) -> Unit = { item ->
         guarantorDataListed -= item
     }
 
-    //Todo----- Handle native feature
-
-    //Handle native feature
-
+    LaunchedEffect(
+        guarantorDataListed
+    ) {
+        guarantorDataListed.map { datas ->
+            if (datas.memberPhoneNumber == signHomeState.prestaTenantByPhoneNumber?.phoneNumber) {
+                clearItemClicked(datas)
+                snackBarScope.launch {
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsWithError(
+                            "self guarantee not allowed $memberNumber",
+                            isError = true
+                        )
+                    )
+                }
+            } else {
+                guarantorDataListed.map { mapedrefId ->
+                    authState.cachedMemberData?.let {
+                        ApplyLongTermLoansStore.Intent.AddFavouriteGuarantor(
+                            token = it.accessToken,
+                            memberRefId = memberRefId,
+                            guarantorRefId = mapedrefId.refId
+                        )
+                    }?.let {
+                        onEvent(
+                            it
+                        )
+                    }
+                    scope.launch { modalBottomState.hide() }
+                }
+            }
+        }
+    }
+    var launchContacts by remember { mutableStateOf(false) }
+    val contactsScope = rememberCoroutineScope()
+    val numberPattern = remember { Regex("^\\d+\$") }
     ModalBottomSheetLayout(
         sheetState = modalBottomState,
         sheetContent = {
@@ -423,24 +447,44 @@ fun FavouriteGuarantorContent(
                                             modifier = Modifier
                                                 .size(25.dp),
                                             onClick = {
-//                                                readPhonenumber?.picknumber(context = AppContext())
-                                                println("Read phone number invoked :::::::")
+                                                //Todo----open Contacts Library
+                                                launchContacts = true
+                                                //Todo----open  the contacts library and take the selected contact
+                                                if (launchContacts) {
+                                                    contactsScope.launch {
+                                                        val content =
+                                                            component.platform.getContact(421, "KE")
+                                                        content.collect { contactData ->
+                                                            contactData.map { item ->
+                                                                if (item.key == "E_FAILED_TO_SHOW_PICKER") {
+                                                                    println("GETTING KEY FAILED")
+                                                                    println(item.value)
+                                                                    this.cancel()
+                                                                }
+                                                                if (item.key == "CONTACT_PICKER_FAILED") {
+                                                                    println("GETTING KEY FAILED")
+                                                                    println(item.value)
+                                                                    this.cancel()
+                                                                }
+                                                                if (item.key == "ACTIVITY_STARTED") {
+                                                                    println("GETTING CONTACT")
+                                                                    println("Selected data:::::::" + item.value)
+                                                                }
+                                                                if (item.value.matches(numberPattern)) {
+                                                                    memberNumber = item.value
+                                                                }
 
-//                                            snackBarScope.launch {
-//                                                snackbarHostState.showSnackbar(
-//                                                    "member data"
-//                                                )
-//                                            }
-                                                //open contacts Library
-//                                        component.platform.getContact().map { contact ->
-//                                            println("Test Contact")
-//                                            println(contact.phoneNumber)
-//                                        }
+                                                            }
+                                                        }
+                                                    }
+                                                    launchContacts = false
+                                                }
+
+
                                             },
                                             content = {
                                                 Icon(
                                                     imageVector = Icons.Outlined.Person,
-                                                    modifier = Modifier,
                                                     contentDescription = null,
                                                     tint = MaterialTheme.colorScheme.primary
                                                 )
@@ -456,8 +500,6 @@ fun FavouriteGuarantorContent(
                                 .fillMaxWidth()
                                 .fillMaxHeight(0.8f)
                         ) {
-                            //list the searched Guarantor
-                            //Todo---clear  the selected gauranotor on choice
                             item {
                                 Spacer(modifier = Modifier.padding(top = 10.dp))
                             }
@@ -467,22 +509,33 @@ fun FavouriteGuarantorContent(
                                         Row(
                                             modifier = Modifier
                                                 .fillMaxWidth()
-                                                .padding(bottom = 10.dp)
+                                                .padding(top = 10.dp)
                                         ) {
-                                            FavouriteGuarantorView(
-                                                Index = 1,
-                                                selected = false,
+                                            WitnessDetailsView(
+                                                label = item.memberFirstName + " " + item.memberLastName,
                                                 onClick = {
-
-                                                },
-                                                deleteMember = {
+                                                    //call back executed
                                                     clearItemClicked(item)
                                                 },
-                                                label = item.memberName,
-                                                description = item.memberNumber
+                                                selected = true,
+                                                phoneNumber = item.memberPhoneNumber,
+                                                memberNumber = item.memberNumber,
                                             )
                                         }
                                     }
+                                }
+                            } else {
+                                //Todo--message to show  how to add the witness
+                                item {
+                                    Text(
+                                        "Add Guarantors using phone number or member number on the above text input",
+                                        fontSize = 12.sp,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                        modifier = Modifier.padding(
+                                            start = 10.dp,
+                                            top = 10.dp
+                                        )
+                                    )
                                 }
                             }
                         }
@@ -494,32 +547,95 @@ fun FavouriteGuarantorContent(
                             ActionButton(
                                 label = if (guarantorDataListed.size != 1) "Search" else "Add Guarantor",
                                 onClickContainer = {
-                                    //Post Favouriete Guarantor
-                                    if (signHomeState.prestaTenantByMemberNumber != null) {
-                                        guarantorDataListed.map { mapedrefId ->
-                                            authState.cachedMemberData?.let {
-                                                ApplyLongTermLoansStore.Intent.AddFavouriteGuarantor(
-                                                    token = it.accessToken,
-                                                    memberRefId = memberRefId,
-                                                    guarantorRefId = mapedrefId.refId
+                                    if (searchWitnessByMemberNumber && signHomeState.prestaTenantByMemberNumber != null) {
+                                        if (guarantorDataListed.size != 1) {
+                                            val apiResponse = listOf(
+                                                FavouriteGuarantorDetails(
+                                                    refId = signHomeState.prestaTenantByMemberNumber.refId,
+                                                    memberFirstName = signHomeState.prestaTenantByMemberNumber.firstName,
+                                                    memberNumber = signHomeState.prestaTenantByMemberNumber.memberNumber,
+                                                    memberLastName = signHomeState.prestaTenantByMemberNumber.lastName,
+                                                    memberPhoneNumber = signHomeState.prestaTenantByMemberNumber.phoneNumber
                                                 )
-                                            }?.let {
-                                                onEvent(
-                                                    it
+                                            )
+                                            val existingItems = guarantorDataListed.toSet()
+                                            val duplicateItems =
+                                                apiResponse.filter { it in existingItems }
+                                            if (duplicateItems.isNotEmpty()) {
+                                                snackBarScope.launch {
+                                                    snackbarHostState.showSnackbar(
+                                                        SnackbarVisualsWithError(
+                                                            "Duplicate Entries not  allowed",
+                                                            isError = true
+                                                        )
+                                                    )
+                                                }
+
+                                            } else {
+                                                guarantorDataListed =
+                                                    guarantorDataListed.toMutableSet().apply {
+                                                        addAll(apiResponse)
+                                                    }
+                                            }
+                                        }
+                                    } else {
+                                        if (searchWitnessByMemberNumber && signHomeState.prestaTenantByMemberNumber == null) {
+                                            snackBarScope.launch {
+                                                snackbarHostState.showSnackbar(
+                                                    SnackbarVisualsWithError(
+                                                        "Error loading Member $memberNumber",
+                                                        isError = true
+                                                    )
+                                                )
+                                            }
+
+                                        }
+                                    }
+                                    //Handle loading  member by Phone Number
+                                    if (searchWitnessByPhoneNumber && state.prestaLoadTenantByPhoneNumber?.phoneNumber != null) {
+                                        if (guarantorDataListed.size != 1) {
+                                            val apiResponse = listOf(
+                                                FavouriteGuarantorDetails(
+                                                    refId = state.prestaLoadTenantByPhoneNumber.refId,
+                                                    memberFirstName = state.prestaLoadTenantByPhoneNumber.firstName,
+                                                    memberNumber = state.prestaLoadTenantByPhoneNumber.memberNumber,
+                                                    memberLastName = state.prestaLoadTenantByPhoneNumber.lastName,
+                                                    memberPhoneNumber = state.prestaLoadTenantByPhoneNumber.phoneNumber
+                                                )
+                                            )
+                                            val existingItems = guarantorDataListed.toSet()
+                                            val duplicateItems =
+                                                apiResponse.filter { it in existingItems }
+                                            if (duplicateItems.isNotEmpty()) {
+                                                snackBarScope.launch {
+                                                    snackbarHostState.showSnackbar(
+                                                        SnackbarVisualsWithError(
+                                                            "Duplicate Entries not  allowed",
+                                                            isError = true
+                                                        )
+                                                    )
+                                                }
+
+                                            } else {
+                                                guarantorDataListed =
+                                                    guarantorDataListed.toMutableSet().apply {
+                                                        addAll(apiResponse)
+                                                    }
+                                            }
+                                        }
+                                    } else {
+                                        if (searchWitnessByPhoneNumber && state.prestaLoadTenantByPhoneNumber?.phoneNumber == null) {
+                                            snackBarScope.launch {
+                                                snackbarHostState.showSnackbar(
+                                                    SnackbarVisualsWithError(
+                                                        "Error loading Member by PhoneNumber $memberNumber",
+                                                        isError = true
+                                                    )
                                                 )
                                             }
                                         }
-                                        memberUpdated++
-                                    } else {
-                                        snackBarScope.launch {
-                                            snackbarHostState.showSnackbar(
-                                                SnackbarVisualsWithError(
-                                                    "Error loading Member $memberNumber",
-                                                    isError = true
-                                                )
-                                            )
-                                        }
                                     }
+
                                 },
                                 enabled = true,
                                 loading = state.isLoading
@@ -604,8 +720,10 @@ fun FavouriteGuarantorContent(
                                                                             guarantorOption =
                                                                                 guarantorList[selectedIndex]
                                                                         }
-                                                                        searchGuarantorByMemberNumber =
-                                                                            guarantorOption == state.memberNo || guarantorOption == state.phoneNo
+                                                                        searchWitnessByMemberNumber =
+                                                                            guarantorOption == state.memberNo
+                                                                        searchWitnessByPhoneNumber =
+                                                                            guarantorOption == state.phoneNo
                                                                     },
                                                                     label = guarantorOptions
                                                                 )
@@ -684,7 +802,6 @@ fun FavouriteGuarantorContent(
             )
         }
     ) {
-        //list Data
         Scaffold(modifier = Modifier.padding(LocalSafeArea.current),
             floatingActionButton = {
                 FloatingActionButton(
@@ -778,7 +895,6 @@ fun FavouriteGuarantorContent(
                                                         it
                                                     )
                                                 }
-                                                memberUpdated++
                                             },
                                             label = prestaFavouriteGuarantorResponse.firstName + " " + prestaFavouriteGuarantorResponse.lastName,
                                             description = prestaFavouriteGuarantorResponse.memberNumber

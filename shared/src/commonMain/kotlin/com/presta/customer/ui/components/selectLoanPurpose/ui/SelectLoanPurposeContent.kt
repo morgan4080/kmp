@@ -7,9 +7,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absolutePadding
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,8 +20,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
@@ -34,6 +40,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +48,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.presta.customer.MR
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
@@ -49,15 +57,22 @@ import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.LoanPurposeProductSelectionCard
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
+import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterialApi::class,
+    ExperimentalLayoutApi::class
+)
 @Composable
 fun SelectLoanPurposeContent(
     component: SelectLoanPurposeComponent,
     state: ApplyLongTermLoansStore.State,
     authState: AuthStore.State,
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
+    reloadModels: () -> Unit,
 ) {
     var selectedCategoryIndex by remember { mutableStateOf(-1) }
     var selectedSubCategoryIndex by remember { mutableStateOf(-1) }
@@ -71,10 +86,14 @@ fun SelectLoanPurposeContent(
     var loanPurpose by remember { mutableStateOf("") }
     var loanPurposeCategory by remember { mutableStateOf("") }
     var loanPurposeCategoryCode by remember { mutableStateOf("") }
+    var refreshing by remember { mutableStateOf(false) }
+    val refreshScope = rememberCoroutineScope()
+
     if (parentId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
-            parentId
+            parentId,
+            refreshing
         ) {
             authState.cachedMemberData?.let {
                 ApplyLongTermLoansStore.Intent.GetLongTermLoansProductsSubCategories(
@@ -94,7 +113,8 @@ fun SelectLoanPurposeContent(
         LaunchedEffect(
             authState.cachedMemberData,
             parentId,
-            childId
+            childId,
+            refreshing
         ) {
             authState.cachedMemberData?.let {
                 ApplyLongTermLoansStore.Intent.GetLongTermLoansProductsSubCategoriesChildren(
@@ -110,6 +130,13 @@ fun SelectLoanPurposeContent(
             }
         }
     }
+    fun refresh() = refreshScope.launch {
+        refreshing = true
+        reloadModels()
+        delay(1500)
+        refreshing = false
+    }
+    val refreshState = rememberPullRefreshState(refreshing, ::refresh)
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Select Loan Purpose", onClickContainer = {
             component.onBackNavClicked()
@@ -120,139 +147,150 @@ fun SelectLoanPurposeContent(
                 .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp)
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxHeight(0.9f)
-                    .padding(innerPadding)
-            ) {
-                if (state.prestaLongTermLoanProductsCategories.isEmpty()) {
-                    items(8) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 10.dp, bottom = 10.dp)
-                                .background(color = MaterialTheme.colorScheme.background),
-                        ) {
-                            ElevatedCard(
+            Box(Modifier.consumeWindowInsets(innerPadding).pullRefresh(refreshState)) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxHeight(0.9f)
+                        .padding(innerPadding)
+                ) {
+                    if (state.prestaLongTermLoanProductsCategories.isEmpty()) {
+                        items(8) {
+                            Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
+                                    .padding(top = 10.dp, bottom = 10.dp)
                                     .background(color = MaterialTheme.colorScheme.background),
-                                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                             ) {
-                                Box(
+                                ElevatedCard(
                                     modifier = Modifier
-                                        .defaultMinSize(40.dp, 40.dp)
-                                        .background(
-                                            ShimmerBrush(
-                                                targetValue = 1300f,
-                                                showShimmer = true
-                                            )
-                                        )
                                         .fillMaxWidth()
+                                        .background(color = MaterialTheme.colorScheme.background),
+                                    colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                                 ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .defaultMinSize(40.dp, 40.dp)
+                                            .background(
+                                                ShimmerBrush(
+                                                    targetValue = 1300f,
+                                                    showShimmer = true
+                                                )
+                                            )
+                                            .fillMaxWidth()
+                                    ) {
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        state.prestaLongTermLoanProductsCategories.mapIndexed() { topIndex, categories ->
+                            item {
+                                Column(
+                                    modifier = Modifier
+                                ) {
+                                    LoanPurposeProductSelectionCard(
+                                        categories.name,
+                                        myLazyColumn = {
+                                            Column() {
+                                                if (state.isLoading) {
+                                                    ElevatedCard(
+                                                        modifier = Modifier
+                                                            .fillMaxWidth()
+                                                            .padding(top = 10.dp, bottom = 10.dp)
+                                                            .background(color = MaterialTheme.colorScheme.inverseOnSurface),
+                                                        colors = CardDefaults.elevatedCardColors(
+                                                            containerColor = MaterialTheme.colorScheme.inverseOnSurface
+                                                        )
+                                                    ) {
+                                                        Box(
+                                                            modifier = Modifier
+                                                                .defaultMinSize(40.dp, 40.dp)
+                                                                .background(
+                                                                    ShimmerBrush(
+                                                                        targetValue = 1300f,
+                                                                        showShimmer = true
+                                                                    )
+                                                                )
+                                                                .fillMaxWidth()
+                                                        ) {
+                                                        }
+                                                    }
+                                                } else {
+                                                    state.prestaLongTermLoanProductsSubCategories.mapIndexed { subIndex, loanSubCategory ->
+                                                        SelectLoanSubCategoryCard(
+                                                            label = loanSubCategory.name,
+                                                            index = subIndex,
+                                                            onClick = { subCatsIndex: Int ->
+                                                                selectedSubCategoryIndex =
+                                                                    if (selectedSubCategoryIndex == subIndex) -1 else subCatsIndex
+                                                                selectedSubCategoryChildrenIndex =
+                                                                    -1
+                                                                if (selectedSubCategoryIndex == subIndex) {
+                                                                    childId =
+                                                                        state.prestaLongTermLoanProductsSubCategories[selectedSubCategoryIndex].code
+                                                                    loanPurpose =
+                                                                        state.prestaLongTermLoanProductsSubCategories[selectedSubCategoryIndex].name
+                                                                }
+                                                            },
+                                                            expandContent = selectedSubCategoryIndex == subIndex,
+                                                            myLazyColumn = {
+                                                                Column() {
+                                                                    state.prestaLongTermLoanProductsSubCategoriesChildren.mapIndexed { subCatChildIndex, loanSubcategoryChildren ->
+                                                                        SelectSubProductCheckBox(
+                                                                            index = subCatChildIndex,
+                                                                            label = loanSubcategoryChildren.name,
+                                                                            onSelectOption = { subCatsChildIndex: Int ->
+                                                                                selectedSubCategoryChildrenIndex =
+                                                                                    if (selectedSubCategoryChildrenIndex == subCatsChildIndex) -1 else subCatChildIndex
+                                                                                if (selectedSubCategoryChildrenIndex > -1) {
+                                                                                    if (selectedSubCategoryChildrenIndex == subCatChildIndex) {
+                                                                                        loanPurposeCategory =
+                                                                                            state.prestaLongTermLoanProductsSubCategoriesChildren[selectedSubCategoryChildrenIndex].name
+                                                                                        loanPurposeCategoryCode =
+                                                                                            state.prestaLongTermLoanProductsSubCategoriesChildren[selectedSubCategoryChildrenIndex].code
+                                                                                    }
+                                                                                }
+
+                                                                            },
+                                                                            isSelectedOption = selectedSubCategoryChildrenIndex == subCatChildIndex,
+                                                                        )
+                                                                    }
+                                                                }
+                                                            }
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        index = topIndex,
+                                        onClick = { index: Int ->
+                                            selectedCategoryIndex =
+                                                if (selectedCategoryIndex == topIndex) -1 else index
+                                            selectedSubCategoryIndex = -1
+                                            if (selectedCategoryIndex == topIndex) {
+                                                parentId =
+                                                    state.prestaLongTermLoanProductsCategories[selectedCategoryIndex].code
+                                                loanCategory =
+                                                    state.prestaLongTermLoanProductsCategories[selectedCategoryIndex].name
+                                            }
+                                        },
+                                        expandContent = selectedCategoryIndex == topIndex,
+                                    )
                                 }
                             }
                         }
                     }
-                } else {
-                    state.prestaLongTermLoanProductsCategories.mapIndexed() { topIndex, categories ->
-                        item {
-                            Column(
-                                modifier = Modifier
-                            ) {
-                                LoanPurposeProductSelectionCard(
-                                    categories.name,
-                                    myLazyColumn = {
-                                        Column() {
-                                            if (state.isLoading) {
-                                                ElevatedCard(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .padding(top = 10.dp, bottom = 10.dp)
-                                                        .background(color = MaterialTheme.colorScheme.inverseOnSurface),
-                                                    colors = CardDefaults.elevatedCardColors(
-                                                        containerColor = MaterialTheme.colorScheme.inverseOnSurface
-                                                    )
-                                                ) {
-                                                    Box(
-                                                        modifier = Modifier
-                                                            .defaultMinSize(40.dp, 40.dp)
-                                                            .background(
-                                                                ShimmerBrush(
-                                                                    targetValue = 1300f,
-                                                                    showShimmer = true
-                                                                )
-                                                            )
-                                                            .fillMaxWidth()
-                                                    ) {
-                                                    }
-                                                }
-                                            } else {
-                                                state.prestaLongTermLoanProductsSubCategories.mapIndexed { subIndex, loanSubCategory ->
-                                                    SelectLoanSubCategoryCard(
-                                                        label = loanSubCategory.name,
-                                                        index = subIndex,
-                                                        onClick = { subCatsIndex: Int ->
-                                                            selectedSubCategoryIndex =
-                                                                if (selectedSubCategoryIndex == subIndex) -1 else subCatsIndex
-                                                            selectedSubCategoryChildrenIndex = -1
-                                                            if (selectedSubCategoryIndex == subIndex) {
-                                                                childId =
-                                                                    state.prestaLongTermLoanProductsSubCategories[selectedSubCategoryIndex].code
-                                                                loanPurpose = state.prestaLongTermLoanProductsSubCategories[selectedSubCategoryIndex].name
-                                                            }
-                                                        },
-                                                        expandContent = selectedSubCategoryIndex == subIndex,
-                                                        myLazyColumn = {
-                                                            Column() {
-                                                                state.prestaLongTermLoanProductsSubCategoriesChildren.mapIndexed { subCatChildIndex, loanSubcategoryChildren ->
-                                                                    SelectSubProductCheckBox(
-                                                                        index = subCatChildIndex,
-                                                                        label = loanSubcategoryChildren.name,
-                                                                        onSelectOption = { subCatsChildIndex: Int ->
-                                                                            selectedSubCategoryChildrenIndex =
-                                                                                if (selectedSubCategoryChildrenIndex == subCatsChildIndex) -1 else subCatChildIndex
-                                                                            if (selectedSubCategoryChildrenIndex > -1) {
-                                                                                if (selectedSubCategoryChildrenIndex == subCatChildIndex) {
-                                                                                    loanPurposeCategory =
-                                                                                        state.prestaLongTermLoanProductsSubCategoriesChildren[selectedSubCategoryChildrenIndex].name
-                                                                                    loanPurposeCategoryCode =
-                                                                                        state.prestaLongTermLoanProductsSubCategoriesChildren[selectedSubCategoryChildrenIndex].code
-                                                                                }
-                                                                            }
-
-                                                                        },
-                                                                        isSelectedOption = selectedSubCategoryChildrenIndex == subCatChildIndex,
-                                                                    )
-                                                                }
-                                                            }
-                                                        }
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    },
-                                    index = topIndex,
-                                    onClick = { index: Int ->
-                                        selectedCategoryIndex =
-                                            if (selectedCategoryIndex == topIndex) -1 else index
-                                        selectedSubCategoryIndex = -1
-                                        if (selectedCategoryIndex == topIndex) {
-                                            parentId =
-                                                state.prestaLongTermLoanProductsCategories[selectedCategoryIndex].code
-                                            loanCategory =
-                                                state.prestaLongTermLoanProductsCategories[selectedCategoryIndex].name
-                                        }
-                                    },
-                                    expandContent = selectedCategoryIndex == topIndex,
-                                )
-                            }
-                        }
+                    item {
+                        Spacer(modifier = Modifier.padding(bottom = 100.dp))
                     }
                 }
-                item {
-                    Spacer(modifier = Modifier.padding(bottom = 100.dp))
-                }
+                PullRefreshIndicator(
+                    refreshing, refreshState,
+                    Modifier
+                        .padding(innerPadding)
+                        .align(Alignment.TopCenter).zIndex(1f),
+                    contentColor = actionButtonColor
+                )
             }
             Row(modifier = Modifier.fillMaxWidth()) {
                 ActionButton(label = "Continue", onClickContainer = {
