@@ -82,7 +82,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.presta.customer.MR
-import com.presta.customer.Platform
 import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
@@ -100,7 +99,6 @@ import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.JsonNull.content
 
 class SnackbarVisualsWithError(
     override val message: String,
@@ -154,6 +152,7 @@ fun AddGuarantorContent(
     var businessType by remember { mutableStateOf("") }
     var amountToGuarantee by remember { mutableStateOf(TextFieldValue()) }
     var launchGuarantorListing by remember { mutableStateOf(false) }
+    var searchInitiated by remember { mutableStateOf(false) }
     val pattern = remember { Regex("^\\d+\$") }
     var userInputs by remember { mutableStateOf(TextFieldValue()) }
     if (memberNumber != "") {
@@ -289,6 +288,53 @@ fun AddGuarantorContent(
     var launchContacts by remember { mutableStateOf(false) }
     val contactsScope = rememberCoroutineScope()
     val numberPattern = remember { Regex("^\\d+\$") }
+
+    var loadedIdentifier by remember { mutableStateOf("") }
+
+    if (state.prestaLoadTenantByPhoneNumber?.firstName != null) {
+        loadedIdentifier = state.prestaLoadTenantByPhoneNumber.firstName
+    }
+
+    //Todo--run active search and load  the guarantor
+    if (memberNumber != "" && searchGuarantorByPhoneNumber) {
+        LaunchedEffect(
+            state.prestaLoadTenantByPhoneNumber,
+            memberNumber,
+            searchInitiated
+        ) {
+            authState.cachedMemberData?.let {
+                ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber(
+                    token = it.accessToken,
+                    phoneNumber = memberNumber
+                )
+            }?.let {
+                onEvent(
+                    it
+                )
+            }
+            println("Value of tracked member identifier is :::::::::::::::::::::::::::::::" + loadedIdentifier)
+
+
+            if (guarantorDataListed.size != component.requiredGuarantors && loadedIdentifier != "") {
+                println("Second load identifier:::::" + loadedIdentifier)
+                launchCheckSelfAndEmPloyedPopUp = false
+                launchAddAmountToGuarantee = true
+                scope.launch { modalBottomSheetState.show() }
+            } else {
+                launchCheckSelfAndEmPloyedPopUp = false
+                launchAddAmountToGuarantee = false
+                scope.launch { modalBottomSheetState.hide() }
+                snackBarScope.launch {
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsWithError(
+                            "Error loading Member by phoneNumber  $memberNumber",
+                            isError = true
+                        )
+                    )
+                }
+            }
+        }
+    }
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -346,7 +392,7 @@ fun AddGuarantorContent(
                         )
                     }
                 }
-            } else if (launchAddAmountToGuarantee && (signHomeState.prestaTenantByMemberNumber?.firstName != null || state.prestaLoadTenantByPhoneNumber?.firstName != null)) {
+            } else if (launchAddAmountToGuarantee) {
                 Column(
                     modifier = Modifier
                 ) {
@@ -577,6 +623,11 @@ fun AddGuarantorContent(
                                     }
                                     scope.launch { modalBottomSheetState.hide() }
                                     launchGuarantorListing = true
+                                    memberNumber = ""
+                                    loadedIdentifier = ""
+                                    searchInitiated = false
+                                    launchCheckSelfAndEmPloyedPopUp = false
+                                    launchAddAmountToGuarantee = false
 
                                 },
                                 enabled = amountToGuarantee.text != "" && diferences > 0 && amountToGuarantee.text.toInt() > 0 && amountToGuarantee.text.toInt() <= diferences
@@ -797,6 +848,8 @@ fun AddGuarantorContent(
                                             .clip(shape = CircleShape)
                                             .background(Color(0xFFE5F1F5)),
                                         onClick = {
+                                            searchGuarantorByPhoneNumber = true
+                                            searchInitiated = true
                                             launchContacts = true
                                             //Todo----open  the contacts library and take the selected contact
                                             if (launchContacts) {
