@@ -27,7 +27,7 @@ import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun SplashLogo(text: String = "E-Guarantorship", callback: () -> Unit) {
+fun SplashLMS(text: String = "LMS", callback: () -> Unit) {
     val scale2 = remember {
         Animatable(0f)
     }
@@ -72,10 +72,10 @@ fun SplashLogo(text: String = "E-Guarantorship", callback: () -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Image(
-                modifier = Modifier.scale(scale2.value).size(150.dp).absoluteOffset(y = (-50).dp).graphicsLayer {
+                modifier = Modifier.scale(scale2.value).size(75.dp).absoluteOffset(y = (-75).dp).graphicsLayer {
                     alpha = op.value
                 },
-                painter = painterResource("asset_1.xml"),
+                painter = painterResource("lms_logo.xml"),
                 contentDescription = "Pattern"
             )
             Text(

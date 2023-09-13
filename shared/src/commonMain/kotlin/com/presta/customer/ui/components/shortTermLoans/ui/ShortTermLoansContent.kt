@@ -23,7 +23,6 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -57,7 +56,7 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ShortTermLoansContent(
     component: ShortTermLoansComponent,
@@ -176,7 +175,8 @@ fun ShortTermLoansContent(
                         }
                     }
                 }
-            } else if (
+            }
+            if (
                 !state.isLoading &&
                 state.prestaLoanEligibilityStatus !== null
             ) {
@@ -240,10 +240,10 @@ fun ShortTermLoansContent(
                                             Text(
                                                 text = state.prestaLoanEligibilityStatus.description,
                                                 color = actionButtonColor,
-                                                style = MaterialTheme.typography.bodyLarge,
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                                style = MaterialTheme.typography.headlineSmall,
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
                                                 textAlign = TextAlign.Center,
-                                                lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                                                lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
                                             )
                                         }
                                     }
@@ -255,60 +255,6 @@ fun ShortTermLoansContent(
                                     Modifier.align(Alignment.TopCenter),
                                     contentColor = actionButtonColor
                                 )
-                            }
-                        }
-                    }
-                }
-            } else {
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight(0.7f)
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(150.dp),
-                            imageVector = Icons.Filled.ChatBubble,
-                            contentDescription = null,
-                            tint = actionButtonColor
-                        )
-                    }
-                    Box(modifier = Modifier.pullRefresh(refreshState)) {
-                        LazyColumn {
-                            item {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(0.8f)
-                                        .padding(top = 25.dp),
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    Text(
-                                        text = "Short Term Loans Are Not Configured Properly, reason:",
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        style = MaterialTheme.typography.headlineSmall,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                                        textAlign = TextAlign.Center,
-                                        lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
-                                    )
-                                }
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(0.8f),
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    Text(
-                                        text = if (state.error !== null) state.error else "",
-                                        color = actionButtonColor,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                        textAlign = TextAlign.Center,
-                                        lineHeight = MaterialTheme.typography.bodySmall.lineHeight
-                                    )
-                                }
                             }
                         }
                     }

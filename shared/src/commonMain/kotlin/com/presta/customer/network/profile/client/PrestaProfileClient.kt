@@ -57,7 +57,7 @@ class PrestaProfileClient(
                 url {
                     encodedParameters.append("purposeIds", purposeIds.joinToString(separator = ","))
                     encodedParameters.append("start", "0")
-                    encodedParameters.append("length", "10")
+                    encodedParameters.append("length", "7")
                     if (searchTerm !== null) parameters.append("searchTerm", searchTerm)
                 }
             }

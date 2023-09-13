@@ -48,7 +48,8 @@ import com.presta.customer.ui.components.tenant.ui.TenantScreen
 import com.presta.customer.ui.components.transactionHistory.ui.TransactionHistoryScreen
 import com.presta.customer.ui.components.welcome.WelcomeScreen
 import com.presta.customer.ui.components.witnessRequests.ui.WitnessRequestScreen
-import com.presta.customer.ui.composables.SplashLogo
+import com.presta.customer.ui.composables.SplashLMS
+import com.presta.customer.ui.composables.SplashSign
 
 @Composable
 fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
@@ -70,20 +71,34 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
     }
 
     var rotated by remember { mutableStateOf(false) }
+    var rotated2 by remember { mutableStateOf(false) }
 
     Children(
         stack = component.childStack,
-        animation = stackAnimation { child ->
+        animation = stackAnimation(true) { child ->
             when (child.instance) {
-                is RootComponent.Child.SignAppChild -> stackAnimator { factor, _, content ->
+                is RootComponent.Child.SignAppChild -> stackAnimator { _, _, content ->
                     if (rotated) {
                         content(
                             Modifier
                         )
                     } else {
-                        SplashLogo(
+                        SplashSign (
                             callback = {
                                 rotated = child.instance is RootComponent.Child.SignAppChild
+                            }
+                        )
+                    }
+                }
+                is RootComponent.Child.RootBottomChild -> stackAnimator { _, _, content ->
+                    if (rotated2) {
+                        content(
+                            Modifier
+                        )
+                    } else {
+                        SplashLMS (
+                            callback = {
+                                rotated2 = child.instance is RootComponent.Child.RootBottomChild
                             }
                         )
                     }
@@ -94,6 +109,9 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
     ) {
         if (it.instance !is RootComponent.Child.SignAppChild) {
             rotated = false
+        }
+        if (it.instance !is RootComponent.Child.RootBottomChild) {
+            rotated2 = false
         }
         when (val child = it.instance) {
             is RootComponent.Child.TenantChild -> TenantScreen(child.component)

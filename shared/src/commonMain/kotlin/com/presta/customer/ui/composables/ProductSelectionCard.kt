@@ -52,7 +52,7 @@ fun  ProductSelectionCard(label: String, description: String? = null, onClickCon
 
                     if (description != null) {
                         Text(
-                            text = "Interest ${description}%",
+                            text = "Interest $description",
                             modifier = Modifier.padding(start = 15.dp),
                             color= MaterialTheme.colorScheme.outline,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light),

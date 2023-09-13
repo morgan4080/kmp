@@ -33,8 +33,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
-import com.presta.customer.Platform
-import com.presta.customer.network.shortTermLoans.model.LoanPeriodUnit
 import com.presta.customer.network.shortTermLoans.model.PrestaLoanEligibilityResponse
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.shortTermLoans.ShortTermLoansComponent
@@ -105,7 +103,7 @@ fun ShortTermProductList(
                             ) {
                                 ProductSelectionCard(shortTermProduct.name!!,
 
-                                  description =   if (shortTermProduct.interestRate != null) "Interest ${shortTermProduct.interestRate}%/"+ shortTermProduct.interestPeriodCycle else "",
+                                  description =   if (shortTermProduct.interestRate != null) "${shortTermProduct.interestRate}% / "+ shortTermProduct.interestPeriodCycle else "",
                                     onClickContainer = {
                                         val loanName = shortTermProduct.name
                                         // check eligibility for selected loan

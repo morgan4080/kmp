@@ -401,5 +401,3 @@ fun ApplyLongTermLoansContent(
         })
 
 }
-
-
