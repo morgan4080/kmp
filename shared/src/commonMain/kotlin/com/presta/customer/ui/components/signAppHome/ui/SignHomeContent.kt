@@ -311,12 +311,12 @@ fun SignHomeContent(
                                                         .padding(
                                                             bottom = 10.dp
                                                         )
-                                                        .background(color = MaterialTheme.colorScheme.inverseOnSurface),
+                                                        .background(color = Color.Transparent),
                                                 ) {
                                                     ElevatedCard(
                                                         modifier = Modifier
                                                             .fillMaxWidth()
-                                                            .background(color = MaterialTheme.colorScheme.background),
+                                                            .background(color = Color.Transparent),
                                                         colors = CardDefaults.elevatedCardColors(
                                                             containerColor = MaterialTheme.colorScheme.inverseOnSurface
                                                         )
@@ -391,7 +391,7 @@ fun SignHomeContent(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = 10.dp)
+                                    .padding(top = 15.dp)
                             ) {
                                 SignProductSelection(
                                     icon = Icons.Outlined.Assignment,
@@ -410,7 +410,7 @@ fun SignHomeContent(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = 10.dp)
+                                    .padding(top = 15.dp)
                             ) {
                                 SignProductSelection(
                                     icon = Icons.Outlined.Grade,
@@ -429,7 +429,7 @@ fun SignHomeContent(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = 10.dp)
+                                    .padding(top = 15.dp)
                             ) {
                                 SignProductSelection(
                                     icon = Icons.Outlined.Shield,

@@ -130,16 +130,6 @@ fun ApplyLongTermLoansContent(
         snackbarHost = {
             SnackbarHost(snackbarHostState) { data ->
                 val isError = (data.visuals as? CustomSnackBar)?.isError ?: false
-                val buttonColor = if (isError) {
-                    ButtonDefaults.textButtonColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer,
-                        contentColor = MaterialTheme.colorScheme.error
-                    )
-                } else {
-                    ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.inversePrimary
-                    )
-                }
                 Snackbar(
                     modifier = Modifier
                         .padding(bottom = 20.dp)
@@ -177,7 +167,7 @@ fun ApplyLongTermLoansContent(
                 })
         },
         content = { innerPadding ->
-            Column() {
+            Column {
                 if (launchHandleLoanRequestPopUp) {
                     Popup {
                         Column(
@@ -302,7 +292,7 @@ fun ApplyLongTermLoansContent(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(top = 10.dp, bottom = 10.dp)
+                                        .padding(top = 10.dp, bottom = 15.dp)
                                         .background(color = MaterialTheme.colorScheme.background),
                                 ) {
                                     ElevatedCard(
@@ -332,7 +322,7 @@ fun ApplyLongTermLoansContent(
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(top = 10.dp)
+                                            .padding(top = 10.dp, bottom = 5.dp)
                                     ) {
                                         ProductSelectionCard(longTermLoanResponse.name.toString(),
                                             description = longTermLoanResponse.interestRate.toString(),

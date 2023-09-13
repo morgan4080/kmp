@@ -22,18 +22,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.presta.customer.MR
 import dev.icerock.moko.resources.compose.fontFamilyResource
-import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun SplashLogo(callback: () -> Unit) {
+fun SplashLogo(text: String = "E-Guarantorship",callback: () -> Unit) {
     val scale = remember {
         Animatable(0f)
     }
-    val rotation = remember {
-        Animatable(0f)
+    val scaleOut = remember {
+        Animatable(1f)
+    }
+    val transitioning = remember {
+        Animatable(-100f)
     }
     val op = remember {
         Animatable(0f)
@@ -41,22 +43,13 @@ fun SplashLogo(callback: () -> Unit) {
 
     // AnimationEffect
     LaunchedEffect(key1 = true) {
-        rotation.animateTo(
+        transitioning.animateTo(
             targetValue = 180f,
             animationSpec = tween(
-                durationMillis = 800,
+                durationMillis = 500,
                 easing = FastOutLinearInEasing
             )
         )
-        delay(1000)
-        scale.animateTo(
-            targetValue = 2.5f,
-            animationSpec = tween(
-                durationMillis = 800,
-                easing = FastOutLinearInEasing
-            )
-        )
-        delay(100)
         op.animateTo(
             targetValue = 1f,
             animationSpec = tween(
@@ -64,37 +57,54 @@ fun SplashLogo(callback: () -> Unit) {
                 easing = FastOutLinearInEasing
             )
         )
-        delay(2000)
+        scale.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(
+                durationMillis = 400,
+                easing = FastOutLinearInEasing
+            )
+        )
+        scaleOut.animateTo(
+            targetValue = 0f,
+            animationSpec = tween(
+                durationMillis = 400,
+                delayMillis = 1000,
+                easing = FastOutLinearInEasing
+            )
+        )
         callback()
     }
 
     // Image
-    Surface(modifier = Modifier.fillMaxSize().graphicsLayer {
-        rotationY = rotation.value
-        cameraDistance = 1900f * density
-    }) {
+    Surface(modifier = Modifier.fillMaxSize()) {
         Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.BottomStart
+            modifier = Modifier.fillMaxSize().scale(scaleOut.value),
+            contentAlignment = Alignment.Center
         ) {
             when(isSystemInDarkTheme()) {
                 true ->Image(
-                    modifier = Modifier.scale(scale.value),
+                    modifier = Modifier.scale(1.5f).graphicsLayer {
+                        translationY = transitioning.value
+                        translationX = transitioning.value
+                    },
                     painter = painterResource("slicesdark.xml"),
                     contentDescription = "Pattern"
                 )
                 false -> Image(
-                    modifier = Modifier.scale(scale.value),
+                    modifier = Modifier.scale(1.5f).graphicsLayer {
+                        translationY = transitioning.value
+                        translationX = transitioning.value
+                    },
                     painter = painterResource("slices.xml"),
                     contentDescription = "Pattern"
                 )
             }
 
             Text(
-                modifier = Modifier.scale(scaleX = -1f, scaleY = 1f).padding(end = 50.dp, bottom = 150.dp).graphicsLayer {
+                modifier = Modifier.scale(scale.value).padding(end = 50.dp, bottom = 150.dp).graphicsLayer {
                     alpha = op.value
                 },
-                text = "E-Guarantorship",
+                text = text,
                 color= MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.headlineMedium,
                 fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBoldItalic),
