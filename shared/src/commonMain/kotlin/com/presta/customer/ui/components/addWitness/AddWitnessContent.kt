@@ -143,26 +143,24 @@ fun AddWitnessContent(
             }
         }
     }
-//    if (memberNumber != "") {
-//        LaunchedEffect(
-//            authState.cachedMemberData,
-//            memberNumber
-//
-//        ) {
-//            authState.cachedMemberData?.let {
-//                ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber(
-//                    token = it.accessToken,
-//                    phoneNumber = memberNumber
-//                )
-//            }?.let {
-//                onEvent(
-//                    it
-//                )
-//            }
-//        }
-//    }
+    if (memberNumber != "") {
+        LaunchedEffect(
+            authState.cachedMemberData,
+            memberNumber
 
-
+        ) {
+            authState.cachedMemberData?.let {
+                ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber(
+                    token = it.accessToken,
+                    phoneNumber = memberNumber
+                )
+            }?.let {
+                onEvent(
+                    it
+                )
+            }
+        }
+    }
     val clearItemClicked: (FavouriteGuarantorDetails) -> Unit = { item ->
         witnessDataListed -= item
     }
@@ -191,20 +189,11 @@ fun AddWitnessContent(
     val numberPattern = remember { Regex("^\\d+\$") }
 
     //Modified
-    LaunchedEffect(Unit,memberNumber,searchInitiated) {
-        if (searchInitiated && memberNumber.isNotEmpty() && searchWitnessByPhoneNumber) {
-
-            authState.cachedMemberData?.let {
-                ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber(
-                    token = it.accessToken,
-                    phoneNumber = memberNumber
-                )
-            }?.let {
-                onEvent(
-                    it
-                )
-            }
-
+    LaunchedEffect(
+        memberNumber,
+        authState.cachedMemberData
+    ) {
+        if ( memberNumber!="" && searchWitnessByPhoneNumber) {
             if (state.prestaLoadTenantByPhoneNumber?.phoneNumber != null) {
                 if (witnessDataListed.size != 1) {
                     val apiResponse = listOf(
@@ -230,9 +219,9 @@ fun AddWitnessContent(
 
                     } else {
                         witnessDataListed = witnessDataListed.toMutableSet().apply {
-                                addAll(apiResponse)
-                            }
-                        searchInitiated=false
+                            addAll(apiResponse)
+                        }
+                        searchInitiated = false
                     }
                 }
             } else {

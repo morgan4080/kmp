@@ -335,13 +335,6 @@ fun AddGuarantorContent(
     }
     //Todo----delegate state to Default component
 
-
-
-
-
-
-
-
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
