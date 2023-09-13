@@ -180,378 +180,377 @@ fun LongTermLoanRequestsContent(
         sheetContentColor = MaterialTheme.colorScheme.background,
         sheetBackgroundColor = MaterialTheme.colorScheme.background,
         sheetContent = {
-
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 10.dp)
                     .fillMaxHeight(0.9f)
-                    .background(MaterialTheme.colorScheme.background)
+                    .background(MaterialTheme.colorScheme.surface)
             ) {
-                Row(
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                Column (
+                    modifier = Modifier.padding(16.dp)
                 ) {
-                    Text(
-                        text = "Request Details ",
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                        fontSize = 14.sp
-                    )
-
-                    Icon(
-                        Icons.Filled.Cancel,
-                        contentDescription = "Cancel  Arrow",
-                        tint = MaterialTheme.colorScheme.primary.copy(0.7f),
-                        modifier = Modifier.clickable {
-                            scope.launch { modalBottomSheetState.hide() }
-                        }
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    if (state.isLoading || state.prestaLoanByLoanRequestRefId?.loanProductName == null) {
-                        shimmerTextContainer(showLoadingShimmer = state.isLoading)
-                        shimmerTextContainer(showLoadingShimmer = state.isLoading)
-
-
-                    } else {
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 10.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
                         Text(
-                            text = state.prestaLoanByLoanRequestRefId.loanProductName,
-                            fontSize = 14.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f)
+                            text = "Request Details ",
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                            fontSize = 14.sp
                         )
 
-                        Text(
-                            text = state.prestaLoanByLoanRequestRefId.applicationStatus.lowercase(),
-                            fontSize = 14.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f)
+                        Icon(
+                            Icons.Filled.Cancel,
+                            contentDescription = "Cancel  Arrow",
+                            tint = MaterialTheme.colorScheme.primary.copy(0.7f),
+                            modifier = Modifier.clickable {
+                                scope.launch { modalBottomSheetState.hide() }
+                            }
                         )
-
                     }
 
-
-                }
-                Row(
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = if (state.prestaLoanByLoanRequestRefId?.loanAmount != null) " Kes " + formatMoney(
-                            state.prestaLoanByLoanRequestRefId.loanAmount
-                        ) else "",
-                        fontSize = 16.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
-                    )
-
-                    Text(
-                        text = if (state.prestaLoanByLoanRequestRefId?.loanRequestProgress != null) state.prestaLoanByLoanRequestRefId.loanRequestProgress.toString() + "%" else "",
-                        fontSize = 16.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-
-                }
-                if (state.prestaLoanByLoanRequestRefId?.applicantSigned == false) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 10.dp)
+                            .padding(top = 20.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        OutlinedButton(
-                            onClick = {
-                                //sign the application form
-                                //navigate to sign
-                                scope.launch { modalBottomSheetState.hide() }
-                                if (loanAmount != "") {
-                                    signHomeState.prestaTenantByPhoneNumber?.let {
-                                        component.navigateToSignLoanForm(
-                                            loanNumber = loanNumber,
-                                            amount = loanAmount.toDouble(),
-                                            loanRequestRefId = loanRequestRefId,
-                                            memberRefId = it.refId,
-                                        )
-                                    }
-                                }
-                            },
-                            modifier = Modifier,
-                            shape = CircleShape,
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                            colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primary)
-                        ) {
-                            Text(
-                                modifier = Modifier,
-                                text = "Sign Form",
-                                color = MaterialTheme.colorScheme.background,
-                                fontSize = 12.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                            )
-                        }
-                        OutlinedButton(
-                            onClick = {
-                                if (loanRequestNumber != "") {
-                                    authState.cachedMemberData?.let {
-                                        ApplyLongTermLoansStore.Intent.DeleteLoanRequest(
-                                            token = it.accessToken,
-                                            loanRequestNumber = loanRequestNumber
-                                        )
+                        if (state.isLoading || state.prestaLoanByLoanRequestRefId?.loanProductName == null) {
+                            shimmerTextContainer(showLoadingShimmer = state.isLoading)
+                            shimmerTextContainer(showLoadingShimmer = state.isLoading)
 
-                                    }?.let {
-                                        onEvent(
-                                            it
-                                        )
-                                    }
-                                }
-                                deleteInitiated = true
-                            },
-                            modifier = Modifier
-                                .padding(
-                                    start = 10.dp
-                                ),
-                            shape = CircleShape,
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
-                            colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.error)
-                        ) {
+
+                        } else {
                             Text(
-                                modifier = Modifier,
-                                text = "Void request",
-                                color = MaterialTheme.colorScheme.background,
-                                fontSize = 12.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                text = state.prestaLoanByLoanRequestRefId.loanProductName,
+                                fontSize = 14.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f)
                             )
+
+                            Text(
+                                text = state.prestaLoanByLoanRequestRefId.applicationStatus.lowercase(),
+                                fontSize = 14.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f)
+                            )
+
                         }
+
+
                     }
-                }
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 10.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = if (state.prestaLoanByLoanRequestRefId?.loanAmount != null) " Kes " + formatMoney(
+                                state.prestaLoanByLoanRequestRefId.loanAmount
+                            ).uppercase() else "",
+                            fontSize = 16.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                        )
 
-                Row(
-                    modifier = Modifier
-                        .padding(top = 5.dp, bottom = 10.dp)
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Guarantor Status",
-                        fontSize = 13.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
-                    )
+                        Text(
+                            text = if (state.prestaLoanByLoanRequestRefId?.loanRequestProgress != null) state.prestaLoanByLoanRequestRefId.loanRequestProgress.toString() + "%" else "",
+                            fontSize = 16.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                            color = MaterialTheme.colorScheme.primary
+                        )
 
-                }
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    state.prestaLoanByLoanRequestRefId?.guarantorList?.mapIndexed { index, guarantorDataResponse ->
-                        val guarantorProgress =
-                            if (guarantorDataResponse.isAccepted && !guarantorDataResponse.isSigned && guarantorDataResponse.isApproved == false) {
-                                0.3f
-                            } else if (guarantorDataResponse.isSigned && guarantorDataResponse.isAccepted && guarantorDataResponse.isApproved == false) {
-                                0.6f
-                            } else if (guarantorDataResponse.isApproved == true && guarantorDataResponse.isSigned && guarantorDataResponse.isAccepted) {
-                                1f
-
-                            } else {
-                                0.0f
-                            }
-                        item {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight()
-                                    .padding(bottom = 10.dp)
-                            ) {
-                                GuarantorDataCard(
-                                    loanProductName = guarantorDataResponse.firstName + " " + guarantorDataResponse.lastName,
-                                    loanAmount = "Kes " + guarantorDataResponse.committedAmount.toString(),
-                                    loanApplicationProgress = guarantorProgress,
-                                    onClick = { indexed: Int ->
-                                        selectedIndex = if (selectedIndex == index) -1 else indexed
-                                        guarantorFirstName = guarantorDataResponse.firstName
-                                        guarantorLastName = guarantorDataResponse.lastName
-                                        guarantorRefId = guarantorDataResponse.refId
-
-                                    },
-                                    expandContent = selectedIndex == index,
-                                    index = index,
-                                    dataListingColumn = {
-                                        Column(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .wrapContentHeight()
-                                        ) {
-                                            Row(
-                                                modifier = Modifier
-                                                    .padding(top = 20.dp)
-                                                    .fillMaxWidth(),
-                                                horizontalArrangement = Arrangement.SpaceBetween
-                                            ) {
-                                                Text(
-                                                    "Eligibility Status",
-                                                    fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                                )
-                                                Text(
-                                                    guarantorDataResponse.eligibilityMessage,
-                                                    fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                                                )
-                                            }
-                                            Row(
-                                                modifier = Modifier
-                                                    .padding(top = 20.dp)
-                                                    .fillMaxWidth(),
-                                                horizontalArrangement = Arrangement.SpaceBetween
-                                            ) {
-                                                Text(
-                                                    "Committed Amount",
-                                                    fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                                )
-                                                Text(
-                                                    text = formatMoney(guarantorDataResponse.committedAmount),
-                                                    fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                                                )
-                                            }
-                                            Row(
-                                                modifier = Modifier
-                                                    .padding(top = 20.dp)
-                                                    .fillMaxWidth(),
-                                                horizontalArrangement = Arrangement.SpaceBetween
-                                            ) {
-                                                Text(
-                                                    "Guarantorship Status",
-                                                    fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                                )
-                                                Text(
-                                                    text = if (guarantorDataResponse.isActive) "Active" else "Not Active",
-                                                    fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                                                )
-                                            }
-                                            Row(
-                                                modifier = Modifier
-                                                    .padding(top = 20.dp)
-                                                    .fillMaxWidth(),
-                                                horizontalArrangement = Arrangement.SpaceBetween
-                                            ) {
-                                                Text(
-                                                    "Acceptance  Status",
-                                                    fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                                )
-                                                Text(
-                                                    text = if (guarantorDataResponse.isAccepted) "Accepted " else "Pending",
-                                                    fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                                                )
-                                            }
-                                            Row(
-                                                modifier = Modifier
-                                                    .padding(top = 20.dp)
-                                                    .fillMaxWidth(),
-                                                horizontalArrangement = Arrangement.SpaceBetween
-                                            ) {
-                                                Text(
-                                                    "Date Accepted",
-                                                    fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                                )
-                                                Text(
-                                                    text = "",
-                                                    fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                                                )
-                                            }
-                                            Row(
-                                                modifier = Modifier
-                                                    .padding(top = 20.dp)
-                                                    .fillMaxWidth(),
-                                                horizontalArrangement = Arrangement.SpaceBetween
-                                            ) {
-                                                Text(
-                                                    "Signature Status",
-                                                    fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                                )
-                                                Text(
-                                                    text = if (guarantorDataResponse.isSigned) "Signed" else "Pending",
-                                                    fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                                                )
-                                            }
-                                            Row(
-                                                modifier = Modifier
-                                                    .padding(top = 20.dp)
-                                                    .fillMaxWidth(),
-                                                horizontalArrangement = Arrangement.SpaceBetween
-                                            ) {
-                                                Text(
-                                                    "Approval Status",
-                                                    fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                                )
-                                                Text(
-                                                    text = "",
-                                                    fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                                                )
-                                            }
-                                            Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth(),
-                                                horizontalArrangement = Arrangement.Center
-                                            ) {
-                                                OutlinedButton(
-                                                    onClick = {
-                                                        //Todo--proceed to replace  guaarantor
-                                                        scope.launch { modalBottomSheetState.hide() }
-                                                        component.navigateToReplaceGuarantor(
-                                                            loanRequestRefId = loanRequestRefId,
-                                                            guarantorRefId = guarantorRefId,
-                                                            guarantorFirstname = guarantorFirstName,
-                                                            guarantorLastName = guarantorLastName
-                                                        )
-
-
-                                                    },
-                                                    modifier = Modifier.padding(top = 16.dp),
-                                                    shape = CircleShape,
-                                                    border = BorderStroke(
-                                                        1.dp,
-                                                        MaterialTheme.colorScheme.primary
-                                                    ),
-                                                    colors = ButtonDefaults.outlinedButtonColors(
-                                                        containerColor = MaterialTheme.colorScheme.primary
-                                                    )
-                                                ) {
-                                                    Text(
-                                                        modifier = Modifier,
-                                                        text = "Replace  Guarantor",
-                                                        color = MaterialTheme.colorScheme.background,
-                                                        fontSize = 12.sp
-                                                    )
-                                                }
-                                            }
+                    }
+                    if (state.prestaLoanByLoanRequestRefId?.applicantSigned == false) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 10.dp)
+                        ) {
+                            OutlinedButton(
+                                onClick = {
+                                    //sign the application form
+                                    //navigate to sign
+                                    scope.launch { modalBottomSheetState.hide() }
+                                    if (loanAmount != "") {
+                                        signHomeState.prestaTenantByPhoneNumber?.let {
+                                            component.navigateToSignLoanForm(
+                                                loanNumber = loanNumber,
+                                                amount = loanAmount.toDouble(),
+                                                loanRequestRefId = loanRequestRefId,
+                                                memberRefId = it.refId,
+                                            )
                                         }
-                                    },
-                                    backgroundColor = if (!guarantorDataResponse.isAccepted) MaterialTheme.colorScheme.error.copy(
-                                        alpha = 0.2f
-                                    ) else MaterialTheme.colorScheme.inverseOnSurface
+                                    }
+                                },
+                                modifier = Modifier,
+                                shape = CircleShape,
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                                colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primary)
+                            ) {
+                                Text(
+                                    modifier = Modifier,
+                                    text = "Sign Form",
+                                    color = MaterialTheme.colorScheme.background,
+                                    fontSize = 12.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                )
+                            }
+                            OutlinedButton(
+                                onClick = {
+                                    if (loanRequestNumber != "") {
+                                        authState.cachedMemberData?.let {
+                                            ApplyLongTermLoansStore.Intent.DeleteLoanRequest(
+                                                token = it.accessToken,
+                                                loanRequestNumber = loanRequestNumber
+                                            )
+
+                                        }?.let {
+                                            onEvent(
+                                                it
+                                            )
+                                        }
+                                    }
+                                    deleteInitiated = true
+                                },
+                                modifier = Modifier
+                                    .padding(
+                                        start = 10.dp
+                                    ),
+                                shape = CircleShape,
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
+                                colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.error)
+                            ) {
+                                Text(
+                                    modifier = Modifier,
+                                    text = "Void request",
+                                    color = MaterialTheme.colorScheme.background,
+                                    fontSize = 12.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                 )
                             }
                         }
                     }
-                    item {
-                        Spacer(modifier = Modifier.padding(bottom = 100.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 15.dp, bottom = 10.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Guarantor Status",
+                            fontSize = 13.sp,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                        )
+
+                    }
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        state.prestaLoanByLoanRequestRefId?.guarantorList?.mapIndexed { index, guarantorDataResponse ->
+                            val guarantorProgress =
+                                if (guarantorDataResponse.isAccepted && !guarantorDataResponse.isSigned && guarantorDataResponse.isApproved == false) {
+                                    0.3f
+                                } else if (guarantorDataResponse.isSigned && guarantorDataResponse.isAccepted && guarantorDataResponse.isApproved == false) {
+                                    0.6f
+                                } else if (guarantorDataResponse.isApproved == true && guarantorDataResponse.isSigned && guarantorDataResponse.isAccepted) {
+                                    1f
+
+                                } else {
+                                    0.0f
+                                }
+                            item {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .wrapContentHeight()
+                                        .padding(bottom = 10.dp)
+                                ) {
+                                    GuarantorDataCard(
+                                        loanProductName = guarantorDataResponse.firstName + " " + guarantorDataResponse.lastName,
+                                        loanAmount = "Kes " + guarantorDataResponse.committedAmount.toString(),
+                                        loanApplicationProgress = guarantorProgress,
+                                        onClick = { indexed: Int ->
+                                            selectedIndex = if (selectedIndex == index) -1 else indexed
+                                            guarantorFirstName = guarantorDataResponse.firstName
+                                            guarantorLastName = guarantorDataResponse.lastName
+                                            guarantorRefId = guarantorDataResponse.refId
+
+                                        },
+                                        expandContent = selectedIndex == index,
+                                        index = index,
+                                        dataListingColumn = {
+                                            Column(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .wrapContentHeight()
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier
+                                                        .padding(top = 20.dp)
+                                                        .fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween
+                                                ) {
+                                                    Text(
+                                                        "Eligibility Status",
+                                                        fontSize = 12.sp,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                    )
+                                                    Text(
+                                                        guarantorDataResponse.eligibilityMessage,
+                                                        fontSize = 12.sp,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                                    )
+                                                }
+                                                Row(
+                                                    modifier = Modifier
+                                                        .padding(top = 20.dp)
+                                                        .fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween
+                                                ) {
+                                                    Text(
+                                                        "Committed Amount",
+                                                        fontSize = 12.sp,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                    )
+                                                    Text(
+                                                        text = formatMoney(guarantorDataResponse.committedAmount),
+                                                        fontSize = 12.sp,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                                    )
+                                                }
+                                                Row(
+                                                    modifier = Modifier
+                                                        .padding(top = 20.dp)
+                                                        .fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween
+                                                ) {
+                                                    Text(
+                                                        "Guarantorship Status",
+                                                        fontSize = 12.sp,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                    )
+                                                    Text(
+                                                        text = if (guarantorDataResponse.isActive) "Active" else "Not Active",
+                                                        fontSize = 12.sp,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                                    )
+                                                }
+                                                Row(
+                                                    modifier = Modifier
+                                                        .padding(top = 20.dp)
+                                                        .fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween
+                                                ) {
+                                                    Text(
+                                                        "Acceptance  Status",
+                                                        fontSize = 12.sp,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                    )
+                                                    Text(
+                                                        text = if (guarantorDataResponse.isAccepted) "Accepted " else "Pending",
+                                                        fontSize = 12.sp,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                                    )
+                                                }
+                                                Row(
+                                                    modifier = Modifier
+                                                        .padding(top = 20.dp)
+                                                        .fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween
+                                                ) {
+                                                    Text(
+                                                        "Date Accepted",
+                                                        fontSize = 12.sp,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                    )
+                                                    Text(
+                                                        text = "",
+                                                        fontSize = 12.sp,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                                    )
+                                                }
+                                                Row(
+                                                    modifier = Modifier
+                                                        .padding(top = 20.dp)
+                                                        .fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween
+                                                ) {
+                                                    Text(
+                                                        "Signature Status",
+                                                        fontSize = 12.sp,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                    )
+                                                    Text(
+                                                        text = if (guarantorDataResponse.isSigned) "Signed" else "Pending",
+                                                        fontSize = 12.sp,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                                    )
+                                                }
+                                                Row(
+                                                    modifier = Modifier
+                                                        .padding(top = 20.dp)
+                                                        .fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween
+                                                ) {
+                                                    Text(
+                                                        "Approval Status",
+                                                        fontSize = 12.sp,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                    )
+                                                    Text(
+                                                        text = "",
+                                                        fontSize = 12.sp,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                                    )
+                                                }
+                                                Row(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.Center
+                                                ) {
+                                                    OutlinedButton(
+                                                        onClick = {
+                                                            //Todo--proceed to replace  guaarantor
+                                                            scope.launch { modalBottomSheetState.hide() }
+                                                            component.navigateToReplaceGuarantor(
+                                                                loanRequestRefId = loanRequestRefId,
+                                                                guarantorRefId = guarantorRefId,
+                                                                guarantorFirstname = guarantorFirstName,
+                                                                guarantorLastName = guarantorLastName
+                                                            )
+
+
+                                                        },
+                                                        modifier = Modifier.padding(top = 16.dp),
+                                                        shape = CircleShape,
+                                                        border = BorderStroke(
+                                                            1.dp,
+                                                            MaterialTheme.colorScheme.primary
+                                                        ),
+                                                        colors = ButtonDefaults.outlinedButtonColors(
+                                                            containerColor = MaterialTheme.colorScheme.primary
+                                                        )
+                                                    ) {
+                                                        Text(
+                                                            modifier = Modifier,
+                                                            text = "Replace  Guarantor",
+                                                            color = MaterialTheme.colorScheme.background,
+                                                            fontSize = 12.sp
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                        item {
+                            Spacer(modifier = Modifier.padding(bottom = 100.dp))
+                        }
                     }
                 }
             }
@@ -562,16 +561,6 @@ fun LongTermLoanRequestsContent(
             snackbarHost = {
                 SnackbarHost(snackbarHostState) { data ->
                     val isError = (data.visuals as? SnackbarVisualsWithError)?.isError ?: false
-                    val buttonColor = if (isError) {
-                        ButtonDefaults.textButtonColors(
-                            containerColor = MaterialTheme.colorScheme.errorContainer,
-                            contentColor = MaterialTheme.colorScheme.error
-                        )
-                    } else {
-                        ButtonDefaults.textButtonColors(
-                            contentColor = MaterialTheme.colorScheme.inversePrimary
-                        )
-                    }
                     Snackbar(
                         modifier = Modifier.padding(bottom = 80.dp, start = 16.dp, end = 16.dp),
                         action = {
@@ -780,8 +769,7 @@ fun LoanApplicationProgressCard(
     loanProgress: String,
     loanApplicationProgress: Float,
     onClickContainer: () -> Unit,
-
-    ) {
+) {
     ElevatedCard(
         onClick = onClickContainer,
         modifier = Modifier.fillMaxWidth()
@@ -857,8 +845,7 @@ fun GuarantorDataCard(
     onClick: (Int) -> Unit,
     expandContent: Boolean,
     index: Int,
-    dataListingColumn: @Composable () -> Unit,
-    backgroundColor: Color
+    dataListingColumn: @Composable () -> Unit
 ) {
     var showExpanded by remember { mutableStateOf(false) }
     ElevatedCard(
@@ -868,9 +855,9 @@ fun GuarantorDataCard(
 
         },
         modifier = Modifier.fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.background)
+            .background(color = Color.Transparent)
     ) {
-        Box(modifier = Modifier.background(color = backgroundColor)) {
+        Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.inverseOnSurface)) {
             Column(
                 modifier = Modifier.padding(top = 15.dp, bottom = 17.dp, start = 17.dp, end = 17.dp)
                     .fillMaxWidth()

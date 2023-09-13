@@ -38,7 +38,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -93,7 +92,7 @@ fun CountriesSearch(
                         modifier = Modifier.size(25.dp).alpha(0.7f),
                         imageVector = Icons.Filled.Cancel,
                         contentDescription = null,
-                        tint = Color.Red
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             )
@@ -161,7 +160,7 @@ fun CountriesSearch(
                                 modifier = Modifier.padding(8.dp),
                                 imageVector = Icons.Filled.Cancel,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.outline
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         })
                     }

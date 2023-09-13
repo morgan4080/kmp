@@ -192,13 +192,13 @@ fun SignHomeContent(
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .padding(innerPadding)
                             .padding(start = 16.dp, end = 16.dp)
                     ) {
                         item {
                             ElevatedCard(
                                 modifier = Modifier
-                                    .clip(RoundedCornerShape(size = 12.dp))
-                                    .padding(innerPadding),
+                                    .clip(RoundedCornerShape(size = 12.dp)),
                                 colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background)
                             ) {
                                 Box(
@@ -206,15 +206,16 @@ fun SignHomeContent(
                                         .background(MaterialTheme.colorScheme.inverseOnSurface)
                                 ) {
                                     Column(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(10.dp)
+                                        modifier = Modifier.padding(
+                                            16.dp
+                                        )
                                     ) {
                                         Column(modifier = Modifier.fillMaxWidth()) {
                                             Text(
                                                 text = great.uppercase(),
-                                                fontSize = 14.sp,
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                color= MaterialTheme.colorScheme.onBackground,
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                                style = MaterialTheme.typography.bodyMedium
                                             )
                                             Text(
                                                 modifier = Modifier.background(
@@ -225,9 +226,9 @@ fun SignHomeContent(
                                                     shape = RoundedCornerShape(12.dp)
                                                 ).defaultMinSize(150.dp),
                                                 text = if (state.prestaTenantByPhoneNumber?.fullName !== null) state.prestaTenantByPhoneNumber.firstName.uppercase() else "",
-                                                color = MaterialTheme.colorScheme.onBackground,
-                                                fontSize = 14.sp,
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                color= MaterialTheme.colorScheme.onBackground,
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                                style = MaterialTheme.typography.bodyMedium
                                             )
                                             Text(
                                                 modifier = Modifier
@@ -239,9 +240,10 @@ fun SignHomeContent(
                                                         ),
                                                         shape = RoundedCornerShape(12.dp)
                                                     ).defaultMinSize(150.dp),
-                                                text = if (state.prestaTenantByPhoneNumber?.memberNumber !== null) state.prestaTenantByPhoneNumber.memberNumber else "",
-                                                fontSize = 14.sp,
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                text = if (state.prestaTenantByPhoneNumber?.memberNumber !== null) state.prestaTenantByPhoneNumber.memberNumber.uppercase() else "",
+                                                color= MaterialTheme.colorScheme.onBackground,
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                                style = MaterialTheme.typography.bodyMedium
                                             )
                                             Row(modifier = Modifier.fillMaxWidth()) {
                                                 Spacer(modifier = Modifier.weight(1f))
@@ -292,7 +294,7 @@ fun SignHomeContent(
                                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                                 )
                                                 Text(
-                                                    "See All",
+                                                    "See all",
                                                     fontSize = 14.sp,
                                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
                                                     color = MaterialTheme.colorScheme.primary,
@@ -307,9 +309,7 @@ fun SignHomeContent(
                                                     modifier = Modifier
                                                         .fillMaxWidth()
                                                         .padding(
-                                                            bottom = 10.dp,
-                                                            start = 16.dp,
-                                                            end = 16.dp
+                                                            bottom = 10.dp
                                                         )
                                                         .background(color = MaterialTheme.colorScheme.inverseOnSurface),
                                                 ) {
@@ -373,7 +373,7 @@ fun SignHomeContent(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = 10.dp)
+                                    .padding(top = 20.dp)
                             ) {
                                 SignProductSelection(
                                     icon = Icons.Outlined.Assignment,
@@ -468,31 +468,40 @@ fun LoanRequestsListing(
     Row(
         modifier = Modifier
             .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        //CircularProgressBar(percentage = progressPercentage)
-        CircularProgressBarWithText(
-            progress = progress,
-            text = "${(progress * 100).toInt()}%",
-            modifier = Modifier.padding(start = 1.dp)
-        )
-        // Text(text = "${(progressPercentage * 100).toInt()}%", fontSize = 24.sp)
-        Column() {
-            Text(
-                text = loanName,
-                fontSize = 12.sp
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            CircularProgressBarWithText(
+                progress = progress,
+                text = "${(progress * 100).toInt()}%",
+                modifier = Modifier.size(40.dp)
             )
-            Text(
-                text = loanRequestDate,
-                fontSize = 12.sp
-            )
-        }
 
-        Spacer(modifier = Modifier.weight(1f))
+            Column(modifier = Modifier.padding(start = 15.dp)) {
+                Text(
+                    text = loanName,
+                    color= MaterialTheme.colorScheme.onBackground,
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = loanRequestDate,
+                    color= MaterialTheme.colorScheme.outline,
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
 
         Text(
             text = loanAmount,
-            fontSize = 12.sp
+            color= MaterialTheme.colorScheme.onBackground,
+            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+            style = MaterialTheme.typography.bodyMedium
         )
 
     }
