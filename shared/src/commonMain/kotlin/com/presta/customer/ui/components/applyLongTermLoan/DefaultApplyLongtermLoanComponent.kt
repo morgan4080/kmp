@@ -120,6 +120,10 @@ class DefaultApplyLongtermLoanComponent(
       onResolveLoanClicked(loanRefId)
     }
 
+    override fun reloadModels() {
+    checkAuthenticatedUser()
+    }
+
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         checkAuthenticatedUser()

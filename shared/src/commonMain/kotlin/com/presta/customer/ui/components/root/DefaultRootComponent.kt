@@ -683,7 +683,7 @@ class DefaultRootComponent(
 
             },
             onProductClicked = { loanRefid ->
-                navigation.push(Config.LongTermLoanDetails(loanRefId = loanRefid))
+                navigation.bringToFront(Config.LongTermLoanDetails(loanRefId = loanRefid))
 
             },
             storeFactory = storeFactory,

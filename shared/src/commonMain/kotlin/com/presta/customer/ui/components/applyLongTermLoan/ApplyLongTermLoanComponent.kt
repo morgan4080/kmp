@@ -18,4 +18,5 @@ interface ApplyLongTermLoanComponent {
     val sigHomeStore: SignHomeStore
     val signHomeState: StateFlow<SignHomeStore.State>
     fun onResolveLoanSelected(loanRefId: String)
+    fun reloadModels()
 }
