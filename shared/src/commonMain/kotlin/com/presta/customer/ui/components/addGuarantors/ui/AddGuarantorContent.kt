@@ -346,6 +346,7 @@ fun AddGuarantorContent(
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 10.dp)
                         .fillMaxHeight()
+                        .background(MaterialTheme.colorScheme.inverseOnSurface)
                 ) {
                     TabRow(
                         selectedTabIndex = tabIndex,
@@ -642,16 +643,6 @@ fun AddGuarantorContent(
             snackbarHost = {
                 SnackbarHost(snackbarHostState) { data ->
                     val isError = (data.visuals as? SnackbarVisualsWithError)?.isError ?: false
-                    val buttonColor = if (isError) {
-                        ButtonDefaults.textButtonColors(
-                            containerColor = MaterialTheme.colorScheme.errorContainer,
-                            contentColor = MaterialTheme.colorScheme.error
-                        )
-                    } else {
-                        ButtonDefaults.textButtonColors(
-                            contentColor = MaterialTheme.colorScheme.inversePrimary
-                        )
-                    }
                     Snackbar(
                         modifier = Modifier.padding(bottom = 20.dp, start = 16.dp, end = 16.dp),
                         action = {
