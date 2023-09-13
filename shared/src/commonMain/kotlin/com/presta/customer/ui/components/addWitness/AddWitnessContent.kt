@@ -222,6 +222,7 @@ fun AddWitnessContent(
                             addAll(apiResponse)
                         }
                         searchInitiated = false
+                        memberNumber=""
                     }
                 }
             } else {
@@ -452,6 +453,7 @@ fun AddWitnessContent(
                                     modifier = Modifier
                                         .size(25.dp),
                                     onClick = {
+                                        memberNumber=""
                                         searchWitnessByPhoneNumber = true
                                         launchContacts = true
                                         //Todo----open  the contacts library and take the selected contact
