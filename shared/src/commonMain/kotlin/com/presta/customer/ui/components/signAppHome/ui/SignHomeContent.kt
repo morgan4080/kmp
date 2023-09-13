@@ -309,7 +309,7 @@ fun SignHomeContent(
                                                     modifier = Modifier
                                                         .fillMaxWidth()
                                                         .padding(
-                                                            bottom = 10.dp
+                                                            vertical = 10.dp
                                                         )
                                                         .background(color = Color.Transparent),
                                                 ) {

@@ -74,8 +74,6 @@ fun AuthContent(
     platform: Platform
 ) {
 
-    println(state.cachedMemberData)
-
     val focusRequester = remember { FocusRequester() }
 
     val snackbarHostState = remember { SnackbarHostState() }

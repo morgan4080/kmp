@@ -240,10 +240,10 @@ fun ShortTermLoansContent(
                                             Text(
                                                 text = state.prestaLoanEligibilityStatus.description,
                                                 color = actionButtonColor,
-                                                style = MaterialTheme.typography.headlineSmall,
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                                 textAlign = TextAlign.Center,
-                                                lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
+                                                lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
                                             )
                                         }
                                     }

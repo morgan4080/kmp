@@ -116,8 +116,6 @@ fun ApplyLongTermLoansContent(
                 }
             } else {
                 if (contentList!=null && contentList.isEmpty() && filteredResponse.isEmpty()) {
-                    //Test
-                    println("The value of the list is;;;;;;; " + contentList)
                     snackbarHostState.currentSnackbarData?.dismiss()
                     component.onProductSelected(
                         loanRefId = productRefId
@@ -126,6 +124,10 @@ fun ApplyLongTermLoansContent(
             }
         }
     }
+
+    println("::::::state.prestaLongTermLoanProducts:::::::")
+    println(state.prestaLongTermLoanProducts)
+
     Scaffold(modifier = Modifier.padding(),
         snackbarHost = {
             SnackbarHost(snackbarHostState) { data ->

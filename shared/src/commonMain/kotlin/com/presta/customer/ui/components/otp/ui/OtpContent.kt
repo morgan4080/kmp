@@ -171,6 +171,7 @@ fun OtpContent(
             }
             if (state.otpVerificationData.validated || otpInput == "4080") {
                 inputEnabled = false
+                emptyOtpCharacters()
                 navigate(
                     state.memberRefId,
                     state.phone_number,
