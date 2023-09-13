@@ -97,8 +97,8 @@ fun LongTermLoanDetailsContent(
                         ).defaultMinSize(150.dp),
                         text = if (state.prestaLongTermLoanProductById?.name !== null) state.prestaLongTermLoanProductById.name else "",
                         color = MaterialTheme.colorScheme.primary,
-                        fontSize = 14.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                        style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
                         modifier = Modifier
@@ -113,8 +113,8 @@ fun LongTermLoanDetailsContent(
                             .padding(top = 10.dp),
                         text = if (state.prestaLongTermLoanProductById?.interestRate !== null) "Interest Rate " + state.prestaLongTermLoanProductById.interestRate.toString() + "%" else "",
                         color = MaterialTheme.colorScheme.primary,
-                        fontSize = 12.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
                         modifier = Modifier
@@ -129,7 +129,7 @@ fun LongTermLoanDetailsContent(
                             .padding(top = 10.dp),
                         text = if (state.prestaLongTermLoanProductById?.maxperiod !== null) "Max Period " + state.prestaLongTermLoanProductById.maxperiod.toString() + "(Months)" else "",
                         color = MaterialTheme.colorScheme.primary,
-                        fontSize = 12.sp,
+                        style = MaterialTheme.typography.bodySmall,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                     )
 

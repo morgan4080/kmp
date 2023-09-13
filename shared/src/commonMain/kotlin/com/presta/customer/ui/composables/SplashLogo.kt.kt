@@ -4,12 +4,12 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,15 +27,12 @@ import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun SplashLogo(text: String = "E-Guarantorship",callback: () -> Unit) {
-    val scale = remember {
+fun SplashLogo(text: String = "E-Guarantorship", callback: () -> Unit) {
+    val scale2 = remember {
         Animatable(0f)
     }
     val scaleOut = remember {
         Animatable(1f)
-    }
-    val transitioning = remember {
-        Animatable(-100f)
     }
     val op = remember {
         Animatable(0f)
@@ -43,10 +40,10 @@ fun SplashLogo(text: String = "E-Guarantorship",callback: () -> Unit) {
 
     // AnimationEffect
     LaunchedEffect(key1 = true) {
-        transitioning.animateTo(
-            targetValue = 180f,
+        scale2.animateTo(
+            targetValue = 1f,
             animationSpec = tween(
-                durationMillis = 500,
+                durationMillis = 400,
                 easing = FastOutLinearInEasing
             )
         )
@@ -54,13 +51,6 @@ fun SplashLogo(text: String = "E-Guarantorship",callback: () -> Unit) {
             targetValue = 1f,
             animationSpec = tween(
                 durationMillis = 800,
-                easing = FastOutLinearInEasing
-            )
-        )
-        scale.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(
-                durationMillis = 400,
                 easing = FastOutLinearInEasing
             )
         )
@@ -76,39 +66,27 @@ fun SplashLogo(text: String = "E-Guarantorship",callback: () -> Unit) {
     }
 
     // Image
-    Surface(modifier = Modifier.fillMaxSize()) {
+    Scaffold(modifier = Modifier.fillMaxSize()) {
         Box(
             modifier = Modifier.fillMaxSize().scale(scaleOut.value),
             contentAlignment = Alignment.Center
         ) {
-            when(isSystemInDarkTheme()) {
-                true ->Image(
-                    modifier = Modifier.scale(1.5f).graphicsLayer {
-                        translationY = transitioning.value
-                        translationX = transitioning.value
-                    },
-                    painter = painterResource("slicesdark.xml"),
-                    contentDescription = "Pattern"
-                )
-                false -> Image(
-                    modifier = Modifier.scale(1.5f).graphicsLayer {
-                        translationY = transitioning.value
-                        translationX = transitioning.value
-                    },
-                    painter = painterResource("slices.xml"),
-                    contentDescription = "Pattern"
-                )
-            }
-
+            Image(
+                modifier = Modifier.scale(scale2.value).size(150.dp).absoluteOffset(y = (-50).dp).graphicsLayer {
+                    alpha = op.value
+                },
+                painter = painterResource("asset_1.xml"),
+                contentDescription = "Pattern"
+            )
             Text(
-                modifier = Modifier.scale(scale.value).padding(end = 50.dp, bottom = 150.dp).graphicsLayer {
+                modifier = Modifier.scale(scale2.value).graphicsLayer {
                     alpha = op.value
                 },
                 text = text,
                 color= MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.headlineMedium,
                 fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBoldItalic),
-                textAlign = TextAlign.Start
+                textAlign = TextAlign.Center
             )
         }
     }

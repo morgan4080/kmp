@@ -24,7 +24,6 @@ import androidx.compose.material.icons.outlined.Backspace
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -59,7 +58,6 @@ import com.presta.customer.ui.components.otp.store.OtpStore
 import com.presta.customer.ui.components.root.DefaultRootComponent
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OtpContent(
     state: OtpStore.State,
