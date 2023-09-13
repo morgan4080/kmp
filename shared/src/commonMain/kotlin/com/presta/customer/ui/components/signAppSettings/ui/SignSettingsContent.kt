@@ -278,37 +278,37 @@ fun SignSettingsContent(
                                     }
                                 }
                             }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "Enable Finger Print ",
-                                    fontSize = 13.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                                )
-                                val icon: (@Composable () -> Unit)? = if (checked) {
-                                    {
-                                        Icon(
-                                            imageVector = Icons.Filled.Check,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                                            tint = actionButtonColor
-                                        )
-                                    }
-                                } else {
-                                    null
-                                }
-                                Switch(
-                                    modifier = Modifier
-                                        .semantics { contentDescription = "Demo with icon" },
-                                    checked = checked,
-                                    onCheckedChange = { checked = it },
-                                    thumbContent = icon
-                                )
-                            }
+//                            Row(
+//                                modifier = Modifier
+//                                    .fillMaxWidth(),
+//                                horizontalArrangement = Arrangement.SpaceBetween,
+//                                verticalAlignment = Alignment.CenterVertically
+//                            ) {
+//                                Text(
+//                                    text = "Enable Finger Print ",
+//                                    fontSize = 13.sp,
+//                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+//                                )
+//                                val icon: (@Composable () -> Unit)? = if (checked) {
+//                                    {
+//                                        Icon(
+//                                            imageVector = Icons.Filled.Check,
+//                                            contentDescription = null,
+//                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+//                                            tint = actionButtonColor
+//                                        )
+//                                    }
+//                                } else {
+//                                    null
+//                                }
+//                                Switch(
+//                                    modifier = Modifier
+//                                        .semantics { contentDescription = "Demo with icon" },
+//                                    checked = checked,
+//                                    onCheckedChange = { checked = it },
+//                                    thumbContent = icon
+//                                )
+//                            }
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()

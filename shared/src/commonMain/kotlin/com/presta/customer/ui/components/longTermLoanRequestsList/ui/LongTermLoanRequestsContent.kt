@@ -169,10 +169,10 @@ fun LongTermLoanRequestsContent(
 
     fun refresh() = refreshScope.launch {
         refreshing = true
-        //  reloadModels()
         delay(1500)
         refreshing = false
     }
+
     val refreshState = rememberPullRefreshState(refreshing, ::refresh)
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
@@ -185,7 +185,7 @@ fun LongTermLoanRequestsContent(
                     .fillMaxHeight(0.9f)
                     .background(MaterialTheme.colorScheme.surface)
             ) {
-                Column (
+                Column(
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Row(
@@ -262,16 +262,14 @@ fun LongTermLoanRequestsContent(
                         )
 
                     }
-                    if (state.prestaLoanByLoanRequestRefId?.applicantSigned == false) {
+                    if (state.prestaLoanByLoanRequestRefId?.applicantSigned == false || !state.prestaLoanByLoanRequestRefId?.pendingReason.isNullOrEmpty()) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(bottom = 10.dp)
+                                .padding(bottom = 10.dp, top = 10.dp)
                         ) {
                             OutlinedButton(
                                 onClick = {
-                                    //sign the application form
-                                    //navigate to sign
                                     scope.launch { modalBottomSheetState.hide() }
                                     if (loanAmount != "") {
                                         signHomeState.prestaTenantByPhoneNumber?.let {
@@ -284,10 +282,10 @@ fun LongTermLoanRequestsContent(
                                         }
                                     }
                                 },
-                                modifier = Modifier,
+                                modifier = Modifier.height(35.dp),
                                 shape = CircleShape,
-                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                                colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primary)
+                                border = BorderStroke(0.1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)),
+                                colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f))
                             ) {
                                 Text(
                                     modifier = Modifier,
@@ -315,12 +313,20 @@ fun LongTermLoanRequestsContent(
                                     deleteInitiated = true
                                 },
                                 modifier = Modifier
+                                    .height(35.dp)
                                     .padding(
                                         start = 10.dp
                                     ),
                                 shape = CircleShape,
-                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
-                                colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.error)
+                                border = BorderStroke(
+                                    0.1.dp,
+                                    MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
+                                ),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.error.copy(
+                                        alpha = 0.7f
+                                    )
+                                )
                             ) {
                                 Text(
                                     modifier = Modifier,
@@ -351,11 +357,11 @@ fun LongTermLoanRequestsContent(
                     ) {
                         state.prestaLoanByLoanRequestRefId?.guarantorList?.mapIndexed { index, guarantorDataResponse ->
                             val guarantorProgress =
-                                if (guarantorDataResponse.isAccepted && !guarantorDataResponse.isSigned && guarantorDataResponse.isApproved == false) {
+                                if (guarantorDataResponse.isAccepted == true && !guarantorDataResponse.isSigned!! && guarantorDataResponse.isApproved == false) {
                                     0.3f
-                                } else if (guarantorDataResponse.isSigned && guarantorDataResponse.isAccepted && guarantorDataResponse.isApproved == false) {
+                                } else if (guarantorDataResponse.isSigned == true && guarantorDataResponse.isAccepted == true && guarantorDataResponse.isApproved == false) {
                                     0.6f
-                                } else if (guarantorDataResponse.isApproved == true && guarantorDataResponse.isSigned && guarantorDataResponse.isAccepted) {
+                                } else if (guarantorDataResponse.isApproved == true && guarantorDataResponse.isSigned == true && guarantorDataResponse.isAccepted == true) {
                                     1f
 
                                 } else {
@@ -373,7 +379,8 @@ fun LongTermLoanRequestsContent(
                                         loanAmount = "Kes " + guarantorDataResponse.committedAmount.toString(),
                                         loanApplicationProgress = guarantorProgress,
                                         onClick = { indexed: Int ->
-                                            selectedIndex = if (selectedIndex == index) -1 else indexed
+                                            selectedIndex =
+                                                if (selectedIndex == index) -1 else indexed
                                             guarantorFirstName = guarantorDataResponse.firstName
                                             guarantorLastName = guarantorDataResponse.lastName
                                             guarantorRefId = guarantorDataResponse.refId
@@ -398,11 +405,13 @@ fun LongTermLoanRequestsContent(
                                                         fontSize = 12.sp,
                                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                                     )
-                                                    Text(
-                                                        guarantorDataResponse.eligibilityMessage,
-                                                        fontSize = 12.sp,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                                                    )
+                                                    guarantorDataResponse.eligibilityMessage?.let {
+                                                        Text(
+                                                            it,
+                                                            fontSize = 12.sp,
+                                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                                        )
+                                                    }
                                                 }
                                                 Row(
                                                     modifier = Modifier
@@ -450,7 +459,7 @@ fun LongTermLoanRequestsContent(
                                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                                     )
                                                     Text(
-                                                        text = if (guarantorDataResponse.isAccepted) "Accepted " else "Pending",
+                                                        text = if (guarantorDataResponse.isAccepted == true) "Accepted " else "Pending",
                                                         fontSize = 12.sp,
                                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                                     )
@@ -484,7 +493,7 @@ fun LongTermLoanRequestsContent(
                                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                                     )
                                                     Text(
-                                                        text = if (guarantorDataResponse.isSigned) "Signed" else "Pending",
+                                                        text = if (guarantorDataResponse.isSigned == true) "Signed" else "Pending",
                                                         fontSize = 12.sp,
                                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                                     )
@@ -714,7 +723,6 @@ fun LinearProgressWithPercentage(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp)
             .clickable {
                 onClick()
             }

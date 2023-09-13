@@ -21,22 +21,14 @@ data class PrestaLoanRequestByRequestRefId @OptIn(ExperimentalSerializationApi::
     val phoneNumber: String,
     val loanRequestProgress: Double,
     val totalDeposits: Double,
-    @EncodeDefault val applicantSigned: Boolean?=null,
-    @EncodeDefault val witnessAccepted: Boolean?=null,
-    @EncodeDefault val witnessSigned: Boolean?=null,
+    @EncodeDefault val pendingReason: String? = null,
+    @EncodeDefault val applicantSigned: Boolean? = null,
+    @EncodeDefault val witnessAccepted: Boolean? = null,
+    @EncodeDefault val witnessSigned: Boolean? = null,
     @EncodeDefault val pdfThumbNail: String? = null,
     val guarantorList: List<GuarantorDataResponse>,
-    //val acceptanceStatus: String,
-    //val applicationStatus: String,
-    //  val pendingReason: String,
-    //val signingStatus: String,
-    //val status: String,
-    //val witnessMemberNo: String,
-    // val witnessName: String,
-    //val witnessRefId: String,
-    //val zohoDocumentId: String,
-    //val zohoRequest: String,
-    //val zohoRequestId: String,
 )
+
+
 
 

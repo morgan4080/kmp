@@ -11,12 +11,11 @@ data class GuarantorDataResponse @OptIn(ExperimentalSerializationApi::class) con
     val memberRefId: String,
     val firstName: String,
     val lastName: String,
-    val eligible: Boolean? = null,
-    val eligibilityMessage: String,
-    val isAccepted: Boolean,
-    val isSigned: Boolean,
+    @EncodeDefault val eligible: Boolean? = null,
+    @EncodeDefault val eligibilityMessage: String? = null,
+    @EncodeDefault val isAccepted: Boolean? = null,
+    @EncodeDefault val isSigned: Boolean? = null,
     val isActive: Boolean,
     val committedAmount: Double,
     @EncodeDefault val isApproved: Boolean? = null,
 )
-
