@@ -117,6 +117,7 @@ fun AddWitnessContent(
     var selectedIndex by remember { mutableStateOf(-1) }
     var searchWitnessByMemberNumber by remember { mutableStateOf(false) }
     var searchWitnessByPhoneNumber by remember { mutableStateOf(false) }
+    var searchInitiated by remember { mutableStateOf(false) }
     var conditionChecked by remember { mutableStateOf(false) }
     var memberRefId by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -142,24 +143,26 @@ fun AddWitnessContent(
             }
         }
     }
-    if (memberNumber != "") {
-        LaunchedEffect(
-            authState.cachedMemberData,
-            memberNumber
+//    if (memberNumber != "") {
+//        LaunchedEffect(
+//            authState.cachedMemberData,
+//            memberNumber
+//
+//        ) {
+//            authState.cachedMemberData?.let {
+//                ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber(
+//                    token = it.accessToken,
+//                    phoneNumber = memberNumber
+//                )
+//            }?.let {
+//                onEvent(
+//                    it
+//                )
+//            }
+//        }
+//    }
 
-        ) {
-            authState.cachedMemberData?.let {
-                ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber(
-                    token = it.accessToken,
-                    phoneNumber = memberNumber
-                )
-            }?.let {
-                onEvent(
-                    it
-                )
-            }
-        }
-    }
+
     val clearItemClicked: (FavouriteGuarantorDetails) -> Unit = { item ->
         witnessDataListed -= item
     }
@@ -186,6 +189,67 @@ fun AddWitnessContent(
     var launchContacts by remember { mutableStateOf(false) }
     val contactsScope = rememberCoroutineScope()
     val numberPattern = remember { Regex("^\\d+\$") }
+
+    //Modified
+    LaunchedEffect(Unit,memberNumber,searchInitiated) {
+        if (searchInitiated && memberNumber.isNotEmpty() && searchWitnessByPhoneNumber) {
+
+            authState.cachedMemberData?.let {
+                ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber(
+                    token = it.accessToken,
+                    phoneNumber = memberNumber
+                )
+            }?.let {
+                onEvent(
+                    it
+                )
+            }
+
+            if (state.prestaLoadTenantByPhoneNumber?.phoneNumber != null) {
+                if (witnessDataListed.size != 1) {
+                    val apiResponse = listOf(
+                        FavouriteGuarantorDetails(
+                            refId = state.prestaLoadTenantByPhoneNumber.refId,
+                            memberFirstName = state.prestaLoadTenantByPhoneNumber.firstName,
+                            memberNumber = state.prestaLoadTenantByPhoneNumber.memberNumber,
+                            memberLastName = state.prestaLoadTenantByPhoneNumber.lastName,
+                            memberPhoneNumber = state.prestaLoadTenantByPhoneNumber.phoneNumber
+                        )
+                    )
+                    val existingItems = witnessDataListed.toSet()
+                    val duplicateItems = apiResponse.filter { it in existingItems }
+                    if (duplicateItems.isNotEmpty()) {
+                        snackBarScope.launch {
+                            snackbarHostState.showSnackbar(
+                                SnackbarVisualsWithError(
+                                    "Duplicate Entries not  allowed",
+                                    isError = true
+                                )
+                            )
+                        }
+
+                    } else {
+                        witnessDataListed = witnessDataListed.toMutableSet().apply {
+                                addAll(apiResponse)
+                            }
+                        searchInitiated=false
+                    }
+                }
+            } else {
+                snackBarScope.launch {
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsWithError(
+                            "Error loading Member by PhoneNumber $memberNumber",
+                            isError = true
+                        )
+                    )
+                }
+
+            }
+
+        }
+    }
+
     Scaffold(
         modifier = Modifier
             .fillMaxWidth()
@@ -399,7 +463,7 @@ fun AddWitnessContent(
                                     modifier = Modifier
                                         .size(25.dp),
                                     onClick = {
-                                        //Todo----open Contacts Library
+                                        searchWitnessByPhoneNumber = true
                                         launchContacts = true
                                         //Todo----open  the contacts library and take the selected contact
                                         if (launchContacts) {
@@ -576,7 +640,7 @@ fun AddWitnessContent(
                                     }
                                 }
                             } else {
-                                if (searchWitnessByPhoneNumber && state.prestaLoadTenantByPhoneNumber?.phoneNumber == null ){
+                                if (searchWitnessByPhoneNumber && state.prestaLoadTenantByPhoneNumber?.phoneNumber == null) {
                                     snackBarScope.launch {
                                         snackbarHostState.showSnackbar(
                                             SnackbarVisualsWithError(
@@ -610,7 +674,7 @@ fun AddWitnessContent(
                                         guarantorList = component.guarantorList,
                                         loanPurposeCategoryCode = component.loanPurposeCategoryCode,
                                         witnessRefId = witnessData.refId,
-                                        witnessName = witnessData.memberFirstName +" "+ witnessData.memberLastName
+                                        witnessName = witnessData.memberFirstName + " " + witnessData.memberLastName
                                     )
                                 }
                             }

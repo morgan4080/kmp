@@ -313,8 +313,6 @@ fun AddGuarantorContent(
                 )
             }
             println("Value of tracked member identifier is :::::::::::::::::::::::::::::::" + loadedIdentifier)
-
-
             if (guarantorDataListed.size != component.requiredGuarantors && loadedIdentifier != "") {
                 println("Second load identifier:::::" + loadedIdentifier)
                 launchCheckSelfAndEmPloyedPopUp = false
@@ -335,6 +333,15 @@ fun AddGuarantorContent(
             }
         }
     }
+    //Todo----delegate state to Default component
+
+
+
+
+
+
+
+
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
