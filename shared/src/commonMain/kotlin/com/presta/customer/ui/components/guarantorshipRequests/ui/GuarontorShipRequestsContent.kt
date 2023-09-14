@@ -144,11 +144,13 @@ fun GuarantorShipRequestsContent(
     ModalBottomSheetLayout(
         sheetState = modalBottomState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        sheetBackgroundColor =  MaterialTheme.colorScheme.surface,
         sheetContent = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp)
+                    .background(MaterialTheme.colorScheme.surface)
                     .fillMaxHeight(0.8f),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -211,7 +213,8 @@ fun GuarantorShipRequestsContent(
                         modifier = Modifier
                             .padding(top = 20.dp),
                         fontSize = 12.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 Row(
@@ -222,7 +225,8 @@ fun GuarantorShipRequestsContent(
                         " as a guarantor for this loan product valued:",
                         modifier = Modifier,
                         fontSize = 12.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 Text(

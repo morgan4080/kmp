@@ -24,7 +24,9 @@ import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
+
 data class MultipleVariables(val grossSalary: String, val variable2: String, val variable3: Boolean)
+
 @Composable
 fun EmployedDetails(
     state: ApplyLongTermLoansStore.State,
@@ -32,7 +34,6 @@ fun EmployedDetails(
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
     signHomeState: SignHomeStore.State,
     onProfileEvent: (SignHomeStore.Intent) -> Unit,
-    //onKRAPinChanged: (String) -> Unit,
     onClickSubmit: () -> Unit,
     component: AddGuarantorsComponent,
 ) {
@@ -248,12 +249,10 @@ fun EmployedDetails(
                                     it
                                 )
                             }
-
                             //Todo-----show failed or successful update
                             onClickSubmit()
-
                         },
-                        enabled =true,
+                        enabled = true,
                         loading = signHomeState.isLoading
                     )
                 }
