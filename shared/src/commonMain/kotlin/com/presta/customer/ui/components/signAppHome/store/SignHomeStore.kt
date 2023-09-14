@@ -32,7 +32,7 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
         val isLoading: Boolean = false,
         val error: String? = null,
         val prestaTenantByPhoneNumber: PrestaSignUserDetailsResponse? = null,
-        val prestaTenantByMemberNumber: PrestaSignUserDetailsResponse? = null,
+        var prestaTenantByMemberNumber: PrestaSignUserDetailsResponse? = null,
         val updatePrestaTenantDetails: PrestaSignUserDetailsResponse? = null,
         val updatePrestaTenantPersonalInfo: PrestaSignUserDetailsResponse? = null
     )

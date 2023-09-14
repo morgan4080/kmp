@@ -196,33 +196,35 @@ fun AddWitnessContent(
         if ( memberNumber!="" && searchWitnessByPhoneNumber) {
             if (state.prestaLoadTenantByPhoneNumber?.phoneNumber != null) {
                 if (witnessDataListed.size != 1) {
-                    val apiResponse = listOf(
-                        FavouriteGuarantorDetails(
-                            refId = state.prestaLoadTenantByPhoneNumber.refId,
-                            memberFirstName = state.prestaLoadTenantByPhoneNumber.firstName,
-                            memberNumber = state.prestaLoadTenantByPhoneNumber.memberNumber,
-                            memberLastName = state.prestaLoadTenantByPhoneNumber.lastName,
-                            memberPhoneNumber = state.prestaLoadTenantByPhoneNumber.phoneNumber
-                        )
-                    )
-                    val existingItems = witnessDataListed.toSet()
-                    val duplicateItems = apiResponse.filter { it in existingItems }
-                    if (duplicateItems.isNotEmpty()) {
-                        snackBarScope.launch {
-                            snackbarHostState.showSnackbar(
-                                SnackbarVisualsWithError(
-                                    "Duplicate Entries not  allowed",
-                                    isError = true
-                                )
+                    state.prestaLoadTenantByPhoneNumber?.let {
+                        val apiResponse = listOf(
+                            FavouriteGuarantorDetails(
+                                refId = it.refId,
+                                memberFirstName = it.firstName,
+                                memberNumber = it.memberNumber,
+                                memberLastName = it.lastName,
+                                memberPhoneNumber = it.phoneNumber
                             )
-                        }
+                        )
+                        val existingItems = witnessDataListed.toSet()
+                        val duplicateItems = apiResponse.filter { it in existingItems }
+                        if (duplicateItems.isNotEmpty()) {
+                            snackBarScope.launch {
+                                snackbarHostState.showSnackbar(
+                                    SnackbarVisualsWithError(
+                                        "Duplicate Entries not  allowed",
+                                        isError = true
+                                    )
+                                )
+                            }
 
-                    } else {
-                        witnessDataListed = witnessDataListed.toMutableSet().apply {
-                            addAll(apiResponse)
+                        } else {
+                            witnessDataListed = witnessDataListed.toMutableSet().apply {
+                                addAll(apiResponse)
+                            }
+                            searchInitiated = false
+                            memberNumber=""
                         }
-                        searchInitiated = false
-                        memberNumber=""
                     }
                 }
             } else {
@@ -557,33 +559,35 @@ fun AddWitnessContent(
                             println(" Check active state memeber Number::::" + searchWitnessByMemberNumber)
                             println(" Check active state Phone Number::::" + searchWitnessByPhoneNumber)
                             if (searchWitnessByMemberNumber && signHomeState.prestaTenantByMemberNumber != null) {
-                                if (witnessDataListed.size != 1) {
-                                    val apiResponse = listOf(
-                                        FavouriteGuarantorDetails(
-                                            refId = signHomeState.prestaTenantByMemberNumber.refId,
-                                            memberFirstName = signHomeState.prestaTenantByMemberNumber.firstName,
-                                            memberNumber = signHomeState.prestaTenantByMemberNumber.memberNumber,
-                                            memberLastName = signHomeState.prestaTenantByMemberNumber.lastName,
-                                            memberPhoneNumber = signHomeState.prestaTenantByMemberNumber.phoneNumber
-                                        )
-                                    )
-                                    val existingItems = witnessDataListed.toSet()
-                                    val duplicateItems = apiResponse.filter { it in existingItems }
-                                    if (duplicateItems.isNotEmpty()) {
-                                        snackBarScope.launch {
-                                            snackbarHostState.showSnackbar(
-                                                SnackbarVisualsWithError(
-                                                    "Duplicate Entries not  allowed",
-                                                    isError = true
-                                                )
+                                signHomeState.prestaTenantByMemberNumber?.let {
+                                    if (witnessDataListed.size != 1) {
+                                        val apiResponse = listOf(
+                                            FavouriteGuarantorDetails(
+                                                refId = it.refId,
+                                                memberFirstName = it.firstName,
+                                                memberNumber = it.memberNumber,
+                                                memberLastName = it.lastName,
+                                                memberPhoneNumber = it.phoneNumber
                                             )
-                                        }
-
-                                    } else {
-                                        witnessDataListed =
-                                            witnessDataListed.toMutableSet().apply {
-                                                addAll(apiResponse)
+                                        )
+                                        val existingItems = witnessDataListed.toSet()
+                                        val duplicateItems = apiResponse.filter { it in existingItems }
+                                        if (duplicateItems.isNotEmpty()) {
+                                            snackBarScope.launch {
+                                                snackbarHostState.showSnackbar(
+                                                    SnackbarVisualsWithError(
+                                                        "Duplicate Entries not  allowed",
+                                                        isError = true
+                                                    )
+                                                )
                                             }
+
+                                        } else {
+                                            witnessDataListed =
+                                                witnessDataListed.toMutableSet().apply {
+                                                    addAll(apiResponse)
+                                                }
+                                        }
                                     }
                                 }
                             } else {
@@ -602,32 +606,34 @@ fun AddWitnessContent(
                             //Handle loading  member by Phone Number
                             if (searchWitnessByPhoneNumber && state.prestaLoadTenantByPhoneNumber?.phoneNumber != null) {
                                 if (witnessDataListed.size != 1) {
-                                    val apiResponse = listOf(
-                                        FavouriteGuarantorDetails(
-                                            refId = state.prestaLoadTenantByPhoneNumber.refId,
-                                            memberFirstName = state.prestaLoadTenantByPhoneNumber.firstName,
-                                            memberNumber = state.prestaLoadTenantByPhoneNumber.memberNumber,
-                                            memberLastName = state.prestaLoadTenantByPhoneNumber.lastName,
-                                            memberPhoneNumber = state.prestaLoadTenantByPhoneNumber.phoneNumber
-                                        )
-                                    )
-                                    val existingItems = witnessDataListed.toSet()
-                                    val duplicateItems = apiResponse.filter { it in existingItems }
-                                    if (duplicateItems.isNotEmpty()) {
-                                        snackBarScope.launch {
-                                            snackbarHostState.showSnackbar(
-                                                SnackbarVisualsWithError(
-                                                    "Duplicate Entries not  allowed",
-                                                    isError = true
-                                                )
+                                    state.prestaLoadTenantByPhoneNumber?.let {
+                                        val apiResponse = listOf(
+                                            FavouriteGuarantorDetails(
+                                                refId = it.refId,
+                                                memberFirstName = it.firstName,
+                                                memberNumber = it.memberNumber,
+                                                memberLastName = it.lastName,
+                                                memberPhoneNumber = it.phoneNumber
                                             )
-                                        }
-
-                                    } else {
-                                        witnessDataListed =
-                                            witnessDataListed.toMutableSet().apply {
-                                                addAll(apiResponse)
+                                        )
+                                        val existingItems = witnessDataListed.toSet()
+                                        val duplicateItems = apiResponse.filter { it in existingItems }
+                                        if (duplicateItems.isNotEmpty()) {
+                                            snackBarScope.launch {
+                                                snackbarHostState.showSnackbar(
+                                                    SnackbarVisualsWithError(
+                                                        "Duplicate Entries not  allowed",
+                                                        isError = true
+                                                    )
+                                                )
                                             }
+
+                                        } else {
+                                            witnessDataListed =
+                                                witnessDataListed.toMutableSet().apply {
+                                                    addAll(apiResponse)
+                                                }
+                                        }
                                     }
                                 }
                             } else {
@@ -744,7 +750,7 @@ fun AddWitnessContent(
                                                             )
                                                     ) {
                                                         SelectGuarantorsView(
-                                                            Index = guarantorIndex,
+                                                            idx = guarantorIndex,
                                                             selected = selectedIndex == guarantorIndex,
                                                             onClick = { index: Int ->
                                                                 selectedIndex =

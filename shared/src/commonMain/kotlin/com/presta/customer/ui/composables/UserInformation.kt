@@ -180,7 +180,7 @@ fun UserInformation(
                                                         )
                                                 ) {
                                                     SelectGuarantorsView(
-                                                        Index = indexed,
+                                                        idx = indexed,
                                                         selected = selectedIndex == indexed,
                                                         onClick = { index: Int ->
                                                             selectedIndex =
@@ -333,7 +333,7 @@ fun UserInformation(
                                                         )
                                                 ) {
                                                     SelectGuarantorsView(
-                                                        Index = indexedPay,
+                                                        idx= indexedPay,
                                                         selected = selectedIndex == indexedPay,
                                                         onClick = { index: Int ->
                                                             selectedIndex =

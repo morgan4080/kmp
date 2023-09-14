@@ -167,7 +167,7 @@ interface ApplyLongTermLoansStore :
         val prestaAdedFavouriteGuarantor: PrestaFavouriteGuarantorResponse? = null,
         val deleteFavouriteGuarantorResponse: String? = null,
         val deleteLoanRequestResponse: String? = null,
-        val prestaLoadTenantByPhoneNumber: PrestaSignUserDetailsResponse? = null,
+        var prestaLoadTenantByPhoneNumber: PrestaSignUserDetailsResponse? = null,
         val memberNo: String = "By Member No",
         val phoneNo: String = "By Phone No",
         val selfGuarantee: String = "Self Guarantee",

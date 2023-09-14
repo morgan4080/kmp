@@ -527,30 +527,32 @@ fun ReplaceGuarantorContent(
                             witnessDataListed = emptySet()
                             if (searchGuarantorByMemberNumber && signHomeState.prestaTenantByMemberNumber?.refId != null) {
                                 if (witnessDataListed.size != 1) {
-                                    val apiResponse = listOf(
-                                        FavouriteGuarantorDetails(
-                                            refId = signHomeState.prestaTenantByMemberNumber.refId,
-                                            memberFirstName = signHomeState.prestaTenantByMemberNumber.firstName,
-                                            memberNumber = signHomeState.prestaTenantByMemberNumber.memberNumber,
-                                            memberLastName = signHomeState.prestaTenantByMemberNumber.lastName,
-                                            memberPhoneNumber = signHomeState.prestaTenantByMemberNumber.phoneNumber
-                                        )
-                                    )
-                                    val existingItems = witnessDataListed.toSet()
-                                    val duplicateItems = apiResponse.filter { it in existingItems }
-                                    if (duplicateItems.isNotEmpty()) {
-                                        snackBarScope.launch {
-                                            snackbarHostState.showSnackbar(
-                                                SnackbarVisualsWithError(
-                                                    "Duplicate Entries not  allowed",
-                                                    isError = true
-                                                )
+                                    signHomeState.prestaTenantByMemberNumber?.let {
+                                        val apiResponse = listOf(
+                                            FavouriteGuarantorDetails(
+                                                refId = it.refId,
+                                                memberFirstName = it.firstName,
+                                                memberNumber = it.memberNumber,
+                                                memberLastName = it.lastName,
+                                                memberPhoneNumber = it.phoneNumber
                                             )
-                                        }
+                                        )
+                                        val existingItems = witnessDataListed.toSet()
+                                        val duplicateItems = apiResponse.filter { it in existingItems }
+                                        if (duplicateItems.isNotEmpty()) {
+                                            snackBarScope.launch {
+                                                snackbarHostState.showSnackbar(
+                                                    SnackbarVisualsWithError(
+                                                        "Duplicate Entries not  allowed",
+                                                        isError = true
+                                                    )
+                                                )
+                                            }
 
-                                    } else {
-                                        witnessDataListed = witnessDataListed.toMutableSet().apply {
-                                            addAll(apiResponse)
+                                        } else {
+                                            witnessDataListed = witnessDataListed.toMutableSet().apply {
+                                                addAll(apiResponse)
+                                            }
                                         }
                                     }
                                 } else {
@@ -577,30 +579,32 @@ fun ReplaceGuarantorContent(
                             }
                             if (searchGuarantorByPhoneNumber && applyLongTermLoanState.prestaLoadTenantByPhoneNumber?.refId != null) {
                                 if (witnessDataListed.size != 1) {
-                                    val apiResponse = listOf(
-                                        FavouriteGuarantorDetails(
-                                            refId = applyLongTermLoanState.prestaLoadTenantByPhoneNumber.refId,
-                                            memberFirstName = applyLongTermLoanState.prestaLoadTenantByPhoneNumber.firstName,
-                                            memberNumber = applyLongTermLoanState.prestaLoadTenantByPhoneNumber.memberNumber,
-                                            memberLastName = applyLongTermLoanState.prestaLoadTenantByPhoneNumber.lastName,
-                                            memberPhoneNumber = applyLongTermLoanState.prestaLoadTenantByPhoneNumber.phoneNumber
-                                        )
-                                    )
-                                    val existingItems = witnessDataListed.toSet()
-                                    val duplicateItems = apiResponse.filter { it in existingItems }
-                                    if (duplicateItems.isNotEmpty()) {
-                                        snackBarScope.launch {
-                                            snackbarHostState.showSnackbar(
-                                                SnackbarVisualsWithError(
-                                                    "Duplicate Entries not  allowed",
-                                                    isError = true
-                                                )
+                                    applyLongTermLoanState.prestaLoadTenantByPhoneNumber?.let {
+                                        val apiResponse = listOf(
+                                            FavouriteGuarantorDetails(
+                                                refId = it.refId,
+                                                memberFirstName = it.firstName,
+                                                memberNumber = it.memberNumber,
+                                                memberLastName = it.lastName,
+                                                memberPhoneNumber = it.phoneNumber
                                             )
-                                        }
+                                        )
+                                        val existingItems = witnessDataListed.toSet()
+                                        val duplicateItems = apiResponse.filter { it in existingItems }
+                                        if (duplicateItems.isNotEmpty()) {
+                                            snackBarScope.launch {
+                                                snackbarHostState.showSnackbar(
+                                                    SnackbarVisualsWithError(
+                                                        "Duplicate Entries not  allowed",
+                                                        isError = true
+                                                    )
+                                                )
+                                            }
 
-                                    } else {
-                                        witnessDataListed = witnessDataListed.toMutableSet().apply {
-                                            addAll(apiResponse)
+                                        } else {
+                                            witnessDataListed = witnessDataListed.toMutableSet().apply {
+                                                addAll(apiResponse)
+                                            }
                                         }
                                     }
                                 } else {
@@ -703,7 +707,7 @@ fun ReplaceGuarantorContent(
                                                             )
                                                     ) {
                                                         SelectGuarantorsView(
-                                                            Index = guarantorIndex,
+                                                            idx = guarantorIndex,
                                                             selected = selectedIndex == guarantorIndex,
                                                             onClick = { index: Int ->
                                                                 selectedIndex =

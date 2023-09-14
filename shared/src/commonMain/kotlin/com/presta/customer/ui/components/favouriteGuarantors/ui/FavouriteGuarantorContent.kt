@@ -549,33 +549,35 @@ fun FavouriteGuarantorContent(
                                 onClickContainer = {
                                     if (searchWitnessByMemberNumber && signHomeState.prestaTenantByMemberNumber != null) {
                                         if (guarantorDataListed.size != 1) {
-                                            val apiResponse = listOf(
-                                                FavouriteGuarantorDetails(
-                                                    refId = signHomeState.prestaTenantByMemberNumber.refId,
-                                                    memberFirstName = signHomeState.prestaTenantByMemberNumber.firstName,
-                                                    memberNumber = signHomeState.prestaTenantByMemberNumber.memberNumber,
-                                                    memberLastName = signHomeState.prestaTenantByMemberNumber.lastName,
-                                                    memberPhoneNumber = signHomeState.prestaTenantByMemberNumber.phoneNumber
-                                                )
-                                            )
-                                            val existingItems = guarantorDataListed.toSet()
-                                            val duplicateItems =
-                                                apiResponse.filter { it in existingItems }
-                                            if (duplicateItems.isNotEmpty()) {
-                                                snackBarScope.launch {
-                                                    snackbarHostState.showSnackbar(
-                                                        SnackbarVisualsWithError(
-                                                            "Duplicate Entries not  allowed",
-                                                            isError = true
-                                                        )
+                                            signHomeState.prestaTenantByMemberNumber?.let {
+                                                val apiResponse = listOf(
+                                                    FavouriteGuarantorDetails(
+                                                        refId = it.refId,
+                                                        memberFirstName = it.firstName,
+                                                        memberNumber = it.memberNumber,
+                                                        memberLastName = it.lastName,
+                                                        memberPhoneNumber = it.phoneNumber
                                                     )
-                                                }
-
-                                            } else {
-                                                guarantorDataListed =
-                                                    guarantorDataListed.toMutableSet().apply {
-                                                        addAll(apiResponse)
+                                                )
+                                                val existingItems = guarantorDataListed.toSet()
+                                                val duplicateItems =
+                                                    apiResponse.filter { it in existingItems }
+                                                if (duplicateItems.isNotEmpty()) {
+                                                    snackBarScope.launch {
+                                                        snackbarHostState.showSnackbar(
+                                                            SnackbarVisualsWithError(
+                                                                "Duplicate Entries not  allowed",
+                                                                isError = true
+                                                            )
+                                                        )
                                                     }
+
+                                                } else {
+                                                    guarantorDataListed =
+                                                        guarantorDataListed.toMutableSet().apply {
+                                                            addAll(apiResponse)
+                                                        }
+                                                }
                                             }
                                         }
                                     } else {
@@ -594,33 +596,35 @@ fun FavouriteGuarantorContent(
                                     //Handle loading  member by Phone Number
                                     if (searchWitnessByPhoneNumber && state.prestaLoadTenantByPhoneNumber?.phoneNumber != null) {
                                         if (guarantorDataListed.size != 1) {
-                                            val apiResponse = listOf(
-                                                FavouriteGuarantorDetails(
-                                                    refId = state.prestaLoadTenantByPhoneNumber.refId,
-                                                    memberFirstName = state.prestaLoadTenantByPhoneNumber.firstName,
-                                                    memberNumber = state.prestaLoadTenantByPhoneNumber.memberNumber,
-                                                    memberLastName = state.prestaLoadTenantByPhoneNumber.lastName,
-                                                    memberPhoneNumber = state.prestaLoadTenantByPhoneNumber.phoneNumber
-                                                )
-                                            )
-                                            val existingItems = guarantorDataListed.toSet()
-                                            val duplicateItems =
-                                                apiResponse.filter { it in existingItems }
-                                            if (duplicateItems.isNotEmpty()) {
-                                                snackBarScope.launch {
-                                                    snackbarHostState.showSnackbar(
-                                                        SnackbarVisualsWithError(
-                                                            "Duplicate Entries not  allowed",
-                                                            isError = true
-                                                        )
+                                            state.prestaLoadTenantByPhoneNumber?.let {
+                                                val apiResponse = listOf(
+                                                    FavouriteGuarantorDetails(
+                                                        refId = it.refId,
+                                                        memberFirstName = it.firstName,
+                                                        memberNumber = it.memberNumber,
+                                                        memberLastName = it.lastName,
+                                                        memberPhoneNumber = it.phoneNumber
                                                     )
-                                                }
-
-                                            } else {
-                                                guarantorDataListed =
-                                                    guarantorDataListed.toMutableSet().apply {
-                                                        addAll(apiResponse)
+                                                )
+                                                val existingItems = guarantorDataListed.toSet()
+                                                val duplicateItems =
+                                                    apiResponse.filter { it in existingItems }
+                                                if (duplicateItems.isNotEmpty()) {
+                                                    snackBarScope.launch {
+                                                        snackbarHostState.showSnackbar(
+                                                            SnackbarVisualsWithError(
+                                                                "Duplicate Entries not  allowed",
+                                                                isError = true
+                                                            )
+                                                        )
                                                     }
+
+                                                } else {
+                                                    guarantorDataListed =
+                                                        guarantorDataListed.toMutableSet().apply {
+                                                            addAll(apiResponse)
+                                                        }
+                                                }
                                             }
                                         }
                                     } else {
@@ -711,7 +715,7 @@ fun FavouriteGuarantorContent(
                                                                     )
                                                             ) {
                                                                 SelectGuarantorsView(
-                                                                    Index = guarantorIndex,
+                                                                    idx = guarantorIndex,
                                                                     selected = selectedIndex == guarantorIndex,
                                                                     onClick = { index: Int ->
                                                                         selectedIndex =
