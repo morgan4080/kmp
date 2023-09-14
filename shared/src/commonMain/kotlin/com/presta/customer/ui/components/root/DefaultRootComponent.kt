@@ -380,7 +380,7 @@ class DefaultRootComponent(
             isTermsAccepted = config.isTermsAccepted
         ) { memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext, pinStatus ->
             when (onBoardingContext) {
-                OnBoardingContext.REGISTRATION -> navigation.push(
+                OnBoardingContext.REGISTRATION -> navigation.bringToFront(
                     Config.Register(
                         phoneNumber = phoneNumber,
                         isTermsAccepted = isTermsAccepted,
@@ -391,7 +391,7 @@ class DefaultRootComponent(
                 )
 
                 OnBoardingContext.LOGIN -> {
-                    if (memberRefId !== null) navigation.push(
+                    if (memberRefId !== null) navigation.bringToFront(
                         Config.Auth(
                             memberRefId = memberRefId,
                             phoneNumber = phoneNumber,

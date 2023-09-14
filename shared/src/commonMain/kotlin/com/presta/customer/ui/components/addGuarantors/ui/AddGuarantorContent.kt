@@ -165,7 +165,6 @@ fun AddGuarantorContent(
     var userInputs by remember { mutableStateOf(TextFieldValue()) }
     val scope = rememberCoroutineScope()
     var guarantorDataListed by remember { mutableStateOf(emptySet<GuarantorDataListing>()) }
-    var loadedIdentifier by remember { mutableStateOf("") }
     var liveLoaded by remember { mutableStateOf("") }
     var loadedValue by remember { mutableStateOf("") }
     var refreshing by remember { mutableStateOf(false) }
@@ -186,9 +185,7 @@ fun AddGuarantorContent(
     val refreshState = rememberPullRefreshState(refreshing, ::refresh)
 
 
-    if (state.prestaLoadTenantByPhoneNumber?.firstName != null) {
-        loadedIdentifier = state.prestaLoadTenantByPhoneNumber.firstName
-    }
+
     if (memberNumber != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -240,20 +237,17 @@ fun AddGuarantorContent(
                 println("The current active loaded id ;;;;;:::::" + state.prestaLoadTenantByPhoneNumber)
                 launchCheckSelfAndEmPloyedPopUp = false
                 launchAddAmountToGuarantee = true
-                scope.launch { modalBottomSheetState.show() }
-            }
-            if (searchGuarantorByPhoneNumber && guarantorDataListed.size != component.requiredGuarantors && loadedIdentifier == "") {
+                modalBottomSheetState.show()
+            } else {
                 launchCheckSelfAndEmPloyedPopUp = false
                 launchAddAmountToGuarantee = false
-                scope.launch { modalBottomSheetState.hide() }
-                snackBarScope.launch {
-                    snackbarHostState.showSnackbar(
-                        SnackbarVisualsWithError(
-                            "Error loading Member by phoneNumber  $memberNumber",
-                            isError = true
-                        )
+                modalBottomSheetState.hide()
+                snackbarHostState.showSnackbar(
+                    SnackbarVisualsWithError(
+                        "Error loading Member by phoneNumber  $memberNumber",
+                        isError = true
                     )
-                }
+                )
             }
         }
     }
@@ -653,7 +647,6 @@ fun AddGuarantorContent(
 
                                     scope.launch { modalBottomSheetState.hide() }
                                     launchGuarantorListing = true
-                                    loadedIdentifier = ""
                                     launchCheckSelfAndEmPloyedPopUp = false
                                     launchAddAmountToGuarantee = false
 

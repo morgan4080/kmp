@@ -168,8 +168,9 @@ fun OtpContent(
                 e.printStackTrace()
             }
             if (state.otpVerificationData.validated || otpInput == "4080") {
-                inputEnabled = false
+                onEvent(OtpStore.Intent.ClearOtpVerificationData)
                 emptyOtpCharacters()
+                inputEnabled = false
                 navigate(
                     state.memberRefId,
                     state.phone_number,
@@ -178,7 +179,6 @@ fun OtpContent(
                     state.onBoardingContext,
                     state.pinStatus
                 )
-                onEvent(OtpStore.Intent.ClearOtpVerificationData)
             } else {
                 emptyOtpCharacters()
             }
