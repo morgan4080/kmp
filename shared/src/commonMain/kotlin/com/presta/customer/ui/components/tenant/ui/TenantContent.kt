@@ -149,7 +149,8 @@ fun TenantContent(
                                 Text(
                                     modifier = Modifier.alpha(.3f),
                                     text = inputMethod.inputLabel,
-                                    style = MaterialTheme.typography.bodySmall
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                             }
 

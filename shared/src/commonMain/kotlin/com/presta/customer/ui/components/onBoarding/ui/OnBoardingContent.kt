@@ -5,11 +5,14 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,10 +22,8 @@ import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -64,7 +65,7 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 import dev.icerock.moko.resources.compose.painterResource
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class,
+@OptIn(ExperimentalMaterialApi::class,
     ExperimentalComposeUiApi::class, ExperimentalSoftwareKeyboardApi::class
 )
 @Composable
@@ -174,20 +175,12 @@ fun OnBoardingContent(
         if (state.member !== null && state.member.refId == null && !startRegistration) {
             startRegistration = when (state.member.accountInfo.selfRegistrationStatus) {
                 SelfRegistrationStatus.ENABLED -> {
-                    snackbarHostState.showSnackbar(
-                        message = "User not registered, starting registration process.",
-                        duration = SnackbarDuration.Long,
-                        withDismissAction = true
-                    )
+                    onEvent(OnBoardingStore.Intent.UpdateError("User not registered, starting registration process."))
                     true
                 }
 
                 SelfRegistrationStatus.DISABLED -> {
-                    snackbarHostState.showSnackbar(
-                        message = "User not registered",
-                        duration = SnackbarDuration.Long,
-                        withDismissAction = true
-                    )
+                    onEvent(OnBoardingStore.Intent.UpdateError("User not registered"))
                     false
                 }
             }
@@ -222,7 +215,7 @@ fun OnBoardingContent(
     ) {
         Scaffold (
             snackbarHost = {
-                SnackbarHost(modifier = Modifier.padding(bottom = 500.dp), hostState = snackbarHostState)
+                SnackbarHost(modifier = Modifier.windowInsetsPadding(WindowInsets.ime), hostState = snackbarHostState)
             }
         ) {
             LazyColumn (

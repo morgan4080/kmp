@@ -141,7 +141,8 @@ fun TextInputContainer(
                     Text(
                         modifier = Modifier.alpha(.3f).padding(start = if (icon !== null) 50.dp else 0.dp, top = if (icon !== null) 5.dp else 0.dp),
                         text = label,
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
                 AnimatedVisibility(
