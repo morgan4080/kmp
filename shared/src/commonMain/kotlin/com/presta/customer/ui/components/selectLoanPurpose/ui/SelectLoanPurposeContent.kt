@@ -374,6 +374,7 @@ fun SelectLoanSubCategoryCard(
                                 .background(color = MaterialTheme.colorScheme.background)
                                 .size(20.dp),
                             onClick = {
+                                onClick.invoke(index)
                                 showExpanded = !showExpanded
                             },
                             content = {
