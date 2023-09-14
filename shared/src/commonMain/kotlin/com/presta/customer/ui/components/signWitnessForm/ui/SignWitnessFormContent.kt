@@ -129,7 +129,7 @@ fun SignWitnessFormContent(
                             .fillMaxWidth()
                     ) {
                         Text(
-                            "Being a Witness for  " + component.loanNumber + " of Kes " + component.amount + " has been confirmed",
+                            "Being a Witness for  " + component.loanNumber + " of KES " + component.amount + " has been confirmed",
                             fontSize = 16.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
                             color = MaterialTheme.colorScheme.primary

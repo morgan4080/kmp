@@ -74,7 +74,7 @@ fun TopUpSelectionContainer(
 
         Column() {
 
-            Text(text = " Bal.Kes 5000.00",
+            Text(text = " Bal.KES 5000.00",
                 fontSize = 12.sp,
                 fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
                 color = labelTextColor

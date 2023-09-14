@@ -153,7 +153,7 @@ fun LoanTopUpContent(
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     Text(
-                                        text = if (state.prestaLoanProductById?.offer?.totalAmount != null) "Kes" + formatMoney(
+                                        text = if (state.prestaLoanProductById?.offer?.totalAmount != null) "KES" + formatMoney(
                                             state.prestaLoanProductById.offer.totalAmount
                                         ) else "",
                                         color = MaterialTheme.colorScheme.onBackground, // #002C56

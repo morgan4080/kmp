@@ -91,7 +91,7 @@ fun SuccessfulTransactionScreen(component: SuccessfulTransactionComponent) {
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center) {
                     Text(
-                        text = "Loan topup of Kes 30,000 transferred to Mpesa No. 0724123456",
+                        text = "Loan topup of KES 30,000 transferred to Mpesa No. 0724123456",
                         fontSize = 14.sp,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
 

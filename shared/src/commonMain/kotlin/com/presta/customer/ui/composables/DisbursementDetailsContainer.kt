@@ -91,7 +91,7 @@ fun DisbursementDetailsContainer(
 
                     }else{
                         Text(
-                            text = "Kes " + formatMoney(component.amount),
+                            text = "KES " + formatMoney(component.amount),
                             color = MaterialTheme.colorScheme.onBackground,
                             fontSize = MaterialTheme.typography.headlineSmall.fontSize,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
@@ -104,7 +104,7 @@ fun DisbursementDetailsContainer(
                 ) {
                     disbursementDetailsRow(
                         "Requested Amount",
-                        "Kes " + formatMoney(component.amount,
+                        "KES " + formatMoney(component.amount,
                         ),
                         modeOfDisbursementState
                     )
@@ -122,14 +122,14 @@ fun DisbursementDetailsContainer(
                     )
                     disbursementDetailsRow(
                         "Balance brought forward",
-                        if (modeOfDisbursementState.prestaLoanQuotation !== null) "Kes" + formatMoney(
+                        if (modeOfDisbursementState.prestaLoanQuotation !== null) "KES" + formatMoney(
                             modeOfDisbursementState.prestaLoanQuotation.balanceBroughtForward
                         ) else "",
                         modeOfDisbursementState
                     )
                     disbursementDetailsRow(
                         "Repayment amount",
-                        if (modeOfDisbursementState.prestaLoanQuotation !== null) "Kes" + formatMoney(
+                        if (modeOfDisbursementState.prestaLoanQuotation !== null) "KES" + formatMoney(
                             modeOfDisbursementState.prestaLoanQuotation.totalAmount
                         ) else "",
                         modeOfDisbursementState

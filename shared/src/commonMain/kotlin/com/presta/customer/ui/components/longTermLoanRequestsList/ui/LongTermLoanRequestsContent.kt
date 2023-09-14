@@ -247,7 +247,7 @@ fun LongTermLoanRequestsContent(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = if (state.prestaLoanByLoanRequestRefId?.loanAmount != null) " Kes " + formatMoney(
+                            text = if (state.prestaLoanByLoanRequestRefId?.loanAmount != null) " KES " + formatMoney(
                                 state.prestaLoanByLoanRequestRefId.loanAmount
                             ).uppercase() else "",
                             fontSize = 16.sp,
@@ -376,7 +376,7 @@ fun LongTermLoanRequestsContent(
                                 ) {
                                     GuarantorDataCard(
                                         loanProductName = guarantorDataResponse.firstName + " " + guarantorDataResponse.lastName,
-                                        loanAmount = "Kes " + guarantorDataResponse.committedAmount.toString(),
+                                        loanAmount = "KES " + guarantorDataResponse.committedAmount.toString(),
                                         loanApplicationProgress = guarantorProgress,
                                         onClick = { indexed: Int ->
                                             selectedIndex =
@@ -678,7 +678,7 @@ fun LongTermLoanRequestsContent(
                                         Row(modifier = Modifier.padding(bottom = 20.dp)) {
                                             LoanApplicationProgressCard(
                                                 loanProductName = loanlistingData.loanProductName,
-                                                loanAmount = "Kes " + loanlistingData.loanAmount.toString(),
+                                                loanAmount = "KES " + loanlistingData.loanAmount.toString(),
                                                 loanApplicationDate = loanlistingData.loanDate,
                                                 loanProgress = "${loanlistingData.loanRequestProgress}% ${loanlistingData.applicationStatus}",
                                                 loanApplicationProgress = loanlistingData.loanRequestProgress.toFloat() / 100,

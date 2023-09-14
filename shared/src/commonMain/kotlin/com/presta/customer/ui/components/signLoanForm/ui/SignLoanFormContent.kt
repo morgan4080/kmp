@@ -135,7 +135,7 @@ fun SignLoanFormContent(
                             .fillMaxWidth()
                     ) {
                         Text(
-                            "Proceed to Sign your Loan " + component.loanNumber + " of Kes " + component.amount,
+                            "Proceed to Sign your Loan " + component.loanNumber + " of KES " + component.amount,
                             fontSize = 16.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
                             color = MaterialTheme.colorScheme.primary

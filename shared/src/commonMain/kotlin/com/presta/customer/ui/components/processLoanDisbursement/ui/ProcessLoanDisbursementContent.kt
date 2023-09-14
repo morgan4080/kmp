@@ -150,10 +150,10 @@ fun ProcessLoanDisbursementContent(
                     if (state.loanDisbursementStatus !== null) {
                         Text(
                             text =  when(state.loanDisbursementStatus) {
-                                DisbursementStatus.DISBURSED -> "Your loan of Kes ${formatMoney(amount)} has been successfully disbursed."
-                                DisbursementStatus.NOTDISBURSED -> "We regret that your loan request of Kes ${formatMoney(amount)} could not be disbursed. Please try again later."
-                                DisbursementStatus.FAILED -> "We regret that your loan request of Kes ${formatMoney(amount)} failed. Please try again later."
-                                DisbursementStatus.INPROGRESS -> "Your loan of Kes ${formatMoney(amount)} is being disbursed. You will receive a notification once completed."
+                                DisbursementStatus.DISBURSED -> "Your loan of KES ${formatMoney(amount)} has been successfully disbursed."
+                                DisbursementStatus.NOTDISBURSED -> "We regret that your loan request of KES ${formatMoney(amount)} could not be disbursed. Please try again later."
+                                DisbursementStatus.FAILED -> "We regret that your loan request of KES ${formatMoney(amount)} failed. Please try again later."
+                                DisbursementStatus.INPROGRESS -> "Your loan of KES ${formatMoney(amount)} is being disbursed. You will receive a notification once completed."
                                 DisbursementStatus.INITIATED -> "Your loan request disbursement has been initiated."
                             },
                             fontSize = 14.sp,
@@ -163,10 +163,10 @@ fun ProcessLoanDisbursementContent(
                     } else if (state.loanAppraisalStatus !== null) {
                         Text(
                             text = when(state.loanAppraisalStatus) {
-                                AppraisalStatus.APPROVED -> "We are happy to inform you that your loan of Kes ${formatMoney(amount)} has been approved."
-                                AppraisalStatus.FAILED -> "We regret that your loan request of Kes ${formatMoney(amount)} could not be processed at this time. Please try again later."
-                                AppraisalStatus.DENIED -> "We regret that your loan request of Kes ${formatMoney(amount)} has been declined. Please try again later."
-                                AppraisalStatus.PENDING -> "Your loan of Kes ${formatMoney(amount)} is awaiting approval. You will be notified once completed."
+                                AppraisalStatus.APPROVED -> "We are happy to inform you that your loan of KES ${formatMoney(amount)} has been approved."
+                                AppraisalStatus.FAILED -> "We regret that your loan request of KES ${formatMoney(amount)} could not be processed at this time. Please try again later."
+                                AppraisalStatus.DENIED -> "We regret that your loan request of KES ${formatMoney(amount)} has been declined. Please try again later."
+                                AppraisalStatus.PENDING -> "Your loan of KES ${formatMoney(amount)} is awaiting approval. You will be notified once completed."
                             },
                             fontSize = 14.sp,
                             textAlign = TextAlign.Center,
@@ -174,7 +174,7 @@ fun ProcessLoanDisbursementContent(
                         )
                     } else {
                         Text(
-                            text = "Loan Request of Kes ${formatMoney(amount)} has been received",
+                            text = "Loan Request of KES ${formatMoney(amount)} has been received",
                             fontSize = 14.sp,
                             textAlign = TextAlign.Center,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)

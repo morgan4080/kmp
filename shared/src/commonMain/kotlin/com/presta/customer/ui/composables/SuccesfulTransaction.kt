@@ -72,7 +72,7 @@ fun  SuccessfulTransaction(){
 
                 Row(modifier = Modifier.padding(start = 50.dp, end = 50.dp, top = 5.dp)){
 
-                    Text(text = "Loan topup of Kes 30,000 transferred to Mpesa No. 0724123456",
+                    Text(text = "Loan topup of KES 30,000 transferred to Mpesa No. 0724123456",
                         fontSize = 2.4.em)
 
                 }
