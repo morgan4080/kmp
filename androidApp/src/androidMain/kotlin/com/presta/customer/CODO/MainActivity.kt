@@ -1,4 +1,5 @@
 package com.presta.customer.CODO
+
 import android.app.Activity
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -18,9 +19,6 @@ import org.koin.core.error.KoinAppAlreadyStartedException
 class MainActivity : AppCompatActivity() {
     private var platform: Platform? = null
     private var currentActivity: Activity? = null
-    private fun getCurrentActivity(): Activity? {
-        return currentActivity
-    }
     private fun setCurrentActivity(activity: Activity) {
         currentActivity = activity
     }

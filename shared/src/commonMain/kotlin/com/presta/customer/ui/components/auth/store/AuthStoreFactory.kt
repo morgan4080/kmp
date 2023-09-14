@@ -250,7 +250,6 @@ internal class AuthStoreFactory(
         private var tenantServicesQueryJob: Job? = null
 
         private fun checkTenantServices(token: String, tenantId: String) {
-            println("::::::navigationBottomStackNavigation.subscribe000000::::::::")
             try {
                 if (tenantServicesQueryJob?.isActive == true) return
 
@@ -259,9 +258,13 @@ internal class AuthStoreFactory(
                 tenantServicesQueryJob = scope.launch {
                     authRepository.checkTenantServices(token, tenantId)
                         .onSuccess { response ->
+                            println("::::::CheckTenantServicesFulfilled:::::::")
+                            println(response)
                             dispatch(Msg.CheckTenantServicesFulfilled(response))
                         }
                         .onFailure { e ->
+                            println("::::::CheckTenantServicesFailed:::::::")
+                            println(e.message)
                             dispatch(Msg.AuthFailed(e.message))
                         }
                     dispatch(Msg.AuthLoading(false))
@@ -275,19 +278,21 @@ internal class AuthStoreFactory(
         private var tenantServicesConfigQueryJob: Job? = null
 
         private fun checkTenantServicesConfig(token: String, tenantId: String) {
-            println("::::::navigationBottomStackNavigation.subscribe000000::::::::")
             try {
                 if (tenantServicesConfigQueryJob?.isActive == true) return
 
                 dispatch(Msg.AuthLoading())
 
                 tenantServicesConfigQueryJob = scope.launch {
-                    println("tenantServicesConfigQueryJob")
                     authRepository.checkTenantServicesConfig(token, tenantId)
                         .onSuccess { response ->
+                            println("::::::CheckTenantServicesConfigFulfilled:::::::")
+                            println(response)
                             dispatch(Msg.CheckTenantServicesConfigFulfilled(response))
                         }
                         .onFailure { e ->
+                            println("::::::CheckTenantServicesConfigFailed:::::::")
+                            println(e.message)
                             dispatch(Msg.AuthFailed(e.message))
                         }
                     dispatch(Msg.AuthLoading(false))

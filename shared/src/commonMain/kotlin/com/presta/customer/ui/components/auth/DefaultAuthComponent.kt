@@ -136,20 +136,33 @@ class DefaultAuthComponent(
                                 tenantId = it.cachedMemberData.tenantId
                             )
                         )
+                    } else {
+                        onOnBoardingEvent(
+                            OnBoardingStore.Intent.GetMemberDetails(
+                                token = "",
+                                memberIdentifier = phoneNumber,
+                                identifierType = IdentifierTypes.PHONE_NUMBER,
+                                tenantId = it.cachedMemberData.tenantId
+                            )
+                        )
                     }
 
                     onBoardingState.collect { onBoard ->
-                        if (onBoard.member?.authenticationInfo?.pinStatus == PinStatus.SET) {
+                        if (onBoard.member !== null && onBoard.member.authenticationInfo.pinStatus == PinStatus.SET || it.pinStatus == PinStatus.SET) {
                             val title: String = if (it.cachedMemberData.firstName !== null && it.cachedMemberData.lastName !== null) {
                                 "${it.cachedMemberData.firstName} ${it.cachedMemberData.lastName}"
                             } else {
                                 "log in"
                             }
-                            val label: String = if (OrganisationModel.organisation.tenant_name!="") {
-                                OrganisationModel.organisation.tenant_name
+
+                            val label: String = if (onBoard.member !== null && onBoard.member.accountInfo.accountName != "") {
+                                onBoard.member.accountInfo.accountName
                             } else {
                                 ""
                             }
+                            println(":::::onBoard.label::::::::")
+                            println(title)
+                            println(label)
                             onEvent(AuthStore.Intent.UpdateContext(
                                 context = Contexts.LOGIN,
                                 title = title,
@@ -159,6 +172,10 @@ class DefaultAuthComponent(
                                 error = null
                             ))
 
+                        } else if (it.pinStatus == null && onBoard.member !== null && onBoard.member.authenticationInfo.pinStatus == null) {
+                            AuthStore.Intent.UpdateError(
+                                error = "Your Account Is Not Synchronised: Kindly Contact: +254 711 082 442"
+                            )
                         } else {
                             AuthStore.Intent.UpdateContext(
                                 context = Contexts.CREATE_PIN,

@@ -110,10 +110,30 @@ fun AuthContent(
         pinInput = ""
     }
 
-    LaunchedEffect(state.pinStatus, state.cachedMemberData?.firstName, state.cachedMemberData?.lastName) {
+    LaunchedEffect(state.pinStatus, state.cachedMemberData, onBoardingState.member) {
         if (
-            state.pinStatus == PinStatus.SET && onBoardingState.member?.authenticationInfo?.pinStatus == PinStatus.SET
+            state.pinStatus == PinStatus.SET && state.cachedMemberData !== null
         ) {
+            val title: String = if (state.cachedMemberData.firstName !== null && state.cachedMemberData.lastName !== null) {
+                "${state.cachedMemberData.firstName} ${state.cachedMemberData.lastName}"
+            } else {
+                "log in"
+            }
+
+            val label: String = if (onBoardingState.member !== null && onBoardingState.member.accountInfo.accountName != "") {
+                onBoardingState.member.accountInfo.accountName
+            } else {
+                ""
+            }
+            onEvent(AuthStore.Intent.UpdateContext(
+                context = Contexts.LOGIN,
+                title = title,
+                label = label,
+                pinCreated = true,
+                pinConfirmed = true,
+                error = null
+            ))
+        } else if (state.pinStatus == null && onBoardingState.member !== null && onBoardingState.member.authenticationInfo.pinStatus == null) {
             val title: String = if (state.cachedMemberData !== null) {
                 if (state.cachedMemberData.firstName !== null && state.cachedMemberData.lastName !== null) {
                     "${state.cachedMemberData.firstName} ${state.cachedMemberData.lastName}"
@@ -192,6 +212,8 @@ fun AuthContent(
             }
         }
     }
+    println("onBoardingState.updateMemberResponse")
+    println(onBoardingState.updateMemberResponse)
     LaunchedEffect(onBoardingState.updateMemberResponse, state.cachedMemberData?.firstName, state.cachedMemberData?.lastName) {
         if (onBoardingState.updateMemberResponse !== null) {
             platform.showToast("Pin Created Successfully!")
@@ -383,7 +405,7 @@ fun AuthContent(
                                 }
 
                                 AnimatedVisibility(
-                                    visible = state.error !== null,
+                                    visible = state.error !== null || onBoardingState.error !== null,
                                     enter = fadeIn() + expandVertically(),
                                     exit = fadeOut() + shrinkVertically()
                                 ) {
@@ -395,7 +417,7 @@ fun AuthContent(
                                     ) {
                                         Text(
                                             modifier = Modifier.fillMaxWidth(.6f),
-                                            text = if (state.error !== null) state.error.uppercase() else "",
+                                            text = if (state.error !== null) state.error.uppercase() else if (onBoardingState.error !== null) onBoardingState.error.uppercase() else "",
                                             style = MaterialTheme.typography.labelSmall,
                                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                             fontSize = 10.0.sp,

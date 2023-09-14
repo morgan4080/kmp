@@ -58,7 +58,7 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
     LaunchedEffect(Unit) {
         windowInsetsController?.apply {
             // Hide the status bars
-            setIsStatusBarsVisible(true)
+            setIsStatusBarsVisible(false)
             // Hide the navigation bars
             setIsNavigationBarsVisible(false)
             // Change an options for behavior when system bars are hidden

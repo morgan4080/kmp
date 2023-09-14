@@ -1450,7 +1450,24 @@ class DefaultRootComponent(
                     is Config.ReplaceGuarantor -> {
                         super.onResume()
                     }
+
                     is Config.FavouriteGuarantors -> {
+                        super.onResume()
+                    }
+
+                    is Config.Auth -> {
+                        super.onResume()
+                    }
+
+                    is Config.Register -> {
+                        super.onResume()
+                    }
+
+                    is Config.OTP -> {
+                        super.onResume()
+                    }
+
+                    is Config.OnBoarding -> {
                         super.onResume()
                     }
 
