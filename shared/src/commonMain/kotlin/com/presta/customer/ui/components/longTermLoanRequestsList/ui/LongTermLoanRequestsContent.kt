@@ -75,7 +75,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(
-    ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterialApi::class,
     ExperimentalLayoutApi::class
 )
 @Composable
@@ -108,7 +108,6 @@ fun LongTermLoanRequestsContent(
         memBerRefId = signHomeState.prestaTenantByPhoneNumber.refId
     }
     var deleteInitiated by remember { mutableStateOf(false) }
-
     val scope = rememberCoroutineScope()
     if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         LaunchedEffect(
@@ -164,15 +163,16 @@ fun LongTermLoanRequestsContent(
             }
         }
     }
-
     //Todo ---add pull to refresh
-
     fun refresh() = refreshScope.launch {
         refreshing = true
         delay(1500)
         refreshing = false
     }
 
+    if (loanRequestRefId == "") {
+        scope.launch { modalBottomSheetState.hide() }
+    }
     val refreshState = rememberPullRefreshState(refreshing, ::refresh)
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
@@ -235,10 +235,7 @@ fun LongTermLoanRequestsContent(
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f)
                             )
-
                         }
-
-
                     }
                     Row(
                         modifier = Modifier
@@ -284,8 +281,15 @@ fun LongTermLoanRequestsContent(
                                 },
                                 modifier = Modifier.height(35.dp),
                                 shape = CircleShape,
-                                border = BorderStroke(0.1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)),
-                                colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f))
+                                border = BorderStroke(
+                                    0.1.dp,
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+                                ),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary.copy(
+                                        alpha = 0.8f
+                                    )
+                                )
                             ) {
                                 Text(
                                     modifier = Modifier,
@@ -530,7 +534,6 @@ fun LongTermLoanRequestsContent(
                                                                 guarantorFirstname = guarantorFirstName,
                                                                 guarantorLastName = guarantorLastName
                                                             )
-
 
                                                         },
                                                         modifier = Modifier.padding(top = 16.dp),

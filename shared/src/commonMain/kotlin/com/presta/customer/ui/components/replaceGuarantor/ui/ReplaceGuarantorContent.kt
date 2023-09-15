@@ -33,6 +33,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.outlined.ArrowCircleDown
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -156,16 +157,15 @@ fun ReplaceGuarantorContent(
             refreshing = false
         }
     }
-
     val refreshState = rememberPullRefreshState(refreshing, ::refresh)
-
     LaunchedEffect(
         applyLongTermLoanState.prestaLoadTenantByPhoneNumber,
         findGuarantorOptions,
         applyLongTermLoanState.isLoading
     ) {
         //Get Tenant by phone Number
-        if (findGuarantorOptions === FindGuarantorOptions.PHONENUMBER && guarantorListedData.size != 1) {
+
+        if (findGuarantorOptions === FindGuarantorOptions.PHONENUMBER && guarantorListedData.size != 1 && applyLongTermLoanState.prestaLoadTenantByPhoneNumber?.refId != null) {
             var loadedValue = ""
 
             loadedValue = applyLongTermLoanState.prestaLoadTenantByPhoneNumber?.refId ?: ""
@@ -176,7 +176,7 @@ fun ReplaceGuarantorContent(
             }
             if (liveLoaded.isNotEmpty()) {
                 //automatically add  the list
-                if (guarantorListedData.size != 1 && findGuarantorOptions === FindGuarantorOptions.PHONENUMBER && applyLongTermLoanState.prestaLoadTenantByPhoneNumber?.phoneNumber != null) {
+                if (guarantorListedData.size != 1 && findGuarantorOptions === FindGuarantorOptions.PHONENUMBER && !applyLongTermLoanState.prestaLoanByLoanRequestRefId?.guarantorList.isNullOrEmpty()) {
                     applyLongTermLoanState.prestaLoadTenantByPhoneNumber?.let {
                         val apiResponse = listOf(
                             FavouriteGuarantorDetails(
@@ -189,14 +189,13 @@ fun ReplaceGuarantorContent(
 
                         )
                         val existingItems = guarantorListedData.toSet()
-                        val duplicateItems =
-                            apiResponse.filter {
-                                it in existingItems || existingItems.any { listed ->
-                                    println("listed.guarantorRefId:res.guarantorRefId")
-                                    println("${listed.refId} : ${it.refId}")
-                                    listed.refId == it.refId
-                                }
+                        val duplicateItems = apiResponse.filter {
+                            it in existingItems || existingItems.any { listed ->
+                                println("listed.guarantorRefId:res.guarantorRefId")
+                                println("${listed.refId} : ${it.refId}")
+                                listed.refId == it.refId
                             }
+                        }
                         if (duplicateItems.isNotEmpty()) {
                             snackBarScope.launch {
                                 snackbarHostState.showSnackbar(
@@ -212,6 +211,7 @@ fun ReplaceGuarantorContent(
                                     addAll(apiResponse)
                                 }
                         }
+
                     }
                 }
             } else if (!applyLongTermLoanState.isLoading && memberNumber.isNotEmpty()) {
@@ -228,12 +228,12 @@ fun ReplaceGuarantorContent(
     LaunchedEffect(
         signHomeState.prestaTenantByMemberNumber,
         findGuarantorOptions,
-        signHomeState.isLoading
+        signHomeState.isLoading,
+        applyLongTermLoanState.isLoading
     ) {
         //Get Tenant by phone Number
-        if (findGuarantorOptions === FindGuarantorOptions.MEMBERNUMBER && guarantorListedData.size != 1) {
+        if (findGuarantorOptions === FindGuarantorOptions.MEMBERNUMBER && guarantorListedData.size != 1 && !applyLongTermLoanState.prestaLoanByLoanRequestRefId?.guarantorList.isNullOrEmpty()) {
             var loadedValue = ""
-
             loadedValue = signHomeState.prestaTenantByMemberNumber?.refId ?: ""
             liveLoaded = if (loadedValue == "") {
                 ""
@@ -291,34 +291,34 @@ fun ReplaceGuarantorContent(
         }
     }
     LaunchedEffect(
-        guarantorListedData
+        guarantorListedData,
+        applyLongTermLoanState.isLoading,
+        signHomeState.isLoading
     ) {
         guarantorListedData.map { datas ->
             applyLongTermLoanState.prestaLoanByLoanRequestRefId?.guarantorList?.map { existingGuarantor ->
-                if (datas.memberNumber == signHomeState.prestaTenantByPhoneNumber?.memberNumber) {
+                if (datas.memberNumber == signHomeState.prestaTenantByPhoneNumber?.memberNumber && !applyLongTermLoanState.isLoading && !signHomeState.isLoading) {
                     clearItemClicked(datas)
-                    conditionChecked = false
                     snackBarScope.launch {
                         snackbarHostState.showSnackbar(
                             SnackbarVisualsWithError(
-                                "Self Guarantee not Allowed",
+                                "Self Guarantee not  allowed",
                                 isError = true
                             )
                         )
                     }
                 } else if (datas.refId == existingGuarantor.memberRefId) {
                     clearItemClicked(datas)
-                    conditionChecked = false
                     snackBarScope.launch {
                         snackbarHostState.showSnackbar(
                             SnackbarVisualsWithError(
-                                "Member is already a guarantor",
+                                "Member Already a guarantor",
                                 isError = true
                             )
                         )
                     }
                 } else {
-                    conditionChecked = guarantorListedData.size == 1
+                    conditionChecked = true
                 }
             }
         }
@@ -397,21 +397,27 @@ fun ReplaceGuarantorContent(
                                     modifier = Modifier.padding(10.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    androidx.compose.material3.IconButton(
+                                    IconButton(
                                         modifier = Modifier
-                                            .clip(CircleShape)
-                                            .background(Color(0xFFE5F1F5))
-                                            .size(25.dp),
+                                            .size(25.dp)
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(
+                                                MaterialTheme.colorScheme.primary.copy(
+                                                    alpha = 0.5f
+                                                )
+                                            ),
                                         onClick = {
                                             launchPopUp = true
                                         },
                                         content = {
                                             Icon(
-                                                imageVector = Icons.Filled.KeyboardArrowDown,
+                                                imageVector = Icons.Outlined.ArrowCircleDown,
                                                 modifier = if (launchPopUp) Modifier.size(25.dp)
                                                     .rotate(180F) else Modifier.size(25.dp),
                                                 contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary
+                                                tint = MaterialTheme.colorScheme.onBackground.copy(
+                                                    alpha = 0.7f
+                                                )
                                             )
                                         }
                                     )
@@ -539,9 +545,28 @@ fun ReplaceGuarantorContent(
                                 ) {
                                     androidx.compose.material3.IconButton(
                                         modifier = Modifier
-                                            .size(25.dp),
+                                            .size(25.dp)
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(
+                                                MaterialTheme.colorScheme.primary.copy(
+                                                    alpha = 0.5f
+                                                )
+                                            ),
                                         onClick = {
                                             memberNumber = ""
+                                            signHomeState.prestaTenantByMemberNumber = null
+                                            applyLongTermLoanState.prestaLoadTenantByPhoneNumber =
+                                                null
+                                            authState.cachedMemberData?.let {
+                                                ApplyLongTermLoansStore.Intent.GetPrestaLoanByLoanRequestRefId(
+                                                    token = it.accessToken,
+                                                    loanRequestRefId = component.loanRequestRefId
+                                                )
+                                            }?.let {
+                                                onEvent(
+                                                    it
+                                                )
+                                            }
                                             contactsScope.launch {
                                                 val content =
                                                     component.platform.getContact(421, "KE")
@@ -652,6 +677,16 @@ fun ReplaceGuarantorContent(
                             label = if (guarantorListedData.size != 1) "Search" else "Add Guarantor",
                             onClickContainer = {
                                 if (guarantorListedData.size != 1) {
+                                    authState.cachedMemberData?.let {
+                                        ApplyLongTermLoansStore.Intent.GetPrestaLoanByLoanRequestRefId(
+                                            token = it.accessToken,
+                                            loanRequestRefId = component.loanRequestRefId
+                                        )
+                                    }?.let {
+                                        onEvent(
+                                            it
+                                        )
+                                    }
                                     when (findGuarantorOptions) {
                                         FindGuarantorOptions.MEMBERNUMBER -> {
                                             authState.cachedMemberData?.let {
@@ -697,7 +732,6 @@ fun ReplaceGuarantorContent(
                         .align(Alignment.TopCenter).zIndex(1f),
                     contentColor = actionButtonColor
                 )
-
             }
 
             if (launchPopUp) {
