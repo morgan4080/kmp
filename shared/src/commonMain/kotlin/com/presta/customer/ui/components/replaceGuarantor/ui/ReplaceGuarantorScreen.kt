@@ -14,7 +14,7 @@ fun ReplaceGuarantorScreen(
     val profileState by component.signHomeState.collectAsState()
     ReplaceGuarantorContent(
         component = component,
-        applyLongTermLoanState = applyLongTermLoansState,
+        state = applyLongTermLoansState,
         authState = authState,
         onEvent = component::onEvent,
         signHomeState = profileState,

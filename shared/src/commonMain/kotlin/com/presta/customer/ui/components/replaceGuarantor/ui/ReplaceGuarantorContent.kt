@@ -33,7 +33,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.outlined.ArrowCircleDown
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -79,6 +78,7 @@ import com.presta.customer.ui.components.addGuarantors.ui.SelectGuarantorsView
 import com.presta.customer.ui.components.addGuarantors.ui.SnackbarVisualsWithError
 import com.presta.customer.ui.components.addWitness.FavouriteGuarantorDetails
 import com.presta.customer.ui.components.addWitness.WitnessDetailsView
+import com.presta.customer.ui.components.addWitness.WitnessOptions
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.replaceGuarantor.ReplaceGuarantorComponent
@@ -93,10 +93,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-enum class FindGuarantorOptions {
-    PHONENUMBER,
-    MEMBERNUMBER
-}
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class,
@@ -105,7 +101,7 @@ enum class FindGuarantorOptions {
 @Composable
 fun ReplaceGuarantorContent(
     component: ReplaceGuarantorComponent,
-    applyLongTermLoanState: ApplyLongTermLoansStore.State,
+    state: ApplyLongTermLoansStore.State,
     authState: AuthStore.State,
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
     signHomeState: SignHomeStore.State,
@@ -113,10 +109,9 @@ fun ReplaceGuarantorContent(
 ) {
     var launchPopUp by remember { mutableStateOf(false) }
     var confirmGuarantorReplacementPopUp by remember { mutableStateOf(false) }
-    var allowedToUpdateGuarantor by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var memberNumber by remember { mutableStateOf("") }
-    var findGuarantorOptions by remember { mutableStateOf(FindGuarantorOptions.PHONENUMBER) }
+    var witnessOptions by remember { mutableStateOf(WitnessOptions.PHONENUMBER) }
     var firstName by remember { mutableStateOf(TextFieldValue()) }
     val emptyTextContainer by remember { mutableStateOf(TextFieldValue()) }
     var selectedIndex by remember { mutableStateOf(-1) }
@@ -125,12 +120,12 @@ fun ReplaceGuarantorContent(
     val snackbarHostState = remember { SnackbarHostState() }
     val snackBarScope = rememberCoroutineScope()
     var liveLoaded by remember { mutableStateOf("") }
-    var guarantorListedData by remember { mutableStateOf(emptySet<FavouriteGuarantorDetails>()) }
+    var witnessDataListed by remember { mutableStateOf(emptySet<FavouriteGuarantorDetails>()) }
     if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         memberRefId = signHomeState.prestaTenantByPhoneNumber.refId
     }
     val clearItemClicked: (FavouriteGuarantorDetails) -> Unit = { item ->
-        guarantorListedData -= item
+        witnessDataListed -= item
     }
     val contactsScope = rememberCoroutineScope()
     val numberPattern = remember { Regex("^\\d+\$") }
@@ -142,7 +137,7 @@ fun ReplaceGuarantorContent(
         refreshing = false
     }
 
-    if (applyLongTermLoanState.isLoading) {
+    if (state.isLoading) {
         refreshScope.launch {
             refreshing = true
             delay(1500)
@@ -157,18 +152,20 @@ fun ReplaceGuarantorContent(
             refreshing = false
         }
     }
+
     val refreshState = rememberPullRefreshState(refreshing, ::refresh)
+
+    //cleaned
     LaunchedEffect(
-        applyLongTermLoanState.prestaLoadTenantByPhoneNumber,
-        findGuarantorOptions,
-        applyLongTermLoanState.isLoading
+        state.prestaLoadTenantByPhoneNumber,
+        witnessOptions,
+        state.isLoading
     ) {
         //Get Tenant by phone Number
-
-        if (findGuarantorOptions === FindGuarantorOptions.PHONENUMBER && guarantorListedData.size != 1 && applyLongTermLoanState.prestaLoadTenantByPhoneNumber?.refId != null) {
+        if (witnessOptions === WitnessOptions.PHONENUMBER && witnessDataListed.size != 1) {
             var loadedValue = ""
 
-            loadedValue = applyLongTermLoanState.prestaLoadTenantByPhoneNumber?.refId ?: ""
+            loadedValue = state.prestaLoadTenantByPhoneNumber?.refId ?: ""
             liveLoaded = if (loadedValue == "") {
                 ""
             } else {
@@ -176,8 +173,8 @@ fun ReplaceGuarantorContent(
             }
             if (liveLoaded.isNotEmpty()) {
                 //automatically add  the list
-                if (guarantorListedData.size != 1 && findGuarantorOptions === FindGuarantorOptions.PHONENUMBER && !applyLongTermLoanState.prestaLoanByLoanRequestRefId?.guarantorList.isNullOrEmpty()) {
-                    applyLongTermLoanState.prestaLoadTenantByPhoneNumber?.let {
+                if (witnessDataListed.size != 1 && witnessOptions === WitnessOptions.PHONENUMBER && state.prestaLoadTenantByPhoneNumber?.phoneNumber != null) {
+                    state.prestaLoadTenantByPhoneNumber?.let {
                         val apiResponse = listOf(
                             FavouriteGuarantorDetails(
                                 refId = it.refId,
@@ -188,73 +185,7 @@ fun ReplaceGuarantorContent(
                             )
 
                         )
-                        val existingItems = guarantorListedData.toSet()
-                        val duplicateItems = apiResponse.filter {
-                            it in existingItems || existingItems.any { listed ->
-                                println("listed.guarantorRefId:res.guarantorRefId")
-                                println("${listed.refId} : ${it.refId}")
-                                listed.refId == it.refId
-                            }
-                        }
-                        if (duplicateItems.isNotEmpty()) {
-                            snackBarScope.launch {
-                                snackbarHostState.showSnackbar(
-                                    SnackbarVisualsWithError(
-                                        "Duplicate Entries not  allowed",
-                                        isError = true
-                                    )
-                                )
-                            }
-                        } else {
-                            guarantorListedData =
-                                guarantorListedData.toMutableSet().apply {
-                                    addAll(apiResponse)
-                                }
-                        }
-
-                    }
-                }
-            } else if (!applyLongTermLoanState.isLoading && memberNumber.isNotEmpty()) {
-                snackbarHostState.showSnackbar(
-                    SnackbarVisualsWithError(
-                        "Error loading Member by phone no.  $memberNumber",
-                        isError = true
-                    )
-                )
-            }
-        }
-    }
-
-    LaunchedEffect(
-        signHomeState.prestaTenantByMemberNumber,
-        findGuarantorOptions,
-        signHomeState.isLoading,
-        applyLongTermLoanState.isLoading
-    ) {
-        //Get Tenant by phone Number
-        if (findGuarantorOptions === FindGuarantorOptions.MEMBERNUMBER && guarantorListedData.size != 1 && !applyLongTermLoanState.prestaLoanByLoanRequestRefId?.guarantorList.isNullOrEmpty()) {
-            var loadedValue = ""
-            loadedValue = signHomeState.prestaTenantByMemberNumber?.refId ?: ""
-            liveLoaded = if (loadedValue == "") {
-                ""
-            } else {
-                loadedValue
-            }
-            if (liveLoaded.isNotEmpty()) {
-                //automatically add  the list
-                if (guarantorListedData.size != 1 && findGuarantorOptions === FindGuarantorOptions.MEMBERNUMBER && signHomeState.prestaTenantByMemberNumber != null) {
-                    signHomeState.prestaTenantByMemberNumber?.let {
-                        val apiResponse = listOf(
-                            FavouriteGuarantorDetails(
-                                refId = it.refId,
-                                memberFirstName = it.firstName,
-                                memberNumber = it.memberNumber,
-                                memberLastName = it.lastName,
-                                memberPhoneNumber = it.phoneNumber
-                            )
-
-                        )
-                        val existingItems = guarantorListedData.toSet()
+                        val existingItems = witnessDataListed.toSet()
                         val duplicateItems =
                             apiResponse.filter {
                                 it in existingItems || existingItems.any { listed ->
@@ -273,8 +204,75 @@ fun ReplaceGuarantorContent(
                                 )
                             }
                         } else {
-                            guarantorListedData =
-                                guarantorListedData.toMutableSet().apply {
+                            witnessDataListed =
+                                witnessDataListed.toMutableSet().apply {
+                                    addAll(apiResponse)
+                                }
+                        }
+                    }
+                }
+            } else if (!state.isLoading && memberNumber.isNotEmpty()) {
+                snackbarHostState.showSnackbar(
+                    SnackbarVisualsWithError(
+                        "Error loading Member by phone no.  $memberNumber",
+                        isError = true
+                    )
+                )
+            }
+        }
+    }
+
+
+    LaunchedEffect(
+        signHomeState.prestaTenantByMemberNumber,
+        witnessOptions,
+        signHomeState.isLoading
+    ) {
+        //Get Tenant by phone Number
+        if (witnessOptions === WitnessOptions.MEMBERNUMBER && witnessDataListed.size != 1) {
+            var loadedValue = ""
+
+            loadedValue = signHomeState.prestaTenantByMemberNumber?.refId ?: ""
+            liveLoaded = if (loadedValue == "") {
+                ""
+            } else {
+                loadedValue
+            }
+            if (liveLoaded.isNotEmpty()) {
+                //automatically add  the list
+                if (witnessDataListed.size != 1 && witnessOptions === WitnessOptions.MEMBERNUMBER && signHomeState.prestaTenantByMemberNumber != null) {
+                    signHomeState.prestaTenantByMemberNumber?.let {
+                        val apiResponse = listOf(
+                            FavouriteGuarantorDetails(
+                                refId = it.refId,
+                                memberFirstName = it.firstName,
+                                memberNumber = it.memberNumber,
+                                memberLastName = it.lastName,
+                                memberPhoneNumber = it.phoneNumber
+                            )
+
+                        )
+                        val existingItems = witnessDataListed.toSet()
+                        val duplicateItems =
+                            apiResponse.filter {
+                                it in existingItems || existingItems.any { listed ->
+                                    println("listed.guarantorRefId:res.guarantorRefId")
+                                    println("${listed.refId} : ${it.refId}")
+                                    listed.refId == it.refId
+                                }
+                            }
+                        if (duplicateItems.isNotEmpty()) {
+                            snackBarScope.launch {
+                                snackbarHostState.showSnackbar(
+                                    SnackbarVisualsWithError(
+                                        "Duplicate Entries not  allowed",
+                                        isError = true
+                                    )
+                                )
+                            }
+                        } else {
+                            witnessDataListed =
+                                witnessDataListed.toMutableSet().apply {
                                     addAll(apiResponse)
                                 }
                         }
@@ -291,36 +289,25 @@ fun ReplaceGuarantorContent(
         }
     }
     LaunchedEffect(
-        guarantorListedData,
-        applyLongTermLoanState.isLoading,
-        signHomeState.isLoading
+        witnessDataListed
     ) {
-        guarantorListedData.map { datas ->
-            applyLongTermLoanState.prestaLoanByLoanRequestRefId?.guarantorList?.map { existingGuarantor ->
-                if (datas.memberNumber == signHomeState.prestaTenantByPhoneNumber?.memberNumber && !applyLongTermLoanState.isLoading && !signHomeState.isLoading) {
-                    clearItemClicked(datas)
-                    snackBarScope.launch {
-                        snackbarHostState.showSnackbar(
-                            SnackbarVisualsWithError(
-                                "Self Guarantee not  allowed",
-                                isError = true
-                            )
+        witnessDataListed.map { datas ->
+            if (datas.memberNumber == signHomeState.prestaTenantByPhoneNumber?.memberNumber) {
+                clearItemClicked(datas)
+                signHomeState.prestaTenantByMemberNumber = null
+                state.prestaLoadTenantByPhoneNumber = null
+                snackBarScope.launch {
+                    snackbarHostState.showSnackbar(
+                        SnackbarVisualsWithError(
+                            "Self Guarantee not allowed",
+                            isError = true
                         )
-                    }
-                } else if (datas.refId == existingGuarantor.memberRefId) {
-                    clearItemClicked(datas)
-                    snackBarScope.launch {
-                        snackbarHostState.showSnackbar(
-                            SnackbarVisualsWithError(
-                                "Member Already a guarantor",
-                                isError = true
-                            )
-                        )
-                    }
-                } else {
-                    conditionChecked = true
+                    )
                 }
+            } else {
+                conditionChecked = true
             }
+
         }
     }
     Scaffold(
@@ -363,7 +350,7 @@ fun ReplaceGuarantorContent(
             }
         },
         topBar = {
-            NavigateBackTopBar("Replace Guarantor ", onClickContainer = {
+            NavigateBackTopBar("Add Guarantor ", onClickContainer = {
                 component.onBackNavClicked()
             })
         },
@@ -397,27 +384,21 @@ fun ReplaceGuarantorContent(
                                     modifier = Modifier.padding(10.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    IconButton(
+                                    androidx.compose.material3.IconButton(
                                         modifier = Modifier
-                                            .size(25.dp)
-                                            .clip(RoundedCornerShape(12.dp))
-                                            .background(
-                                                MaterialTheme.colorScheme.primary.copy(
-                                                    alpha = 0.5f
-                                                )
-                                            ),
+                                            .clip(CircleShape)
+                                            .background(Color(0xFFE5F1F5))
+                                            .size(25.dp),
                                         onClick = {
                                             launchPopUp = true
                                         },
                                         content = {
                                             Icon(
-                                                imageVector = Icons.Outlined.ArrowCircleDown,
+                                                imageVector = Icons.Filled.KeyboardArrowDown,
                                                 modifier = if (launchPopUp) Modifier.size(25.dp)
                                                     .rotate(180F) else Modifier.size(25.dp),
                                                 contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.onBackground.copy(
-                                                    alpha = 0.7f
-                                                )
+                                                tint = MaterialTheme.colorScheme.primary
                                             )
                                         }
                                     )
@@ -465,9 +446,9 @@ fun ReplaceGuarantorContent(
                                         fontFamily = MaterialTheme.typography.bodySmall.fontFamily
                                     ),
                                     decorationBox = { innerTextField ->
-                                        val txt = when (findGuarantorOptions) {
-                                            FindGuarantorOptions.PHONENUMBER -> "Search Phone No."
-                                            FindGuarantorOptions.MEMBERNUMBER -> "Search Member No."
+                                        val txt = when (witnessOptions) {
+                                            WitnessOptions.PHONENUMBER -> "Search Phone No."
+                                            WitnessOptions.MEMBERNUMBER -> "Search Member No."
                                         }
                                         if (memberNumber == "") {
                                             Text(
@@ -545,28 +526,9 @@ fun ReplaceGuarantorContent(
                                 ) {
                                     androidx.compose.material3.IconButton(
                                         modifier = Modifier
-                                            .size(25.dp)
-                                            .clip(RoundedCornerShape(12.dp))
-                                            .background(
-                                                MaterialTheme.colorScheme.primary.copy(
-                                                    alpha = 0.5f
-                                                )
-                                            ),
+                                            .size(25.dp),
                                         onClick = {
                                             memberNumber = ""
-                                            signHomeState.prestaTenantByMemberNumber = null
-                                            applyLongTermLoanState.prestaLoadTenantByPhoneNumber =
-                                                null
-                                            authState.cachedMemberData?.let {
-                                                ApplyLongTermLoansStore.Intent.GetPrestaLoanByLoanRequestRefId(
-                                                    token = it.accessToken,
-                                                    loanRequestRefId = component.loanRequestRefId
-                                                )
-                                            }?.let {
-                                                onEvent(
-                                                    it
-                                                )
-                                            }
                                             contactsScope.launch {
                                                 val content =
                                                     component.platform.getContact(421, "KE")
@@ -587,9 +549,9 @@ fun ReplaceGuarantorContent(
                                                             println("Selected data:::::::" + item.value)
                                                         }
                                                         if (item.value.matches(numberPattern)) {
-                                                            if (guarantorListedData.size != 1) {
-                                                                findGuarantorOptions =
-                                                                    FindGuarantorOptions.PHONENUMBER
+                                                            if (witnessDataListed.size != 1) {
+                                                                witnessOptions =
+                                                                    WitnessOptions.PHONENUMBER
                                                                 memberNumber = item.value
 
                                                                 authState.cachedMemberData?.let {
@@ -629,8 +591,8 @@ fun ReplaceGuarantorContent(
                         item {
                             Spacer(modifier = Modifier.padding(top = 10.dp))
                         }
-                        if (guarantorListedData.isNotEmpty()) {
-                            guarantorListedData.forEach { item ->
+                        if (witnessDataListed.isNotEmpty()) {
+                            witnessDataListed.forEach { item ->
                                 item {
                                     Row(
                                         modifier = Modifier
@@ -643,8 +605,7 @@ fun ReplaceGuarantorContent(
                                                 //call back executed
                                                 clearItemClicked(item)
                                                 signHomeState.prestaTenantByMemberNumber = null
-                                                applyLongTermLoanState.prestaLoadTenantByPhoneNumber =
-                                                    null
+                                                state.prestaLoadTenantByPhoneNumber = null
                                             },
                                             selected = true,
                                             phoneNumber = item.memberPhoneNumber,
@@ -657,7 +618,7 @@ fun ReplaceGuarantorContent(
                             //Todo--message to show  how to add the witness
                             item {
                                 Text(
-                                    "Add Guarantor using phone number or member number on the above text input",
+                                    "Add Witness using phone number or member number on the above text input",
                                     fontSize = 12.sp,
                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
                                     modifier = Modifier.padding(
@@ -674,21 +635,11 @@ fun ReplaceGuarantorContent(
                             .padding(bottom = 30.dp)
                     ) {
                         ActionButton(
-                            label = if (guarantorListedData.size != 1) "Search" else "Add Guarantor",
+                            label = if (witnessDataListed.size != 1) "Search" else "Add Guarantor",
                             onClickContainer = {
-                                if (guarantorListedData.size != 1) {
-                                    authState.cachedMemberData?.let {
-                                        ApplyLongTermLoansStore.Intent.GetPrestaLoanByLoanRequestRefId(
-                                            token = it.accessToken,
-                                            loanRequestRefId = component.loanRequestRefId
-                                        )
-                                    }?.let {
-                                        onEvent(
-                                            it
-                                        )
-                                    }
-                                    when (findGuarantorOptions) {
-                                        FindGuarantorOptions.MEMBERNUMBER -> {
+                                if (witnessDataListed.size != 1) {
+                                    when (witnessOptions) {
+                                        WitnessOptions.MEMBERNUMBER -> {
                                             authState.cachedMemberData?.let {
                                                 SignHomeStore.Intent.GetPrestaTenantByMemberNumber(
                                                     token = it.accessToken,
@@ -701,7 +652,7 @@ fun ReplaceGuarantorContent(
                                             }
                                         }
 
-                                        FindGuarantorOptions.PHONENUMBER -> {
+                                        WitnessOptions.PHONENUMBER -> {
                                             authState.cachedMemberData?.let {
                                                 ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber(
                                                     token = it.accessToken,
@@ -715,13 +666,13 @@ fun ReplaceGuarantorContent(
                                         }
                                     }
                                 } else {
-                                    confirmGuarantorReplacementPopUp = true
-                                    println("completed")
-
+                                    if (conditionChecked) {
+                                        confirmGuarantorReplacementPopUp = true
+                                    }
                                 }
                             },
                             enabled = memberNumber != "",
-                            loading = applyLongTermLoanState.isLoading
+                            loading = state.isLoading
                         )
                     }
                 }
@@ -732,6 +683,7 @@ fun ReplaceGuarantorContent(
                         .align(Alignment.TopCenter).zIndex(1f),
                     contentColor = actionButtonColor
                 )
+
             }
 
             if (launchPopUp) {
@@ -788,8 +740,8 @@ fun ReplaceGuarantorContent(
                                                 .wrapContentHeight()
                                         ) {
                                             val guarantorList = arrayListOf<String>()
-                                            guarantorList.add(applyLongTermLoanState.memberNo)
-                                            guarantorList.add(applyLongTermLoanState.phoneNo)
+                                            guarantorList.add(state.memberNo)
+                                            guarantorList.add(state.phoneNo)
                                             guarantorList.mapIndexed { guarantorIndex, guarantorOptions ->
                                                 item {
                                                     Row(
@@ -810,14 +762,14 @@ fun ReplaceGuarantorContent(
                                                                     if (selectedIndex == index) -1 else index
                                                                 if (selectedIndex > -1) {
                                                                     when (guarantorList[selectedIndex]) {
-                                                                        applyLongTermLoanState.memberNo -> {
-                                                                            findGuarantorOptions =
-                                                                                FindGuarantorOptions.MEMBERNUMBER
+                                                                        state.memberNo -> {
+                                                                            witnessOptions =
+                                                                                WitnessOptions.MEMBERNUMBER
                                                                         }
 
-                                                                        applyLongTermLoanState.phoneNo -> {
-                                                                            findGuarantorOptions =
-                                                                                FindGuarantorOptions.PHONENUMBER
+                                                                        state.phoneNo -> {
+                                                                            witnessOptions =
+                                                                                WitnessOptions.PHONENUMBER
                                                                         }
 
                                                                     }
@@ -878,7 +830,7 @@ fun ReplaceGuarantorContent(
                                     onClick = {
                                         memberNumber = ""
                                         signHomeState.prestaTenantByMemberNumber = null
-                                        applyLongTermLoanState.prestaLoadTenantByPhoneNumber = null
+                                        state.prestaLoadTenantByPhoneNumber = null
                                         launchPopUp = false
                                     },
                                     modifier = Modifier
@@ -901,133 +853,127 @@ fun ReplaceGuarantorContent(
                 }
             }
 
-
-        }
-    )
-    //confirm replacing Guaranotor pop up
-    if (confirmGuarantorReplacementPopUp) {
-        Popup {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-                    .background(color = Color.Black.copy(alpha = 0.7f)),
-                verticalArrangement = Arrangement.Center
-            ) {
-                ElevatedCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            start = 26.dp,
-                            end = 26.dp,
-                            top = 40.dp,
-                            bottom = 90.dp
-                        ),
-                    colors = CardDefaults
-                        .elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
-                ) {
+            if (confirmGuarantorReplacementPopUp) {
+                Popup {
                     Column(
                         modifier = Modifier
-                            .padding(start = 16.dp, end = 16.dp)
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                            .background(color = Color.Black.copy(alpha = 0.7f)),
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        Column(
+                        ElevatedCard(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .padding(
+                                    start = 26.dp,
+                                    end = 26.dp,
+                                    top = 40.dp,
+                                    bottom = 90.dp
+                                ),
+                            colors = CardDefaults
+                                .elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                         ) {
-                            Text(
-                                text = "Confirm you want to replace " + component.guarantorFirstName + " " + component.guarantorLastName,
-                                modifier = Modifier.padding(top = 10.dp),
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
-                                fontSize = 12.sp
-                            )
-                        }
-                    }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                top = 20.dp,
-                                bottom = 10.dp,
-                            ),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(start = 16.dp, end = 16.dp)
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = "Confirm you want to replace " + component.guarantorFirstName + " " + component.guarantorLastName,
+                                        modifier = Modifier.padding(top = 10.dp),
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                        fontSize = 12.sp
+                                    )
+                                }
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(
+                                        top = 20.dp,
+                                        bottom = 10.dp,
+                                    ),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
 
-                        OutlinedButton(
-                            border = BorderStroke(
-                                width = 1.dp,
-                                color = MaterialTheme.colorScheme.primary
-                            ),
-                            onClick = {
-                                confirmGuarantorReplacementPopUp = false
-                            },
-                            modifier = Modifier
-                                .padding(start = 16.dp)
-                                .height(30.dp),
-                        ) {
+                                OutlinedButton(
+                                    border = BorderStroke(
+                                        width = 1.dp,
+                                        color = MaterialTheme.colorScheme.primary
+                                    ),
+                                    onClick = {
+                                        confirmGuarantorReplacementPopUp = false
+                                    },
+                                    modifier = Modifier
+                                        .padding(start = 16.dp)
+                                        .height(30.dp),
+                                ) {
 
-                            Text(
-                                text = "Dismiss",
-                                fontSize = 11.sp,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.align(Alignment.CenterVertically),
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                            )
+                                    Text(
+                                        text = "Dismiss",
+                                        fontSize = 11.sp,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.align(Alignment.CenterVertically),
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    )
 
-                        }
-                        OutlinedButton(
-                            colors = ButtonDefaults.outlinedButtonColors(containerColor = actionButtonColor),
-                            border = BorderStroke(
-                                width = 0.dp,
-                                color = actionButtonColor
-                            ),
-                            onClick = {
-                                confirmGuarantorReplacementPopUp = false
-                                if (allowedToUpdateGuarantor) {
-                                    //confirmGuarantorReplacementPopUp =false
-                                    guarantorListedData.map { newguarantor ->
-                                        authState.cachedMemberData?.let {
-                                            ApplyLongTermLoansStore.Intent.ReplaceLoanGuarantor(
-                                                token = it.accessToken,
-                                                loanRequestRefId = component.loanRequestRefId,
-                                                guarantorRefId = component.guarantorRefId,
-                                                memberRefId = newguarantor.refId
-                                            )
-                                        }?.let {
-                                            onEvent(
-                                                it
+                                }
+                                OutlinedButton(
+                                    colors = ButtonDefaults.outlinedButtonColors(containerColor = actionButtonColor),
+                                    border = BorderStroke(
+                                        width = 0.dp,
+                                        color = actionButtonColor
+                                    ),
+                                    onClick = {
+                                        witnessDataListed.map { newguarantor ->
+                                            authState.cachedMemberData?.let {
+                                                ApplyLongTermLoansStore.Intent.ReplaceLoanGuarantor(
+                                                    token = it.accessToken,
+                                                    loanRequestRefId = component.loanRequestRefId,
+                                                    guarantorRefId = component.guarantorRefId,
+                                                    memberRefId = newguarantor.refId
+                                                )
+                                            }?.let {
+                                                onEvent(
+                                                    it
+                                                )
+                                            }
+                                        }
+                                        //Todo ---remove this
+                                        snackBarScope.launch {
+                                            snackbarHostState.showSnackbar(
+                                                SnackbarVisualsWithError(
+                                                    "Guarantor Replaced successfully",
+                                                    isError = true
+                                                )
                                             )
                                         }
-                                    }
-
-                                    //Todo ---remove this
-                                    snackBarScope.launch {
-                                        snackbarHostState.showSnackbar(
-                                            SnackbarVisualsWithError(
-                                                "Guarantor Replaced successfully",
-                                                isError = true
-                                            )
-                                        )
-                                    }
+                                    },
+                                    modifier = Modifier
+                                        .padding(end = 16.dp)
+                                        .height(30.dp),
+                                ) {
+                                    Text(
+                                        text = "Proceed",
+                                        color = Color.White,
+                                        fontSize = 11.sp,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.align(Alignment.CenterVertically),
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    )
                                 }
-                            },
-                            modifier = Modifier
-                                .padding(end = 16.dp)
-                                .height(30.dp),
-                        ) {
-                            Text(
-                                text = "Proceed",
-                                color = Color.White,
-                                fontSize = 11.sp,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.align(Alignment.CenterVertically),
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                            )
+                            }
                         }
                     }
                 }
             }
         }
-    }
+    )
+
 }
 
 
