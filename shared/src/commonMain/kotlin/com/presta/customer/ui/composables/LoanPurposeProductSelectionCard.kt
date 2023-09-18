@@ -83,7 +83,7 @@ fun LoanPurposeProductSelectionCard(
                         Text(
                             text = label,
                             color = MaterialTheme.colorScheme.outline,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier
                                 .fillMaxWidth(0.8f)
