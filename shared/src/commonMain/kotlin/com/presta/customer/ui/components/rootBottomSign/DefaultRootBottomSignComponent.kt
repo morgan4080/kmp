@@ -6,7 +6,6 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
@@ -23,12 +22,11 @@ import com.presta.customer.prestaDispatchers
 import com.presta.customer.ui.components.auth.poller.AuthPoller
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
+import com.presta.customer.ui.components.longTermLoanRequestsList.DefaultLongTermLoansRequestsComponent
+import com.presta.customer.ui.components.longTermLoanRequestsList.LongTermLoanRequestsComponent
 import com.presta.customer.ui.components.profile.coroutineScope
 import com.presta.customer.ui.components.rootSignHome.DefaultRootSignHomeComponent
 import com.presta.customer.ui.components.rootSignHome.RootSignHomeComponent
-import com.presta.customer.ui.components.longTermLoanRequestsList.DefaultLongTermLoansRequestsComponent
-import com.presta.customer.ui.components.longTermLoanRequestsList.LongTermLoanRequestsComponent
-import com.presta.customer.ui.components.root.DefaultRootComponent
 import com.presta.customer.ui.components.signAppSettings.DefaultSignSettingsComponent
 import com.presta.customer.ui.components.signAppSettings.SignSettingsComponent
 import kotlinx.coroutines.CoroutineDispatcher

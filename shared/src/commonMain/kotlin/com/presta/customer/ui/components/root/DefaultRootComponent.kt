@@ -315,7 +315,10 @@ class DefaultRootComponent(
                         isActive = isActive,
                         onBoardingContext = onBoardingContext,
                         pinStatus = pinStatus
-                    )
+                    ),
+                    onComplete = {
+                        println("Existing User Auth")
+                    }
                 )
             }
         )
@@ -445,7 +448,9 @@ class DefaultRootComponent(
             pinStatus = config.pinStatus,
             onBoardingContext = config.onBoardingContext,
             onLogin = {
-                navigation.replaceAll(Config.RootBottom(false))
+                navigation.replaceAll(Config.RootBottom(false), onComplete = {
+                    println("Logged In")
+                })
             }
         )
 
@@ -465,10 +470,12 @@ class DefaultRootComponent(
             gotToPendingApprovals = {
                 navigation.push(Config.LoanPendingApprovals)
             },
-            logoutToSplash = {
+            logoutToSplash = { out ->
                 scope.launch {
-                    if (it) {
-                        navigation.replaceAll(Config.Splash)
+                    if (out) {
+                        navigation.replaceAll(Config.Splash, onComplete = {
+                            println("Logged Out")
+                        })
                     }
                 }
             },
@@ -668,7 +675,9 @@ class DefaultRootComponent(
                 //Todo handle logout
                 scope.launch {
                     if (it) {
-                        navigation.replaceAll(Config.Splash)
+                        navigation.replaceAll(Config.Splash, onComplete = {
+                            println("Logged Out")
+                        })
                     }
                 }
 
@@ -1086,7 +1095,6 @@ class DefaultRootComponent(
             componentContext = componentContext,
             onItemClicked = {
                 navigation.pop()
-
             },
             onProductClicked = {
             },
@@ -1145,7 +1153,6 @@ class DefaultRootComponent(
             componentContext = componentContext,
             onItemClicked = {
                 navigation.pop()
-
             },
             onProductClicked = {
             },
@@ -1162,7 +1169,6 @@ class DefaultRootComponent(
                         amount = amount
                     )
                 )
-
             },
             sign = false,
             memberRefId = config.memberRefId,
@@ -1473,7 +1479,9 @@ class DefaultRootComponent(
 
                     else -> {
                         super.onResume()
-                        navigation.replaceAll(Config.Splash)
+                        navigation.replaceAll(Config.Splash, onComplete = {
+                            println("Suspended")
+                        })
                     }
                 }
             }

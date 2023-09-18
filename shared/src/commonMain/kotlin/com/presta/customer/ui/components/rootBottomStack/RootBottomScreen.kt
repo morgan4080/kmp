@@ -21,12 +21,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
-import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.Direction
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
@@ -48,23 +49,26 @@ fun RootBottomScreen(component: RootBottomComponent) {
     val childStackBottom by component.childStackBottom.subscribeAsState()
     val state by component.authState.collectAsState()
     val activeComponentStackBottom = childStackBottom.active.instance
-    val screens = remember { listOf(
-            ScreensBottom("Home", component::onProfileTabClicked, activeComponentStackBottom is RootBottomComponent.ChildBottom.ProfileChild, PrestaServices.PRESTALENDER),
-            ScreensBottom("Loans", component::onLoanTabClicked, activeComponentStackBottom is RootBottomComponent.ChildBottom.RootLoansChild, PrestaServices.PRESTALENDER),
-            ScreensBottom("Savings", component::onSavingsTabClicked, activeComponentStackBottom is RootBottomComponent.ChildBottom.RootSavingsChild, PrestaServices.PRESTALENDER, TenantServiceConfig.savings),
-            ScreensBottom("Sign", component::onSignTabClicked, activeComponentStackBottom is RootBottomComponent.ChildBottom.SignChild, PrestaServices.EGUARANTORSHIP),
+    // TenantServicesResponse
+    val listOfActiveServices = remember { mutableListOf<TenantServicesResponse>() }
+    
+    val screens by remember { mutableStateOf(listOf(
+        ScreensBottom("Home", component::onProfileTabClicked, activeComponentStackBottom is RootBottomComponent.ChildBottom.ProfileChild, PrestaServices.PRESTALENDER),
+        ScreensBottom("Loans", component::onLoanTabClicked, activeComponentStackBottom is RootBottomComponent.ChildBottom.RootLoansChild, PrestaServices.PRESTALENDER),
+        ScreensBottom("Savings", component::onSavingsTabClicked, activeComponentStackBottom is RootBottomComponent.ChildBottom.RootSavingsChild, PrestaServices.PRESTALENDER, TenantServiceConfig.savings),
+        ScreensBottom("Sign", component::onSignTabClicked, activeComponentStackBottom is RootBottomComponent.ChildBottom.SignChild, PrestaServices.EGUARANTORSHIP),
+    ))}
+    // Filter screens list to exclude inactive features
+
+    var savingsIsFalse by remember { mutableStateOf(false) }
+    
+    LaunchedEffect(state.tenantServicesConfig) {
+        savingsIsFalse = state.tenantServicesConfig.contains(
+            TenantServiceConfigResponse(TenantServiceConfig.savings, false)
         )
     }
 
-    // Filter screens list to exclude inactive features
-
-    val savingsIsFalse = state.tenantServicesConfig.contains(
-        TenantServiceConfigResponse(TenantServiceConfig.savings, false)
-    )
-
-    LaunchedEffect(state.tenantServices, state.tenantServicesConfig) {
-        val listOfActiveServices = mutableListOf<TenantServicesResponse>()
-
+    LaunchedEffect(state.tenantServices) {
         state.tenantServices.forEach { service ->
             if (service.status == ServicesActivity.ACTIVE) listOfActiveServices.add(service)
         }
@@ -126,13 +130,29 @@ fun RootBottomScreen(component: RootBottomComponent) {
                 }
             }
         },
-        content = { innerPadding ->
+        content = {
             Children(
                 stack = component.childStackBottom,
                 animation = stackAnimation(fade() + scale()),
             ) {
                 when (val childX = it.instance) {
-                    is RootBottomComponent.ChildBottom.ProfileChild -> ProfileScreen(childX.component, innerPadding)
+                    is RootBottomComponent.ChildBottom.ProfileChild -> ProfileScreen(childX.component, callback = {
+                        savingsIsFalse = state.tenantServicesConfig.contains(
+                            TenantServiceConfigResponse(TenantServiceConfig.savings, false)
+                        )
+
+                        state.tenantServices.forEach { service ->
+                            if (service.status == ServicesActivity.ACTIVE) listOfActiveServices.add(service)
+                        }
+
+                        component.onAuthEvent(AuthStore.Intent.UpdateScreens(
+                            screens = screens.filter {
+                                listOfActiveServices.contains(TenantServicesResponse(it.serviceMapping, ServicesActivity.ACTIVE))
+                            }.filter { screen ->
+                                !(savingsIsFalse && screen.featureMapping == TenantServiceConfig.savings)
+                            }
+                        ))
+                    })
                     is RootBottomComponent.ChildBottom.RootLoansChild -> RootLoansScreen(childX.component)
                     is RootBottomComponent.ChildBottom.RootSavingsChild-> RootSavingsScreen(childX.component)
                     is RootBottomComponent.ChildBottom.SignChild -> SignScreen(childX.component)
@@ -141,20 +161,3 @@ fun RootBottomScreen(component: RootBottomComponent) {
         }
     )
 }
-
-private val RootBottomComponent.ChildBottom.index: Int
-    get() =
-        when (this) {
-            is RootBottomComponent.ChildBottom.ProfileChild -> 0
-            is RootBottomComponent.ChildBottom.RootLoansChild -> 1
-            is RootBottomComponent.ChildBottom.RootSavingsChild  -> 2
-            is RootBottomComponent.ChildBottom.SignChild -> 3
-        }
-
-private fun Direction.flipSide(): Direction =
-    when (this) {
-        Direction.ENTER_FRONT -> Direction.ENTER_BACK
-        Direction.EXIT_FRONT -> Direction.EXIT_BACK
-        Direction.ENTER_BACK -> Direction.ENTER_FRONT
-        Direction.EXIT_BACK -> Direction.EXIT_FRONT
-    }

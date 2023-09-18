@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
@@ -114,7 +113,6 @@ fun ProfileContent(
     state: ProfileStore.State,
     addSavingsState: AddSavingsStore.State,
     modeOfDisbursementState: ModeOfDisbursementStore.State,
-    innerPadding: PaddingValues,
     seeAllTransactions: () -> Unit,
     goToSavings: () -> Unit,
     goToLoans: () -> Unit,
@@ -123,6 +121,7 @@ fun ProfileContent(
     activateAccount: (amount: Double) -> Unit,
     logout: () -> Unit,
     reloadModels: () -> Unit,
+    callback: () -> Unit,
 ) {
     val stateLazyRow0 = rememberLazyListState()
 
@@ -167,10 +166,15 @@ fun ProfileContent(
 
     val refreshScope = rememberCoroutineScope()
 
+    LaunchedEffect(Unit) {
+        callback()
+    }
+
     fun refresh() = refreshScope.launch {
         refreshing = true
 
         reloadModels()
+        callback()
 
         delay(1500)
         refreshing = false

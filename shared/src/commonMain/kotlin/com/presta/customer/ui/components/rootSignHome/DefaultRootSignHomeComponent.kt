@@ -79,7 +79,6 @@ class DefaultRootSignHomeComponent(
             },
             logoutToSplash = {
                 logoutToSplash()
-
             }
         )
     private sealed class ConfigSignHome : Parcelable {
