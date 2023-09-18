@@ -154,15 +154,13 @@ fun ReplaceGuarantorContent(
     }
 
     val refreshState = rememberPullRefreshState(refreshing, ::refresh)
-
-    //cleaned
     LaunchedEffect(
         state.prestaLoadTenantByPhoneNumber,
         witnessOptions,
         state.isLoading
     ) {
         //Get Tenant by phone Number
-        if (witnessOptions === WitnessOptions.PHONENUMBER && witnessDataListed.size != 1) {
+        if (witnessOptions === WitnessOptions.PHONENUMBER && witnessDataListed.size != 1 && !state.prestaLoanByLoanRequestRefId?.guarantorList.isNullOrEmpty()) {
             var loadedValue = ""
 
             loadedValue = state.prestaLoadTenantByPhoneNumber?.refId ?: ""
@@ -222,14 +220,13 @@ fun ReplaceGuarantorContent(
         }
     }
 
-
     LaunchedEffect(
         signHomeState.prestaTenantByMemberNumber,
         witnessOptions,
         signHomeState.isLoading
     ) {
         //Get Tenant by phone Number
-        if (witnessOptions === WitnessOptions.MEMBERNUMBER && witnessDataListed.size != 1) {
+        if (witnessOptions === WitnessOptions.MEMBERNUMBER && witnessDataListed.size != 1 && !state.prestaLoanByLoanRequestRefId?.guarantorList.isNullOrEmpty()) {
             var loadedValue = ""
 
             loadedValue = signHomeState.prestaTenantByMemberNumber?.refId ?: ""
@@ -288,26 +285,43 @@ fun ReplaceGuarantorContent(
             }
         }
     }
+
+
     LaunchedEffect(
         witnessDataListed
     ) {
         witnessDataListed.map { datas ->
-            if (datas.memberNumber == signHomeState.prestaTenantByPhoneNumber?.memberNumber) {
-                clearItemClicked(datas)
-                signHomeState.prestaTenantByMemberNumber = null
-                state.prestaLoadTenantByPhoneNumber = null
-                snackBarScope.launch {
-                    snackbarHostState.showSnackbar(
-                        SnackbarVisualsWithError(
-                            "Self Guarantee not allowed",
-                            isError = true
+            state.prestaLoanByLoanRequestRefId?.guarantorList?.map { existingGuarantor ->
+                if (datas.memberNumber == signHomeState.prestaTenantByPhoneNumber?.memberNumber) {
+                    clearItemClicked(datas)
+                    signHomeState.prestaTenantByMemberNumber = null
+                    state.prestaLoadTenantByPhoneNumber = null
+                    snackBarScope.launch {
+                        snackbarHostState.showSnackbar(
+                            SnackbarVisualsWithError(
+                                "Self Guarantee not allowed",
+                                isError = true
+                            )
                         )
-                    )
-                }
-            } else {
-                conditionChecked = true
-            }
+                    }
+                } else if (datas.refId == existingGuarantor.memberRefId) {
+                    clearItemClicked(datas)
+                    signHomeState.prestaTenantByMemberNumber = null
+                    state.prestaLoadTenantByPhoneNumber = null
+                    snackBarScope.launch {
+                        snackbarHostState.showSnackbar(
+                            SnackbarVisualsWithError(
+                                "Member already a guarantor",
+                                isError = true
+                            )
+                        )
+                    }
 
+                } else {
+                    conditionChecked = true
+                }
+
+            }
         }
     }
     Scaffold(

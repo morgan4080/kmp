@@ -105,6 +105,12 @@ class DefaultReplaceGuarantorComponent (
                             phoneNumber = state.cachedMemberData.phoneNumber
                         )
                     )
+                    onEvent(
+                        ApplyLongTermLoansStore.Intent.GetPrestaLoanByLoanRequestRefId(
+                            token = state.cachedMemberData.accessToken,
+                            loanRequestRefId = loanRequestRefId
+                        )
+                    )
 
                 }
             }
