@@ -111,7 +111,7 @@ interface LongTermLoansRepository {
         loanRequestRefId: String,
         guarantorRefId: String,
         memberRefId: String,
-    ): Result<LongTermLoanRequestResponse>
+    ): Result<String>
 
     suspend fun getWitnessRequests(
         token: String,

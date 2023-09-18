@@ -353,8 +353,8 @@ class PrestaLongTermLoansClient(
         loanRequestRefId: String,
         guarantorRefId: String,//old guarantor---replace the old guarantor with the new guarantor
         memberRefId: String,
-    ): LongTermLoanRequestResponse {
-        return loanRequestErrorHandler {
+    ): String {
+        return longTermLoansErrorHandler  {
             httpClient.post("${NetworkConstants.PrestaLongTermLoanRequestByRefId.route}/${loanRequestRefId}/${"guarantor"}/${guarantorRefId}") {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 contentType(ContentType.Application.Json)

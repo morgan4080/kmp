@@ -160,7 +160,7 @@ interface ApplyLongTermLoansStore :
         val prestaLongTermLoansRequestsList: PrestaLongTermLoansRequestsListResponse? = null,
         val prestaLongTermLoansRequestsFilteredList: PrestaLongTermLoansRequestsListResponse? = null,
         val prestaLongTermLoansRequestsSpecificProduct: PrestaLongTermLoansRequestsListResponse? = null,
-        val prestaUpdatedGuarantorData: LongTermLoanRequestResponse? = null,
+        val prestaReplaceLoanGuarantor: String? = null,
         val prestaWitnessRequests: List<PrestaWitnessRequestResponse> = emptyList(),
         val prestaWitnessAcceptanceStatus: PrestaWitnessRequestResponse? = null,
         val prestaFavouriteGuarantor: List<PrestaFavouriteGuarantorResponse> = emptyList(),

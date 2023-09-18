@@ -32,7 +32,10 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Dialpad
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.outlined.ArrowCircleDown
+import androidx.compose.material.icons.outlined.Error
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -92,7 +95,6 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class,
@@ -219,7 +221,6 @@ fun ReplaceGuarantorContent(
             }
         }
     }
-
     LaunchedEffect(
         signHomeState.prestaTenantByMemberNumber,
         witnessOptions,
@@ -286,7 +287,6 @@ fun ReplaceGuarantorContent(
         }
     }
 
-
     LaunchedEffect(
         witnessDataListed
     ) {
@@ -321,6 +321,19 @@ fun ReplaceGuarantorContent(
                     conditionChecked = true
                 }
 
+            }
+        }
+    }
+
+    LaunchedEffect(state.isLoading) {
+        if (state.prestaReplaceLoanGuarantor != null) {
+            snackBarScope.launch {
+                snackbarHostState.showSnackbar(
+                    SnackbarVisualsWithError(
+                        state.prestaReplaceLoanGuarantor,
+                        isError = true
+                    )
+                )
             }
         }
     }
@@ -400,19 +413,25 @@ fun ReplaceGuarantorContent(
                                 ) {
                                     androidx.compose.material3.IconButton(
                                         modifier = Modifier
-                                            .clip(CircleShape)
-                                            .background(Color(0xFFE5F1F5))
-                                            .size(25.dp),
+                                            .size(25.dp)
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(
+                                                MaterialTheme.colorScheme.primary.copy(
+                                                    alpha = 0.5f
+                                                )
+                                            ),
                                         onClick = {
                                             launchPopUp = true
                                         },
                                         content = {
                                             Icon(
-                                                imageVector = Icons.Filled.KeyboardArrowDown,
+                                                imageVector = Icons.Outlined.ArrowCircleDown,
                                                 modifier = if (launchPopUp) Modifier.size(25.dp)
                                                     .rotate(180F) else Modifier.size(25.dp),
                                                 contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary
+                                                tint = MaterialTheme.colorScheme.onBackground.copy(
+                                                    alpha = 0.7f
+                                                )
                                             )
                                         }
                                     )
@@ -540,7 +559,13 @@ fun ReplaceGuarantorContent(
                                 ) {
                                     androidx.compose.material3.IconButton(
                                         modifier = Modifier
-                                            .size(25.dp),
+                                            .size(25.dp)
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(
+                                                MaterialTheme.colorScheme.primary.copy(
+                                                    alpha = 0.5f
+                                                )
+                                            ),
                                         onClick = {
                                             memberNumber = ""
                                             contactsScope.launch {
@@ -586,9 +611,12 @@ fun ReplaceGuarantorContent(
                                         },
                                         content = {
                                             Icon(
-                                                imageVector = Icons.Outlined.Person,
+                                                imageVector = Icons.Filled.Dialpad,
+                                                modifier = Modifier,
                                                 contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary
+                                                tint = MaterialTheme.colorScheme.onBackground.copy(
+                                                    alpha = 0.7f
+                                                )
                                             )
                                         }
                                     )
@@ -631,15 +659,25 @@ fun ReplaceGuarantorContent(
                         } else {
                             //Todo--message to show  how to add the witness
                             item {
-                                Text(
-                                    "Add Witness using phone number or member number on the above text input",
-                                    fontSize = 12.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
-                                    modifier = Modifier.padding(
-                                        start = 10.dp,
-                                        top = 10.dp
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Error,
+                                        modifier = Modifier,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary
                                     )
-                                )
+                                    Text(
+                                        "Add Guarantors using phone number or member number on the above text input",
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        modifier = Modifier.padding(horizontal = 20.dp)
+                                    )
+                                }
                             }
                         }
                     }
@@ -957,15 +995,7 @@ fun ReplaceGuarantorContent(
                                                 )
                                             }
                                         }
-                                        //Todo ---remove this
-                                        snackBarScope.launch {
-                                            snackbarHostState.showSnackbar(
-                                                SnackbarVisualsWithError(
-                                                    "Guarantor Replaced successfully",
-                                                    isError = true
-                                                )
-                                            )
-                                        }
+                                        confirmGuarantorReplacementPopUp = false
                                     },
                                     modifier = Modifier
                                         .padding(end = 16.dp)

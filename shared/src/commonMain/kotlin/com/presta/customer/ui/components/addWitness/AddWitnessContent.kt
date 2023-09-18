@@ -35,7 +35,12 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Dialpad
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.RadioButtonChecked
+import androidx.compose.material.icons.outlined.ArrowCircleDown
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Error
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.PersonRemove
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -255,7 +260,7 @@ fun AddWitnessContent(
             }
             if (liveLoaded.isNotEmpty()) {
                 //automatically add  the list
-                if (witnessDataListed.size != 1 && witnessOptions === WitnessOptions.MEMBERNUMBER &&  signHomeState.prestaTenantByMemberNumber != null) {
+                if (witnessDataListed.size != 1 && witnessOptions === WitnessOptions.MEMBERNUMBER && signHomeState.prestaTenantByMemberNumber != null) {
                     signHomeState.prestaTenantByMemberNumber?.let {
                         val apiResponse = listOf(
                             FavouriteGuarantorDetails(
@@ -399,19 +404,25 @@ fun AddWitnessContent(
                                 ) {
                                     androidx.compose.material3.IconButton(
                                         modifier = Modifier
-                                            .clip(CircleShape)
-                                            .background(Color(0xFFE5F1F5))
-                                            .size(25.dp),
+                                            .size(25.dp)
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(
+                                                MaterialTheme.colorScheme.primary.copy(
+                                                    alpha = 0.5f
+                                                )
+                                            ),
                                         onClick = {
                                             launchPopUp = true
                                         },
                                         content = {
                                             Icon(
-                                                imageVector = Icons.Filled.KeyboardArrowDown,
+                                                imageVector = Icons.Outlined.ArrowCircleDown,
                                                 modifier = if (launchPopUp) Modifier.size(25.dp)
                                                     .rotate(180F) else Modifier.size(25.dp),
                                                 contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary
+                                                tint = MaterialTheme.colorScheme.onBackground.copy(
+                                                    alpha = 0.7f
+                                                )
                                             )
                                         }
                                     )
@@ -539,7 +550,13 @@ fun AddWitnessContent(
                                 ) {
                                     androidx.compose.material3.IconButton(
                                         modifier = Modifier
-                                            .size(25.dp),
+                                            .size(25.dp)
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(
+                                                MaterialTheme.colorScheme.primary.copy(
+                                                    alpha = 0.5f
+                                                )
+                                            ),
                                         onClick = {
                                             memberNumber = ""
                                             contactsScope.launch {
@@ -585,9 +602,12 @@ fun AddWitnessContent(
                                         },
                                         content = {
                                             Icon(
-                                                imageVector = Icons.Outlined.Person,
+                                                imageVector = Icons.Filled.Dialpad,
+                                                modifier = Modifier,
                                                 contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary
+                                                tint = MaterialTheme.colorScheme.onBackground.copy(
+                                                    alpha = 0.7f
+                                                )
                                             )
                                         }
                                     )
@@ -630,15 +650,25 @@ fun AddWitnessContent(
                         } else {
                             //Todo--message to show  how to add the witness
                             item {
-                                Text(
-                                    "Add Witness using phone number or member number on the above text input",
-                                    fontSize = 12.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
-                                    modifier = Modifier.padding(
-                                        start = 10.dp,
-                                        top = 10.dp
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Error,
+                                        modifier = Modifier,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary
                                     )
-                                )
+                                    Text(
+                                        "Add Witness  using phone number or member number on the above text input",
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        modifier = Modifier.padding(horizontal = 20.dp)
+                                    )
+                                }
                             }
                         }
                     }
@@ -908,7 +938,7 @@ fun WitnessDetailsView(
         },
         modifier = Modifier.fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.background),
-        elevation = CardDefaults.cardElevation(defaultElevation = 20.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
     ) {
         Box(
             modifier = Modifier
@@ -942,21 +972,22 @@ fun WitnessDetailsView(
                     ) {
                         if (selected)
                             Icon(
-                                Icons.Default.Check,
+                                Icons.Default.RadioButtonChecked,
                                 contentDescription = "Check Box",
-                                tint = Color.White,
-                                modifier = Modifier.padding(1.dp)
+                                modifier = Modifier.padding(1.dp).size(35.dp),
+                                tint = MaterialTheme.colorScheme.background
                             )
                     }
                 }
                 Column {
 
                     Text(
-                        text = label,
+                        text = label.uppercase(),
                         modifier = Modifier
-                            .padding(start = 15.dp),
-                        fontSize = 12.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                            .padding(start = 10.dp),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                        style = MaterialTheme.typography.bodyMedium
                     )
                     Row(
                         modifier = Modifier.width(IntrinsicSize.Max),
@@ -965,37 +996,39 @@ fun WitnessDetailsView(
                         Text(
                             text = phoneNumber,
                             modifier = Modifier
-                                .padding(start = 10.dp),
-                            fontSize = 12.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                .padding(start = 10.dp, end = 2.dp),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                            style = MaterialTheme.typography.bodySmall
                         )
                         Divider(
                             modifier = Modifier
                                 .height(10.dp)
-                                .padding(start = 2.dp)
-                                .width(1.dp)
+                                .padding(horizontal = 2.dp)
+                                .width(1.dp),
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                         Text(
-                            text = memberNumber,
+                            text = memberNumber.uppercase(),
                             modifier = Modifier
-                                .padding(start = 10.dp),
-                            fontSize = 12.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                .padding(start = 5.dp, end = 2.dp),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                            style = MaterialTheme.typography.bodySmall
                         )
                     }
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                androidx.compose.material3.IconButton(
+                IconButton(
                     modifier = Modifier
                         .background(color = MaterialTheme.colorScheme.inverseOnSurface),
                     onClick = {
-                        //open contacts Library
                         onClick()
 
                     },
                     content = {
                         Icon(
-                            imageVector = Icons.Outlined.PersonRemove,
+                            imageVector = Icons.Outlined.Delete,
                             modifier = Modifier
                                 .size(30.dp),
                             contentDescription = null,
@@ -1003,8 +1036,11 @@ fun WitnessDetailsView(
                         )
                     }
                 )
-                Spacer(modifier = Modifier.padding(end = 15.dp))
+                Spacer(modifier = Modifier.padding(end = 10.dp))
             }
         }
     }
 }
+
+
+

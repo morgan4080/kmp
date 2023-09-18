@@ -13,9 +13,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,9 +39,15 @@ import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Dialpad
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.ArrowCircleDown
+import androidx.compose.material.icons.outlined.Error
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -77,10 +85,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import androidx.compose.ui.zIndex
 import com.presta.customer.MR
 import com.presta.customer.ui.components.addGuarantors.ui.SelectGuarantorsView
 import com.presta.customer.ui.components.addGuarantors.ui.SnackbarVisualsWithError
 import com.presta.customer.ui.components.addWitness.WitnessDetailsView
+import com.presta.customer.ui.components.addWitness.WitnessOptions
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGuarantorsComponent
@@ -93,19 +103,13 @@ import com.presta.customer.ui.theme.backArrowColor
 import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-
-@Serializable
-data class FavouriteGuarantorDetails(
-    val refId: String,
-    val memberFirstName: String,
-    val memberLastName: String,
-    val memberNumber: String,
-    val memberPhoneNumber: String
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class,
+    ExperimentalLayoutApi::class
 )
-
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FavouriteGuarantorContent(
     component: FavouriteGuarantorsComponent,
@@ -116,28 +120,59 @@ fun FavouriteGuarantorContent(
     onProfileEvent: (SignHomeStore.Intent) -> Unit,
 ) {
     var launchPopUp by remember { mutableStateOf(false) }
-    val focusRequester = remember { FocusRequester() }
-    var memberNumber by remember { mutableStateOf("") }
-    var guarantorOption by remember { mutableStateOf("") }
-    var firstName by remember { mutableStateOf(TextFieldValue()) }
-    val emptyTextContainer by remember { mutableStateOf(TextFieldValue()) }
-    var selectedIndex by remember { mutableStateOf(-1) }
-    var searchWitnessByMemberNumber by remember { mutableStateOf(false) }
-    var searchWitnessByPhoneNumber by remember { mutableStateOf(false) }
     val skipHalfExpanded by remember { mutableStateOf(true) }
+    val scope = rememberCoroutineScope()
     val modalBottomState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = skipHalfExpanded
     )
+    val focusRequester = remember { FocusRequester() }
+    var memberNumber by remember { mutableStateOf("") }
+    var witnessOptions by remember { mutableStateOf(WitnessOptions.PHONENUMBER) }
+    var firstName by remember { mutableStateOf(TextFieldValue()) }
+    val emptyTextContainer by remember { mutableStateOf(TextFieldValue()) }
+    var selectedIndex by remember { mutableStateOf(-1) }
+    var conditionChecked by remember { mutableStateOf(false) }
     var memberRefId by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
     val snackBarScope = rememberCoroutineScope()
-    val scope = rememberCoroutineScope()
-    var guarantorDataListed by remember { mutableStateOf(emptySet<FavouriteGuarantorDetails>()) }
+    var liveLoaded by remember { mutableStateOf("") }
+    var witnessDataListed by remember { mutableStateOf(emptySet<com.presta.customer.ui.components.addWitness.FavouriteGuarantorDetails>()) }
     if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         memberRefId = signHomeState.prestaTenantByPhoneNumber.refId
-
     }
+    val clearItemClicked: (com.presta.customer.ui.components.addWitness.FavouriteGuarantorDetails) -> Unit =
+        { item ->
+            witnessDataListed -= item
+        }
+    val contactsScope = rememberCoroutineScope()
+    val numberPattern = remember { Regex("^\\d+\$") }
+    var refreshing by remember { mutableStateOf(false) }
+    val refreshScope = rememberCoroutineScope()
+    fun refresh() = refreshScope.launch {
+        refreshing = true
+        delay(1500)
+        refreshing = false
+    }
+
+    if (state.isLoading) {
+        refreshScope.launch {
+            refreshing = true
+            delay(1500)
+            refreshing = false
+        }
+    }
+
+    if (signHomeState.isLoading) {
+        refreshScope.launch {
+            refreshing = true
+            delay(1500)
+            refreshing = false
+        }
+    }
+
+    val refreshState = rememberPullRefreshState(refreshing, ::refresh)
+
     if (memberRefId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -157,80 +192,158 @@ fun FavouriteGuarantorContent(
             }
         }
     }
-    if (memberNumber != "") {
-        LaunchedEffect(
-            authState.cachedMemberData,
-            memberNumber
-        ) {
-            authState.cachedMemberData?.let {
-                SignHomeStore.Intent.GetPrestaTenantByMemberNumber(
-                    token = it.accessToken,
-                    memberNumber = memberNumber
-                )
-            }?.let {
-                onProfileEvent(
-                    it
-                )
-            }
-        }
-    }
-    if (memberNumber != "") {
-        LaunchedEffect(
-            authState.cachedMemberData,
-            memberNumber
+    LaunchedEffect(
+        state.prestaLoadTenantByPhoneNumber,
+        witnessOptions,
+        state.isLoading
+    ) {
+        //Get Tenant by phone Number
+        if (witnessOptions === WitnessOptions.PHONENUMBER && witnessDataListed.size != 1) {
+            var loadedValue = ""
 
-        ) {
-            authState.cachedMemberData?.let {
-                ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber(
-                    token = it.accessToken,
-                    phoneNumber = memberNumber
-                )
-            }?.let {
-                onEvent(
-                    it
+            loadedValue = state.prestaLoadTenantByPhoneNumber?.refId ?: ""
+            liveLoaded = if (loadedValue == "") {
+                ""
+            } else {
+                loadedValue
+            }
+            if (liveLoaded.isNotEmpty()) {
+                //automatically add  the list
+                if (witnessDataListed.size != 1 && witnessOptions === WitnessOptions.PHONENUMBER && state.prestaLoadTenantByPhoneNumber?.phoneNumber != null) {
+                    state.prestaLoadTenantByPhoneNumber?.let {
+                        val apiResponse = listOf(
+                            com.presta.customer.ui.components.addWitness.FavouriteGuarantorDetails(
+                                refId = it.refId,
+                                memberFirstName = it.firstName,
+                                memberNumber = it.memberNumber,
+                                memberLastName = it.lastName,
+                                memberPhoneNumber = it.phoneNumber
+                            )
+
+                        )
+                        val existingItems = witnessDataListed.toSet()
+                        val duplicateItems =
+                            apiResponse.filter {
+                                it in existingItems || existingItems.any { listed ->
+                                    println("listed.guarantorRefId:res.guarantorRefId")
+                                    println("${listed.refId} : ${it.refId}")
+                                    listed.refId == it.refId
+                                }
+                            }
+                        if (duplicateItems.isNotEmpty()) {
+                            snackBarScope.launch {
+                                snackbarHostState.showSnackbar(
+                                    SnackbarVisualsWithError(
+                                        "Duplicate Entries not  allowed",
+                                        isError = true
+                                    )
+                                )
+                            }
+                        } else {
+                            witnessDataListed =
+                                witnessDataListed.toMutableSet().apply {
+                                    addAll(apiResponse)
+                                }
+                        }
+                    }
+                }
+            } else if (!state.isLoading && memberNumber.isNotEmpty()) {
+                snackbarHostState.showSnackbar(
+                    SnackbarVisualsWithError(
+                        "Error loading Member by phone no.  $memberNumber",
+                        isError = true
+                    )
                 )
             }
         }
-    }
-    val clearItemClicked: (FavouriteGuarantorDetails) -> Unit = { item ->
-        guarantorDataListed -= item
     }
 
     LaunchedEffect(
-        guarantorDataListed
+        signHomeState.prestaTenantByMemberNumber,
+        witnessOptions,
+        signHomeState.isLoading
     ) {
-        guarantorDataListed.map { datas ->
-            if (datas.memberPhoneNumber == signHomeState.prestaTenantByPhoneNumber?.phoneNumber) {
+        //Get Tenant by phone Number
+        if (witnessOptions === WitnessOptions.MEMBERNUMBER && witnessDataListed.size != 1) {
+            var loadedValue = ""
+
+            loadedValue = signHomeState.prestaTenantByMemberNumber?.refId ?: ""
+            liveLoaded = if (loadedValue == "") {
+                ""
+            } else {
+                loadedValue
+            }
+            if (liveLoaded.isNotEmpty()) {
+                //automatically add  the list
+                if (witnessDataListed.size != 1 && witnessOptions === WitnessOptions.MEMBERNUMBER && signHomeState.prestaTenantByMemberNumber != null) {
+                    signHomeState.prestaTenantByMemberNumber?.let {
+                        val apiResponse = listOf(
+                            com.presta.customer.ui.components.addWitness.FavouriteGuarantorDetails(
+                                refId = it.refId,
+                                memberFirstName = it.firstName,
+                                memberNumber = it.memberNumber,
+                                memberLastName = it.lastName,
+                                memberPhoneNumber = it.phoneNumber
+                            )
+
+                        )
+                        val existingItems = witnessDataListed.toSet()
+                        val duplicateItems =
+                            apiResponse.filter {
+                                it in existingItems || existingItems.any { listed ->
+                                    println("listed.guarantorRefId:res.guarantorRefId")
+                                    println("${listed.refId} : ${it.refId}")
+                                    listed.refId == it.refId
+                                }
+                            }
+                        if (duplicateItems.isNotEmpty()) {
+                            snackBarScope.launch {
+                                snackbarHostState.showSnackbar(
+                                    SnackbarVisualsWithError(
+                                        "Duplicate Entries not  allowed",
+                                        isError = true
+                                    )
+                                )
+                            }
+                        } else {
+                            witnessDataListed =
+                                witnessDataListed.toMutableSet().apply {
+                                    addAll(apiResponse)
+                                }
+                        }
+                    }
+                }
+            } else if (!signHomeState.isLoading && memberNumber.isNotEmpty()) {
+                snackbarHostState.showSnackbar(
+                    SnackbarVisualsWithError(
+                        "Error loading Member no.  $memberNumber",
+                        isError = true
+                    )
+                )
+            }
+        }
+    }
+
+    LaunchedEffect(
+        witnessDataListed
+    ) {
+        witnessDataListed.map { datas ->
+            if (datas.memberNumber == signHomeState.prestaTenantByPhoneNumber?.memberNumber) {
                 clearItemClicked(datas)
                 snackBarScope.launch {
                     snackbarHostState.showSnackbar(
                         SnackbarVisualsWithError(
-                            "self guarantee not allowed $memberNumber",
+                            "Self Guarantee not allowed",
                             isError = true
                         )
                     )
                 }
             } else {
-                guarantorDataListed.map { mapedrefId ->
-                    authState.cachedMemberData?.let {
-                        ApplyLongTermLoansStore.Intent.AddFavouriteGuarantor(
-                            token = it.accessToken,
-                            memberRefId = memberRefId,
-                            guarantorRefId = mapedrefId.refId
-                        )
-                    }?.let {
-                        onEvent(
-                            it
-                        )
-                    }
-                    scope.launch { modalBottomState.hide() }
-                }
+                conditionChecked = true
             }
+
         }
     }
-    var launchContacts by remember { mutableStateOf(false) }
-    val contactsScope = rememberCoroutineScope()
-    val numberPattern = remember { Regex("^\\d+\$") }
     ModalBottomSheetLayout(
         sheetState = modalBottomState,
         sheetContent = {
@@ -279,178 +392,192 @@ fun FavouriteGuarantorContent(
                     })
                 },
                 content = { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(start = 16.dp, end = 16.dp)
-                    ) {
-                        Row(
+                    Box(Modifier.consumeWindowInsets(innerPadding).pullRefresh(refreshState)) {
+                        Column(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(innerPadding)
-                                .background(color = MaterialTheme.colorScheme.background),
-                            verticalAlignment = Alignment.CenterVertically
+                                .padding(start = 16.dp, end = 16.dp)
                         ) {
-                            ElevatedCard(
-                                onClick = {
-                                    //launch pop up
-                                    launchPopUp = true
-
-                                },
+                            Row(
                                 modifier = Modifier
-                                    .background(color = MaterialTheme.colorScheme.background)
+                                    .fillMaxWidth()
+                                    .padding(innerPadding)
+                                    .background(color = MaterialTheme.colorScheme.background),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Box(
+                                ElevatedCard(
+                                    onClick = {
+                                        //launch pop up
+                                        launchPopUp = true
+
+                                    },
                                     modifier = Modifier
-                                        .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                                        .background(color = MaterialTheme.colorScheme.background)
                                 ) {
-                                    Row(
-                                        modifier = Modifier.padding(10.dp),
-                                        verticalAlignment = Alignment.CenterVertically
+                                    Box(
+                                        modifier = Modifier
+                                            .background(color = MaterialTheme.colorScheme.inverseOnSurface)
                                     ) {
-                                        androidx.compose.material3.IconButton(
+                                        Row(
+                                            modifier = Modifier.padding(10.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            androidx.compose.material3.IconButton(
+                                                modifier = Modifier
+                                                    .size(25.dp)
+                                                    .clip(RoundedCornerShape(12.dp))
+                                                    .background(
+                                                        MaterialTheme.colorScheme.primary.copy(
+                                                            alpha = 0.5f
+                                                        )
+                                                    ),
+                                                onClick = {
+                                                    launchPopUp = true
+                                                },
+                                                content = {
+                                                    Icon(
+                                                        imageVector = Icons.Outlined.ArrowCircleDown,
+                                                        modifier = if (launchPopUp) Modifier.size(25.dp)
+                                                            .rotate(180F) else Modifier.size(25.dp),
+                                                        contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.onBackground.copy(
+                                                            alpha = 0.7f
+                                                        )
+                                                    )
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+                                Row(modifier = Modifier) {
+                                    Column(
+                                        modifier = Modifier
+                                            .wrapContentWidth()
+                                            .padding(start = 7.dp)
+                                            .shadow(0.5.dp, RoundedCornerShape(10.dp))
+                                            .background(
+                                                color = MaterialTheme.colorScheme.inverseOnSurface,
+                                                shape = RoundedCornerShape(10.dp)
+                                            ),
+                                    ) {
+                                        BasicTextField(
                                             modifier = Modifier
-                                                .clip(CircleShape)
-                                                .background(Color(0xFFE5F1F5))
-                                                .size(25.dp),
-                                            onClick = {
-                                                launchPopUp = true
+                                                .focusRequester(focusRequester)
+                                                .height(50.dp)
+                                                .wrapContentWidth()
+                                                .padding(
+                                                    top = 16.dp,
+                                                    bottom = 16.dp,
+                                                    start = 10.dp,
+                                                    end = 10.dp
+                                                ),
+                                            enabled = true,
+                                            keyboardOptions = KeyboardOptions(
+                                                keyboardType = KeyboardType.Text
+                                            ),
+                                            value = memberNumber,
+                                            onValueChange = {
+                                                memberNumber = it
                                             },
-                                            content = {
-                                                Icon(
-                                                    imageVector = Icons.Filled.KeyboardArrowDown,
-                                                    modifier = if (launchPopUp) Modifier.size(25.dp)
-                                                        .rotate(180F) else Modifier.size(25.dp),
-                                                    contentDescription = null,
-                                                    tint = MaterialTheme.colorScheme.primary
-                                                )
+                                            singleLine = true,
+                                            textStyle = TextStyle(
+                                                color = MaterialTheme.colorScheme.onBackground,
+                                                fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
+                                                fontSize = 13.sp,
+                                                fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
+                                                letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
+                                                lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                                                fontFamily = MaterialTheme.typography.bodySmall.fontFamily
+                                            ),
+                                            decorationBox = { innerTextField ->
+                                                val txt = when (witnessOptions) {
+                                                    WitnessOptions.PHONENUMBER -> "Search Phone No."
+                                                    WitnessOptions.MEMBERNUMBER -> "Search Member No."
+                                                }
+                                                if (memberNumber == "") {
+                                                    Text(
+                                                        modifier = Modifier.alpha(.3f),
+                                                        text = txt,
+                                                        style = MaterialTheme.typography.bodySmall
+                                                    )
+                                                }
+                                                AnimatedVisibility(
+                                                    visible = memberNumber != "",
+                                                    modifier = Modifier.absoluteOffset(y = -(16).dp),
+                                                    enter = fadeIn() + expandVertically(),
+                                                    exit = fadeOut() + shrinkVertically(),
+                                                ) {
+                                                    Text(
+                                                        text = txt,
+                                                        color = primaryColor,
+                                                        style = MaterialTheme.typography.labelSmall,
+                                                        fontSize = 11.sp
+                                                    )
+                                                }
+
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(0.8f),
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.SpaceBetween
+                                                ) {
+                                                    Row(
+                                                        verticalAlignment = Alignment.CenterVertically,
+                                                    ) {
+
+                                                        innerTextField()
+                                                    }
+
+                                                    AnimatedVisibility(
+                                                        visible = firstName.text.isNotEmpty(),
+                                                        enter = fadeIn() + expandVertically(),
+                                                        exit = fadeOut() + shrinkVertically(),
+                                                    ) {
+
+                                                        IconButton(
+                                                            modifier = Modifier.size(18.dp),
+                                                            onClick = {
+                                                                firstName = emptyTextContainer
+                                                            },
+                                                            content = {
+                                                                Icon(
+                                                                    modifier = Modifier.alpha(0.4f),
+                                                                    imageVector = Icons.Filled.Cancel,
+                                                                    contentDescription = null,
+                                                                    tint = actionButtonColor
+                                                                )
+                                                            }
+                                                        )
+                                                    }
+                                                }
                                             }
                                         )
                                     }
                                 }
-                            }
-                            Row(modifier = Modifier) {
-                                Column(
+                                ElevatedCard(
+                                    onClick = {
+                                    },
                                     modifier = Modifier
-                                        .wrapContentWidth()
+                                        .background(color = MaterialTheme.colorScheme.background)
                                         .padding(start = 7.dp)
-                                        .shadow(0.5.dp, RoundedCornerShape(10.dp))
-                                        .background(
-                                            color = MaterialTheme.colorScheme.inverseOnSurface,
-                                            shape = RoundedCornerShape(10.dp)
-                                        ),
                                 ) {
-                                    BasicTextField(
+                                    Box(
                                         modifier = Modifier
-                                            .focusRequester(focusRequester)
-                                            .height(50.dp)
-                                            .wrapContentWidth()
-                                            .padding(
-                                                top = 16.dp,
-                                                bottom = 16.dp,
-                                                start = 10.dp,
-                                                end = 10.dp
-                                            ),
-                                        enabled = true,
-                                        keyboardOptions = KeyboardOptions(
-                                            keyboardType = KeyboardType.Text
-                                        ),
-                                        value = memberNumber,
-                                        onValueChange = {
-                                            memberNumber = it
-                                        },
-                                        singleLine = true,
-                                        textStyle = TextStyle(
-                                            color = MaterialTheme.colorScheme.onBackground,
-                                            fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
-                                            fontSize = 13.sp,
-                                            fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
-                                            letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
-                                            lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
-                                            fontFamily = MaterialTheme.typography.bodySmall.fontFamily
-                                        ),
-                                        decorationBox = { innerTextField ->
-                                            if (memberNumber == "") {
-                                                Text(
-                                                    modifier = Modifier.alpha(.3f),
-                                                    text = if (guarantorOption == state.memberNo) "Search Member Number" else "Search PhoneBook",
-                                                    style = MaterialTheme.typography.bodySmall
-                                                )
-                                            }
-                                            AnimatedVisibility(
-                                                visible = memberNumber != "",
-                                                modifier = Modifier.absoluteOffset(y = -(16).dp),
-                                                enter = fadeIn() + expandVertically(),
-                                                exit = fadeOut() + shrinkVertically(),
-                                            ) {
-                                                Text(
-                                                    text = if (guarantorOption == state.memberNo) "Search Member Number" else "Search PhoneBook",
-                                                    color = primaryColor,
-                                                    style = MaterialTheme.typography.labelSmall,
-                                                    fontSize = 11.sp
-                                                )
-                                            }
-
-                                            Row(
-                                                modifier = Modifier.fillMaxWidth(0.8f),
-                                                verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.SpaceBetween
-                                            ) {
-                                                Row(
-                                                    verticalAlignment = Alignment.CenterVertically,
-                                                ) {
-
-                                                    innerTextField()
-                                                }
-
-                                                AnimatedVisibility(
-                                                    visible = firstName.text.isNotEmpty(),
-                                                    enter = fadeIn() + expandVertically(),
-                                                    exit = fadeOut() + shrinkVertically(),
-                                                ) {
-
-                                                    IconButton(
-                                                        modifier = Modifier.size(18.dp),
-                                                        onClick = {
-                                                            firstName = emptyTextContainer
-                                                        },
-                                                        content = {
-                                                            Icon(
-                                                                modifier = Modifier.alpha(0.4f),
-                                                                imageVector = Icons.Filled.Cancel,
-                                                                contentDescription = null,
-                                                                tint = actionButtonColor
-                                                            )
-                                                        }
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    )
-                                }
-                            }
-                            ElevatedCard(
-                                onClick = {
-                                },
-                                modifier = Modifier
-                                    .background(color = MaterialTheme.colorScheme.background)
-                                    .padding(start = 7.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .background(color = MaterialTheme.colorScheme.inverseOnSurface)
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(10.dp),
-                                        verticalAlignment = Alignment.CenterVertically
+                                            .background(color = MaterialTheme.colorScheme.inverseOnSurface)
                                     ) {
-                                        androidx.compose.material3.IconButton(
-                                            modifier = Modifier
-                                                .size(25.dp),
-                                            onClick = {
-                                                //Todo----open Contacts Library
-                                                launchContacts = true
-                                                //Todo----open  the contacts library and take the selected contact
-                                                if (launchContacts) {
+                                        Row(
+                                            modifier = Modifier.padding(10.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            androidx.compose.material3.IconButton(
+                                                modifier = Modifier
+                                                    .size(25.dp)
+                                                    .clip(RoundedCornerShape(12.dp))
+                                                    .background(
+                                                        MaterialTheme.colorScheme.primary.copy(
+                                                            alpha = 0.5f
+                                                        )
+                                                    ),
+                                                onClick = {
+                                                    memberNumber = ""
                                                     contactsScope.launch {
                                                         val content =
                                                             component.platform.getContact(421, "KE")
@@ -471,181 +598,170 @@ fun FavouriteGuarantorContent(
                                                                     println("Selected data:::::::" + item.value)
                                                                 }
                                                                 if (item.value.matches(numberPattern)) {
-                                                                    memberNumber = item.value
-                                                                }
+                                                                    if (witnessDataListed.size != 1) {
+                                                                        witnessOptions =
+                                                                            WitnessOptions.PHONENUMBER
+                                                                        memberNumber = item.value
 
+                                                                        authState.cachedMemberData?.let {
+                                                                            ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber(
+                                                                                token = it.accessToken,
+                                                                                phoneNumber = item.value
+                                                                            )
+                                                                        }?.let {
+                                                                            onEvent(
+                                                                                it
+                                                                            )
+                                                                        }
+                                                                    }
+                                                                }
                                                             }
                                                         }
                                                     }
-                                                    launchContacts = false
-                                                }
-
-
-                                            },
-                                            content = {
-                                                Icon(
-                                                    imageVector = Icons.Outlined.Person,
-                                                    contentDescription = null,
-                                                    tint = MaterialTheme.colorScheme.primary
-                                                )
-                                            }
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        //list the guarantor
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(0.8f)
-                        ) {
-                            item {
-                                Spacer(modifier = Modifier.padding(top = 10.dp))
-                            }
-                            if (guarantorDataListed.isNotEmpty()) {
-                                guarantorDataListed.forEach { item ->
-                                    item {
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(top = 10.dp)
-                                        ) {
-                                            WitnessDetailsView(
-                                                label = item.memberFirstName + " " + item.memberLastName,
-                                                onClick = {
-                                                    //call back executed
-                                                    clearItemClicked(item)
                                                 },
-                                                selected = true,
-                                                phoneNumber = item.memberPhoneNumber,
-                                                memberNumber = item.memberNumber,
+                                                content = {
+                                                    Icon(
+                                                        imageVector = Icons.Filled.Dialpad,
+                                                        modifier = Modifier,
+                                                        contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.onBackground.copy(
+                                                            alpha = 0.7f
+                                                        )
+                                                    )
+                                                }
                                             )
                                         }
                                     }
                                 }
-                            } else {
-                                //Todo--message to show  how to add the witness
+                            }
+                            //list the guarantor
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(0.8f)
+                            ) {
                                 item {
-                                    Text(
-                                        "Add Guarantors using phone number or member number on the above text input",
-                                        fontSize = 12.sp,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
-                                        modifier = Modifier.padding(
-                                            start = 10.dp,
-                                            top = 10.dp
-                                        )
-                                    )
+                                    Spacer(modifier = Modifier.padding(top = 10.dp))
+                                }
+                                if (witnessDataListed.isNotEmpty()) {
+                                    witnessDataListed.forEach { item ->
+                                        item {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(top = 10.dp)
+                                            ) {
+                                                WitnessDetailsView(
+                                                    label = item.memberFirstName + " " + item.memberLastName,
+                                                    onClick = {
+                                                        //call back executed
+                                                        clearItemClicked(item)
+                                                        signHomeState.prestaTenantByMemberNumber =
+                                                            null
+                                                        state.prestaLoadTenantByPhoneNumber = null
+                                                    },
+                                                    selected = true,
+                                                    phoneNumber = item.memberPhoneNumber,
+                                                    memberNumber = item.memberNumber,
+                                                )
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    //Todo--message to show  how to add the witness
+                                    item {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Outlined.Error,
+                                                modifier = Modifier,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                            Text(
+                                                "Add Guarantor  using phone number or member number on the above text input",
+                                                color = MaterialTheme.colorScheme.onBackground,
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                                style = MaterialTheme.typography.bodySmall,
+                                                modifier = Modifier.padding(horizontal = 20.dp)
+                                            )
+                                        }
+                                    }
                                 }
                             }
-                        }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 30.dp)
-                        ) {
-                            ActionButton(
-                                label = if (guarantorDataListed.size != 1) "Search" else "Add Guarantor",
-                                onClickContainer = {
-                                    if (searchWitnessByMemberNumber && signHomeState.prestaTenantByMemberNumber != null) {
-                                        if (guarantorDataListed.size != 1) {
-                                            signHomeState.prestaTenantByMemberNumber?.let {
-                                                val apiResponse = listOf(
-                                                    FavouriteGuarantorDetails(
-                                                        refId = it.refId,
-                                                        memberFirstName = it.firstName,
-                                                        memberNumber = it.memberNumber,
-                                                        memberLastName = it.lastName,
-                                                        memberPhoneNumber = it.phoneNumber
-                                                    )
-                                                )
-                                                val existingItems = guarantorDataListed.toSet()
-                                                val duplicateItems =
-                                                    apiResponse.filter { it in existingItems }
-                                                if (duplicateItems.isNotEmpty()) {
-                                                    snackBarScope.launch {
-                                                        snackbarHostState.showSnackbar(
-                                                            SnackbarVisualsWithError(
-                                                                "Duplicate Entries not  allowed",
-                                                                isError = true
-                                                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 30.dp)
+                            ) {
+                                ActionButton(
+                                    label = if (witnessDataListed.size != 1) "Search" else "Add Guarantor",
+                                    onClickContainer = {
+                                        if (witnessDataListed.size != 1) {
+                                            when (witnessOptions) {
+                                                WitnessOptions.MEMBERNUMBER -> {
+                                                    authState.cachedMemberData?.let {
+                                                        SignHomeStore.Intent.GetPrestaTenantByMemberNumber(
+                                                            token = it.accessToken,
+                                                            memberNumber = memberNumber
+                                                        )
+                                                    }?.let {
+                                                        onProfileEvent(
+                                                            it
                                                         )
                                                     }
+                                                }
 
-                                                } else {
-                                                    guarantorDataListed =
-                                                        guarantorDataListed.toMutableSet().apply {
-                                                            addAll(apiResponse)
-                                                        }
+                                                WitnessOptions.PHONENUMBER -> {
+                                                    authState.cachedMemberData?.let {
+                                                        ApplyLongTermLoansStore.Intent.LoadTenantByPhoneNumber(
+                                                            token = it.accessToken,
+                                                            phoneNumber = memberNumber
+                                                        )
+                                                    }?.let {
+                                                        onEvent(
+                                                            it
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            if (conditionChecked) {
+                                                //post Guarantor
+                                                witnessDataListed.map { mapedrefId ->
+                                                    authState.cachedMemberData?.let {
+                                                        ApplyLongTermLoansStore.Intent.AddFavouriteGuarantor(
+                                                            token = it.accessToken,
+                                                            memberRefId = memberRefId,
+                                                            guarantorRefId = mapedrefId.refId
+                                                        )
+                                                    }?.let {
+                                                        onEvent(
+                                                            it
+                                                        )
+                                                    }
                                                 }
                                             }
                                         }
-                                    } else {
-                                        if (searchWitnessByMemberNumber && signHomeState.prestaTenantByMemberNumber == null) {
-                                            snackBarScope.launch {
-                                                snackbarHostState.showSnackbar(
-                                                    SnackbarVisualsWithError(
-                                                        "Error loading Member $memberNumber",
-                                                        isError = true
-                                                    )
-                                                )
-                                            }
-
-                                        }
-                                    }
-                                    //Handle loading  member by Phone Number
-                                    if (searchWitnessByPhoneNumber && state.prestaLoadTenantByPhoneNumber?.phoneNumber != null) {
-                                        if (guarantorDataListed.size != 1) {
-                                            state.prestaLoadTenantByPhoneNumber?.let {
-                                                val apiResponse = listOf(
-                                                    FavouriteGuarantorDetails(
-                                                        refId = it.refId,
-                                                        memberFirstName = it.firstName,
-                                                        memberNumber = it.memberNumber,
-                                                        memberLastName = it.lastName,
-                                                        memberPhoneNumber = it.phoneNumber
-                                                    )
-                                                )
-                                                val existingItems = guarantorDataListed.toSet()
-                                                val duplicateItems =
-                                                    apiResponse.filter { it in existingItems }
-                                                if (duplicateItems.isNotEmpty()) {
-                                                    snackBarScope.launch {
-                                                        snackbarHostState.showSnackbar(
-                                                            SnackbarVisualsWithError(
-                                                                "Duplicate Entries not  allowed",
-                                                                isError = true
-                                                            )
-                                                        )
-                                                    }
-
-                                                } else {
-                                                    guarantorDataListed =
-                                                        guarantorDataListed.toMutableSet().apply {
-                                                            addAll(apiResponse)
-                                                        }
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        if (searchWitnessByPhoneNumber && state.prestaLoadTenantByPhoneNumber?.phoneNumber == null) {
-                                            snackBarScope.launch {
-                                                snackbarHostState.showSnackbar(
-                                                    SnackbarVisualsWithError(
-                                                        "Error loading Member by PhoneNumber $memberNumber",
-                                                        isError = true
-                                                    )
-                                                )
-                                            }
-                                        }
-                                    }
-
-                                },
-                                enabled = true,
-                                loading = state.isLoading
-                            )
+                                    },
+                                    enabled = memberNumber != "",
+                                    loading = state.isLoading
+                                )
+                            }
                         }
+                        PullRefreshIndicator(
+                            refreshing, refreshState,
+                            Modifier
+                                .padding(innerPadding)
+                                .align(Alignment.TopCenter).zIndex(1f),
+                            contentColor = actionButtonColor
+                        )
+
                     }
+
                     if (launchPopUp) {
                         Popup {
                             Column(
@@ -721,13 +837,20 @@ fun FavouriteGuarantorContent(
                                                                         selectedIndex =
                                                                             if (selectedIndex == index) -1 else index
                                                                         if (selectedIndex > -1) {
-                                                                            guarantorOption =
-                                                                                guarantorList[selectedIndex]
+                                                                            when (guarantorList[selectedIndex]) {
+                                                                                state.memberNo -> {
+                                                                                    witnessOptions =
+                                                                                        WitnessOptions.MEMBERNUMBER
+                                                                                }
+
+                                                                                state.phoneNo -> {
+                                                                                    witnessOptions =
+                                                                                        WitnessOptions.PHONENUMBER
+                                                                                }
+
+                                                                            }
+
                                                                         }
-                                                                        searchWitnessByMemberNumber =
-                                                                            guarantorOption == state.memberNo
-                                                                        searchWitnessByPhoneNumber =
-                                                                            guarantorOption == state.phoneNo
                                                                     },
                                                                     label = guarantorOptions
                                                                 )
@@ -781,6 +904,9 @@ fun FavouriteGuarantorContent(
                                                 color = actionButtonColor
                                             ),
                                             onClick = {
+                                                memberNumber = ""
+                                                signHomeState.prestaTenantByMemberNumber = null
+                                                state.prestaLoadTenantByPhoneNumber = null
                                                 launchPopUp = false
                                             },
                                             modifier = Modifier

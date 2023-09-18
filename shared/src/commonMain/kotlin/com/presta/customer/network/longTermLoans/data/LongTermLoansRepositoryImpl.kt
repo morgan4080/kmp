@@ -308,7 +308,7 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
         loanRequestRefId: String,
         guarantorRefId: String,
         memberRefId: String,
-    ): Result<LongTermLoanRequestResponse> {
+    ): Result<String> {
         return try {
             val response = prestaLongTermLoansClient.upDateGuarantor(
                 token = token,
@@ -339,6 +339,7 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
             Result.failure(e)
         }
     }
+
     override suspend fun getWitnessAcceptanceStatus(
         token: String,
         loanRequestRefId: String,

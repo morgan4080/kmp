@@ -94,7 +94,8 @@ class ApplyLongTermLoansStoreFactory(
         data class LongTermLoansRequestsSpecificProductLoaded(val longTermLoansRequestsSpecificProduct: PrestaLongTermLoansRequestsListResponse) :
             Msg()
 
-        data class UpdatedGuarantorLoaded(val replacedGuarantorResponse: LongTermLoanRequestResponse) :
+        //Replaced  guarantor
+        data class UpdatedGuarantorLoaded(val replacedGuarantorResponse: String) :
             Msg()
 
         data class WitnessRequestsLoaded(val witnessRequestsLoaded: List<PrestaWitnessRequestResponse> = listOf()) :
@@ -234,7 +235,7 @@ class ApplyLongTermLoansStoreFactory(
                     memberRefId = intent.memberRefId
                 )
 
-                is ApplyLongTermLoansStore.Intent.GetWitnessAcceptanceStatus -> getprestaWitnessAcceptanceStatus (
+                is ApplyLongTermLoansStore.Intent.GetWitnessAcceptanceStatus -> getprestaWitnessAcceptanceStatus(
                     token = intent.token,
                     loanRequestRefId = intent.loanRequestRefId,
                     isAccepted = intent.isAccepted
@@ -682,7 +683,7 @@ class ApplyLongTermLoansStoreFactory(
                     guarantorRefId,
                     memberRefId
                 ).onSuccess { response ->
-                    dispatch(Msg.LongTermLoanRequestLoaded(response))
+                    dispatch(Msg.UpdatedGuarantorLoaded(response))
                     println("GuarantorUpdated SuccessFully")
                 }.onFailure { e ->
                     dispatch(Msg.LongTermLoansFailed(e.message))
@@ -728,8 +729,8 @@ class ApplyLongTermLoansStoreFactory(
             getprestaWitnessAcceptanceStatusJob = scope.launch {
                 longTermLoansRepository.getWitnessAcceptanceStatus(
                     token = token,
-                   loanRequestRefId=loanRequestRefId,
-                    isAccepted=isAccepted
+                    loanRequestRefId = loanRequestRefId,
+                    isAccepted = isAccepted
                 ).onSuccess { response ->
                     dispatch(Msg.WitnessAcceptanceStatusLoaded(response))
 
@@ -884,14 +885,14 @@ class ApplyLongTermLoansStoreFactory(
                     prestaLongTermLoansRequestsSpecificProduct = msg.longTermLoansRequestsSpecificProduct
                 )
 
-                is Msg.UpdatedGuarantorLoaded -> copy(prestaUpdatedGuarantorData = msg.replacedGuarantorResponse)
+                is Msg.UpdatedGuarantorLoaded -> copy(prestaReplaceLoanGuarantor = msg.replacedGuarantorResponse)
                 is Msg.WitnessRequestsLoaded -> copy(prestaWitnessRequests = msg.witnessRequestsLoaded)
                 is Msg.FavouriteGuarantorLoaded -> copy(prestaFavouriteGuarantor = msg.favouriteGuarantorLoaded)
                 is Msg.AddedFavouriteGuarantorLoaded -> copy(prestaAdedFavouriteGuarantor = msg.addedfavouriteGuarantorLoaded)
                 is Msg.FavouriteGuarantorDeleted -> copy(deleteFavouriteGuarantorResponse = msg.favouriteGuarantorDeletedResponse)
                 is Msg.LoanRequestDeleted -> copy(deleteLoanRequestResponse = msg.loanRequestDeleted)
                 is Msg.LoadedSignTenantByPhoneNumber -> copy(prestaLoadTenantByPhoneNumber = msg.signTenantByPhoneNumberResponse)
-                is Msg.WitnessAcceptanceStatusLoaded -> copy(prestaWitnessAcceptanceStatus = msg.witnessAcceptanceResponseLoaded )
+                is Msg.WitnessAcceptanceStatusLoaded -> copy(prestaWitnessAcceptanceStatus = msg.witnessAcceptanceResponseLoaded)
             }
     }
 
