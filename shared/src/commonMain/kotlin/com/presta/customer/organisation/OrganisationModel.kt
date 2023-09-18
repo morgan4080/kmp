@@ -7,11 +7,11 @@ class OrganisationModel {
     @ThreadLocal
     companion object Data {
         var organisation: Organisation = Organisation (
-            "CODO",
-            "t11813",
+            "Wanaanga",
+            "t74411",
             MR.images.logo,
             MR.images.logodark,
-            true,
+            false,
         )
 
         fun  loadOrganisation(org: Organisation) {
