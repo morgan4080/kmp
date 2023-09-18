@@ -430,9 +430,11 @@ fun AddGuarantorContent(
                             signHomeState,
                             onProfileEvent,
                             //Delegated onclick Button functions
-                            onClickSubmit = {
-                                allConditionsChecked = true
-                                scope.launch { modalBottomSheetState.hide() }
+                            onClickSubmit = {hasErrors->
+                                if (!hasErrors){
+                                    allConditionsChecked = true
+                                    scope.launch { modalBottomSheetState.hide() }
+                                }
                             },
                             component
                         )

@@ -34,122 +34,143 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.presta.customer.MR
+import com.presta.customer.network.authDevice.errorHandler.Message
 import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.primaryColor
+import dev.icerock.moko.resources.compose.fontFamilyResource
+
 @Composable
 fun LiveTextContainer(
+    callback2: (errorrOccured: Boolean) -> Unit = {},
     keyboardType: KeyboardType,
     pattern: Regex,
     userInput: String,
-    label:String,
+    label: String,
     callback: (userInput: String) -> Unit = {},
 ) {
     val focusRequester = remember { FocusRequester() }
     val emptyTextContainer by remember { mutableStateOf(TextFieldValue()) }
     var userInputs by remember { mutableStateOf(TextFieldValue(userInput)) }
+    callback2(userInputs.text=="")
     Row(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp)
-                .shadow(0.5.dp, RoundedCornerShape(10.dp))
-                .background(
-                    color = MaterialTheme.colorScheme.inverseOnSurface,
-                    shape = RoundedCornerShape(10.dp)
-                ),
-        ) {
-            BasicTextField(
+        Column() {
+            Column(
                 modifier = Modifier
-                    .focusRequester(focusRequester)
-                    .height(65.dp)
-                    .padding(top = 20.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
-                    .absoluteOffset(y = 2.dp),
-                enabled = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = keyboardType
-                ),
-                value = userInputs,
-                onValueChange = {
-                    if (it.text.isEmpty() || it.text.matches(pattern)) {
-                        userInputs = it
-                        callback(userInputs.text)
-                    }
-                },
-                singleLine = true,
-                textStyle = TextStyle(
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
-                    fontSize = 13.sp,
-                    fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
-                    letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
-                    lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
-                    fontFamily = MaterialTheme.typography.bodySmall.fontFamily
-                ),
-                decorationBox = { innerTextField ->
-                    if (userInputs.text.isEmpty()
-                    ) {
-                        Text(
-                            modifier = Modifier.alpha(.3f),
-                            text = label,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-
-                    AnimatedVisibility(
-                        visible = userInputs.text.isNotEmpty(),
-                        modifier = Modifier.absoluteOffset(y = -(16).dp),
-                        enter = fadeIn() + expandVertically(),
-                        exit = fadeOut() + shrinkVertically(),
-                    ) {
-                        Text(
-                            text = label,
-                            color = primaryColor,
-                            style = MaterialTheme.typography.labelSmall,
-                            fontSize = 11.sp
-                        )
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                    .fillMaxWidth()
+                    .padding(top = 10.dp)
+                    .shadow(0.5.dp, RoundedCornerShape(10.dp))
+                    .background(
+                        color = MaterialTheme.colorScheme.inverseOnSurface,
+                        shape = RoundedCornerShape(10.dp)
+                    ),
+            ) {
+                BasicTextField(
+                    modifier = Modifier
+                        .focusRequester(focusRequester)
+                        .height(65.dp)
+                        .padding(top = 20.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                        .absoluteOffset(y = 2.dp),
+                    enabled = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = keyboardType
+                    ),
+                    value = userInputs,
+                    onValueChange = {
+                        if (it.text.isEmpty() || it.text.matches(pattern)) {
+                            userInputs = it
+                            callback(userInputs.text)
+                        }
+                    },
+                    singleLine = true,
+                    textStyle = TextStyle(
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
+                        fontSize = 13.sp,
+                        fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
+                        letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
+                        lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                        fontFamily = MaterialTheme.typography.bodySmall.fontFamily
+                    ),
+                    decorationBox = { innerTextField ->
+                        if (userInputs.text.isEmpty()
                         ) {
-
-                            innerTextField()
+                            Text(
+                                modifier = Modifier.alpha(.3f),
+                                text = label,
+                                style = MaterialTheme.typography.bodySmall
+                            )
                         }
 
                         AnimatedVisibility(
                             visible = userInputs.text.isNotEmpty(),
+                            modifier = Modifier.absoluteOffset(y = -(16).dp),
                             enter = fadeIn() + expandVertically(),
                             exit = fadeOut() + shrinkVertically(),
                         ) {
-                            IconButton(
-                                modifier = Modifier.size(18.dp),
-                                onClick = { userInputs = emptyTextContainer },
-                                content = {
-                                    Icon(
-                                        modifier = Modifier.alpha(0.4f),
-                                        imageVector = Icons.Filled.Cancel,
-                                        contentDescription = null,
-                                        tint = actionButtonColor
-                                    )
-                                }
+                            Text(
+                                text = label,
+                                color = primaryColor,
+                                style = MaterialTheme.typography.labelSmall,
+                                fontSize = 11.sp
                             )
                         }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+
+                                innerTextField()
+                            }
+
+                            AnimatedVisibility(
+                                visible = userInputs.text.isNotEmpty(),
+                                enter = fadeIn() + expandVertically(),
+                                exit = fadeOut() + shrinkVertically(),
+                            ) {
+                                IconButton(
+                                    modifier = Modifier.size(18.dp),
+                                    onClick = { userInputs = emptyTextContainer },
+                                    content = {
+                                        Icon(
+                                            modifier = Modifier.alpha(0.4f),
+                                            imageVector = Icons.Filled.Cancel,
+                                            contentDescription = null,
+                                            tint = actionButtonColor
+                                        )
+                                    }
+                                )
+                            }
+                        }
                     }
-                }
-            )
+                )
+            }
+            if (userInputs.text == "") {
+                Text(
+                    modifier = Modifier.padding(top = 10.dp, start = 5.dp),
+                    text = "Required",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                    color = Color.Red
+                )
+
+            }
+
         }
+
     }
 }

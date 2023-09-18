@@ -25,8 +25,6 @@ import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLo
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 
-data class MultipleVariables(val grossSalary: String, val variable2: String, val variable3: Boolean)
-
 @Composable
 fun EmployedDetails(
     state: ApplyLongTermLoansStore.State,
@@ -34,7 +32,7 @@ fun EmployedDetails(
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
     signHomeState: SignHomeStore.State,
     onProfileEvent: (SignHomeStore.Intent) -> Unit,
-    onClickSubmit: () -> Unit,
+    onClickSubmit: (errorrOccured: Boolean) -> Unit,
     component: AddGuarantorsComponent,
 ) {
     var employernameLive by remember { mutableStateOf("") }
@@ -52,6 +50,7 @@ fun EmployedDetails(
     val userDetailsMap = mutableMapOf<String, String>()
     val pattern = remember { Regex("^\\d+\$") }
     val numberTextPattern = remember { Regex("^[\\p{L}\\d ]+$") }
+    var hasError by remember { mutableStateOf(false) }
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -119,21 +118,25 @@ fun EmployedDetails(
                         userInput = employernameLive,
                         label = "Employer",
                         keyboardType = KeyboardType.Text,
-                        pattern = numberTextPattern
+                        pattern = numberTextPattern,
+                        callback2 = {errorcalled->
+                            hasError=errorcalled
+                        }
                     ) {
                         val inputValue: String = TextFieldValue(it).text
                         if (inputValue != "") {
                             if (TextFieldValue(it).text !== "") {
                                 employer = TextFieldValue(it)
+                                employernameLive = it
                             } else {
-                                //Throw error
+                                //Error
+
                             }
                         }
                     }
                 }
             }
             item {
-
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -142,7 +145,10 @@ fun EmployedDetails(
                         userInput = employmentNumberLive,
                         label = "Employment Number",
                         keyboardType = KeyboardType.Text,
-                        pattern = numberTextPattern
+                        pattern = numberTextPattern,
+                        callback2 = {errorcalled->
+                            hasError=errorcalled
+                        }
                     ) {
                         val inputValue: String = TextFieldValue(it).text
                         if (inputValue != "") {
@@ -162,7 +168,10 @@ fun EmployedDetails(
                         userInput = grossSalaryDataLive,
                         label = "Gross Salary",
                         keyboardType = KeyboardType.Number,
-                        pattern = pattern
+                        pattern = pattern,
+                        callback2 = {errorcalled->
+                            hasError=errorcalled
+                        }
                     ) {
                         val inputValue: String = TextFieldValue(it).text
                         if (inputValue != "") {
@@ -183,7 +192,10 @@ fun EmployedDetails(
                         userInput = netSalaryLive,
                         label = "Net Salary",
                         keyboardType = KeyboardType.Number,
-                        pattern = pattern
+                        pattern = pattern,
+                        callback2 = {errorcalled->
+                            hasError=errorcalled
+                        }
                     ) {
                         val inputValue: String = TextFieldValue(it).text
                         if (inputValue != "") {
@@ -203,7 +215,10 @@ fun EmployedDetails(
                         userInput = kraPinLive,
                         label = "KRA Pin",
                         keyboardType = KeyboardType.Text,
-                        pattern = numberTextPattern
+                        pattern = numberTextPattern,
+                        callback2 = {errorcalled->
+                            hasError=errorcalled
+                        }
                     ) {
                         val inputValue: String = TextFieldValue(it).text
                         if (inputValue != "") {
@@ -211,11 +226,13 @@ fun EmployedDetails(
                                 kraPin = TextFieldValue(it)
                             } else {
                                 //Throw error
+
                             }
                         }
                     }
                 }
             }
+
             item {
 
                 Row(
@@ -226,31 +243,33 @@ fun EmployedDetails(
                     ActionButton(
                         label = "Submit",
                         onClickContainer = {
-                            userDetailsMap["employer"] =
-                                if (employer.text != "") employer.text else employernameLive
-                            userDetailsMap["employmentNumber"] =
-                                if (employMentNumber.text != "") employMentNumber.text else employmentNumberLive
-                            userDetailsMap["grossSalary"] =
-                                if (grossSalary.text != "") grossSalary.text else grossSalaryDataLive
-                            userDetailsMap["netSalary"] =
-                                if (netSalary.text != "") netSalary.text else netSalaryLive
-                            userDetailsMap["kraPin"] =
-                                if (kraPin.text != "") kraPin.text else kraPinLive
-                            userDetailsMap["businessLocation"] = businessLocationLive
-                            userDetailsMap["businessType"] = businessTypeLive
-                            authState.cachedMemberData?.let {
-                                SignHomeStore.Intent.UpdatePrestaTenantDetails(
-                                    token = it.accessToken,
-                                    memberRefId = signHomeState.prestaTenantByPhoneNumber.refId,
-                                    details = userDetailsMap
-                                )
-                            }?.let {
-                                onProfileEvent(
-                                    it
-                                )
+                            if (!hasError){
+                                userDetailsMap["employer"] =
+                                    if (employer.text != "") employer.text else employernameLive
+                                userDetailsMap["employmentNumber"] =
+                                    if (employMentNumber.text != "") employMentNumber.text else employmentNumberLive
+                                userDetailsMap["grossSalary"] =
+                                    if (grossSalary.text != "") grossSalary.text else grossSalaryDataLive
+                                userDetailsMap["netSalary"] =
+                                    if (netSalary.text != "") netSalary.text else netSalaryLive
+                                userDetailsMap["kraPin"] =
+                                    if (kraPin.text != "") kraPin.text else kraPinLive
+                                userDetailsMap["businessLocation"] = businessLocationLive
+                                userDetailsMap["businessType"] = businessTypeLive
+                                authState.cachedMemberData?.let {
+                                    SignHomeStore.Intent.UpdatePrestaTenantDetails(
+                                        token = it.accessToken,
+                                        memberRefId = signHomeState.prestaTenantByPhoneNumber.refId,
+                                        details = userDetailsMap
+                                    )
+                                }?.let {
+                                    onProfileEvent(
+                                        it
+                                    )
+                                }
+                                //Todo-----show failed or successful update
+                                onClickSubmit(false)
                             }
-                            //Todo-----show failed or successful update
-                            onClickSubmit()
                         },
                         enabled = true,
                         loading = signHomeState.isLoading
