@@ -430,8 +430,8 @@ fun AddGuarantorContent(
                             signHomeState,
                             onProfileEvent,
                             //Delegated onclick Button functions
-                            onClickSubmit = {hasErrors->
-                                if (!hasErrors){
+                            onClickSubmit = { hasErrors ->
+                                if (!hasErrors && tabIndex == 0) {
                                     allConditionsChecked = true
                                     scope.launch { modalBottomSheetState.hide() }
                                 }
@@ -442,7 +442,13 @@ fun AddGuarantorContent(
                         1 -> SelfEmployedDetails(
                             signHomeState,
                             authState,
-                            onProfileEvent
+                            onProfileEvent,
+                            onClickSubmit = { hasErrors ->
+                                if (!hasErrors && tabIndex == 1) {
+                                    allConditionsChecked = true
+                                    scope.launch { modalBottomSheetState.hide() }
+                                }
+                            }
                         )
                     }
                 }

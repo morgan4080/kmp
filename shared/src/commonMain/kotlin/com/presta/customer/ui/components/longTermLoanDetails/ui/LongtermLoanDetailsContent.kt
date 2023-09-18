@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -58,7 +59,6 @@ import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LongTermLoanDetailsContent(
     component: LongTermLoanDetailsComponent,
@@ -72,6 +72,8 @@ fun LongTermLoanDetailsContent(
         mutableStateOf(TextFieldValue())
     }
     var isError by remember { mutableStateOf(false) }
+    var isPeriodError by remember { mutableStateOf(false) }
+    var isAmountError by remember { mutableStateOf(false) }
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Enter Loan Details", onClickContainer = {
             component.onBackNavClicked()
@@ -154,6 +156,18 @@ fun LongTermLoanDetailsContent(
                                 }
                             }
                         }
+                    }
+                    if (amount.text != "") {
+                        isAmountError = amount.text.toInt() < 100
+                    }
+                    if (isAmountError) {
+                        Text(
+                            modifier = Modifier.padding(top = 10.dp, start = 5.dp),
+                            text = "min KSh: 100 ",
+                            style = MaterialTheme.typography.bodySmall,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                            color = Color.Red
+                        )
                     }
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Column(
@@ -257,7 +271,22 @@ fun LongTermLoanDetailsContent(
                                     }
                                 }
                             )
+                            if (state.prestaLongTermLoanProductById?.maxperiod != null && desiredPeriod.text != "") {
+                                isPeriodError =
+                                    !(desiredPeriod.text.toInt() >= 1 && desiredPeriod.text.toInt() <= state.prestaLongTermLoanProductById.maxperiod.toInt())
+
+                            }
                         }
+                    }
+
+                    if (isPeriodError) {
+                        Text(
+                            modifier = Modifier.padding(top = 10.dp, start = 5.dp),
+                            text = "min 1 month max ${state.prestaLongTermLoanProductById?.maxperiod}",
+                            style = MaterialTheme.typography.bodySmall,
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                            color = Color.Red
+                        )
                     }
                     Text(
                         "Select Desired Period (EG 1-96 Months)",
@@ -271,30 +300,30 @@ fun LongTermLoanDetailsContent(
                             .fillMaxWidth()
                             .padding(top = 40.dp)
                     ) {
-                        ActionButton(label = "Confirm", onClickContainer = {
-//                            loanRefId,
-//                            loanType,
-//                            desiredAmount,
-//                            loanPeriod
-                            if (state.prestaLongTermLoanProductById?.refId != null) {
-                                if (state.prestaLongTermLoanProductById.name != null) {
-                                    if (amount.text != "") {
-                                        if (desiredPeriod.text != "") {
-                                            if (state.prestaLongTermLoanProductById.requiredGuarantors !=null){
-                                                component.onConfirmSelected(
-                                                    loanRefId = state.prestaLongTermLoanProductById.refId,
-                                                    loanType = state.prestaLongTermLoanProductById.name,
-                                                    desiredAmount = amount.text.toDouble(),
-                                                    loanPeriod = desiredPeriod.text.toInt(),
-                                                    requiredGuarantors =state.prestaLongTermLoanProductById.requiredGuarantors.toInt()
-                                                )
+                        ActionButton(
+                            label = "Confirm",
+                            onClickContainer = {
+                                if (state.prestaLongTermLoanProductById?.refId != null) {
+                                    if (state.prestaLongTermLoanProductById.name != null) {
+                                        if (amount.text != "") {
+                                            if (desiredPeriod.text != "") {
+                                                if (state.prestaLongTermLoanProductById.requiredGuarantors != null) {
+                                                    component.onConfirmSelected(
+                                                        loanRefId = state.prestaLongTermLoanProductById.refId,
+                                                        loanType = state.prestaLongTermLoanProductById.name,
+                                                        desiredAmount = amount.text.toDouble(),
+                                                        loanPeriod = desiredPeriod.text.toInt(),
+                                                        requiredGuarantors = state.prestaLongTermLoanProductById.requiredGuarantors.toInt()
+                                                    )
+                                                }
                                             }
                                         }
                                     }
                                 }
-                            }
 
-                        }, enabled = amount.text!="" && desiredPeriod.text!="" )
+                            },
+                            enabled = amount.text != "" && desiredPeriod.text != "" && !isPeriodError && !isAmountError
+                        )
 
                     }
                     Row(

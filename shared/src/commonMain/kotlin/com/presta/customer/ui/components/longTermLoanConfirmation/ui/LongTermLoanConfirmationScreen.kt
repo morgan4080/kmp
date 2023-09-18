@@ -17,7 +17,8 @@ fun LongTermLoanConfirmationScreen(
         signProfileState = signHomeStateState,
         authState = authState,
         onLongTermLoanEvent = component::onEvent,
-        state = applyLongTermLoansState
+        state = applyLongTermLoansState,
+        onSignProfileEvent = component::onSignProfileEvent
     )
 
 }

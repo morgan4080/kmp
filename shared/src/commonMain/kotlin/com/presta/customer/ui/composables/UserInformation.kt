@@ -66,13 +66,14 @@ fun UserInformation(
     signProfileState: SignHomeStore.State,
     onLongTermLoanEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
     state: ApplyLongTermLoansStore.State,
+    onSignProfileEvent: (SignHomeStore.Intent) -> Unit,
 ) {
     var selectedIndex by remember { mutableStateOf(-1) }
     var launchDisbursementModePopUp by remember { mutableStateOf(false) }
     var launchPaymentModePopUp by remember { mutableStateOf(false) }
     var sendLoanRequest by remember { mutableStateOf(false) }
     var launchHandleLoanRequestPopUp by remember { mutableStateOf(false) }
-    var lastName by remember { mutableStateOf(TextFieldValue()) }
+    var hasError by remember { mutableStateOf(false) }
     var disbursementMode by remember { mutableStateOf("") }
     var repaymentMode by remember { mutableStateOf("") }
     val pattern = remember { Regex("^\\d+\$") }
@@ -84,6 +85,23 @@ fun UserInformation(
         val guarantorName = item.guarantorFirstName
         guarantorList.add(Guarantor(refId, amount, guarantorName))
     }
+    var firstnameLive by remember { mutableStateOf("") }
+    var lastnameLive by remember { mutableStateOf("") }
+    var phoneNumberLive by remember { mutableStateOf("") }
+    var idNumberLive by remember { mutableStateOf("") }
+    var emailLive by remember { mutableStateOf("") }
+    if (signProfileState.prestaTenantByPhoneNumber?.refId != null) {
+        firstnameLive = signProfileState.prestaTenantByPhoneNumber.firstName
+        lastnameLive = signProfileState.prestaTenantByPhoneNumber.lastName
+        phoneNumberLive = signProfileState.prestaTenantByPhoneNumber.phoneNumber
+        idNumberLive = signProfileState.prestaTenantByPhoneNumber.idNumber
+        emailLive = signProfileState.prestaTenantByPhoneNumber.email
+    }
+    var firstName by remember { mutableStateOf(TextFieldValue(firstnameLive)) }
+    var lastName by remember { mutableStateOf(TextFieldValue(lastnameLive)) }
+    var phoneNumber by remember { mutableStateOf(TextFieldValue(phoneNumberLive)) }
+    var idNumber by remember { mutableStateOf(TextFieldValue(idNumberLive)) }
+    var email by remember { mutableStateOf(TextFieldValue(emailLive)) }
     LaunchedEffect(state.prestaLongTermLoanRequestData?.refId) {
         if (!state.prestaLongTermLoanRequestData?.refId.isNullOrEmpty()) {
             state.prestaLongTermLoanRequestData?.let {
@@ -105,7 +123,6 @@ fun UserInformation(
             }
         }
     }
-
     Column(modifier = Modifier.padding(top = 20.dp)) {
         //popup Disbursement mode
         //Aded the popUps on top of Parent Column to prevent them from freezing
@@ -333,7 +350,7 @@ fun UserInformation(
                                                         )
                                                 ) {
                                                     SelectGuarantorsView(
-                                                        idx= indexedPay,
+                                                        idx = indexedPay,
                                                         selected = selectedIndex == indexedPay,
                                                         onClick = { index: Int ->
                                                             selectedIndex =
@@ -445,7 +462,6 @@ fun UserInformation(
                     }
                 }
             } else {
-                lastName = TextFieldValue(signProfileState.prestaTenantByPhoneNumber.firstName)
                 item {
                     Column(
                         modifier = Modifier
@@ -456,54 +472,108 @@ fun UserInformation(
                                 .fillMaxWidth()
                         ) {
                             LiveTextContainer(
-                                userInput = lastName.text,
+                                userInput = firstnameLive,
                                 label = "first Name",
                                 keyboardType = KeyboardType.Text,
-                                pattern = numberTextPattern
+                                pattern = numberTextPattern,
+                                callback2 = { errorcalled ->
+                                    hasError = errorcalled
+                                }
                             ) {
                                 val inputValue: String = TextFieldValue(it).text
-                                lastName = TextFieldValue(it)
-//                                if (inputValue != "") {
-//                                    if (TextFieldValue(it).text !== "") {
-//                                        lastName = TextFieldValue(it)
-//
-//                                    } else {
-//
-//                                    }
-//                               }
+                                if (inputValue != "") {
+                                    if (TextFieldValue(it).text !== "") {
+                                        firstName = TextFieldValue(it)
+
+                                    } else {
+
+                                    }
+                                }
                             }
                         }
                         Row(modifier = Modifier.fillMaxWidth()) {
                             LiveTextContainer(
-                                userInput = signProfileState.prestaTenantByPhoneNumber.lastName,
+                                userInput = lastnameLive,
                                 label = "last name",
                                 keyboardType = KeyboardType.Text,
-                                pattern = numberTextPattern
-                            )
+                                pattern = numberTextPattern,
+                                callback2 = { errorcalled ->
+                                    hasError = errorcalled
+                                }
+                            ) {
+                                val inputValue: String = TextFieldValue(it).text
+                                if (inputValue != "") {
+                                    if (TextFieldValue(it).text !== "") {
+                                        lastName = TextFieldValue(it)
+
+                                    } else {
+
+                                    }
+                                }
+                            }
                         }
                         Row(modifier = Modifier.fillMaxWidth()) {
                             LiveTextContainer(
-                                userInput = signProfileState.prestaTenantByPhoneNumber.idNumber,
+                                userInput = idNumberLive,
                                 label = "ID number",
                                 keyboardType = KeyboardType.Number,
-                                pattern = pattern
-                            )
+                                pattern = pattern,
+                                callback2 = { errorcalled ->
+                                    hasError = errorcalled
+                                }
+                            ) {
+                                val inputValue: String = TextFieldValue(it).text
+                                if (inputValue != "") {
+                                    if (TextFieldValue(it).text !== "") {
+                                        idNumber = TextFieldValue(it)
+
+                                    } else {
+
+                                    }
+                                }
+                            }
                         }
                         Row(modifier = Modifier.fillMaxWidth()) {
                             LiveTextContainer(
-                                userInput = signProfileState.prestaTenantByPhoneNumber.phoneNumber,
+                                userInput = phoneNumberLive,
                                 label = "Phone Number",
                                 keyboardType = KeyboardType.Number,
-                                pattern = pattern
-                            )
+                                pattern = pattern,
+                                callback2 = { errorcalled ->
+                                    hasError = errorcalled
+                                }
+                            ) {
+                                val inputValue: String = TextFieldValue(it).text
+                                if (inputValue != "") {
+                                    if (TextFieldValue(it).text !== "") {
+                                        phoneNumber = TextFieldValue(it)
+
+                                    } else {
+
+                                    }
+                                }
+                            }
                         }
                         Row(modifier = Modifier.fillMaxWidth()) {
                             LiveTextContainer(
-                                userInput = signProfileState.prestaTenantByPhoneNumber.email,
+                                userInput = emailLive,
                                 label = "email",
                                 keyboardType = KeyboardType.Text,
-                                pattern = numberTextPattern
-                            )
+                                pattern = numberTextPattern,
+                                callback2 = { errorcalled ->
+                                    hasError = errorcalled
+                                }
+                            ) {
+                                val inputValue: String = TextFieldValue(it).text
+                                if (inputValue != "") {
+                                    if (TextFieldValue(it).text !== "") {
+                                        email = TextFieldValue(it)
+
+                                    } else {
+
+                                    }
+                                }
+                            }
                         }
                         Row(
                             modifier = Modifier
@@ -536,6 +606,23 @@ fun UserInformation(
                         ) {
                             ActionButton(
                                 label = "Submit  Loan Request", onClickContainer = {
+                                    if (!hasError) {
+                                        authState.cachedMemberData?.let {
+                                            SignHomeStore.Intent.UpdatePrestaTenantPersonalInfo(
+                                                token = it.accessToken,
+                                                memberRefId = signProfileState.prestaTenantByPhoneNumber.refId,
+                                                firstName = if (firstName.text != "") firstName.text else signProfileState.prestaTenantByPhoneNumber.firstName,
+                                                lastName = if (lastName.text != "") lastName.text else signProfileState.prestaTenantByPhoneNumber.lastName,
+                                                phoneNumber = if (phoneNumber.text != "") phoneNumber.text else signProfileState.prestaTenantByPhoneNumber.phoneNumber,
+                                                idNumber = if (idNumber.text != "") idNumber.text else signProfileState.prestaTenantByPhoneNumber.idNumber,
+                                                email = if (email.text != "") email.text else signProfileState.prestaTenantByPhoneNumber.email,
+                                            )
+                                        }?.let {
+                                            onSignProfileEvent(
+                                                it
+                                            )
+                                        }
+                                    }
                                     authState.cachedMemberData?.let {
                                         ApplyLongTermLoansStore.Intent.RequestLongTermLoan(
                                             token = it.accessToken,
@@ -574,7 +661,7 @@ fun UserInformation(
                                     }
                                     sendLoanRequest = true
                                 },
-                                enabled = repaymentMode != "" && disbursementMode != "",
+                                enabled = repaymentMode != "" && disbursementMode != "" && !hasError,
                                 loading = state.isLoading
                             )
                         }

@@ -23,11 +23,13 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
+
 @Composable
 fun SelfEmployedDetails(
     signHomeState: SignHomeStore.State,
     authState: AuthStore.State,
     onProfileEvent: (SignHomeStore.Intent) -> Unit,
+    onClickSubmit: (errorrOccured: Boolean) -> Unit,
 ) {
     var employernameLive by remember { mutableStateOf("") }
     var employmentNumberLive by remember { mutableStateOf("") }
@@ -39,6 +41,7 @@ fun SelfEmployedDetails(
     val userDetailsMap = mutableMapOf<String, String>()
     val pattern = remember { Regex("^\\d+\$") }
     val numberTextPattern = remember { Regex("^[\\p{L}\\d ]+$") }
+    var hasError by remember { mutableStateOf(false) }
 
     signHomeState.prestaTenantByPhoneNumber?.details?.map { it ->
         if (it.key.contains("employer")) {
@@ -112,7 +115,10 @@ fun SelfEmployedDetails(
                     userInput = businessLocation.text,
                     label = "Business Location",
                     keyboardType = KeyboardType.Text,
-                    pattern = numberTextPattern
+                    pattern = numberTextPattern,
+                    callback2 = { errorcalled ->
+                        hasError = errorcalled
+                    }
 
                 ) {
                     val inputValue: String = TextFieldValue(it).text
@@ -129,7 +135,10 @@ fun SelfEmployedDetails(
                     userInput = businessType.text,
                     label = "Business Type",
                     keyboardType = KeyboardType.Text,
-                    pattern = numberTextPattern
+                    pattern = numberTextPattern,
+                    callback2 = { errorcalled ->
+                        hasError = errorcalled
+                    }
                 ) {
                     val inputValue: String = TextFieldValue(it).text
                     if (inputValue != "") {
@@ -146,7 +155,10 @@ fun SelfEmployedDetails(
                     userInput = kraPinLive,
                     label = "KRA pin",
                     keyboardType = KeyboardType.Text,
-                    pattern = numberTextPattern
+                    pattern = numberTextPattern,
+                    callback2 = { errorcalled ->
+                        hasError = errorcalled
+                    }
                 ) {
                     val inputValue: String = TextFieldValue(it).text
                     if (inputValue != "") {
@@ -167,27 +179,32 @@ fun SelfEmployedDetails(
                 ActionButton(
                     label = "Submit",
                     onClickContainer = {
-                        userDetailsMap["employer"] = employernameLive
-                        userDetailsMap["employmentNumber"] = employmentNumberLive
-                        userDetailsMap["grossSalary"] = grossSalaryDataLive
-                        userDetailsMap["netSalary"] = netSalaryLive
-                        userDetailsMap["kraPin"] =
-                            if (kraPin.text != "") kraPin.text else kraPinLive
-                        userDetailsMap["businessLocation"] =
-                            if (businessLocation.text != "") businessLocation.text else businessLocationLive
-                        userDetailsMap["businessType"] =
-                            if (businessType.text != "") businessType.text else businessTypeLive
-                        authState.cachedMemberData?.let {
-                            SignHomeStore.Intent.UpdatePrestaTenantDetails(
-                                token = it.accessToken,
-                                memberRefId = signHomeState.prestaTenantByPhoneNumber.refId,
-                                details = userDetailsMap
-                            )
-                        }?.let {
-                            onProfileEvent(
-                                it
-                            )
+                        if (!hasError) {
+                            userDetailsMap["employer"] = employernameLive
+                            userDetailsMap["employmentNumber"] = employmentNumberLive
+                            userDetailsMap["grossSalary"] = grossSalaryDataLive
+                            userDetailsMap["netSalary"] = netSalaryLive
+                            userDetailsMap["kraPin"] =
+                                if (kraPin.text != "") kraPin.text else kraPinLive
+                            userDetailsMap["businessLocation"] =
+                                if (businessLocation.text != "") businessLocation.text else businessLocationLive
+                            userDetailsMap["businessType"] =
+                                if (businessType.text != "") businessType.text else businessTypeLive
+                            authState.cachedMemberData?.let {
+                                SignHomeStore.Intent.UpdatePrestaTenantDetails(
+                                    token = it.accessToken,
+                                    memberRefId = signHomeState.prestaTenantByPhoneNumber.refId,
+                                    details = userDetailsMap
+                                )
+                            }?.let {
+                                onProfileEvent(
+                                    it
+                                )
+                            }
+                            onClickSubmit(false)
+
                         }
+
                     },
                     enabled = true,
                     loading = signHomeState.isLoading

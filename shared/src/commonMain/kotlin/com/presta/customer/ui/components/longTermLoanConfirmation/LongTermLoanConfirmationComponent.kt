@@ -38,7 +38,6 @@ interface LongTermLoanConfirmationComponent {
     fun onSignProfileEvent(event: SignHomeStore.Intent)
     val sigHomeStore: SignHomeStore
     val signHomeState: StateFlow<SignHomeStore.State>
-
     //apply  loan
     fun onEvent(event: ApplyLongTermLoansStore.Intent)
     val applyLongTermLoansStore: ApplyLongTermLoansStore
