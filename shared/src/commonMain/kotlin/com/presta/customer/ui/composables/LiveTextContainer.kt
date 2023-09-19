@@ -44,7 +44,6 @@ import com.presta.customer.MR
 import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
-
 @Composable
 fun LiveTextContainer(
     callback2: (errorrOccured: Boolean) -> Unit = {},

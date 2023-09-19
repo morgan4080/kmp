@@ -47,6 +47,8 @@ class SignHomeStoreFactory(
 
         object ClearError : Msg()
         data class UpdateInputValue(val inputField: InputFields, val value: TextFieldValue) : Msg()
+        object ClearKycError : Msg()
+        data class UpdateKycValue(val inputField: KycInputs, val value: TextFieldValue) : Msg()
 
         data class SignHomeFailed(val error: String?) : Msg()
 
@@ -103,6 +105,17 @@ class SignHomeStoreFactory(
                 is SignHomeStore.Intent.ClearError ->
                     dispatch(Msg.ClearError)
 
+                is SignHomeStore.Intent.UpdateKycValues ->
+                    dispatch(
+                        Msg.UpdateKycValue(
+                            inputField = intent.inputField,
+                            value = intent.value
+                        )
+                    )
+
+                is SignHomeStore.Intent.ClearKYCErrors ->
+                    dispatch(Msg.ClearKycError)
+
             }
 
         private var getPrestaTenantByPhoneNumberJob: Job? = null
@@ -152,6 +165,68 @@ class SignHomeStoreFactory(
                             value = TextFieldValue(response.phoneNumber)
                         )
                     )
+                    //update
+                    response.details?.map { it ->
+                        if (it.key.contains("employer")) {
+                            dispatch(
+                                Msg.UpdateKycValue(
+                                    inputField = KycInputs.EMPLOYER,
+                                    value = TextFieldValue(it.value.value.toString())
+                                )
+                            )
+                        }
+                        if (it.key.contains("gross")) {
+                            dispatch(
+                                Msg.UpdateKycValue(
+                                    inputField = KycInputs.GROSSSALARY,
+                                    value = TextFieldValue(it.value.value.toString())
+                                )
+                            )
+                        }
+                        if (it.key.contains("net")) {
+                            dispatch(
+                                Msg.UpdateKycValue(
+                                    inputField = KycInputs.NETSALARY,
+                                    value = TextFieldValue(it.value.value.toString())
+                                )
+                            )
+
+                        }
+                        if (it.key.contains("kra")) {
+                            dispatch(
+                                Msg.UpdateKycValue(
+                                    inputField = KycInputs.KRAPIN,
+                                    value = TextFieldValue(it.value.value.toString())
+                                )
+                            )
+                        }
+                        if (it.key.contains("employment")) {
+                            dispatch(
+                                Msg.UpdateKycValue(
+                                    inputField = KycInputs.EMPLOYMENTNUMBER,
+                                    value = TextFieldValue(it.value.value.toString())
+                                )
+                            )
+
+                        }
+                        if (it.key.contains("businessLocation")) {
+                            dispatch(
+                                Msg.UpdateKycValue(
+                                    inputField = KycInputs.BUSINESSLOCATION,
+                                    value = TextFieldValue(it.value.value.toString())
+                                )
+                            )
+
+                        }
+                        if (it.key.contains("businessType")) {
+                            dispatch(
+                                Msg.UpdateKycValue(
+                                    inputField = KycInputs.BUSINESSTYPE,
+                                    value = TextFieldValue(it.value.value.toString())
+                                )
+                            )
+                        }
+                    }
 
                 }.onFailure { e ->
                     dispatch(Msg.SignHomeFailed(e.message))
@@ -350,8 +425,148 @@ class SignHomeStoreFactory(
                         }
                     }
                 }
+                //update
+                is Msg.UpdateKycValue -> {
+                    when (msg.inputField) {
+                        KycInputs.EMPLOYER -> {
+                            // validate first name
+                            val pattern = Regex("^(\\s*[a-zA-Z\\s]*)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && employer.required) {
+                                errorMsg = "employer is required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "enter valid value."
+                                }
+                            }
+                            copy(
+                                employer = employer.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                )
+                            )
+                        }
+
+                        KycInputs.EMPLOYMENTNUMBER -> {
+                            // validate last name
+                            val pattern = Regex("^([a-zA-Z0-9]+)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && employmentNumber.required) {
+                                errorMsg = "Employment Number required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "Not a valid employment Number."
+                                }
+                            }
+                            copy(
+                                employmentNumber = employmentNumber.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                )
+                            )
+                        }
+
+                        KycInputs.GROSSSALARY -> {
+                            // validate id number
+                            val pattern = Regex("^([0-9]+)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && grossSalary.required) {
+                                errorMsg = "Gross Salary required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "Enter a valid value"
+                                }
+                            }
+                            copy(
+                                grossSalary = grossSalary.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                )
+                            )
+                        }
+
+                        KycInputs.NETSALARY -> {
+                            // validate introducer
+                            val pattern = Regex("^([0-9]+)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && netSalary.required) {
+                                errorMsg = "Net Salary required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "Enter a valid value"
+                                }
+                            }
+                            copy(
+                                netSalary = netSalary.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                )
+                            )
+                        }
+
+                        KycInputs.KRAPIN -> {
+                            // validate introducer
+                            val pattern = Regex("^([a-zA-Z0-9]+)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && kraPin.required) {
+                                errorMsg = "Kra Pin required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "Enter a valid value"
+                                }
+                            }
+                            copy(
+                                kraPin = kraPin.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                )
+                            )
+                        }
+
+                        KycInputs.BUSINESSLOCATION -> {
+                            // validate first name
+                            val pattern = Regex("^(\\s*[a-zA-Z\\s]*)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && businessLocation.required) {
+                                errorMsg = "Business Location required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "Enter a  valid value."
+                                }
+                            }
+                            copy(
+                                businessLocation = businessLocation.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                )
+                            )
+                        }
+
+                        KycInputs.BUSINESSTYPE -> {
+                            val pattern = Regex("^(\\s*[a-zA-Z\\s]*)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && businessType.required) {
+                                errorMsg = "Business Type Required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "Enter a valid value."
+                                }
+                            }
+                            copy(
+                                businessType = businessType.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                )
+                            )
+                        }
+                    }
+                }
 
                 is Msg.ClearError -> copy(
+                    error = null
+                )
+
+                is Msg.ClearKycError -> copy(
                     error = null
                 )
 

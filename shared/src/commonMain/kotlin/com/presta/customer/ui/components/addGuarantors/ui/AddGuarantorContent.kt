@@ -230,7 +230,6 @@ fun AddGuarantorContent(
             }
         }
     }
-
     // check response for member number search add show contribution forms
     LaunchedEffect(
         signHomeState.prestaTenantByMemberNumber,
@@ -288,7 +287,6 @@ fun AddGuarantorContent(
             businessType = it.value.value.toString()
         }
     }
-
     val clearItemClicked: (GuarantorDataListing) -> Unit = { item ->
         guarantorDataListed -= item
     }
@@ -413,8 +411,8 @@ fun AddGuarantorContent(
                             signHomeState,
                             onProfileEvent,
                             //Delegated onclick Button functions
-                            onClickSubmit = { hasErrors ->
-                                if (!hasErrors && tabIndex == 0) {
+                            onClickSubmit = {
+                                if (signHomeState.employer.value.text != "" && signHomeState.employmentNumber.value.text != "" && signHomeState.grossSalary.value.text != "" && signHomeState.netSalary.value.text != "" && signHomeState.kraPin.value.text != "" && tabIndex == 0) {
                                     allConditionsChecked = true
                                     scope.launch { modalBottomSheetState.hide() }
                                 }
@@ -426,8 +424,8 @@ fun AddGuarantorContent(
                             signHomeState,
                             authState,
                             onProfileEvent,
-                            onClickSubmit = { hasErrors ->
-                                if (!hasErrors && tabIndex == 1) {
+                            onClickSubmit = {
+                                if (signHomeState.businessLocation.value.text != "" && signHomeState.businessType.value.text != "" && signHomeState.kraPin.value.text != "" && tabIndex == 1) {
                                     allConditionsChecked = true
                                     scope.launch { modalBottomSheetState.hide() }
                                 }
@@ -1103,6 +1101,7 @@ fun AddGuarantorContent(
                                             //Todo--check if witness is required and navigate
                                             if (state.prestaClientSettings?.response?.requireWitness == true) {
                                                 //navigate  to add witness
+                                                signHomeState.kraPin.value.text != ""
                                                 signHomeState.prestaTenantByPhoneNumber?.refId?.let {
                                                     component.onNavigateToAddWitness(
                                                         component.loanRefId,
@@ -1113,13 +1112,13 @@ fun AddGuarantorContent(
                                                         component.loanCategory,
                                                         component.loanPurpose,
                                                         component.loanPurposeCategory,
-                                                        businessType = businessType,
-                                                        businessLocation = businessLocation,
-                                                        kraPin = kraPin,
-                                                        employer = employer,
-                                                        employmentNumber = employmentNumber,
-                                                        grossSalary = if (grossSalary != "") grossSalary.toDouble() else 0.0,
-                                                        netSalary = if (netSalary != "") netSalary.toDouble() else 0.0,
+                                                        businessType = signHomeState.businessType.value.text,
+                                                        businessLocation = signHomeState.businessLocation.value.text,
+                                                        kraPin = signHomeState.kraPin.value.text,
+                                                        employer = signHomeState.employer.value.text,
+                                                        employmentNumber = signHomeState.employmentNumber.value.text,
+                                                        grossSalary = if (signHomeState.grossSalary.value.text != "") signHomeState.grossSalary.value.text.toDouble() else 0.0,
+                                                        netSalary = if (signHomeState.netSalary.value.text != "") signHomeState.netSalary.value.text.toDouble() else 0.0,
                                                         memberRefId = it,
                                                         guarantorList = guarantorDataListed,
                                                         loanPurposeCategoryCode = component.loanPurposeCategoryCode,

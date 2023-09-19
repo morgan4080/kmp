@@ -102,10 +102,10 @@ fun ApplyLongTermLoansContent(
         LaunchedEffect(
             state.prestaLongTermLoansRequestsSpecificProduct,
             productRefId,
-            refreshing
+            refreshing,
+            state.isLoading
         ) {
             if (state.prestaLongTermLoansRequestsSpecificProduct?.content?.isEmpty() == false) {
-
                 println("The value of the list is;;;;;;; " + contentList)
                 snackbarHostState.currentSnackbarData?.dismiss()
                 filteredResponse =

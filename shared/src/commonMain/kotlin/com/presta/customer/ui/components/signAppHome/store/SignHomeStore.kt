@@ -16,6 +16,27 @@ data class InputMethodConfirmation(
     val enabled: Boolean,
 )
 
+data class Kyc(
+    val inputLabel: String,
+    val fieldType: KycInputs,
+    val required: Boolean,
+    val inputTypes: InputTypes,
+    var value: TextFieldValue,
+    val errorMessage: String,
+    val enabled: Boolean,
+)
+
+enum class KycInputs {
+    EMPLOYER,
+    EMPLOYMENTNUMBER,
+    GROSSSALARY,
+    NETSALARY,
+    KRAPIN,
+    BUSINESSLOCATION,
+    BUSINESSTYPE
+}
+
+
 interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothing> {
     sealed class Intent {
         data class GetPrestaTenantByPhoneNumber(val token: String, val phoneNumber: String) :
@@ -45,8 +66,12 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
             val inputField: InputFields,
             val value: TextFieldValue
         ) : Intent()
-
         object ClearError : Intent()
+        data class UpdateKycValues(
+            val inputField: KycInputs,
+            val value: TextFieldValue
+        ) : Intent()
+        object ClearKYCErrors : Intent()
     }
 
     data class State(
@@ -100,6 +125,70 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
             value = TextFieldValue(),
             errorMessage = "",
             enabled = true
-        )
+        ),
+        //new update
+        val employer: Kyc = Kyc(
+            inputLabel = "Employer*",
+            fieldType = KycInputs.EMPLOYER,
+            inputTypes = InputTypes.STRING,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
+        val employmentNumber: Kyc = Kyc(
+            inputLabel = "Employment Number*",
+            fieldType = KycInputs.EMPLOYMENTNUMBER,
+            inputTypes = InputTypes.STRING,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
+        val grossSalary: Kyc = Kyc(
+            inputLabel = "Gross Salary*",
+            fieldType = KycInputs.GROSSSALARY,
+            inputTypes = InputTypes.NUMBER,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
+        val netSalary: Kyc = Kyc(
+            inputLabel = "Net Salary*",
+            fieldType = KycInputs.NETSALARY,
+            inputTypes = InputTypes.NUMBER,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
+        val kraPin: Kyc = Kyc(
+            inputLabel = "Kra Pin*",
+            fieldType = KycInputs.KRAPIN,
+            inputTypes = InputTypes.STRING,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
+        val businessLocation: Kyc = Kyc(
+            inputLabel = "Business Location*",
+            fieldType = KycInputs.BUSINESSLOCATION,
+            inputTypes = InputTypes.STRING,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
+        val businessType: Kyc = Kyc(
+            inputLabel = "Business Type*",
+            fieldType = KycInputs.BUSINESSTYPE,
+            inputTypes = InputTypes.STRING,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
     )
 }

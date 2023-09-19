@@ -680,6 +680,7 @@ fun AddWitnessContent(
                         ActionButton(
                             label = if (witnessDataListed.size != 1) "Search" else "Add Witness",
                             onClickContainer = {
+                                println("tES DATA:::::" +  component.kraPin)
                                 if (witnessDataListed.size != 1) {
                                     when (witnessOptions) {
                                         WitnessOptions.MEMBERNUMBER -> {

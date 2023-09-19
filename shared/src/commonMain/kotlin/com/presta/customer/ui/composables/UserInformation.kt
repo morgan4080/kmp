@@ -96,6 +96,13 @@ fun UserInformation(
     var launchHandleLoanRequestPopUp by remember { mutableStateOf(false) }
     var disbursementMode by remember { mutableStateOf("") }
     var repaymentMode by remember { mutableStateOf("") }
+    var employer by remember { mutableStateOf("") }
+    var grossSalary by remember { mutableStateOf("") }
+    var netSalary by remember { mutableStateOf("") }
+    var kraPin by remember { mutableStateOf("") }
+    var employmentNumber by remember { mutableStateOf("") }
+    var businessLocation by remember { mutableStateOf("") }
+    var businessType by remember { mutableStateOf("") }
     val guarantorList = arrayListOf<Guarantor>()
     for (item in component.guarantorList) {
         val refId = item.guarantorRefId
@@ -136,6 +143,30 @@ fun UserInformation(
             }
         }
     }
+    signProfileState.prestaTenantByPhoneNumber?.details?.map { it ->
+        if (it.key.contains("employer")) {
+            employer = it.value.value.toString()
+        }
+        if (it.key.contains("gross")) {
+            grossSalary = it.value.value.toString()
+        }
+        if (it.key.contains("net")) {
+            netSalary = it.value.value.toString()
+        }
+        if (it.key.contains("kra")) {
+            kraPin = it.value.value.toString()
+        }
+        if (it.key.contains("employment")) {
+            employmentNumber = it.value.value.toString()
+        }
+        if (it.key.contains("businessL")) {
+            businessLocation = it.value.value.toString()
+        }
+        if (it.key.contains("businessT")) {
+            businessType = it.value.value.toString()
+        }
+    }
+
     Column(modifier = Modifier.padding(top = 20.dp)) {
         //popup Disbursement mode
         //Aded the popUps on top of Parent Column to prevent them from freezing
@@ -796,17 +827,17 @@ fun UserInformation(
                                                     loanPurposeCode = component.loanPurposeCategoryCode,
                                                     loanPeriod = component.loanPeriod.toString(),
                                                     repayment_period = component.loanPeriod.toString(),
-                                                    employer_name = component.employer,
+                                                    employer_name = employer,
                                                     employment_type = "",
-                                                    employment_number = component.employmentNumber,
-                                                    business_location = component.businessLocation,
-                                                    business_type = component.businessType,
-                                                    net_salary = component.netSalary.toString(),
-                                                    gross_salary = component.grossSalary.toString(),
+                                                    employment_number = employmentNumber,
+                                                    business_location = businessLocation,
+                                                    business_type = businessType,
+                                                    net_salary = netSalary,
+                                                    gross_salary = grossSalary,
                                                     disbursement_mode = disbursementMode,
                                                     repayment_mode = repaymentMode,
                                                     loan_type = component.loanType,
-                                                    kra_pin = component.kraPin
+                                                    kra_pin = kraPin
                                                 ),
                                                 loanProductName = component.loanType,
                                                 loanProductRefId = component.loanRefId,
