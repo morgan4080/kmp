@@ -1,6 +1,5 @@
 package com.presta.customer.ui.components.signAppHome.ui
 
-import ShimmerBrush
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -58,6 +57,7 @@ import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.SignHomeComponent
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.MainModalDrawerSheet
+import com.presta.customer.ui.composables.ShimmerBrush
 import com.presta.customer.ui.composables.SignProductSelection
 import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.helpers.formatMoney
@@ -248,7 +248,7 @@ fun SignHomeContent(
                                             Row(modifier = Modifier.fillMaxWidth()) {
                                                 Spacer(modifier = Modifier.weight(1f))
                                                 Text(
-                                                    text = "Share Amount ",
+                                                    text = "My Borrowing Limit ",
                                                     fontSize = 14.sp,
                                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                                 )
@@ -265,9 +265,9 @@ fun SignHomeContent(
                                                             ),
                                                             shape = RoundedCornerShape(12.dp)
                                                         ).defaultMinSize(50.dp),
-                                                    text = if (state.prestaTenantByPhoneNumber?.totalShares !== null) "${
+                                                    text = if (state.prestaTenantByPhoneNumber?.availableAmount !== null) "${
                                                         formatMoney(
-                                                            state.prestaTenantByPhoneNumber.totalShares
+                                                            state.prestaTenantByPhoneNumber.availableAmount
                                                         )
                                                     } KES" else "",
                                                     color = MaterialTheme.colorScheme.onBackground,

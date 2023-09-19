@@ -1,6 +1,6 @@
 package com.presta.customer.ui.components.topUp.ui
 
-import ShimmerBrush
+import com.presta.customer.ui.composables.ShimmerBrush
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

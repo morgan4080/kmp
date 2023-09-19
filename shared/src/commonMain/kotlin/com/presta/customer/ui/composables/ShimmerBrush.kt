@@ -1,3 +1,5 @@
+package com.presta.customer.ui.composables
+
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable

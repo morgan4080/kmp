@@ -1,6 +1,5 @@
 package com.presta.customer.ui.composables
 
-import ShimmerBrush
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn

@@ -1,7 +1,6 @@
 package com.presta.customer.ui.components.applyLongTermLoan.ui
 
 import ProductSelectionCard
-import ShimmerBrush
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -59,6 +58,7 @@ import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLo
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.NavigateBackTopBar
+import com.presta.customer.ui.composables.ShimmerBrush
 import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.delay
@@ -321,12 +321,12 @@ fun ApplyLongTermLoansContent(
                                 .padding(innerPadding)
                         ) {
 
-                            if (state.prestaLongTermLoanProducts?.total == null) {
+                            if (state.prestaLongTermLoanProducts?.total == null || state.isLoading) {
                                 items(6) {
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(top = 10.dp, bottom = 15.dp)
+                                            .padding(vertical = 10.dp)
                                             .background(color = MaterialTheme.colorScheme.background),
                                     ) {
                                         ElevatedCard(

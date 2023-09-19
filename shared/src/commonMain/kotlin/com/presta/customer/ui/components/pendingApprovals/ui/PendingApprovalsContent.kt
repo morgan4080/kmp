@@ -1,6 +1,6 @@
 package com.presta.customer.ui.components.pendingApprovals.ui
 
-import ShimmerBrush
+import com.presta.customer.ui.composables.ShimmerBrush
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween

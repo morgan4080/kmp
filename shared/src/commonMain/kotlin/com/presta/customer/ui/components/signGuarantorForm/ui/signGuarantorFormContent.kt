@@ -1,6 +1,6 @@
 package com.presta.customer.ui.components.signGuarantorForm.ui
 
-import ShimmerBrush
+import com.presta.customer.ui.composables.ShimmerBrush
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

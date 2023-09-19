@@ -1,6 +1,5 @@
 package com.presta.customer.ui.composables
 
-import ShimmerBrush
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

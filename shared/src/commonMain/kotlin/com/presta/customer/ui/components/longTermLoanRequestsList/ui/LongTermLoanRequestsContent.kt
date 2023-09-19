@@ -1,6 +1,6 @@
 package com.presta.customer.ui.components.longTermLoanRequestsList.ui
 
-import ShimmerBrush
+import com.presta.customer.ui.composables.ShimmerBrush
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

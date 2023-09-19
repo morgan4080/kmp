@@ -1,12 +1,12 @@
 package com.presta.customer.ui.components.longTermLoanDetails.ui
 
-import ShimmerBrush
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,7 +24,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -53,6 +52,7 @@ import com.presta.customer.ui.components.longTermLoanDetails.LongTermLoanDetails
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.NavigateBackTopBar
+import com.presta.customer.ui.composables.ShimmerBrush
 import com.presta.customer.ui.composables.TextInputContainer
 import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.theme.actionButtonColor
@@ -96,7 +96,7 @@ fun LongTermLoanDetailsContent(
                                 showShimmer = state.prestaLongTermLoanProductById?.name == null
                             ),
                             shape = RoundedCornerShape(12.dp)
-                        ).defaultMinSize(150.dp),
+                        ).defaultMinSize(100.dp),
                         text = if (state.prestaLongTermLoanProductById?.name !== null) state.prestaLongTermLoanProductById.name else "",
                         color = MaterialTheme.colorScheme.primary,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
@@ -127,7 +127,7 @@ fun LongTermLoanDetailsContent(
                                     showShimmer = state.prestaLongTermLoanProductById?.maxperiod == null
                                 ),
                                 shape = RoundedCornerShape(12.dp)
-                            ).defaultMinSize(150.dp)
+                            ).defaultMinSize(200.dp)
                             .padding(top = 10.dp),
                         text = if (state.prestaLongTermLoanProductById?.maxperiod !== null) "Max Period " + state.prestaLongTermLoanProductById.maxperiod.toString() + "(Months)" else "",
                         color = MaterialTheme.colorScheme.primary,
@@ -336,7 +336,8 @@ fun LongTermLoanDetailsContent(
                             "Cancel",
                             fontSize = 14.sp,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
-                            textDecoration = TextDecoration.Underline
+                            textDecoration = TextDecoration.Underline,
+                            modifier = Modifier.clickable { component.onBackNavClicked() }
                         )
                     }
                 }

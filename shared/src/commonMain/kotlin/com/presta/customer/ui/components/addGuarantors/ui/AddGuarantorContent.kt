@@ -42,7 +42,6 @@ import androidx.compose.material.icons.filled.RadioButtonChecked
 import androidx.compose.material.icons.outlined.ArrowCircleDown
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Error
-import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -480,7 +479,18 @@ fun AddGuarantorContent(
                         }
                         Row(
                             modifier = Modifier
-                                .padding(top = 10.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Guarantor Amount",
+                                color= MaterialTheme.colorScheme.primary,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .padding(top = 5.dp)
                                 .fillMaxWidth()
                         ) {
                             //Todo--show the number of the selected guarantor
@@ -494,7 +504,7 @@ fun AddGuarantorContent(
                         }
                         Row(
                             modifier = Modifier
-                                .padding(top = 10.dp)
+                                .padding(top = 5.dp)
                                 .fillMaxWidth()
                         ) {
                             amountDesired = component.desiredAmount.toInt()
