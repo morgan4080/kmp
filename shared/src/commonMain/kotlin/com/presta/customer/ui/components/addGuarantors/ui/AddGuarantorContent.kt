@@ -358,22 +358,6 @@ fun AddGuarantorContent(
     var diferences by remember { mutableStateOf(0) }
     val contactsScope = rememberCoroutineScope()
     val numberPattern = remember { Regex("^\\d+\$") }
-
-    //Todo----launch self  and employed pop up automatically
-//    LaunchedEffect(
-//        guarantorDataListed.size,
-////        state.isLoading,
-////        signHomeState.isLoading
-//    ) {
-//        println("Check has been called :::::::::::")
-//        println("size of the list" + guarantorDataListed.size)
-//        if (guarantorDataListed.size == component.requiredGuarantors) {
-//            scope.launch { modalBottomSheetState.show() }
-//            launchAddAmountToGuarantee = false
-//            launchCheckSelfAndEmPloyedPopUp = true
-//        }
-//    }
-
     // clear searched member when bottom sheet is dismissed
     if (modalBottomSheetState.currentValue != ModalBottomSheetValue.Hidden) {
         DisposableEffect(Unit) {
@@ -483,7 +467,7 @@ fun AddGuarantorContent(
                         ) {
                             Text(
                                 text = "Guarantor Amount",
-                                color= MaterialTheme.colorScheme.primary,
+                                color = MaterialTheme.colorScheme.primary,
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
                                 style = MaterialTheme.typography.bodyMedium
                             )

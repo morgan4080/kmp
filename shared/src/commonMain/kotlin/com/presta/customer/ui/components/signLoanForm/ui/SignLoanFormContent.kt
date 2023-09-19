@@ -155,9 +155,10 @@ fun SignLoanFormContent(
                                     it
                                 )
                             }
+                            println("The Sign Url :::::::: " + state.prestaZohoSignUrl )
 
                         },
-                        loading = state.prestaZohoSignUrl == null
+                        loading =  state.isLoading
                     )
                 }
             }

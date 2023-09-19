@@ -47,8 +47,6 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
 fun LiveTextContainer(
-    callback3: (Boolean) -> Unit = { newError ->
-    },
     callback2: (errorrOccured: Boolean) -> Unit = {},
     keyboardType: KeyboardType,
     pattern: Regex,
@@ -60,7 +58,6 @@ fun LiveTextContainer(
     val emptyTextContainer by remember { mutableStateOf(TextFieldValue()) }
     var userInputs by remember { mutableStateOf(TextFieldValue(userInput)) }
     callback2(userInputs.text == "")
-    callback3(userInputs.text == "")
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -162,7 +159,6 @@ fun LiveTextContainer(
                 )
             }
             if (userInputs.text == "") {
-                callback3(true)
                 Text(
                     modifier = Modifier.padding(top = 10.dp, start = 5.dp),
                     text = "Required",
@@ -171,8 +167,6 @@ fun LiveTextContainer(
                     color = Color.Red
                 )
 
-            } else {
-                callback3(false)
             }
 
         }
