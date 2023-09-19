@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,7 +34,6 @@ import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignLoanFormContent(
     component: SignLoanFormComponent,
@@ -61,25 +59,14 @@ fun SignLoanFormContent(
         }
     }
 
-    if (component.loanRequestRefId != "") {
-        LaunchedEffect(
-            component.loanRequestRefId,
-            state.prestaLoanByLoanRequestRefId
-        ) {
-            authState.cachedMemberData?.let {
-                ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
-                    token = it.accessToken,
-                    loanRequestRefId = component.loanRequestRefId,
-                    actorRefId = component.memberRefId,
-                    actorType = ActorType.APPLICANT
-                )
-            }?.let {
-                onEvent(
-                    it
-                )
-            }
+    LaunchedEffect(
+        state.prestaZohoSignUrl?.signURL
+    ) {
+        if (state.prestaZohoSignUrl?.signURL != null) {
+            component.platform.openUrl(state.prestaZohoSignUrl.signURL)
         }
     }
+
 
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Sign Loan Form", onClickContainer = {
@@ -156,9 +143,17 @@ fun SignLoanFormContent(
                     ActionButton(
                         label = "SIGN DOCUMENT",
                         onClickContainer = {
-                            //Todo=--already fixed this implementation
-                            if (state.prestaZohoSignUrl?.signURL != null) {
-                                component.platform.openUrl(state.prestaZohoSignUrl.signURL)
+                            authState.cachedMemberData?.let {
+                                ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
+                                    token = it.accessToken,
+                                    loanRequestRefId = component.loanRequestRefId,
+                                    actorRefId = component.memberRefId,
+                                    actorType = ActorType.APPLICANT
+                                )
+                            }?.let {
+                                onEvent(
+                                    it
+                                )
                             }
 
                         },

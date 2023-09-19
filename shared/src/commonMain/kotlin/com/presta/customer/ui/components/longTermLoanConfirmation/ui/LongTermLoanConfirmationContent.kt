@@ -103,7 +103,11 @@ fun LongTermLoanConfirmationContent(
                                             )
                                         )
                                         .background(
-                                            color = if (tabIndex == index) MaterialTheme.colorScheme.inverseOnSurface.copy(0.3f) else MaterialTheme.colorScheme.inverseOnSurface.copy(0.1f)
+                                            color = if (tabIndex == index) MaterialTheme.colorScheme.inverseOnSurface.copy(
+                                                0.3f
+                                            ) else MaterialTheme.colorScheme.inverseOnSurface.copy(
+                                                0.1f
+                                            )
                                         ),
                                     selectedContentColor = MaterialTheme.colorScheme.surfaceTint,
                                     unselectedContentColor = MaterialTheme.colorScheme.outline
@@ -113,7 +117,15 @@ fun LongTermLoanConfirmationContent(
                     }
                 }
                 when (tabIndex) {
-                    0 -> UserInformation(component,authState,signProfileState,onLongTermLoanEvent,state,onSignProfileEvent)
+                    0 -> UserInformation(
+                        component,
+                        authState,
+                        signProfileState,
+                        onLongTermLoanEvent,
+                        state,
+                        onSignProfileEvent
+                    )
+
                     1 -> LoanInformation(component)
                 }
             }

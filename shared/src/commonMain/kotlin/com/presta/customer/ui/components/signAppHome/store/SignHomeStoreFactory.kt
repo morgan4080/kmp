@@ -1,5 +1,6 @@
 package com.presta.customer.ui.components.signAppHome.store
 
+import androidx.compose.ui.text.input.TextFieldValue
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.core.store.Store
@@ -8,6 +9,7 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.presta.customer.network.signHome.data.SignHomeRepository
 import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
 import com.presta.customer.prestaDispatchers
+import com.presta.customer.ui.components.registration.store.InputFields
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -39,10 +41,15 @@ class SignHomeStoreFactory(
 
         data class UpdateSignTenantDetails(val updateSignTenantDetails: PrestaSignUserDetailsResponse) :
             Msg()
+
         data class UpdateSignTenanPersonalInfo(val updateSignTenantPersonalInfo: PrestaSignUserDetailsResponse) :
             Msg()
 
+        object ClearError : Msg()
+        data class UpdateInputValue(val inputField: InputFields, val value: TextFieldValue) : Msg()
+
         data class SignHomeFailed(val error: String?) : Msg()
+
     }
 
     private inner class ExecutorImpl :
@@ -73,15 +80,28 @@ class SignHomeStoreFactory(
                     memberRefId = intent.memberRefId,
                     details = intent.details
                 )
-                is SignHomeStore.Intent.UpdatePrestaTenantPersonalInfo->updatePrestaMemberPersonalInfo(
+
+                is SignHomeStore.Intent.UpdatePrestaTenantPersonalInfo -> updatePrestaMemberPersonalInfo(
                     token = intent.token,
                     memberRefId = intent.memberRefId,
                     firstName = intent.firstName,
                     lastName = intent.lastName,
                     phoneNumber = intent.phoneNumber,
                     idNumber = intent.idNumber,
-                    email = intent.email
+                    email = intent.email,
+                    callback = intent.callback
                 )
+
+                is SignHomeStore.Intent.UpdateInputValue ->
+                    dispatch(
+                        Msg.UpdateInputValue(
+                            inputField = intent.inputField,
+                            value = intent.value
+                        )
+                    )
+
+                is SignHomeStore.Intent.ClearError ->
+                    dispatch(Msg.ClearError)
 
             }
 
@@ -101,10 +121,41 @@ class SignHomeStoreFactory(
                     phoneNumber = phoneNumber
                 ).onSuccess { response ->
                     dispatch(Msg.SignTenantByPhoneNumberLoaded(response))
+                    //use  the response to push the update
+                    dispatch(
+                        Msg.UpdateInputValue(
+                            inputField = InputFields.FIRST_NAME,
+                            value = TextFieldValue(response.firstName)
+                        )
+                    )
+                    dispatch(
+                        Msg.UpdateInputValue(
+                            inputField = InputFields.LAST_NAME,
+                            value = TextFieldValue(response.lastName)
+                        )
+                    )
+                    dispatch(
+                        Msg.UpdateInputValue(
+                            inputField = InputFields.EMAIL,
+                            value = TextFieldValue(response.email)
+                        )
+                    )
+                    dispatch(
+                        Msg.UpdateInputValue(
+                            inputField = InputFields.ID_NUMBER,
+                            value = TextFieldValue(response.idNumber)
+                        )
+                    )
+                    dispatch(
+                        Msg.UpdateInputValue(
+                            inputField = InputFields.INTRODUCER,
+                            value = TextFieldValue(response.phoneNumber)
+                        )
+                    )
+
                 }.onFailure { e ->
                     dispatch(Msg.SignHomeFailed(e.message))
                 }
-
                 dispatch(Msg.SignHomeLoading(false))
             }
         }
@@ -164,6 +215,7 @@ class SignHomeStoreFactory(
             phoneNumber: String,
             idNumber: String,
             email: String,
+            callback: () -> Unit
         ) {
             if (updatePrestaMemberPersonalInfoJob?.isActive == true) return
 
@@ -173,13 +225,14 @@ class SignHomeStoreFactory(
                 signHomeRepository.upDateMemberPersonalInfo(
                     token = token,
                     memberRefId = memberRefId,
-                    firstName=firstName,
-                    lastName= lastName,
-                    phoneNumber=phoneNumber,
-                    idNumber=idNumber,
-                    email=email
+                    firstName = firstName,
+                    lastName = lastName,
+                    phoneNumber = phoneNumber,
+                    idNumber = idNumber,
+                    email = email
                 ).onSuccess { response ->
                     dispatch(Msg.UpdateSignTenantDetails(response))
+                    callback()
                 }.onFailure { e ->
                     dispatch(Msg.SignHomeFailed(e.message))
                 }
@@ -187,6 +240,7 @@ class SignHomeStoreFactory(
             }
         }
     }
+
     private object ReducerImpl :
         Reducer<SignHomeStore.State, Msg> {
         override fun SignHomeStore.State.reduce(msg: Msg): SignHomeStore.State =
@@ -196,7 +250,110 @@ class SignHomeStoreFactory(
                 is Msg.SignTenantByPhoneNumberLoaded -> copy(prestaTenantByPhoneNumber = msg.signTenantById)
                 is Msg.SignTenantByMemberNumberLoaded -> copy(prestaTenantByMemberNumber = msg.signTenantByMemberNumber)
                 is Msg.UpdateSignTenantDetails -> copy(updatePrestaTenantDetails = msg.updateSignTenantDetails)
-                is Msg.UpdateSignTenanPersonalInfo-> copy(updatePrestaTenantPersonalInfo=msg.updateSignTenantPersonalInfo)
+                is Msg.UpdateSignTenanPersonalInfo -> copy(updatePrestaTenantPersonalInfo = msg.updateSignTenantPersonalInfo)
+                is Msg.UpdateInputValue -> {
+                    when (msg.inputField) {
+                        InputFields.FIRST_NAME -> {
+                            // validate first name
+                            val pattern = Regex("^([a-zA-Z]+)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && firstName.required) {
+                                errorMsg = "First name is required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "Not a valid first name."
+                                }
+                            }
+                            copy(
+                                firstName = firstName.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                )
+                            )
+                        }
+
+                        InputFields.LAST_NAME -> {
+                            // validate last name
+                            val pattern = Regex("^([a-zA-Z]+)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && lastName.required) {
+                                errorMsg = "Last name is required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "Not a valid last name."
+                                }
+                            }
+                            copy(
+                                lastName = lastName.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                )
+                            )
+                        }
+
+                        InputFields.ID_NUMBER -> {
+                            // validate id number
+                            val pattern = Regex("^([0-9]+)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && idNumber.required) {
+                                errorMsg = "ID number is required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "Not a valid id number"
+                                }
+                            }
+                            copy(
+                                idNumber = idNumber.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                )
+                            )
+                        }
+
+                        InputFields.INTRODUCER -> {
+                            // validate introducer
+                            val pattern = Regex("^([0-9]+)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && introducer.required) {
+                                errorMsg = "Phone number is required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "Not a valid Phone number"
+                                }
+                            }
+                            copy(
+                                introducer = introducer.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                )
+                            )
+                        }
+
+                        InputFields.EMAIL -> {
+                            // validate email
+                            val pattern =
+                                Regex("(?:[a-z0-9!#\$%&'*+/=?^_`{|}~\\-]+(?:\\.[a-z0-9!#\$%&'*+/=?^_`{|}~\\-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)])")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && email.required) {
+                                errorMsg = "Email is required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "Not a valid email address"
+                                }
+                            }
+                            copy(
+                                email = email.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                )
+                            )
+                        }
+                    }
+                }
+
+                is Msg.ClearError -> copy(
+                    error = null
+                )
 
             }
     }

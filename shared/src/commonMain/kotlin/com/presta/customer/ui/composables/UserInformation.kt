@@ -1,6 +1,11 @@
 package com.presta.customer.ui.composables
 
 import ShimmerBrush
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -8,28 +13,44 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -45,6 +66,7 @@ import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.longTermLoanConfirmation.LongTermLoanConfirmationComponent
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.theme.actionButtonColor
+import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 data class DisbursementModes(
@@ -73,11 +95,8 @@ fun UserInformation(
     var launchPaymentModePopUp by remember { mutableStateOf(false) }
     var sendLoanRequest by remember { mutableStateOf(false) }
     var launchHandleLoanRequestPopUp by remember { mutableStateOf(false) }
-    var hasError by remember { mutableStateOf(false) }
     var disbursementMode by remember { mutableStateOf("") }
     var repaymentMode by remember { mutableStateOf("") }
-    val pattern = remember { Regex("^\\d+\$") }
-    val numberTextPattern = remember { Regex("^[\\p{L}\\d ]+$") }
     val guarantorList = arrayListOf<Guarantor>()
     for (item in component.guarantorList) {
         val refId = item.guarantorRefId
@@ -85,23 +104,18 @@ fun UserInformation(
         val guarantorName = item.guarantorFirstName
         guarantorList.add(Guarantor(refId, amount, guarantorName))
     }
-    var firstnameLive by remember { mutableStateOf("") }
-    var lastnameLive by remember { mutableStateOf("") }
-    var phoneNumberLive by remember { mutableStateOf("") }
-    var idNumberLive by remember { mutableStateOf("") }
-    var emailLive by remember { mutableStateOf("") }
-    if (signProfileState.prestaTenantByPhoneNumber?.refId != null) {
-        firstnameLive = signProfileState.prestaTenantByPhoneNumber.firstName
-        lastnameLive = signProfileState.prestaTenantByPhoneNumber.lastName
-        phoneNumberLive = signProfileState.prestaTenantByPhoneNumber.phoneNumber
-        idNumberLive = signProfileState.prestaTenantByPhoneNumber.idNumber
-        emailLive = signProfileState.prestaTenantByPhoneNumber.email
+    val snackbarHostState = remember { SnackbarHostState() }
+    val focusRequester = remember { FocusRequester() }
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(signProfileState.error) {
+        if (signProfileState.error !== null) {
+            snackbarHostState.showSnackbar(
+                signProfileState.error
+            )
+            // clear error
+            onSignProfileEvent(SignHomeStore.Intent.ClearError)
+        }
     }
-    var firstName by remember { mutableStateOf(TextFieldValue(firstnameLive)) }
-    var lastName by remember { mutableStateOf(TextFieldValue(lastnameLive)) }
-    var phoneNumber by remember { mutableStateOf(TextFieldValue(phoneNumberLive)) }
-    var idNumber by remember { mutableStateOf(TextFieldValue(idNumberLive)) }
-    var email by remember { mutableStateOf(TextFieldValue(emailLive)) }
     LaunchedEffect(state.prestaLongTermLoanRequestData?.refId) {
         if (!state.prestaLongTermLoanRequestData?.refId.isNullOrEmpty()) {
             state.prestaLongTermLoanRequestData?.let {
@@ -431,6 +445,107 @@ fun UserInformation(
                 }
             }
         }
+        if (launchHandleLoanRequestPopUp) {
+            Popup {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .background(color = Color.Black.copy(alpha = 0.7f)),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    ElevatedCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = 26.dp,
+                                end = 26.dp,
+                                top = 40.dp,
+                                bottom = 90.dp
+                            ),
+                        colors = CardDefaults
+                            .elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(start = 16.dp, end = 16.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = "PENDING REASON",
+                                    modifier = Modifier.padding(top = 20.dp),
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                                )
+                                Text(
+                                    text = if (state.error != null || state.prestaLongTermLoanRequestData?.pendingReason != null) state.error.toString() + state.prestaLongTermLoanRequestData?.pendingReason else "",
+                                    modifier = Modifier.padding(top = 10.dp),
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                )
+                            }
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    top = 20.dp,
+                                    bottom = 10.dp,
+                                ),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+
+                            OutlinedButton(
+                                border = BorderStroke(
+                                    width = 1.dp,
+                                    color = MaterialTheme.colorScheme.primary
+                                ),
+                                onClick = {
+                                    launchHandleLoanRequestPopUp = false
+                                },
+                                modifier = Modifier
+                                    .padding(start = 16.dp)
+                                    .height(30.dp),
+                            ) {
+
+                                Text(
+                                    text = "Dismiss",
+                                    fontSize = 11.sp,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.align(Alignment.CenterVertically),
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                )
+
+                            }
+                            OutlinedButton(
+                                colors = ButtonDefaults.outlinedButtonColors(containerColor = actionButtonColor),
+                                border = BorderStroke(
+                                    width = 0.dp,
+                                    color = actionButtonColor
+                                ),
+                                onClick = {
+                                    launchHandleLoanRequestPopUp = false
+                                },
+                                modifier = Modifier
+                                    .padding(end = 16.dp)
+                                    .height(30.dp),
+                            ) {
+
+                                Text(
+                                    text = "Proceed",
+                                    color = Color.White,
+                                    fontSize = 11.sp,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.align(Alignment.CenterVertically),
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
         LazyColumn() {
             if (signProfileState.prestaTenantByPhoneNumber?.firstName == null) {
                 items(6) {
@@ -462,319 +577,272 @@ fun UserInformation(
                     }
                 }
             } else {
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Row(
+
+                fun checkIfValid(): Boolean {
+                    var valid = true
+                    listOf(
+                        signProfileState.firstName,
+                        signProfileState.lastName,
+                        signProfileState.email,
+                        signProfileState.idNumber,
+                        signProfileState.introducer,
+                    ).map { inputMethod ->
+                        if (inputMethod.required && inputMethod.value.text.isEmpty()) valid = false
+                    }
+
+                    return valid
+                }
+                listOf(
+                    signProfileState.firstName,
+                    signProfileState.lastName,
+                    signProfileState.email,
+                    signProfileState.idNumber,
+                    signProfileState.introducer,
+                ).map { inputMethod ->
+                    item {
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                                .shadow(0.5.dp, RoundedCornerShape(10.dp))
+                                .background(
+                                    color = MaterialTheme.colorScheme.inverseOnSurface,
+                                    shape = RoundedCornerShape(10.dp)
+                                ),
                         ) {
-                            LiveTextContainer(
-                                userInput = firstnameLive,
-                                label = "first Name",
-                                keyboardType = KeyboardType.Text,
-                                pattern = numberTextPattern,
-                                callback2 = { errorcalled ->
-                                    hasError = errorcalled
-                                }
-                            ) {
-                                val inputValue: String = TextFieldValue(it).text
-                                if (inputValue != "") {
-                                    if (TextFieldValue(it).text !== "") {
-                                        firstName = TextFieldValue(it)
-
-                                    } else {
-
+                            BasicTextField(
+                                modifier = Modifier
+                                    .focusRequester(focusRequester)
+                                    .height(65.dp)
+                                    .padding(
+                                        top = 20.dp,
+                                        bottom = 16.dp,
+                                        start = 16.dp,
+                                        end = 16.dp
+                                    )
+                                    .absoluteOffset(y = 2.dp),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType =
+                                    when (inputMethod.inputTypes) {
+                                        InputTypes.NUMBER -> KeyboardType.Number
+                                        InputTypes.STRING -> KeyboardType.Text
+                                        InputTypes.PHONE -> KeyboardType.Phone
+                                        InputTypes.URI -> KeyboardType.Uri
+                                        InputTypes.EMAIL -> KeyboardType.Email
+                                        InputTypes.PASSWORD -> KeyboardType.Password
+                                        InputTypes.NUMBER_PASSWORD -> KeyboardType.NumberPassword
+                                        InputTypes.DECIMAL -> KeyboardType.Decimal
                                     }
-                                }
-                            }
-                        }
-                        Row(modifier = Modifier.fillMaxWidth()) {
-                            LiveTextContainer(
-                                userInput = lastnameLive,
-                                label = "last name",
-                                keyboardType = KeyboardType.Text,
-                                pattern = numberTextPattern,
-                                callback2 = { errorcalled ->
-                                    hasError = errorcalled
-                                }
-                            ) {
-                                val inputValue: String = TextFieldValue(it).text
-                                if (inputValue != "") {
-                                    if (TextFieldValue(it).text !== "") {
-                                        lastName = TextFieldValue(it)
-
-                                    } else {
-
-                                    }
-                                }
-                            }
-                        }
-                        Row(modifier = Modifier.fillMaxWidth()) {
-                            LiveTextContainer(
-                                userInput = idNumberLive,
-                                label = "ID number",
-                                keyboardType = KeyboardType.Number,
-                                pattern = pattern,
-                                callback2 = { errorcalled ->
-                                    hasError = errorcalled
-                                }
-                            ) {
-                                val inputValue: String = TextFieldValue(it).text
-                                if (inputValue != "") {
-                                    if (TextFieldValue(it).text !== "") {
-                                        idNumber = TextFieldValue(it)
-
-                                    } else {
-
-                                    }
-                                }
-                            }
-                        }
-                        Row(modifier = Modifier.fillMaxWidth()) {
-                            LiveTextContainer(
-                                userInput = phoneNumberLive,
-                                label = "Phone Number",
-                                keyboardType = KeyboardType.Number,
-                                pattern = pattern,
-                                callback2 = { errorcalled ->
-                                    hasError = errorcalled
-                                }
-                            ) {
-                                val inputValue: String = TextFieldValue(it).text
-                                if (inputValue != "") {
-                                    if (TextFieldValue(it).text !== "") {
-                                        phoneNumber = TextFieldValue(it)
-
-                                    } else {
-
-                                    }
-                                }
-                            }
-                        }
-                        Row(modifier = Modifier.fillMaxWidth()) {
-                            LiveTextContainer(
-                                userInput = emailLive,
-                                label = "email",
-                                keyboardType = KeyboardType.Text,
-                                pattern = numberTextPattern,
-                                callback2 = { errorcalled ->
-                                    hasError = errorcalled
-                                }
-                            ) {
-                                val inputValue: String = TextFieldValue(it).text
-                                if (inputValue != "") {
-                                    if (TextFieldValue(it).text !== "") {
-                                        email = TextFieldValue(it)
-
-                                    } else {
-
-                                    }
-                                }
-                            }
-                        }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 10.dp)
-                        ) {
-                            ModeSelectionCard(label = "Disbursement Mode",
-                                description = if (disbursementMode != "") disbursementMode else "",
-                                onClickContainer = {
-                                    launchDisbursementModePopUp = true
-
-                                })
-                        }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 10.dp)
-                        ) {
-                            ModeSelectionCard(label = "Repayment Mode",
-                                description = if (repaymentMode != "") repaymentMode else "",
-                                onClickContainer = {
-                                    launchPaymentModePopUp = true
-                                })
-                        }
-                        //Todo --- get the updated response in  real time
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 40.dp)
-                        ) {
-                            ActionButton(
-                                label = "Submit  Loan Request", onClickContainer = {
-                                    if (!hasError) {
-                                        authState.cachedMemberData?.let {
-                                            SignHomeStore.Intent.UpdatePrestaTenantPersonalInfo(
-                                                token = it.accessToken,
-                                                memberRefId = signProfileState.prestaTenantByPhoneNumber.refId,
-                                                firstName = if (firstName.text != "") firstName.text else signProfileState.prestaTenantByPhoneNumber.firstName,
-                                                lastName = if (lastName.text != "") lastName.text else signProfileState.prestaTenantByPhoneNumber.lastName,
-                                                phoneNumber = if (phoneNumber.text != "") phoneNumber.text else signProfileState.prestaTenantByPhoneNumber.phoneNumber,
-                                                idNumber = if (idNumber.text != "") idNumber.text else signProfileState.prestaTenantByPhoneNumber.idNumber,
-                                                email = if (email.text != "") email.text else signProfileState.prestaTenantByPhoneNumber.email,
-                                            )
-                                        }?.let {
-                                            onSignProfileEvent(
+                                ),
+                                value = inputMethod.value,
+                                enabled = inputMethod.enabled,
+                                onValueChange = {
+                                    if (inputMethod.enabled) {
+                                        onSignProfileEvent(
+                                            SignHomeStore.Intent.UpdateInputValue(
+                                                inputMethod.fieldType,
                                                 it
+                                            )
+                                        )
+                                    }
+
+                                },
+                                singleLine = true,
+                                textStyle = TextStyle(
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
+                                    fontSize = 13.sp,
+                                    fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
+                                    letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
+                                    lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                                    fontFamily = MaterialTheme.typography.bodySmall.fontFamily
+                                ),
+                                decorationBox = { innerTextField ->
+
+                                    if (inputMethod.value.text.isEmpty()
+                                    ) {
+                                        Text(
+                                            modifier = Modifier.alpha(.3f),
+                                            text = inputMethod.inputLabel,
+                                            style = MaterialTheme.typography.bodySmall
+                                        )
+                                    }
+
+                                    AnimatedVisibility(
+                                        visible = inputMethod.value.text.isNotEmpty(),
+                                        modifier = Modifier.absoluteOffset(y = -(16).dp),
+                                        enter = fadeIn() + expandVertically(),
+                                        exit = fadeOut() + shrinkVertically(),
+                                    ) {
+                                        Text(
+                                            text = inputMethod.inputLabel,
+                                            color = primaryColor,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontSize = 11.sp
+                                        )
+                                    }
+
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                        ) {
+
+                                            innerTextField()
+                                        }
+
+                                        AnimatedVisibility(
+                                            visible = inputMethod.value.text.isNotEmpty(),
+                                            enter = fadeIn() + expandVertically(),
+                                            exit = fadeOut() + shrinkVertically(),
+                                        ) {
+
+                                            IconButton(
+                                                modifier = Modifier.size(18.dp),
+                                                onClick = {
+                                                    if (inputMethod.enabled) {
+                                                        onSignProfileEvent(
+                                                            SignHomeStore.Intent.UpdateInputValue(
+                                                                inputMethod.fieldType,
+                                                                TextFieldValue()
+                                                            )
+                                                        )
+                                                    }
+                                                },
+                                                content = {
+                                                    Icon(
+                                                        modifier = Modifier.alpha(0.4f),
+                                                        imageVector = Icons.Filled.Cancel,
+                                                        contentDescription = null,
+                                                        tint = actionButtonColor
+                                                    )
+                                                }
                                             )
                                         }
                                     }
-                                    authState.cachedMemberData?.let {
-                                        ApplyLongTermLoansStore.Intent.RequestLongTermLoan(
-                                            token = it.accessToken,
-                                            details = DetailsData(
-                                                loan_purpose_1 = component.loanCategory,
-                                                loan_purpose_2 = component.loanPurpose,
-                                                loan_purpose_3 = component.loanPurposeCategory,
-                                                loanPurposeCode = component.loanPurposeCategoryCode,
-                                                loanPeriod = component.loanPeriod.toString(),
-                                                repayment_period = component.loanPeriod.toString(),
-                                                employer_name = component.employer,
-                                                employment_type = "",
-                                                employment_number = component.employmentNumber,
-                                                business_location = component.businessLocation,
-                                                business_type = component.businessType,
-                                                net_salary = component.netSalary.toString(),
-                                                gross_salary = component.grossSalary.toString(),
-                                                disbursement_mode = disbursementMode,
-                                                repayment_mode = repaymentMode,
-                                                loan_type = component.loanType,
-                                                kra_pin = component.kraPin
-                                            ),
-                                            loanProductName = component.loanType,
-                                            loanProductRefId = component.loanRefId,
-                                            selfCommitment = 0.0,
-                                            loanAmount = component.desiredAmount,
-                                            memberRefId = component.memberRefId,
-                                            memberNumber = signProfileState.prestaTenantByPhoneNumber.memberNumber,
-                                            witnessRefId = component.witnessRefId,
-                                            guarantorList = guarantorList,
-                                        )
-                                    }?.let {
-                                        onLongTermLoanEvent(
-                                            it
-                                        )
-                                    }
-                                    sendLoanRequest = true
-                                },
-                                enabled = repaymentMode != "" && disbursementMode != "" && !hasError,
-                                loading = state.isLoading
+                                }
+                            )
+                        }
+
+                        if (inputMethod.errorMessage !== "") {
+                            Text(
+                                modifier = Modifier.padding(horizontal = 22.dp),
+                                text = inputMethod.errorMessage,
+                                fontSize = 10.sp,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                color = Color.Red
                             )
                         }
                     }
                 }
-            }
-            item {
-                //lauch pop up to handle loan Request Errors
-                if (launchHandleLoanRequestPopUp) {
-                    Popup {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight()
-                                .background(color = Color.Black.copy(alpha = 0.7f)),
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            ElevatedCard(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(
-                                        start = 26.dp,
-                                        end = 26.dp,
-                                        top = 40.dp,
-                                        bottom = 90.dp
-                                    ),
-                                colors = CardDefaults
-                                    .elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .padding(start = 16.dp, end = 16.dp)
-                                ) {
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
+                //Todo--remove this
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp)
+                    ) {
+                        ModeSelectionCard(label = "Disbursement Mode",
+                            description = if (disbursementMode != "") disbursementMode else "",
+                            onClickContainer = {
+                                launchDisbursementModePopUp = true
+
+                            })
+                    }
+
+
+                }
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp)
+                    ) {
+                        ModeSelectionCard(label = "Repayment Mode",
+                            description = if (repaymentMode != "") repaymentMode else "",
+                            onClickContainer = {
+                                launchPaymentModePopUp = true
+                            })
+                    }
+                }
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 40.dp)
+                    ) {
+                        ActionButton(
+                            label = "Submit  Loan Request", onClickContainer = {
+                                authState.cachedMemberData?.let { memberData ->
+                                    SignHomeStore.Intent.UpdatePrestaTenantPersonalInfo(
+                                        token = memberData.accessToken,
+                                        memberRefId = signProfileState.prestaTenantByPhoneNumber.refId,
+                                        firstName = signProfileState.firstName.value.text,
+                                        lastName = signProfileState.lastName.value.text,
+                                        phoneNumber = signProfileState.introducer.value.text,
+                                        idNumber = signProfileState.idNumber.value.text,
+                                        email = signProfileState.email.value.text
                                     ) {
-                                        Text(
-                                            text = "PENDING REASON",
-                                            modifier = Modifier.padding(top = 20.dp),
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
-                                        )
-                                        Text(
-                                            text = if (state.error != null || state.prestaLongTermLoanRequestData?.pendingReason != null) state.error.toString() + state.prestaLongTermLoanRequestData?.pendingReason else "",
-                                            modifier = Modifier.padding(top = 10.dp),
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                        )
+                                        authState.cachedMemberData.let { catchedData ->
+                                            ApplyLongTermLoansStore.Intent.RequestLongTermLoan(
+                                                token = catchedData.accessToken,
+                                                details = DetailsData(
+                                                    loan_purpose_1 = component.loanCategory,
+                                                    loan_purpose_2 = component.loanPurpose,
+                                                    loan_purpose_3 = component.loanPurposeCategory,
+                                                    loanPurposeCode = component.loanPurposeCategoryCode,
+                                                    loanPeriod = component.loanPeriod.toString(),
+                                                    repayment_period = component.loanPeriod.toString(),
+                                                    employer_name = component.employer,
+                                                    employment_type = "",
+                                                    employment_number = component.employmentNumber,
+                                                    business_location = component.businessLocation,
+                                                    business_type = component.businessType,
+                                                    net_salary = component.netSalary.toString(),
+                                                    gross_salary = component.grossSalary.toString(),
+                                                    disbursement_mode = disbursementMode,
+                                                    repayment_mode = repaymentMode,
+                                                    loan_type = component.loanType,
+                                                    kra_pin = component.kraPin
+                                                ),
+                                                loanProductName = component.loanType,
+                                                loanProductRefId = component.loanRefId,
+                                                selfCommitment = 0.0,
+                                                loanAmount = component.desiredAmount,
+                                                memberRefId = component.memberRefId,
+                                                memberNumber = signProfileState.prestaTenantByPhoneNumber.memberNumber,
+                                                witnessRefId = component.witnessRefId,
+                                                guarantorList = guarantorList,
+                                            )
+                                        }.let {
+                                            onLongTermLoanEvent(
+                                                it
+                                            )
+                                        }
+
+                                        sendLoanRequest = true
                                     }
+                                }?.let {
+                                    onSignProfileEvent(
+                                        it
+                                    )
                                 }
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(
-                                            top = 20.dp,
-                                            bottom = 10.dp,
-                                        ),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-
-                                    OutlinedButton(
-                                        border = BorderStroke(
-                                            width = 1.dp,
-                                            color = MaterialTheme.colorScheme.primary
-                                        ),
-                                        onClick = {
-                                            launchHandleLoanRequestPopUp = false
-                                        },
-                                        modifier = Modifier
-                                            .padding(start = 16.dp)
-                                            .height(30.dp),
-                                    ) {
-
-                                        Text(
-                                            text = "Dismiss",
-                                            fontSize = 11.sp,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.align(Alignment.CenterVertically),
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                        )
-
-                                    }
-                                    OutlinedButton(
-                                        colors = ButtonDefaults.outlinedButtonColors(containerColor = actionButtonColor),
-                                        border = BorderStroke(
-                                            width = 0.dp,
-                                            color = actionButtonColor
-                                        ),
-                                        onClick = {
-                                            launchHandleLoanRequestPopUp = false
-                                        },
-                                        modifier = Modifier
-                                            .padding(end = 16.dp)
-                                            .height(30.dp),
-                                    ) {
-
-                                        Text(
-                                            text = "Proceed",
-                                            color = Color.White,
-                                            fontSize = 11.sp,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.align(Alignment.CenterVertically),
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
-                                        )
-                                    }
-                                }
-                            }
-                        }
+                            },
+                            enabled = repaymentMode != "" && disbursementMode != "" && signProfileState.firstName.value.text != "" && signProfileState.lastName.value.text != "" && signProfileState.introducer.value.text != "" && signProfileState.email.value.text != "" && signProfileState.idNumber.value.text != "",
+                            loading = state.isLoading
+                        )
                     }
                 }
             }
+
             item {
                 Spacer(modifier = Modifier.padding(bottom = 100.dp))
             }
         }
     }
 }
+

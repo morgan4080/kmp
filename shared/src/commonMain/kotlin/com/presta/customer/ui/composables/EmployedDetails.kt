@@ -119,7 +119,7 @@ fun EmployedDetails(
                         label = "Employer",
                         keyboardType = KeyboardType.Text,
                         pattern = numberTextPattern,
-                        callback2 = {errorcalled->
+                        callback2 = { errorcalled->
                             hasError=errorcalled
                         }
                     ) {
@@ -146,7 +146,7 @@ fun EmployedDetails(
                         label = "Employment Number",
                         keyboardType = KeyboardType.Text,
                         pattern = numberTextPattern,
-                        callback2 = {errorcalled->
+                        callback2 = { errorcalled->
                             hasError=errorcalled
                         }
                     ) {
@@ -169,7 +169,7 @@ fun EmployedDetails(
                         label = "Gross Salary",
                         keyboardType = KeyboardType.Number,
                         pattern = pattern,
-                        callback2 = {errorcalled->
+                        callback2 = { errorcalled->
                             hasError=errorcalled
                         }
                     ) {
@@ -193,7 +193,7 @@ fun EmployedDetails(
                         label = "Net Salary",
                         keyboardType = KeyboardType.Number,
                         pattern = pattern,
-                        callback2 = {errorcalled->
+                        callback2 = { errorcalled->
                             hasError=errorcalled
                         }
                     ) {
@@ -216,7 +216,7 @@ fun EmployedDetails(
                         label = "KRA Pin",
                         keyboardType = KeyboardType.Text,
                         pattern = numberTextPattern,
-                        callback2 = {errorcalled->
+                        callback2 = { errorcalled->
                             hasError=errorcalled
                         }
                     ) {

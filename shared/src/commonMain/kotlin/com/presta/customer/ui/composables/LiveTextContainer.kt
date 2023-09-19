@@ -41,13 +41,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
-import com.presta.customer.network.authDevice.errorHandler.Message
 import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
 fun LiveTextContainer(
+    callback3: (Boolean) -> Unit = { newError ->
+    },
     callback2: (errorrOccured: Boolean) -> Unit = {},
     keyboardType: KeyboardType,
     pattern: Regex,
@@ -58,7 +59,8 @@ fun LiveTextContainer(
     val focusRequester = remember { FocusRequester() }
     val emptyTextContainer by remember { mutableStateOf(TextFieldValue()) }
     var userInputs by remember { mutableStateOf(TextFieldValue(userInput)) }
-    callback2(userInputs.text=="")
+    callback2(userInputs.text == "")
+    callback3(userInputs.text == "")
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -160,6 +162,7 @@ fun LiveTextContainer(
                 )
             }
             if (userInputs.text == "") {
+                callback3(true)
                 Text(
                     modifier = Modifier.padding(top = 10.dp, start = 5.dp),
                     text = "Required",
@@ -168,6 +171,8 @@ fun LiveTextContainer(
                     color = Color.Red
                 )
 
+            } else {
+                callback3(false)
             }
 
         }
