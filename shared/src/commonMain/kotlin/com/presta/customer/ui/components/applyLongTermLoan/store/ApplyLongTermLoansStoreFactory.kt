@@ -86,6 +86,7 @@ class ApplyLongTermLoansStoreFactory(
 
         data object ClearExisting: Msg()
         data object ClearExistingError: Msg()
+        data object ClearEligibilityResponse: Msg()
 
         data class LoanByLoanRequestRefIdLoaded(val loanByLoanRequestRefId: PrestaLoanRequestByRequestRefId) :
             Msg()
@@ -285,6 +286,7 @@ class ApplyLongTermLoansStoreFactory(
 
                 is ApplyLongTermLoansStore.Intent.ClearExisting -> dispatch(Msg.ClearExisting)
                 is ApplyLongTermLoansStore.Intent.ClearExistingError -> dispatch(Msg.ClearExistingError)
+                is ApplyLongTermLoansStore.Intent.ClearEligibilityResponse -> dispatch(Msg.ClearEligibilityResponse)
             }
 
         private var getPrestaLongTermLoansProductsJob: Job? = null
@@ -936,6 +938,7 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.SetExistingLoanRequest -> copy(loanRefId = msg.loanRefId)
                 is Msg.ClearExisting -> copy(loanRefId = "")
                 is Msg.ClearExistingError -> copy(error = null)
+                is Msg.ClearEligibilityResponse -> copy(loanRequestEligibility = null)
             }
     }
 

@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -55,9 +56,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.presta.customer.Durations
 import com.presta.customer.MR
 import com.presta.customer.ui.components.addGuarantors.ui.SnackbarVisualsWithError
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
@@ -94,6 +97,7 @@ fun LongTermLoanRequestsContent(
     var memBerRefId by remember { mutableStateOf("") }
     var loanRequestRefId by remember { mutableStateOf("") }
     var loanAmount by remember { mutableStateOf("") }
+    var showVoidError by remember { mutableStateOf(false) }
     var loanNumber by remember { mutableStateOf("") }
     var loanRequestNumber by remember { mutableStateOf("") }
     var selectedIndex by remember { mutableStateOf(-1) }
@@ -109,6 +113,14 @@ fun LongTermLoanRequestsContent(
     }
     var deleteInitiated by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(showVoidError) {
+        if (showVoidError) {
+            delay(4000)
+            showVoidError = false
+        }
+    }
+
     if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -220,7 +232,7 @@ fun LongTermLoanRequestsContent(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "Request Details ",
+                            text = "Request Details ".uppercase() + if(state.prestaLoanByLoanRequestRefId !== null) "(${state.prestaLoanByLoanRequestRefId.loanRequestNumber})" else "",
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
                             fontSize = 14.sp
                         )
@@ -244,8 +256,6 @@ fun LongTermLoanRequestsContent(
                         if (state.isLoading || state.prestaLoanByLoanRequestRefId?.loanProductName == null) {
                             shimmerTextContainer(showLoadingShimmer = state.isLoading)
                             shimmerTextContainer(showLoadingShimmer = state.isLoading)
-
-
                         } else {
                             Text(
                                 text = state.prestaLoanByLoanRequestRefId.loanProductName,
@@ -284,12 +294,12 @@ fun LongTermLoanRequestsContent(
                         )
 
                     }
-                    if (state.prestaLoanByLoanRequestRefId?.applicantSigned == false || !state.prestaLoanByLoanRequestRefId?.pendingReason.isNullOrEmpty()) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 10.dp, top = 10.dp)
-                        ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 10.dp, top = 10.dp)
+                    ) {
+                        if (state.prestaLoanByLoanRequestRefId?.applicantSigned == false || !state.prestaLoanByLoanRequestRefId?.pendingReason.isNullOrEmpty()) {
                             OutlinedButton(
                                 onClick = {
                                     scope.launch { modalBottomSheetState.hide() }
@@ -304,7 +314,7 @@ fun LongTermLoanRequestsContent(
                                         }
                                     }
                                 },
-                                modifier = Modifier.height(35.dp),
+                                modifier = Modifier.height(30.dp),
                                 shape = CircleShape,
                                 border = BorderStroke(
                                     0.1.dp,
@@ -317,35 +327,44 @@ fun LongTermLoanRequestsContent(
                                 )
                             ) {
                                 Text(
-                                    modifier = Modifier,
                                     text = "Sign Form",
                                     color = MaterialTheme.colorScheme.background,
-                                    fontSize = 12.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    fontSize = 10.sp,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.align(Alignment.CenterVertically),
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                 )
                             }
+
+                            Spacer(modifier = Modifier.width(5.dp))
+                        }
+
+                        if (state.prestaLoanByLoanRequestRefId !== null) {
                             OutlinedButton(
                                 onClick = {
-                                    if (loanRequestNumber != "") {
-                                        authState.cachedMemberData?.let {
-                                            ApplyLongTermLoansStore.Intent.DeleteLoanRequest(
-                                                token = it.accessToken,
-                                                loanRequestNumber = loanRequestNumber
-                                            )
+                                    if (state.prestaLoanByLoanRequestRefId.applicantSigned !== null) {
+                                        if (state.prestaLoanByLoanRequestRefId.applicantSigned) {
+                                            showVoidError = true
+                                        } else {
+                                            if (loanRequestNumber != "") {
+                                                authState.cachedMemberData?.let {
+                                                    ApplyLongTermLoansStore.Intent.DeleteLoanRequest(
+                                                        token = it.accessToken,
+                                                        loanRequestNumber = loanRequestNumber
+                                                    )
 
-                                        }?.let {
-                                            onEvent(
-                                                it
-                                            )
+                                                }?.let {
+                                                    onEvent(
+                                                        it
+                                                    )
+                                                }
+                                            }
+                                            deleteInitiated = true
                                         }
                                     }
-                                    deleteInitiated = true
                                 },
                                 modifier = Modifier
-                                    .height(35.dp)
-                                    .padding(
-                                        start = 10.dp
-                                    ),
+                                    .height(30.dp),
                                 shape = CircleShape,
                                 border = BorderStroke(
                                     0.1.dp,
@@ -358,13 +377,33 @@ fun LongTermLoanRequestsContent(
                                 )
                             ) {
                                 Text(
-                                    modifier = Modifier,
                                     text = "Void request",
-                                    color = MaterialTheme.colorScheme.background,
-                                    fontSize = 12.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    color = Color.White,
+                                    fontSize = 10.sp,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.align(Alignment.CenterVertically),
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                 )
                             }
+                        }
+                    }
+
+                    AnimatedVisibility(showVoidError) {
+                        Row(
+                            modifier = Modifier
+                                .padding(top = 15.dp, bottom = 10.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Voiding not allowed: Your loan request has already been signed and is in-progress.",
+                                color = MaterialTheme.colorScheme.error.copy(
+                                    alpha = 0.7f
+                                ),
+                                fontSize = 11.sp,
+                                textAlign = TextAlign.Start,
+                                modifier = Modifier.align(Alignment.CenterVertically),
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                            )
                         }
                     }
 

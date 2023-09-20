@@ -94,8 +94,7 @@ fun ApplyLongTermLoansContent(
     }
 
     LaunchedEffect(
-        state.loanRequestEligibility,
-        productRefId
+        state.loanRequestEligibility
     ) {
         if (state.loanRequestEligibility !== null) {
             state.loanRequestEligibility.isElibigible.let { eligible ->
@@ -327,6 +326,7 @@ fun ApplyLongTermLoansContent(
                         onConfirm = {
                             showDialog = false
                             scope.launch {
+                                onEvent(ApplyLongTermLoansStore.Intent.ClearEligibilityResponse)
                                 delay(500)
                                 state.loanRequestEligibility.metadata?.let {
                                     component.onResolveLoanSelected(loanRefId = it.existingLoanRequestRefId)
@@ -334,7 +334,11 @@ fun ApplyLongTermLoansContent(
                             }
                         },
                         onDismiss = {
-                            showDialog = false
+                            scope.launch {
+                                onEvent(ApplyLongTermLoansStore.Intent.ClearEligibilityResponse)
+                                delay(500)
+                                showDialog = false
+                            }
                         },
                         confirmText = "Resolve",
                         dismissText = "Dismiss",

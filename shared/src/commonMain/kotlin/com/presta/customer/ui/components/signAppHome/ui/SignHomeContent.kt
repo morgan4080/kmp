@@ -163,10 +163,16 @@ fun SignHomeContent(
                                 ) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Text(
-                                            modifier = Modifier,
-                                            text = "Presta capital",
+                                            modifier = Modifier.padding(start = 9.dp).background(
+                                                brush = ShimmerBrush(
+                                                    targetValue = 1300f,
+                                                    showShimmer = authState.authUserResponse?.companyName == null
+                                                ),
+                                                shape = RoundedCornerShape(12.dp)
+                                            ).defaultMinSize(200.dp),
+                                            text = if (authState.authUserResponse !== null) authState.authUserResponse.companyName else "",
                                             color = MaterialTheme.colorScheme.onBackground,
-                                            fontSize = 18.sp
+                                            style = TextStyle(fontSize = 18.sp),
                                         )
                                     }
                                     IconButton(

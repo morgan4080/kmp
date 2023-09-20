@@ -147,6 +147,7 @@ interface ApplyLongTermLoansStore :
         data object CloseWebView : Intent()
         data object ClearExisting : Intent()
         data object ClearExistingError : Intent()
+        data object ClearEligibilityResponse : Intent()
 
     }
 
