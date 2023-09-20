@@ -145,30 +145,27 @@ fun LongTermLoanDetailsContent(
                             "",
                             inputType = InputTypes.NUMBER
                         ) {
-                            val inputValue: Double? = TextFieldValue(it).text.toDoubleOrNull()
-                            if (inputValue != null) {
-                                if (TextFieldValue(it).text !== "") {
+                            if (it != "") {
+                                if (TextFieldValue(it).text !== "" && TextFieldValue(it).text.matches(Regex("^\\d+\$"))) {
                                     amount = TextFieldValue(it)
                                     isError = false
-
+                                    isAmountError = false
                                 } else {
+                                    println("ERROR")
+                                    println(it)
                                     isError = true
+                                    isAmountError = true
                                 }
                             }
                         }
                     }
-                    if (amount.text != "") {
-                        isAmountError = amount.text.toInt() < 100
-                    }
-                    if (isAmountError) {
-                        Text(
-                            modifier = Modifier.padding(top = 10.dp, start = 5.dp),
-                            text = "min KSh: 100 ",
-                            style = MaterialTheme.typography.bodySmall,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                            color = Color.Red
-                        )
-                    }
+                    Text(
+                        modifier = Modifier.padding(top = 10.dp, start = 5.dp),
+                        text = "Min Amount 100",
+                        fontSize = 11.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
+                    )
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Column(
                             modifier = Modifier
@@ -290,9 +287,9 @@ fun LongTermLoanDetailsContent(
                     }
                     Text(
                         "Select Desired Period (EG 1-96 Months)",
-                        fontSize = 14.sp,
+                        fontSize = 11.sp,
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                        modifier = Modifier.padding(top = 10.dp),
+                        modifier = Modifier.padding(top = 10.dp, start = 5.dp),
                         color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
                     )
                     Row(
@@ -320,9 +317,8 @@ fun LongTermLoanDetailsContent(
                                         }
                                     }
                                 }
-
                             },
-                            enabled = amount.text != "" && desiredPeriod.text != "" && !isPeriodError && !isAmountError
+                            enabled = (amount.text != "" && desiredPeriod.text != "" && !isPeriodError && !isAmountError)
                         )
 
                     }

@@ -232,7 +232,7 @@ fun OnBoardingContent(
                             .imePadding(),
                     ) {
                         Row (
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
@@ -364,7 +364,7 @@ fun OnBoardingContent(
                         }
 
                         Row (
-                            modifier = Modifier.padding(bottom = 30.dp)
+                            modifier = Modifier.padding(bottom = 350.dp)
                         ) {
                             ActionButton("Submit", onClickContainer = {
                                 when(state.onBoardingContext) {

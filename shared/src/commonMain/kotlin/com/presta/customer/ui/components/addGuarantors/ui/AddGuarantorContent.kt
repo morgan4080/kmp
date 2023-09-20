@@ -37,7 +37,7 @@ import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Dialpad
+import androidx.compose.material.icons.filled.ImportContacts
 import androidx.compose.material.icons.filled.RadioButtonChecked
 import androidx.compose.material.icons.outlined.ArrowCircleDown
 import androidx.compose.material.icons.outlined.Delete
@@ -972,7 +972,7 @@ fun AddGuarantorContent(
                                             },
                                             content = {
                                                 Icon(
-                                                    imageVector = Icons.Filled.Dialpad,
+                                                    imageVector = Icons.Filled.ImportContacts,
                                                     modifier = Modifier,
                                                     contentDescription = null,
                                                     tint = MaterialTheme.colorScheme.onBackground.copy(

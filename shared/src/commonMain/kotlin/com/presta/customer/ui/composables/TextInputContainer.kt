@@ -42,6 +42,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.text.TextStyle
@@ -72,6 +73,7 @@ fun TextInputContainer(
     imageUrl: String? = null,
     icon:  ImageVector? = null,
     callingCode: String? = null,
+    backgroundColor: Color = MaterialTheme.colorScheme.inverseOnSurface,
     callback: (userInput: String) -> Unit = {},
 ) {
     var userInput by remember { mutableStateOf(TextFieldValue()) }
