@@ -5,6 +5,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -93,15 +94,17 @@ fun SplashScreen(component: SplashComponent, connectivityStatus: SharedStatus?) 
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row (
-                modifier = Modifier.padding(bottom = 33.dp),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 33.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
                 when(isSystemInDarkTheme()) {
                     false -> Image(
+                        modifier = Modifier.size(250.dp),
                         painter = painterResource(model.organisation.logo),
                         contentDescription = "Logo"
                     )
                     true -> Image(
+                        modifier = Modifier.size(250.dp),
                         painter = painterResource(model.organisation.logodark),
                         contentDescription = "Logo"
                     )
