@@ -389,6 +389,8 @@ fun LongTermLoanRequestsContent(
                                             guarantorLastName = guarantorDataResponse.lastName
                                             guarantorRefId = guarantorDataResponse.refId
 
+                                            println("Test gaurantor Response;;;;" + guarantorProgress )
+
                                         },
                                         expandContent = selectedIndex == index,
                                         index = index,

@@ -35,7 +35,6 @@ import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignGuarantorFormContent(
     component: SignGuarantorFormComponent,
@@ -62,19 +61,11 @@ fun SignGuarantorFormContent(
         }
     }
     LaunchedEffect(
-        authState.cachedMemberData
+        authState.cachedMemberData,
+        state.isLoading
     ) {
-        authState.cachedMemberData?.let {
-            ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
-                token = it.accessToken,
-                loanRequestRefId = component.loanRequestRefId,
-                actorRefId = component.memberRefId,
-                actorType = ActorType.GUARANTOR
-            )
-        }?.let {
-            onEvent(
-                it
-            )
+        if (state.prestaZohoSignUrl?.signURL != null) {
+            component.platform.openUrl(state.prestaZohoSignUrl.signURL)
         }
     }
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
@@ -151,9 +142,17 @@ fun SignGuarantorFormContent(
                     ActionButton(
                         label = "SIGN DOCUMENT",
                         onClickContainer = {
-
-                            if (state.prestaZohoSignUrl?.signURL != null) {
-                                component.platform.openUrl(state.prestaZohoSignUrl.signURL)
+                            authState.cachedMemberData?.let {
+                                ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
+                                    token = it.accessToken,
+                                    loanRequestRefId = component.loanRequestRefId,
+                                    actorRefId = component.memberRefId,
+                                    actorType = ActorType.GUARANTOR
+                                )
+                            }?.let {
+                                onEvent(
+                                    it
+                                )
                             }
                             //check the loan Number
                         },

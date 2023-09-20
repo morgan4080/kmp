@@ -89,7 +89,8 @@ fun UserInformation(
     state: ApplyLongTermLoansStore.State,
     onSignProfileEvent: (SignHomeStore.Intent) -> Unit,
 ) {
-    var selectedIndex by remember { mutableStateOf(-1) }
+    var selectedDisburseMentIndex by remember { mutableStateOf(-1) }
+    var selectedPaymentModeIndex by remember { mutableStateOf(-1) }
     var launchDisbursementModePopUp by remember { mutableStateOf(false) }
     var launchPaymentModePopUp by remember { mutableStateOf(false) }
     var sendLoanRequest by remember { mutableStateOf(false) }
@@ -242,13 +243,13 @@ fun UserInformation(
                                                 ) {
                                                     SelectGuarantorsView(
                                                         idx = indexed,
-                                                        selected = selectedIndex == indexed,
+                                                        selected = selectedDisburseMentIndex == indexed,
                                                         onClick = { index: Int ->
-                                                            selectedIndex =
-                                                                if (selectedIndex == index) -1 else index
-                                                            if (selectedIndex > -1) {
+                                                            selectedDisburseMentIndex =
+                                                                if (selectedDisburseMentIndex == index) -1 else index
+                                                            if (selectedDisburseMentIndex > -1) {
                                                                 disbursementMode =
-                                                                    disburementModeListing[selectedIndex].name
+                                                                    disburementModeListing[selectedDisburseMentIndex].name
                                                             }
                                                         },
                                                         label = disbursementModes.name
@@ -395,13 +396,12 @@ fun UserInformation(
                                                 ) {
                                                     SelectGuarantorsView(
                                                         idx = indexedPay,
-                                                        selected = selectedIndex == indexedPay,
+                                                        selected = selectedPaymentModeIndex == indexedPay,
                                                         onClick = { index: Int ->
-                                                            selectedIndex =
-                                                                if (selectedIndex == index) -1 else index
-                                                            if (selectedIndex > -1) {
-                                                                repaymentMode =
-                                                                    repaymentmentModeListing[selectedIndex].name
+                                                            selectedPaymentModeIndex  =
+                                                                if (selectedPaymentModeIndex  == index) -1 else index
+                                                            if (selectedPaymentModeIndex > -1) {
+                                                                repaymentMode = repaymentmentModeListing[selectedPaymentModeIndex ].name
                                                             }
                                                         },
                                                         label = repamentModes.name
@@ -776,7 +776,7 @@ fun UserInformation(
                             .fillMaxWidth()
                             .padding(top = 10.dp)
                     ) {
-                        ModeSelectionCard(label = "Disbursement Mode",
+                        ModeSelectionCard(label = "Disbursement Mode*",
                             description = if (disbursementMode != "") disbursementMode else "",
                             onClickContainer = {
                                 launchDisbursementModePopUp = true
@@ -792,7 +792,7 @@ fun UserInformation(
                             .fillMaxWidth()
                             .padding(top = 10.dp)
                     ) {
-                        ModeSelectionCard(label = "Repayment Mode",
+                        ModeSelectionCard(label = "Repayment Mode*",
                             description = if (repaymentMode != "") repaymentMode else "",
                             onClickContainer = {
                                 launchPaymentModePopUp = true
