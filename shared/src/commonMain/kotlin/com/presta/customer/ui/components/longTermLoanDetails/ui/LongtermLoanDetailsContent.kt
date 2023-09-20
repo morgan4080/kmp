@@ -140,13 +140,17 @@ fun LongTermLoanDetailsContent(
                             .fillMaxWidth()
                             .padding(top = 20.dp)
                     ) {
+
                         TextInputContainer(
                             "Desired Amount",
                             "",
                             inputType = InputTypes.NUMBER
                         ) {
                             if (it != "") {
-                                if (TextFieldValue(it).text !== "" && TextFieldValue(it).text.matches(Regex("^\\d+\$"))) {
+                                if (TextFieldValue(it).text !== "" && TextFieldValue(it).text.matches(
+                                        Regex("^\\d+\$")
+                                    )
+                                ) {
                                     amount = TextFieldValue(it)
                                     isError = false
                                     isAmountError = false
@@ -156,8 +160,11 @@ fun LongTermLoanDetailsContent(
                                     isError = true
                                     isAmountError = true
                                 }
+                            } else {
+                                isAmountError = true
                             }
                         }
+
                     }
                     Text(
                         modifier = Modifier.padding(top = 10.dp, start = 5.dp),
@@ -318,7 +325,7 @@ fun LongTermLoanDetailsContent(
                                     }
                                 }
                             },
-                            enabled = (amount.text != "" && desiredPeriod.text != "" && !isPeriodError && !isAmountError)
+                            enabled = amount.text != "" && desiredPeriod.text != "" && !isPeriodError && !isAmountError
                         )
 
                     }
@@ -338,9 +345,6 @@ fun LongTermLoanDetailsContent(
                     }
                 }
             }
-
-
-
             item {
                 Spacer(modifier = Modifier.padding(bottom = 100.dp))
             }
