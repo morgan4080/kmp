@@ -509,7 +509,7 @@ class DefaultRootComponent(
             },
             backTopProfile = config.backTopProfile,
             gotoSignApp = {
-                navigation.bringToFront(Config.SignApp(loanRefId = { "" }))
+                navigation.bringToFront(Config.SignApp(loanRefId = ""))
             }
         )
 
@@ -698,10 +698,7 @@ class DefaultRootComponent(
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
             onResolveLoanClicked = { loanRequestRefId ->
-                //Todo navigate to bottom sign  and launch requests  if refid is not null
-                navigation.bringToFront(Config.SignApp(loanRefId = {
-                    loanRequestRefId
-                }))
+                navigation.bringToFront(Config.SignApp(loanRefId = loanRequestRefId))
 
             }
         )
@@ -1083,7 +1080,7 @@ class DefaultRootComponent(
             amount = config.amount,
             loanNumber = config.loanNumber,
             navigateToProfileClicked = {
-                navigation.replaceAll(Config.SignApp(loanRefId = { "" }))
+                navigation.replaceAll(Config.SignApp(loanRefId = ""))
             }
         )
 
@@ -1279,7 +1276,7 @@ class DefaultRootComponent(
 
         @Parcelize
         data class SignApp(
-            val loanRefId: () -> String,
+            val loanRefId: String,
         ) : Config()
 
 

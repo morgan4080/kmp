@@ -71,7 +71,7 @@ class DefaultRootBottomSignComponent(
         memberRefId: String
     ) -> Unit,
     backTopProfile: Boolean = false,
-    loanRefId: () -> String,
+    loanRefId: String,
     val logoutToSplash: (state: Boolean) -> Unit = {},
 ) : RootBottomSignComponent, ComponentContext by componentContext, KoinComponent {
     private val authRepository by inject<AuthRepository>()
@@ -81,7 +81,7 @@ class DefaultRootBottomSignComponent(
     private val _childStackBottom =
         childStack(
             source = navigationBottomStackNavigation,
-            initialConfiguration = if(loanRefId() == "") ConfigBottom.SignProfile else ConfigBottom.Request(loanRefId()),
+            initialConfiguration = if (loanRefId == "") ConfigBottom.SignProfile else ConfigBottom.Request(loanRefId),
             handleBackButton = true,
             childFactory = ::createChildBottom,
             key = "authStack"

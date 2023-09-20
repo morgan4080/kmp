@@ -3,7 +3,6 @@ package com.presta.customer.ui.components.applyLongTermLoan.ui
 import ProductSelectionCard
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,8 +15,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -29,9 +26,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.Text
@@ -50,10 +45,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.zIndex
+import com.mohamedrejeb.calf.ui.dialog.AdaptiveAlertDialog
 import com.presta.customer.MR
-import com.presta.customer.network.longTermLoans.model.LoanApplicationStatus
-import com.presta.customer.network.longTermLoans.model.LoanRequestListData
-import com.presta.customer.network.longTermLoans.model.LoanSigningStatus
+import com.presta.customer.network.longTermLoans.model.NonEligibilityReasons
 import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComponent
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
@@ -86,58 +80,31 @@ fun ApplyLongTermLoansContent(
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
     signHomeState: SignHomeStore.State
 ) {
+    var showDialog by remember { mutableStateOf(false) }
     var launchHandleLoanRequestPopUp by remember { mutableStateOf(false) }
     var memberRefId by remember { mutableStateOf("") }
     var productRefId by remember { mutableStateOf("") }
     var loanName by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
-    val snackBarScope = rememberCoroutineScope()
-    var filteredResponse: List<LoanRequestListData> = emptyList()
     var refreshing by remember { mutableStateOf(false) }
     val refreshScope = rememberCoroutineScope()
-    val contentList = state.prestaLongTermLoansRequestsSpecificProduct?.content
+    val scope = rememberCoroutineScope()
     if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         memberRefId = signHomeState.prestaTenantByPhoneNumber.refId
     }
-    if (productRefId != "") {
-        LaunchedEffect(
-            state.prestaLongTermLoansRequestsSpecificProduct,
-            productRefId,
-            refreshing,
-            state.isLoading
-        ) {
-            if (state.prestaLongTermLoansRequestsSpecificProduct?.content?.isEmpty() == false) {
-                println("The value of the list is;;;;;;; " + contentList)
-                snackbarHostState.currentSnackbarData?.dismiss()
-                filteredResponse =
-                    state.prestaLongTermLoansRequestsSpecificProduct.content.filter { existingLoan ->
-                        existingLoan.loanProductRefId.contains(productRefId)
-                    }
-                filteredResponse.map { filteredResponse ->
-                    if (filteredResponse.applicationStatus == LoanApplicationStatus.COMPLETED) {
-                        component.onProductSelected(
-                            loanRefId = productRefId
-                        )
 
-                    }
-                    if (filteredResponse.signingStatus == LoanSigningStatus.INPROGRESS) {
-                        snackBarScope.launch {
-                            snackbarHostState.showSnackbar(
-                                CustomSnackBar(
-                                    "${filteredResponse.loanProductName} of ${filteredResponse.loanAmount} is in progress from: ${filteredResponse.loanDate}",
-                                    isError = true
-                                )
-                            )
-                        }
-
-                    }
-                }
-            } else {
-                if (contentList != null && contentList.isEmpty() && filteredResponse.isEmpty()) {
-                    snackbarHostState.currentSnackbarData?.dismiss()
+    LaunchedEffect(
+        state.loanRequestEligibility,
+        productRefId
+    ) {
+        if (state.loanRequestEligibility !== null) {
+            state.loanRequestEligibility.isElibigible.let { eligible ->
+                if (eligible) {
                     component.onProductSelected(
                         loanRefId = productRefId
                     )
+                } else {
+                    showDialog = true
                 }
             }
         }
@@ -160,39 +127,6 @@ fun ApplyLongTermLoansContent(
     val refreshState = rememberPullRefreshState(refreshing, ::refresh)
 
     Scaffold(modifier = Modifier.padding(),
-        snackbarHost = {
-            SnackbarHost(snackbarHostState) { data ->
-                val isError = (data.visuals as? CustomSnackBar)?.isError ?: false
-                Snackbar(
-                    modifier = Modifier
-                        .padding(bottom = 20.dp)
-                        .wrapContentHeight(),
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    action = {
-                        Text(text = "Resolve",
-                            color = MaterialTheme.colorScheme.background,
-                            modifier = Modifier
-                                .clickable {
-                                    if (isError) data.dismiss() else data.performAction()
-                                    launchHandleLoanRequestPopUp = true
-                                }
-                                .padding(end = 5.dp))
-                    }
-                ) {
-                    Column() {
-                        Text(
-                            data.visuals.message,
-                            modifier = Modifier
-                                .padding(bottom = 10.dp, top = 10.dp, start = 5.dp)
-                                .wrapContentWidth()
-                                .wrapContentHeight(),
-                            fontSize = 12.sp
-                        )
-                    }
-
-                }
-            }
-        },
         topBar = {
             NavigateBackTopBar("Select Loan Product",
                 onClickContainer = {
@@ -363,13 +297,11 @@ fun ApplyLongTermLoansContent(
                                                 description = longTermLoanResponse.interestRate.toString(),
                                                 onClickContainer = {
                                                     snackbarHostState.currentSnackbarData?.dismiss()
-                                                    productRefId = ""
                                                     productRefId = longTermLoanResponse.refId.toString()
                                                     loanName = longTermLoanResponse.name.toString()
                                                     authState.cachedMemberData?.let {
-                                                        ApplyLongTermLoansStore.Intent.GetPrestaLongTermLoansRequestsSpecificProduct(
+                                                        ApplyLongTermLoansStore.Intent.CheckLoanRequestEligibility(
                                                             token = it.accessToken,
-                                                            productRefId = productRefId,
                                                             memberRefId = memberRefId
                                                         )
                                                     }?.let {
@@ -389,6 +321,31 @@ fun ApplyLongTermLoansContent(
                         }
                     }
                 }
+
+                if (state.loanRequestEligibility !== null && showDialog) {
+                    AdaptiveAlertDialog(
+                        onConfirm = {
+                            showDialog = false
+                            scope.launch {
+                                delay(500)
+                                state.loanRequestEligibility.metadata?.let {
+                                    component.onResolveLoanSelected(loanRefId = it.existingLoanRequestRefId)
+                                }
+                            }
+                        },
+                        onDismiss = {
+                            showDialog = false
+                        },
+                        confirmText = "Resolve",
+                        dismissText = "Dismiss",
+                        title = when(state.loanRequestEligibility.nonEligibilityReason) {
+                            NonEligibilityReasons.MEMBER_NOT_FOUND -> "Member Not Found"
+                            NonEligibilityReasons.LOAN_INPROGRESS -> "Loan In Progress"
+                        },
+                        text = if (state.loanRequestEligibility.description !== null) state.loanRequestEligibility.description else "",
+                    )
+                }
+
                 PullRefreshIndicator(
                     refreshing, refreshState,
                     Modifier
@@ -396,9 +353,7 @@ fun ApplyLongTermLoansContent(
                         .align(Alignment.TopCenter).zIndex(1f),
                     contentColor = actionButtonColor
                 )
-
             }
-
         })
 
 }

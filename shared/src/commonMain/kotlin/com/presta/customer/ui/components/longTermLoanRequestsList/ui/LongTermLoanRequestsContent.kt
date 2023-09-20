@@ -1,6 +1,5 @@
 package com.presta.customer.ui.components.longTermLoanRequestsList.ui
 
-import com.presta.customer.ui.composables.ShimmerBrush
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -66,6 +65,7 @@ import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.longTermLoanRequestsList.LongTermLoanRequestsComponent
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.NavigateBackTopBar
+import com.presta.customer.ui.composables.ShimmerBrush
 import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.helpers.formatMoney
 import com.presta.customer.ui.theme.actionButtonColor
@@ -174,6 +174,31 @@ fun LongTermLoanRequestsContent(
         scope.launch { modalBottomSheetState.hide() }
     }
     val refreshState = rememberPullRefreshState(refreshing, ::refresh)
+
+
+    LaunchedEffect(state.loanRefId, state.prestaLongTermLoansRequestsList) {
+        if (state.loanRefId !== "" && state.prestaLongTermLoansRequestsList !== null) {
+            if (state.prestaLongTermLoansRequestsList.content.isNotEmpty()) {
+                loanRequestRefId = state.loanRefId
+
+                val lr = state.prestaLongTermLoansRequestsList.content.find { request ->
+                    request.refId == state.loanRefId
+                }
+
+                if (lr !== null) {
+                    loanAmount =
+                        lr.loanAmount.toString()
+                    loanNumber = lr.loanRequestNumber
+                    loanRequestNumber =
+                        lr.loanRequestNumber
+
+                    modalBottomSheetState.show()
+                }
+            }
+        }
+    }
+
+
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -388,9 +413,6 @@ fun LongTermLoanRequestsContent(
                                             guarantorFirstName = guarantorDataResponse.firstName
                                             guarantorLastName = guarantorDataResponse.lastName
                                             guarantorRefId = guarantorDataResponse.refId
-
-                                            println("Test gaurantor Response;;;;" + guarantorProgress )
-
                                         },
                                         expandContent = selectedIndex == index,
                                         index = index,
@@ -569,7 +591,7 @@ fun LongTermLoanRequestsContent(
                     }
                 }
             }
-        }
+        },
     ) {
         Scaffold(
             modifier = Modifier.padding(LocalSafeArea.current),
@@ -689,14 +711,16 @@ fun LongTermLoanRequestsContent(
                                                 loanProgress = "${loanlistingData.loanRequestProgress}% ${loanlistingData.applicationStatus}",
                                                 loanApplicationProgress = loanlistingData.loanRequestProgress.toFloat() / 100,
                                                 onClickContainer = {
+                                                    onEvent(ApplyLongTermLoansStore.Intent.ClearExisting)
                                                     loanRequestRefId = loanlistingData.refId
                                                     loanAmount =
                                                         loanlistingData.loanAmount.toString()
                                                     loanNumber = loanlistingData.loanRequestNumber
                                                     loanRequestNumber =
                                                         loanlistingData.loanRequestNumber
-                                                    scope.launch { modalBottomSheetState.show() }
-
+                                                    scope.launch {
+                                                        modalBottomSheetState.show()
+                                                    }
                                                 })
                                         }
                                     }

@@ -14,8 +14,10 @@ data class EligibilityMetaData(
 )
 @Serializable
 data class PrestaLoanRequestEligibility @OptIn(ExperimentalSerializationApi::class) constructor(
-    val isEligible: Boolean,
+    val isElibigible: Boolean,
     val nonEligibilityReason: NonEligibilityReasons,
     @EncodeDefault val description: String? = null,
     @EncodeDefault val metadata: EligibilityMetaData? = null
 )
+
+// {"isElibigible":false,"nonEligibilityReason":"LOAN_INPROGRESS","description":"You have an existing loan in progress","metadata":{"existingLoanRequestRefId":"zgSq723gfDL2j6be"}}

@@ -34,7 +34,7 @@ import org.koin.core.component.inject
 
 class ApplyLongTermLoansStoreFactory(
     private val storeFactory: StoreFactory,
-    private val loanRefId: String? = null,
+    private val loanRefId: String = "",
 ) : KoinComponent {
     private val longTermLoansRepository by inject<LongTermLoansRepository>()
 
@@ -81,6 +81,10 @@ class ApplyLongTermLoansStoreFactory(
             Msg()
         data class LoanRequestEligibility(val loanRequestEligibility: PrestaLoanRequestEligibility) :
             Msg()
+        data class SetExistingLoanRequest(val loanRefId: String) :
+            Msg()
+
+        data object ClearExisting: Msg()
 
         data class LoanByLoanRequestRefIdLoaded(val loanByLoanRequestRefId: PrestaLoanRequestByRequestRefId) :
             Msg()
@@ -131,8 +135,7 @@ class ApplyLongTermLoansStoreFactory(
             prestaDispatchers.main
         ) {
         override fun executeAction(action: Unit, getState: () -> ApplyLongTermLoansStore.State) {
-            println(":::::::::;loanRefId::::::::::::::::::::")
-            println(loanRefId)
+            dispatch(Msg.SetExistingLoanRequest(loanRefId))
         }
 
         override fun executeIntent(
@@ -278,6 +281,8 @@ class ApplyLongTermLoansStoreFactory(
                 )
 
                 is ApplyLongTermLoansStore.Intent.CloseWebView -> dispatch(Msg.ClearSignUrl)
+
+                is ApplyLongTermLoansStore.Intent.ClearExisting -> dispatch(Msg.ClearExisting)
             }
 
         private var getPrestaLongTermLoansProductsJob: Job? = null
@@ -926,6 +931,8 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.WitnessAcceptanceStatusLoaded -> copy(prestaWitnessAcceptanceStatus = msg.witnessAcceptanceResponseLoaded)
                 is Msg.ClearSignUrl -> copy(prestaZohoSignUrl = null)
                 is Msg.LoanRequestEligibility -> copy(loanRequestEligibility = msg.loanRequestEligibility)
+                is Msg.SetExistingLoanRequest -> copy(loanRefId = msg.loanRefId)
+                is Msg.ClearExisting -> copy(loanRefId = "")
             }
     }
 

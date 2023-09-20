@@ -145,6 +145,7 @@ interface ApplyLongTermLoansStore :
         ) : Intent()
 
         data object CloseWebView : Intent()
+        data object ClearExisting : Intent()
 
     }
 
@@ -179,5 +180,6 @@ interface ApplyLongTermLoansStore :
         val phoneNo: String = "By Phone No",
         val selfGuarantee: String = "Self Guarantee",
         val loanRequestEligibility: PrestaLoanRequestEligibility? = null,
+        val loanRefId: String = "",
     )
 }
