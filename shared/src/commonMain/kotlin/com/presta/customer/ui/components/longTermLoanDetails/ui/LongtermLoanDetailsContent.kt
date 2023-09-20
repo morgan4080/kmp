@@ -200,15 +200,13 @@ fun LongTermLoanDetailsContent(
                                     fontFamily = MaterialTheme.typography.bodySmall.fontFamily
                                 ),
                                 decorationBox = { innerTextField ->
-                                    if (desiredPeriod.text.isEmpty()
-                                    ) {
+                                    if (desiredPeriod.text.isEmpty()) {
                                         Text(
                                             modifier = Modifier.alpha(.3f),
                                             text = "Desired Period(Months ${if(state.prestaLongTermLoanProductById !== null && state.prestaLongTermLoanProductById.maxperiod !== null) "max ${state.prestaLongTermLoanProductById.maxperiod}" else ""})",
                                             style = MaterialTheme.typography.bodySmall
                                         )
                                     }
-
                                     AnimatedVisibility(
                                         visible = desiredPeriod.text.isNotEmpty(),
                                         modifier = Modifier.absoluteOffset(y = -(16).dp),
