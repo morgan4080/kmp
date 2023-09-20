@@ -9,3 +9,4 @@ data class LoanRequest(
     val loanNumber: String,
     val amount: Double,
 )
+

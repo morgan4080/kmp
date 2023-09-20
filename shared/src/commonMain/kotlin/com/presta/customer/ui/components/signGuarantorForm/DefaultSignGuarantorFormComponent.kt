@@ -140,8 +140,7 @@ class DefaultSignGuarantorFormComponent(
                             refId = state.cachedMemberData.refId
                         )
                     )
-                    val flow =
-                        poller.poll(5_000L, state.cachedMemberData.accessToken, memberRefId)
+                    val flow = poller.poll(5_000L, state.cachedMemberData.accessToken, memberRefId)
 
                     flow.collect {
                         it.onSuccess { response ->
@@ -150,7 +149,7 @@ class DefaultSignGuarantorFormComponent(
                                     loadedData.loanRequest.loanNumber.contains(loanNumber)
                                 }
                             filteredResponse.map { filter ->
-                                if (filter.isSigned) {
+                                if (filter.isSigned == true) {
                                     onDocumentSigned(loanNumber, amount)
                                 }
                                 println("The loaded data is " + filter.loanRequest.loanNumber)

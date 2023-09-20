@@ -1,21 +1,22 @@
 package com.presta.customer.network.longTermLoans.model.guarantorResponse
 
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PrestaGuarantorResponse(
+data class PrestaGuarantorResponse @OptIn(ExperimentalSerializationApi::class) constructor(
     val refId: String,
     val memberNumber: String,
     val memberRefId: String,
     val firstName: String,
     val lastName: String,
-    val eligible: Boolean,
-    val eligibilityMessage: String,
-    val isAccepted: Boolean,
-    val isSigned: Boolean,
+    @EncodeDefault val eligible: Boolean? = null,
+    @EncodeDefault val eligibilityMessage: String? = null,
+    @EncodeDefault val isAccepted: Boolean? = null,
+    @EncodeDefault val isSigned: Boolean? = null,
     val isActive: Boolean,
     val committedAmount: Double,
     val applicant: Applicant,
     val loanRequest: LoanRequest
 )
-

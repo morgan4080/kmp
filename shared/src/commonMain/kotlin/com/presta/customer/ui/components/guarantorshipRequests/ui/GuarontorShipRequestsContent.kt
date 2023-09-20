@@ -271,14 +271,7 @@ fun GuarantorShipRequestsContent(
                                             it
                                         )
                                     }
-//                                    component.onAcceptSelected(
-//                                        loanNumber = loanNumber,
-//                                        amount = if (amountToGuarantee != "") amountToGuarantee.toDouble() else 0.0,
-//                                        loanRequestRefId = loanRequestRefId,
-//                                        memberRefId = memberRefId,
-//                                        guarantorRefId = guarantorRefIdRefId
-//                                    )
-//                                    modalBottomScope.launch { modalBottomState.hide() }
+//
                                 }
                                 .clip(shape = CircleShape),
                             tint = MaterialTheme.colorScheme.tertiaryContainer

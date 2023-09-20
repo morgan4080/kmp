@@ -119,7 +119,8 @@ fun WitnessRequestContent(
 
     if (loanRequestRefId != "") {
         LaunchedEffect(
-            state.prestaWitnessAcceptanceStatus
+            state.prestaWitnessAcceptanceStatus,
+            state.isLoading
         ) {
             if (loanRequestRefId == state.prestaWitnessAcceptanceStatus?.loanRequest?.refId) {
                 if (state.prestaWitnessAcceptanceStatus.witnessAccepted) {
@@ -142,11 +143,13 @@ fun WitnessRequestContent(
     ModalBottomSheetLayout(
         sheetState = modalBottomState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        sheetBackgroundColor = MaterialTheme.colorScheme.surface,
         sheetContent = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp)
+                    .background(MaterialTheme.colorScheme.surface)
                     .fillMaxHeight(0.8f),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -209,7 +212,8 @@ fun WitnessRequestContent(
                         modifier = Modifier
                             .padding(top = 20.dp),
                         fontSize = 12.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 Row(
@@ -220,7 +224,8 @@ fun WitnessRequestContent(
                         " as a  Witness for this loan product valued:",
                         modifier = Modifier,
                         fontSize = 12.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 Text(
@@ -268,7 +273,7 @@ fun WitnessRequestContent(
                                     }
                                 }
                                 .clip(shape = CircleShape),
-                            tint =MaterialTheme.colorScheme.tertiaryContainer
+                            tint = MaterialTheme.colorScheme.tertiaryContainer
                         )
                         Text(
                             "Accept ",
