@@ -15,6 +15,7 @@ import com.presta.customer.network.longTermLoans.model.LongTermLoanResponse
 import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLoanByRefIdResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLoanRequestByRequestRefId
+import com.presta.customer.network.longTermLoans.model.PrestaLoanRequestEligibility
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanCategoriesResponse
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategories
 import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoanSubCategoriesChildren
@@ -77,6 +78,8 @@ class ApplyLongTermLoansStoreFactory(
             Msg()
 
         data class GuarantorAcceptanceResponseLoaded(val guarantorAcceptanceResponse: PrestaGuarantorAcceptanceResponse) :
+            Msg()
+        data class LoanRequestEligibility(val loanRequestEligibility: PrestaLoanRequestEligibility) :
             Msg()
 
         data class LoanByLoanRequestRefIdLoaded(val loanByLoanRequestRefId: PrestaLoanRequestByRequestRefId) :
@@ -269,6 +272,11 @@ class ApplyLongTermLoansStoreFactory(
                     phoneNumber = intent.phoneNumber
                 )
 
+                is ApplyLongTermLoansStore.Intent.CheckLoanRequestEligibility -> getLoanRequestEligibilityByMemberRefId(
+                    token = intent.token,
+                    memberRefId = intent.memberRefId
+                )
+
                 is ApplyLongTermLoansStore.Intent.CloseWebView -> dispatch(Msg.ClearSignUrl)
             }
 
@@ -456,7 +464,6 @@ class ApplyLongTermLoansStoreFactory(
                     guarantorList,
                 ).onSuccess { response ->
                     dispatch(Msg.LongTermLoanRequestLoaded(response))
-                    println("LongTerm Loan Request  Success Success:::::;;;" + response)
                 }.onFailure { e ->
                     dispatch(Msg.LongTermLoansFailed(e.message))
                     println("Reason of failure" + e.message)
@@ -522,7 +529,22 @@ class ApplyLongTermLoansStoreFactory(
             token: String,
             memberRefId: String
         ) {
+            if (checkLoanRequestEligibilityJob?.isActive == true) return
 
+            dispatch(Msg.LongTermLoansLoading())
+
+            checkLoanRequestEligibilityJob = scope.launch {
+                longTermLoansRepository.checkLoanRequestEligibilityByMemberRefId(
+                    token,
+                    memberRefId
+                ).onSuccess { response ->
+                    dispatch(Msg.LoanRequestEligibility(response))
+                }.onFailure { e ->
+                    dispatch(Msg.LongTermLoansFailed(e.message))
+                }
+
+                dispatch(Msg.LongTermLoansLoading(false))
+            }
         }
 
         private var getGuarantorAcceptanceResponseJob: Job? = null
@@ -540,9 +562,6 @@ class ApplyLongTermLoansStoreFactory(
                     isAccepted = isAccepted
                 ).onSuccess { response ->
                     dispatch(Msg.GuarantorAcceptanceResponseLoaded(response))
-                    println(":::::::::getGuarantorAcceptance Response")
-                    println(response)
-
                 }.onFailure { e ->
                     dispatch(Msg.LongTermLoansFailed(e.message))
                 }
@@ -906,6 +925,7 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.LoadedSignTenantByPhoneNumber -> copy(prestaLoadTenantByPhoneNumber = msg.signTenantByPhoneNumberResponse)
                 is Msg.WitnessAcceptanceStatusLoaded -> copy(prestaWitnessAcceptanceStatus = msg.witnessAcceptanceResponseLoaded)
                 is Msg.ClearSignUrl -> copy(prestaZohoSignUrl = null)
+                is Msg.LoanRequestEligibility -> copy(loanRequestEligibility = msg.loanRequestEligibility)
             }
     }
 

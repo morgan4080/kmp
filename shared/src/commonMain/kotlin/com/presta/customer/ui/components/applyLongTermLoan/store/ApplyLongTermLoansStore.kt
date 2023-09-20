@@ -17,6 +17,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansReques
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
+import com.presta.customer.network.longTermLoans.model.PrestaLoanRequestEligibility
 import com.presta.customer.network.longTermLoans.model.favouriteGuarantor.PrestaFavouriteGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
@@ -138,6 +139,10 @@ interface ApplyLongTermLoansStore :
             val token: String,
             val phoneNumber: String
         ) : Intent()
+        data class CheckLoanRequestEligibility(
+            val token: String,
+            val memberRefId: String
+        ) : Intent()
 
         data object CloseWebView : Intent()
 
@@ -173,5 +178,6 @@ interface ApplyLongTermLoansStore :
         val memberNo: String = "By Member No",
         val phoneNo: String = "By Phone No",
         val selfGuarantee: String = "Self Guarantee",
+        val loanRequestEligibility: PrestaLoanRequestEligibility? = null,
     )
 }

@@ -192,7 +192,7 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
         }
     }
 
-    override suspend fun checkLoanRequestEligibilityByRefId(
+    override suspend fun checkLoanRequestEligibilityByMemberRefId(
         token: String,
         memberRefId: String
     ): Result<PrestaLoanRequestEligibility> {

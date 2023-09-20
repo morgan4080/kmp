@@ -74,7 +74,7 @@ interface LongTermLoansRepository {
         loanRequestRefId: String,
     ): Result<PrestaLoanByRefIdResponse>
 
-    suspend fun checkLoanRequestEligibilityByRefId(
+    suspend fun checkLoanRequestEligibilityByMemberRefId(
         token: String,
         memberRefId: String,
     ): Result<PrestaLoanRequestEligibility>
