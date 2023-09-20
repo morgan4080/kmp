@@ -34,7 +34,7 @@ import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun SignWitnessFormContent(
     component: SignWitnessFormComponent,
@@ -61,20 +61,13 @@ fun SignWitnessFormContent(
         }
     }
     LaunchedEffect(
-        authState.cachedMemberData
+        authState.cachedMemberData,
+        state.isLoading
     ) {
-        authState.cachedMemberData?.let {
-            ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
-                token = it.accessToken,
-                loanRequestRefId = component.loanRequestRefId,
-                actorRefId = component.memberRefId,
-                actorType = ActorType.WITNESS
-            )
-        }?.let {
-            onEvent(
-                it
-            )
+        if (state.prestaZohoSignUrl?.signURL != null) {
+            component.platform.openUrl(state.prestaZohoSignUrl.signURL)
         }
+
     }
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Sign Document", onClickContainer = {
@@ -150,13 +143,20 @@ fun SignWitnessFormContent(
                     ActionButton(
                         label = "SIGN DOCUMENT",
                         onClickContainer = {
-
-                            if (state.prestaZohoSignUrl?.signURL != null) {
-                                component.platform.openUrl(state.prestaZohoSignUrl.signURL)
+                            authState.cachedMemberData?.let {
+                                ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
+                                    token = it.accessToken,
+                                    loanRequestRefId = component.loanRequestRefId,
+                                    actorRefId = component.memberRefId,
+                                    actorType = ActorType.WITNESS
+                                )
+                            }?.let {
+                                onEvent(
+                                    it
+                                )
                             }
-                            //check the loan Number
                         },
-                        loading = state.prestaZohoSignUrl == null
+                        loading = state.isLoading
                     )
                 }
             }

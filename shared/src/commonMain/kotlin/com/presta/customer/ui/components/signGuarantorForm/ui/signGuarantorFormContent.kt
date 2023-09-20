@@ -156,7 +156,7 @@ fun SignGuarantorFormContent(
                             }
                             //check the loan Number
                         },
-                        loading = state.prestaZohoSignUrl == null
+                        loading = state.isLoading
                     )
                 }
             }

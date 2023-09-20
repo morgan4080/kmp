@@ -53,6 +53,7 @@ import androidx.compose.ui.zIndex
 import com.presta.customer.MR
 import com.presta.customer.network.longTermLoans.model.LoanApplicationStatus
 import com.presta.customer.network.longTermLoans.model.LoanRequestListData
+import com.presta.customer.network.longTermLoans.model.LoanSigningStatus
 import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComponent
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
@@ -119,7 +120,7 @@ fun ApplyLongTermLoansContent(
                         )
 
                     }
-                    if (filteredResponse.applicationStatus == LoanApplicationStatus.INPROGRESS) {
+                    if (filteredResponse.signingStatus == LoanSigningStatus.INPROGRESS) {
                         snackBarScope.launch {
                             snackbarHostState.showSnackbar(
                                 CustomSnackBar(
@@ -132,7 +133,7 @@ fun ApplyLongTermLoansContent(
                     }
                 }
             } else {
-                if (contentList!=null && contentList.isEmpty() && filteredResponse.isEmpty()) {
+                if (contentList != null && contentList.isEmpty() && filteredResponse.isEmpty()) {
                     snackbarHostState.currentSnackbarData?.dismiss()
                     component.onProductSelected(
                         loanRefId = productRefId
@@ -149,14 +150,14 @@ fun ApplyLongTermLoansContent(
         refreshing = false
     }
 
-    if (state.isLoading){
+    if (state.isLoading) {
         refreshScope.launch {
             refreshing = true
             delay(1500)
             refreshing = false
         }
     }
-    val refreshState = rememberPullRefreshState(refreshing , ::refresh)
+    val refreshState = rememberPullRefreshState(refreshing, ::refresh)
 
     Scaffold(modifier = Modifier.padding(),
         snackbarHost = {
@@ -389,7 +390,7 @@ fun ApplyLongTermLoansContent(
                     }
                 }
                 PullRefreshIndicator(
-                    refreshing , refreshState,
+                    refreshing, refreshState,
                     Modifier
                         .padding(innerPadding)
                         .align(Alignment.TopCenter).zIndex(1f),

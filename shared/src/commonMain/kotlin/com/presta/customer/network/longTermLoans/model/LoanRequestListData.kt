@@ -13,7 +13,7 @@ data class LoanRequestListData @OptIn(ExperimentalSerializationApi::class) const
     val loanProductRefId: String,
     val loanAmount: Double,
     val status: String,
-    @EncodeDefault val signingStatus: String?=null,
+    @EncodeDefault val signingStatus: LoanSigningStatus?=null,
     val acceptanceStatus: String,
     val applicationStatus: LoanApplicationStatus,
     val memberRefId: String,
