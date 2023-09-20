@@ -238,7 +238,7 @@ fun EmployedDetails(
                     }
 
                     if (inputMethod.errorMessage !== "") {
-                        hasError =true
+                        hasError = true
                         Text(
                             modifier = Modifier.padding(horizontal = 22.dp),
                             text = inputMethod.errorMessage,
@@ -247,8 +247,8 @@ fun EmployedDetails(
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                             color = Color.Red
                         )
-                    }else{
-                        hasError =false
+                    } else {
+                        hasError = false
                     }
                 }
             }
@@ -262,7 +262,7 @@ fun EmployedDetails(
                     ActionButton(
                         label = "Submit",
                         onClickContainer = {
-                            if (signHomeState.employer.value.text!=""&& signHomeState.employmentNumber.value.text!="") {
+                            if (signHomeState.employer.value.text != "" && signHomeState.employmentNumber.value.text != "") {
                                 userDetailsMap["employer"] =
                                     signHomeState.employer.value.text
                                 userDetailsMap["employmentNumber"] =

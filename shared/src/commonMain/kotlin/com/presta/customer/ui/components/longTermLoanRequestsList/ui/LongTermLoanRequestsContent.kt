@@ -360,17 +360,17 @@ fun LongTermLoanRequestsContent(
                             .fillMaxWidth()
                     ) {
                         state.prestaLoanByLoanRequestRefId?.guarantorList?.mapIndexed { index, guarantorDataResponse ->
-                            val guarantorProgress =
-                                if (guarantorDataResponse.isAccepted == true && !guarantorDataResponse.isSigned!! && guarantorDataResponse.isApproved == false) {
-                                    0.3f
-                                } else if (guarantorDataResponse.isSigned == true && guarantorDataResponse.isAccepted == true && guarantorDataResponse.isApproved == false) {
-                                    0.6f
-                                } else if (guarantorDataResponse.isApproved == true && guarantorDataResponse.isSigned == true && guarantorDataResponse.isAccepted == true) {
-                                    1f
-
-                                } else {
-                                    0.0f
-                                }
+                            val guarantorProgress = when {
+                                guarantorDataResponse.isAccepted == true && guarantorDataResponse.isSigned == false && guarantorDataResponse.isApproved == false -> 0.3f
+                                guarantorDataResponse.isSigned == true && guarantorDataResponse.isAccepted == true && guarantorDataResponse.isApproved == false -> 0.6f
+                                guarantorDataResponse.isApproved == true && guarantorDataResponse.isSigned == true && guarantorDataResponse.isAccepted == true -> 1f
+                                else -> 0.0f
+                            }
+                            val approvalStatus = when (guarantorDataResponse.isApproved) {
+                                true -> "Approved"
+                                false -> "Declined"
+                                else -> "Pending"
+                            }
                             item {
                                 Column(
                                     modifier = Modifier
@@ -480,7 +480,8 @@ fun LongTermLoanRequestsContent(
                                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                                     )
                                                     Text(
-                                                        text = "",
+                                                        text = guarantorDataResponse.dateAccepted
+                                                            ?: " ",
                                                         fontSize = 12.sp,
                                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                                     )
@@ -514,7 +515,7 @@ fun LongTermLoanRequestsContent(
                                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                                     )
                                                     Text(
-                                                        text = "",
+                                                        text = approvalStatus,
                                                         fontSize = 12.sp,
                                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                                     )
