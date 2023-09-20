@@ -2,6 +2,8 @@ package com.presta.customer.wanaanga
 
 import android.app.Activity
 import android.os.Bundle
+import android.webkit.WebSettings
+import android.webkit.WebView
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -22,7 +24,6 @@ class MainActivity : AppCompatActivity() {
     private fun setCurrentActivity(activity: Activity) {
         currentActivity = activity
     }
-
 
     private var connectivityStatus: SharedStatus? = null
 

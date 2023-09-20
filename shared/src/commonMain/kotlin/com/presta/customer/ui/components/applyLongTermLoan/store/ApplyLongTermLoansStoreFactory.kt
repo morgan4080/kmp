@@ -120,6 +120,7 @@ class ApplyLongTermLoansStoreFactory(
             Msg()
 
         data class LongTermLoansFailed(val error: String?) : Msg()
+        data object ClearSignUrl : Msg()
     }
 
     private inner class ExecutorImpl :
@@ -267,6 +268,8 @@ class ApplyLongTermLoansStoreFactory(
                     token = intent.token,
                     phoneNumber = intent.phoneNumber
                 )
+
+                is ApplyLongTermLoansStore.Intent.CloseWebView -> dispatch(Msg.ClearSignUrl)
             }
 
         private var getPrestaLongTermLoansProductsJob: Job? = null
@@ -893,6 +896,7 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.LoanRequestDeleted -> copy(deleteLoanRequestResponse = msg.loanRequestDeleted)
                 is Msg.LoadedSignTenantByPhoneNumber -> copy(prestaLoadTenantByPhoneNumber = msg.signTenantByPhoneNumberResponse)
                 is Msg.WitnessAcceptanceStatusLoaded -> copy(prestaWitnessAcceptanceStatus = msg.witnessAcceptanceResponseLoaded)
+                is Msg.ClearSignUrl -> copy(prestaZohoSignUrl = null)
             }
     }
 

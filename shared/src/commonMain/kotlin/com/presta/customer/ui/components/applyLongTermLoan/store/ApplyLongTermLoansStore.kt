@@ -139,6 +139,8 @@ interface ApplyLongTermLoansStore :
             val phoneNumber: String
         ) : Intent()
 
+        data object CloseWebView : Intent()
+
     }
 
     data class State(

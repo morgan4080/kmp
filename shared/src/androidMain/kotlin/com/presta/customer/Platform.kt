@@ -16,6 +16,7 @@ import android.os.Build
 import android.provider.ContactsContract
 import android.util.Base64
 import android.util.Log
+import android.webkit.CookieManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,6 +34,7 @@ import com.google.android.gms.common.api.Status
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.google.i18n.phonenumbers.Phonenumber
+import com.mohamedrejeb.calf.ui.web.WebViewState
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
@@ -219,6 +221,10 @@ actual class Platform(
             null
         )
     }
+
+    /*actual fun acceptWebViewCookies(webview: WebViewState) {
+        CookieManager.getInstance().setAcceptThirdPartyCookies(webview.webView, true)
+    }*/
 }
 
 class AppSignatureHelper(

@@ -1,28 +1,41 @@
 package com.presta.customer.ui.components.signLoanForm.ui
 
-import com.presta.customer.ui.composables.ShimmerBrush
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mohamedrejeb.calf.ui.web.WebView
+import com.mohamedrejeb.calf.ui.web.rememberWebViewState
 import com.presta.customer.ImageConverter
 import com.presta.customer.MR
 import com.presta.customer.network.longTermLoans.model.ActorType
@@ -31,6 +44,7 @@ import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signLoanForm.SignLoanFormComponent
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.NavigateBackTopBar
+import com.presta.customer.ui.composables.ShimmerBrush
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
@@ -67,16 +81,14 @@ fun SignLoanFormContent(
         }
     }
 
-
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Sign Loan Form", onClickContainer = {
             component.onBackNavClicked()
-
         })
     }, content = { innerPadding ->
         if (state.prestaLoanByLoanRequestRefId?.pdfThumbNail == null) {
             LazyColumn(modifier = Modifier.padding(innerPadding)) {
-                items(6) {
+                items(1) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -92,6 +104,32 @@ fun SignLoanFormContent(
                             Box(
                                 modifier = Modifier
                                     .defaultMinSize(40.dp, 40.dp)
+                                    .background(
+                                        ShimmerBrush(
+                                            targetValue = 1300f,
+                                            showShimmer = true
+                                        )
+                                    )
+                                    .fillMaxWidth()
+                            ) {
+                            }
+                        }
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top= 25.dp, bottom = 10.dp, start = 16.dp, end = 16.dp)
+                            .background(color = MaterialTheme.colorScheme.background),
+                    ) {
+                        ElevatedCard(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(color = MaterialTheme.colorScheme.background),
+                            colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .defaultMinSize(100.dp, 100.dp)
                                     .background(
                                         ShimmerBrush(
                                             targetValue = 1300f,
@@ -181,6 +219,66 @@ fun Base64ToImage(base64String: String) {
             .fillMaxWidth()
 
     )
+}
+
+
+/*WebSettings settings = webview.getSettings();
+        settings.setJavaScriptEnabled(true);
+        settings.setDomStorageEnabled(true);*/
+@Composable
+fun ViewWebView(signURL: String, onEvent: (ApplyLongTermLoansStore.Intent) -> Unit) {
+    val stateWebView = rememberWebViewState(
+        url = signURL
+    )
+
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .windowInsetsPadding(WindowInsets.systemBars)
+            .windowInsetsPadding(WindowInsets.ime)
+    ) {
+        WebView(
+            state = stateWebView,
+            modifier = Modifier
+                .fillMaxSize(),
+            captureBackPresses = false,
+            onCreated = {
+                println("onCreated")
+            },
+            onDispose = {
+                println("onDispose")
+            }
+        )
+
+        if (stateWebView.isLoading)
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+            )
+
+        IconButton(
+            onClick = {
+                onEvent(
+                    ApplyLongTermLoansStore.Intent.CloseWebView
+                )
+            },
+            colors = IconButtonDefaults.iconButtonColors(
+                contentColor = MaterialTheme.colorScheme.onBackground,
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(16.dp)
+        ) {
+            Icon(
+                Icons.Filled.ArrowBackIosNew,
+                contentDescription = "Back",
+                tint = MaterialTheme.colorScheme.onBackground,
+            )
+        }
+    }
 }
 
 

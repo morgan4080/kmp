@@ -1,7 +1,7 @@
 plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
-    kotlin("plugin.serialization") version "1.8.20"
+    kotlin("plugin.serialization") version "1.9.0"
     id("com.android.library")
     id("org.jetbrains.compose")
     id("com.arkivanov.parcelize.darwin")
@@ -13,7 +13,7 @@ plugins {
 
 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
 kotlin {
-    android()
+    androidTarget()
     ios()
 
     cocoapods {
@@ -39,6 +39,8 @@ kotlin {
             export(deps.moko.resources)
 
             export(deps.moko.resources.graphics)
+
+            export("com.mohamedrejeb.calf:calf-ui:0.1.1")
         }
         extraSpecAttributes["resources"] = "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
     }
@@ -106,7 +108,7 @@ kotlin {
                 implementation("com.github.ln-12:multiplatform-connectivity-status:1.2.0")
                 api("io.github.qdsfdhvh:image-loader:1.4.1")
                 implementation("com.moriatsushi.insetsx:insetsx:0.1.0-alpha10")
-
+                api("com.mohamedrejeb.calf:calf-ui:0.1.1")
             }
         }
 
@@ -138,6 +140,8 @@ kotlin {
                 implementation (deps.crashlytics.firebase)
                 implementation("com.googlecode.libphonenumber:libphonenumber:8.2.0")
             }
+
+            dependsOn(commonMain)
         }
 
         val iosMain by getting {

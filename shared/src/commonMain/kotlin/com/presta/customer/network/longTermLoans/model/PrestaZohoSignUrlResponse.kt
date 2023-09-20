@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PrestaZohoSignUrlResponse(
-    val signURL: String,
+    var signURL: String,
     val success: Boolean,
     val message: String,
 )
