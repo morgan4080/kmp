@@ -92,6 +92,15 @@ fun SignGuarantorFormContent(
             }
         }
     }
+    LaunchedEffect(
+        authState.cachedMemberData,
+        state.isLoading
+    ) {
+        if (state.prestaZohoSignUrl?.signURL != null) {
+            component.platform.openUrl(state.prestaZohoSignUrl.signURL)
+        }
+
+    }
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Sign Document", onClickContainer = {
             component.onBackNavClicked()
