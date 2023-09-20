@@ -73,12 +73,13 @@ fun SignGuarantorFormContent(
         }
     }
     val refreshState = rememberPullRefreshState(refreshing, ::refresh)
-    if (component.loanRequestRefId != "") {
-        LaunchedEffect(
-            authState.cachedMemberData,
-            component.loanRequestRefId,
-            state.prestaGuarontorshipRequests
-        ) {
+
+    LaunchedEffect(
+        authState.cachedMemberData,
+        component.loanRequestRefId,
+        state.prestaGuarontorshipRequests
+    ) {
+        if (component.loanRequestRefId != "") {
             authState.cachedMemberData?.let {
                 ApplyLongTermLoansStore.Intent.GetPrestaLoanByLoanRequestRefId(
                     token = it.accessToken,
