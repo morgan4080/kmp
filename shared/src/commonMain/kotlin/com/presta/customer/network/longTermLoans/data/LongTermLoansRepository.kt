@@ -17,6 +17,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProduc
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
+import com.presta.customer.network.longTermLoans.model.PrestaLoanRequestEligibility
 import com.presta.customer.network.longTermLoans.model.favouriteGuarantor.PrestaFavouriteGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
@@ -72,6 +73,11 @@ interface LongTermLoansRepository {
         token: String,
         loanRequestRefId: String,
     ): Result<PrestaLoanByRefIdResponse>
+
+    suspend fun checkLoanRequestEligibilityByRefId(
+        token: String,
+        memberRefId: String,
+    ): Result<PrestaLoanRequestEligibility>
 
     suspend fun getGuarantorAcceptanceStatus(
         token: String,

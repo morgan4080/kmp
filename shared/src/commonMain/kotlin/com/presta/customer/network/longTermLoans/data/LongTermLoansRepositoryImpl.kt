@@ -18,6 +18,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProduc
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
+import com.presta.customer.network.longTermLoans.model.PrestaLoanRequestEligibility
 import com.presta.customer.network.longTermLoans.model.favouriteGuarantor.PrestaFavouriteGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
@@ -183,6 +184,22 @@ class LongTermLoansRepositoryImpl : LongTermLoansRepository, KoinComponent {
             val response = prestaLongTermLoansClient.getLoanRequestByRefId(
                 token = token,
                 loanRequestRefId = loanRequestRefId
+            )
+            Result.success(response)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun checkLoanRequestEligibilityByRefId(
+        token: String,
+        memberRefId: String
+    ): Result<PrestaLoanRequestEligibility> {
+        return try {
+            val response = prestaLongTermLoansClient.checkLoanRequestEligibilityByRefId(
+                token = token,
+                memberRefId = memberRefId
             )
             Result.success(response)
 

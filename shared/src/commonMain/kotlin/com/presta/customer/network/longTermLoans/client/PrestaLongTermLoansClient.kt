@@ -18,6 +18,7 @@ import com.presta.customer.network.longTermLoans.model.PrestaLongTermLoansProduc
 import com.presta.customer.network.longTermLoans.model.PrestaZohoSignUrlResponse
 import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.PrestaGuarantorAcceptanceResponse
+import com.presta.customer.network.longTermLoans.model.PrestaLoanRequestEligibility
 import com.presta.customer.network.longTermLoans.model.favouriteGuarantor.PrestaFavouriteGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 import com.presta.customer.network.signHome.errorHandler.signHomeErrorHandler
@@ -239,6 +240,19 @@ class PrestaLongTermLoansClient(
     ): PrestaLoanByRefIdResponse {
         return longTermLoansErrorHandler {
             httpClient.get("${NetworkConstants.PrestaLongTermLoanRequestByRefId.route}/${loanRequestRefId}") {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+            }
+        }
+    }
+
+    suspend fun checkLoanRequestEligibilityByRefId(
+        token: String,
+        memberRefId: String,
+    ): PrestaLoanRequestEligibility {
+        return longTermLoansErrorHandler {
+            httpClient.get("${NetworkConstants.PrestaLoanRequestEligibilityByRefId.route}/${memberRefId}") {
                 header(HttpHeaders.Authorization, "Bearer $token")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 contentType(ContentType.Application.Json)

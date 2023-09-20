@@ -516,6 +516,15 @@ class ApplyLongTermLoansStoreFactory(
             }
         }
 
+        private var checkLoanRequestEligibilityJob: Job? = null
+
+        private fun getLoanRequestEligibilityByMemberRefId(
+            token: String,
+            memberRefId: String
+        ) {
+
+        }
+
         private var getGuarantorAcceptanceResponseJob: Job? = null
         private fun getGuarantorAcceptanceResponse(
             token: String,
