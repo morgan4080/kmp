@@ -337,7 +337,7 @@ fun SelectLoanSubCategoryCard(
             },
             shape = RoundedCornerShape(20.dp),
             elevation = CardDefaults.elevatedCardElevation(
-                defaultElevation = 30.dp
+                defaultElevation = 2.dp
             ),
         ) {
             Box(
@@ -360,7 +360,7 @@ fun SelectLoanSubCategoryCard(
                     ) {
                         Text(
                             text = label,
-                            color = MaterialTheme.colorScheme.outline,
+                            color = MaterialTheme.colorScheme.onBackground,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier

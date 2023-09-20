@@ -15,7 +15,7 @@ data class EligibilityMetaData(
 @Serializable
 data class PrestaLoanRequestEligibility @OptIn(ExperimentalSerializationApi::class) constructor(
     val isElibigible: Boolean,
-    val nonEligibilityReason: NonEligibilityReasons,
+    @EncodeDefault val nonEligibilityReason: NonEligibilityReasons? = null,
     @EncodeDefault val description: String? = null,
     @EncodeDefault val metadata: EligibilityMetaData? = null
 )

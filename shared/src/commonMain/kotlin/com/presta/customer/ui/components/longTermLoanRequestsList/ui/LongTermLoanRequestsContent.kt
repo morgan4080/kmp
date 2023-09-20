@@ -60,7 +60,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.presta.customer.Durations
 import com.presta.customer.MR
 import com.presta.customer.ui.components.addGuarantors.ui.SnackbarVisualsWithError
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
@@ -76,6 +75,12 @@ import com.presta.customer.ui.theme.backArrowColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Duration.Companion.days
 
 @OptIn(
     ExperimentalMaterialApi::class,
@@ -265,7 +270,7 @@ fun LongTermLoanRequestsContent(
                             )
 
                             Text(
-                                text = state.prestaLoanByLoanRequestRefId.applicationStatus.lowercase(),
+                                text = state.prestaLoanByLoanRequestRefId.applicationStatus.toString().lowercase(),
                                 fontSize = 14.sp,
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f)
@@ -339,28 +344,69 @@ fun LongTermLoanRequestsContent(
                             Spacer(modifier = Modifier.width(5.dp))
                         }
 
-                        if (state.prestaLoanByLoanRequestRefId !== null) {
+                        println(":::::state.prestaLoanByLoanRequestRefId?.applicationStatus:::::::")
+                        println(state.prestaLoanByLoanRequestRefId?.applicationStatus)
+
+                        if (state.prestaLoanByLoanRequestRefId !== null && state.prestaLoanByLoanRequestRefId.loanRequestProgress < 100) {
                             OutlinedButton(
                                 onClick = {
-                                    if (state.prestaLoanByLoanRequestRefId.applicantSigned !== null) {
-                                        if (state.prestaLoanByLoanRequestRefId.applicantSigned) {
-                                            showVoidError = true
-                                        } else {
-                                            if (loanRequestNumber != "") {
-                                                authState.cachedMemberData?.let {
-                                                    ApplyLongTermLoansStore.Intent.DeleteLoanRequest(
-                                                        token = it.accessToken,
-                                                        loanRequestNumber = loanRequestNumber
-                                                    )
+                                    val dateStr = state.prestaLoanByLoanRequestRefId.loanDate
 
-                                                }?.let {
-                                                    onEvent(
-                                                        it
-                                                    )
-                                                }
+                                    // Split the input string into date and time parts
+                                    val dateAndTimeParts = dateStr.split(" ")
+
+                                    // Split the date part into day, month, and year
+                                    val dateParts = dateAndTimeParts[0].split("/")
+
+                                    // Split the time part into hours and minutes
+                                    val timeParts = dateAndTimeParts[1].split(":")
+
+                                    // Extract components
+                                    val year = dateParts[2].toInt()
+                                    val month = dateParts[1].toInt()
+                                    val day = dateParts[0].toInt()
+                                    val hours = timeParts[0].toInt()
+                                    val minutes = timeParts[1].toInt()
+
+                                    // Create a LocalDateTime object
+                                    val localDateTime = LocalDateTime(year, month, day, hours, minutes)
+
+                                    // Convert it to ISO string format
+                                    val isoString = localDateTime.toInstant(TimeZone.UTC).toLocalDateTime(TimeZone.UTC).toString()
+                                    val todayInstant = Clock.System.now().toLocalDateTime(
+                                        TimeZone.currentSystemDefault()).toInstant(TimeZone.currentSystemDefault())
+
+                                    val loanDateInstant =
+                                        LocalDateTime
+                                            .parse(
+                                                isoString
+                                            )
+                                            .toInstant(
+                                                TimeZone.currentSystemDefault()
+                                            )
+
+                                    val olderThan1month = todayInstant.minus(loanDateInstant) > 30.days
+
+                                    if (state.prestaLoanByLoanRequestRefId.applicantSigned !== null
+                                        &&
+                                        state.prestaLoanByLoanRequestRefId.applicantSigned && !olderThan1month
+                                    ) {
+                                        showVoidError = true
+                                    } else {
+                                        if (loanRequestNumber != "") {
+                                            authState.cachedMemberData?.let {
+                                                ApplyLongTermLoansStore.Intent.DeleteLoanRequest(
+                                                    token = it.accessToken,
+                                                    loanRequestNumber = loanRequestNumber
+                                                )
+
+                                            }?.let {
+                                                onEvent(
+                                                    it
+                                                )
                                             }
-                                            deleteInitiated = true
                                         }
+                                        deleteInitiated = true
                                     }
                                 },
                                 modifier = Modifier
@@ -591,7 +637,9 @@ fun LongTermLoanRequestsContent(
                                                     OutlinedButton(
                                                         onClick = {
                                                             //Todo--proceed to replace  guaarantor
-                                                            scope.launch { modalBottomSheetState.hide() }
+                                                            scope.launch {
+                                                                modalBottomSheetState.hide()
+                                                            }
                                                             component.navigateToReplaceGuarantor(
                                                                 loanRequestRefId = loanRequestRefId,
                                                                 guarantorRefId = guarantorRefId,

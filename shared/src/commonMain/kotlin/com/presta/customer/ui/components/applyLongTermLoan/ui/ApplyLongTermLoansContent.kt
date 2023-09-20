@@ -109,6 +109,9 @@ fun ApplyLongTermLoansContent(
         }
     }
 
+    println(":::state.loanRequestEligibility:::")
+    println(state.loanRequestEligibility)
+
     fun refresh() = refreshScope.launch {
         refreshing = true
         component.reloadModels()
@@ -130,7 +133,8 @@ fun ApplyLongTermLoansContent(
             NavigateBackTopBar("Select Loan Product",
                 onClickContainer = {
                     component.onBackNavClicked()
-                })
+                }
+            )
         },
         content = { innerPadding ->
             Box(Modifier.consumeWindowInsets(innerPadding).pullRefresh(refreshState)) {
@@ -321,7 +325,7 @@ fun ApplyLongTermLoansContent(
                     }
                 }
 
-                if (state.loanRequestEligibility !== null && showDialog) {
+                if (state.loanRequestEligibility !== null && showDialog && state.loanRequestEligibility.nonEligibilityReason !== null) {
                     AdaptiveAlertDialog(
                         onConfirm = {
                             showDialog = false
