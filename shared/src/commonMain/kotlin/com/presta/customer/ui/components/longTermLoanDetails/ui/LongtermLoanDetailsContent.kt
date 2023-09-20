@@ -118,22 +118,6 @@ fun LongTermLoanDetailsContent(
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
                         style = MaterialTheme.typography.bodyMedium
                     )
-                    Text(
-                        modifier = Modifier
-                            .padding(top = 2.dp)
-                            .background(
-                                brush = ShimmerBrush(
-                                    targetValue = 1300f,
-                                    showShimmer = state.prestaLongTermLoanProductById?.maxperiod == null
-                                ),
-                                shape = RoundedCornerShape(12.dp)
-                            ).defaultMinSize(200.dp)
-                            .padding(top = 10.dp),
-                        text = if (state.prestaLongTermLoanProductById?.maxperiod !== null) "Max Period " + state.prestaLongTermLoanProductById.maxperiod.toString() + "(Months)" else "",
-                        color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.bodySmall,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
-                    )
 
                     Row(
                         modifier = Modifier
@@ -220,7 +204,7 @@ fun LongTermLoanDetailsContent(
                                     ) {
                                         Text(
                                             modifier = Modifier.alpha(.3f),
-                                            text = "Desired Period(Months)",
+                                            text = "Desired Period(Months ${if(state.prestaLongTermLoanProductById !== null && state.prestaLongTermLoanProductById.maxperiod !== null) "max ${state.prestaLongTermLoanProductById.maxperiod}" else ""})",
                                             style = MaterialTheme.typography.bodySmall
                                         )
                                     }
