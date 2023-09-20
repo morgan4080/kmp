@@ -19,14 +19,21 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
+import com.mohamedrejeb.calf.ui.dialog.AdaptiveAlertDialog
 import com.presta.customer.ImageConverter
 import com.presta.customer.MR
 import com.presta.customer.network.longTermLoans.model.ActorType
+import com.presta.customer.network.longTermLoans.model.NonEligibilityReasons
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signWitnessForm.SignWitnessFormComponent
@@ -34,6 +41,8 @@ import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignWitnessFormContent(
@@ -42,6 +51,7 @@ fun SignWitnessFormContent(
     authState: AuthStore.State,
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
 ) {
+    var showDialog by remember { mutableStateOf(false) }
     if (component.loanRequestRefId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -69,6 +79,11 @@ fun SignWitnessFormContent(
         }
 
     }
+
+    LaunchedEffect(state.error) {
+        showDialog = state.error !== null
+    }
+
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
         NavigateBackTopBar("Sign Document", onClickContainer = {
             component.onBackNavClicked()
@@ -151,6 +166,7 @@ fun SignWitnessFormContent(
                                     actorType = ActorType.WITNESS
                                 )
                             }?.let {
+                                onEvent(ApplyLongTermLoansStore.Intent.ClearExistingError)
                                 onEvent(
                                     it
                                 )
@@ -160,6 +176,36 @@ fun SignWitnessFormContent(
                     )
                 }
             }
+        }
+
+        if (showDialog && state.error !== null) {
+            AdaptiveAlertDialog(
+                onConfirm = {
+                    showDialog = false
+                    authState.cachedMemberData?.let {
+                        ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
+                            token = it.accessToken,
+                            loanRequestRefId = component.loanRequestRefId,
+                            actorRefId = component.memberRefId,
+                            actorType = ActorType.WITNESS
+                        )
+                    }?.let {
+                        onEvent(ApplyLongTermLoansStore.Intent.ClearExistingError)
+                        onEvent(
+                            it
+                        )
+                    }
+                },
+                onDismiss = {
+                    showDialog = false
+                    onEvent(ApplyLongTermLoansStore.Intent.ClearExistingError)
+                    component.onBackNavClicked()
+                },
+                confirmText = "Retry",
+                dismissText = "Dismiss",
+                title = "Witness Signing Error",
+                text = state.error,
+            )
         }
     })
 }
