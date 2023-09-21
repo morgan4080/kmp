@@ -98,8 +98,6 @@ fun ApplyLongTermLoansContent(
             }
         }
     }
-    println(":::state.loanRequestEligibility:::")
-    println(state.loanRequestEligibility)
 
     fun refresh() = refreshScope.launch {
         refreshing = true
@@ -215,8 +213,7 @@ fun ApplyLongTermLoansContent(
                                 onEvent(ApplyLongTermLoansStore.Intent.ClearEligibilityResponse)
                                 delay(500)
                                 state.loanRequestEligibility.metadata?.let {
-                                    component.onResolveLoanSelected(loanRefId = "5555")
-                                    //it.existingLoanRequestRefId
+                                    component.onResolveLoanSelected(loanRefId = it.existingLoanRequestRefId)
                                 }
                             }
                         },

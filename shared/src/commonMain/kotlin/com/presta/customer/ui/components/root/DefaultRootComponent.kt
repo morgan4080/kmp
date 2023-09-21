@@ -644,11 +644,9 @@ class DefaultRootComponent(
                 navigation.push(Config.WitnessRequests)
             },
             goBackToLMs = {
-                //navigate to  Lms
                 navigation.bringToFront(Config.RootBottom(backTopProfile = false))
             },
             gotoReplaceGuarantor = { loanRequestRefId, guarantorRefId, guarantorFirstName, guarantorLastName ->
-                //navigate  to replace  guarantor
                 navigation.push(
                     Config.ReplaceGuarantor(
                         loanRequestRefId,
@@ -657,9 +655,7 @@ class DefaultRootComponent(
                         guarantorLastName
                     )
                 )
-
             },
-            //Todo--- handle the sign loan form  state--------
             gotoSignLoanForm = { loanNumber, amount, loanRequestRefId, memberRefId ->
                 navigation.push(
                     Config.SignLoanForm(
@@ -672,7 +668,6 @@ class DefaultRootComponent(
             },
             loanRefId = config.loanRefId,
             logoutToSplash = {
-                //Todo handle logout
                 scope.launch {
                     if (it) {
                         navigation.replaceAll(Config.Splash, onComplete = {
@@ -680,7 +675,6 @@ class DefaultRootComponent(
                         })
                     }
                 }
-
             }
         )
 
@@ -689,17 +683,14 @@ class DefaultRootComponent(
             componentContext = componentContext,
             onItemClicked = {
                 navigation.pop()
-
             },
             onProductClicked = { loanRefid ->
                 navigation.bringToFront(Config.LongTermLoanDetails(loanRefId = loanRefid))
-
             },
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
             onResolveLoanClicked = { loanRequestRefId ->
-                navigation.bringToFront(Config.SignApp(loanRefId = loanRequestRefId))
-
+                navigation.replaceAll(Config.SignApp(loanRefId = loanRequestRefId))
             }
         )
 

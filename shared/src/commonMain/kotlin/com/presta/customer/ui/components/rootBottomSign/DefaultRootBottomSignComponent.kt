@@ -5,7 +5,6 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
-import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
@@ -71,7 +70,7 @@ class DefaultRootBottomSignComponent(
         memberRefId: String
     ) -> Unit,
     backTopProfile: Boolean = false,
-    loanRefId: String,
+    val loanRefId: String,
     val logoutToSplash: (state: Boolean) -> Unit = {},
 ) : RootBottomSignComponent, ComponentContext by componentContext, KoinComponent {
     private val authRepository by inject<AuthRepository>()
@@ -81,7 +80,7 @@ class DefaultRootBottomSignComponent(
     private val _childStackBottom =
         childStack(
             source = navigationBottomStackNavigation,
-            initialConfiguration = if (loanRefId == "") ConfigBottom.SignProfile else ConfigBottom.Request(loanRefId),
+            initialConfiguration = ConfigBottom.SignProfile,
             handleBackButton = true,
             childFactory = ::createChildBottom,
             key = "authStack"
@@ -196,13 +195,13 @@ class DefaultRootBottomSignComponent(
 
     private sealed class ConfigBottom : Parcelable {
         @Parcelize
-        object SignProfile : ConfigBottom()
+        data object SignProfile : ConfigBottom()
 
         @Parcelize
         data class Request(val refId: String) : ConfigBottom()
 
         @Parcelize
-        object Settings : ConfigBottom()
+        data object Settings : ConfigBottom()
 
     }
 
@@ -255,5 +254,16 @@ class DefaultRootBottomSignComponent(
         }
 
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
+
+        lifecycle.subscribe(
+            object : Lifecycle.Callbacks {
+                override fun onResume() {
+                    super.onResume()
+                    if (loanRefId !== "")  {
+                        navigationBottomStackNavigation.bringToFront(ConfigBottom.Request(loanRefId))
+                    }
+                }
+            }
+        )
     }
 }
