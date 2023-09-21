@@ -1249,29 +1249,31 @@ fun AddGuarantorContent(
                                                                         onClick = { index: Int ->
                                                                             selectedIndex =
                                                                                 if (selectedIndex == index) -1 else index
-                                                                            when (guarantorList[selectedIndex]) {
-                                                                                state.memberNo -> {
-                                                                                    println(
-                                                                                        guarantorList[selectedIndex]
-                                                                                    )
-                                                                                    guarantorshipOption =
-                                                                                        GuarantorShipOptions.MEMBERNUMBER
-                                                                                }
+                                                                            if (selectedIndex > -1) {
+                                                                                when (guarantorList[selectedIndex]) {
+                                                                                    state.memberNo -> {
+                                                                                        println(
+                                                                                            guarantorList[selectedIndex]
+                                                                                        )
+                                                                                        guarantorshipOption =
+                                                                                            GuarantorShipOptions.MEMBERNUMBER
+                                                                                    }
 
-                                                                                state.phoneNo -> {
-                                                                                    println(
-                                                                                        guarantorList[selectedIndex]
-                                                                                    )
-                                                                                    guarantorshipOption =
-                                                                                        GuarantorShipOptions.PHONENUMBER
-                                                                                }
+                                                                                    state.phoneNo -> {
+                                                                                        println(
+                                                                                            guarantorList[selectedIndex]
+                                                                                        )
+                                                                                        guarantorshipOption =
+                                                                                            GuarantorShipOptions.PHONENUMBER
+                                                                                    }
 
-                                                                                state.selfGuarantee -> {
-                                                                                    println(
-                                                                                        guarantorList[selectedIndex]
-                                                                                    )
-                                                                                    guarantorshipOption =
-                                                                                        GuarantorShipOptions.SELFGUARANTEE
+                                                                                    state.selfGuarantee -> {
+                                                                                        println(
+                                                                                            guarantorList[selectedIndex]
+                                                                                        )
+                                                                                        guarantorshipOption =
+                                                                                            GuarantorShipOptions.SELFGUARANTEE
+                                                                                    }
                                                                                 }
                                                                             }
                                                                         },
