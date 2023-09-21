@@ -79,16 +79,21 @@ fun ApplyLongTermLoansContent(
         memberRefId = signHomeState.prestaTenantByPhoneNumber.refId
     }
     LaunchedEffect(
-        state.loanRequestEligibility
+        state.loanRequestEligibility,
+        state.prestaClientSettings,
+        productRefId
     ) {
         if (state.loanRequestEligibility !== null) {
             state.loanRequestEligibility.isElibigible.let { eligible ->
-                if (eligible) {
-                    component.onProductSelected(
-                        loanRefId = productRefId
-                    )
-                } else {
-                    showDialog = true
+                if (state.prestaClientSettings !== null) {
+                    if (eligible || state.prestaClientSettings.response.parallelLoans) {
+                        println(productRefId)
+                        if (productRefId !== "") component.onProductSelected(
+                            loanRefId = productRefId
+                        )
+                    } else {
+                        showDialog = true
+                    }
                 }
             }
         }

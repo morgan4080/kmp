@@ -121,7 +121,7 @@ fun ProfileContent(
     activateAccount: (amount: Double) -> Unit,
     logout: () -> Unit,
     reloadModels: () -> Unit,
-    callback: () -> Unit,
+    callback: (hideBottomBar: Boolean?) -> Unit,
 ) {
     val stateLazyRow0 = rememberLazyListState()
 
@@ -167,14 +167,14 @@ fun ProfileContent(
     val refreshScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        callback()
+        callback(null)
     }
 
     fun refresh() = refreshScope.launch {
         refreshing = true
 
         reloadModels()
-        callback()
+        callback(null)
 
         delay(1500)
         refreshing = false
@@ -193,6 +193,23 @@ fun ProfileContent(
     val savingsIsFalse = authState.tenantServicesConfig.contains(
         TenantServiceConfigResponse(TenantServiceConfig.savings, false)
     )
+
+    LaunchedEffect(drawerState.currentValue) {
+        if (drawerState.currentValue == DrawerValue.Closed) {
+            callback(false)
+        } else {
+            callback(true)
+        }
+    }
+
+    LaunchedEffect(sheetState.currentValue) {
+        if (sheetState.currentValue == ModalBottomSheetValue.Hidden) {
+            callback(false)
+        } else {
+            callback(true)
+        }
+    }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -298,7 +315,9 @@ fun ProfileContent(
                                 IconButton(
                                     modifier = Modifier.zIndex(1f),
                                     onClick = {
-                                        scopeDrawer.launch { drawerState.open() }
+                                        scopeDrawer.launch {
+                                            drawerState.open()
+                                        }
                                     },
                                     content = {
                                         Icon(

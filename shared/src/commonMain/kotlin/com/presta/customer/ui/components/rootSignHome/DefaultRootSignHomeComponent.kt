@@ -17,7 +17,6 @@ import com.presta.customer.ui.components.signAppHome.SignHomeComponent
 class DefaultRootSignHomeComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
-    private val pop: () -> Unit = {},
     private val onApplyLoanClicked: () -> Unit = {},
     private val onLoanRequestsListClicked: () -> Unit = {},
     private val onGuarantorshipRequestsClicked: () -> Unit = {},

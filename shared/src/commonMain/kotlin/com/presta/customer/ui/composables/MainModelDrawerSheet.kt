@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.presta.customer.MR
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.helpers.LocalSafeArea
@@ -46,6 +47,7 @@ internal fun MainModalDrawerSheet(
     onItemsClick: (Pair<String, ImageVector>?) -> Unit
 ) {
     ModalDrawerSheet(
+        modifier = Modifier.zIndex(1f),
         drawerContainerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.95f),
         drawerContentColor = MaterialTheme.colorScheme.onBackground,
         windowInsets = WindowInsets(

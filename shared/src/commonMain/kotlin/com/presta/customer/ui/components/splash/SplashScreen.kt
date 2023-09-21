@@ -99,12 +99,12 @@ fun SplashScreen(component: SplashComponent, connectivityStatus: SharedStatus?) 
             ) {
                 when(isSystemInDarkTheme()) {
                     false -> Image(
-                        modifier = Modifier.size(250.dp),
+                        modifier = Modifier.size(200.dp),
                         painter = painterResource(model.organisation.logo),
                         contentDescription = "Logo"
                     )
                     true -> Image(
-                        modifier = Modifier.size(250.dp),
+                        modifier = Modifier.size(200.dp),
                         painter = painterResource(model.organisation.logodark),
                         contentDescription = "Logo"
                     )

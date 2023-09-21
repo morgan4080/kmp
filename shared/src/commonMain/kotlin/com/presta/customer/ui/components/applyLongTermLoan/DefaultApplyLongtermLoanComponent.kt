@@ -104,6 +104,10 @@ class DefaultApplyLongtermLoanComponent(
                             token = state.cachedMemberData.accessToken,
                         )
                     )
+
+                    onEvent(ApplyLongTermLoansStore.Intent.GetClientSettings(
+                        token = state.cachedMemberData.accessToken
+                    ))
                 }
             }
         }

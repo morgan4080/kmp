@@ -112,9 +112,6 @@ class DefaultRootBottomSignComponent(
         DefaultRootSignHomeComponent(
             componentContext = componentContext,
             storeFactory = storeFactory,
-            pop = {
-                navigationBottomStackNavigation.pop()
-            },
             onApplyLoanClicked = {
                 //go to component outside root Bottom
                 gotoApplyAllLoans()

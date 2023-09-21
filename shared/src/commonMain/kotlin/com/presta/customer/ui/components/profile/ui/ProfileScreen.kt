@@ -9,7 +9,7 @@ import com.presta.customer.ui.components.profile.ProfileComponent
 @Composable
 fun ProfileScreen(
     component: ProfileComponent,
-    callback: () -> Unit,
+    callback: (hideBottomBar: Boolean?) -> Unit,
 ) {
     val authState by component.authState.collectAsState()
     val profileState by component.profileState.collectAsState()

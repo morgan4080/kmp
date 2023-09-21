@@ -1,8 +1,11 @@
 package com.presta.customer.ui.components.otp.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -57,7 +60,10 @@ import com.presta.customer.ui.components.otp.OtpComponent
 import com.presta.customer.ui.components.otp.store.OtpStore
 import com.presta.customer.ui.components.root.DefaultRootComponent
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun OtpContent(
     state: OtpStore.State,
@@ -201,7 +207,7 @@ fun OtpContent(
     }
 
     Scaffold (modifier = Modifier
-        .fillMaxHeight(),
+        .fillMaxHeight().background(color = MaterialTheme.colorScheme.primary),
         snackbarHost = { SnackbarHost(snackBarHostState) },
     ) {
         Column(
@@ -212,9 +218,28 @@ fun OtpContent(
                 .padding(
                     vertical = 30.dp
                 ),
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column {
+                Box (
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    when(isSystemInDarkTheme()) {
+                        false -> Image(
+                            modifier = Modifier.size(115.dp),
+                            painter = painterResource("otp.xml"),
+                            contentDescription = "otp"
+                        )
+
+                        true -> Image(
+                            modifier = Modifier.size(115.dp),
+                            painter = painterResource("otp__3_.xml"),
+                            contentDescription = "otp"
+                        )
+                    }
+                }
                 Row (
                     modifier = Modifier.padding(horizontal = 16.dp)
                 ) {

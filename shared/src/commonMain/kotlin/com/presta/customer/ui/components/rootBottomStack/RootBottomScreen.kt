@@ -49,6 +49,7 @@ fun RootBottomScreen(component: RootBottomComponent) {
     val childStackBottom by component.childStackBottom.subscribeAsState()
     val state by component.authState.collectAsState()
     val activeComponentStackBottom = childStackBottom.active.instance
+    var showBottomBar by remember { mutableStateOf(true) }
     // TenantServicesResponse
     val listOfActiveServices = remember { mutableListOf<TenantServicesResponse>() }
     
@@ -97,7 +98,7 @@ fun RootBottomScreen(component: RootBottomComponent) {
     Scaffold (
         bottomBar = {
             AnimatedVisibility(
-                visible = state.screens.isNotEmpty(),
+                visible = state.screens.isNotEmpty() && showBottomBar,
                 enter = fadeIn() + expandVertically(),
                 exit = fadeOut() + shrinkVertically()
             ) {
@@ -136,22 +137,28 @@ fun RootBottomScreen(component: RootBottomComponent) {
                 animation = stackAnimation(fade() + scale()),
             ) {
                 when (val childX = it.instance) {
-                    is RootBottomComponent.ChildBottom.ProfileChild -> ProfileScreen(childX.component, callback = {
-                        savingsIsFalse = state.tenantServicesConfig.contains(
-                            TenantServiceConfigResponse(TenantServiceConfig.savings, false)
-                        )
+                    is RootBottomComponent.ChildBottom.ProfileChild -> ProfileScreen(childX.component, callback = { hide ->
+                        if (hide == null) {
+                            savingsIsFalse = state.tenantServicesConfig.contains(
+                                TenantServiceConfigResponse(TenantServiceConfig.savings, false)
+                            )
 
-                        state.tenantServices.forEach { service ->
-                            if (service.status == ServicesActivity.ACTIVE) listOfActiveServices.add(service)
-                        }
-
-                        component.onAuthEvent(AuthStore.Intent.UpdateScreens(
-                            screens = screens.filter {
-                                listOfActiveServices.contains(TenantServicesResponse(it.serviceMapping, ServicesActivity.ACTIVE))
-                            }.filter { screen ->
-                                !(savingsIsFalse && screen.featureMapping == TenantServiceConfig.savings)
+                            state.tenantServices.forEach { service ->
+                                if (service.status == ServicesActivity.ACTIVE) listOfActiveServices.add(service)
                             }
-                        ))
+
+                            component.onAuthEvent(AuthStore.Intent.UpdateScreens(
+                                screens = screens.filter {
+                                    listOfActiveServices.contains(TenantServicesResponse(it.serviceMapping, ServicesActivity.ACTIVE))
+                                }.filter { screen ->
+                                    !(savingsIsFalse && screen.featureMapping == TenantServiceConfig.savings)
+                                }
+                            ))
+                        } else {
+                            println("::callback::")
+                            println(hide)
+                            showBottomBar = !hide
+                        }
                     })
                     is RootBottomComponent.ChildBottom.RootLoansChild -> RootLoansScreen(childX.component)
                     is RootBottomComponent.ChildBottom.RootSavingsChild-> RootSavingsScreen(childX.component)

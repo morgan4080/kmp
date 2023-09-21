@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.Direction
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
@@ -77,12 +78,12 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
         stack = component.childStack,
         animation = stackAnimation(true) { child ->
             when (child.instance) {
-                is RootComponent.Child.SignAppChild -> stackAnimator { _, _, content ->
-                    if (rotated) {
+                is RootComponent.Child.SignAppChild -> stackAnimator { _, direction, content ->
+                    if (rotated || direction !== Direction.ENTER_FRONT) {
                         content(
                             Modifier
                         )
-                    } else {
+                    } else if (direction == Direction.ENTER_FRONT) {
                         SplashSign (
                             callback = {
                                 rotated = child.instance is RootComponent.Child.SignAppChild
