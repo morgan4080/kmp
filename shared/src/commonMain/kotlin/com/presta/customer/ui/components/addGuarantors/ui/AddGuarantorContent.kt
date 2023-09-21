@@ -701,6 +701,7 @@ fun AddGuarantorContent(
                                     launchGuarantorListing = true
                                     // launchCheckSelfAndEmPloyedPopUp = false
                                     launchAddAmountToGuarantee = false
+                                    amountToGuarantee = emptyTextContainer
 
                                 },
                                 enabled = amountToGuarantee.text != "" && diferences > 0 && amountToGuarantee.text.toInt() > 0 && amountToGuarantee.text.toInt() <= diferences

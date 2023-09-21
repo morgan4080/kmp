@@ -79,14 +79,16 @@ class ApplyLongTermLoansStoreFactory(
 
         data class GuarantorAcceptanceResponseLoaded(val guarantorAcceptanceResponse: PrestaGuarantorAcceptanceResponse) :
             Msg()
+
         data class LoanRequestEligibility(val loanRequestEligibility: PrestaLoanRequestEligibility) :
             Msg()
+
         data class SetExistingLoanRequest(val loanRefId: String) :
             Msg()
 
-        data object ClearExisting: Msg()
-        data object ClearExistingError: Msg()
-        data object ClearEligibilityResponse: Msg()
+        data object ClearExisting : Msg()
+        data object ClearExistingError : Msg()
+        data object ClearEligibilityResponse : Msg()
 
         data class LoanByLoanRequestRefIdLoaded(val loanByLoanRequestRefId: PrestaLoanRequestByRequestRefId) :
             Msg()
