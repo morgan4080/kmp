@@ -18,7 +18,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,28 +29,22 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.presta.customer.MR
 import dev.icerock.moko.resources.compose.fontFamilyResource
-import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlertCustom() {
-    var showDialog by remember { mutableStateOf(true) }
-
-    var animate by remember { mutableStateOf(true) }
-
-    LaunchedEffect(showDialog) {
-        delay(2000)
-        showDialog = true
-    }
-
+fun AlertCustom(
+    showDialogue: Boolean,
+    label: String,
+    close: () ->Unit
+) {
+    var animate by remember { mutableStateOf(showDialogue) }
     val translateY: Float by animateFloatAsState(
-        targetValue = if (showDialog) 0f else 2000f,
+        targetValue = if (showDialogue) 0f else 2000f,
         animationSpec = tween(1000, easing = FastOutSlowInEasing),
         finishedListener = {
-            animate = showDialog
+            animate = showDialogue
         }
     )
-
     if (
         animate
     ) {
@@ -60,7 +53,8 @@ fun AlertCustom() {
                 translationY = translateY
             },
             onDismissRequest = {
-                showDialog = false
+                animate=false
+                close()
             },
             content = {
                 ElevatedCard(
@@ -80,13 +74,14 @@ fun AlertCustom() {
                                 bottom = 33.dp,
                             )
                         ) {
-                            Row (modifier = Modifier
-                                .fillMaxWidth(),
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.SpaceBetween,
                             ) {
                                 Text(
-                                    text = "Title",
+                                    text = label,
                                     color = MaterialTheme.colorScheme.outline,
                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                     style = MaterialTheme.typography.bodyMedium

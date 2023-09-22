@@ -57,7 +57,7 @@ import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun GuarantorShipRequestsContent(
     component: GuarantorshipRequestComponent,
@@ -143,7 +143,7 @@ fun GuarantorShipRequestsContent(
     ModalBottomSheetLayout(
         sheetState = modalBottomState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-        sheetBackgroundColor =  MaterialTheme.colorScheme.surface,
+        sheetBackgroundColor = MaterialTheme.colorScheme.surface,
         sheetContent = {
             Column(
                 modifier = Modifier
@@ -153,39 +153,79 @@ fun GuarantorShipRequestsContent(
                     .fillMaxHeight(0.8f),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp)) {
+                    Text(
+                        text = "Guarantorship Request",
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+
+                }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 20.dp),
-                    horizontalArrangement = Arrangement.Center
+                        .padding(top = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.AccountCircle,
-                        contentDescription = null,
+                    Text(
+                        text = "Date requested",
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                    Text(
                         modifier = Modifier
-                            .size(70.dp)
-                            .clip(shape = CircleShape),
-                        tint = MaterialTheme.colorScheme.outline.copy(0.5f)
-                    )
-                }
-                Text(
-                    modifier = Modifier
-                        .padding(top = 20.dp)
-                        .fillMaxWidth()
-                        .background(
-                            brush = ShimmerBrush(
-                                targetValue = 1300f,
-                                showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null
-                            ),
-                            shape = RoundedCornerShape(12.dp),
-                        ).defaultMinSize(200.dp),
-                    text = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) "${state.prestaLoanByLoanRequestRefId.memberFirstName.uppercase()} ${state.prestaLoanByLoanRequestRefId.memberLastName.uppercase()}" else "",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 14.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                    textAlign = TextAlign.Center,
+                            .fillMaxWidth()
+                            .background(
+                                brush = ShimmerBrush(
+                                    targetValue = 1300f,
+                                    showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null
+                                ),
+                                shape = RoundedCornerShape(12.dp),
+                            ).defaultMinSize(100.dp),
+                        text = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) state.prestaLoanByLoanRequestRefId.loanDate else " ",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 14.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                        textAlign = TextAlign.Center,
 
+                        )
+
+
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Applicant",
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.outline
                     )
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                brush = ShimmerBrush(
+                                    targetValue = 1300f,
+                                    showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null
+                                ),
+                                shape = RoundedCornerShape(12.dp),
+                            ).defaultMinSize(100.dp),
+                        text = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) "${state.prestaLoanByLoanRequestRefId.memberFirstName.uppercase()} ${state.prestaLoanByLoanRequestRefId.memberLastName.uppercase()}" else "",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 14.sp,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                        textAlign = TextAlign.Center,
+
+                        )
+
+                }
+
                 Text(
                     modifier = Modifier
                         .padding(top = 10.dp)

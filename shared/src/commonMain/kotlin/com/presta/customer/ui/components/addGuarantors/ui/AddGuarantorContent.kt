@@ -96,6 +96,7 @@ import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLo
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.ActionButton
+import com.presta.customer.ui.composables.AlertCustom
 import com.presta.customer.ui.composables.EmployedDetails
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.SelfEmployedDetails
@@ -148,7 +149,6 @@ fun AddGuarantorContent(
     val skipHalfExpanded by remember { mutableStateOf(true) }
     var launchCheckSelfAndEmPloyedPopUp by remember { mutableStateOf(false) }
     var allConditionsChecked by remember { mutableStateOf(false) }
-    var selfGuarantee by remember { mutableStateOf(guarantorshipOption === GuarantorShipOptions.SELFGUARANTEE) }
     val modalBottomSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = skipHalfExpanded
@@ -187,7 +187,6 @@ fun AddGuarantorContent(
             refreshing = false
         }
     }
-
     if (signHomeState.isLoading) {
         refreshScope.launch {
             refreshing = true
@@ -195,9 +194,7 @@ fun AddGuarantorContent(
             refreshing = false
         }
     }
-
     val refreshState = rememberPullRefreshState(refreshing, ::refresh)
-
     LaunchedEffect(
         state.prestaLoadTenantByPhoneNumber,
         guarantorshipOption,
@@ -370,10 +367,33 @@ fun AddGuarantorContent(
     var check1 by remember { mutableStateOf(0) }
     var check2 by remember { mutableStateOf(0) }
     var difff by remember { mutableStateOf(0) }
-    LaunchedEffect(guarantorDataListed){
-        check1= component.desiredAmount.toInt()
-        check2 =  guarantorDataListed.sumOf { it.amount.toInt() }
-        difff =check1-check2
+    LaunchedEffect(guarantorDataListed) {
+        check1 = component.desiredAmount.toInt()
+        check2 = guarantorDataListed.sumOf { it.amount.toInt() }
+        difff = check1 - check2
+    }
+
+    var showDialogue by remember { mutableStateOf(false) }
+//    LaunchedEffect(guarantorDataListed.size, component.requiredGuarantors, difff) {
+//        showDialogue = guarantorDataListed.size == component.requiredGuarantors && difff != 0
+//    }
+
+//    AlertCustom(
+//        showDialogue = showDialogue,
+//        label = "Before proceeding, please review and update the guarantor-ship amount as it is currently insufficient. Ensure that the required amount is entered to continue with the process.",
+//        close = {
+//            showDialogue = false
+//        }
+//    )
+    if (guarantorDataListed.size == component.requiredGuarantors && difff != 0) {
+        AlertCustom(
+            showDialogue = true,
+            label = "Before proceeding, please review and update the guarantor-ship amount as it is currently insufficient. Ensure that the required amount is entered to continue with the process.",
+            close = {
+                showDialogue = false
+            }
+        )
+
     }
 
     ModalBottomSheetLayout(
@@ -1007,25 +1027,6 @@ fun AddGuarantorContent(
                             )
                         }
                         //Todo---add the loading modifier
-                        AnimatedVisibility(guarantorDataListed.size == component.requiredGuarantors && difff != 0) {
-                            Row(
-                                modifier = Modifier
-                                    .padding(top = 5.dp)
-                                    .fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = "Loan not fully guaranteed.",
-                                    color = MaterialTheme.colorScheme.error.copy(
-                                        alpha = 0.7f
-                                    ),
-                                    fontSize = 11.sp,
-                                    textAlign = TextAlign.Start,
-                                    modifier = Modifier.align(Alignment.CenterVertically),
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
-                                )
-                            }
-                        }
-
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -1192,14 +1193,7 @@ fun AddGuarantorContent(
                                         launchAddAmountToGuarantee = false
                                         launchCheckSelfAndEmPloyedPopUp = true
                                     } else {
-                                        snackBarScope.launch {
-                                            snackbarHostState.showSnackbar(
-                                                SnackbarVisualsWithError(
-                                                    "$difff not covered by the guarantors",
-                                                    isError = true
-                                                )
-                                            )
-                                        }
+                                        showDialogue = true
                                     }
                                 },
                                 enabled = memberNumber != "" || guarantorDataListed.size == component.requiredGuarantors
