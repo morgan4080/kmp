@@ -35,7 +35,7 @@ interface OtpStore: Store<OtpStore.Intent, OtpStore.State, Nothing> {
                 value = ""
             )
         ),
-        val label: String = "Please enter the code sent to",
+        val label: String = "Please enter the 4 digit code sent ",
         val title: String = "Enter OTP Verification code",
         val phone_number: String? = null,
         val isActive: Boolean? = null,
