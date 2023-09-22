@@ -366,6 +366,16 @@ fun AddGuarantorContent(
             }
         }
     }
+
+    var check1 by remember { mutableStateOf(0) }
+    var check2 by remember { mutableStateOf(0) }
+    var difff by remember { mutableStateOf(0) }
+    LaunchedEffect(guarantorDataListed){
+        check1= component.desiredAmount.toInt()
+        check2 =  guarantorDataListed.sumOf { it.amount.toInt() }
+        difff =check1-check2
+    }
+
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -997,7 +1007,24 @@ fun AddGuarantorContent(
                             )
                         }
                         //Todo---add the loading modifier
-
+                        AnimatedVisibility(guarantorDataListed.size == component.requiredGuarantors && difff != 0) {
+                            Row(
+                                modifier = Modifier
+                                    .padding(top = 5.dp)
+                                    .fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = "Loan not fully guaranteed.",
+                                    color = MaterialTheme.colorScheme.error.copy(
+                                        alpha = 0.7f
+                                    ),
+                                    fontSize = 11.sp,
+                                    textAlign = TextAlign.Start,
+                                    modifier = Modifier.align(Alignment.CenterVertically),
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                                )
+                            }
+                        }
 
                         LazyColumn(
                             modifier = Modifier
@@ -1098,7 +1125,7 @@ fun AddGuarantorContent(
                                             }
                                         }
                                     } else {
-                                        if (allConditionsChecked) {
+                                        if (allConditionsChecked && difff == 0) {
                                             //Todo--check if witness is required and navigate
                                             if (state.prestaClientSettings?.response?.requireWitness == true) {
                                                 //navigate  to add witness
@@ -1158,16 +1185,22 @@ fun AddGuarantorContent(
                                                 launchAddAmountToGuarantee = false
                                                 scope.launch { modalBottomSheetState.hide() }
                                             }
-
                                         }
                                     }
-                                    if (guarantorDataListed.size == component.requiredGuarantors) {
+                                    if (guarantorDataListed.size == component.requiredGuarantors && difff == 0) {
                                         scope.launch { modalBottomSheetState.show() }
                                         launchAddAmountToGuarantee = false
                                         launchCheckSelfAndEmPloyedPopUp = true
+                                    } else {
+                                        snackBarScope.launch {
+                                            snackbarHostState.showSnackbar(
+                                                SnackbarVisualsWithError(
+                                                    "$difff not covered by the guarantors",
+                                                    isError = true
+                                                )
+                                            )
+                                        }
                                     }
-
-
                                 },
                                 enabled = memberNumber != "" || guarantorDataListed.size == component.requiredGuarantors
                             )
