@@ -29,6 +29,7 @@ import androidx.compose.material.icons.outlined.Backspace
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -63,7 +64,7 @@ import com.presta.customer.ui.components.onBoarding.store.IdentifierTypes
 import com.presta.customer.ui.components.onBoarding.store.OnBoardingStore
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AuthContent(
     state: AuthStore.State,
