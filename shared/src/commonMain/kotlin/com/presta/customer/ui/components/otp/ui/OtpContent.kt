@@ -59,6 +59,7 @@ import com.presta.customer.ui.components.otp.OtpComponent
 import com.presta.customer.ui.components.otp.store.OtpStore
 import com.presta.customer.ui.components.root.DefaultRootComponent
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
@@ -140,10 +141,7 @@ fun OtpContent(
 
     LaunchedEffect(state.error) {
         if (state.error !== null) {
-            snackBarHostState.showSnackbar(
-                state.error
-            )
-
+            delay(3000)
             onEvent(OtpStore.Intent.ClearError)
         }
     }
@@ -342,7 +340,7 @@ fun OtpContent(
                     }
                 }
 
-                AnimatedVisibility(state.isLoading || authState.isLoading) {
+                AnimatedVisibility((state.isLoading || authState.isLoading) &&  state.error == null) {
                     Row (
                         modifier = Modifier
                             .padding(horizontal = 16.dp)
@@ -356,7 +354,7 @@ fun OtpContent(
                     }
                 }
 
-                AnimatedVisibility(!(state.isLoading || authState.isLoading)) {
+                AnimatedVisibility(!(state.isLoading || authState.isLoading) &&  state.error == null) {
                     Row (
                         modifier = Modifier
                             .padding(horizontal = 16.dp)
@@ -379,6 +377,34 @@ fun OtpContent(
                             style = MaterialTheme.typography.bodySmall,
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                         )
+                    }
+                }
+
+                AnimatedVisibility(state.error !== null) {
+                    Row (
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        state.error?.let { error ->
+                            Text(
+                                modifier = Modifier.clickable {
+                                    if (state.phone_number !== null) {
+                                        onEvent(OtpStore.Intent.RequestOTP(
+                                            token = "",
+                                            phoneNumber = state.phone_number,
+                                            tenantId = OrganisationModel.organisation.tenant_id
+                                        ))
+                                    }
+                                },
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.error,
+                                text = error,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                            )
+                        }
                     }
                 }
 

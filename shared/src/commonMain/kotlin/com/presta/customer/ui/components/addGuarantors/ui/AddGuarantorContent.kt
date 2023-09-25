@@ -1022,7 +1022,7 @@ fun AddGuarantorContent(
                                 .padding(top = 20.dp)
                         ) {
                             Text(
-                                "SELECTED GUARANTORS " + "(REQUIRES " + component.requiredGuarantors + " GUARANTOR)",
+                                "SELECTED GUARANTORS " + "(MIN " + component.requiredGuarantors + " GUARANTOR)",
                                 fontSize = 12.sp
                             )
                         }
