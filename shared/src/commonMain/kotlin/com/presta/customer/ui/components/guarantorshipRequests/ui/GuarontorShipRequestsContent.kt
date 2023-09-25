@@ -159,7 +159,7 @@ fun GuarantorShipRequestsContent(
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp)
                     .background(MaterialTheme.colorScheme.surface)
-                    .fillMaxHeight(0.8f),
+                    .fillMaxHeight(0.9f),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(

@@ -27,12 +27,15 @@ import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -84,7 +87,7 @@ import kotlin.time.Duration.Companion.days
 
 @OptIn(
     ExperimentalMaterialApi::class,
-    ExperimentalLayoutApi::class
+    ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class
 )
 @Composable
 fun LongTermLoanRequestsContent(
@@ -237,7 +240,7 @@ fun LongTermLoanRequestsContent(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "Request Details ".uppercase() + if(state.prestaLoanByLoanRequestRefId !== null) "(${state.prestaLoanByLoanRequestRefId.loanRequestNumber})" else "",
+                            text = "Request Details ".uppercase() + if (state.prestaLoanByLoanRequestRefId !== null) "(${state.prestaLoanByLoanRequestRefId.loanRequestNumber})" else "",
                             fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
                             fontSize = 14.sp
                         )
@@ -270,7 +273,8 @@ fun LongTermLoanRequestsContent(
                             )
 
                             Text(
-                                text = state.prestaLoanByLoanRequestRefId.applicationStatus.toString().lowercase(),
+                                text = state.prestaLoanByLoanRequestRefId.applicationStatus.toString()
+                                    .lowercase(),
                                 fontSize = 14.sp,
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f)
@@ -369,12 +373,15 @@ fun LongTermLoanRequestsContent(
                                     val minutes = timeParts[1].toInt()
 
                                     // Create a LocalDateTime object
-                                    val localDateTime = LocalDateTime(year, month, day, hours, minutes)
+                                    val localDateTime =
+                                        LocalDateTime(year, month, day, hours, minutes)
 
                                     // Convert it to ISO string format
-                                    val isoString = localDateTime.toInstant(TimeZone.UTC).toLocalDateTime(TimeZone.UTC).toString()
+                                    val isoString = localDateTime.toInstant(TimeZone.UTC)
+                                        .toLocalDateTime(TimeZone.UTC).toString()
                                     val todayInstant = Clock.System.now().toLocalDateTime(
-                                        TimeZone.currentSystemDefault()).toInstant(TimeZone.currentSystemDefault())
+                                        TimeZone.currentSystemDefault()
+                                    ).toInstant(TimeZone.currentSystemDefault())
 
                                     val loanDateInstant =
                                         LocalDateTime
@@ -385,7 +392,8 @@ fun LongTermLoanRequestsContent(
                                                 TimeZone.currentSystemDefault()
                                             )
 
-                                    val olderThan1month = todayInstant.minus(loanDateInstant) > 30.days
+                                    val olderThan1month =
+                                        todayInstant.minus(loanDateInstant) > 30.days
 
                                     if (state.prestaLoanByLoanRequestRefId.applicantSigned !== null
                                         &&
@@ -452,19 +460,43 @@ fun LongTermLoanRequestsContent(
                             )
                         }
                     }
-                    AnimatedVisibility(state.replacedGuarantor!="") {
-                        Row(
-                            modifier = Modifier
-                                .padding(top = 15.dp, bottom = 10.dp)
-                                .fillMaxWidth()
+                    AnimatedVisibility(state.replacedGuarantor != "") {
+                        ElevatedCard(
+                            modifier = Modifier.fillMaxWidth()
+                                .background(color = MaterialTheme.colorScheme.background)
                         ) {
-                            Text(
-                                text = "Changed guarantor will take effect when the added guarantor accepts request.",
-                                fontSize = 11.sp,
-                                textAlign = TextAlign.Start,
-                                modifier = Modifier.align(Alignment.CenterVertically),
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
-                            )
+                            Box(
+                                modifier = Modifier.background(
+                                    color = MaterialTheme.colorScheme.outline.copy(
+                                        alpha = 0.3f
+                                    )
+                                )
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(top = 9.dp, bottom = 9.dp)
+                                        .fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Info,
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .size(30.dp)
+                                            .clip(shape = CircleShape)
+                                            .padding(start = 10.dp),
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                    Text(
+                                        text = "Changed guarantor will take effect when the added guarantor accepts request.",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                        lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                                        modifier = Modifier.padding(start = 10.dp, end = 10.dp),
+                                        color = MaterialTheme.colorScheme.outline,
+                                    )
+
+                                }
+                            }
                         }
                     }
 
