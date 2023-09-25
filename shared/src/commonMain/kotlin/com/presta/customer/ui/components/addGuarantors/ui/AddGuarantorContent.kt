@@ -374,17 +374,6 @@ fun AddGuarantorContent(
     }
 
     var showDialogue by remember { mutableStateOf(false) }
-//    LaunchedEffect(guarantorDataListed.size, component.requiredGuarantors, difff) {
-//        showDialogue = guarantorDataListed.size == component.requiredGuarantors && difff != 0
-//    }
-
-//    AlertCustom(
-//        showDialogue = showDialogue,
-//        label = "Before proceeding, please review and update the guarantor-ship amount as it is currently insufficient. Ensure that the required amount is entered to continue with the process.",
-//        close = {
-//            showDialogue = false
-//        }
-//    )
     if (guarantorDataListed.size == component.requiredGuarantors && difff != 0) {
         AlertCustom(
             showDialogue = true,

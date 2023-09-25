@@ -452,6 +452,21 @@ fun LongTermLoanRequestsContent(
                             )
                         }
                     }
+                    AnimatedVisibility(state.replacedGuarantor!="") {
+                        Row(
+                            modifier = Modifier
+                                .padding(top = 15.dp, bottom = 10.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Changed guarantor will take effect when the added guarantor accepts request.",
+                                fontSize = 11.sp,
+                                textAlign = TextAlign.Start,
+                                modifier = Modifier.align(Alignment.CenterVertically),
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                            )
+                        }
+                    }
 
                     Row(
                         modifier = Modifier

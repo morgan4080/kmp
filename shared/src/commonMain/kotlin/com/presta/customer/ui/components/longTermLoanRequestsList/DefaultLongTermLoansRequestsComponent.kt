@@ -41,6 +41,7 @@ class DefaultLongTermLoansRequestsComponent(
         memberRefId: String
     ) -> Unit,
     loanRefId: String,
+    replacedGuarantor: String
 ) : LongTermLoanRequestsComponent, ComponentContext by componentContext, KoinComponent {
     override val platform by inject<Platform>()
 
@@ -66,7 +67,8 @@ class DefaultLongTermLoansRequestsComponent(
             //use the loan refId to launch a specific product in Request loan screen
             ApplyLongTermLoansStoreFactory(
                 storeFactory = storeFactory,
-                loanRefId = loanRefId
+                loanRefId = loanRefId,
+                replacedGuarantor = replacedGuarantor
             ).create()
         }
 

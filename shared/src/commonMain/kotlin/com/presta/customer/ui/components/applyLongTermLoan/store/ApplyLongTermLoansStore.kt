@@ -183,5 +183,6 @@ interface ApplyLongTermLoansStore :
         val selfGuarantee: String = "Self Guarantee",
         val loanRequestEligibility: PrestaLoanRequestEligibility? = null,
         val loanRefId: String = "",
+        val replacedGuarantor: String = "",
     )
 }

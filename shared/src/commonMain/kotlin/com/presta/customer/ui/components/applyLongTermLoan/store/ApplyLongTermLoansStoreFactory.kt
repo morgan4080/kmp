@@ -35,6 +35,7 @@ import org.koin.core.component.inject
 class ApplyLongTermLoansStoreFactory(
     private val storeFactory: StoreFactory,
     private val loanRefId: String = "",
+    private val replacedGuarantor: String = "",
 ) : KoinComponent {
     private val longTermLoansRepository by inject<LongTermLoansRepository>()
 
@@ -83,7 +84,7 @@ class ApplyLongTermLoansStoreFactory(
         data class LoanRequestEligibility(val loanRequestEligibility: PrestaLoanRequestEligibility) :
             Msg()
 
-        data class SetExistingLoanRequest(val loanRefId: String) :
+        data class SetExistingLoanRequest(val loanRefId: String,val replacedGuarantor: String) :
             Msg()
 
         data object ClearExisting : Msg()
@@ -139,7 +140,7 @@ class ApplyLongTermLoansStoreFactory(
             prestaDispatchers.main
         ) {
         override fun executeAction(action: Unit, getState: () -> ApplyLongTermLoansStore.State) {
-            dispatch(Msg.SetExistingLoanRequest(loanRefId))
+            dispatch(Msg.SetExistingLoanRequest(loanRefId,replacedGuarantor))
         }
 
         override fun executeIntent(
@@ -937,8 +938,8 @@ class ApplyLongTermLoansStoreFactory(
                 is Msg.WitnessAcceptanceStatusLoaded -> copy(prestaWitnessAcceptanceStatus = msg.witnessAcceptanceResponseLoaded)
                 is Msg.ClearSignUrl -> copy(prestaZohoSignUrl = null)
                 is Msg.LoanRequestEligibility -> copy(loanRequestEligibility = msg.loanRequestEligibility)
-                is Msg.SetExistingLoanRequest -> copy(loanRefId = msg.loanRefId)
-                is Msg.ClearExisting -> copy(loanRefId = "")
+                is Msg.SetExistingLoanRequest -> copy(loanRefId = msg.loanRefId, replacedGuarantor = msg.replacedGuarantor)
+                is Msg.ClearExisting -> copy(loanRefId = "", replacedGuarantor = "")
                 is Msg.ClearExistingError -> copy(error = null)
                 is Msg.ClearEligibilityResponse -> copy(loanRequestEligibility = null)
             }

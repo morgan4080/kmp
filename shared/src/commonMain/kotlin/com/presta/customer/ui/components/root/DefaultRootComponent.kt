@@ -509,7 +509,7 @@ class DefaultRootComponent(
             },
             backTopProfile = config.backTopProfile,
             gotoSignApp = {
-                navigation.bringToFront(Config.SignApp(loanRefId = ""))
+                navigation.bringToFront(Config.SignApp(loanRefId = "", replaceGuarantor = ""))
             }
         )
 
@@ -665,6 +665,7 @@ class DefaultRootComponent(
                 )
             },
             loanRefId = config.loanRefId,
+            replaceGuarantor = config.replaceGuarantor,
             logoutToSplash = {
                 scope.launch {
                     if (it) {
@@ -688,7 +689,7 @@ class DefaultRootComponent(
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
             onResolveLoanClicked = { loanRequestRefId ->
-                navigation.replaceAll(Config.SignApp(loanRefId = loanRequestRefId))
+                navigation.replaceAll(Config.SignApp(loanRefId = loanRequestRefId, replaceGuarantor = ""))
             }
         )
 
@@ -1069,7 +1070,7 @@ class DefaultRootComponent(
             amount = config.amount,
             loanNumber = config.loanNumber,
             navigateToProfileClicked = {
-                navigation.replaceAll(Config.SignApp(loanRefId = ""))
+                navigation.replaceAll(Config.SignApp(loanRefId = "", replaceGuarantor = ""))
             }
         )
 
@@ -1178,8 +1179,8 @@ class DefaultRootComponent(
             guarantorRefId = config.guarantorRefId,
             guarantorFirstName = config.guarantorFirstname,
             guarantorLastName = config.guarantorLastName,
-            onGoToLoanRequestsCalled = {loanRefId->
-                navigation.replaceAll(Config.SignApp(loanRefId = loanRefId))
+            onGoToLoanRequestsCalled = { loanRefId, guarantorReplaced ->
+                navigation.replaceAll(Config.SignApp(loanRefId = loanRefId, replaceGuarantor = guarantorReplaced.toString()))
             }
         )
 
@@ -1269,12 +1270,10 @@ class DefaultRootComponent(
         @Parcelize
         data class SignApp(
             val loanRefId: String,
+            val replaceGuarantor: String
         ) : Config()
 
-
-        // GUARANTORSHIP
-
-
+        //E  GUARANTORSHIP
         @Parcelize
         object ApplyLongTermLoans : Config()
 

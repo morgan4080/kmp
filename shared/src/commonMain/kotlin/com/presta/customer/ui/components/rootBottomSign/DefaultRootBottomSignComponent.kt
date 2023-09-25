@@ -71,6 +71,7 @@ class DefaultRootBottomSignComponent(
     ) -> Unit,
     backTopProfile: Boolean = false,
     val loanRefId: String,
+    val replaceGuarantor: String,
     val logoutToSplash: (state: Boolean) -> Unit = {},
 ) : RootBottomSignComponent, ComponentContext by componentContext, KoinComponent {
     private val authRepository by inject<AuthRepository>()
@@ -125,7 +126,12 @@ class DefaultRootBottomSignComponent(
                 gotoWitnessRequests()
             },
             onLoanRequestsListClicked = {
-                navigationBottomStackNavigation.bringToFront(ConfigBottom.Request(""))
+                navigationBottomStackNavigation.bringToFront(
+                    ConfigBottom.Request(
+                        "",
+                        guarantorReplaced = ""
+                    )
+                )
 
             },
             logoutToSplash = {
@@ -135,7 +141,10 @@ class DefaultRootBottomSignComponent(
 
         )
 
-    private fun longTermLoansrequestsListComponent(componentContext: ComponentContext, config: ConfigBottom.Request): LongTermLoanRequestsComponent =
+    private fun longTermLoansrequestsListComponent(
+        componentContext: ComponentContext,
+        config: ConfigBottom.Request
+    ): LongTermLoanRequestsComponent =
         DefaultLongTermLoansRequestsComponent(
             componentContext = componentContext,
             onSelected = {
@@ -164,7 +173,8 @@ class DefaultRootBottomSignComponent(
                     memberRefId
                 )
             },
-            loanRefId = config.refId
+            loanRefId = config.refId,
+            replacedGuarantor = config.guarantorReplaced
         )
 
     private fun settingsComponent(componentContext: ComponentContext): SignSettingsComponent =
@@ -182,7 +192,12 @@ class DefaultRootBottomSignComponent(
     }
 
     override fun onRequestTabClicked() {
-        navigationBottomStackNavigation.bringToFront(ConfigBottom.Request(""))
+        navigationBottomStackNavigation.bringToFront(
+            ConfigBottom.Request(
+                "",
+                guarantorReplaced = ""
+            )
+        )
     }
 
     override fun onSettingsTabClicked() {
@@ -198,7 +213,7 @@ class DefaultRootBottomSignComponent(
         data object SignProfile : ConfigBottom()
 
         @Parcelize
-        data class Request(val refId: String) : ConfigBottom()
+        data class Request(val refId: String, val guarantorReplaced: String) : ConfigBottom()
 
         @Parcelize
         data object Settings : ConfigBottom()
@@ -259,8 +274,13 @@ class DefaultRootBottomSignComponent(
             object : Lifecycle.Callbacks {
                 override fun onResume() {
                     super.onResume()
-                    if (loanRefId !== "")  {
-                        navigationBottomStackNavigation.bringToFront(ConfigBottom.Request(loanRefId))
+                    if (loanRefId !== "") {
+                        navigationBottomStackNavigation.bringToFront(
+                            ConfigBottom.Request(
+                                loanRefId,
+                                replaceGuarantor
+                            )
+                        )
                     }
                 }
             }

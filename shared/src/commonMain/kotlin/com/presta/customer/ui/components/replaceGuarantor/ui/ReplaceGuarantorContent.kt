@@ -93,6 +93,10 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+enum class GuarantorReplaced {
+    GUARANTORREPLACED
+}
+
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class,
     ExperimentalLayoutApi::class
@@ -336,7 +340,7 @@ fun ReplaceGuarantorContent(
                 )
             }
             //navigate to loan requests
-            component.goToLoanRequests(loanRefId =component.loanRequestRefId )
+            component.goToLoanRequests(loanRefId = component.loanRequestRefId, guarantorReplaced = GuarantorReplaced.GUARANTORREPLACED)
 
         }
     }

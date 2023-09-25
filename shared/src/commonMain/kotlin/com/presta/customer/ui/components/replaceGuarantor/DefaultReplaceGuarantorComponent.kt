@@ -11,6 +11,7 @@ import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLo
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.profile.coroutineScope
+import com.presta.customer.ui.components.replaceGuarantor.ui.GuarantorReplaced
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStoreFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,7 +33,7 @@ class DefaultReplaceGuarantorComponent (
     override val guarantorRefId: String,
     override val guarantorFirstName: String,
     override val guarantorLastName: String,
-    private val onGoToLoanRequestsCalled: (loanRefId: String) -> Unit,
+    private val onGoToLoanRequestsCalled: (loanRefId: String,guarantorReplaced:GuarantorReplaced) -> Unit,
 ): ReplaceGuarantorComponent, ComponentContext by componentContext, KoinComponent {
 
     private val scope = coroutineScope(mainContext + SupervisorJob())
@@ -124,8 +125,8 @@ class DefaultReplaceGuarantorComponent (
       onProductClicked()
     }
 
-    override fun goToLoanRequests(loanRefId: String) {
-        onGoToLoanRequestsCalled(loanRefId)
+    override fun goToLoanRequests(loanRefId: String,guarantorReplaced: GuarantorReplaced) {
+        onGoToLoanRequestsCalled(loanRefId, guarantorReplaced)
     }
 
     init {
