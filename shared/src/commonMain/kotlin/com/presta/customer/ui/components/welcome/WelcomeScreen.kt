@@ -32,7 +32,7 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 import dev.icerock.moko.resources.compose.painterResource
 import com.presta.customer.ui.helpers.LocalSafeArea
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WelcomeScreen(
     component: WelcomeComponent
