@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -33,10 +32,8 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.ImportContacts
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.ArrowCircleDown
 import androidx.compose.material.icons.outlined.Error
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -327,6 +324,9 @@ fun ReplaceGuarantorContent(
 
     LaunchedEffect(state.isLoading) {
         if (state.prestaReplaceLoanGuarantor != null) {
+            //Todo--navigate to  loan requests and opem the highlighted loan
+            //add--message changed guarantor will take effect when the
+            //aded guarantor  accepts to guarantee
             snackBarScope.launch {
                 snackbarHostState.showSnackbar(
                     SnackbarVisualsWithError(
@@ -335,6 +335,9 @@ fun ReplaceGuarantorContent(
                     )
                 )
             }
+            //navigate to loan requests
+            component.goToLoanRequests(loanRefId =component.loanRequestRefId )
+
         }
     }
     Scaffold(

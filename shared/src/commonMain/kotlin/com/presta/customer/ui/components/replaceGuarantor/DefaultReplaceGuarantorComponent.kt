@@ -31,7 +31,8 @@ class DefaultReplaceGuarantorComponent (
     override val loanRequestRefId: String,
     override val guarantorRefId: String,
     override val guarantorFirstName: String,
-    override val guarantorLastName: String
+    override val guarantorLastName: String,
+    private val onGoToLoanRequestsCalled: (loanRefId: String) -> Unit,
 ): ReplaceGuarantorComponent, ComponentContext by componentContext, KoinComponent {
 
     private val scope = coroutineScope(mainContext + SupervisorJob())
@@ -122,6 +123,11 @@ class DefaultReplaceGuarantorComponent (
     override fun onProductSelected() {
       onProductClicked()
     }
+
+    override fun goToLoanRequests(loanRefId: String) {
+        onGoToLoanRequestsCalled(loanRefId)
+    }
+
     init {
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         checkAuthenticatedUser()

@@ -618,9 +618,7 @@ class DefaultRootComponent(
         )
 
 
-    // GUARANTORSHIP
-
-
+    // GUARANTORSHIP.
     private fun signApplication(
         componentContext: ComponentContext,
         config: Config.SignApp
@@ -1179,7 +1177,10 @@ class DefaultRootComponent(
             loanRequestRefId = config.loanRequestRefId,
             guarantorRefId = config.guarantorRefId,
             guarantorFirstName = config.guarantorFirstname,
-            guarantorLastName = config.guarantorLastName
+            guarantorLastName = config.guarantorLastName,
+            onGoToLoanRequestsCalled = {loanRefId->
+                navigation.replaceAll(Config.SignApp(loanRefId = loanRefId))
+            }
         )
 
 

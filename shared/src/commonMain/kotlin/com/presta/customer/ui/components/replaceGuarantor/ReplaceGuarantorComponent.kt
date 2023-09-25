@@ -22,5 +22,6 @@ interface ReplaceGuarantorComponent {
     val signHomeState: StateFlow<SignHomeStore.State>
     fun onBackNavClicked()
     fun onProductSelected()
+    fun goToLoanRequests(loanRefId: String)
     val platform: Platform
 }
