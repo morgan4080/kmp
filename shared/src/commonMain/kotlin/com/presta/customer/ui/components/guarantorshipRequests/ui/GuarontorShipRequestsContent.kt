@@ -1,6 +1,5 @@
 package com.presta.customer.ui.components.guarantorshipRequests.ui
 
-import com.presta.customer.ui.composables.ShimmerBrush
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,9 +22,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -41,8 +42,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
@@ -51,8 +56,8 @@ import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.guarantorshipRequests.GuarantorshipRequestComponent
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.NavigateBackTopBar
+import com.presta.customer.ui.composables.ShimmerBrush
 import com.presta.customer.ui.helpers.LocalSafeArea
-import com.presta.customer.ui.helpers.formatMoney
 import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.launch
@@ -82,6 +87,10 @@ fun GuarantorShipRequestsContent(
     if (signHomeState.prestaTenantByPhoneNumber?.refId != null) {
         memberRefId = signHomeState.prestaTenantByPhoneNumber.refId
     }
+    val filtered =
+        state.prestaLoanByLoanRequestRefId?.guarantorList?.filter { guarantorDataResponse ->
+            guarantorDataResponse.memberRefId == memberRefId
+        }
     if (loanRequestRefId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -153,213 +162,186 @@ fun GuarantorShipRequestsContent(
                     .fillMaxHeight(0.8f),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp)) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp, bottom = 10.dp)
+                ) {
                     Text(
                         text = "Guarantorship Request",
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.outline
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontSize = 16.sp,
                     )
 
                 }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "Date requested",
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.outline
-                    )
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(
-                                brush = ShimmerBrush(
-                                    targetValue = 1300f,
-                                    showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null
-                                ),
-                                shape = RoundedCornerShape(12.dp),
-                            ).defaultMinSize(100.dp),
-                        text = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) state.prestaLoanByLoanRequestRefId.loanDate else " ",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 14.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                        textAlign = TextAlign.Center,
-
-                        )
-
-
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "Applicant",
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.outline
-                    )
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(
-                                brush = ShimmerBrush(
-                                    targetValue = 1300f,
-                                    showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null
-                                ),
-                                shape = RoundedCornerShape(12.dp),
-                            ).defaultMinSize(100.dp),
-                        text = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) "${state.prestaLoanByLoanRequestRefId.memberFirstName.uppercase()} ${state.prestaLoanByLoanRequestRefId.memberLastName.uppercase()}" else "",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 14.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                        textAlign = TextAlign.Center,
-
-                        )
-
-                }
-
-                Text(
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .background(
-                            brush = ShimmerBrush(
-                                targetValue = 1300f,
-                                showShimmer = authState.authUserResponse?.companyName == null
-                            ),
-                            shape = RoundedCornerShape(12.dp)
-                        ).defaultMinSize(200.dp),
-                    text = if (authState.authUserResponse !== null) authState.authUserResponse.companyName else "",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 12.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                    textAlign = TextAlign.Center
+                RequestsDataListing(
+                    label = "Loan Date",
+                    showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null,
+                    value = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) state.prestaLoanByLoanRequestRefId.loanDate else "",
+                    labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                 )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        "Kindly accept my  request to add you ",
-                        modifier = Modifier
-                            .padding(top = 20.dp),
-                        fontSize = 12.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        " as a guarantor for this loan product valued:",
-                        modifier = Modifier,
-                        fontSize = 12.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-                Text(
-                    modifier = Modifier
-                        .padding(top = 40.dp)
-                        .background(
-                            brush = ShimmerBrush(
-                                targetValue = 1300f,
-                                showShimmer = state.prestaLoanByLoanRequestRefId?.loanAmount == null
-                            ),
-                            shape = RoundedCornerShape(12.dp)
-                        ).defaultMinSize(200.dp),
-                    text = if (state.prestaLoanByLoanRequestRefId?.loanAmount !== null) "KES " + formatMoney(
-                        state.prestaLoanByLoanRequestRefId.loanAmount
-                    ) else "",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 14.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                    textAlign = TextAlign.Center
+                RequestsDataListing(
+                    label = "Applicant",
+                    showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null,
+                    value = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) "${state.prestaLoanByLoanRequestRefId.memberFirstName.uppercase()} ${state.prestaLoanByLoanRequestRefId.memberLastName.uppercase()}" else "",
+                    labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                 )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 40.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            imageVector = Icons.Filled.CheckCircle,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(70.dp)
-                                .clickable {
-                                    //Todo--commented for test
-                                    authState.cachedMemberData?.let {
-                                        ApplyLongTermLoansStore.Intent.GetGuarantorAcceptanceStatus(
-                                            token = it.accessToken,
-                                            guarantorshipRequestRefId = guarantorshipRequestRefId,
-                                            isAccepted = true
-                                        )
-                                    }?.let {
-                                        onEvent(
-                                            it
-                                        )
-                                    }
-//
-                                }
-                                .clip(shape = CircleShape),
-                            tint = MaterialTheme.colorScheme.tertiaryContainer
-                        )
-                        Text(
-                            "Accept ",
-                            modifier = Modifier
-                                .padding(top = 10.dp),
-                            fontSize = 12.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                            color = MaterialTheme.colorScheme.tertiaryContainer
+                RequestsDataListing(
+                    label = "Application Amount",
+                    showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null,
+                    value = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) state.prestaLoanByLoanRequestRefId.loanAmount.toString() else "",
+                    labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                )
+                filtered?.map { filteredResponse ->
+                    RequestsDataListing(
+                        label = "Commited Amount",
+                        showShimmer = false,
+                        value = filteredResponse.committedAmount.toString(),
+                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                    )
+                    RequestsDataListing(
+                        label = "Date Requested",
+                        showShimmer = false,
+                        value = state.prestaLoanByLoanRequestRefId.loanDate,
+                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                    )
+                    (filteredResponse.dateAccepted)?.let {
+                        RequestsDataListing(
+                            label = "Date  Accepted",
+                            showShimmer = false,
+                            value = it,
+                            labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                            valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                         )
                     }
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            imageVector = Icons.Filled.Cancel,
-                            contentDescription = null,
+                    RequestsDataListing(
+                        label = "Loan Status",
+                        showShimmer = false,
+                        value = if (state.prestaLoanByLoanRequestRefId.isActive) "Active" else "InActive",
+                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                    )
+                    RequestsDataListing(
+                        label = "Acceptance Status",
+                        showShimmer = false,
+                        icon = if (filteredResponse.isAccepted == true) Icons.Filled.CheckCircle else Icons.Filled.Cancel,
+                        iconColor = if (filteredResponse.isAccepted == true) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.error.copy(
+                            alpha = 0.8f
+                        ),
+                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                    )
+
+                }
+                filtered?.map { filteredResponse ->
+                    RequestsDataListing(
+                        label = "Signing Status",
+                        showShimmer = false,
+                        icon = if (filteredResponse.isSigned == true) Icons.Filled.CheckCircle else Icons.Filled.Cancel,
+                        iconColor = if (filteredResponse.isSigned == true) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.error.copy(
+                            alpha = 0.8f
+                        ),
+                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                    )
+                }
+
+                filtered?.map { filteredResponse ->
+                    if (filteredResponse.isSigned == false) {
+
+                        Row(
                             modifier = Modifier
-                                .size(70.dp)
-                                .clickable {
-                                    //Todo----commented for test
-                                    //Request Declined
-                                    authState.cachedMemberData?.let {
-                                        ApplyLongTermLoansStore.Intent.GetGuarantorAcceptanceStatus(
-                                            token = it.accessToken,
-                                            guarantorshipRequestRefId = guarantorshipRequestRefId,
-                                            isAccepted = false
-                                        )
-                                    }?.let {
-                                        onEvent(
-                                            it
-                                        )
-                                    }
-                                    modalBottomScope.launch { modalBottomState.hide() }
-                                }
-                                .clip(shape = CircleShape),
-                            tint = MaterialTheme.colorScheme.error.copy(alpha = 0.8f)
-                        )
-                        Text(
-                            "Decline ",
-                            modifier = Modifier
+                                .fillMaxWidth()
                                 .padding(top = 10.dp),
-                            fontSize = 12.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                            color = MaterialTheme.colorScheme.error
-                        )
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Info,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .clip(shape = CircleShape),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+
+                            Text(
+                                text = "Kindly click below to sign Guarantorship Request",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light), // Replace with your font resource
+                                lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                                color = MaterialTheme.colorScheme.outline,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 16.dp, end = 16.dp)
+                            )
+                        }
                     }
                 }
+                filtered?.map { filteredResponse ->
+                    if (filteredResponse.isSigned == false) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 20.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                CustomButton(
+                                    label = "Accept",
+                                    onClickContainer = {
+                                        authState.cachedMemberData?.let {
+                                            ApplyLongTermLoansStore.Intent.GetGuarantorAcceptanceStatus(
+                                                token = it.accessToken,
+                                                guarantorshipRequestRefId = guarantorshipRequestRefId,
+                                                isAccepted = true
+                                            )
+                                        }?.let {
+                                            onEvent(
+                                                it
+                                            )
+                                        }
+
+                                    },
+                                    loading = state.isLoading,
+                                    enabled = true,
+                                    color = MaterialTheme.colorScheme.tertiaryContainer
+                                )
+                                Spacer(modifier = Modifier.padding(top = 10.dp))
+                                CustomButton(
+                                    label = "Decline",
+                                    onClickContainer = {
+                                        authState.cachedMemberData?.let {
+                                            ApplyLongTermLoansStore.Intent.GetGuarantorAcceptanceStatus(
+                                                token = it.accessToken,
+                                                guarantorshipRequestRefId = guarantorshipRequestRefId,
+                                                isAccepted = false
+                                            )
+                                        }?.let {
+                                            onEvent(
+                                                it
+                                            )
+                                        }
+                                        modalBottomScope.launch { modalBottomState.hide() }
+
+                                    },
+                                    loading = false,
+                                    enabled = true,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+
+                            }
+                        }
+
+                    }
+                }
+
             }
         }
     ) {
@@ -545,6 +527,115 @@ fun GuarantorsRequestsView(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun RequestsDataListing(
+    label: String,
+    showShimmer: Boolean,
+    value: String? = null,
+    icon: ImageVector? = null,
+    iconColor: Color? = null,
+    labelFontFamily: FontFamily,
+    valueFontFamily: FontFamily
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        Row {
+            Column {
+                Text(
+                    modifier = Modifier
+                        .defaultMinSize(minHeight = 8.dp, minWidth = 150.dp),
+                    text = label,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontFamily = labelFontFamily
+                )
+            }
+        }
+        Column {
+            if (icon != null) {
+
+                if (iconColor != null) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clip(shape = CircleShape),
+                        tint = iconColor
+                    )
+                }
+            } else {
+                if (value != null) {
+                    Text(
+                        modifier = Modifier
+                            .align(Alignment.Start)
+                            .fillMaxWidth()
+                            .background(
+                                brush = ShimmerBrush(
+                                    targetValue = 1300f,
+                                    showShimmer = showShimmer
+                                ),
+                                shape = RoundedCornerShape(12.dp),
+                            ),
+                        text = value,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = valueFontFamily
+                    )
+                }
+
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomButton(
+    label: String,
+    onClickContainer: () -> Unit,
+    loading: Boolean = false,
+    enabled: Boolean = true,
+    color: Color
+) {
+    ElevatedCard(
+        onClick = { if (!loading && enabled) onClickContainer() },
+        modifier = Modifier.fillMaxWidth().alpha(if (!loading && enabled) 1f else 0.5f),
+        colors = CardDefaults.cardColors(containerColor = color)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(top = 11.dp, bottom = 11.dp)
+                .align(Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            if (loading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(25.dp).padding(end = 2.dp),
+                    color = Color.White
+                )
+            }
+            Text(
+                text = label,
+                modifier = Modifier
+                    .padding(start = 5.dp),
+                style = TextStyle(
+                    color = Color.White,
+                    fontWeight = MaterialTheme.typography.labelMedium.fontWeight,
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                    fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+                    letterSpacing = MaterialTheme.typography.bodyLarge.letterSpacing,
+                    lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                    fontFamily = MaterialTheme.typography.bodyLarge.fontFamily
+                ),
+                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold)
+            )
         }
     }
 }

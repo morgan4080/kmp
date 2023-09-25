@@ -1,8 +1,6 @@
 package com.presta.customer.ui.components.witnessRequests.ui
 
-import com.presta.customer.ui.composables.ShimmerBrush
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,9 +18,9 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.CardDefaults
@@ -41,18 +39,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.guarantorshipRequests.ui.CustomButton
 import com.presta.customer.ui.components.guarantorshipRequests.ui.GuarantorsRequestsView
+import com.presta.customer.ui.components.guarantorshipRequests.ui.RequestsDataListing
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.components.witnessRequests.WitnessRequestComponent
 import com.presta.customer.ui.composables.NavigateBackTopBar
+import com.presta.customer.ui.composables.ShimmerBrush
 import com.presta.customer.ui.helpers.LocalSafeArea
-import com.presta.customer.ui.helpers.formatMoney
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.launch
 
@@ -77,6 +76,7 @@ fun WitnessRequestContent(
         skipHalfExpanded = skipHalfExpanded
     )
     val modalBottomScope = rememberCoroutineScope()
+
     if (loanRequestRefId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -116,7 +116,9 @@ fun WitnessRequestContent(
             }
         }
     }
-
+    val filtered = state.prestaWitnessRequests.filter { witnessResponse ->
+        witnessResponse.loanRequest.refId == loanRequestRefId
+    }
     if (loanRequestRefId != "") {
         LaunchedEffect(
             state.prestaWitnessAcceptanceStatus,
@@ -156,167 +158,161 @@ fun WitnessRequestContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 20.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.AccountCircle,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(70.dp)
-                            .clip(shape = CircleShape),
-                        tint = MaterialTheme.colorScheme.outline.copy(0.5f)
-                    )
-                }
-                Text(
-                    modifier = Modifier
-                        .padding(top = 20.dp)
-                        .fillMaxWidth()
-                        .background(
-                            brush = ShimmerBrush(
-                                targetValue = 1300f,
-                                showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null
-                            ),
-                            shape = RoundedCornerShape(12.dp),
-                        ).defaultMinSize(200.dp),
-                    text = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) "${state.prestaLoanByLoanRequestRefId.memberFirstName.uppercase()} ${state.prestaLoanByLoanRequestRefId.memberLastName.uppercase()}" else "",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 14.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                    textAlign = TextAlign.Center,
-
-                    )
-                Text(
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .background(
-                            brush = ShimmerBrush(
-                                targetValue = 1300f,
-                                showShimmer = authState.authUserResponse?.companyName == null
-                            ),
-                            shape = RoundedCornerShape(12.dp)
-                        ).defaultMinSize(200.dp),
-                    text = if (authState.authUserResponse !== null) authState.authUserResponse.companyName else "",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 12.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                    textAlign = TextAlign.Center
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                        .padding(top = 20.dp, bottom = 10.dp)
                 ) {
                     Text(
-                        "Kindly accept my  request to add you ",
-                        modifier = Modifier
-                            .padding(top = 20.dp),
-                        fontSize = 12.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                        color = MaterialTheme.colorScheme.onBackground
+                        text = "Witness Request",
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontSize = 16.sp,
                     )
+
                 }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        " as a  Witness for this loan product valued:",
-                        modifier = Modifier,
-                        fontSize = 12.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-                Text(
-                    modifier = Modifier
-                        .padding(top = 40.dp)
-                        .background(
-                            brush = ShimmerBrush(
-                                targetValue = 1300f,
-                                showShimmer = state.prestaLoanByLoanRequestRefId?.loanAmount == null
-                            ),
-                            shape = RoundedCornerShape(12.dp)
-                        ).defaultMinSize(200.dp),
-                    text = if (state.prestaLoanByLoanRequestRefId?.loanAmount !== null) "KES " + formatMoney(
-                        state.prestaLoanByLoanRequestRefId.loanAmount
-                    ) else "",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 14.sp,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                    textAlign = TextAlign.Center
+                RequestsDataListing(
+                    label = "Loan Date",
+                    showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null,
+                    value = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) state.prestaLoanByLoanRequestRefId.loanDate else "",
+                    labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                 )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 40.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            imageVector = Icons.Filled.CheckCircle,
-                            contentDescription = null,
+                RequestsDataListing(
+                    label = "Applicant",
+                    showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null,
+                    value = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) "${state.prestaLoanByLoanRequestRefId.memberFirstName.uppercase()} ${state.prestaLoanByLoanRequestRefId.memberLastName.uppercase()}" else "",
+                    labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                )
+                RequestsDataListing(
+                    label = "Application Amount",
+                    showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null,
+                    value = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) state.prestaLoanByLoanRequestRefId.loanAmount.toString() else "",
+                    labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                )
+                filtered.map { filteredResponse ->
+
+                    RequestsDataListing(
+                        label = "Loan Status",
+                        showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null,
+                        value = if (state.prestaLoanByLoanRequestRefId?.isActive == true) "Active" else "InActive",
+                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                    )
+
+                    RequestsDataListing(
+                        label = "Acceptance Status",
+                        showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null,
+                        icon = if (filteredResponse.witnessAccepted) Icons.Filled.CheckCircle else Icons.Filled.Cancel,
+                        iconColor = if (filteredResponse.witnessAccepted) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.error.copy(
+                            alpha = 0.8f
+                        ),
+                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                    )
+
+                }
+                filtered.map { filteredResponse ->
+                    RequestsDataListing(
+                        label = "Signing Status",
+                        showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null,
+                        icon = if (filteredResponse.witnessSigned) Icons.Filled.CheckCircle else Icons.Filled.Cancel,
+                        iconColor = if (filteredResponse.witnessSigned) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.error.copy(
+                            alpha = 0.8f
+                        ),
+                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                    )
+                }
+
+                filtered.map { filteredResponse ->
+                    if (!filteredResponse.witnessSigned) {
+
+                        Row(
                             modifier = Modifier
-                                .size(70.dp)
-                                .clickable {
-                                    //Todo--commented for test
-                                    authState.cachedMemberData?.let {
-                                        ApplyLongTermLoansStore.Intent.GetWitnessAcceptanceStatus(
-                                            token = it.accessToken,
-                                            loanRequestRefId = loanRequestRefId,
-                                            isAccepted = true
-                                        )
-                                    }?.let {
-                                        onEvent(
-                                            it
-                                        )
-                                    }
-                                }
-                                .clip(shape = CircleShape),
-                            tint = MaterialTheme.colorScheme.tertiaryContainer
-                        )
-                        Text(
-                            "Accept ",
-                            modifier = Modifier
+                                .fillMaxWidth()
                                 .padding(top = 10.dp),
-                            fontSize = 12.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                            color = MaterialTheme.colorScheme.tertiaryContainer
-                        )
-                    }
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            imageVector = Icons.Filled.Cancel,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(70.dp)
-                                .clickable {
-                                    //Todo----commented for test
-                                    authState.cachedMemberData?.let {
-                                        ApplyLongTermLoansStore.Intent.GetWitnessAcceptanceStatus(
-                                            token = it.accessToken,
-                                            loanRequestRefId = loanRequestRefId,
-                                            isAccepted = false
-                                        )
-                                    }?.let {
-                                        onEvent(
-                                            it
-                                        )
-                                    }
-                                }
-                                .clip(shape = CircleShape),
-                            tint = MaterialTheme.colorScheme.error.copy(alpha = 0.8f)
-                        )
-                        Text(
-                            "Decline ",
-                            modifier = Modifier
-                                .padding(top = 10.dp),
-                            fontSize = 12.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                            color = MaterialTheme.colorScheme.error
-                        )
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Info,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .clip(shape = CircleShape),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+
+                            Text(
+                                text = "Kindly click below to sign Witness Request",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light), // Replace with your font resource
+                                lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                                color = MaterialTheme.colorScheme.outline,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 16.dp, end = 16.dp)
+                            )
+                        }
                     }
                 }
+                filtered.map { filteredResponse ->
+                    if (!filteredResponse.witnessSigned) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 20.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                CustomButton(
+                                    label = "Accept",
+                                    onClickContainer = {
+                                        authState.cachedMemberData?.let {
+                                            ApplyLongTermLoansStore.Intent.GetWitnessAcceptanceStatus(
+                                                token = it.accessToken,
+                                                loanRequestRefId = loanRequestRefId,
+                                                isAccepted = true
+                                            )
+                                        }?.let {
+                                            onEvent(
+                                                it
+                                            )
+                                        }
+
+                                    },
+                                    loading = state.isLoading,
+                                    enabled = true,
+                                    color = MaterialTheme.colorScheme.tertiaryContainer
+                                )
+                                Spacer(modifier = Modifier.padding(top = 10.dp))
+                                CustomButton(
+                                    label = "Decline",
+                                    onClickContainer = {
+                                        authState.cachedMemberData?.let {
+                                            ApplyLongTermLoansStore.Intent.GetWitnessAcceptanceStatus(
+                                                token = it.accessToken,
+                                                loanRequestRefId = loanRequestRefId,
+                                                isAccepted = false
+                                            )
+                                        }?.let {
+                                            onEvent(
+                                                it
+                                            )
+                                        }
+
+                                    },
+                                    loading = false,
+                                    enabled = true,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+
+                            }
+                        }
+
+                    }
+                }
+
             }
         }
     ) {
