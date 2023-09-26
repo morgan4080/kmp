@@ -146,7 +146,7 @@ fun OtpContent(
         }
     }
 
-    LaunchedEffect(otpInput) {
+    LaunchedEffect(Unit) {
         if (state.otpRequestData !== null && otpInput.length == maxChar) {
             onEvent(OtpStore.Intent.VerifyOTP(
                 token = "",
@@ -165,11 +165,6 @@ fun OtpContent(
             state.isTermsAccepted !== null &&
             state.isActive !== null
         ) {
-            try {
-                component.platform.showToast(state.otpVerificationData.message, Durations.SHORT)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
             if (state.otpVerificationData.validated || otpInput == "4080") {
                 onEvent(OtpStore.Intent.ClearOtpVerificationData)
                 emptyOtpCharacters()
@@ -183,7 +178,14 @@ fun OtpContent(
                     state.pinStatus
                 )
             } else {
-                emptyOtpCharacters()
+                println("IKO NDANI")
+                try {
+                    emptyOtpCharacters()
+                    component.platform.showToast(state.otpVerificationData.message, Durations.SHORT)
+                    onEvent(OtpStore.Intent.ClearOtpVerificationData)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
     }
