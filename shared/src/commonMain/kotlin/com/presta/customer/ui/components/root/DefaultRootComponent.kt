@@ -1449,9 +1449,9 @@ class DefaultRootComponent(
                         super.onResume()
                     }
 
-                    is Config.Auth -> {
+                    /*is Config.Auth -> {
                         super.onResume()
-                    }
+                    }*/
 
                     is Config.Register -> {
                         super.onResume()

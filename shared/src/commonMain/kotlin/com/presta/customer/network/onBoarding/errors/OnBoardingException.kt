@@ -8,5 +8,5 @@ enum class OnBoardingError {
 }
 
 class OnBoardingException(error: OnBoardingError, message: String?): Exception(
-    "Account Config Error: ${message ?: error}"
+    "Service Unavailable, try again in a few minutes: ${message ?: error}"
 )
