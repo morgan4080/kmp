@@ -292,8 +292,7 @@ class DefaultRootComponent(
                     )
                 )
             },
-
-            )
+        )
 
     private fun splashComponent(componentContext: ComponentContext): SplashComponent =
         DefaultSplashComponent(
@@ -332,7 +331,12 @@ class DefaultRootComponent(
             onBoardingContext = config.context,
             onGetStartedSelected = {
                 // TODO REMOVE ON WHITE LABEL
-                if (OrganisationModel.organisation.sandbox) {
+                navigation.push(
+                    Config.OnBoarding(
+                        onBoardingContext = it
+                    )
+                )
+               /* if (OrganisationModel.organisation.sandbox) {
                     navigation.push(
                         Config.Tenant(
                             onBoardingContext = it
@@ -344,7 +348,7 @@ class DefaultRootComponent(
                             onBoardingContext = it
                         )
                     )
-                }
+                }*/
             },
         )
 

@@ -1021,7 +1021,7 @@ fun AddGuarantorContent(
                                 .padding(top = 20.dp)
                         ) {
                             Text(
-                                "SELECTED GUARANTORS " + "(MIN " + component.requiredGuarantors + " GUARANTOR)",
+                                "SELECTED GUARANTORS (AMOUNT REMAINING: $difff)",
                                 fontSize = 12.sp
                             )
                         }
@@ -1195,7 +1195,7 @@ fun AddGuarantorContent(
                                         //showDialogue = true
                                     }
                                 },
-                                enabled = memberNumber != "" || guarantorDataListed.size == component.requiredGuarantors
+                                enabled = difff < 0 || guarantorDataListed.size == component.requiredGuarantors
                             )
                         }
                         //Select Guarantor Option Pop UP
