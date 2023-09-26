@@ -79,6 +79,7 @@ fun SignLoanFormContent(
         if (state.prestaZohoSignUrl?.signURL != null) {
             component.platform.openUrl(state.prestaZohoSignUrl.signURL)
         }
+        component.platform.logErrorsToFirebase(Exception(state.error))
     }
 
     Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
