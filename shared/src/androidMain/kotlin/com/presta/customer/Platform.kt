@@ -176,8 +176,6 @@ actual class Platform(
                 }
             }
         }
-
-
     }
 
     private val startForResult = currentActivity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
