@@ -165,6 +165,7 @@ fun WitnessRequestContent(
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                         style = MaterialTheme.typography.headlineSmall,
                         fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
 
                 }

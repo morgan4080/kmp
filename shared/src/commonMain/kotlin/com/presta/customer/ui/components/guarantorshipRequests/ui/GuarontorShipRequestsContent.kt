@@ -172,6 +172,7 @@ fun GuarantorShipRequestsContent(
                         fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
                         style = MaterialTheme.typography.headlineSmall,
                         fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
 
                 }
@@ -553,7 +554,8 @@ fun RequestsDataListing(
                         .defaultMinSize(minHeight = 8.dp, minWidth = 150.dp),
                     text = label,
                     style = MaterialTheme.typography.bodyMedium,
-                    fontFamily = labelFontFamily
+                    fontFamily = labelFontFamily,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -585,7 +587,8 @@ fun RequestsDataListing(
                             ),
                         text = value,
                         style = MaterialTheme.typography.bodySmall,
-                        fontFamily = valueFontFamily
+                        fontFamily = valueFontFamily,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
 

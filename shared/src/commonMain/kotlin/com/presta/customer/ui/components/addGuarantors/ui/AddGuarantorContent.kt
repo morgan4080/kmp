@@ -207,7 +207,7 @@ fun AddGuarantorContent(
         state.isLoading
     ) {
         //Get Tenant by phone Number
-        if (guarantorshipOption === GuarantorShipOptions.PHONENUMBER && guarantorDataListed.size != 10 && difff!=0) {
+        if (guarantorshipOption === GuarantorShipOptions.PHONENUMBER && guarantorDataListed.size != 10 && difff != 0) {
             var loadedValue = ""
 
             loadedValue = state.prestaLoadTenantByPhoneNumber?.refId ?: ""
@@ -239,7 +239,7 @@ fun AddGuarantorContent(
         guarantorshipOption,
         signHomeState.isLoading
     ) {
-        if (guarantorshipOption === GuarantorShipOptions.MEMBERNUMBER && guarantorDataListed.size != 10 && difff!=0) {
+        if (guarantorshipOption === GuarantorShipOptions.MEMBERNUMBER && guarantorDataListed.size != 10 && difff != 0) {
             var loadedValue = ""
 
             loadedValue = signHomeState.prestaTenantByMemberNumber?.refId ?: ""
@@ -456,7 +456,7 @@ fun AddGuarantorContent(
                         )
                     }
                 }
-            } else if (launchAddAmountToGuarantee && difff!=0) {
+            } else if (launchAddAmountToGuarantee && difff != 0) {
                 Column(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.surface)
@@ -1181,7 +1181,7 @@ fun AddGuarantorContent(
                                             }
                                         }
                                     }
-                                    if ( difff == 0) {
+                                    if (difff == 0) {
                                         scope.launch { modalBottomSheetState.show() }
                                         launchAddAmountToGuarantee = false
                                         launchCheckSelfAndEmPloyedPopUp = true
