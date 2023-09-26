@@ -1,5 +1,6 @@
 package com.presta.customer
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.KeyguardManager
@@ -24,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -194,21 +196,27 @@ actual class Platform(
     }
 
     actual fun getContact(contactRequestCode: Int, alpha2Code: String): MutableStateFlow<Map<String, String>> {
-        return try {
-            alpha2CodeValue = alpha2Code
-            contactRequestCodeValue = contactRequestCode
-            val contacts = Intent(Intent.ACTION_PICK).apply {
-                setDataAndType( ContactsContract.Contacts.CONTENT_URI, ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE)
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(currentActivity, arrayOf(Manifest.permission.READ_CONTACTS), 100);
+            resultFromContact.value = mapOf("E_SHOW_CONTACTS_PERMISSION" to "TRUE")
+            return resultFromContact
+        } else {
+            return try {
+                alpha2CodeValue = alpha2Code
+                contactRequestCodeValue = contactRequestCode
+                val contacts = Intent(Intent.ACTION_PICK).apply {
+                    setDataAndType( ContactsContract.Contacts.CONTENT_URI, ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE)
+                }
+                startForResult.apply {
+                    launch(contacts)
+                }
+                resultFromContact.value = mapOf("ACTIVITY_STARTED" to "TRUE")
+                resultFromContact
+            } catch (e: Exception) {
+                e.printStackTrace()
+                resultFromContact.value = mapOf("E_FAILED_TO_SHOW_PICKER" to e.stackTraceToString())
+                resultFromContact
             }
-            startForResult.apply {
-                launch(contacts)
-            }
-            resultFromContact.value = mapOf("ACTIVITY_STARTED" to "TRUE")
-            resultFromContact
-        } catch (e: Exception) {
-            e.printStackTrace()
-            resultFromContact.value = mapOf("E_FAILED_TO_SHOW_PICKER" to e.stackTraceToString())
-            resultFromContact
         }
     }
 
