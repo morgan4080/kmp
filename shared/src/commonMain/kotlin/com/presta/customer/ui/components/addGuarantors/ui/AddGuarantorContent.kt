@@ -351,6 +351,7 @@ fun AddGuarantorContent(
                 guarantorDataListed = guarantorDataListed.toMutableSet().apply {
                         addAll(apiResponse)
                     }
+                memberNumber = ""
                 launchGuarantorListing = true
             }
         }
@@ -677,6 +678,8 @@ fun AddGuarantorContent(
                                                     guarantorDataListed.toMutableSet().apply {
                                                         addAll(apiResponse)
                                                     }
+
+                                                memberNumber = ""
                                             }
                                         }
                                     } else {
@@ -716,6 +719,8 @@ fun AddGuarantorContent(
                                                         guarantorDataListed.toMutableSet().apply {
                                                             addAll(apiResponse)
                                                         }
+
+                                                    memberNumber = ""
                                                 }
                                             }
                                         }
