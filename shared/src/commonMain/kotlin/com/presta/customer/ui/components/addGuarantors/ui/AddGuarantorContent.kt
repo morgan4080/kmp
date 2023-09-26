@@ -230,6 +230,7 @@ fun AddGuarantorContent(
                         isError = true
                     )
                 )
+                component.platform.logErrorsToFirebase(Exception(state.error))
             }
         }
     }
@@ -262,6 +263,7 @@ fun AddGuarantorContent(
                         isError = true
                     )
                 )
+                component.platform.logErrorsToFirebase(Exception(state.error))
             }
         }
     }
@@ -330,7 +332,7 @@ fun AddGuarantorContent(
                     signHomeState.prestaTenantByPhoneNumber.lastName,
                     signHomeState.prestaTenantByPhoneNumber.phoneNumber,
                     signHomeState.prestaTenantByPhoneNumber.memberNumber,
-                    component.desiredAmount.toString(),
+                    component.desiredAmount.toInt().toString(),
                     signHomeState.prestaTenantByPhoneNumber.refId,
                 )
             )
@@ -346,8 +348,7 @@ fun AddGuarantorContent(
                     )
                 }
             } else {
-                guarantorDataListed =
-                    guarantorDataListed.toMutableSet().apply {
+                guarantorDataListed = guarantorDataListed.toMutableSet().apply {
                         addAll(apiResponse)
                     }
                 launchGuarantorListing = true

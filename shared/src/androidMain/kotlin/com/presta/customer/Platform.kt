@@ -32,6 +32,8 @@ import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.google.i18n.phonenumbers.Phonenumber
 import com.mohamedrejeb.calf.ui.web.WebViewState
@@ -86,6 +88,7 @@ actual class Platform(
     actual  fun logErrorsToFirebase(Error: Exception){
         //Firebase.crashlytics.log(Error)
         FirebaseCrashlytics.getInstance().recordException(Error)
+        Error.localizedMessage?.let { Firebase.crashlytics.log(it) }
     }
     actual fun startSmsRetriever() {
         val client = SmsRetriever.getClient(context)
