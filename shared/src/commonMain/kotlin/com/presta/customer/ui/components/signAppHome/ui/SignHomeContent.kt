@@ -254,7 +254,7 @@ fun SignHomeContent(
                                             Row(modifier = Modifier.fillMaxWidth()) {
                                                 Spacer(modifier = Modifier.weight(1f))
                                                 Text(
-                                                    text = "My Borrowing Limit ",
+                                                    text = "Balance",
                                                     fontSize = 14.sp,
                                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
                                                 )
@@ -271,14 +271,39 @@ fun SignHomeContent(
                                                             ),
                                                             shape = RoundedCornerShape(12.dp)
                                                         ).defaultMinSize(50.dp),
-                                                    text = if (state.prestaTenantByPhoneNumber?.availableAmount !== null) "${
+                                                    text = if (state.prestaTenantByPhoneNumber?.totalShares !== null) "${
                                                         formatMoney(
-                                                            state.prestaTenantByPhoneNumber.availableAmount
+                                                            state.prestaTenantByPhoneNumber.totalShares +
+                                                                    state.prestaTenantByPhoneNumber.totalDeposits
                                                         )
                                                     } KES" else "",
                                                     color = MaterialTheme.colorScheme.onBackground,
                                                     fontSize = 20.sp,
                                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                                                )
+                                            }
+                                            Row(modifier = Modifier.fillMaxWidth()) {
+                                                Spacer(modifier = Modifier.weight(1f))
+                                                Text(
+                                                    modifier = Modifier
+                                                        .padding(top = 2.dp)
+                                                        .background(
+                                                            brush = ShimmerBrush(
+                                                                targetValue = 1300f,
+                                                                showShimmer = state.prestaTenantByPhoneNumber?.totalShares == null
+                                                            ),
+                                                            shape = RoundedCornerShape(12.dp)
+                                                        ).defaultMinSize(50.dp),
+                                                    text = if (state.prestaTenantByPhoneNumber?.totalShares !== null) "Shares: " +
+                                                        formatMoney(
+                                                            state.prestaTenantByPhoneNumber.totalShares
+                                                        ) + " & " +
+                                                        "Deposits: " + formatMoney(
+                                                            state.prestaTenantByPhoneNumber.totalDeposits
+                                                        ) else "",
+                                                    color = MaterialTheme.colorScheme.onBackground,
+                                                    fontSize = 12.sp,
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                                 )
                                             }
                                             Divider(
