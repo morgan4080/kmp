@@ -174,6 +174,12 @@ fun AddGuarantorContent(
     var liveLoaded by remember { mutableStateOf("") }
     var refreshing by remember { mutableStateOf(false) }
     val refreshScope = rememberCoroutineScope()
+    var check1 by remember { mutableStateOf(0) }
+    var check2 by remember { mutableStateOf(0) }
+    var difff by remember { mutableStateOf(0) }
+    check1 = component.desiredAmount.toInt()
+    check2 = guarantorDataListed.sumOf { it.amount.toInt() }
+    difff = check1 - check2
     fun refresh() = refreshScope.launch {
         refreshing = true
         delay(1500)
@@ -201,7 +207,7 @@ fun AddGuarantorContent(
         state.isLoading
     ) {
         //Get Tenant by phone Number
-        if (guarantorshipOption === GuarantorShipOptions.PHONENUMBER && guarantorDataListed.size != component.requiredGuarantors) {
+        if (guarantorshipOption === GuarantorShipOptions.PHONENUMBER && guarantorDataListed.size != 10 && difff!=0) {
             var loadedValue = ""
 
             loadedValue = state.prestaLoadTenantByPhoneNumber?.refId ?: ""
@@ -233,7 +239,7 @@ fun AddGuarantorContent(
         guarantorshipOption,
         signHomeState.isLoading
     ) {
-        if (guarantorshipOption === GuarantorShipOptions.MEMBERNUMBER && guarantorDataListed.size != component.requiredGuarantors) {
+        if (guarantorshipOption === GuarantorShipOptions.MEMBERNUMBER && guarantorDataListed.size != 10 && difff!=0) {
             var loadedValue = ""
 
             loadedValue = signHomeState.prestaTenantByMemberNumber?.refId ?: ""
@@ -317,7 +323,7 @@ fun AddGuarantorContent(
         guarantorshipOption
     ) {
         println("Test data:::::::::::;;" + signHomeState.prestaTenantByPhoneNumber?.firstName)
-        if (guarantorshipOption === GuarantorShipOptions.SELFGUARANTEE && signHomeState.prestaTenantByPhoneNumber?.firstName != null && guarantorDataListed.size != component.requiredGuarantors) {
+        if (guarantorshipOption === GuarantorShipOptions.SELFGUARANTEE && signHomeState.prestaTenantByPhoneNumber?.firstName != null && guarantorDataListed.size != 10) {
             val apiResponse = listOf(
                 GuarantorDataListing(
                     signHomeState.prestaTenantByPhoneNumber.firstName,
@@ -364,26 +370,24 @@ fun AddGuarantorContent(
         }
     }
 
-    var check1 by remember { mutableStateOf(0) }
-    var check2 by remember { mutableStateOf(0) }
-    var difff by remember { mutableStateOf(0) }
+
     LaunchedEffect(guarantorDataListed) {
         check1 = component.desiredAmount.toInt()
         check2 = guarantorDataListed.sumOf { it.amount.toInt() }
         difff = check1 - check2
     }
 
-    var showDialogue by remember { mutableStateOf(false) }
-    if (guarantorDataListed.size == component.requiredGuarantors && difff != 0) {
-        AlertCustom(
-            showDialogue = true,
-            label = "Before proceeding, please review and update the guarantor-ship amount as it is currently insufficient. Ensure that the required amount is entered to continue with the process.",
-            close = {
-                showDialogue = false
-            }
-        )
-
-    }
+//    var showDialogue by remember { mutableStateOf(false) }
+//    if (guarantorDataListed.size == component.requiredGuarantors && difff != 0) {
+//        AlertCustom(
+//            showDialogue = true,
+//            label = "Before proceeding, please review and update the guarantor-ship amount as it is currently insufficient. Ensure that the required amount is entered to continue with the process.",
+//            close = {
+//                showDialogue = false
+//            }
+//        )
+//
+//    }
 
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
@@ -452,7 +456,7 @@ fun AddGuarantorContent(
                         )
                     }
                 }
-            } else if (launchAddAmountToGuarantee) {
+            } else if (launchAddAmountToGuarantee && difff!=0) {
                 Column(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.surface)
@@ -636,7 +640,7 @@ fun AddGuarantorContent(
                                 "SUBMIT",
                                 onClickContainer = {
                                     liveLoaded = ""
-                                    if (guarantorDataListed.size != component.requiredGuarantors && guarantorshipOption === GuarantorShipOptions.MEMBERNUMBER && signHomeState.prestaTenantByMemberNumber?.firstName != null) {
+                                    if (guarantorDataListed.size != 10 && guarantorshipOption === GuarantorShipOptions.MEMBERNUMBER && signHomeState.prestaTenantByMemberNumber?.firstName != null) {
                                         //Todo-- handle self guarantee case
                                         signHomeState.prestaTenantByMemberNumber?.let {
                                             val apiResponse = listOf(
@@ -675,7 +679,7 @@ fun AddGuarantorContent(
                                             }
                                         }
                                     } else {
-                                        if (guarantorDataListed.size != component.requiredGuarantors && guarantorshipOption === GuarantorShipOptions.PHONENUMBER && state.prestaLoadTenantByPhoneNumber?.phoneNumber != null) {
+                                        if (guarantorDataListed.size != 10 && guarantorshipOption === GuarantorShipOptions.PHONENUMBER && state.prestaLoadTenantByPhoneNumber?.phoneNumber != null) {
                                             state.prestaLoadTenantByPhoneNumber?.let {
                                                 val apiResponse = listOf(
                                                     GuarantorDataListing(
@@ -969,7 +973,7 @@ fun AddGuarantorContent(
                                                                 println("Selected data:::::::" + item.value)
                                                             }
                                                             if (item.value.matches(numberPattern)) {
-                                                                if (guarantorDataListed.size != component.requiredGuarantors) {
+                                                                if (guarantorDataListed.size != 10) {
                                                                     guarantorshipOption =
                                                                         GuarantorShipOptions.PHONENUMBER
                                                                     memberNumber = item.value
@@ -1080,9 +1084,9 @@ fun AddGuarantorContent(
                                 .fillMaxWidth()
                         ) {
                             ActionButton(
-                                label = if (guarantorDataListed.size != component.requiredGuarantors) "Search" else "Continue",
+                                label = if (difff != 0) "Search" else "Continue",
                                 onClickContainer = {
-                                    if (guarantorDataListed.size != component.requiredGuarantors) {
+                                    if (difff != 0) {
                                         when (guarantorshipOption) {
                                             GuarantorShipOptions.MEMBERNUMBER -> {
                                                 authState.cachedMemberData?.let {
@@ -1115,7 +1119,7 @@ fun AddGuarantorContent(
                                             }
                                         }
                                     } else {
-                                        if (allConditionsChecked && difff == 0) {
+                                        if (allConditionsChecked) {
                                             //Todo--check if witness is required and navigate
                                             if (state.prestaClientSettings?.response?.requireWitness == true) {
                                                 //navigate  to add witness
@@ -1177,12 +1181,12 @@ fun AddGuarantorContent(
                                             }
                                         }
                                     }
-                                    if (guarantorDataListed.size == component.requiredGuarantors && difff == 0) {
+                                    if ( difff == 0) {
                                         scope.launch { modalBottomSheetState.show() }
                                         launchAddAmountToGuarantee = false
                                         launchCheckSelfAndEmPloyedPopUp = true
                                     } else {
-                                        showDialogue = true
+                                        //showDialogue = true
                                     }
                                 },
                                 enabled = memberNumber != "" || guarantorDataListed.size == component.requiredGuarantors
