@@ -2,16 +2,19 @@ package com.presta.customer.ui.components.root
 
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
+import com.presta.customer.Platform
 import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
 import com.presta.customer.ui.components.addWitness.AddWitnessComponent
 import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComponent
 import com.presta.customer.ui.components.auth.AuthComponent
+import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGuarantorsComponent
 import com.presta.customer.ui.components.guarantorshipRequests.GuarantorshipRequestComponent
 import com.presta.customer.ui.components.longTermLoanSignStatus.LongtermLoanSigningStatusComponent
 import com.presta.customer.ui.components.longTermLoanConfirmation.LongTermLoanConfirmationComponent
 import com.presta.customer.ui.components.longTermLoanDetails.LongTermLoanDetailsComponent
 import com.presta.customer.ui.components.onBoarding.OnBoardingComponent
+import com.presta.customer.ui.components.onBoarding.store.OnBoardingStore
 import com.presta.customer.ui.components.otp.OtpComponent
 import com.presta.customer.ui.components.payLoan.PayLoanComponent
 import com.presta.customer.ui.components.payLoanPropmpt.PayLoanPromptComponent
@@ -29,11 +32,24 @@ import com.presta.customer.ui.components.signLoanForm.SignLoanFormComponent
 import com.presta.customer.ui.components.signWitnessForm.SignWitnessFormComponent
 import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.tenant.TenantComponent
+import com.presta.customer.ui.components.tenant.store.TenantStore
 import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
 import com.presta.customer.ui.components.welcome.WelcomeComponent
 import com.presta.customer.ui.components.witnessRequests.WitnessRequestComponent
+import kotlinx.coroutines.flow.StateFlow
 
 interface RootComponent {
+
+    val authStore: AuthStore
+    val onBoardingStore: OnBoardingStore
+    val state: StateFlow<AuthStore.State>
+    val onBoardingState: StateFlow<OnBoardingStore.State>
+    val tenantStore: TenantStore
+    val tenantState: StateFlow<TenantStore.State>
+    val authState: StateFlow<AuthStore.State>
+    fun onTenantEvent(event: TenantStore.Intent)
+    fun onEvent(event: AuthStore.Intent)
+    fun onOnBoardingEvent(event: OnBoardingStore.Intent)
 
     val childStack: Value<ChildStack<*, Child>>
     //get  the guarantor sign status to navigate user to appropriate screen
@@ -72,5 +88,4 @@ interface RootComponent {
         class ReplaceGuarantorChild(val component: ReplaceGuarantorComponent): Child()
 
     }
-
 }

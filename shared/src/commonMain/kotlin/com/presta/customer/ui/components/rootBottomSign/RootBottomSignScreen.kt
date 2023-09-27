@@ -31,13 +31,16 @@ import com.presta.customer.ui.components.signAppSettings.ui.SignSettingsScreen
 import com.presta.customer.ui.composables.GetIconForSignScreen
 import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
+
 @Composable
-fun RootBottomSignScreen(component: RootBottomSignComponent) {
+fun RootBottomSignScreen(
+    component: RootBottomSignComponent
+) {
     val childStackBottom by component.childStackBottom.subscribeAsState()
     val activeComponentStackBottom = childStackBottom.active.instance
     //Todo----Modified going back to loan  requests when user hits resolve loan
-
-
+    //Todo Show the LMS button based on  client settings
+    val showLms: Boolean = true
     Scaffold(
         modifier = Modifier.padding(LocalSafeArea.current),
         bottomBar = {
@@ -130,31 +133,33 @@ fun RootBottomSignScreen(component: RootBottomSignComponent) {
                             unselectedIconColor = MaterialTheme.colorScheme.outline
                         )
                     )
-                    NavigationBarItem(
-                        icon = {
-                            Icon(
-                                imageVector = GetIconForSignScreen(screens[3]),
-                                contentDescription = null,
-                                modifier = Modifier.size(27.dp)
+                    if (showLms) {
+                        NavigationBarItem(
+                            icon = {
+                                Icon(
+                                    imageVector = GetIconForSignScreen(screens[3]),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(27.dp)
+                                )
+                            },
+                            label = {
+                                Text(
+                                    text = screens[3],
+                                    color = MaterialTheme.colorScheme.outline,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                    modifier = Modifier.absoluteOffset(y = 30.dp)
+                                )
+                            },
+                            selected = false,
+                            onClick = component::onLmsTabClicked,
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = MaterialTheme.colorScheme.primary,
+                                indicatorColor = MaterialTheme.colorScheme.background,
+                                unselectedIconColor = MaterialTheme.colorScheme.outline
                             )
-                        },
-                        label = {
-                            Text(
-                                text = screens[3],
-                                color = MaterialTheme.colorScheme.outline,
-                                style = MaterialTheme.typography.bodySmall,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                modifier = Modifier.absoluteOffset(y = 30.dp)
-                            )
-                        },
-                        selected = false,
-                        onClick = component::onLmsTabClicked,
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.primary,
-                            indicatorColor = MaterialTheme.colorScheme.background,
-                            unselectedIconColor = MaterialTheme.colorScheme.outline
                         )
-                    )
+                    }
                 }
             }
         },
@@ -168,6 +173,7 @@ fun RootBottomSignScreen(component: RootBottomSignComponent) {
                     is RootBottomSignComponent.ChildBottom.RequestChild -> LongTermLoanRequestsScreen(
                         childX.component
                     )
+
                     is RootBottomSignComponent.ChildBottom.SettingsChild -> SignSettingsScreen(
                         childX.component
                     )

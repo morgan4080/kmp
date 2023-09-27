@@ -71,6 +71,8 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
         }
     }
 
+    //Todo---- skip to Sign depending on the organization  requirements
+
     var rotated by remember { mutableStateOf(false) }
     var rotated2 by remember { mutableStateOf(false) }
 

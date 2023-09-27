@@ -15,12 +15,13 @@ import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
+import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.payments.data.PaymentTypes
 import com.presta.customer.network.payments.model.PaymentStatuses
-import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.prestaDispatchers
 import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
 import com.presta.customer.ui.components.addGuarantors.DefaultAddGuarantorsComponent
@@ -30,6 +31,8 @@ import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComp
 import com.presta.customer.ui.components.applyLongTermLoan.DefaultApplyLongtermLoanComponent
 import com.presta.customer.ui.components.auth.AuthComponent
 import com.presta.customer.ui.components.auth.DefaultAuthComponent
+import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.favouriteGuarantors.DefaultFavouriteGuarantorsComponent
 import com.presta.customer.ui.components.favouriteGuarantors.FavouriteGuarantorsComponent
 import com.presta.customer.ui.components.guarantorshipRequests.DefaultGuarantorshipRequestComponent
@@ -42,6 +45,8 @@ import com.presta.customer.ui.components.longTermLoanSignStatus.DefaultLongTermL
 import com.presta.customer.ui.components.longTermLoanSignStatus.LongtermLoanSigningStatusComponent
 import com.presta.customer.ui.components.onBoarding.DefaultOnboardingComponent
 import com.presta.customer.ui.components.onBoarding.OnBoardingComponent
+import com.presta.customer.ui.components.onBoarding.store.OnBoardingStore
+import com.presta.customer.ui.components.onBoarding.store.OnBoardingStoreFactory
 import com.presta.customer.ui.components.otp.DefaultOtpComponent
 import com.presta.customer.ui.components.otp.OtpComponent
 import com.presta.customer.ui.components.payLoan.DefaultPayLoanComponent
@@ -77,6 +82,8 @@ import com.presta.customer.ui.components.splash.DefaultSplashComponent
 import com.presta.customer.ui.components.splash.SplashComponent
 import com.presta.customer.ui.components.tenant.DefaultTenantComponent
 import com.presta.customer.ui.components.tenant.TenantComponent
+import com.presta.customer.ui.components.tenant.store.TenantStore
+import com.presta.customer.ui.components.tenant.store.TenantStoreFactory
 import com.presta.customer.ui.components.transactionHistory.DefaultTransactionHistoryComponent
 import com.presta.customer.ui.components.transactionHistory.TransactionHistoryComponent
 import com.presta.customer.ui.components.welcome.DefaultWelcomeComponent
@@ -84,8 +91,11 @@ import com.presta.customer.ui.components.welcome.WelcomeComponent
 import com.presta.customer.ui.components.witnessRequests.DefaultWitnessRequestComponent
 import com.presta.customer.ui.components.witnessRequests.WitnessRequestComponent
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
@@ -101,14 +111,81 @@ fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
 class DefaultRootComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
+    mainContext: CoroutineContext = Dispatchers.Default,
+    onBoardingContext: OnBoardingContext = OnBoardingContext.LOGIN,
 ) : RootComponent, ComponentContext by componentContext {
     lateinit var loanRefid: String
     lateinit var passedLoanNumber: String
     lateinit var passedAmount: String
     lateinit var passedGuarantorRefId: String
     lateinit var passedMemberRefid: String
-
     private val navigation = StackNavigation<Config>()
+    override val authStore =
+        instanceKeeper.getStore {
+            AuthStoreFactory(
+                storeFactory = storeFactory,
+                componentContext = componentContext,
+                phoneNumber = null,
+                isTermsAccepted = false,
+                isActive = false,
+                pinStatus = PinStatus.SET
+            ).create()
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val state: StateFlow<AuthStore.State> = authStore.stateFlow
+
+    override val onBoardingStore =
+        instanceKeeper.getStore {
+            OnBoardingStoreFactory(
+                storeFactory = storeFactory,
+                onBoardingContext = onBoardingContext
+            ).create()
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val onBoardingState: StateFlow<OnBoardingStore.State> = onBoardingStore.stateFlow
+
+    override fun onEvent(event: AuthStore.Intent) {
+        authStore.accept(event)
+    }
+
+    override fun onOnBoardingEvent(event: OnBoardingStore.Intent) {
+        onBoardingStore.accept(event)
+    }
+
+    override val tenantStore: TenantStore =
+        instanceKeeper.getStore {
+            TenantStoreFactory(
+                storeFactory = storeFactory,
+                componentContext = componentContext,
+            ).create()
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val tenantState: StateFlow<TenantStore.State> = tenantStore.stateFlow
+
+    override fun onTenantEvent(event: TenantStore.Intent) {
+        tenantStore.accept(event)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val authState: StateFlow<AuthStore.State> = authStore.stateFlow
+
+
+    private val scope3 = coroutineScope(mainContext + SupervisorJob())
+
+    init {
+        onEvent(AuthStore.Intent.GetCachedMemberData)
+
+        scope3.launch {
+            state.collect {
+                if (it.error !== null) {
+                    onEvent(AuthStore.Intent.UpdateError(null))
+                }
+            }
+        }
+    }
 
     private val _childStack =
         childStack(
@@ -336,19 +413,19 @@ class DefaultRootComponent(
                         onBoardingContext = it
                     )
                 )
-               /* if (OrganisationModel.organisation.sandbox) {
-                    navigation.push(
-                        Config.Tenant(
-                            onBoardingContext = it
-                        )
-                    )
-                } else {
-                    navigation.push(
-                        Config.OnBoarding(
-                            onBoardingContext = it
-                        )
-                    )
-                }*/
+                /* if (OrganisationModel.organisation.sandbox) {
+                     navigation.push(
+                         Config.Tenant(
+                             onBoardingContext = it
+                         )
+                     )
+                 } else {
+                     navigation.push(
+                         Config.OnBoarding(
+                             onBoardingContext = it
+                         )
+                     )
+                 }*/
             },
         )
 
@@ -452,9 +529,31 @@ class DefaultRootComponent(
             pinStatus = config.pinStatus,
             onBoardingContext = config.onBoardingContext,
             onLogin = {
+                //Todo ----navigate to the appropriate application based on  client Settings
                 navigation.replaceAll(Config.RootBottom(false), onComplete = {
                     println("Logged In")
                 })
+//                scope.launch {
+//                    state.collect {
+//                        if (it.cachedMemberData?.tenantId != null) {
+//                            navigation.replaceAll(
+//                                Config.SignApp(
+//                                    loanRefId = "",
+//                                    replaceGuarantor = ""
+//                                )
+//                            )
+//
+//                        } else {
+//                            navigation.replaceAll(Config.RootBottom(false), onComplete = {
+//                                println("Logged In")
+//                            })
+//
+//                        }
+//
+//                    }
+//
+//                }
+
             }
         )
 
@@ -693,7 +792,12 @@ class DefaultRootComponent(
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
             onResolveLoanClicked = { loanRequestRefId ->
-                navigation.replaceAll(Config.SignApp(loanRefId = loanRequestRefId, replaceGuarantor = ""))
+                navigation.replaceAll(
+                    Config.SignApp(
+                        loanRefId = loanRequestRefId,
+                        replaceGuarantor = ""
+                    )
+                )
             }
         )
 
@@ -1184,7 +1288,12 @@ class DefaultRootComponent(
             guarantorFirstName = config.guarantorFirstname,
             guarantorLastName = config.guarantorLastName,
             onGoToLoanRequestsCalled = { loanRefId, guarantorReplaced ->
-                navigation.replaceAll(Config.SignApp(loanRefId = loanRefId, replaceGuarantor = guarantorReplaced.toString()))
+                navigation.replaceAll(
+                    Config.SignApp(
+                        loanRefId = loanRefId,
+                        replaceGuarantor = guarantorReplaced.toString()
+                    )
+                )
             }
         )
 
@@ -1479,4 +1588,5 @@ class DefaultRootComponent(
             }
         })
     }
+
 }
