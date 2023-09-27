@@ -1195,7 +1195,7 @@ fun AddGuarantorContent(
                                         //showDialogue = true
                                     }
                                 },
-                                enabled = difff < 0 || guarantorDataListed.size == component.requiredGuarantors
+                                enabled = difff <= 0 || memberNumber != "" || guarantorDataListed.size == component.requiredGuarantors
                             )
                         }
                         //Select Guarantor Option Pop UP
