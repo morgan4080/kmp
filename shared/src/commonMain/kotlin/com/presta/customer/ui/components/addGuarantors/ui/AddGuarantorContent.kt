@@ -96,7 +96,6 @@ import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLo
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.ActionButton
-import com.presta.customer.ui.composables.AlertCustom
 import com.presta.customer.ui.composables.EmployedDetails
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.SelfEmployedDetails
@@ -208,9 +207,8 @@ fun AddGuarantorContent(
     ) {
         //Get Tenant by phone Number
         if (guarantorshipOption === GuarantorShipOptions.PHONENUMBER && guarantorDataListed.size != 10 && difff != 0) {
-            var loadedValue = ""
 
-            loadedValue = state.prestaLoadTenantByPhoneNumber?.refId ?: ""
+            val loadedValue: String = state.prestaLoadTenantByPhoneNumber?.refId ?: ""
             liveLoaded = if (loadedValue == "") {
                 ""
             } else {
@@ -241,9 +239,8 @@ fun AddGuarantorContent(
         signHomeState.isLoading
     ) {
         if (guarantorshipOption === GuarantorShipOptions.MEMBERNUMBER && guarantorDataListed.size != 10 && difff != 0) {
-            var loadedValue = ""
 
-            loadedValue = signHomeState.prestaTenantByMemberNumber?.refId ?: ""
+            val loadedValue: String = signHomeState.prestaTenantByMemberNumber?.refId ?: ""
             liveLoaded = if (loadedValue == "") {
                 ""
             } else {
@@ -268,7 +265,7 @@ fun AddGuarantorContent(
         }
     }
 
-    signHomeState.prestaTenantByPhoneNumber?.details?.map { it ->
+    signHomeState.prestaTenantByPhoneNumber?.details?.map {
         if (it.key.contains("employer")) {
             employer = it.value.value.toString()
             employerkey = it.key
@@ -698,11 +695,11 @@ fun AddGuarantorContent(
                                                 )
                                                 val existingItems = guarantorDataListed.toSet()
                                                 val duplicateItems =
-                                                    apiResponse.filter {
-                                                        it in existingItems || existingItems.any { listed ->
+                                                    apiResponse.filter { guarantorData ->
+                                                        guarantorData in existingItems || existingItems.any { listed ->
                                                             println("listed.guarantorRefId:res.guarantorRefId")
-                                                            println("${listed.guarantorRefId} : ${it.guarantorRefId}")
-                                                            listed.guarantorRefId == it.guarantorRefId
+                                                            println("${listed.guarantorRefId} : ${guarantorData.guarantorRefId}")
+                                                            listed.guarantorRefId == guarantorData.guarantorRefId
                                                         }
                                                     }
                                                 if (duplicateItems.isNotEmpty()) {
