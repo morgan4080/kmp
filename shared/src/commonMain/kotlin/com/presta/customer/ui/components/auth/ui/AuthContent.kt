@@ -360,6 +360,11 @@ fun AuthContent(
     }
     fun refresh() = refreshScope.launch {
         refreshing = true
+        onOnBoardingEvent(
+            OnBoardingStore.Intent.UpdateError(
+                error = null
+            )
+        )
         reloadModels()
         delay(1500)
         refreshing = false
@@ -475,9 +480,9 @@ fun AuthContent(
                                             }
                                         }
 
-                                        if (onBoardingState.error !== null){
+                                        if (onBoardingState.error !== null) {
                                             AnimatedVisibility(
-                                                visible = state.error !== null || onBoardingState.error !== null,
+                                                visible = true,
                                                 enter = fadeIn() + expandVertically(),
                                                 exit = fadeOut() + shrinkVertically()
                                             ) {
@@ -489,7 +494,7 @@ fun AuthContent(
                                                 ) {
                                                     Text(
                                                         modifier = Modifier.fillMaxWidth(.6f),
-                                                        text = if (state.error !== null) state.error.uppercase() else if (onBoardingState.error !== null) onBoardingState.error.uppercase() else "",
+                                                        text = if (state.error !== null) state.error.uppercase() else onBoardingState.error.uppercase(),
                                                         style = MaterialTheme.typography.labelSmall,
                                                         fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
                                                         fontSize = 10.0.sp,
