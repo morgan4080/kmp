@@ -56,8 +56,7 @@ internal class OnBoardingStoreFactory(
                     updateMemberDetails(token = intent.token, memberRefId = intent.memberRefId, intent.pinConfirmation, tenantId = intent.tenantId)
                 is OnBoardingStore.Intent.SelectCountry ->
                     updateSelectedCountry(countrySelected = intent.country)
-                is OnBoardingStore.Intent.UpdateError ->
-                    updateError(error = intent.error)
+                is OnBoardingStore.Intent.UpdateError -> updateError(error = intent.error)
                 is OnBoardingStore.Intent.ClearMember ->
                     clearMember(member = intent.member)
             }

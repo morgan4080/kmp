@@ -21,4 +21,5 @@ interface AuthComponent {
     fun onEvent(event: AuthStore.Intent)
     fun onOnBoardingEvent(event: OnBoardingStore.Intent)
     fun navigate()
+    fun reloadModels()
 }

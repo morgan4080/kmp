@@ -51,9 +51,9 @@ class DefaultAuthComponent(
     pinStatus: PinStatus?,
     onBoardingContext: DefaultRootComponent.OnBoardingContext,
     private val onLogin: () -> Unit,
-): AuthComponent, ComponentContext by componentContext, KoinComponent {
+) : AuthComponent, ComponentContext by componentContext, KoinComponent {
     override val platform by inject<Platform>()
-
+    val phone = phoneNumber
     override val authStore =
         instanceKeeper.getStore {
             AuthStoreFactory(
@@ -93,8 +93,9 @@ class DefaultAuthComponent(
             TenantStoreFactory(
                 storeFactory = storeFactory,
                 componentContext = componentContext,
-            ) .create()
+            ).create()
         }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     override val tenantState: StateFlow<TenantStore.State> = tenantStore.stateFlow
 
@@ -111,16 +112,15 @@ class DefaultAuthComponent(
 
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
-    init {
+    override fun reloadModels() {
         onEvent(AuthStore.Intent.GetCachedMemberData)
-
         scope.launch {
             state.collect {
                 if (it.error !== null) {
                     platform.showToast(it.error)
                     onEvent(AuthStore.Intent.UpdateError(null))
                 }
-                if (it.cachedMemberData?.tenantId!== null) {
+                if (it.cachedMemberData?.tenantId !== null) {
                     onTenantEvent(
                         TenantStore.Intent.GetClientById(
                             searchTerm = it.cachedMemberData.tenantId
@@ -140,7 +140,7 @@ class DefaultAuthComponent(
                         onOnBoardingEvent(
                             OnBoardingStore.Intent.GetMemberDetails(
                                 token = "",
-                                memberIdentifier = phoneNumber,
+                                memberIdentifier = phone,
                                 identifierType = IdentifierTypes.PHONE_NUMBER,
                                 tenantId = it.cachedMemberData.tenantId
                             )
@@ -149,28 +149,32 @@ class DefaultAuthComponent(
 
                     onBoardingState.collect { onBoard ->
                         if (onBoard.member !== null && onBoard.member.authenticationInfo.pinStatus == PinStatus.SET || it.pinStatus == PinStatus.SET) {
-                            val title: String = if (it.cachedMemberData.firstName !== null && it.cachedMemberData.lastName !== null) {
-                                "${it.cachedMemberData.firstName} ${it.cachedMemberData.lastName}"
-                            } else {
-                                "log in"
-                            }
+                            val title: String =
+                                if (it.cachedMemberData.firstName !== null && it.cachedMemberData.lastName !== null) {
+                                    "${it.cachedMemberData.firstName} ${it.cachedMemberData.lastName}"
+                                } else {
+                                    "log in"
+                                }
 
-                            val label: String = if (onBoard.member !== null && onBoard.member.accountInfo.accountName != "") {
-                                onBoard.member.accountInfo.accountName
-                            } else {
-                                ""
-                            }
+                            val label: String =
+                                if (onBoard.member !== null && onBoard.member.accountInfo.accountName != "") {
+                                    onBoard.member.accountInfo.accountName
+                                } else {
+                                    ""
+                                }
                             println(":::::onBoard.label::::::::")
                             println(title)
                             println(label)
-                            onEvent(AuthStore.Intent.UpdateContext(
-                                context = Contexts.LOGIN,
-                                title = title,
-                                label = label,
-                                pinCreated = true,
-                                pinConfirmed = true,
-                                error = null
-                            ))
+                            onEvent(
+                                AuthStore.Intent.UpdateContext(
+                                    context = Contexts.LOGIN,
+                                    title = title,
+                                    label = label,
+                                    pinCreated = true,
+                                    pinConfirmed = true,
+                                    error = null
+                                )
+                            )
 
                         } else if (it.pinStatus == null && onBoard.member !== null && onBoard.member.authenticationInfo.pinStatus == null) {
                             AuthStore.Intent.UpdateError(
@@ -189,8 +193,8 @@ class DefaultAuthComponent(
                     }
                 }
             }
-        }
 
+        }
         scope.launch {
             tenantState.collect {
                 if (it.tenantData !== null) {
@@ -206,5 +210,9 @@ class DefaultAuthComponent(
                 }
             }
         }
+    }
+
+    init {
+        reloadModels()
     }
 }
