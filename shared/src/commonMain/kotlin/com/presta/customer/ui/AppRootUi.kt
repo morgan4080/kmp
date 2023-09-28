@@ -75,7 +75,6 @@ fun AppRootUi(component: RootComponent, connectivityStatus: SharedStatus?) {
 
     var rotated by remember { mutableStateOf(false) }
     var rotated2 by remember { mutableStateOf(false) }
-
     Children(
         stack = component.childStack,
         animation = stackAnimation(true) { child ->

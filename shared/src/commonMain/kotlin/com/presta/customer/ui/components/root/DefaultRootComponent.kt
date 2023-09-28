@@ -18,6 +18,8 @@ import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.presta.customer.PrestaDispatchers
+import com.presta.customer.network.authDevice.model.PrestaServices
 import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.payments.data.PaymentTypes
@@ -93,9 +95,11 @@ import com.presta.customer.ui.components.witnessRequests.WitnessRequestComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
@@ -111,7 +115,7 @@ fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
 class DefaultRootComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
-    mainContext: CoroutineContext = Dispatchers.Default,
+    mainContext: CoroutineContext = prestaDispatchers.main,
     onBoardingContext: OnBoardingContext = OnBoardingContext.LOGIN,
 ) : RootComponent, ComponentContext by componentContext {
     lateinit var loanRefid: String
@@ -175,14 +179,28 @@ class DefaultRootComponent(
 
     private val scope3 = coroutineScope(mainContext + SupervisorJob())
 
+    val scope4 = coroutineScope(prestaDispatchers.main)
+
     init {
         onEvent(AuthStore.Intent.GetCachedMemberData)
 
-        scope3.launch {
-            state.collect {
-                if (it.error !== null) {
+        scope4.launch {
+            state.collect { states ->
+                println("Tested stored value :::::::::::" + states.cachedMemberData?.accessToken)
+
+
+                if (states.error !== null) {
                     onEvent(AuthStore.Intent.UpdateError(null))
                 }
+//                if (states.cachedMemberData != null) {
+//                    println("Data loading callled::::")
+//                    onEvent(
+//                        AuthStore.Intent.CheckServiceConfigs(
+//                            token = states.cachedMemberData.accessToken,
+//                            tenantId = states.cachedMemberData.tenantId
+//                        )
+//                    )
+//                }
             }
         }
     }
@@ -535,19 +553,13 @@ class DefaultRootComponent(
                 })
 //                scope.launch {
 //                    state.collect {
-//                        if (it.cachedMemberData?.tenantId != null) {
+//                        if (it.tenantServices.isNotEmpty()){
 //                            navigation.replaceAll(
 //                                Config.SignApp(
 //                                    loanRefId = "",
 //                                    replaceGuarantor = ""
 //                                )
 //                            )
-//
-//                        } else {
-//                            navigation.replaceAll(Config.RootBottom(false), onComplete = {
-//                                println("Logged In")
-//                            })
-//
 //                        }
 //
 //                    }
