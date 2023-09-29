@@ -54,7 +54,6 @@ import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.ShimmerBrush
 import com.presta.customer.ui.composables.TextInputContainer
-import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.primaryColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
@@ -74,7 +73,7 @@ fun LongTermLoanDetailsContent(
     var isError by remember { mutableStateOf(false) }
     var isPeriodError by remember { mutableStateOf(false) }
     var isAmountError by remember { mutableStateOf(false) }
-    Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
+    Scaffold(topBar = {
         NavigateBackTopBar("Enter Loan Details", onClickContainer = {
             component.onBackNavClicked()
         })

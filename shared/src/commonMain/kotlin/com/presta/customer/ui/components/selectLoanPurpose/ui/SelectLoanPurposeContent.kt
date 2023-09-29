@@ -1,6 +1,5 @@
 package com.presta.customer.ui.components.selectLoanPurpose.ui
 
-import com.presta.customer.ui.composables.ShimmerBrush
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -56,9 +55,10 @@ import com.presta.customer.ui.components.selectLoanPurpose.SelectLoanPurposeComp
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.LoanPurposeProductSelectionCard
 import com.presta.customer.ui.composables.NavigateBackTopBar
-import com.presta.customer.ui.helpers.LocalSafeArea
+import com.presta.customer.ui.composables.ShimmerBrush
 import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -79,9 +79,6 @@ fun SelectLoanPurposeContent(
     var selectedSubCategoryChildrenIndex by remember { mutableStateOf(-1) }
     var parentId by remember { mutableStateOf("") }
     var childId by remember { mutableStateOf("") }
-    val (selectedOption: Int, onOptionSelected: (Int) -> Unit) = remember {
-        mutableStateOf(-1)
-    }
     var loanCategory by remember { mutableStateOf("") }
     var loanPurpose by remember { mutableStateOf("") }
     var loanPurposeCategory by remember { mutableStateOf("") }
@@ -106,6 +103,8 @@ fun SelectLoanPurposeContent(
                     it
                 )
             }
+
+            this.cancel()
         }
     }
 
@@ -128,6 +127,8 @@ fun SelectLoanPurposeContent(
                     it
                 )
             }
+
+            this.cancel()
         }
     }
     fun refresh() = refreshScope.launch {
@@ -137,7 +138,7 @@ fun SelectLoanPurposeContent(
         refreshing = false
     }
     val refreshState = rememberPullRefreshState(refreshing, ::refresh)
-    Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
+    Scaffold(topBar = {
         NavigateBackTopBar("Select Loan Purpose", onClickContainer = {
             component.onBackNavClicked()
         })
@@ -177,13 +178,12 @@ fun SelectLoanPurposeContent(
                                                 )
                                             )
                                             .fillMaxWidth()
-                                    ) {
-                                    }
+                                    )
                                 }
                             }
                         }
                     } else {
-                        state.prestaLongTermLoanProductsCategories.mapIndexed() { topIndex, categories ->
+                        state.prestaLongTermLoanProductsCategories.mapIndexed { topIndex, categories ->
                             item {
                                 Column(
                                     modifier = Modifier
@@ -191,7 +191,7 @@ fun SelectLoanPurposeContent(
                                     LoanPurposeProductSelectionCard(
                                         categories.name,
                                         myLazyColumn = {
-                                            Column() {
+                                            Column {
                                                 if (state.isLoading) {
                                                     ElevatedCard(
                                                         modifier = Modifier
@@ -212,8 +212,7 @@ fun SelectLoanPurposeContent(
                                                                     )
                                                                 )
                                                                 .fillMaxWidth()
-                                                        ) {
-                                                        }
+                                                        )
                                                     }
                                                 } else {
                                                     state.prestaLongTermLoanProductsSubCategories.mapIndexed { subIndex, loanSubCategory ->
@@ -234,7 +233,7 @@ fun SelectLoanPurposeContent(
                                                             },
                                                             expandContent = selectedSubCategoryIndex == subIndex,
                                                             myLazyColumn = {
-                                                                Column() {
+                                                                Column {
                                                                     state.prestaLongTermLoanProductsSubCategoriesChildren.mapIndexed { subCatChildIndex, loanSubcategoryChildren ->
                                                                         SelectSubProductCheckBox(
                                                                             index = subCatChildIndex,
@@ -321,7 +320,7 @@ fun SelectLoanSubCategoryCard(
     myLazyColumn: @Composable () -> Unit
 ) {
     var showExpanded by remember { mutableStateOf(false) }
-    Column() {
+    Column {
         ElevatedCard(
             modifier = Modifier
                 .absolutePadding(

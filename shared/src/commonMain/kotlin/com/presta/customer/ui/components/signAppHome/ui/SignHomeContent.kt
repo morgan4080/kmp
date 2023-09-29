@@ -142,257 +142,247 @@ fun SignHomeContent(
                     if (item !== null) selectedItem = item
                 }
             )
-
-
-        },
-        content = {
-            Scaffold(
-                modifier = Modifier.padding(LocalSafeArea.current),
-                topBar = {
-                    CenterAlignedTopAppBar(
+        }
+    ) {
+        Scaffold(
+            topBar = {
+                CenterAlignedTopAppBar(
+                    modifier = Modifier
+                        .background(color = MaterialTheme.colorScheme.background)
+                        .padding(start = 9.dp),
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+                    title = {},
+                    navigationIcon = {
+                        Text(
+                            modifier = Modifier.padding(start = 9.dp).background(
+                                brush = ShimmerBrush(
+                                    targetValue = 1300f,
+                                    showShimmer = authState.authUserResponse?.companyName == null
+                                ),
+                                shape = RoundedCornerShape(12.dp)
+                            ).defaultMinSize(200.dp),
+                            text = if (authState.authUserResponse !== null) authState.authUserResponse.companyName else "",
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = TextStyle(fontSize = 18.sp),
+                        )
+                    },
+                    actions = {
+                        IconButton(
+                            modifier = Modifier.zIndex(1f),
+                            onClick = {
+                                scopeDrawer.launch {
+                                    drawerState.open()
+                                }
+                            },
+                            content = {
+                                Icon(
+                                    imageVector = Icons.Filled.Apps,
+                                    modifier = Modifier.size(25.dp),
+                                    contentDescription = "Menu pending",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        )
+                    }
+                )
+            },
+        ) { innerPadding ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(innerPadding)
+                    .padding(start = 16.dp, end = 16.dp)
+            ) {
+                item {
+                    ElevatedCard(
                         modifier = Modifier
-                            .background(color = MaterialTheme.colorScheme.background)
-                            .padding(start = 9.dp),
-                        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.background),
-                        title = {
-                            Column(modifier = Modifier.fillMaxWidth()) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text(
-                                            modifier = Modifier.padding(start = 9.dp).background(
+                            .clip(RoundedCornerShape(size = 12.dp)),
+                        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .background(MaterialTheme.colorScheme.inverseOnSurface)
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(
+                                    16.dp
+                                )
+                            ) {
+                                Column(modifier = Modifier.fillMaxWidth()) {
+                                    Text(
+                                        text = great.uppercase(),
+                                        color= MaterialTheme.colorScheme.onBackground,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    Text(
+                                        modifier = Modifier.background(
+                                            brush = ShimmerBrush(
+                                                targetValue = 1300f,
+                                                showShimmer = state.prestaTenantByPhoneNumber?.fullName == null
+                                            ),
+                                            shape = RoundedCornerShape(12.dp)
+                                        ).defaultMinSize(150.dp),
+                                        text = if (state.prestaTenantByPhoneNumber?.fullName !== null) state.prestaTenantByPhoneNumber.firstName.uppercase() else "",
+                                        color= MaterialTheme.colorScheme.onBackground,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(top = 2.dp)
+                                            .background(
                                                 brush = ShimmerBrush(
                                                     targetValue = 1300f,
-                                                    showShimmer = authState.authUserResponse?.companyName == null
+                                                    showShimmer = state.prestaTenantByPhoneNumber?.fullName == null
                                                 ),
                                                 shape = RoundedCornerShape(12.dp)
-                                            ).defaultMinSize(200.dp),
-                                            text = if (authState.authUserResponse !== null) authState.authUserResponse.companyName else "",
-                                            color = MaterialTheme.colorScheme.onBackground,
-                                            style = TextStyle(fontSize = 18.sp),
+                                            ).defaultMinSize(150.dp),
+                                        text = if (state.prestaTenantByPhoneNumber?.memberNumber !== null) state.prestaTenantByPhoneNumber.memberNumber.uppercase() else "",
+                                        color= MaterialTheme.colorScheme.onBackground,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    Row(modifier = Modifier.fillMaxWidth()) {
+                                        Spacer(modifier = Modifier.weight(1f))
+                                        Text(
+                                            text = "Balance",
+                                            fontSize = 14.sp,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                         )
                                     }
-                                    IconButton(
-                                        modifier = Modifier.absoluteOffset(x = 6.dp).zIndex(1f),
-                                        onClick = {
-                                            scopeDrawer.launch { drawerState.open() }
-                                        },
-                                        content = {
-                                            Icon(
-                                                imageVector = Icons.Filled.Apps,
-                                                modifier = Modifier.size(25.dp),
-                                                contentDescription = "Menu pending",
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    )
-                },
-                content = { innerPadding ->
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(innerPadding)
-                            .padding(start = 16.dp, end = 16.dp)
-                    ) {
-                        item {
-                            ElevatedCard(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(size = 12.dp)),
-                                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .background(MaterialTheme.colorScheme.inverseOnSurface)
-                                ) {
-                                    Column(
-                                        modifier = Modifier.padding(
-                                            16.dp
-                                        )
-                                    ) {
-                                        Column(modifier = Modifier.fillMaxWidth()) {
-                                            Text(
-                                                text = great.uppercase(),
-                                                color= MaterialTheme.colorScheme.onBackground,
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                                                style = MaterialTheme.typography.bodyMedium
-                                            )
-                                            Text(
-                                                modifier = Modifier.background(
+                                    Row(modifier = Modifier.fillMaxWidth()) {
+                                        Spacer(modifier = Modifier.weight(1f))
+                                        Text(
+                                            modifier = Modifier
+                                                .padding(top = 2.dp)
+                                                .background(
                                                     brush = ShimmerBrush(
                                                         targetValue = 1300f,
-                                                        showShimmer = state.prestaTenantByPhoneNumber?.fullName == null
+                                                        showShimmer = state.prestaTenantByPhoneNumber?.totalShares == null
                                                     ),
                                                     shape = RoundedCornerShape(12.dp)
-                                                ).defaultMinSize(150.dp),
-                                                text = if (state.prestaTenantByPhoneNumber?.fullName !== null) state.prestaTenantByPhoneNumber.firstName.uppercase() else "",
-                                                color= MaterialTheme.colorScheme.onBackground,
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
-                                                style = MaterialTheme.typography.bodyMedium
-                                            )
-                                            Text(
-                                                modifier = Modifier
-                                                    .padding(top = 2.dp)
-                                                    .background(
-                                                        brush = ShimmerBrush(
-                                                            targetValue = 1300f,
-                                                            showShimmer = state.prestaTenantByPhoneNumber?.fullName == null
-                                                        ),
-                                                        shape = RoundedCornerShape(12.dp)
-                                                    ).defaultMinSize(150.dp),
-                                                text = if (state.prestaTenantByPhoneNumber?.memberNumber !== null) state.prestaTenantByPhoneNumber.memberNumber.uppercase() else "",
-                                                color= MaterialTheme.colorScheme.onBackground,
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                                style = MaterialTheme.typography.bodyMedium
-                                            )
-                                            Row(modifier = Modifier.fillMaxWidth()) {
-                                                Spacer(modifier = Modifier.weight(1f))
-                                                Text(
-                                                    text = "Balance",
-                                                    fontSize = 14.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
-                                                )
-                                            }
-                                            Row(modifier = Modifier.fillMaxWidth()) {
-                                                Spacer(modifier = Modifier.weight(1f))
-                                                Text(
-                                                    modifier = Modifier
-                                                        .padding(top = 2.dp)
-                                                        .background(
-                                                            brush = ShimmerBrush(
-                                                                targetValue = 1300f,
-                                                                showShimmer = state.prestaTenantByPhoneNumber?.totalShares == null
-                                                            ),
-                                                            shape = RoundedCornerShape(12.dp)
-                                                        ).defaultMinSize(50.dp),
-                                                    text = if (state.prestaTenantByPhoneNumber?.totalShares !== null) "${
-                                                        formatMoney(
-                                                            state.prestaTenantByPhoneNumber.totalShares +
-                                                                    state.prestaTenantByPhoneNumber.totalDeposits
-                                                        )
-                                                    } KES" else "",
-                                                    color = MaterialTheme.colorScheme.onBackground,
-                                                    fontSize = 20.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
-                                                )
-                                            }
-                                            Row(modifier = Modifier.fillMaxWidth()) {
-                                                Spacer(modifier = Modifier.weight(1f))
-                                                Text(
-                                                    modifier = Modifier
-                                                        .padding(top = 2.dp)
-                                                        .background(
-                                                            brush = ShimmerBrush(
-                                                                targetValue = 1300f,
-                                                                showShimmer = state.prestaTenantByPhoneNumber?.totalShares == null
-                                                            ),
-                                                            shape = RoundedCornerShape(12.dp)
-                                                        ).defaultMinSize(50.dp),
-                                                    text = if (state.prestaTenantByPhoneNumber?.totalShares !== null) "Shares: " +
-                                                        formatMoney(
-                                                            state.prestaTenantByPhoneNumber.totalShares
-                                                        ) + " & " +
-                                                        "Deposits: " + formatMoney(
+                                                ).defaultMinSize(50.dp),
+                                            text = if (state.prestaTenantByPhoneNumber?.totalShares !== null) "${
+                                                formatMoney(
+                                                    state.prestaTenantByPhoneNumber.totalShares +
                                                             state.prestaTenantByPhoneNumber.totalDeposits
-                                                        ) else "",
-                                                    color = MaterialTheme.colorScheme.onBackground,
-                                                    fontSize = 12.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                                                 )
+                                            } KES" else "",
+                                            color = MaterialTheme.colorScheme.onBackground,
+                                            fontSize = 20.sp,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.bold)
+                                        )
+                                    }
+                                    Row(modifier = Modifier.fillMaxWidth()) {
+                                        Spacer(modifier = Modifier.weight(1f))
+                                        Text(
+                                            modifier = Modifier
+                                                .padding(top = 2.dp)
+                                                .background(
+                                                    brush = ShimmerBrush(
+                                                        targetValue = 1300f,
+                                                        showShimmer = state.prestaTenantByPhoneNumber?.totalShares == null
+                                                    ),
+                                                    shape = RoundedCornerShape(12.dp)
+                                                ).defaultMinSize(50.dp),
+                                            text = if (state.prestaTenantByPhoneNumber?.totalShares !== null) "Shares: " +
+                                                    formatMoney(
+                                                        state.prestaTenantByPhoneNumber.totalShares
+                                                    ) + " & " +
+                                                    "Deposits: " + formatMoney(
+                                                state.prestaTenantByPhoneNumber.totalDeposits
+                                            ) else "",
+                                            color = MaterialTheme.colorScheme.onBackground,
+                                            fontSize = 12.sp,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light)
+                                        )
+                                    }
+                                    Divider(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 20.dp),
+                                        thickness = 2.dp,
+                                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
+                                    )
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 10.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Text(
+                                            "Loan Requests",
+                                            fontSize = 14.sp,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                                        )
+                                        Text(
+                                            "See all",
+                                            fontSize = 14.sp,
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                            color = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.clickable {
+                                                component.goToLoanRequests()
                                             }
-                                            Divider(
+                                        )
+
+                                    }
+                                    if (applyLongTermLoanState.isLoading) {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(
+                                                    vertical = 10.dp
+                                                )
+                                                .background(color = Color.Transparent),
+                                        ) {
+                                            ElevatedCard(
                                                 modifier = Modifier
                                                     .fillMaxWidth()
-                                                    .padding(top = 20.dp),
-                                                thickness = 2.dp,
-                                                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
-                                            )
+                                                    .background(color = Color.Transparent),
+                                                colors = CardDefaults.elevatedCardColors(
+                                                    containerColor = MaterialTheme.colorScheme.inverseOnSurface
+                                                )
+                                            ) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .defaultMinSize(40.dp, 40.dp)
+                                                        .background(
+                                                            ShimmerBrush(
+                                                                targetValue = 1300f,
+                                                                showShimmer = true
+                                                            )
+                                                        )
+                                                        .fillMaxWidth()
+                                                ) {
+                                                }
+                                            }
+                                        }
+
+                                    } else {
+                                        if (applyLongTermLoanState.prestaLongTermLoansRequestsFilteredList?.content.isNullOrEmpty()) {
                                             Row(
                                                 modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(top = 10.dp),
-                                                horizontalArrangement = Arrangement.SpaceBetween
+                                                    .fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.Center
                                             ) {
                                                 Text(
-                                                    "Loan Requests",
-                                                    fontSize = 14.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                                                    text = "You don't have Loan Requests",
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                                    fontSize = 12.sp
                                                 )
-                                                Text(
-                                                    "See all",
-                                                    fontSize = 14.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
-                                                    color = MaterialTheme.colorScheme.primary,
-                                                    modifier = Modifier.clickable {
-                                                        component.goToLoanRequests()
-                                                    }
-                                                )
-
                                             }
-                                            if (applyLongTermLoanState.isLoading) {
-                                                Row(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .padding(
-                                                            vertical = 10.dp
-                                                        )
-                                                        .background(color = Color.Transparent),
-                                                ) {
-                                                    ElevatedCard(
-                                                        modifier = Modifier
-                                                            .fillMaxWidth()
-                                                            .background(color = Color.Transparent),
-                                                        colors = CardDefaults.elevatedCardColors(
-                                                            containerColor = MaterialTheme.colorScheme.inverseOnSurface
-                                                        )
-                                                    ) {
-                                                        Box(
-                                                            modifier = Modifier
-                                                                .defaultMinSize(40.dp, 40.dp)
-                                                                .background(
-                                                                    ShimmerBrush(
-                                                                        targetValue = 1300f,
-                                                                        showShimmer = true
-                                                                    )
-                                                                )
-                                                                .fillMaxWidth()
-                                                        ) {
-                                                        }
-                                                    }
-                                                }
-
-                                            } else {
-                                                if (applyLongTermLoanState.prestaLongTermLoansRequestsFilteredList?.content.isNullOrEmpty()) {
-                                                    Row(
-                                                        modifier = Modifier
-                                                            .fillMaxWidth(),
-                                                        horizontalArrangement = Arrangement.Center
-                                                    ) {
-                                                        Text(
-                                                            text = "You don't have Loan Requests",
-                                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                                                            fontSize = 12.sp
-                                                        )
-                                                    }
-                                                } else {
-                                                    applyLongTermLoanState.prestaLongTermLoansRequestsFilteredList?.content?.map { filteredLoanRequests ->
-                                                        Row(modifier = Modifier.padding(top = 10.dp)) {
-                                                            LoanRequestsListing(
-                                                                loanName = filteredLoanRequests.loanProductName,
-                                                                loanRequestDate = filteredLoanRequests.loanDate,
-                                                                loanAmount = formatMoney(
-                                                                    filteredLoanRequests.loanAmount
-                                                                ) + " KES",
-                                                                loanProgress = filteredLoanRequests.loanRequestProgress.toFloat() / 100,
-                                                            )
-                                                        }
-                                                    }
+                                        } else {
+                                            applyLongTermLoanState.prestaLongTermLoansRequestsFilteredList?.content?.map { filteredLoanRequests ->
+                                                Row(modifier = Modifier.padding(top = 10.dp)) {
+                                                    LoanRequestsListing(
+                                                        loanName = filteredLoanRequests.loanProductName,
+                                                        loanRequestDate = filteredLoanRequests.loanDate,
+                                                        loanAmount = formatMoney(
+                                                            filteredLoanRequests.loanAmount
+                                                        ) + " KES",
+                                                        loanProgress = filteredLoanRequests.loanRequestProgress.toFloat() / 100,
+                                                    )
                                                 }
                                             }
                                         }
@@ -400,92 +390,90 @@ fun SignHomeContent(
                                 }
                             }
                         }
-                        item {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 20.dp)
-                            ) {
-                                SignProductSelection(
-                                    icon = Icons.Outlined.Assignment,
-                                    label1 = "Apply for a loan",
-                                    label2 = "Create a loan Request",
-                                    onClickContainer = {
-                                        component.onApplyLoanSelected()
-
-                                    },
-                                    backgroundColor = MaterialTheme.colorScheme.primary,
-                                    textColor = MaterialTheme.colorScheme.background,
-                                    iconTint = MaterialTheme.colorScheme.background
-                                )
-                            }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 15.dp)
-                            ) {
-                                SignProductSelection(
-                                    icon = Icons.Outlined.Assignment,
-                                    label1 = "Guarantorship requests ",
-                                    label2 = "View guarantorship requets",
-                                    onClickContainer = {
-                                        //navigate to view requests
-                                        component.guarantorshipRequestsSelected()
-
-                                    },
-                                    backgroundColor = MaterialTheme.colorScheme.inverseOnSurface,
-                                    textColor = MaterialTheme.colorScheme.onBackground,
-                                    iconTint = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 15.dp)
-                            ) {
-                                SignProductSelection(
-                                    icon = Icons.Outlined.Grade,
-                                    label1 = "Favorite guarantors",
-                                    label2 = "View  and edit your favourite guarantors",
-                                    onClickContainer = {
-                                        //navigate to favourite guarantors
-                                        component.favouriteGuarantorsSelected()
-
-                                    },
-                                    backgroundColor = MaterialTheme.colorScheme.inverseOnSurface,
-                                    textColor = MaterialTheme.colorScheme.onBackground,
-                                    iconTint = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 15.dp)
-                            ) {
-                                SignProductSelection(
-                                    icon = Icons.Outlined.Shield,
-                                    label1 = "Witness request",
-                                    label2 = "View witness requests",
-                                    onClickContainer = {
-                                        component.witnessRequestSelected()
-
-                                    },
-                                    backgroundColor = MaterialTheme.colorScheme.inverseOnSurface,
-                                    textColor = MaterialTheme.colorScheme.onBackground,
-                                    iconTint = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
-                        item {
-                            Spacer(modifier = Modifier.padding(bottom = 100.dp))
-                        }
                     }
-                })
+                }
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 20.dp)
+                    ) {
+                        SignProductSelection(
+                            icon = Icons.Outlined.Assignment,
+                            label1 = "Apply for a loan",
+                            label2 = "Create a loan Request",
+                            onClickContainer = {
+                                component.onApplyLoanSelected()
 
+                            },
+                            backgroundColor = MaterialTheme.colorScheme.primary,
+                            textColor = MaterialTheme.colorScheme.background,
+                            iconTint = MaterialTheme.colorScheme.background
+                        )
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 15.dp)
+                    ) {
+                        SignProductSelection(
+                            icon = Icons.Outlined.Assignment,
+                            label1 = "Guarantorship requests ",
+                            label2 = "View guarantorship requets",
+                            onClickContainer = {
+                                //navigate to view requests
+                                component.guarantorshipRequestsSelected()
 
-        })
+                            },
+                            backgroundColor = MaterialTheme.colorScheme.inverseOnSurface,
+                            textColor = MaterialTheme.colorScheme.onBackground,
+                            iconTint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 15.dp)
+                    ) {
+                        SignProductSelection(
+                            icon = Icons.Outlined.Grade,
+                            label1 = "Favorite guarantors",
+                            label2 = "View  and edit your favourite guarantors",
+                            onClickContainer = {
+                                //navigate to favourite guarantors
+                                component.favouriteGuarantorsSelected()
 
+                            },
+                            backgroundColor = MaterialTheme.colorScheme.inverseOnSurface,
+                            textColor = MaterialTheme.colorScheme.onBackground,
+                            iconTint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 15.dp)
+                    ) {
+                        SignProductSelection(
+                            icon = Icons.Outlined.Shield,
+                            label1 = "Witness request",
+                            label2 = "View witness requests",
+                            onClickContainer = {
+                                component.witnessRequestSelected()
 
+                            },
+                            backgroundColor = MaterialTheme.colorScheme.inverseOnSurface,
+                            textColor = MaterialTheme.colorScheme.onBackground,
+                            iconTint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+                item {
+                    Spacer(modifier = Modifier.padding(bottom = 100.dp))
+                }
+            }
+        }
+    }
 }
 
 @Composable

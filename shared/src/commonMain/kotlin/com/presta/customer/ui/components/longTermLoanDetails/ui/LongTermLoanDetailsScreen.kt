@@ -7,14 +7,11 @@ import com.presta.customer.ui.components.longTermLoanDetails.LongTermLoanDetails
 
 @Composable
 fun LongTermLoanDetailsScreen(component: LongTermLoanDetailsComponent) {
-
-    val authState by component.authState.collectAsState()
     val  applyLongTermLoansState by component.applyLongTermLoansState.collectAsState()
     LongTermLoanDetailsContent(
         component = component,
         state = applyLongTermLoansState
     )
-
 }
 
 

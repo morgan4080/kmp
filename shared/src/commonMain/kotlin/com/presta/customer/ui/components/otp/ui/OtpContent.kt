@@ -278,7 +278,7 @@ fun OtpContent(
                                 modifier = Modifier
                                     .shadow(1.dp, RoundedCornerShape(10.dp))
                                     .align(Alignment.CenterHorizontally)
-                                    .height(65.dp)
+                                    .height(62.dp)
                                     .fillMaxWidth(0.88f)
                                     .fillMaxHeight(0.15f)
                                     .background(

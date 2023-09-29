@@ -101,7 +101,7 @@ fun SignGuarantorFormContent(
         }
 
     }
-    Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
+    Scaffold(topBar = {
         NavigateBackTopBar("Sign Document", onClickContainer = {
             component.onBackNavClicked()
         })

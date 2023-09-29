@@ -317,7 +317,7 @@ fun WitnessRequestContent(
             }
         }
     ) {
-        Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
+        Scaffold(topBar = {
             NavigateBackTopBar("Witness Requests", onClickContainer = {
                 component.onBackNavClicked()
             })

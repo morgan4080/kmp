@@ -346,7 +346,7 @@ fun GuarantorShipRequestsContent(
             }
         }
     ) {
-        Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
+        Scaffold(topBar = {
             NavigateBackTopBar("Guarantorship Requests", onClickContainer = {
                 component.onBackNavClicked()
             })

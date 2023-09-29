@@ -80,8 +80,7 @@ fun TenantContent(
     println(Modifier.imePadding())
 
     Scaffold(
-        modifier = Modifier.fillMaxHeight(1f)
-            .padding(LocalSafeArea.current),
+        modifier = Modifier.fillMaxHeight(1f),
     ) {
         Column (
             modifier = Modifier

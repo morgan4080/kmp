@@ -153,8 +153,7 @@ fun RegistrationContent(
 
     Scaffold (
         modifier = Modifier
-            .fillMaxHeight()
-            .padding(LocalSafeArea.current),
+            .fillMaxHeight(),
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
 

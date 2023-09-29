@@ -82,7 +82,7 @@ fun SignLoanFormContent(
         component.platform.logErrorsToFirebase(Exception(state.error))
     }
 
-    Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
+    Scaffold(topBar = {
         NavigateBackTopBar("Sign Loan Form", onClickContainer = {
             component.onBackNavClicked()
         })

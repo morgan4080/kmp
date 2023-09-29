@@ -41,7 +41,6 @@ fun WelcomeScreen(
     Scaffold (
         modifier = Modifier
             .fillMaxHeight(1f)
-            .padding(LocalSafeArea.current)
     ) {
         LazyColumn (
             modifier = Modifier.fillMaxHeight(),

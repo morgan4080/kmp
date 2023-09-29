@@ -68,7 +68,6 @@ fun CountriesSearch(
     val kc = LocalSoftwareKeyboardController.current
     Column (
         modifier = Modifier
-            .padding(LocalSafeArea.current)
             .fillMaxHeight()
             .background(MaterialTheme.colorScheme.surface)
     ) {

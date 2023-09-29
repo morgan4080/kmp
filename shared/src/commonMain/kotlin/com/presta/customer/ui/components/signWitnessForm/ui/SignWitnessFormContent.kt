@@ -79,7 +79,7 @@ fun SignWitnessFormContent(
         showDialog = state.error !== null
     }
 
-    Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
+    Scaffold(topBar = {
         NavigateBackTopBar("Sign Document", onClickContainer = {
             component.onBackNavClicked()
         })

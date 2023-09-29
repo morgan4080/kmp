@@ -930,7 +930,7 @@ fun FavouriteGuarantorContent(
             )
         }
     ) {
-        Scaffold(modifier = Modifier.padding(LocalSafeArea.current),
+        Scaffold(
             floatingActionButton = {
                 FloatingActionButton(
                     backgroundColor = MaterialTheme.colorScheme.primary,

@@ -66,8 +66,7 @@ fun SplashScreen(component: SplashComponent, connectivityStatus: SharedStatus?) 
 
     Scaffold (
         modifier = Modifier
-            .fillMaxHeight(1f)
-            .padding(LocalSafeArea.current),
+            .fillMaxHeight(1f),
         snackbarHost = { SnackbarHost(modifier = Modifier.padding(bottom = 10.dp), hostState = snackBarHostState) },
         floatingActionButton = {
             Row (

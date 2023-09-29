@@ -80,7 +80,6 @@ fun PayLoanContent(
 
     Scaffold (
         modifier = Modifier
-            .padding(LocalSafeArea.current)
             .fillMaxHeight(),
         snackbarHost = {
             SnackbarHost(

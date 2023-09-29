@@ -84,7 +84,6 @@ fun LoanTopUpContent(
     }
     Scaffold(
         modifier = Modifier
-            .padding(LocalSafeArea.current)
             .fillMaxHeight(),
         topBar = {
             NavigateBackTopBar("Topup", onClickContainer = {

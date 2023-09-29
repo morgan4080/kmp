@@ -28,9 +28,7 @@ import dev.icerock.moko.resources.compose.painterResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignScreen(component: SignComponent) {
-    Scaffold(
-        modifier = Modifier.padding(LocalSafeArea.current)
-    ) {
+    Scaffold {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier

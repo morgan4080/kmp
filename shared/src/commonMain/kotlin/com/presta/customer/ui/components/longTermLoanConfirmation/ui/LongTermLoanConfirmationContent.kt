@@ -46,7 +46,7 @@ fun LongTermLoanConfirmationContent(
 ) {
     val tabs = listOf("User Information", "Loan Information")
     var tabIndex by remember { mutableStateOf(0) }
-    Scaffold(modifier = Modifier.padding(LocalSafeArea.current), topBar = {
+    Scaffold(topBar = {
         NavigateBackTopBar("Confirmation", onClickContainer = {
             component.onBackNavClicked()
         })

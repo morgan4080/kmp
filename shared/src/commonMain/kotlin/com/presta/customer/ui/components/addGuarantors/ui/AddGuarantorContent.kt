@@ -738,7 +738,7 @@ fun AddGuarantorContent(
             }
         }
     ) {
-        Scaffold(modifier = Modifier.padding(LocalSafeArea.current),
+        Scaffold(
             snackbarHost = {
                 SnackbarHost(snackbarHostState) { data ->
                     val isError = (data.visuals as? SnackbarVisualsWithError)?.isError ?: false

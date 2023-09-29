@@ -251,6 +251,21 @@ class DefaultRootBottomSignComponent(
         scope.launch {
             authState.collect { state ->
                 if (state.cachedMemberData !== null) {
+
+                    onAuthEvent(
+                        AuthStore.Intent.CheckServices(
+                            token = state.cachedMemberData.accessToken,
+                            tenantId = state.cachedMemberData.tenantId
+                        )
+                    )
+
+                    onAuthEvent(
+                        AuthStore.Intent.CheckServiceConfigs(
+                            token = state.cachedMemberData.accessToken,
+                            tenantId = state.cachedMemberData.tenantId
+                        )
+                    )
+
                     val flow = poller.poll(
                         state.cachedMemberData.expires_in * 100,
                         OrganisationModel.organisation.tenant_id,

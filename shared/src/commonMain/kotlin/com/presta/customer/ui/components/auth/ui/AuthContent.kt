@@ -574,9 +574,9 @@ fun AuthContent(
                                             enabled = false,
                                             singleLine = true,
                                             decorationBox = { innerTextField ->
-                                                Box(
-                                                    modifier = Modifier.border(BorderStroke(1.dp, Color.Red)),
-                                                    contentAlignment = Alignment.Center
+                                                Column (
+                                                    verticalArrangement = Arrangement.Center,
+                                                    horizontalAlignment = Alignment.CenterHorizontally
                                                 ) {
                                                     innerTextField()
                                                 }

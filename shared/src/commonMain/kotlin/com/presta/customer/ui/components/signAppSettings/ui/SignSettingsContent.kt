@@ -87,7 +87,6 @@ fun SignSettingsContent(
     }
     val focusRequester = remember { FocusRequester() }
     Scaffold(
-        modifier = Modifier.padding(LocalSafeArea.current),
         topBar = {
             CenterAlignedTopAppBar(
                 modifier = Modifier

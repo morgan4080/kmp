@@ -1,10 +1,8 @@
 package com.presta.customer.ui.components.rootBottomSign
 
-import RootSignHomeScreen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.absoluteOffset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
@@ -14,22 +12,29 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
-import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.Direction
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.presta.customer.MR
+import com.presta.customer.network.authDevice.model.PrestaServices
+import com.presta.customer.network.authDevice.model.ServicesActivity
+import com.presta.customer.network.authDevice.model.TenantServicesResponse
 import com.presta.customer.ui.components.longTermLoanRequestsList.ui.LongTermLoanRequestsScreen
+import com.presta.customer.ui.components.rootSignHome.RootSignHomeScreen
 import com.presta.customer.ui.components.signAppSettings.ui.SignSettingsScreen
 import com.presta.customer.ui.composables.GetIconForSignScreen
-import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
@@ -38,11 +43,24 @@ fun RootBottomSignScreen(
 ) {
     val childStackBottom by component.childStackBottom.subscribeAsState()
     val activeComponentStackBottom = childStackBottom.active.instance
-    //Todo----Modified going back to loan  requests when user hits resolve loan
-    //Todo Show the LMS button based on  client settings
-    val showLms: Boolean = true
+    val state by component.authState.collectAsState()
+    val listOfActiveServices = remember { mutableListOf<TenantServicesResponse>() }
+    var showLMS by remember { mutableStateOf(false) }
+    LaunchedEffect(state.tenantServices) {
+        if (state.tenantServices.isNotEmpty()) {
+            state.tenantServices.forEach { service ->
+                if (service.status == ServicesActivity.ACTIVE) listOfActiveServices.add(service)
+            }
+            showLMS = listOfActiveServices.contains(
+                TenantServicesResponse(
+                    PrestaServices.PRESTALENDER,
+                    ServicesActivity.ACTIVE
+                )
+            )
+        }
+    }
+
     Scaffold(
-        modifier = Modifier.padding(LocalSafeArea.current),
         bottomBar = {
             val screens = listOf("Home", "Request", "Setting", "Lms")
 
@@ -133,7 +151,9 @@ fun RootBottomSignScreen(
                             unselectedIconColor = MaterialTheme.colorScheme.outline
                         )
                     )
-                    if (showLms) {
+                    if (
+                        showLMS
+                    ) {
                         NavigationBarItem(
                             icon = {
                                 Icon(
@@ -163,7 +183,7 @@ fun RootBottomSignScreen(
                 }
             }
         },
-        content = { innerPadding ->
+        content = {
             Children(
                 stack = component.childStackBottom,
                 animation = stackAnimation(fade() + scale()),
@@ -173,7 +193,6 @@ fun RootBottomSignScreen(
                     is RootBottomSignComponent.ChildBottom.RequestChild -> LongTermLoanRequestsScreen(
                         childX.component
                     )
-
                     is RootBottomSignComponent.ChildBottom.SettingsChild -> SignSettingsScreen(
                         childX.component
                     )
@@ -182,19 +201,3 @@ fun RootBottomSignScreen(
         }
     )
 }
-
-private val RootBottomSignComponent.ChildBottom.index: Int
-    get() =
-        when (this) {
-            is RootBottomSignComponent.ChildBottom.ProfileChild -> 0
-            is RootBottomSignComponent.ChildBottom.RequestChild -> 1
-            is RootBottomSignComponent.ChildBottom.SettingsChild -> 2
-        }
-
-private fun Direction.flipSide(): Direction =
-    when (this) {
-        Direction.ENTER_FRONT -> Direction.ENTER_BACK
-        Direction.EXIT_FRONT -> Direction.EXIT_BACK
-        Direction.ENTER_BACK -> Direction.ENTER_FRONT
-        Direction.EXIT_BACK -> Direction.EXIT_FRONT
-    }
