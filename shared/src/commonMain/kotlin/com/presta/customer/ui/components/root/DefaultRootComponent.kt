@@ -18,8 +18,6 @@ import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
-import com.presta.customer.PrestaDispatchers
-import com.presta.customer.network.authDevice.model.PrestaServices
 import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.payments.data.PaymentTypes
@@ -93,13 +91,10 @@ import com.presta.customer.ui.components.welcome.WelcomeComponent
 import com.presta.customer.ui.components.witnessRequests.DefaultWitnessRequestComponent
 import com.presta.customer.ui.components.witnessRequests.WitnessRequestComponent
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
@@ -550,21 +545,14 @@ class DefaultRootComponent(
                 navigation.replaceAll(Config.RootBottom(false), onComplete = {
                     println("Logged In")
                 })
-//                scope.launch {
-//                    state.collect {
-//                        if (it.tenantServices.isNotEmpty()){
-//                            navigation.replaceAll(
-//                                Config.SignApp(
-//                                    loanRefId = "",
-//                                    replaceGuarantor = ""
-//                                )
-//                            )
-//                        }
-//
-//                    }
-//
-//                }
-
+            },
+            onLoginSIGN = {
+                navigation.replaceAll(
+                    Config.SignApp(
+                        loanRefId = "",
+                        replaceGuarantor = ""
+                    )
+                )
             }
         )
 

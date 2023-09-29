@@ -50,8 +50,9 @@ class DefaultAuthComponent(
     isActive: Boolean,
     pinStatus: PinStatus?,
     onBoardingContext: DefaultRootComponent.OnBoardingContext,
-    private val onLogin: () -> Unit,
-) : AuthComponent, ComponentContext by componentContext, KoinComponent {
+    private val onLoginLMS: () -> Unit,
+    private val onLoginSIGN: () -> Unit,
+): AuthComponent, ComponentContext by componentContext, KoinComponent {
     override val platform by inject<Platform>()
     val phone = phoneNumber
     override val authStore =
@@ -93,9 +94,8 @@ class DefaultAuthComponent(
             TenantStoreFactory(
                 storeFactory = storeFactory,
                 componentContext = componentContext,
-            ).create()
+            ) .create()
         }
-
     @OptIn(ExperimentalCoroutinesApi::class)
     override val tenantState: StateFlow<TenantStore.State> = tenantStore.stateFlow
 

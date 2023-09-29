@@ -20,6 +20,7 @@ interface AuthComponent {
     fun onTenantEvent(event: TenantStore.Intent)
     fun onEvent(event: AuthStore.Intent)
     fun onOnBoardingEvent(event: OnBoardingStore.Intent)
-    fun navigate()
+    fun navigateToLMS()
+    fun navigateToSign()
     fun reloadModels()
 }
