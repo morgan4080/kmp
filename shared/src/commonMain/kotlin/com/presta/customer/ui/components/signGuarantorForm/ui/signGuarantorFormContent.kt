@@ -157,7 +157,7 @@ fun SignGuarantorFormContent(
                             Text(
                                 "Your guarantorship " + component.loanNumber + " of KES " + component.amount + " has been confirmed",
                                 fontSize = 16.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                                 color = MaterialTheme.colorScheme.primary
                             )
                         }

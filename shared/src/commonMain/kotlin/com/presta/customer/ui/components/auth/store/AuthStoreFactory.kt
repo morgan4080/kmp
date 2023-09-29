@@ -146,6 +146,8 @@ internal class AuthStoreFactory(
                 authRepository
                     .loginUser(phoneNumber, pin, tenantId, refId, registrationFees, registrationFeeStatus)
                     .onSuccess {response ->
+                        checkTenantServices(token = response.access_token, tenantId = tenantId)
+                        checkTenantServicesConfig(token = response.access_token, tenantId = tenantId)
                         dispatch(Msg.LoginFulfilled(response))
                     }
                     .onFailure { e ->

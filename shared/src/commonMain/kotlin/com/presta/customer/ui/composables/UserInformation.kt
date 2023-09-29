@@ -217,7 +217,7 @@ fun UserInformation(
                                 modifier = Modifier
                                     .padding(start = 16.dp),
                                 fontSize = 10.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                             )
                             Column(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.7f)) {
                                 Column(
@@ -292,7 +292,7 @@ fun UserInformation(
                                     fontSize = 11.sp,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.align(Alignment.CenterVertically),
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                 )
 
                             }
@@ -316,7 +316,7 @@ fun UserInformation(
                                     fontSize = 11.sp,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.align(Alignment.CenterVertically),
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                 )
                             }
                         }
@@ -370,7 +370,7 @@ fun UserInformation(
                                 modifier = Modifier
                                     .padding(start = 16.dp),
                                 fontSize = 10.sp,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                             )
                             Column(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.7f)) {
                                 Column(
@@ -443,7 +443,7 @@ fun UserInformation(
                                     fontSize = 11.sp,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.align(Alignment.CenterVertically),
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                 )
 
                             }
@@ -467,7 +467,7 @@ fun UserInformation(
                                     fontSize = 11.sp,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.align(Alignment.CenterVertically),
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                 )
                             }
                         }
@@ -512,7 +512,7 @@ fun UserInformation(
                                 Text(
                                     text = if (state.error != null || state.prestaLongTermLoanRequestData?.pendingReason != null) state.error.toString() + state.prestaLongTermLoanRequestData?.pendingReason else "",
                                     modifier = Modifier.padding(top = 10.dp),
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                 )
                             }
                         }
@@ -544,7 +544,7 @@ fun UserInformation(
                                     fontSize = 11.sp,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.align(Alignment.CenterVertically),
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                 )
 
                             }
@@ -568,7 +568,7 @@ fun UserInformation(
                                     fontSize = 11.sp,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.align(Alignment.CenterVertically),
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                 )
                             }
                         }

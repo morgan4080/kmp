@@ -75,7 +75,7 @@ fun SignProductSelection(
                                 label2,
                                 fontSize = 11.sp,
                                 color =textColor,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                             )
                     }
                 }

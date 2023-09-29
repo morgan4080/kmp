@@ -180,21 +180,21 @@ fun GuarantorShipRequestsContent(
                     label = "Loan Date",
                     showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null,
                     value = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) state.prestaLoanByLoanRequestRefId.loanDate else "",
-                    labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    labelFontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                     valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                 )
                 RequestsDataListing(
                     label = "Applicant",
                     showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null,
                     value = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) "${state.prestaLoanByLoanRequestRefId.memberFirstName.uppercase()} ${state.prestaLoanByLoanRequestRefId.memberLastName.uppercase()}" else "",
-                    labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    labelFontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                     valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                 )
                 RequestsDataListing(
                     label = "Application Amount",
                     showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null,
                     value = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) state.prestaLoanByLoanRequestRefId.loanAmount.toString() else "",
-                    labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    labelFontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                     valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                 )
                 filtered?.map { filteredResponse ->
@@ -202,14 +202,14 @@ fun GuarantorShipRequestsContent(
                         label = "Commited Amount",
                         showShimmer = false,
                         value = filteredResponse.committedAmount.toString(),
-                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                         valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                     )
                     RequestsDataListing(
                         label = "Date Requested",
                         showShimmer = false,
                         value = state.prestaLoanByLoanRequestRefId.loanDate,
-                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                         valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                     )
                     (filteredResponse.dateAccepted)?.let {
@@ -217,7 +217,7 @@ fun GuarantorShipRequestsContent(
                             label = "Date  Accepted",
                             showShimmer = false,
                             value = it,
-                            labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                            labelFontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                             valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                         )
                     }
@@ -225,7 +225,7 @@ fun GuarantorShipRequestsContent(
                         label = "Loan Status",
                         showShimmer = false,
                         value = if (state.prestaLoanByLoanRequestRefId.isActive) "Active" else "InActive",
-                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                         valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                     )
                     RequestsDataListing(
@@ -235,7 +235,7 @@ fun GuarantorShipRequestsContent(
                         iconColor = if (filteredResponse.isAccepted == true) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.error.copy(
                             alpha = 0.8f
                         ),
-                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                         valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                     )
 
@@ -248,7 +248,7 @@ fun GuarantorShipRequestsContent(
                         iconColor = if (filteredResponse.isSigned == true) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.error.copy(
                             alpha = 0.8f
                         ),
-                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                         valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                     )
                 }

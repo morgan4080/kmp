@@ -489,7 +489,7 @@ fun LongTermLoanRequestsContent(
                                     Text(
                                         text = "Changed guarantor will take effect when the added guarantor accepts request.",
                                         style = MaterialTheme.typography.bodySmall,
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                                         lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
                                         modifier = Modifier.padding(start = 10.dp, end = 10.dp),
                                         color = MaterialTheme.colorScheme.outline,
@@ -563,7 +563,7 @@ fun LongTermLoanRequestsContent(
                                                     Text(
                                                         "Eligibility Status",
                                                         fontSize = 12.sp,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                                     )
                                                     guarantorDataResponse.eligibilityMessage?.let {
                                                         Text(
@@ -582,7 +582,7 @@ fun LongTermLoanRequestsContent(
                                                     Text(
                                                         "Committed Amount",
                                                         fontSize = 12.sp,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                                     )
                                                     Text(
                                                         text = formatMoney(guarantorDataResponse.committedAmount),
@@ -599,7 +599,7 @@ fun LongTermLoanRequestsContent(
                                                     Text(
                                                         "Guarantorship Status",
                                                         fontSize = 12.sp,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                                     )
                                                     Text(
                                                         text = if (guarantorDataResponse.isActive) "Active" else "Not Active",
@@ -616,7 +616,7 @@ fun LongTermLoanRequestsContent(
                                                     Text(
                                                         "Acceptance  Status",
                                                         fontSize = 12.sp,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                                     )
                                                     Text(
                                                         text = if (guarantorDataResponse.isAccepted == true) "Accepted " else "Pending",
@@ -633,7 +633,7 @@ fun LongTermLoanRequestsContent(
                                                     Text(
                                                         "Date Accepted",
                                                         fontSize = 12.sp,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                                     )
                                                     Text(
                                                         text = guarantorDataResponse.dateAccepted
@@ -651,7 +651,7 @@ fun LongTermLoanRequestsContent(
                                                     Text(
                                                         "Signature Status",
                                                         fontSize = 12.sp,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                                     )
                                                     Text(
                                                         text = if (guarantorDataResponse.isSigned == true) "Signed" else "Pending",
@@ -668,7 +668,7 @@ fun LongTermLoanRequestsContent(
                                                     Text(
                                                         "Approval Status",
                                                         fontSize = 12.sp,
-                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                                     )
                                                     Text(
                                                         text = approvalStatus,
@@ -982,7 +982,7 @@ fun LoanApplicationProgressCard(
                     )
                     Text(
                         text = loanProgress,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.primary
                     )

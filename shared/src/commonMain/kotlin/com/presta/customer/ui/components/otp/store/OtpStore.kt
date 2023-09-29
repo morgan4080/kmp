@@ -12,8 +12,8 @@ interface OtpStore: Store<OtpStore.Intent, OtpStore.State, Nothing> {
     sealed class Intent {
         data class RequestOTP(val token: String, val phoneNumber: String, val tenantId: String): Intent()
         data class VerifyOTP(val token: String, val requestMapper: String, val otp: String, val tenantId: String): Intent()
-        object ClearOtpVerificationData: Intent()
-        object ClearError: Intent()
+        data object ClearOtpVerificationData: Intent()
+        data object ClearError: Intent()
     }
 
     data class State(

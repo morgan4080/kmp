@@ -47,7 +47,7 @@ fun ModeSelectionCard(label: String, description: String? = "", onClickContainer
                         text = label,
                         modifier = Modifier.padding(start = 15.dp),
                         fontSize = 14.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                         color = MaterialTheme.colorScheme.primary
                     )
                     if (description != "") {

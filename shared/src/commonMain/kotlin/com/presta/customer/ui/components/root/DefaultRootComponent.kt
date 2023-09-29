@@ -546,8 +546,7 @@ class DefaultRootComponent(
             isActive = config.isActive,
             pinStatus = config.pinStatus,
             onBoardingContext = config.onBoardingContext,
-            onLogin = {
-                //Todo ----navigate to the appropriate application based on  client Settings
+            onLoginLMS = {
                 navigation.replaceAll(Config.RootBottom(false), onComplete = {
                     println("Logged In")
                 })
@@ -1320,7 +1319,7 @@ class DefaultRootComponent(
         data class Tenant(val onBoardingContext: OnBoardingContext) : Config()
 
         @Parcelize
-        object Splash : Config()
+        data object Splash : Config()
 
         @Parcelize
         data class Welcome(val context: OnBoardingContext) : Config()
@@ -1361,16 +1360,16 @@ class DefaultRootComponent(
         ) : Config()
 
         @Parcelize
-        object AllTransactions : Config()
+        data object AllTransactions : Config()
 
         @Parcelize
-        object LoanPendingApprovals : Config()
+        data object LoanPendingApprovals : Config()
 
         @Parcelize
         data class RootBottom(val backTopProfile: Boolean) : Config()
 
         @Parcelize
-        object PayLoan : Config()
+        data object PayLoan : Config()
 
         @Parcelize
         data class PayLoanPrompt(val amount: String, val correlationId: String) : Config()
@@ -1398,9 +1397,8 @@ class DefaultRootComponent(
             val replaceGuarantor: String
         ) : Config()
 
-        //E  GUARANTORSHIP
         @Parcelize
-        object ApplyLongTermLoans : Config()
+        data object ApplyLongTermLoans : Config()
 
         @Parcelize
         data class LongTermLoanDetails(
@@ -1430,13 +1428,13 @@ class DefaultRootComponent(
         ) : Config()
 
         @Parcelize
-        object GuarantorshipRequest : Config()
+        data object GuarantorshipRequest : Config()
 
         @Parcelize
-        object FavouriteGuarantors : Config()
+        data object FavouriteGuarantors : Config()
 
         @Parcelize
-        object WitnessRequests : Config()
+        data object WitnessRequests : Config()
 
         @Parcelize
         data class LongTermLoanConfirmation(

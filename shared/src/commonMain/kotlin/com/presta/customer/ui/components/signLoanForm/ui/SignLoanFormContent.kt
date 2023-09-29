@@ -163,7 +163,7 @@ fun SignLoanFormContent(
                         Text(
                             "Proceed to Sign your Loan " + component.loanNumber + " of KES " + component.amount,
                             fontSize = 16.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                             color = MaterialTheme.colorScheme.primary
                         )
                     }

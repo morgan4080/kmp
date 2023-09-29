@@ -36,6 +36,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -64,6 +66,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.presta.customer.MR
 import com.presta.customer.Platform
+import com.presta.customer.network.authDevice.model.PrestaServices
+import com.presta.customer.network.authDevice.model.ServicesActivity
+import com.presta.customer.network.authDevice.model.TenantServicesResponse
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.Contexts
@@ -88,6 +93,10 @@ fun AuthContent(
     platform: Platform,
     reloadModels: () -> Unit,
 ) {
+
+    var navigate by remember { mutableStateOf(false) }
+
+    val listOfActiveServices = remember { mutableListOf<TenantServicesResponse>() }
 
     val focusRequester = remember { FocusRequester() }
 
@@ -301,7 +310,7 @@ fun AuthContent(
         if (state.loginResponse !== null && state.phoneNumber != null) {
             inputEnabled = false
             platform.showToast("Login Successful!")
-            navigate()
+            navigate = true
         }
 
         if (state.phoneNumber !== null) {

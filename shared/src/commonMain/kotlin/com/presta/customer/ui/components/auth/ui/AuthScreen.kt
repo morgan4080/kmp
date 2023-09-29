@@ -17,7 +17,8 @@ fun AuthScreen(component: AuthComponent) {
         onBoardingState = onBoardingState,
         onEvent = component::onEvent,
         onOnBoardingEvent = component::onOnBoardingEvent,
-        navigate = component::navigate,
+        navigateLMS = component::navigateToLMS,
+        navigateSign = component::navigateToSign,
         platform = component.platform,
         reloadModels = component::reloadModels
     )

@@ -115,7 +115,7 @@ fun LongTermLoanDetailsContent(
                             .padding(top = 10.dp),
                         text = if (state.prestaLongTermLoanProductById?.interestRate !== null) "Interest Rate " + state.prestaLongTermLoanProductById.interestRate.toString() + "%" else "",
                         color = MaterialTheme.colorScheme.primary,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                         style = MaterialTheme.typography.bodyMedium
                     )
 
@@ -320,7 +320,7 @@ fun LongTermLoanDetailsContent(
                         Text(
                             "Cancel",
                             fontSize = 14.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                             textDecoration = TextDecoration.Underline,
                             modifier = Modifier.clickable { component.onBackNavClicked() }
                         )

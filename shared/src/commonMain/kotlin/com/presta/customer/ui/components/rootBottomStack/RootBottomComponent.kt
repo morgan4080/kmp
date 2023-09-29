@@ -18,6 +18,8 @@ interface RootBottomComponent {
     fun onProfileTabClicked()
     fun onLoanTabClicked()
     fun onSavingsTabClicked()
+
+    val gotoSignApp: () -> Unit
     fun onSignTabClicked()
 
     val authStore: AuthStore

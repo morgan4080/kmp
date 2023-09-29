@@ -173,21 +173,21 @@ fun WitnessRequestContent(
                     label = "Loan Date",
                     showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null,
                     value = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) state.prestaLoanByLoanRequestRefId.loanDate else "",
-                    labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    labelFontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                     valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                 )
                 RequestsDataListing(
                     label = "Applicant",
                     showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null,
                     value = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) "${state.prestaLoanByLoanRequestRefId.memberFirstName.uppercase()} ${state.prestaLoanByLoanRequestRefId.memberLastName.uppercase()}" else "",
-                    labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    labelFontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                     valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                 )
                 RequestsDataListing(
                     label = "Application Amount",
                     showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null,
                     value = if (state.prestaLoanByLoanRequestRefId?.memberFirstName !== null) state.prestaLoanByLoanRequestRefId.loanAmount.toString() else "",
-                    labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    labelFontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                     valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                 )
                 filtered.map { filteredResponse ->
@@ -196,7 +196,7 @@ fun WitnessRequestContent(
                         label = "Loan Status",
                         showShimmer = state.prestaLoanByLoanRequestRefId?.memberFirstName == null,
                         value = if (state.prestaLoanByLoanRequestRefId?.isActive == true) "Active" else "InActive",
-                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                         valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                     )
 
@@ -207,7 +207,7 @@ fun WitnessRequestContent(
                         iconColor = if (filteredResponse.witnessAccepted) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.error.copy(
                             alpha = 0.8f
                         ),
-                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                         valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                     )
 
@@ -220,7 +220,7 @@ fun WitnessRequestContent(
                         iconColor = if (filteredResponse.witnessSigned) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.error.copy(
                             alpha = 0.8f
                         ),
-                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                        labelFontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                         valueFontFamily = fontFamilyResource(MR.fonts.Poppins.light)
                     )
                 }

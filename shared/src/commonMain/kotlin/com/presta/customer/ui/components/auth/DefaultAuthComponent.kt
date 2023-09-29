@@ -106,8 +106,12 @@ class DefaultAuthComponent(
     @OptIn(ExperimentalCoroutinesApi::class)
     override val authState: StateFlow<AuthStore.State> = authStore.stateFlow
 
-    override fun navigate() {
-        onLogin()
+    override fun navigateToLMS() {
+        onLoginLMS()
+    }
+
+    override fun navigateToSign() {
+        onLoginSIGN()
     }
 
     private val scope = coroutineScope(mainContext + SupervisorJob())

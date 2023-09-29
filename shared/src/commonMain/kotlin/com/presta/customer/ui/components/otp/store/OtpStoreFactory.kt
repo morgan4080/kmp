@@ -144,7 +144,6 @@ internal class OtpStoreFactory (
                     pinStatus = msg.pinStatus
                 )
                 is Msg.ClearOtpVerificationData -> copy(
-                    otpRequestData = null,
                     otpVerificationData = null
                 )
                 is Msg.ClearError -> copy(

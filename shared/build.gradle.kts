@@ -11,7 +11,7 @@ plugins {
     id("com.google.firebase.crashlytics")
 }
 
-@OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+
 kotlin {
     androidTarget()
     ios()
@@ -53,6 +53,7 @@ kotlin {
                     implementation(foundation)
                     implementation(material)
                     implementation(material3)
+                    @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                     implementation(components.resources)
                     implementation(materialIconsExtended)
                 }
@@ -159,11 +160,6 @@ kotlin {
 
             dependsOn(commonMain)
         }
-
-        multiplatformResources {
-            multiplatformResourcesPackage = "com.presta.customer"
-            multiplatformResourcesSourceSet = "commonMain"
-        }
     }
 }
 
@@ -187,8 +183,10 @@ android {
         jvmToolchain(17)
     }
 }
-dependencies {
-    implementation("com.google.android.material:material:1.9.0")
+
+multiplatformResources {
+    multiplatformResourcesPackage = "com.presta.customer"
+    multiplatformResourcesSourceSet = "commonMain"
 }
 
 sqldelight {

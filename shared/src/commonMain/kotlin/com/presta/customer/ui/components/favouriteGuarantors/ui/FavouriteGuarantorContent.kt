@@ -800,7 +800,7 @@ fun FavouriteGuarantorContent(
                                             modifier = Modifier
                                                 .padding(start = 16.dp),
                                             fontSize = 10.sp,
-                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                         )
                                         Column(
                                             modifier = Modifier.fillMaxWidth().fillMaxHeight(0.7f)
@@ -889,7 +889,7 @@ fun FavouriteGuarantorContent(
                                                 fontSize = 11.sp,
                                                 textAlign = TextAlign.Center,
                                                 modifier = Modifier.align(Alignment.CenterVertically),
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                             )
 
                                         }
@@ -918,7 +918,7 @@ fun FavouriteGuarantorContent(
                                                 fontSize = 11.sp,
                                                 textAlign = TextAlign.Center,
                                                 modifier = Modifier.align(Alignment.CenterVertically),
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                             )
                                         }
                                     }

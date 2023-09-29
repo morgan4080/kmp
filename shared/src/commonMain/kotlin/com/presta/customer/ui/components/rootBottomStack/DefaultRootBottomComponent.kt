@@ -66,7 +66,7 @@ class DefaultRootBottomComponent(
         amount: Double,
         mode: PaymentTypes
     ) -> Unit,
-    val gotoSignApp: () -> Unit,
+    override val gotoSignApp: () -> Unit,
     var processLoanState: (state: ProcessLoanDisbursement?) -> Unit,
     backTopProfile: Boolean = false
 ) : RootBottomComponent, ComponentContext by componentContext, KoinComponent {
@@ -178,13 +178,13 @@ class DefaultRootBottomComponent(
 
     sealed class ConfigBottom : Parcelable {
         @Parcelize
-        object Profile : ConfigBottom()
+        data object Profile : ConfigBottom()
         @Parcelize
-        object RootLoans : ConfigBottom()
+        data object RootLoans : ConfigBottom()
         @Parcelize
-        object RootSavings : ConfigBottom()
+        data object RootSavings : ConfigBottom()
         @Parcelize
-        object Sign : ConfigBottom()
+        data object Sign : ConfigBottom()
     }
 
     override val authStore =

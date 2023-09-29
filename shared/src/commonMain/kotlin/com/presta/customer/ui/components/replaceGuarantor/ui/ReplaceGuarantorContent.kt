@@ -785,7 +785,7 @@ fun ReplaceGuarantorContent(
                                     modifier = Modifier
                                         .padding(start = 16.dp),
                                     fontSize = 10.sp,
-                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                 )
                                 Column(
                                     modifier = Modifier.fillMaxWidth().fillMaxHeight(0.7f)
@@ -874,7 +874,7 @@ fun ReplaceGuarantorContent(
                                         fontSize = 11.sp,
                                         textAlign = TextAlign.Center,
                                         modifier = Modifier.align(Alignment.CenterVertically),
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                     )
 
                                 }
@@ -903,7 +903,7 @@ fun ReplaceGuarantorContent(
                                         fontSize = 11.sp,
                                         textAlign = TextAlign.Center,
                                         modifier = Modifier.align(Alignment.CenterVertically),
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                     )
                                 }
                             }
@@ -944,7 +944,7 @@ fun ReplaceGuarantorContent(
                                     Text(
                                         text = "Confirm you want to replace " + component.guarantorFirstName + " " + component.guarantorLastName,
                                         modifier = Modifier.padding(top = 10.dp),
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                                         fontSize = 12.sp
                                     )
                                 }
@@ -977,7 +977,7 @@ fun ReplaceGuarantorContent(
                                         fontSize = 11.sp,
                                         textAlign = TextAlign.Center,
                                         modifier = Modifier.align(Alignment.CenterVertically),
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                     )
 
                                 }
@@ -1014,7 +1014,7 @@ fun ReplaceGuarantorContent(
                                         fontSize = 11.sp,
                                         textAlign = TextAlign.Center,
                                         modifier = Modifier.align(Alignment.CenterVertically),
-                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                     )
                                 }
                             }

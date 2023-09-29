@@ -104,7 +104,6 @@ fun TransactionHistoryContent(
     }
 
     Scaffold(
-        modifier = Modifier.padding(LocalSafeArea.current),
         topBar = {
             NavigateBackTopBar("Transaction History", onClickContainer = {
                 onBack()

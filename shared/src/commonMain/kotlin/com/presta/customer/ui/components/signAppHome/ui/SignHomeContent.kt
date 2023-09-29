@@ -233,7 +233,7 @@ fun SignHomeContent(
                                                 ).defaultMinSize(150.dp),
                                                 text = if (state.prestaTenantByPhoneNumber?.fullName !== null) state.prestaTenantByPhoneNumber.firstName.uppercase() else "",
                                                 color= MaterialTheme.colorScheme.onBackground,
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                                                 style = MaterialTheme.typography.bodyMedium
                                             )
                                             Text(
@@ -256,7 +256,7 @@ fun SignHomeContent(
                                                 Text(
                                                     text = "Balance",
                                                     fontSize = 14.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                                 )
                                             }
                                             Row(modifier = Modifier.fillMaxWidth()) {
@@ -322,12 +322,12 @@ fun SignHomeContent(
                                                 Text(
                                                     "Loan Requests",
                                                     fontSize = 14.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                                 )
                                                 Text(
                                                     "See all",
                                                     fontSize = 14.sp,
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                                                     color = MaterialTheme.colorScheme.primary,
                                                     modifier = Modifier.clickable {
                                                         component.goToLoanRequests()
@@ -516,7 +516,7 @@ fun LoanRequestsListing(
                 Text(
                     text = loanName,
                     color= MaterialTheme.colorScheme.onBackground,
-                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
@@ -531,7 +531,7 @@ fun LoanRequestsListing(
         Text(
             text = loanAmount,
             color= MaterialTheme.colorScheme.onBackground,
-            fontFamily = fontFamilyResource(MR.fonts.Poppins.regular),
+            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
             style = MaterialTheme.typography.bodyMedium
         )
 

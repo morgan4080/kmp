@@ -1338,7 +1338,7 @@ fun AddGuarantorContent(
                                                     fontSize = 11.sp,
                                                     textAlign = TextAlign.Center,
                                                     modifier = Modifier.align(Alignment.CenterVertically),
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                                 )
 
                                             }
@@ -1365,7 +1365,7 @@ fun AddGuarantorContent(
                                                     fontSize = 11.sp,
                                                     textAlign = TextAlign.Center,
                                                     modifier = Modifier.align(Alignment.CenterVertically),
-                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                                                 )
                                             }
                                         }
@@ -1422,7 +1422,7 @@ fun SelectGuarantorsView(
                         modifier = Modifier
                             .padding(start = 15.dp),
                         fontSize = 12.sp,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.regular)
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
                     )
 
                     if (description != null) {
