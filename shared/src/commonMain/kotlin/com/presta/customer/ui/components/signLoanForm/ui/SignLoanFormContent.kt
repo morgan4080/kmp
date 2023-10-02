@@ -28,6 +28,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
@@ -45,8 +47,9 @@ import com.presta.customer.ui.components.signLoanForm.SignLoanFormComponent
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.ShimmerBrush
-import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.fontFamilyResource
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun SignLoanFormContent(
@@ -205,21 +208,34 @@ fun SignLoanFormContent(
     })
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun Base64ToImage(base64String: String) {
     val imageConverter = ImageConverter()
-    val bitmap = imageConverter.decodeBase64ToBitmap(base64String)
-    Image(
-        bitmap = bitmap as ImageBitmap,
-        contentDescription = null,
-        contentScale = ContentScale.Crop,
-        modifier = Modifier
-            .padding(top = 20.dp)
-            .padding(top = 20.dp)
-            .fillMaxHeight(0.9f)
-            .fillMaxWidth()
+    val bitmap by imageConverter.decodeBase64ToBitmap(base64String).collectAsState()
+    if (bitmap != null) {
+        Image(
+            bitmap = bitmap as ImageBitmap,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .padding(top = 20.dp)
+                .padding(top = 20.dp)
+                .fillMaxHeight(0.9f)
+                .fillMaxWidth()
 
-    )
+        )
+    } else {
+        Image(
+            modifier = Modifier
+                .padding(top = 20.dp)
+                .padding(top = 20.dp)
+                .fillMaxHeight(0.9f)
+                .fillMaxWidth(),
+            painter = painterResource("imgplaceholder.xml"),
+            contentDescription = "image placeholder"
+        )
+    }
 }
 
 
