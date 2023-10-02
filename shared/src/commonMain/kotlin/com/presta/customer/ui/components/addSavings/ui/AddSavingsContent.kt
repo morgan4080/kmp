@@ -113,7 +113,6 @@ fun AddSavingsContent(
 
     Scaffold (
         modifier = Modifier
-            .padding(innerPadding)
             .background(color = MaterialTheme.colorScheme.background)
             .fillMaxHeight(),
         snackbarHost = {

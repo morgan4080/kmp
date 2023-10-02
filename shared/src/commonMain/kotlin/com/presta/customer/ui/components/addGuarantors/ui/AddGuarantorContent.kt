@@ -99,7 +99,6 @@ import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.EmployedDetails
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.SelfEmployedDetails
-import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.helpers.formatMoney
 import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.backArrowColor

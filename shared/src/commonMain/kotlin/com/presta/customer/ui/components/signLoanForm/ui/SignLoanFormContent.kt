@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -30,6 +30,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
@@ -57,7 +60,14 @@ fun SignLoanFormContent(
     state: ApplyLongTermLoansStore.State,
     authState: AuthStore.State,
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
+    onDocumentSigned: (
+        loanNumber: String,
+        amount: Double
+    ) -> Unit,
+    loanNumber: String,
+    amount: Double
 ) {
+    var webViewDisposed by remember { mutableStateOf(false) }
     if (component.loanRequestRefId != "") {
         LaunchedEffect(
             authState.cachedMemberData,
@@ -76,136 +86,156 @@ fun SignLoanFormContent(
         }
     }
 
-    LaunchedEffect(
-        state.prestaZohoSignUrl?.signURL
-    ) {
-        if (state.prestaZohoSignUrl?.signURL != null) {
-            component.platform.openUrl(state.prestaZohoSignUrl.signURL)
+    LaunchedEffect(state.prestaLoanByLoanRequestRefId, state.prestaLoanByLoanRequestRefId?.applicantSigned, webViewDisposed) {
+        if (state.prestaLoanByLoanRequestRefId != null) {
+            if (state.prestaLoanByLoanRequestRefId.applicantSigned != null) {
+                if (state.prestaLoanByLoanRequestRefId.applicantSigned) {
+                    println("SHOW DOCUMENT SIGNED")
+                    onDocumentSigned(loanNumber,amount)
+                }
+                if (webViewDisposed && !state.prestaLoanByLoanRequestRefId.applicantSigned) {
+                    println("SHOW DOCUMENT NOT SIGNED")
+                }
+            }
         }
-        component.platform.logErrorsToFirebase(Exception(state.error))
     }
 
-    Scaffold(topBar = {
-        NavigateBackTopBar("Sign Loan Form", onClickContainer = {
-            component.onBackNavClicked()
+    if (state.prestaZohoSignUrl !== null) {
+        ViewWebView(state.prestaZohoSignUrl.signURL, onEvent, disposed = {
+            authState.cachedMemberData?.let {
+                ApplyLongTermLoansStore.Intent.GetPrestaLoanByLoanRequestRefId(
+                    token = it.accessToken,
+                    loanRequestRefId = component.loanRequestRefId
+                )
+            }?.let {
+                onEvent(
+                    it
+                )
+
+                webViewDisposed = true
+            }
         })
-    }, content = { innerPadding ->
-        if (state.prestaLoanByLoanRequestRefId?.pdfThumbNail == null) {
-            LazyColumn(modifier = Modifier.padding(innerPadding)) {
-                items(1) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 10.dp, start = 16.dp, end = 16.dp)
-                            .background(color = MaterialTheme.colorScheme.background),
-                    ) {
-                        ElevatedCard(
+    } else {
+        Scaffold(topBar = {
+            NavigateBackTopBar("Sign Loan Form", onClickContainer = {
+                component.onBackNavClicked()
+            })
+        }, content = { innerPadding ->
+            if (state.prestaLoanByLoanRequestRefId?.pdfThumbNail == null) {
+                LazyColumn(modifier = Modifier.padding(innerPadding)) {
+                    items(1) {
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .padding(bottom = 10.dp, start = 16.dp, end = XX16.dp)
                                 .background(color = MaterialTheme.colorScheme.background),
-                            colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                         ) {
-                            Box(
+                            ElevatedCard(
                                 modifier = Modifier
-                                    .defaultMinSize(40.dp, 40.dp)
-                                    .background(
-                                        ShimmerBrush(
-                                            targetValue = 1300f,
-                                            showShimmer = true
-                                        )
-                                    )
                                     .fillMaxWidth()
+                                    .background(color = MaterialTheme.colorScheme.background),
+                                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                             ) {
+                                Box(
+                                    modifier = Modifier
+                                        .defaultMinSize(40.dp, 40.dp)
+                                        .background(
+                                            ShimmerBrush(
+                                                targetValue = 1300f,
+                                                showShimmer = true
+                                            )
+                                        )
+                                        .fillMaxWidth()
+                                ) {
+                                }
                             }
                         }
-                    }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top= 25.dp, bottom = 10.dp, start = 16.dp, end = 16.dp)
-                            .background(color = MaterialTheme.colorScheme.background),
-                    ) {
-                        ElevatedCard(
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .padding(top= 25.dp, bottom = 10.dp, start = 16.dp, end = 16.dp)
                                 .background(color = MaterialTheme.colorScheme.background),
-                            colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                         ) {
-                            Box(
+                            ElevatedCard(
                                 modifier = Modifier
-                                    .defaultMinSize(100.dp, 100.dp)
-                                    .background(
-                                        ShimmerBrush(
-                                            targetValue = 1300f,
-                                            showShimmer = true
-                                        )
-                                    )
                                     .fillMaxWidth()
+                                    .background(color = MaterialTheme.colorScheme.background),
+                                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
                             ) {
+                                Box(
+                                    modifier = Modifier
+                                        .defaultMinSize(100.dp, 100.dp)
+                                        .background(
+                                            ShimmerBrush(
+                                                targetValue = 1300f,
+                                                showShimmer = true
+                                            )
+                                        )
+                                        .fillMaxWidth()
+                                ) {
+                                }
                             }
                         }
                     }
                 }
-            }
 
-        } else {
-            Column(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp)
-            ) {
+            } else {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.85f)
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp)
                 ) {
-                    Row(
+                    Column(
                         modifier = Modifier
-                            .padding(innerPadding)
                             .fillMaxWidth()
+                            .fillMaxHeight(0.85f)
                     ) {
+                        Row(
+                            modifier = Modifier
+                                .padding(innerPadding)
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                "Proceed to Sign your Loan " + component.loanNumber + " of KES " + component.amount,
+                                fontSize = 16.sp,
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
                         Text(
-                            "Proceed to Sign your Loan " + component.loanNumber + " of KES " + component.amount,
-                            fontSize = 16.sp,
-                            fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
-                            color = MaterialTheme.colorScheme.primary
+                            "Proceed Below to sign your Loan form",
+                            fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                            fontSize = 12.sp,
+                            modifier = Modifier.padding(top = 10.dp)
+                        )
+                        //Form Image
+                        if (state.prestaLoanByLoanRequestRefId.pdfThumbNail != "") {
+                            Base64ToImage(state.prestaLoanByLoanRequestRefId.pdfThumbNail)
+                        }
+                    }
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        ActionButton(
+                            label = "SIGN DOCUMENT",
+                            onClickContainer = {
+                                authState.cachedMemberData?.let {
+                                    ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
+                                        token = it.accessToken,
+                                        loanRequestRefId = component.loanRequestRefId,
+                                        actorRefId = component.memberRefId,
+                                        actorType = ActorType.APPLICANT
+                                    )
+                                }?.let {
+                                    onEvent(
+                                        it
+                                    )
+                                }
+                            },
+                            loading =  state.isLoading
                         )
                     }
-                    Text(
-                        "Proceed Below to sign your Loan form",
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
-                        fontSize = 12.sp,
-                        modifier = Modifier.padding(top = 10.dp)
-                    )
-                    //Form Image
-                    if (state.prestaLoanByLoanRequestRefId.pdfThumbNail != "") {
-                        Base64ToImage(state.prestaLoanByLoanRequestRefId.pdfThumbNail)
-                    }
-                }
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    ActionButton(
-                        label = "SIGN DOCUMENT",
-                        onClickContainer = {
-                            authState.cachedMemberData?.let {
-                                ApplyLongTermLoansStore.Intent.GetZohoSignUrl(
-                                    token = it.accessToken,
-                                    loanRequestRefId = component.loanRequestRefId,
-                                    actorRefId = component.memberRefId,
-                                    actorType = ActorType.APPLICANT
-                                )
-                            }?.let {
-                                onEvent(
-                                    it
-                                )
-                            }
-                            println("The Sign Url :::::::: " + state.prestaZohoSignUrl )
-
-                        },
-                        loading =  state.isLoading
-                    )
                 }
             }
-        }
-    })
+        })
+    }
 }
 
 @OptIn(ExperimentalResourceApi::class)
@@ -238,15 +268,17 @@ fun Base64ToImage(base64String: String) {
     }
 }
 
-
-/*WebSettings settings = webview.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setDomStorageEnabled(true);*/
 @Composable
-fun ViewWebView(signURL: String, onEvent: (ApplyLongTermLoansStore.Intent) -> Unit) {
+fun ViewWebView(signURL: String, onEvent: (ApplyLongTermLoansStore.Intent) -> Unit, disposed: () -> Unit) {
     val stateWebView = rememberWebViewState(
         url = signURL
     )
+
+    val settings = stateWebView.settings
+
+    settings.javaScriptEnabled = true
+    settings.androidSettings.supportZoom = true
+    settings.androidSettings.domStorageEnabled = true
 
     Box(
         Modifier
@@ -264,7 +296,7 @@ fun ViewWebView(signURL: String, onEvent: (ApplyLongTermLoansStore.Intent) -> Un
                 println("onCreated")
             },
             onDispose = {
-                println("onDispose")
+                disposed()
             }
         )
 
@@ -286,11 +318,11 @@ fun ViewWebView(signURL: String, onEvent: (ApplyLongTermLoansStore.Intent) -> Un
                 containerColor = MaterialTheme.colorScheme.surface,
             ),
             modifier = Modifier
-                .align(Alignment.TopStart)
+                .align(Alignment.TopEnd)
                 .padding(16.dp)
         ) {
             Icon(
-                Icons.Filled.ArrowBackIosNew,
+                Icons.Filled.Cancel,
                 contentDescription = "Back",
                 tint = MaterialTheme.colorScheme.onBackground,
             )

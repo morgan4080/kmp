@@ -21,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -49,7 +50,6 @@ class DefaultSignLoanFormComponent(
 ) : SignLoanFormComponent, ComponentContext by componentContext, KoinComponent {
     override val platform by inject<Platform>()
     private val scope = coroutineScope(mainContext + SupervisorJob())
-    private val longTermLoanRepository by inject<LongTermLoansRepository>()
     override val authStore: AuthStore =
         instanceKeeper.getStore {
             AuthStoreFactory(
@@ -97,11 +97,6 @@ class DefaultSignLoanFormComponent(
                             state.cachedMemberData.refId
                         )
                     )
-                    onEvent(
-                        ApplyLongTermLoansStore.Intent.GetLongTermLoansProducts(
-                            token = state.cachedMemberData.accessToken,
-                        )
-                    )
                 }
             }
         }
@@ -124,9 +119,6 @@ class DefaultSignLoanFormComponent(
 
     private val loanScope = coroutineScope(coroutinetineDispatcher + SupervisorJob())
 
-    private val poller =
-        ApplicantSigningStatusPoller(longTermLoanRepository, coroutinetineDispatcher)
-
     private fun refreshToken() {
         loanScope.launch {
             authState.collect { state ->
@@ -137,25 +129,10 @@ class DefaultSignLoanFormComponent(
                             refId = state.cachedMemberData.refId
                         )
                     )
-                    val flow =
-                        poller.poll(5_000L, state.cachedMemberData.accessToken, loanRequestRefId)
-
-                    flow.collect {
-                        it.onSuccess { response ->
-                            if (response.applicantSigned!=null) {
-                                if (response.applicantSigned){
-                                    onDocumentSigned(loanNumber,amount)
-                                }
-                            }
-                            println("Poll has Succeded ::::::")
-                        }.onFailure { error ->
-                            println("Poll has   Failed  ::::::")
-                        }
-                    }
-                    poller.close()
                 } else {
                     onAuthEvent(AuthStore.Intent.GetCachedMemberData)
                 }
+                this.cancel()
             }
         }
     }
