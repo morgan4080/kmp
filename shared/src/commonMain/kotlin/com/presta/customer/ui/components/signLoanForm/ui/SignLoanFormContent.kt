@@ -114,6 +114,8 @@ fun SignLoanFormContent(
 
                 webViewDisposed = true
             }
+        }, created = {
+            webViewDisposed = false
         })
     } else {
         Scaffold(topBar = {
@@ -269,7 +271,7 @@ fun Base64ToImage(base64String: String) {
 }
 
 @Composable
-fun ViewWebView(signURL: String, onEvent: (ApplyLongTermLoansStore.Intent) -> Unit, disposed: () -> Unit) {
+fun ViewWebView(signURL: String, onEvent: (ApplyLongTermLoansStore.Intent) -> Unit, disposed: () -> Unit, created: () -> Unit) {
     val stateWebView = rememberWebViewState(
         url = signURL
     )
@@ -293,7 +295,7 @@ fun ViewWebView(signURL: String, onEvent: (ApplyLongTermLoansStore.Intent) -> Un
                 .fillMaxSize(),
             captureBackPresses = false,
             onCreated = {
-                println("onCreated")
+                created()
             },
             onDispose = {
                 disposed()
