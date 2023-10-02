@@ -127,7 +127,7 @@ fun SignLoanFormContent(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(bottom = 10.dp, start = 16.dp, end = XX16.dp)
+                                .padding(bottom = 10.dp, start = 16.dp, end = 16.dp)
                                 .background(color = MaterialTheme.colorScheme.background),
                         ) {
                             ElevatedCard(
