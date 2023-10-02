@@ -86,6 +86,8 @@ class DefaultLoanPendingApprovalsComponent(
                         customerRefId = state.cachedMemberData.refId,
                         applicationStatus = listOf(LoanApplicationStatus.NEWAPPLICATION)
                     ))
+
+                    this.cancel()
                 }
             }
         }

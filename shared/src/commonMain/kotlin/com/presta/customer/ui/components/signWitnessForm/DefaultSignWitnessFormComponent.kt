@@ -106,7 +106,7 @@ class DefaultSignWitnessFormComponent(
                             memberRefId = memberRefId
                         )
                     )
-
+                    this.cancel()
                 }
             }
         }

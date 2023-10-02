@@ -97,6 +97,8 @@ class DefaultSignLoanFormComponent(
                             state.cachedMemberData.refId
                         )
                     )
+
+                    this.cancel()
                 }
             }
         }
@@ -129,10 +131,10 @@ class DefaultSignLoanFormComponent(
                             refId = state.cachedMemberData.refId
                         )
                     )
+                    this.cancel()
                 } else {
                     onAuthEvent(AuthStore.Intent.GetCachedMemberData)
                 }
-                this.cancel()
             }
         }
     }

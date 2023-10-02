@@ -153,6 +153,8 @@ class DefaultSpecificLoansComponent(
                             customerRefId = state.cachedMemberData.refId
                         )
                     )
+
+                    this.cancel()
                 }
             }
         }

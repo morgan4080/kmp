@@ -102,6 +102,7 @@ class DefaultSignGuarantorFormComponent(
                             memberRefId = memberRefId
                         )
                     )
+                    this.cancel()
                 }
             }
         }

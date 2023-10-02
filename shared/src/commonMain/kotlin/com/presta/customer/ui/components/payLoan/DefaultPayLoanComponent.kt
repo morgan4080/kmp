@@ -116,8 +116,8 @@ class DefaultPayLoanComponent(
                             paymentType = PaymentTypes.LOAN
                         )
                     )
+                    this.cancel()
                 }
-                this.cancel()
             }
         }
 
@@ -152,6 +152,8 @@ class DefaultPayLoanComponent(
                         token = state.cachedMemberData.accessToken,
                         refId = state.cachedMemberData.refId,
                     ))
+
+                    this.cancel()
                 } else {
                     onAuthEvent(AuthStore.Intent.GetCachedMemberData)
                 }

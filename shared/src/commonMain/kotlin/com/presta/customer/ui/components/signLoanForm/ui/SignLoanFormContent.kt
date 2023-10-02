@@ -43,6 +43,7 @@ import com.mohamedrejeb.calf.ui.web.WebView
 import com.mohamedrejeb.calf.ui.web.rememberWebViewState
 import com.presta.customer.ImageConverter
 import com.presta.customer.MR
+import com.presta.customer.getPlatformName
 import com.presta.customer.network.longTermLoans.model.ActorType
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
@@ -279,8 +280,12 @@ fun ViewWebView(signURL: String, onEvent: (ApplyLongTermLoansStore.Intent) -> Un
     val settings = stateWebView.settings
 
     settings.javaScriptEnabled = true
-    settings.androidSettings.supportZoom = true
-    settings.androidSettings.domStorageEnabled = true
+    if (getPlatformName() == "Android") {
+        settings.androidSettings.supportZoom = true
+        settings.androidSettings.domStorageEnabled = true
+    } else {
+        println("IOS")
+    }
 
     Box(
         Modifier

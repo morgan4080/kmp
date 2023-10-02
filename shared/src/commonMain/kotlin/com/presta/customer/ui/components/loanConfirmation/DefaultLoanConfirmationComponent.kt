@@ -118,6 +118,7 @@ class DefaultLoanConfirmationComponent(
                             state.cachedMemberData.refId
                         )
                     )
+                    this.cancel()
                 }
             }
         }

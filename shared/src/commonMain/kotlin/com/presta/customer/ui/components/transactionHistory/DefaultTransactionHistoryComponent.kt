@@ -133,6 +133,8 @@ class DefaultTransactionHistoryComponent(
                     ))
 
                     fetchAllTransactionHistory(state.cachedMemberData.accessToken, state.cachedMemberData.refId)
+
+                    this.cancel()
                 }
             }
         }

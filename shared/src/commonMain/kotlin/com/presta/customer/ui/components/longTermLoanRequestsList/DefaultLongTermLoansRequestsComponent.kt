@@ -16,6 +16,7 @@ import com.presta.customer.ui.components.signAppHome.store.SignHomeStoreFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -118,6 +119,8 @@ class DefaultLongTermLoansRequestsComponent(
                             phoneNumber = state.cachedMemberData.phoneNumber
                         )
                     )
+
+                    this.cancel()
                 }
             }
         }

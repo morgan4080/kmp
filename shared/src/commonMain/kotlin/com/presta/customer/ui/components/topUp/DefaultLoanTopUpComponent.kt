@@ -191,6 +191,8 @@ class DefaultLoanTopUpComponent(
                             loanRefId = loanRefIds
                         )
                     )
+
+                    this.cancel()
                 }
             }
         }

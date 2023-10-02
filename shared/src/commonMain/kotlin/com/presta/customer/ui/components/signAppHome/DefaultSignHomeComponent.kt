@@ -110,6 +110,7 @@ class DefaultSignHomeComponent(
                             phoneNumber = state.cachedMemberData.phoneNumber
                         )
                     )
+                    this.cancel()
                 }
             }
         }
