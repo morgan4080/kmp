@@ -6,8 +6,6 @@ import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.Platform
-import com.presta.customer.network.longTermLoans.data.LongTermLoansRepository
-import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
@@ -16,12 +14,12 @@ import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.profile.CoroutineScope
 import com.presta.customer.ui.components.profile.coroutineScope
-import com.presta.customer.ui.components.signGuarantorForm.poller.GuarantorSigningStatusPoller
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -50,7 +48,6 @@ class DefaultSignGuarantorFormComponent(
     override val guarantorRefId: String
 ) : SignGuarantorFormComponent, ComponentContext by componentContext, KoinComponent {
     override val platform by inject<Platform>()
-    private val longTermLoanRepository by inject<LongTermLoansRepository>()
     private val scope = coroutineScope(mainContext + SupervisorJob())
     override val authStore: AuthStore =
         instanceKeeper.getStore {
@@ -125,11 +122,6 @@ class DefaultSignGuarantorFormComponent(
     }
 
     private val loanScope = coroutineScope(coroutinetineDispatcher + SupervisorJob())
-
-    private val poller =
-        GuarantorSigningStatusPoller(longTermLoanRepository, coroutinetineDispatcher)
-
-    //Todo--use the new token while polling for result
     private fun refreshToken() {
         loanScope.launch {
             authState.collect { state ->
@@ -140,30 +132,10 @@ class DefaultSignGuarantorFormComponent(
                             refId = state.cachedMemberData.refId
                         )
                     )
-                    val flow = poller.poll(5_000L, state.cachedMemberData.accessToken, memberRefId)
-
-                    flow.collect {
-                        it.onSuccess { response ->
-                            val filteredResponse: List<PrestaGuarantorResponse> =
-                                response.filter { loadedData ->
-                                    loadedData.loanRequest.loanNumber.contains(loanNumber)
-                                }
-                            filteredResponse.map { filter ->
-                                if (filter.isSigned == true) {
-                                    onDocumentSigned(loanNumber, amount)
-                                }
-                                println("The loaded data is " + filter.loanRequest.loanNumber)
-                                println("The initial data is  $loanNumber")
-                            }
-                            println("Poll has Succeded ::::::")
-                        }.onFailure { error ->
-                            println("Poll has   Failed  ::::::")
-                        }
-                    }
-                    poller.close()
                 } else {
                     onAuthEvent(AuthStore.Intent.GetCachedMemberData)
                 }
+                this.cancel()
             }
         }
     }

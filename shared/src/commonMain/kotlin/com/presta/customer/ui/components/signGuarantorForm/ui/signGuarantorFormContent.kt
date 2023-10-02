@@ -214,7 +214,3 @@ fun SignGuarantorFormContent(
         })
     }
 }
-
-
-
-
