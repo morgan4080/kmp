@@ -1,6 +1,5 @@
 package com.presta.customer.ui.components.signGuarantorForm.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,21 +29,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.presta.customer.ImageConverter
 import com.presta.customer.MR
 import com.presta.customer.network.longTermLoans.model.ActorType
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signGuarantorForm.SignGuarantorFormComponent
+import com.presta.customer.ui.components.signLoanForm.ui.Base64ToImage
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.ShimmerBrush
-import com.presta.customer.ui.helpers.LocalSafeArea
 import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.delay
@@ -203,22 +199,6 @@ fun SignGuarantorFormContent(
             )
         }
     })
-}
-
-@Composable
-fun Base64ToImage(base64String: String) {
-    val imageConverter = ImageConverter()
-    val bitmap = imageConverter.decodeBase64ToBitmap(base64String)
-    Image(
-        bitmap = bitmap as ImageBitmap,
-        contentDescription = null,
-        contentScale = ContentScale.Crop,
-        modifier = Modifier
-            .padding(top = 20.dp)
-            .fillMaxHeight(0.9f)
-            .fillMaxWidth()
-
-    )
 }
 
 
