@@ -97,8 +97,9 @@ class DefaultSignGuarantorFormComponent(
                         )
                     )
                     onEvent(
-                        ApplyLongTermLoansStore.Intent.GetLongTermLoansProducts(
+                        ApplyLongTermLoansStore.Intent.GetPrestaGuarantorshipRequests(
                             token = state.cachedMemberData.accessToken,
+                            memberRefId = memberRefId
                         )
                     )
                 }

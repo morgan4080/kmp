@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.presta.customer.MR
 import com.presta.customer.network.longTermLoans.model.ActorType
+import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signGuarantorForm.SignGuarantorFormComponent
@@ -54,6 +55,12 @@ fun SignGuarantorFormContent(
     state: ApplyLongTermLoansStore.State,
     authState: AuthStore.State,
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
+    onDocumentSigned: (
+        loanNumber: String,
+        amount: Double
+    ) -> Unit,
+    loanNumber: String,
+    amount: Double
 ) {
     var webViewDisposed by remember { mutableStateOf(false) }
     var refreshing by remember { mutableStateOf(false) }
@@ -91,6 +98,22 @@ fun SignGuarantorFormContent(
         }
     }
 
+    LaunchedEffect(state.prestaLoanByLoanRequestRefId, webViewDisposed) {
+        val filteredResponse: PrestaGuarantorResponse? =
+            state.prestaGuarontorshipRequests.find { loadedData ->
+                loadedData.loanRequest.loanNumber == component.loanNumber
+            }
+        println("This is filted::::::::;;;;;" + filteredResponse)
+        if (filteredResponse != null) {
+            if (filteredResponse.isSigned == true) {
+                onDocumentSigned(loanNumber, amount)
+            }else{
+                if (webViewDisposed &&  filteredResponse.isSigned == false) {
+                    println("SHOW DOCUMENT NOT SIGNED")
+                }
+            }
+        }
+    }
 
     if (state.prestaZohoSignUrl !== null) {
         ViewWebView(state.prestaZohoSignUrl.signURL, onEvent, disposed = {

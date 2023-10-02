@@ -934,7 +934,7 @@ class DefaultRootComponent(
             mainContext = prestaDispatchers.main,
             onAcceptClicked = { loanNumber, amount, loanRequestRefId, memberRefId, witnessRefId ->
                 //Navigate to sign
-                navigation.push(
+                navigation.bringToFront(
                     Config.SignWitnessDocument(
                         loanNumber = loanNumber,
                         amount = amount,

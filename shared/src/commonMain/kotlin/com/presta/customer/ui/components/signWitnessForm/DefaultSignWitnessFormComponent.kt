@@ -7,7 +7,6 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.Platform
 import com.presta.customer.network.longTermLoans.data.LongTermLoansRepository
-import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
@@ -22,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -100,10 +100,12 @@ class DefaultSignWitnessFormComponent(
                         )
                     )
                     onEvent(
-                        ApplyLongTermLoansStore.Intent.GetLongTermLoansProducts(
+                        ApplyLongTermLoansStore.Intent.GetPrestaWitnessRequests(
                             token = state.cachedMemberData.accessToken,
+                            memberRefId = memberRefId
                         )
                     )
+
                 }
             }
         }
@@ -127,8 +129,6 @@ class DefaultSignWitnessFormComponent(
     private val loanScope = coroutineScope(coroutinetineDispatcher + SupervisorJob())
 
     private val poller = WitnessSigningStatusPoller(longTermLoanRepository, coroutinetineDispatcher)
-
-    //Todo--use the new token while polling for result
     private fun refreshToken() {
         loanScope.launch {
             authState.collect { state ->
@@ -139,31 +139,10 @@ class DefaultSignWitnessFormComponent(
                             refId = state.cachedMemberData.refId
                         )
                     )
-                    val flow =
-                        poller.poll(5_000L, state.cachedMemberData.accessToken, "XMazvHXCRt8WFv3N")
-
-                    flow.collect {
-                        it.onSuccess { response ->
-                            val filteredResponse: List<PrestaWitnessRequestResponse> =
-                                response.filter { loadedData ->
-                                    loadedData.loanRequest.loanNumber.contains(loanNumber)
-                                }
-                            filteredResponse.map { filter ->
-                                if (filter.witnessSigned) {
-                                    onDocumentSigned(loanNumber, amount)
-                                }
-                                println("The loaded data is " + filter.loanRequest.loanNumber)
-                                println("The initial data is  $loanNumber")
-                            }
-                            println("Poll has Succeded ::::::")
-                        }.onFailure { error ->
-                            println("Poll has   Failed  ::::::")
-                        }
-                    }
-                    poller.close()
                 } else {
                     onAuthEvent(AuthStore.Intent.GetCachedMemberData)
                 }
+                this.cancel()
             }
         }
     }

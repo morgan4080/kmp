@@ -15,12 +15,10 @@ fun SignGuarantorFormScreen(component: SignGuarantorFormComponent) {
         state = applyLongTermLoansState,
         authState = authState,
         onEvent = component::onEvent,
-//        onDocumentSigned = component::onDocumentSigned,
-//        loanNumber = component.loanNumber,
-//        amount = component.amount
+        onDocumentSigned = component::onDocumentSigned,
+        loanNumber = component.loanNumber,
+        amount = component.amount
     )
-
-
 }
 
 

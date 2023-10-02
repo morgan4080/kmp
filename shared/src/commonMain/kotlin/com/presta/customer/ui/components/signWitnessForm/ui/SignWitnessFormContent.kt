@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.sp
 import com.mohamedrejeb.calf.ui.dialog.AdaptiveAlertDialog
 import com.presta.customer.MR
 import com.presta.customer.network.longTermLoans.model.ActorType
+import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
+import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signLoanForm.ui.Base64ToImage
@@ -42,6 +44,12 @@ fun SignWitnessFormContent(
     state: ApplyLongTermLoansStore.State,
     authState: AuthStore.State,
     onEvent: (ApplyLongTermLoansStore.Intent) -> Unit,
+    onDocumentSigned: (
+        loanNumber: String,
+        amount: Double
+    ) -> Unit,
+    loanNumber: String,
+    amount: Double
 ) {
     var webViewDisposed by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
@@ -68,7 +76,21 @@ fun SignWitnessFormContent(
         showDialog = state.error !== null
     }
 
-
+    LaunchedEffect(state.prestaLoanByLoanRequestRefId, webViewDisposed) {
+        val filteredResponse: PrestaWitnessRequestResponse? =
+            state.prestaWitnessRequests.find { loadedData ->
+                loadedData.loanRequest.loanNumber == component.loanNumber
+            }
+        if (filteredResponse != null) {
+            if (filteredResponse.witnessSigned) {
+                onDocumentSigned(loanNumber, amount)
+            } else {
+                if (webViewDisposed && !filteredResponse.witnessSigned) {
+                    println("SHOW DOCUMENT NOT SIGNED")
+                }
+            }
+        }
+    }
 
     if (state.prestaZohoSignUrl !== null) {
         ViewWebView(state.prestaZohoSignUrl.signURL, onEvent, disposed = {
