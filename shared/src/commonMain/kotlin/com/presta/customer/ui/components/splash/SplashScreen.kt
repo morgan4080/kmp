@@ -39,7 +39,6 @@ import com.presta.customer.ui.helpers.LocalSafeArea
 import dev.icerock.moko.resources.compose.painterResource
 import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SplashScreen(component: SplashComponent, connectivityStatus: SharedStatus?) {
     val model by component.model.subscribeAsState()

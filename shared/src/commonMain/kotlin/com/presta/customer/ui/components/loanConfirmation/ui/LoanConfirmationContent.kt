@@ -177,6 +177,8 @@ fun LoanConfirmationContent(
                                 onClick = {
                                     launchPopUp = false
                                     component.onConfirmSelected()
+
+
                                 }, modifier = Modifier
                                     .padding(end = 16.dp),
                                 colors = CardDefaults.elevatedCardColors(containerColor = actionButtonColor)

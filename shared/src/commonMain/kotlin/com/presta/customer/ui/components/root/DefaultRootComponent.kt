@@ -303,6 +303,7 @@ class DefaultRootComponent(
                 navigation.push(Config.Welcome(context = OnBoardingContext.LOGIN))
             },
             navigateToAuth = { memberRefId, phoneNumber, isTermsAccepted, isActive, onBoardingContext, pinStatus ->
+                println("navigating to auth")
                 navigation.replaceAll(
                     Config.Auth(
                         memberRefId = memberRefId,

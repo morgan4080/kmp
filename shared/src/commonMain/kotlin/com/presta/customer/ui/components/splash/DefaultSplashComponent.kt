@@ -78,36 +78,29 @@ class DefaultSplashComponent(
     init {
         onEvent(AuthStore.Intent.GetCachedMemberData)
 
-        lifecycle.subscribe(
-            object : Lifecycle.Callbacks {
-                override fun onResume() {
-                    super.onResume()
-                    scope.launch {
-                        authState.collect { state ->
-                            if (state.cachedMemberData !== null && state.cachedMemberData.accessToken !== "") {
-                                if (
-                                    state.authUserResponse == null &&
-                                    state.cachedMemberData.accessToken !== "" &&
-                                    state.cachedMemberData.refId !== "" &&
-                                    state.cachedMemberData.phoneNumber !== ""
-                                ) {
-                                    if (state.isOnline) {
-                                        delay(2000L)
-                                        navigateToAuth(
-                                            state.cachedMemberData.refId,
-                                            state.cachedMemberData.phoneNumber,
-                                            true,
-                                            true,
-                                            DefaultRootComponent.OnBoardingContext.LOGIN,
-                                            PinStatus.SET
-                                        )
-                                    }
-                                }
-                            }
+        scope.launch {
+            authState.collect { state ->
+                if (state.cachedMemberData !== null && state.cachedMemberData.accessToken !== "") {
+                    if (
+                        state.authUserResponse == null &&
+                        state.cachedMemberData.accessToken !== "" &&
+                        state.cachedMemberData.refId !== "" &&
+                        state.cachedMemberData.phoneNumber !== ""
+                    ) {
+                        if (state.isOnline) {
+                            navigateToAuth(
+                                state.cachedMemberData.refId,
+                                state.cachedMemberData.phoneNumber,
+                                true,
+                                true,
+                                DefaultRootComponent.OnBoardingContext.LOGIN,
+                                PinStatus.SET
+                            )
+                            this.cancel()
                         }
                     }
                 }
             }
-        )
+        }
     }
 }

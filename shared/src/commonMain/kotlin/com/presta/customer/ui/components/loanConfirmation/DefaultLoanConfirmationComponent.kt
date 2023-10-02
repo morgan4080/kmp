@@ -164,6 +164,7 @@ class DefaultLoanConfirmationComponent(
                 if (state.requestId !== null) {
                     val requestId = state.requestId
                     onConfirmClicked(requestId, amount, 0.00)
+                    this.cancel()
                 }
             }
         }
