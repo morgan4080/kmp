@@ -330,7 +330,7 @@ class SignHomeStoreFactory(
                     when (msg.inputField) {
                         InputFields.FIRST_NAME -> {
                             // validate first name
-                            val pattern = Regex("^([a-zA-Z]+)")
+                            val pattern = Regex("^(\\s*[a-zA-Z\\s]*)")
                             var errorMsg = ""
                             if (msg.value.text.isEmpty() && firstName.required) {
                                 errorMsg = "First name is required"
@@ -349,7 +349,7 @@ class SignHomeStoreFactory(
 
                         InputFields.LAST_NAME -> {
                             // validate last name
-                            val pattern = Regex("^([a-zA-Z]+)")
+                            val pattern = Regex("^(\\s*[a-zA-Z\\s]*)")
                             var errorMsg = ""
                             if (msg.value.text.isEmpty() && lastName.required) {
                                 errorMsg = "Last name is required"
