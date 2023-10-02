@@ -14,6 +14,7 @@ data class InputMethodConfirmation(
     var value: TextFieldValue,
     val errorMessage: String,
     val enabled: Boolean,
+    val enumOptions: List<String> = emptyList()
 )
 
 data class Kyc(
@@ -24,12 +25,14 @@ data class Kyc(
     var value: TextFieldValue,
     val errorMessage: String,
     val enabled: Boolean,
+    val enumOptions: List<String> = emptyList()
 )
 
 enum class KycInputs {
     EMPLOYER,
     EMPLOYMENTNUMBER,
     EMPLOYMENTTERMS,
+    DEPARTMENT,
     GROSSSALARY,
     NETSALARY,
     KRAPIN,
@@ -67,12 +70,12 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
             val inputField: InputFields,
             val value: TextFieldValue
         ) : Intent()
-        object ClearError : Intent()
+        data object ClearError : Intent()
         data class UpdateKycValues(
             val inputField: KycInputs,
             val value: TextFieldValue
         ) : Intent()
-        object ClearKYCErrors : Intent()
+        data object ClearKYCErrors : Intent()
     }
 
     data class State(
@@ -137,6 +140,15 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
             errorMessage = "",
             enabled = true
         ),
+        val department: Kyc = Kyc(
+            inputLabel = "Department*",
+            fieldType = KycInputs.DEPARTMENT,
+            inputTypes = InputTypes.STRING,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
         val employmentNumber: Kyc = Kyc(
             inputLabel = "Employment Number*",
             fieldType = KycInputs.EMPLOYMENTNUMBER,
@@ -149,11 +161,12 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
         val employmentType: Kyc = Kyc(
             inputLabel = "Employment Terms*",
             fieldType = KycInputs.EMPLOYMENTTERMS,
-            inputTypes = InputTypes.STRING,
+            inputTypes = InputTypes.ENUM,
             required = true,
             value = TextFieldValue(),
             errorMessage = "",
-            enabled = true
+            enabled = true,
+            enumOptions = listOf("PERMANENT", "TEMPORARY", "CONTRACT")
         ),
         val grossSalary: Kyc = Kyc(
             inputLabel = "Gross Salary*",

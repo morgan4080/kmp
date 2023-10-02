@@ -450,7 +450,7 @@ class SignHomeStoreFactory(
                             // validate first name
                             val pattern = Regex("^(\\s*[a-zA-Z\\s]*)")
                             var errorMsg = ""
-                            if (msg.value.text.isEmpty() && employer.required) {
+                            if (msg.value.text.isEmpty() && employmentType.required) {
                                 errorMsg = "employment terms is required"
                             } else {
                                 if (!msg.value.text.matches(pattern)) {
@@ -458,7 +458,25 @@ class SignHomeStoreFactory(
                                 }
                             }
                             copy(
-                                employer = employer.copy(
+                                employmentType = employmentType.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                )
+                            )
+                        }
+                        KycInputs.DEPARTMENT -> {
+                            // validate first name
+                            val pattern = Regex("^(\\s*[a-zA-Z\\s]*)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && department.required) {
+                                errorMsg = "Department is required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "enter valid value."
+                                }
+                            }
+                            copy(
+                                department = department.copy(
                                     value = msg.value,
                                     errorMessage = errorMsg,
                                 )

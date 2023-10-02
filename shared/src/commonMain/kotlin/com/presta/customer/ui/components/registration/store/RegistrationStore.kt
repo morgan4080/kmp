@@ -16,7 +16,7 @@ enum class InputFields {
     INTRODUCER
 }
 
-data class InputMethod(val inputLabel: String, val fieldType: InputFields, val required: Boolean, val inputTypes: InputTypes, var value: TextFieldValue, val errorMessage: String)
+data class InputMethod(val inputLabel: String, val fieldType: InputFields, val required: Boolean, val inputTypes: InputTypes, var value: TextFieldValue, val errorMessage: String, val enumOptions: List<String> = emptyList())
 
 interface RegistrationStore: Store<RegistrationStore.Intent, RegistrationStore.State, Nothing> {
     sealed class Intent {
@@ -35,7 +35,7 @@ interface RegistrationStore: Store<RegistrationStore.Intent, RegistrationStore.S
             val value: TextFieldValue
         ): Intent()
 
-        object ClearError: Intent()
+        data object ClearError: Intent()
     }
 
     data class State(

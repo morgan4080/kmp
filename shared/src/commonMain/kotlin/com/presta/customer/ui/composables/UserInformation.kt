@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -33,6 +35,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,7 +43,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +51,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -113,7 +116,6 @@ fun UserInformation(
     }
     val snackbarHostState = remember { SnackbarHostState() }
     val focusRequester = remember { FocusRequester() }
-    val scope = rememberCoroutineScope()
     LaunchedEffect(signProfileState.error) {
         if (signProfileState.error !== null) {
             snackbarHostState.showSnackbar(
@@ -144,7 +146,7 @@ fun UserInformation(
             }
         }
     }
-    signProfileState.prestaTenantByPhoneNumber?.details?.map { it ->
+    signProfileState.prestaTenantByPhoneNumber?.details?.map {
         if (it.key.contains("employer")) {
             employer = it.value.value.toString()
         }
@@ -174,9 +176,10 @@ fun UserInformation(
         if (launchDisbursementModePopUp) {
 
             val disburementModeListing = listOf(
-                DisbursementModes("Cheques", "Cheques", selected = true),
-                DisbursementModes("My Account", "My Account", selected = true),
-                DisbursementModes("EFT", "EFT", selected = true)
+                DisbursementModes("Cheques", "CHEQUE", selected = true),
+                DisbursementModes("My Account", "MY_ACCOUNT", selected = true),
+                DisbursementModes("EFT", "EFT", selected = true),
+                DisbursementModes("RTGS", "RTGS", selected = true)
             )
             Popup {
                 Column(
@@ -576,7 +579,7 @@ fun UserInformation(
                 }
             }
         }
-        LazyColumn() {
+        LazyColumn {
             if (signProfileState.prestaTenantByPhoneNumber?.firstName == null) {
                 items(6) {
                     Row(
@@ -607,21 +610,6 @@ fun UserInformation(
                     }
                 }
             } else {
-
-                fun checkIfValid(): Boolean {
-                    var valid = true
-                    listOf(
-                        signProfileState.firstName,
-                        signProfileState.lastName,
-                        signProfileState.email,
-                        signProfileState.idNumber,
-                        signProfileState.introducer,
-                    ).map { inputMethod ->
-                        if (inputMethod.required && inputMethod.value.text.isEmpty()) valid = false
-                    }
-
-                    return valid
-                }
                 listOf(
                     signProfileState.firstName,
                     signProfileState.lastName,
@@ -630,142 +618,187 @@ fun UserInformation(
                     signProfileState.introducer,
                 ).map { inputMethod ->
                     item {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp)
-                                .shadow(0.5.dp, RoundedCornerShape(10.dp))
-                                .background(
-                                    color = MaterialTheme.colorScheme.inverseOnSurface,
-                                    shape = RoundedCornerShape(10.dp)
-                                ),
-                        ) {
-                            BasicTextField(
-                                modifier = Modifier
-                                    .focusRequester(focusRequester)
-                                    .height(65.dp)
-                                    .padding(
-                                        top = 20.dp,
-                                        bottom = 16.dp,
-                                        start = 16.dp,
-                                        end = 16.dp
-                                    )
-                                    .absoluteOffset(y = 2.dp),
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType =
-                                    when (inputMethod.inputTypes) {
-                                        InputTypes.NUMBER -> KeyboardType.Number
-                                        InputTypes.STRING -> KeyboardType.Text
-                                        InputTypes.PHONE -> KeyboardType.Phone
-                                        InputTypes.URI -> KeyboardType.Uri
-                                        InputTypes.EMAIL -> KeyboardType.Email
-                                        InputTypes.PASSWORD -> KeyboardType.Password
-                                        InputTypes.NUMBER_PASSWORD -> KeyboardType.NumberPassword
-                                        InputTypes.DECIMAL -> KeyboardType.Decimal
-                                    }
-                                ),
-                                value = inputMethod.value,
-                                enabled = inputMethod.enabled,
-                                onValueChange = {
-                                    if (inputMethod.enabled) {
-                                        onSignProfileEvent(
-                                            SignHomeStore.Intent.UpdateInputValue(
-                                                inputMethod.fieldType,
-                                                it
-                                            )
-                                        )
-                                    }
+                        when(inputMethod.inputTypes) {
+                            InputTypes.ENUM -> {
+                                val (selectedOption, onOptionSelected) = remember { mutableStateOf(inputMethod.enumOptions[0]) }
 
-                                },
-                                singleLine = true,
-                                textStyle = TextStyle(
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
-                                    fontSize = 13.sp,
-                                    fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
-                                    letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
-                                    lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
-                                    fontFamily = MaterialTheme.typography.bodySmall.fontFamily
-                                ),
-                                decorationBox = { innerTextField ->
-
-                                    if (inputMethod.value.text.isEmpty()
-                                    ) {
-                                        Text(
-                                            modifier = Modifier.alpha(.3f),
-                                            text = inputMethod.inputLabel,
-                                            style = MaterialTheme.typography.bodySmall
-                                        )
-                                    }
-
-                                    AnimatedVisibility(
-                                        visible = inputMethod.value.text.isNotEmpty(),
-                                        modifier = Modifier.absoluteOffset(y = -(16).dp),
-                                        enter = fadeIn() + expandVertically(),
-                                        exit = fadeOut() + shrinkVertically(),
-                                    ) {
-                                        Text(
-                                            text = inputMethod.inputLabel,
-                                            color = primaryColor,
-                                            style = MaterialTheme.typography.labelSmall,
-                                            fontSize = 11.sp
-                                        )
-                                    }
-
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.SpaceBetween
-                                    ) {
+                                Column(modifier = Modifier.selectableGroup()) {
+                                    inputMethod.enumOptions.forEach { text ->
                                         Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                        ) {
-
-                                            innerTextField()
-                                        }
-
-                                        AnimatedVisibility(
-                                            visible = inputMethod.value.text.isNotEmpty(),
-                                            enter = fadeIn() + expandVertically(),
-                                            exit = fadeOut() + shrinkVertically(),
-                                        ) {
-
-                                            IconButton(
-                                                modifier = Modifier.size(18.dp),
-                                                onClick = {
-                                                    if (inputMethod.enabled) {
-                                                        onSignProfileEvent(
-                                                            SignHomeStore.Intent.UpdateInputValue(
-                                                                inputMethod.fieldType,
-                                                                TextFieldValue()
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .height(56.dp)
+                                                .selectable(
+                                                    selected = (text == selectedOption),
+                                                    onClick = {
+                                                        onOptionSelected(text)
+                                                        if (inputMethod.enabled) {
+                                                            onSignProfileEvent(
+                                                                SignHomeStore.Intent.UpdateInputValue(
+                                                                    inputMethod.fieldType,
+                                                                    TextFieldValue(text)
+                                                                )
                                                             )
-                                                        )
-                                                    }
-                                                },
-                                                content = {
-                                                    Icon(
-                                                        modifier = Modifier.alpha(0.4f),
-                                                        imageVector = Icons.Filled.Cancel,
-                                                        contentDescription = null,
-                                                        tint = actionButtonColor
-                                                    )
-                                                }
+                                                        }
+                                                    },
+                                                    role = Role.RadioButton
+                                                )
+                                                .padding(horizontal = 16.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            RadioButton(
+                                                selected = (text == selectedOption),
+                                                onClick = null // null recommended for accessibility with screenreaders
+                                            )
+                                            Text(
+                                                text = text,
+                                                style = MaterialTheme.typography.bodySmall.merge(),
+                                                modifier = Modifier.padding(start = 16.dp)
                                             )
                                         }
                                     }
                                 }
-                            )
-                        }
+                            }
+                            else -> {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 8.dp)
+                                        .shadow(0.5.dp, RoundedCornerShape(10.dp))
+                                        .background(
+                                            color = MaterialTheme.colorScheme.inverseOnSurface,
+                                            shape = RoundedCornerShape(10.dp)
+                                        ),
+                                ) {
+                                    BasicTextField(
+                                        modifier = Modifier
+                                            .focusRequester(focusRequester)
+                                            .height(65.dp)
+                                            .padding(
+                                                top = 20.dp,
+                                                bottom = 16.dp,
+                                                start = 16.dp,
+                                                end = 16.dp
+                                            )
+                                            .absoluteOffset(y = 2.dp),
+                                        keyboardOptions = KeyboardOptions(
+                                            keyboardType =
+                                            when (inputMethod.inputTypes) {
+                                                InputTypes.NUMBER -> KeyboardType.Number
+                                                InputTypes.STRING -> KeyboardType.Text
+                                                InputTypes.PHONE -> KeyboardType.Phone
+                                                InputTypes.URI -> KeyboardType.Uri
+                                                InputTypes.EMAIL -> KeyboardType.Email
+                                                InputTypes.PASSWORD -> KeyboardType.Password
+                                                InputTypes.NUMBER_PASSWORD -> KeyboardType.NumberPassword
+                                                InputTypes.DECIMAL -> KeyboardType.Decimal
+                                                else -> KeyboardType.Text
+                                            }
+                                        ),
+                                        value = inputMethod.value,
+                                        enabled = inputMethod.enabled,
+                                        onValueChange = {
+                                            if (inputMethod.enabled) {
+                                                onSignProfileEvent(
+                                                    SignHomeStore.Intent.UpdateInputValue(
+                                                        inputMethod.fieldType,
+                                                        it
+                                                    )
+                                                )
+                                            }
 
-                        if (inputMethod.errorMessage !== "") {
-                            Text(
-                                modifier = Modifier.padding(horizontal = 22.dp),
-                                text = inputMethod.errorMessage,
-                                fontSize = 10.sp,
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
-                                color = Color.Red
-                            )
+                                        },
+                                        singleLine = true,
+                                        textStyle = TextStyle(
+                                            color = MaterialTheme.colorScheme.onBackground,
+                                            fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
+                                            fontSize = 13.sp,
+                                            fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
+                                            letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
+                                            lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                                            fontFamily = MaterialTheme.typography.bodySmall.fontFamily
+                                        ),
+                                        decorationBox = { innerTextField ->
+
+                                            if (inputMethod.value.text.isEmpty()
+                                            ) {
+                                                Text(
+                                                    modifier = Modifier.alpha(.3f),
+                                                    text = inputMethod.inputLabel,
+                                                    style = MaterialTheme.typography.bodySmall
+                                                )
+                                            }
+
+                                            AnimatedVisibility(
+                                                visible = inputMethod.value.text.isNotEmpty(),
+                                                modifier = Modifier.absoluteOffset(y = -(16).dp),
+                                                enter = fadeIn() + expandVertically(),
+                                                exit = fadeOut() + shrinkVertically(),
+                                            ) {
+                                                Text(
+                                                    text = inputMethod.inputLabel,
+                                                    color = primaryColor,
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                    fontSize = 11.sp
+                                                )
+                                            }
+
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.SpaceBetween
+                                            ) {
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                ) {
+
+                                                    innerTextField()
+                                                }
+
+                                                AnimatedVisibility(
+                                                    visible = inputMethod.value.text.isNotEmpty(),
+                                                    enter = fadeIn() + expandVertically(),
+                                                    exit = fadeOut() + shrinkVertically(),
+                                                ) {
+
+                                                    IconButton(
+                                                        modifier = Modifier.size(18.dp),
+                                                        onClick = {
+                                                            if (inputMethod.enabled) {
+                                                                onSignProfileEvent(
+                                                                    SignHomeStore.Intent.UpdateInputValue(
+                                                                        inputMethod.fieldType,
+                                                                        TextFieldValue()
+                                                                    )
+                                                                )
+                                                            }
+                                                        },
+                                                        content = {
+                                                            Icon(
+                                                                modifier = Modifier.alpha(0.4f),
+                                                                imageVector = Icons.Filled.Cancel,
+                                                                contentDescription = null,
+                                                                tint = actionButtonColor
+                                                            )
+                                                        }
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    )
+                                }
+
+                                if (inputMethod.errorMessage !== "") {
+                                    Text(
+                                        modifier = Modifier.padding(horizontal = 22.dp),
+                                        text = inputMethod.errorMessage,
+                                        fontSize = 10.sp,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
+                                        color = Color.Red
+                                    )
+                                }
+                            }
                         }
                     }
                 }
