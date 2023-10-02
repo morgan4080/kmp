@@ -442,6 +442,7 @@ fun AddGuarantorContent(
                         )
 
                         1 -> SelfEmployedDetails(
+                            state,
                             signHomeState,
                             authState,
                             onProfileEvent,

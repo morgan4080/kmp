@@ -446,6 +446,24 @@ class SignHomeStoreFactory(
                                 )
                             )
                         }
+                        KycInputs.EMPLOYMENTTERMS -> {
+                            // validate first name
+                            val pattern = Regex("^(\\s*[a-zA-Z\\s]*)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && employer.required) {
+                                errorMsg = "employment terms is required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "enter valid value."
+                                }
+                            }
+                            copy(
+                                employer = employer.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                )
+                            )
+                        }
 
                         KycInputs.EMPLOYMENTNUMBER -> {
                             // validate last name

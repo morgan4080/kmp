@@ -49,6 +49,7 @@ import com.presta.customer.MR
 import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.signAppHome.store.KycInputs
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.primaryColor
@@ -104,11 +105,39 @@ fun EmployedDetails(
             item {
                 listOf(
                     signHomeState.employer,
+                    signHomeState.employmentType,
                     signHomeState.employmentNumber,
                     signHomeState.grossSalary,
                     signHomeState.netSalary,
                     signHomeState.kraPin,
-                ).map { inputMethod ->
+                    //
+                ).filter {formItem ->
+                    // check client settings state
+                    // determine which fields to exclude
+                    state.prestaClientSettings?.let { settings ->
+                        settings.response.details?.let { detail ->
+                            if (!detail.containsKey("employment_type") && formItem.fieldType == KycInputs.EMPLOYMENTTERMS) {
+                                return@filter false
+                            }
+                            if (!detail.containsKey("employer_name") && formItem.fieldType == KycInputs.EMPLOYER) {
+                                return@filter false
+                            }
+                            if (!detail.containsKey("employment_number") && formItem.fieldType == KycInputs.EMPLOYMENTNUMBER) {
+                                return@filter false
+                            }
+                            if (!detail.containsKey("gross_salary") && formItem.fieldType == KycInputs.GROSSSALARY) {
+                                return@filter false
+                            }
+                            if (!detail.containsKey("net_salary") && formItem.fieldType == KycInputs.NETSALARY) {
+                                return@filter false
+                            }
+                            if (!detail.containsKey("kra_pin") && formItem.fieldType == KycInputs.KRAPIN) {
+                                return@filter false
+                            }
+                        }
+                    }
+                    true
+                }.map { inputMethod ->
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()

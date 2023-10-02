@@ -46,6 +46,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
+import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.theme.actionButtonColor
@@ -54,6 +55,7 @@ import dev.icerock.moko.resources.compose.fontFamilyResource
 
 @Composable
 fun SelfEmployedDetails(
+    state: ApplyLongTermLoansStore.State,
     signHomeState: SignHomeStore.State,
     authState: AuthStore.State,
     onProfileEvent: (SignHomeStore.Intent) -> Unit,
@@ -102,7 +104,9 @@ fun SelfEmployedDetails(
                 signHomeState.businessLocation,
                 signHomeState.businessType,
                 signHomeState.kraPin,
-            ).map { inputMethod ->
+            ).filter { kyc ->
+                true
+            }.map { inputMethod ->
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

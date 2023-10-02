@@ -29,6 +29,7 @@ data class Kyc(
 enum class KycInputs {
     EMPLOYER,
     EMPLOYMENTNUMBER,
+    EMPLOYMENTTERMS,
     GROSSSALARY,
     NETSALARY,
     KRAPIN,
@@ -139,6 +140,15 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
         val employmentNumber: Kyc = Kyc(
             inputLabel = "Employment Number*",
             fieldType = KycInputs.EMPLOYMENTNUMBER,
+            inputTypes = InputTypes.STRING,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
+        val employmentType: Kyc = Kyc(
+            inputLabel = "Employment Terms*",
+            fieldType = KycInputs.EMPLOYMENTTERMS,
             inputTypes = InputTypes.STRING,
             required = true,
             value = TextFieldValue(),
