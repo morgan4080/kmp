@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.sp
 import com.mohamedrejeb.calf.ui.dialog.AdaptiveAlertDialog
 import com.presta.customer.MR
 import com.presta.customer.network.longTermLoans.model.ActorType
-import com.presta.customer.network.longTermLoans.model.guarantorResponse.PrestaGuarantorResponse
 import com.presta.customer.network.longTermLoans.model.witnessRequests.PrestaWitnessRequestResponse
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore

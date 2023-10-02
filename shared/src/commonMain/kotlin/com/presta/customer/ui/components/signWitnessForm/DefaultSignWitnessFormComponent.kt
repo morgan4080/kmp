@@ -99,6 +99,7 @@ class DefaultSignWitnessFormComponent(
                             state.cachedMemberData.refId
                         )
                     )
+
                     onEvent(
                         ApplyLongTermLoansStore.Intent.GetPrestaWitnessRequests(
                             token = state.cachedMemberData.accessToken,
