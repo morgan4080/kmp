@@ -115,14 +115,14 @@ fun EmployedDetails(
                     signHomeState.grossSalary,
                     signHomeState.netSalary,
                     signHomeState.kraPin,
-                    signHomeState.employmentType,
+                    signHomeState.employmentTerms,
                     //
                 ).filter {formItem ->
                     // check client settings state
                     // determine which fields to exclude
                     state.prestaClientSettings?.let { settings ->
                         settings.response.details?.let { detail ->
-                            if (!detail.containsKey("employment_type") && formItem.fieldType == KycInputs.EMPLOYMENTTERMS) {
+                            if (!detail.containsKey("employment_terms") && formItem.fieldType == KycInputs.EMPLOYMENTTERMS) {
                                 return@filter false
                             }
                             if (!detail.containsKey("department") && formItem.fieldType == KycInputs.DEPARTMENT) {
@@ -150,63 +150,78 @@ fun EmployedDetails(
 
                     when(inputMethod.inputTypes) {
                         InputTypes.ENUM -> {
-                            val (selectedOption, onOptionSelected) = remember { mutableStateOf(inputMethod.enumOptions[0]) }
+                            /*val mt = mutableListOf<String>()
+                            state.prestaClientSettings?.let { s ->
+                                s.response.details?.let {
+                                    println(":::it:::::")
+                                    if (inputMethod. it.containsKey("employment_terms")) {
 
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp)
-                                    .shadow(0.5.dp, RoundedCornerShape(10.dp))
-                                    .background(
-                                        color = MaterialTheme.colorScheme.inverseOnSurface,
-                                        shape = RoundedCornerShape(10.dp)
-                                    ),
-                            ) {
-                                Text(
-                                    modifier = Modifier.padding(horizontal = 16.dp).absoluteOffset(y = (10.dp)),
-                                    text = inputMethod.inputLabel,
-                                    color = primaryColor,
-                                    style = MaterialTheme.typography.labelSmall,
-                                    fontSize = 11.sp
-                                )
-                                LazyRow(
-                                    modifier = Modifier.selectableGroup()
+                                    }
+                                }
+                            }*/
+                            inputMethod.enumOptions = mutableListOf()
+                            if (inputMethod.enumOptions.isNotEmpty()) {
+                                val selected = if (inputMethod.value.text.isNotEmpty()) inputMethod.enumOptions.indexOf(inputMethod.value.text) else inputMethod.enumOptions[0]
+                                val (selectedOption, onOptionSelected) = remember { mutableStateOf(
+                                    selected
+                                )}
+
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 8.dp)
+                                        .shadow(0.5.dp, RoundedCornerShape(10.dp))
+                                        .background(
+                                            color = MaterialTheme.colorScheme.inverseOnSurface,
+                                            shape = RoundedCornerShape(10.dp)
+                                        ),
                                 ) {
-                                    inputMethod.enumOptions.forEach { text ->
-                                        item {
-                                            Row(
-                                                Modifier
-                                                    .fillMaxWidth()
-                                                    .height(56.dp)
-                                                    .selectable(
-                                                        selected = (text == selectedOption),
-                                                        onClick = {
-                                                            onOptionSelected(text)
-                                                            if (inputMethod.enabled) {
-                                                                hasError = false
-                                                                onProfileEvent(
-                                                                    SignHomeStore.Intent.UpdateKycValues(
-                                                                        inputMethod.fieldType,
-                                                                        TextFieldValue(text)
+                                    Text(
+                                        modifier = Modifier.padding(horizontal = 16.dp).absoluteOffset(y = (10.dp)),
+                                        text = inputMethod.inputLabel,
+                                        color = primaryColor,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontSize = 11.sp
+                                    )
+                                    LazyRow(
+                                        modifier = Modifier.selectableGroup()
+                                    ) {
+                                        inputMethod.enumOptions.forEach { text ->
+                                            item {
+                                                Row(
+                                                    Modifier
+                                                        .fillMaxWidth()
+                                                        .height(56.dp)
+                                                        .selectable(
+                                                            selected = (text == selectedOption),
+                                                            onClick = {
+                                                                onOptionSelected(text)
+                                                                if (inputMethod.enabled) {
+                                                                    hasError = false
+                                                                    onProfileEvent(
+                                                                        SignHomeStore.Intent.UpdateKycValues(
+                                                                            inputMethod.fieldType,
+                                                                            TextFieldValue(text)
+                                                                        )
                                                                     )
-                                                                )
-                                                            }
-                                                        },
-                                                        role = Role.RadioButton
+                                                                }
+                                                            },
+                                                            role = Role.RadioButton
+                                                        )
+                                                        .padding(horizontal = 16.dp),
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    RadioButton(
+                                                        selected = (text == selectedOption),
+                                                        onClick = null // null recommended for accessibility with screenreaders
                                                     )
-                                                    .padding(horizontal = 16.dp),
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                RadioButton(
-                                                    selected = (text == selectedOption),
-                                                    onClick = null // null recommended for accessibility with screenreaders
-                                                )
-                                                Text(
-                                                    text = text,
-                                                    color = MaterialTheme.colorScheme.onBackground,
-                                                    style = MaterialTheme.typography.bodySmall.merge(),
-                                                    modifier = Modifier.padding(start = 16.dp)
-                                                )
+                                                    Text(
+                                                        text = text,
+                                                        color = MaterialTheme.colorScheme.onBackground,
+                                                        style = MaterialTheme.typography.bodySmall.merge(),
+                                                        modifier = Modifier.padding(start = 16.dp)
+                                                    )
+                                                }
                                             }
                                         }
                                     }
@@ -346,8 +361,8 @@ fun EmployedDetails(
                             if (inputMethod.errorMessage !== "") {
                                 hasError = true
                                 Text(
-                                    modifier = Modifier.padding(horizontal = 22.dp),
-                                    text = inputMethod.errorMessage,
+                                    modifier = Modifier.padding(horizontal = 20.dp),
+                                    text = inputMethod.errorMessage.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
                                     fontSize = 10.sp,
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.medium),
@@ -370,39 +385,39 @@ fun EmployedDetails(
                     ActionButton(
                         label = "Submit",
                         onClickContainer = {
-                            if (signHomeState.employer.value.text != "" && signHomeState.employmentNumber.value.text != "") {
-                                userDetailsMap["employer"] =
-                                    signHomeState.employer.value.text
-                                userDetailsMap["employmentType"] =
-                                    signHomeState.employmentType.value.text
-                                userDetailsMap["employmentNumber"] =
-                                    signHomeState.employmentNumber.value.text
-                                userDetailsMap["grossSalary"] =
-                                    signHomeState.grossSalary.value.text
-                                userDetailsMap["netSalary"] =
-                                    signHomeState.netSalary.value.text
-                                userDetailsMap["kraPin"] =
-                                    signHomeState.kraPin.value.text
-                                userDetailsMap["businessLocation"] =
-                                    signHomeState.businessLocation.value.text
-                                userDetailsMap["businessType"] =
-                                    signHomeState.businessType.value.text
+                            userDetailsMap["employer"] =
+                                signHomeState.employer.value.text
+                            userDetailsMap["employmentTerms"] =
+                                signHomeState.employmentTerms.value.text
+                            userDetailsMap["department"] =
+                                signHomeState.department.value.text
+                            userDetailsMap["employmentNumber"] =
+                                signHomeState.employmentNumber.value.text
+                            userDetailsMap["grossSalary"] =
+                                signHomeState.grossSalary.value.text
+                            userDetailsMap["netSalary"] =
+                                signHomeState.netSalary.value.text
+                            userDetailsMap["kraPin"] =
+                                signHomeState.kraPin.value.text
+                            userDetailsMap["businessLocation"] =
+                                signHomeState.businessLocation.value.text
+                            userDetailsMap["businessType"] =
+                                signHomeState.businessType.value.text
 
 
-                                authState.cachedMemberData?.let {
-                                    SignHomeStore.Intent.UpdatePrestaTenantDetails(
-                                        token = it.accessToken,
-                                        memberRefId = signHomeState.prestaTenantByPhoneNumber.refId,
-                                        details = userDetailsMap
-                                    )
-                                }?.let {
-                                    onProfileEvent(
-                                        it
-                                    )
-                                }
-                                //Todo-----show failed or successful update
-                                onClickSubmit()
+                            authState.cachedMemberData?.let {
+                                SignHomeStore.Intent.UpdatePrestaTenantDetails(
+                                    token = it.accessToken,
+                                    memberRefId = signHomeState.prestaTenantByPhoneNumber.refId,
+                                    details = userDetailsMap
+                                )
+                            }?.let {
+                                onProfileEvent(
+                                    it
+                                )
                             }
+                            //Todo-----show failed or successful update
+                            onClickSubmit()
                         },
                         enabled = true,
                         loading = signHomeState.isLoading

@@ -2,6 +2,7 @@ package com.presta.customer.ui.components.applyLongTermLoan.ui
 
 import ProductSelectionCard
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -9,20 +10,26 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarVisuals
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,9 +39,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mohamedrejeb.calf.ui.dialog.AdaptiveAlertDialog
+import com.presta.customer.MR
 import com.presta.customer.network.longTermLoans.model.NonEligibilityReasons
 import com.presta.customer.ui.components.applyLongTermLoan.ApplyLongTermLoanComponent
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
@@ -43,6 +52,7 @@ import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.ShimmerBrush
 import com.presta.customer.ui.theme.actionButtonColor
+import dev.icerock.moko.resources.compose.fontFamilyResource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -168,32 +178,72 @@ fun ApplyLongTermLoansContent(
                                     }
                                 }
                             } else {
-                                state.prestaLongTermLoanProducts.list?.map { longTermLoanResponse ->
-                                    item {
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(top = 10.dp, bottom = 5.dp)
-                                        ) {
-                                            ProductSelectionCard(longTermLoanResponse.name.toString(),
-                                                description = longTermLoanResponse.interestRate.toString(),
-                                                onClickContainer = {
-                                                    snackbarHostState.currentSnackbarData?.dismiss()
-                                                    productRefId =
-                                                        longTermLoanResponse.refId.toString()
-                                                    loanName = longTermLoanResponse.name.toString()
-                                                    authState.cachedMemberData?.let {
-                                                        ApplyLongTermLoansStore.Intent.CheckLoanRequestEligibility(
-                                                            token = it.accessToken,
-                                                            memberRefId = memberRefId
-                                                        )
-                                                    }?.let {
-                                                        onEvent(
-                                                            it
-                                                        )
+                                state.prestaLongTermLoanProducts.list?.let { prodList ->
+                                    prodList.map { longTermLoanResponse ->
+                                        item {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(top = 10.dp, bottom = 5.dp)
+                                            ) {
+                                                ProductSelectionCard(longTermLoanResponse.name.toString(),
+                                                    description = longTermLoanResponse.interestRate.toString(),
+                                                    onClickContainer = {
+                                                        snackbarHostState.currentSnackbarData?.dismiss()
+                                                        productRefId =
+                                                            longTermLoanResponse.refId.toString()
+                                                        loanName = longTermLoanResponse.name.toString()
+                                                        authState.cachedMemberData?.let {
+                                                            ApplyLongTermLoansStore.Intent.CheckLoanRequestEligibility(
+                                                                token = it.accessToken,
+                                                                memberRefId = memberRefId
+                                                            )
+                                                        }?.let {
+                                                            onEvent(
+                                                                it
+                                                            )
+                                                        }
                                                     }
+                                                )
+                                            }
+                                        }
+                                    }
+                                    if (prodList.isEmpty()) {
+                                        item {
+                                            Column(
+                                                modifier = Modifier
+                                                    .fillMaxHeight(0.7f)
+                                                    .fillMaxWidth(),
+                                                verticalArrangement = Arrangement.Center,
+                                                horizontalAlignment = Alignment.CenterHorizontally
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.Center
+                                                ) {
+                                                    Icon(
+                                                        modifier = Modifier.size(150.dp),
+                                                        imageVector = Icons.Filled.ChatBubble,
+                                                        contentDescription = null,
+                                                        tint = actionButtonColor
+                                                    )
                                                 }
-                                            )
+
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(0.8f)
+                                                        .padding(top = 25.dp),
+                                                    horizontalArrangement = Arrangement.Center
+                                                ) {
+                                                    Text(
+                                                        text = "You don't have any long-term loan products configured.",
+                                                        color = MaterialTheme.colorScheme.error,
+                                                        style = MaterialTheme.typography.bodyMedium,
+                                                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                                        textAlign = TextAlign.Center,
+                                                        lineHeight = MaterialTheme.typography.bodyMedium.lineHeight
+                                                    )
+                                                }
+                                            }
                                         }
                                     }
                                 }

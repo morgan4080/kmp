@@ -27,7 +27,7 @@ data class Kyc(
     var value: TextFieldValue,
     val errorMessage: String,
     val enabled: Boolean,
-    val enumOptions: List<String> = emptyList()
+    var enumOptions: MutableList<String> = mutableListOf()
 )
 
 enum class KycInputs {
@@ -164,15 +164,14 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
             errorMessage = "",
             enabled = true
         ),
-        val employmentType: Kyc = Kyc(
+        val employmentTerms: Kyc = Kyc(
             inputLabel = "Employment Terms*",
             fieldType = KycInputs.EMPLOYMENTTERMS,
             inputTypes = InputTypes.ENUM,
             required = true,
             value = TextFieldValue(),
             errorMessage = "",
-            enabled = true,
-            enumOptions = listOf("PERMANENT", "TEMPORARY", "CONTRACT")
+            enabled = true
         ),
         val grossSalary: Kyc = Kyc(
             inputLabel = "Gross Salary*",

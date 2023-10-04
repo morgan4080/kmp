@@ -68,7 +68,7 @@ data class DetailsData(
     val loanPeriod: String,
     val repayment_period: String,
     val employer_name: String,
-    val employment_type: String,
+    val employment_terms: String,
     val employment_number: String,
     val business_location: String,
     val business_type: String,

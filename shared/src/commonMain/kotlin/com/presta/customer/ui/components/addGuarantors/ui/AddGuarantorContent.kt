@@ -394,7 +394,16 @@ fun AddGuarantorContent(
         sheetBackgroundColor = MaterialTheme.colorScheme.surface,
         sheetContent = {
             if (launchCheckSelfAndEmPloyedPopUp) {
-                val tabs = listOf("Employed", "Business/Self Employed")
+                val tabs = mutableListOf("Employed")
+                state.prestaClientSettings?.let { sett ->
+                    sett.response.let { res ->
+                        res.details?.let { detail ->
+                            if (detail.containsKey("businessLocation") || detail.containsKey("businessType")) {
+                                tabs.add("Business/Self Employed")
+                            }
+                        }
+                    }
+                }
                 var tabIndex by remember { mutableStateOf(0) }
                 Column(
                     modifier = Modifier
@@ -434,7 +443,7 @@ fun AddGuarantorContent(
                             onProfileEvent,
                             //Delegated onclick Button functions
                             onClickSubmit = {
-                                if (signHomeState.employer.value.text != "" && signHomeState.employmentNumber.value.text != "" && signHomeState.grossSalary.value.text != "" && signHomeState.netSalary.value.text != "" && signHomeState.kraPin.value.text != "" && tabIndex == 0) {
+                                if (signHomeState.employer.errorMessage != "" && signHomeState.employmentNumber.errorMessage != "" && signHomeState.grossSalary.errorMessage != "" && signHomeState.netSalary.errorMessage != "" && signHomeState.kraPin.errorMessage != "" && tabIndex == 0) {
                                     allConditionsChecked = true
                                     scope.launch { modalBottomSheetState.hide() }
                                 }
@@ -448,7 +457,7 @@ fun AddGuarantorContent(
                             authState,
                             onProfileEvent,
                             onClickSubmit = {
-                                if (signHomeState.businessLocation.value.text != "" && signHomeState.businessType.value.text != "" && signHomeState.kraPin.value.text != "" && tabIndex == 1) {
+                                if (signHomeState.businessLocation.errorMessage != "" && signHomeState.businessType.errorMessage != "" && signHomeState.kraPin.errorMessage != "" && tabIndex == 1) {
                                     allConditionsChecked = true
                                     scope.launch { modalBottomSheetState.hide() }
                                 }

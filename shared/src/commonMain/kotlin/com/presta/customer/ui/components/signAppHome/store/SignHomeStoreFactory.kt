@@ -10,8 +10,6 @@ import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.signHome.data.SignHomeRepository
 import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
 import com.presta.customer.prestaDispatchers
-import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
-import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStoreFactory
 import com.presta.customer.ui.components.registration.store.InputFields
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -51,7 +49,7 @@ class SignHomeStoreFactory(
         data object ClearError : Msg()
         data class UpdateInputValue(val inputField: InputFields, val value: TextFieldValue) : Msg()
         data object ClearKycError : Msg()
-        data class UpdateKycValue(val inputField: KycInputs, val value: TextFieldValue) : Msg()
+        data class UpdateKycValue(val inputField: KycInputs, val value: TextFieldValue, val enumOptions: MutableList<String> = mutableListOf()) : Msg()
 
         data class SignHomeFailed(val error: String?) : Msg()
         data class ClientSettingsLoaded(val clientSettingsLoaded: ClientSettingsResponse) : Msg()
@@ -59,7 +57,7 @@ class SignHomeStoreFactory(
     }
 
     private inner class ExecutorImpl :
-        CoroutineExecutor<SignHomeStore.Intent, Unit, SignHomeStore.State, SignHomeStoreFactory.Msg, Nothing>(
+        CoroutineExecutor<SignHomeStore.Intent, Unit, SignHomeStore.State, Msg, Nothing>(
             prestaDispatchers.main
         ) {
         override fun executeAction(action: Unit, getState: () -> SignHomeStore.State) {
@@ -175,7 +173,23 @@ class SignHomeStoreFactory(
                         )
                     )
                     //update
-                    response.details?.map { it ->
+                    response.details?.map {
+                        if (it.key.contains("employmentType")) {
+                            dispatch(
+                                Msg.UpdateKycValue(
+                                    inputField = KycInputs.EMPLOYMENTTERMS,
+                                    value = TextFieldValue(it.value.value.toString()),
+                                )
+                            )
+                        }
+                        if (it.key.contains("employmentTerms")) {
+                            dispatch(
+                                Msg.UpdateKycValue(
+                                    inputField = KycInputs.EMPLOYMENTTERMS,
+                                    value = TextFieldValue(it.value.value.toString()),
+                                )
+                            )
+                        }
                         if (it.key.contains("employer")) {
                             dispatch(
                                 Msg.UpdateKycValue(
@@ -483,7 +497,7 @@ class SignHomeStoreFactory(
                             // validate first name
                             val pattern = Regex("^(\\s*[a-zA-Z\\s]*)")
                             var errorMsg = ""
-                            if (msg.value.text.isEmpty() && employmentType.required) {
+                            if (msg.value.text.isEmpty() && employmentTerms.required) {
                                 errorMsg = "employment terms is required"
                             } else {
                                 if (!msg.value.text.matches(pattern)) {
@@ -491,7 +505,7 @@ class SignHomeStoreFactory(
                                 }
                             }
                             copy(
-                                employmentType = employmentType.copy(
+                                employmentTerms = employmentTerms.copy(
                                     value = msg.value,
                                     errorMessage = errorMsg,
                                 )

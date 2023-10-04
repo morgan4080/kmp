@@ -86,6 +86,12 @@ fun ShortTermLoansContent(
         }
     }
 
+    LaunchedEffect(state.error) {
+        if (state.error != null) {
+            tabIndex = 2
+        }
+    }
+
     var refreshing by remember { mutableStateOf(false) }
     val refreshScope = rememberCoroutineScope()
 
@@ -178,7 +184,7 @@ fun ShortTermLoansContent(
             }
             if (
                 !state.isLoading &&
-                state.prestaLoanEligibilityStatus !== null
+                (state.prestaLoanEligibilityStatus !== null || state.error !== null)
             ) {
                 when (tabIndex) {
                     0 -> ShortTermProductList(
@@ -218,33 +224,52 @@ fun ShortTermLoansContent(
                             }
                             Box(modifier = Modifier.pullRefresh(refreshState)) {
                                 LazyColumn {
-                                    item {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(0.8f)
-                                                .padding(top = 25.dp),
-                                            horizontalArrangement = Arrangement.Center
-                                        ) {
-                                            Text(
-                                                text = "It seems you are not eligible to borrow, reason:",
-                                                color = MaterialTheme.colorScheme.onBackground,
-                                                style = MaterialTheme.typography.headlineSmall,
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
-                                                textAlign = TextAlign.Center,
-                                                lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
-                                            )
+                                    if (state.error == null && state.prestaLoanEligibilityStatus !== null) {
+                                        item {
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(0.8f)
+                                                    .padding(top = 25.dp),
+                                                horizontalArrangement = Arrangement.Center
+                                            ) {
+                                                Text(
+                                                    text = "It seems you are not eligible to borrow, reason:",
+                                                    color = MaterialTheme.colorScheme.onBackground,
+                                                    style = MaterialTheme.typography.headlineSmall,
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.bold),
+                                                    textAlign = TextAlign.Center,
+                                                    lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
+                                                )
+                                            }
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(0.8f),
+                                                horizontalArrangement = Arrangement.Center
+                                            ) {
+                                                Text(
+                                                    text = state.prestaLoanEligibilityStatus.description,
+                                                    color = actionButtonColor,
+                                                    style = MaterialTheme.typography.headlineSmall,
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                                    textAlign = TextAlign.Center,
+                                                    lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
+                                                )
+                                            }
                                         }
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(0.8f),
-                                            horizontalArrangement = Arrangement.Center
-                                        ) {
-                                            Text(
-                                                text = state.prestaLoanEligibilityStatus.description,
-                                                color = actionButtonColor,
-                                                style = MaterialTheme.typography.headlineSmall,
-                                                fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                                                textAlign = TextAlign.Center,
-                                                lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
-                                            )
+                                    } else if (state.error !== null) {
+                                        item {
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(0.8f)
+                                                    .padding(top = 25.dp),
+                                                horizontalArrangement = Arrangement.Center
+                                            ) {
+                                                Text(
+                                                    text = state.error,
+                                                    color = MaterialTheme.colorScheme.error,
+                                                    style = MaterialTheme.typography.bodyMedium,
+                                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                                    textAlign = TextAlign.Center,
+                                                    lineHeight = MaterialTheme.typography.bodyMedium.lineHeight
+                                                )
+                                            }
                                         }
                                     }
                                 }

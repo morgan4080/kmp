@@ -861,7 +861,7 @@ fun UserInformation(
                                                     loanPeriod = component.loanPeriod.toString(),
                                                     repayment_period = component.loanPeriod.toString(),
                                                     employer_name = employer,
-                                                    employment_type = "",
+                                                    employment_terms = "",
                                                     employment_number = employmentNumber,
                                                     business_location = businessLocation,
                                                     business_type = businessType,

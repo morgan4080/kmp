@@ -117,7 +117,7 @@ object NetworkConstants {
     }
 
     object PrestaGetClientSettings {
-        const val route = eguarantorshipApplicationV1BaseUrl + "clientSettings"
+        const val route = eguarantorshipApplicationV1BaseUrl + "clientSettings/bulk"
     }
     object PrestaLongTermLoanRequest {
         const val route =  eguarantorshipApplicationV2BaseUrl + "loan-request"
