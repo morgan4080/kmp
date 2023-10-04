@@ -111,8 +111,7 @@ class SignHomeStoreFactory(
                     dispatch(
                         Msg.UpdateKycValue(
                             inputField = intent.inputField,
-                            value = intent.value,
-                            enumOptions = intent.enumOptions
+                            value = intent.value
                         )
                     )
 
@@ -175,6 +174,14 @@ class SignHomeStoreFactory(
                     )
                     //update
                     response.details?.map {
+                        if (it.key.contains("employmentType")) {
+                            dispatch(
+                                Msg.UpdateKycValue(
+                                    inputField = KycInputs.EMPLOYMENTTERMS,
+                                    value = TextFieldValue(it.value.value.toString()),
+                                )
+                            )
+                        }
                         if (it.key.contains("employmentTerms")) {
                             dispatch(
                                 Msg.UpdateKycValue(
@@ -183,42 +190,10 @@ class SignHomeStoreFactory(
                                 )
                             )
                         }
-                        if (it.key.contains("department")) {
-                            dispatch(
-                                Msg.UpdateKycValue(
-                                    inputField = KycInputs.DEPARTMENT,
-                                    value = TextFieldValue(it.value.value.toString()),
-                                )
-                            )
-                        }
-                        if (it.key.contains("postalAddress")) {
-                            dispatch(
-                                Msg.UpdateKycValue(
-                                    inputField = KycInputs.POSTALADDRESS,
-                                    value = TextFieldValue(it.value.value.toString())
-                                )
-                            )
-                        }
                         if (it.key.contains("employer")) {
                             dispatch(
                                 Msg.UpdateKycValue(
                                     inputField = KycInputs.EMPLOYER,
-                                    value = TextFieldValue(it.value.value.toString())
-                                )
-                            )
-                        }
-                        if (it.key.contains("dob")) {
-                            dispatch(
-                                Msg.UpdateKycValue(
-                                    inputField = KycInputs.DOB,
-                                    value = TextFieldValue(it.value.value.toString())
-                                )
-                            )
-                        }
-                        if (it.key.contains("designation")) {
-                            dispatch(
-                                Msg.UpdateKycValue(
-                                    inputField = KycInputs.DESIGNATION,
                                     value = TextFieldValue(it.value.value.toString())
                                 )
                             )
@@ -375,39 +350,6 @@ class SignHomeStoreFactory(
                 signHomeRepository.getClientSettingsData(
                     token = token
                 ).onSuccess { response ->
-                    response.response.details?.let {detailsMap ->
-                        detailsMap.map {
-                            if (it.key == "employment_terms" && it.value.type == "ENUM")  {
-                                dispatch(
-                                    Msg.UpdateKycValue(
-                                        inputField = KycInputs.EMPLOYMENTTERMS,
-                                        value = TextFieldValue(it.value.value.toString()),
-                                        enumOptions = it.value.meta.keys.toMutableList()
-                                    )
-                                )
-                            }
-                            if (it.key == "disbursement_modes" && it.value.type == "ENUM")  {
-                                dispatch(
-                                    Msg.UpdateKycValue(
-                                        inputField = KycInputs.DISBURSEMENT,
-                                        value = TextFieldValue(it.value.value.toString()),
-                                        enumOptions = it.value.meta.keys.toMutableList()
-                                    )
-                                )
-                            }
-                            if (it.key == "repayment_modes" && it.value.type == "ENUM")  {
-                                dispatch(
-                                    Msg.UpdateKycValue(
-                                        inputField = KycInputs.REPAYMENT,
-                                        value = TextFieldValue(it.value.value.toString()),
-                                        enumOptions = it.value.meta.keys.toMutableList()
-                                    )
-                                )
-                            }
-                        }
-                    }
-
-
                     dispatch(Msg.ClientSettingsLoaded(response))
                     println("Load Success")
 
@@ -547,39 +489,6 @@ class SignHomeStoreFactory(
                                 employer = employer.copy(
                                     value = msg.value,
                                     errorMessage = errorMsg,
-                                    enumOptions = msg.enumOptions
-                                )
-                            )
-                        }
-                        KycInputs.DOB -> {
-                            var errorMsg = ""
-                            if (msg.value.text.isEmpty() && dob.required) {
-                                errorMsg = "DOB is required"
-                            }
-                            copy(
-                                dob = dob.copy(
-                                    value = msg.value,
-                                    errorMessage = errorMsg,
-                                    enumOptions = msg.enumOptions
-                                )
-                            )
-                        }
-                        KycInputs.POSTALADDRESS -> {
-                            // validate first name
-                            val pattern = Regex("^(\\s*[a-zA-Z0-9.\\s]*)")
-                            var errorMsg = ""
-                            if (msg.value.text.isEmpty() && postalAddress.required) {
-                                errorMsg = "Address is required"
-                            } else {
-                                if (!msg.value.text.matches(pattern)) {
-                                    errorMsg = "enter valid value."
-                                }
-                            }
-                            copy(
-                                postalAddress = postalAddress.copy(
-                                    value = msg.value,
-                                    errorMessage = errorMsg,
-                                    enumOptions = msg.enumOptions
                                 )
                             )
                         }
@@ -599,67 +508,6 @@ class SignHomeStoreFactory(
                                 employmentTerms = employmentTerms.copy(
                                     value = msg.value,
                                     errorMessage = errorMsg,
-                                    enumOptions = if (msg.enumOptions.isEmpty()) employmentTerms.enumOptions else msg.enumOptions
-                                )
-                            )
-                        }
-
-                        KycInputs.DISBURSEMENT -> {
-                            // validate first name
-                            val pattern = Regex("^(\\s*[a-zA-Z\\s]*)")
-                            var errorMsg = ""
-                            if (msg.value.text.isEmpty() && disbursementModes.required) {
-                                errorMsg = "disbursement mode is required"
-                            } else {
-                                if (!msg.value.text.matches(pattern)) {
-                                    errorMsg = "enter valid value."
-                                }
-                            }
-                            copy(
-                                disbursementModes = disbursementModes.copy(
-                                    value = msg.value,
-                                    errorMessage = errorMsg,
-                                    enumOptions = if (msg.enumOptions.isEmpty()) disbursementModes.enumOptions else msg.enumOptions
-                                )
-                            )
-                        }
-
-                        KycInputs.WITNESSPAYROLLNO -> {
-                            // validate first name
-                            val pattern = Regex("^(\\s*[a-zA-Z0-9\\s]*)")
-                            var errorMsg = ""
-                            if (msg.value.text.isEmpty() && witnessPayrollNo.required) {
-                                errorMsg = "Witness payroll no. is required"
-                            } else {
-                                if (!msg.value.text.matches(pattern)) {
-                                    errorMsg = "enter valid value."
-                                }
-                            }
-                            copy(
-                                witnessPayrollNo = witnessPayrollNo.copy(
-                                    value = msg.value,
-                                    errorMessage = errorMsg,
-                                    enumOptions = msg.enumOptions
-                                )
-                            )
-                        }
-
-                        KycInputs.REPAYMENT -> {
-                            // validate first name
-                            val pattern = Regex("^(\\s*[a-zA-Z\\s]*)")
-                            var errorMsg = ""
-                            if (msg.value.text.isEmpty() && repaymentModes.required) {
-                                errorMsg = "repayment mode is required"
-                            } else {
-                                if (!msg.value.text.matches(pattern)) {
-                                    errorMsg = "enter valid value."
-                                }
-                            }
-                            copy(
-                                repaymentModes = repaymentModes.copy(
-                                    value = msg.value,
-                                    errorMessage = errorMsg,
-                                    enumOptions = msg.enumOptions
                                 )
                             )
                         }
@@ -679,27 +527,6 @@ class SignHomeStoreFactory(
                                 department = department.copy(
                                     value = msg.value,
                                     errorMessage = errorMsg,
-                                    enumOptions = msg.enumOptions
-                                )
-                            )
-                        }
-
-                        KycInputs.DESIGNATION -> {
-                            // validate first name
-                            val pattern = Regex("^(\\s*[a-zA-Z\\s]*)")
-                            var errorMsg = ""
-                            if (msg.value.text.isEmpty() && designation.required) {
-                                errorMsg = "Designation is required"
-                            } else {
-                                if (!msg.value.text.matches(pattern)) {
-                                    errorMsg = "enter valid value."
-                                }
-                            }
-                            copy(
-                                designation = designation.copy(
-                                    value = msg.value,
-                                    errorMessage = errorMsg,
-                                    enumOptions = msg.enumOptions
                                 )
                             )
                         }
@@ -719,7 +546,6 @@ class SignHomeStoreFactory(
                                 employmentNumber = employmentNumber.copy(
                                     value = msg.value,
                                     errorMessage = errorMsg,
-                                    enumOptions = msg.enumOptions
                                 )
                             )
                         }
@@ -739,7 +565,6 @@ class SignHomeStoreFactory(
                                 grossSalary = grossSalary.copy(
                                     value = msg.value,
                                     errorMessage = errorMsg,
-                                    enumOptions = msg.enumOptions
                                 )
                             )
                         }
@@ -759,7 +584,6 @@ class SignHomeStoreFactory(
                                 netSalary = netSalary.copy(
                                     value = msg.value,
                                     errorMessage = errorMsg,
-                                    enumOptions = msg.enumOptions
                                 )
                             )
                         }
@@ -779,7 +603,6 @@ class SignHomeStoreFactory(
                                 kraPin = kraPin.copy(
                                     value = msg.value,
                                     errorMessage = errorMsg,
-                                    enumOptions = msg.enumOptions
                                 )
                             )
                         }
@@ -799,7 +622,6 @@ class SignHomeStoreFactory(
                                 businessLocation = businessLocation.copy(
                                     value = msg.value,
                                     errorMessage = errorMsg,
-                                    enumOptions = msg.enumOptions
                                 )
                             )
                         }
@@ -818,7 +640,6 @@ class SignHomeStoreFactory(
                                 businessType = businessType.copy(
                                     value = msg.value,
                                     errorMessage = errorMsg,
-                                    enumOptions = msg.enumOptions
                                 )
                             )
                         }

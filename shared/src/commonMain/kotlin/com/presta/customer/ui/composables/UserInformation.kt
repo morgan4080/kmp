@@ -101,11 +101,6 @@ fun UserInformation(
     var disbursementMode by remember { mutableStateOf("") }
     var repaymentMode by remember { mutableStateOf("") }
     var employer by remember { mutableStateOf("") }
-    var employmentTerms by remember { mutableStateOf("") }
-    var department by remember { mutableStateOf("") }
-    var designation by remember { mutableStateOf("") }
-    var postalAddress by remember { mutableStateOf("") }
-    var dob by remember { mutableStateOf("") }
     var grossSalary by remember { mutableStateOf("") }
     var netSalary by remember { mutableStateOf("") }
     var kraPin by remember { mutableStateOf("") }
@@ -130,7 +125,7 @@ fun UserInformation(
             onSignProfileEvent(SignHomeStore.Intent.ClearError)
         }
     }
-    LaunchedEffect(state.prestaLongTermLoanRequestData) {
+    LaunchedEffect(state.prestaLongTermLoanRequestData?.refId) {
         if (!state.prestaLongTermLoanRequestData?.refId.isNullOrEmpty()) {
             state.prestaLongTermLoanRequestData?.let {
                 sendLoanRequest = false
@@ -141,26 +136,19 @@ fun UserInformation(
                     memberRefId = component.memberRefId
                 )
             }
+
+        } else {
+            //launch pop up to show reason of loan failure
+            //Todo--if loan pending reason is not null
+            if (state.prestaLongTermLoanRequestData?.refId.isNullOrEmpty() && sendLoanRequest) {
+                launchHandleLoanRequestPopUp = true
+                sendLoanRequest = false
+            }
         }
     }
     signProfileState.prestaTenantByPhoneNumber?.details?.map {
         if (it.key.contains("employer")) {
             employer = it.value.value.toString()
-        }
-        if (it.key.contains("employmentTerms")) {
-            employmentTerms = it.value.value.toString()
-        }
-        if (it.key.contains("designation")) {
-            designation = it.value.value.toString()
-        }
-        if (it.key.contains("postalAddress")) {
-            postalAddress = it.value.value.toString()
-        }
-        if (it.key.contains("dob")) {
-            dob = it.value.value.toString()
-        }
-        if (it.key.contains("department")) {
-            department = it.value.value.toString()
         }
         if (it.key.contains("gross")) {
             grossSalary = it.value.value.toString()
@@ -182,31 +170,17 @@ fun UserInformation(
         }
     }
 
-
-
-    var disbursementModeListing = listOf(
-        DisbursementModes("Cheques", "CHEQUE", selected = true),
-        DisbursementModes("My Account", "MY_ACCOUNT", selected = true),
-        DisbursementModes("EFT", "EFT", selected = true),
-        DisbursementModes("RTGS", "RTGS", selected = true)
-    )
-
-    signProfileState.prestaClientSettings?.let {
-        it.response.details?.let { detailsMap ->
-            detailsMap.map { det ->
-                if (det.key == "disbursement_mode" && det.value.type == "ENUM")  {
-                    disbursementModeListing = det.value.meta.keys.map { key ->
-                        DisbursementModes(key, key, selected = true)
-                    }
-                }
-            }
-        }
-    }
-
     Column(modifier = Modifier.padding(top = 20.dp)) {
-        // popup Disbursement mode
-        // Added the popUps on top of Parent Column to prevent them from freezing
+        //popup Disbursement mode
+        //Aded the popUps on top of Parent Column to prevent them from freezing
         if (launchDisbursementModePopUp) {
+
+            val disburementModeListing = listOf(
+                DisbursementModes("Cheques", "CHEQUE", selected = true),
+                DisbursementModes("My Account", "MY_ACCOUNT", selected = true),
+                DisbursementModes("EFT", "EFT", selected = true),
+                DisbursementModes("RTGS", "RTGS", selected = true)
+            )
             Popup {
                 Column(
                     modifier = Modifier
@@ -258,7 +232,7 @@ fun UserInformation(
                                             .wrapContentHeight()
                                     ) {
 
-                                        disbursementModeListing.mapIndexed { indexed, disbursementModes ->
+                                        disburementModeListing.mapIndexed { indexed, disbursementModes ->
                                             item {
                                                 Row(
                                                     modifier = Modifier
@@ -278,7 +252,7 @@ fun UserInformation(
                                                                 if (selectedDisburseMentIndex == index) -1 else index
                                                             if (selectedDisburseMentIndex > -1) {
                                                                 disbursementMode =
-                                                                    disbursementModeListing[selectedDisburseMentIndex].name
+                                                                    disburementModeListing[selectedDisburseMentIndex].name
                                                             }
                                                         },
                                                         label = disbursementModes.name
@@ -887,7 +861,7 @@ fun UserInformation(
                                                     loanPeriod = component.loanPeriod.toString(),
                                                     repayment_period = component.loanPeriod.toString(),
                                                     employer_name = employer,
-                                                    employment_terms = employmentTerms,
+                                                    employment_terms = "",
                                                     employment_number = employmentNumber,
                                                     business_location = businessLocation,
                                                     business_type = businessType,
@@ -896,11 +870,7 @@ fun UserInformation(
                                                     disbursement_mode = disbursementMode,
                                                     repayment_mode = repaymentMode,
                                                     loan_type = component.loanType,
-                                                    kra_pin = kraPin,
-                                                    witness_payroll_no = component.witnessPayrollNo,
-                                                    designation = designation,
-                                                    postal_address = postalAddress,
-                                                    dob = dob
+                                                    kra_pin = kraPin
                                                 ),
                                                 loanProductName = component.loanType,
                                                 loanProductRefId = component.loanRefId,
