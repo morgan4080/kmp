@@ -22,11 +22,12 @@ fun MainViewController(
     bottomSafeArea: Float,
     connectivityStatus: SharedStatus?
 ): UIViewController {
-    initKoin(enableNetworkLogs = true, platform = Platform())
+    val defaultComponentCtx = DefaultComponentContext(lifecycle = lifecycle)
     val root = DefaultRootComponent(
-        componentContext = DefaultComponentContext(lifecycle = lifecycle),
+        componentContext = defaultComponentCtx,
         storeFactory = DefaultStoreFactory(),
     )
+    initKoin(defaultComponentCtx, DefaultStoreFactory(),  enableNetworkLogs = true, platform = Platform())
     return WindowInsetsUIViewController {
         val density = LocalDensity.current
 

@@ -27,6 +27,7 @@ interface LongTermLoanConfirmationComponent {
     val loanPurposeCategoryCode: String
     val witnessRefId: String
     val witnessName: String
+    val witnessPayrollNo: String
     fun onBackNavClicked()
     fun onProductSelected(
 

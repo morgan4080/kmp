@@ -2,6 +2,7 @@ package com.presta.customer.ui.components.signLoanForm.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,11 +13,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -37,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mohamedrejeb.calf.ui.web.WebView
@@ -51,6 +56,7 @@ import com.presta.customer.ui.components.signLoanForm.SignLoanFormComponent
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.ShimmerBrush
+import com.presta.customer.ui.theme.actionButtonColor
 import dev.icerock.moko.resources.compose.fontFamilyResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -101,7 +107,45 @@ fun SignLoanFormContent(
         }
     }
 
-    if (state.prestaZohoSignUrl !== null) {
+    if (state.prestaLoanByLoanRequestRefId?.pendingReason != null || state.prestaLoanByLoanRequestRefId?.pendingReason != "") {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight(0.7f)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    modifier = Modifier.size(150.dp),
+                    imageVector = Icons.Filled.ChatBubble,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.errorContainer
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(0.8f)
+                    .padding(top = 25.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                state.prestaLoanByLoanRequestRefId?.pendingReason?.let {
+                    Text(
+                        modifier = Modifier.width(200.dp),
+                        text = "$it. Please contact admin for assistance.",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                        textAlign = TextAlign.Center,
+                        lineHeight = MaterialTheme.typography.bodyMedium.lineHeight
+                    )
+                }
+            }
+        }
+    } else if (state.prestaZohoSignUrl !== null) {
         ViewWebView(state.prestaZohoSignUrl.signURL, onEvent, disposed = {
             authState.cachedMemberData?.let {
                 ApplyLongTermLoansStore.Intent.GetPrestaLoanByLoanRequestRefId(

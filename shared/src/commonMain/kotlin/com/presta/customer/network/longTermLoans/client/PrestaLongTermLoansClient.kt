@@ -32,6 +32,8 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -60,7 +62,7 @@ data class FavouriteGuarantorPayload(
 )
 
 @Serializable
-data class DetailsData(
+data class DetailsData @OptIn(ExperimentalSerializationApi::class) constructor(
     val loan_purpose_1: String,
     val loan_purpose_2: String,
     val loan_purpose_3: String,
@@ -77,7 +79,8 @@ data class DetailsData(
     val disbursement_mode: String,
     val repayment_mode: String,
     val loan_type: String,
-    val kra_pin: String
+    val kra_pin: String,
+    @EncodeDefault val witness_payroll_no: String = "",
 )
 
 @Serializable

@@ -147,24 +147,25 @@ fun EmployedDetails(
                     }
                     true
                 }.map { inputMethod ->
-
                     when(inputMethod.inputTypes) {
                         InputTypes.ENUM -> {
-                            /*val mt = mutableListOf<String>()
-                            state.prestaClientSettings?.let { s ->
-                                s.response.details?.let {
-                                    println(":::it:::::")
-                                    if (inputMethod. it.containsKey("employment_terms")) {
-
-                                    }
-                                }
-                            }*/
-                            inputMethod.enumOptions = mutableListOf()
                             if (inputMethod.enumOptions.isNotEmpty()) {
-                                val selected = if (inputMethod.value.text.isNotEmpty()) inputMethod.enumOptions.indexOf(inputMethod.value.text) else inputMethod.enumOptions[0]
+                                val selected = if (inputMethod.value.text.isNotEmpty()) {
+                                    inputMethod.enumOptions[inputMethod.enumOptions.indexOf(inputMethod.value.text)]
+                                } else {
+                                    inputMethod.enumOptions[0]
+                                }
                                 val (selectedOption, onOptionSelected) = remember { mutableStateOf(
                                     selected
                                 )}
+
+                                onProfileEvent(
+                                    SignHomeStore.Intent.UpdateKycValues(
+                                        inputField = inputMethod.fieldType,
+                                        value = TextFieldValue(selected),
+                                        enumOptions = inputMethod.enumOptions
+                                    )
+                                )
 
                                 Column(
                                     modifier = Modifier
@@ -198,10 +199,13 @@ fun EmployedDetails(
                                                                 onOptionSelected(text)
                                                                 if (inputMethod.enabled) {
                                                                     hasError = false
+                                                                    println(":::text:::")
+                                                                    println(text)
                                                                     onProfileEvent(
                                                                         SignHomeStore.Intent.UpdateKycValues(
-                                                                            inputMethod.fieldType,
-                                                                            TextFieldValue(text)
+                                                                            inputField = inputMethod.fieldType,
+                                                                            value = TextFieldValue(text),
+                                                                            enumOptions = inputMethod.enumOptions
                                                                         )
                                                                     )
                                                                 }
@@ -416,7 +420,7 @@ fun EmployedDetails(
                                     it
                                 )
                             }
-                            //Todo-----show failed or successful update
+
                             onClickSubmit()
                         },
                         enabled = true,

@@ -52,7 +52,8 @@ class DefaultLongTermLoanConfirmationComponent(
     override val guarantorList: Set<GuarantorDataListing>,
     override val loanPurposeCategoryCode: String,
     override val witnessRefId: String,
-    override val witnessName: String
+    override val witnessName: String,
+    override val witnessPayrollNo: String,
 ) : LongTermLoanConfirmationComponent, ComponentContext by componentContext {
     private val scope = coroutineScope(mainContext + SupervisorJob())
 
@@ -138,6 +139,11 @@ class DefaultLongTermLoanConfirmationComponent(
                         SignHomeStore.Intent.GetPrestaTenantByPhoneNumber(
                             token = state.cachedMemberData.accessToken,
                             phoneNumber = state.cachedMemberData.phoneNumber
+                        )
+                    )
+                    onSignProfileEvent(
+                        SignHomeStore.Intent.GetClientSettings(
+                            token = state.cachedMemberData.accessToken
                         )
                     )
 

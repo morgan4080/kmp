@@ -443,7 +443,21 @@ fun AddGuarantorContent(
                             onProfileEvent,
                             //Delegated onclick Button functions
                             onClickSubmit = {
-                                if (signHomeState.employer.errorMessage != "" && signHomeState.employmentNumber.errorMessage != "" && signHomeState.grossSalary.errorMessage != "" && signHomeState.netSalary.errorMessage != "" && signHomeState.kraPin.errorMessage != "" && tabIndex == 0) {
+                                val withErrors = listOf(
+                                    signHomeState.employer,
+                                    signHomeState.employmentNumber,
+                                    signHomeState.employmentTerms,
+                                    signHomeState.netSalary,
+                                    signHomeState.grossSalary,
+                                    signHomeState.kraPin,
+                                ).filter {
+                                    it.errorMessage != ""
+                                }
+                                println(":::withErrors:::")
+                                println(withErrors)
+                                if (
+                                    withErrors.isEmpty() && tabIndex == 0
+                                ) {
                                     allConditionsChecked = true
                                     scope.launch { modalBottomSheetState.hide() }
                                 }
@@ -475,7 +489,6 @@ fun AddGuarantorContent(
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 10.dp)
                     ) {
-                        //Todo----Dismiss focus requester when the modal bottomsheet is dismissed
                         Row(
                             modifier = Modifier
                                 .padding(top = 5.dp)
@@ -507,8 +520,6 @@ fun AddGuarantorContent(
                                 .padding(top = 5.dp)
                                 .fillMaxWidth()
                         ) {
-                            //Todo--show the number of the selected guarantor
-
                             Text(
                                 text = "Guarantor: " + if (guarantorshipOption === GuarantorShipOptions.MEMBERNUMBER) signHomeState.prestaTenantByMemberNumber?.firstName else state.prestaLoadTenantByPhoneNumber?.firstName,
                                 fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
@@ -1131,7 +1142,8 @@ fun AddGuarantorContent(
 
                                             }
                                         }
-                                    } else {
+                                    }
+                                    else {
                                         if (allConditionsChecked) {
                                             //Todo--check if witness is required and navigate
                                             if (state.prestaClientSettings?.response?.requireWitness == true) {
@@ -1163,7 +1175,6 @@ fun AddGuarantorContent(
                                                 launchCheckSelfAndEmPloyedPopUp = false
                                                 launchAddAmountToGuarantee = false
                                                 scope.launch { modalBottomSheetState.hide() }
-
                                             } else if (state.prestaClientSettings?.response?.requireWitness == false) {
                                                 signHomeState.prestaTenantByPhoneNumber?.refId?.let {
                                                     component.onContinueSelected(
@@ -1194,12 +1205,10 @@ fun AddGuarantorContent(
                                             }
                                         }
                                     }
-                                    if (difff == 0) {
+                                    if (difff == 0 && !allConditionsChecked) {
                                         scope.launch { modalBottomSheetState.show() }
                                         launchAddAmountToGuarantee = false
                                         launchCheckSelfAndEmPloyedPopUp = true
-                                    } else {
-                                        //showDialogue = true
                                     }
                                 },
                                 enabled = difff <= 0 || memberNumber != "" || guarantorDataListed.size == component.requiredGuarantors

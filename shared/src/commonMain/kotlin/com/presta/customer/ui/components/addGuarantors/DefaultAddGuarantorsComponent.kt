@@ -160,6 +160,11 @@ class DefaultAddGuarantorsComponent(
                             token = state.cachedMemberData.accessToken,
                         )
                     )
+                    onProfileEvent(
+                        SignHomeStore.Intent.GetClientSettings(
+                            token = state.cachedMemberData.accessToken,
+                        )
+                    )
 
                     this.cancel()
                 }

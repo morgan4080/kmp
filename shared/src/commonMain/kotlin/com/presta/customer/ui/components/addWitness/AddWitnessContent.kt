@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,18 +35,16 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ImportContacts
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.RadioButtonChecked
 import androidx.compose.material.icons.outlined.ArrowCircleDown
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Error
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.PersonRemove
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -91,6 +90,7 @@ import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLo
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.ActionButton
+import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.backArrowColor
@@ -128,6 +128,7 @@ fun AddWitnessContent(
     signHomeState: SignHomeStore.State,
     onProfileEvent: (SignHomeStore.Intent) -> Unit,
 ) {
+    var showDialog by remember { mutableStateOf(false) }
     var launchPopUp by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var memberNumber by remember { mutableStateOf("") }
@@ -328,6 +329,242 @@ fun AddWitnessContent(
 
         }
     }
+
+    var hasError by remember { mutableStateOf(false) }
+
+    val userDetailsMap = mutableMapOf<String, String>()
+
+    if (showDialog) {
+        AlertDialog(
+            modifier = Modifier,
+            onDismissRequest = {
+                println("Dismissed")
+            },
+            content = {
+                ElevatedCard(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(size = 12.dp))
+                        .absolutePadding(left = 2.dp, right = 2.dp, top = 5.dp, bottom = 5.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.surface)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(
+                                top = 23.dp,
+                                start = 24.dp,
+                                end = 19.5.dp,
+                                bottom = 33.dp,
+                            )
+                        ) {
+                            Row (
+                                modifier = Modifier.padding(vertical = 10.dp),
+                            ) {
+                                Text(
+                                    text = "Witness Information",
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 14.sp,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.medium)
+                                )
+                            }
+
+                            Row {
+                                listOf(signHomeState.witnessPayrollNo).map { inputMethod ->
+                                    LaunchedEffect(inputMethod.errorMessage, inputMethod.value) {
+                                        hasError = inputMethod.errorMessage != "" || inputMethod.value.text == ""
+                                    }
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 8.dp)
+                                            .shadow(0.5.dp, RoundedCornerShape(10.dp))
+                                            .background(
+                                                color =  MaterialTheme.colorScheme.inverseOnSurface,
+                                                shape = RoundedCornerShape(10.dp)
+                                            ),
+                                    ) {
+                                        BasicTextField(
+                                            modifier = Modifier
+                                                .focusRequester(focusRequester)
+                                                .height(65.dp)
+                                                .padding(
+                                                    top = 20.dp,
+                                                    bottom = 16.dp,
+                                                    start = 16.dp,
+                                                    end = 16.dp
+                                                )
+                                                .absoluteOffset(y = 2.dp),
+                                            keyboardOptions = KeyboardOptions(
+                                                keyboardType =
+                                                when (inputMethod.inputTypes) {
+                                                    InputTypes.NUMBER -> KeyboardType.Number
+                                                    InputTypes.STRING -> KeyboardType.Text
+                                                    InputTypes.PHONE -> KeyboardType.Phone
+                                                    InputTypes.URI -> KeyboardType.Uri
+                                                    InputTypes.EMAIL -> KeyboardType.Email
+                                                    InputTypes.PASSWORD -> KeyboardType.Password
+                                                    InputTypes.NUMBER_PASSWORD -> KeyboardType.NumberPassword
+                                                    InputTypes.DECIMAL -> KeyboardType.Decimal
+                                                    else -> KeyboardType.Text
+                                                }
+                                            ),
+                                            value = inputMethod.value,
+                                            enabled = inputMethod.enabled,
+                                            onValueChange = {
+                                                if (inputMethod.enabled) {
+                                                    onProfileEvent(
+                                                        SignHomeStore.Intent.UpdateKycValues(
+                                                            inputMethod.fieldType,
+                                                            it
+                                                        )
+                                                    )
+                                                }
+                                            },
+                                            singleLine = true,
+                                            textStyle = TextStyle(
+                                                color = MaterialTheme.colorScheme.onBackground,
+                                                fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
+                                                fontSize = 13.sp,
+                                                fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
+                                                letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
+                                                lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                                                fontFamily = MaterialTheme.typography.bodySmall.fontFamily
+                                            ),
+                                            decorationBox = { innerTextField ->
+
+                                                if (inputMethod.value.text.isEmpty()
+                                                ) {
+                                                    Text(
+                                                        modifier = Modifier.alpha(.3f),
+                                                        text = inputMethod.inputLabel,
+                                                        style = MaterialTheme.typography.bodySmall
+                                                    )
+                                                }
+
+                                                AnimatedVisibility(
+                                                    visible = inputMethod.value.text.isNotEmpty(),
+                                                    modifier = Modifier.absoluteOffset(y = -(16).dp),
+                                                    enter = fadeIn() + expandVertically(),
+                                                    exit = fadeOut() + shrinkVertically(),
+                                                ) {
+                                                    Text(
+                                                        text = inputMethod.inputLabel,
+                                                        color = if (hasError) MaterialTheme.colorScheme.error else primaryColor,
+                                                        style = MaterialTheme.typography.labelSmall,
+                                                        fontSize = 11.sp
+                                                    )
+                                                }
+
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.SpaceBetween
+                                                ) {
+                                                    Row(
+                                                        verticalAlignment = Alignment.CenterVertically,
+                                                    ) {
+
+                                                        innerTextField()
+                                                    }
+
+                                                    AnimatedVisibility(
+                                                        visible = inputMethod.value.text.isNotEmpty(),
+                                                        enter = fadeIn() + expandVertically(),
+                                                        exit = fadeOut() + shrinkVertically(),
+                                                    ) {
+
+                                                        IconButton(
+                                                            modifier = Modifier.size(18.dp),
+                                                            onClick = {
+                                                                if (inputMethod.enabled) {
+                                                                    onProfileEvent(
+                                                                        SignHomeStore.Intent.UpdateKycValues(
+                                                                            inputMethod.fieldType,
+                                                                            TextFieldValue()
+                                                                        )
+                                                                    )
+                                                                }
+                                                            },
+                                                            content = {
+                                                                Icon(
+                                                                    modifier = Modifier.alpha(0.4f),
+                                                                    imageVector = Icons.Filled.Cancel,
+                                                                    contentDescription = null,
+                                                                    tint = actionButtonColor
+                                                                )
+                                                            }
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+
+                            Row (
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                Spacer(modifier = Modifier.weight(1f))
+                                Button(
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                                        contentColor =MaterialTheme.colorScheme.error
+                                    ),
+                                    onClick = { showDialog = false },
+                                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+                                ) {
+                                    Text("Cancel")
+                                }
+                                Spacer(
+                                    modifier = Modifier.size(10.dp)
+                                )
+                                Button(
+                                    enabled = !hasError,
+                                    onClick = {
+                                        if (conditionChecked) {
+                                            witnessDataListed.map { witnessData ->
+                                                //navigate to Loan Confirmation
+                                                component.onAddWitnessSelected(
+                                                    loanRefId = component.loanRefId,
+                                                    loanType = component.loanType,
+                                                    desiredAmount = component.desiredAmount,
+                                                    loanPeriod = component.loanPeriod,
+                                                    requiredGuarantors = component.requiredGuarantors,
+                                                    loanCategory = component.loanCategory,
+                                                    loanPurpose = component.loanPurpose,
+                                                    loanPurposeCategory = component.loanPurposeCategory,
+                                                    businessType = component.businessType,
+                                                    businessLocation = component.businessLocation,
+                                                    kraPin = component.kraPin,
+                                                    employer = component.employer,
+                                                    employmentNumber = component.employmentNumber,
+                                                    grossSalary = component.grossSalary,
+                                                    netSalary = component.netSalary,
+                                                    memberRefId = component.memberRefId,
+                                                    guarantorList = component.guarantorList,
+                                                    loanPurposeCategoryCode = component.loanPurposeCategoryCode,
+                                                    witnessRefId = witnessData.refId,
+                                                    witnessName = witnessData.memberFirstName + " " + witnessData.memberLastName,
+                                                    witnessPayrollNo = signHomeState.witnessPayrollNo.value.text
+                                                )
+                                            }
+                                        }
+                                    },
+                                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+                                ) {
+                                    Text("Submit")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        )
+    }
+
+
     Scaffold(
         modifier = Modifier
             .fillMaxWidth()
@@ -680,7 +917,6 @@ fun AddWitnessContent(
                         ActionButton(
                             label = if (witnessDataListed.size != 1) "Search" else "Add Witness",
                             onClickContainer = {
-                                println("tES DATA:::::" +  component.kraPin)
                                 if (witnessDataListed.size != 1) {
                                     when (witnessOptions) {
                                         WitnessOptions.MEMBERNUMBER -> {
@@ -710,31 +946,40 @@ fun AddWitnessContent(
                                         }
                                     }
                                 } else {
-                                    if (conditionChecked) {
-                                        witnessDataListed.map { witnessData ->
-                                            //navigate to Loan Confirmation
-                                            component.onAddWitnessSelected(
-                                                loanRefId = component.loanRefId,
-                                                loanType = component.loanType,
-                                                desiredAmount = component.desiredAmount,
-                                                loanPeriod = component.loanPeriod,
-                                                requiredGuarantors = component.requiredGuarantors,
-                                                loanCategory = component.loanCategory,
-                                                loanPurpose = component.loanPurpose,
-                                                loanPurposeCategory = component.loanPurposeCategory,
-                                                businessType = component.businessType,
-                                                businessLocation = component.businessLocation,
-                                                kraPin = component.kraPin,
-                                                employer = component.employer,
-                                                employmentNumber = component.employmentNumber,
-                                                grossSalary = component.grossSalary,
-                                                netSalary = component.netSalary,
-                                                memberRefId = component.memberRefId,
-                                                guarantorList = component.guarantorList,
-                                                loanPurposeCategoryCode = component.loanPurposeCategoryCode,
-                                                witnessRefId = witnessData.refId,
-                                                witnessName = witnessData.memberFirstName + " " + witnessData.memberLastName
-                                            )
+                                    // show dialogue
+                                    signHomeState.prestaClientSettings?.let {
+                                        it.response.details?.let { details ->
+                                            if (details.containsKey("witness_payroll_no")) {
+                                                showDialog = true
+                                            } else {
+                                                if (conditionChecked) {
+                                                    witnessDataListed.map { witnessData ->
+                                                        //navigate to Loan Confirmation
+                                                        component.onAddWitnessSelected(
+                                                            loanRefId = component.loanRefId,
+                                                            loanType = component.loanType,
+                                                            desiredAmount = component.desiredAmount,
+                                                            loanPeriod = component.loanPeriod,
+                                                            requiredGuarantors = component.requiredGuarantors,
+                                                            loanCategory = component.loanCategory,
+                                                            loanPurpose = component.loanPurpose,
+                                                            loanPurposeCategory = component.loanPurposeCategory,
+                                                            businessType = component.businessType,
+                                                            businessLocation = component.businessLocation,
+                                                            kraPin = component.kraPin,
+                                                            employer = component.employer,
+                                                            employmentNumber = component.employmentNumber,
+                                                            grossSalary = component.grossSalary,
+                                                            netSalary = component.netSalary,
+                                                            memberRefId = component.memberRefId,
+                                                            guarantorList = component.guarantorList,
+                                                            loanPurposeCategoryCode = component.loanPurposeCategoryCode,
+                                                            witnessRefId = witnessData.refId,
+                                                            witnessName = witnessData.memberFirstName + " " + witnessData.memberLastName
+                                                        )
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }

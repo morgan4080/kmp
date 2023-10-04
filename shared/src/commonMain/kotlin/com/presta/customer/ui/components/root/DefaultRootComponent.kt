@@ -818,7 +818,8 @@ class DefaultRootComponent(
                         guarantorList = guarantorList,
                         loanPurposeCategoryCode = loanPurposeCategoryCode,
                         witnessRefId = witnessRefid,
-                        witnessName = ""
+                        witnessName = "",
+                        witnessPayrollNo = ""
                     )
                 )
             },
@@ -998,7 +999,7 @@ class DefaultRootComponent(
                                     guarantorList,
                                     loanPurposeCategoryCode,
                                     witnessRefid,
-                                    witnessName ->
+                                    witnessName, witnessPayrollNo ->
                 navigation.push(
                     Config.LongTermLoanConfirmation(
                         loanRefId = loanRefId,
@@ -1020,7 +1021,8 @@ class DefaultRootComponent(
                         guarantorList = guarantorList,
                         loanPurposeCategoryCode = loanPurposeCategoryCode,
                         witnessRefId = witnessRefid,
-                        witnessName = witnessName
+                        witnessName = witnessName,
+                                witnessPayrollNo = witnessPayrollNo
                     )
                 )
             }
@@ -1061,6 +1063,7 @@ class DefaultRootComponent(
             loanPurposeCategoryCode = config.loanPurposeCategoryCode,
             witnessRefId = config.witnessRefId,
             witnessName = config.witnessName,
+            witnessPayrollNo = config.witnessPayrollNo,
             navigateToSignLoanFormCLicked = { loanNumber, amount, loanRequestRefId, memberRefId ->
                 navigation.push(
                     Config.SignLoanForm(
@@ -1353,6 +1356,7 @@ class DefaultRootComponent(
             val loanPurposeCategoryCode: String,
             val witnessRefId: String,
             val witnessName: String,
+            val witnessPayrollNo: String,
         ) : Config()
 
         @Parcelize
@@ -1417,6 +1421,12 @@ class DefaultRootComponent(
             val guarantorFirstname: String,
             val guarantorLastName: String
         ) : Config()
+    }
+
+    fun redirectToSplash() {
+        navigation.replaceAll(Config.Splash, onComplete = {
+            println("Suspended")
+        })
     }
 
     init {
@@ -1485,9 +1495,7 @@ class DefaultRootComponent(
 
                     else -> {
                         super.onResume()
-                        navigation.replaceAll(Config.Splash, onComplete = {
-                            println("Suspended")
-                        })
+                        redirectToSplash()
                     }
                 }
             }

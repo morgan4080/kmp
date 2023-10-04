@@ -312,6 +312,10 @@ fun SelfEmployedDetails(
                             userDetailsMap["employer"] = signHomeState.employer.value.text
                             userDetailsMap["employmentNumber"] =
                                 signHomeState.employmentNumber.value.text
+                            userDetailsMap["employmentTerms"] =
+                                signHomeState.employmentTerms.value.text
+                            userDetailsMap["department"] =
+                                signHomeState.department.value.text
                             userDetailsMap["grossSalary"] = signHomeState.grossSalary.value.text
                             userDetailsMap["netSalary"] = signHomeState.netSalary.value.text
                             userDetailsMap["kraPin"] = signHomeState.kraPin.value.text
@@ -329,7 +333,6 @@ fun SelfEmployedDetails(
                                     it
                                 )
                             }
-                            //Todo-----show failed or successful update
                             onClickSubmit()
                         }
 

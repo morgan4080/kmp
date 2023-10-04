@@ -48,6 +48,7 @@ interface AddWitnessComponent {
         loanPurposeCategoryCode: String,
         witnessRefId: String,
         witnessName: String,
+        witnessPayrollNo: String = "",
     )
 
     val authStore: AuthStore

@@ -35,9 +35,13 @@ class MainActivity : AppCompatActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
+        val defaultComponentCtx = defaultComponentContext()
+
         try {
             val koinApplication = initKoin(
                 // add to build configuration, false in prod
+                componentContext = defaultComponentCtx,
+                storeFactory = DefaultStoreFactory(),
                 enableNetworkLogs = true,
                 platform = platform,
             )
@@ -47,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val root = DefaultRootComponent(
-            componentContext = defaultComponentContext(),
+            componentContext = defaultComponentCtx,
             storeFactory = DefaultStoreFactory()
         )
 

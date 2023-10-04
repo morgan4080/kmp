@@ -51,6 +51,7 @@ class DefaultAddWitnessComponent (
         loanPurposeCategoryCode: String,
         witnessRefId: String,
         witnessName: String,
+        witnessPayrollNo: String
     ) -> Unit,
     override val loanRefId: String,
     override val loanType: String,
@@ -143,6 +144,11 @@ class DefaultAddWitnessComponent (
                             phoneNumber = state.cachedMemberData.phoneNumber
                         )
                     )
+                    onProfileEvent(
+                        SignHomeStore.Intent.GetClientSettings(
+                            token = state.cachedMemberData.accessToken
+                        )
+                    )
                     this.cancel()
                 }
             }
@@ -168,7 +174,8 @@ class DefaultAddWitnessComponent (
         guarantorList: Set<GuarantorDataListing>,
         loanPurposeCategoryCode: String,
         witnessRefId: String,
-        witnessName: String
+        witnessName: String,
+        witnessPayrollNo: String
     ) {
         onAddWitnessClicked(
             loanRefId,
@@ -190,7 +197,8 @@ class DefaultAddWitnessComponent (
             guarantorList,
             loanPurposeCategoryCode,
             witnessRefId,
-            witnessName
+            witnessName,
+            witnessPayrollNo
         )
     }
     override fun onBackNavClicked() {
