@@ -6,9 +6,12 @@ import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
+import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.signHome.data.SignHomeRepository
 import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
 import com.presta.customer.prestaDispatchers
+import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
+import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStoreFactory
 import com.presta.customer.ui.components.registration.store.InputFields
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -45,12 +48,13 @@ class SignHomeStoreFactory(
         data class UpdateSignTenanPersonalInfo(val updateSignTenantPersonalInfo: PrestaSignUserDetailsResponse) :
             Msg()
 
-        object ClearError : Msg()
+        data object ClearError : Msg()
         data class UpdateInputValue(val inputField: InputFields, val value: TextFieldValue) : Msg()
-        object ClearKycError : Msg()
+        data object ClearKycError : Msg()
         data class UpdateKycValue(val inputField: KycInputs, val value: TextFieldValue) : Msg()
 
         data class SignHomeFailed(val error: String?) : Msg()
+        data class ClientSettingsLoaded(val clientSettingsLoaded: ClientSettingsResponse) : Msg()
 
     }
 
@@ -115,6 +119,11 @@ class SignHomeStoreFactory(
 
                 is SignHomeStore.Intent.ClearKYCErrors ->
                     dispatch(Msg.ClearKycError)
+
+                is SignHomeStore.Intent.GetClientSettings -> getClientSettings(
+                    token = intent.token
+
+                )
 
             }
 
@@ -314,6 +323,29 @@ class SignHomeStoreFactory(
                 dispatch(Msg.SignHomeLoading(false))
             }
         }
+
+        private var getPrestaClientSettingsJob: Job? = null
+        private fun getClientSettings(
+            token: String
+        ) {
+            if (getPrestaClientSettingsJob?.isActive == true) return
+
+            dispatch(Msg.SignHomeLoading())
+
+            getPrestaClientSettingsJob = scope.launch {
+                signHomeRepository.getClientSettingsData(
+                    token = token
+                ).onSuccess { response ->
+                    dispatch(Msg.ClientSettingsLoaded(response))
+                    println("Load Success")
+
+                }.onFailure { e ->
+                    dispatch(Msg.SignHomeFailed(e.message))
+                    println("Load failed")
+                }
+                dispatch(Msg.SignHomeLoading(false))
+            }
+        }
     }
 
     private object ReducerImpl :
@@ -446,6 +478,7 @@ class SignHomeStoreFactory(
                                 )
                             )
                         }
+
                         KycInputs.EMPLOYMENTTERMS -> {
                             // validate first name
                             val pattern = Regex("^(\\s*[a-zA-Z\\s]*)")
@@ -464,6 +497,7 @@ class SignHomeStoreFactory(
                                 )
                             )
                         }
+
                         KycInputs.DEPARTMENT -> {
                             // validate first name
                             val pattern = Regex("^(\\s*[a-zA-Z\\s]*)")
@@ -605,6 +639,8 @@ class SignHomeStoreFactory(
                 is Msg.ClearKycError -> copy(
                     error = null
                 )
+
+                is Msg.ClientSettingsLoaded -> copy(prestaClientSettings = msg.clientSettingsLoaded)
 
             }
     }

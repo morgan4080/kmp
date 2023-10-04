@@ -1,5 +1,6 @@
 package com.presta.customer.network.signHome.data
 
+import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
 
 interface SignHomeRepository {
@@ -28,4 +29,7 @@ interface SignHomeRepository {
         idNumber: String,
         email: String
     ): Result<PrestaSignUserDetailsResponse>
+    suspend fun getClientSettingsData(
+        token: String
+    ): Result<ClientSettingsResponse>
 }

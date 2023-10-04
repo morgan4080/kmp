@@ -129,6 +129,8 @@ class DefaultAddGuarantorsComponent(
     override val signHomeState: StateFlow<SignHomeStore.State> =
         sigHomeStore.stateFlow
 
+
+
     override fun onProfileEvent(event: SignHomeStore.Intent) {
         sigHomeStore.accept(event)
     }
@@ -257,6 +259,10 @@ class DefaultAddGuarantorsComponent(
             witnessRefId
         )
 
+    }
+
+    override fun reloadModels() {
+       checkAuthenticatedUser()
     }
 
     init {

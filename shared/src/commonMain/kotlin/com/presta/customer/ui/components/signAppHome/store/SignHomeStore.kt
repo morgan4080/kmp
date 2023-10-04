@@ -2,7 +2,9 @@ package com.presta.customer.ui.components.signAppHome.store
 
 import androidx.compose.ui.text.input.TextFieldValue
 import com.arkivanov.mvikotlin.core.store.Store
+import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
+import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.registration.store.InputFields
 import com.presta.customer.ui.composables.InputTypes
 
@@ -70,12 +72,15 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
             val inputField: InputFields,
             val value: TextFieldValue
         ) : Intent()
+
         data object ClearError : Intent()
         data class UpdateKycValues(
             val inputField: KycInputs,
             val value: TextFieldValue
         ) : Intent()
+
         data object ClearKYCErrors : Intent()
+        data class GetClientSettings(val token: String) : Intent()
     }
 
     data class State(
@@ -85,6 +90,7 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
         var prestaTenantByMemberNumber: PrestaSignUserDetailsResponse? = null,
         val updatePrestaTenantDetails: PrestaSignUserDetailsResponse? = null,
         val updatePrestaTenantPersonalInfo: PrestaSignUserDetailsResponse? = null,
+        val prestaClientSettings: ClientSettingsResponse? = null,
         val firstName: InputMethodConfirmation = InputMethodConfirmation(
             inputLabel = "First Name*",
             fieldType = InputFields.FIRST_NAME,

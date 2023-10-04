@@ -1,5 +1,6 @@
 package com.presta.customer.network.signHome.data
 
+import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.signHome.client.PrestaSignHomeClient
 import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
 import org.koin.core.component.KoinComponent
@@ -78,6 +79,20 @@ class SignHomeRepositoryImpl : SignHomeRepository, KoinComponent {
                 phoneNumber= phoneNumber,
                 idNumber= idNumber,
                 email= email
+            )
+            Result.success(response)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getClientSettingsData(
+        token: String): Result<ClientSettingsResponse> {
+        return try {
+            val response =  prestaSignHomeClient.getClientSettings(
+                token = token
             )
             Result.success(response)
 

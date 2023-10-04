@@ -180,6 +180,7 @@ fun AddGuarantorContent(
     difff = check1 - check2
     fun refresh() = refreshScope.launch {
         refreshing = true
+        component.reloadModels()
         delay(1500)
         refreshing = false
     }
@@ -345,8 +346,8 @@ fun AddGuarantorContent(
                 }
             } else {
                 guarantorDataListed = guarantorDataListed.toMutableSet().apply {
-                        addAll(apiResponse)
-                    }
+                    addAll(apiResponse)
+                }
                 memberNumber = ""
                 launchGuarantorListing = true
             }

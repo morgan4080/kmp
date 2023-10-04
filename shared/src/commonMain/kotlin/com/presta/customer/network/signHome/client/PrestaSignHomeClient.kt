@@ -1,6 +1,8 @@
 package com.presta.customer.network.signHome.client
 
 import com.presta.customer.network.NetworkConstants
+import com.presta.customer.network.longTermLoans.errorHandler.longTermLoansErrorHandler
+import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.signHome.errorHandler.signHomeErrorHandler
 import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
 import io.ktor.client.HttpClient
@@ -101,6 +103,17 @@ class PrestaSignHomeClient(
                         email = email
                     )
                 )
+            }
+        }
+    }
+    suspend fun getClientSettings(
+        token: String,
+    ): ClientSettingsResponse {
+        return signHomeErrorHandler {
+            httpClient.get(NetworkConstants.PrestaGetClientSettings.route) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, Json)
+                contentType(Json)
             }
         }
     }

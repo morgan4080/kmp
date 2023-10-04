@@ -70,5 +70,6 @@ interface AddGuarantorsComponent {
     fun onProfileEvent(event: SignHomeStore.Intent)
     val sigHomeStore: SignHomeStore
     val signHomeState: StateFlow<SignHomeStore.State>
+    fun reloadModels()
 
 }
