@@ -103,6 +103,9 @@ fun UserInformation(
     var employer by remember { mutableStateOf("") }
     var employmentTerms by remember { mutableStateOf("") }
     var department by remember { mutableStateOf("") }
+    var designation by remember { mutableStateOf("") }
+    var postalAddress by remember { mutableStateOf("") }
+    var dob by remember { mutableStateOf("") }
     var grossSalary by remember { mutableStateOf("") }
     var netSalary by remember { mutableStateOf("") }
     var kraPin by remember { mutableStateOf("") }
@@ -147,6 +150,15 @@ fun UserInformation(
         if (it.key.contains("employmentTerms")) {
             employmentTerms = it.value.value.toString()
         }
+        if (it.key.contains("designation")) {
+            designation = it.value.value.toString()
+        }
+        if (it.key.contains("postalAddress")) {
+            postalAddress = it.value.value.toString()
+        }
+        if (it.key.contains("dob")) {
+            dob = it.value.value.toString()
+        }
         if (it.key.contains("department")) {
             department = it.value.value.toString()
         }
@@ -182,7 +194,7 @@ fun UserInformation(
     signProfileState.prestaClientSettings?.let {
         it.response.details?.let { detailsMap ->
             detailsMap.map { det ->
-                if (det.key == "disbursement_mode" && det.value.type == "ENUM")  {
+                if (det.key == "disbursement_modes" && det.value.type == "ENUM")  {
                     disbursementModeListing = det.value.meta.keys.map { key ->
                         DisbursementModes(key, key, selected = true)
                     }
@@ -886,6 +898,9 @@ fun UserInformation(
                                                     loan_type = component.loanType,
                                                     kra_pin = kraPin,
                                                     witness_payroll_no = component.witnessPayrollNo,
+                                                    designation = designation,
+                                                    postal_address = postalAddress,
+                                                    dob = dob
                                                 ),
                                                 loanProductName = component.loanType,
                                                 loanProductRefId = component.loanRefId,
