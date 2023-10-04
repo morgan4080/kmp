@@ -1156,7 +1156,12 @@ class DefaultRootComponent(
         DefaultSignLoanFormComponent(
             componentContext = componentContext,
             onItemClicked = {
-                navigation.pop()
+                navigation.replaceAll(
+                    Config.SignApp(
+                        loanRefId = "",
+                        replaceGuarantor = ""
+                    )
+                )
             },
             onProductClicked = {
             },

@@ -107,45 +107,7 @@ fun SignLoanFormContent(
         }
     }
 
-    if (state.prestaLoanByLoanRequestRefId?.pendingReason != null || state.prestaLoanByLoanRequestRefId?.pendingReason != "") {
-        Column(
-            modifier = Modifier
-                .fillMaxHeight(0.7f)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    modifier = Modifier.size(150.dp),
-                    imageVector = Icons.Filled.ChatBubble,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.errorContainer
-                )
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(0.8f)
-                    .padding(top = 25.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                state.prestaLoanByLoanRequestRefId?.pendingReason?.let {
-                    Text(
-                        modifier = Modifier.width(200.dp),
-                        text = "$it. Please contact admin for assistance.",
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
-                        textAlign = TextAlign.Center,
-                        lineHeight = MaterialTheme.typography.bodyMedium.lineHeight
-                    )
-                }
-            }
-        }
-    } else if (state.prestaZohoSignUrl !== null) {
+    if (state.prestaZohoSignUrl !== null) {
         ViewWebView(state.prestaZohoSignUrl.signURL, onEvent, disposed = {
             authState.cachedMemberData?.let {
                 ApplyLongTermLoansStore.Intent.GetPrestaLoanByLoanRequestRefId(
@@ -221,6 +183,24 @@ fun SignLoanFormContent(
                                         .fillMaxWidth()
                                 ) {
                                 }
+                            }
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(0.8f)
+                                .padding(top = 25.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            state.prestaLoanByLoanRequestRefId?.pendingReason?.let {
+                                Text(
+                                    modifier = Modifier.width(200.dp),
+                                    text = "$it. Please contact admin for assistance.",
+                                    color = MaterialTheme.colorScheme.error,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
+                                    textAlign = TextAlign.Center,
+                                    lineHeight = MaterialTheme.typography.bodyMedium.lineHeight
+                                )
                             }
                         }
                     }

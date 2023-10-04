@@ -194,7 +194,7 @@ fun UserInformation(
     signProfileState.prestaClientSettings?.let {
         it.response.details?.let { detailsMap ->
             detailsMap.map { det ->
-                if (det.key == "disbursement_modes" && det.value.type == "ENUM")  {
+                if (det.key == "disbursement_mode" && det.value.type == "ENUM")  {
                     disbursementModeListing = det.value.meta.keys.map { key ->
                         DisbursementModes(key, key, selected = true)
                     }
@@ -887,7 +887,7 @@ fun UserInformation(
                                                     loanPeriod = component.loanPeriod.toString(),
                                                     repayment_period = component.loanPeriod.toString(),
                                                     employer_name = employer,
-                                                    employment_terms = "",
+                                                    employment_terms = employmentTerms,
                                                     employment_number = employmentNumber,
                                                     business_location = businessLocation,
                                                     business_type = businessType,
