@@ -111,11 +111,14 @@ fun EmployedDetails(
                 listOf(
                     signHomeState.employer,
                     signHomeState.department,
+                    signHomeState.postalAddress,
+                    signHomeState.designation,
                     signHomeState.employmentNumber,
                     signHomeState.grossSalary,
                     signHomeState.netSalary,
                     signHomeState.kraPin,
                     signHomeState.employmentTerms,
+                    signHomeState.dob
                     //
                 ).filter {formItem ->
                     // check client settings state
@@ -123,6 +126,15 @@ fun EmployedDetails(
                     state.prestaClientSettings?.let { settings ->
                         settings.response.details?.let { detail ->
                             if (!detail.containsKey("employment_terms") && formItem.fieldType == KycInputs.EMPLOYMENTTERMS) {
+                                return@filter false
+                            }
+                            if (!detail.containsKey("designation") && formItem.fieldType == KycInputs.DESIGNATION) {
+                                return@filter false
+                            }
+                            if (!detail.containsKey("postal_address") && formItem.fieldType == KycInputs.POSTALADDRESS) {
+                                return@filter false
+                            }
+                            if (!detail.containsKey("dob") && formItem.fieldType == KycInputs.DOB) {
                                 return@filter false
                             }
                             if (!detail.containsKey("department") && formItem.fieldType == KycInputs.DEPARTMENT) {
@@ -199,8 +211,6 @@ fun EmployedDetails(
                                                                 onOptionSelected(text)
                                                                 if (inputMethod.enabled) {
                                                                     hasError = false
-                                                                    println(":::text:::")
-                                                                    println(text)
                                                                     onProfileEvent(
                                                                         SignHomeStore.Intent.UpdateKycValues(
                                                                             inputField = inputMethod.fieldType,
@@ -365,7 +375,7 @@ fun EmployedDetails(
                             if (inputMethod.errorMessage !== "") {
                                 hasError = true
                                 Text(
-                                    modifier = Modifier.padding(horizontal = 20.dp),
+                                    modifier = Modifier.padding(horizontal = 16.dp),
                                     text = inputMethod.errorMessage.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
                                     fontSize = 10.sp,
                                     style = MaterialTheme.typography.bodyMedium,
@@ -395,6 +405,12 @@ fun EmployedDetails(
                                 signHomeState.employmentTerms.value.text
                             userDetailsMap["department"] =
                                 signHomeState.department.value.text
+                            userDetailsMap["designation"] =
+                                signHomeState.designation.value.text
+                            userDetailsMap["dob"] =
+                                signHomeState.dob.value.text
+                            userDetailsMap["postalAddress"] =
+                                signHomeState.postalAddress.value.text
                             userDetailsMap["employmentNumber"] =
                                 signHomeState.employmentNumber.value.text
                             userDetailsMap["grossSalary"] =

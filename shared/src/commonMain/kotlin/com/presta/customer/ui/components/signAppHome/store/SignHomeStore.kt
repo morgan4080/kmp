@@ -36,11 +36,14 @@ enum class KycInputs {
     WITNESSPAYROLLNO,
     DISBURSEMENT,
     REPAYMENT,
+    DESIGNATION,
     DEPARTMENT,
+    POSTALADDRESS,
     GROSSSALARY,
     NETSALARY,
     KRAPIN,
     BUSINESSLOCATION,
+    DOB,
     BUSINESSTYPE
 }
 
@@ -130,6 +133,15 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
             errorMessage = "",
             enabled = false
         ),
+        val dob: Kyc = Kyc(
+            inputLabel = "Date of Birth*",
+            fieldType = KycInputs.DOB,
+            inputTypes = InputTypes.STRING,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
         val email: InputMethodConfirmation = InputMethodConfirmation(
             inputLabel = "Email*",
             fieldType = InputFields.EMAIL,
@@ -152,6 +164,15 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
         val department: Kyc = Kyc(
             inputLabel = "Department*",
             fieldType = KycInputs.DEPARTMENT,
+            inputTypes = InputTypes.STRING,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
+        val postalAddress: Kyc = Kyc(
+            inputLabel = "Postal Address*",
+            fieldType = KycInputs.POSTALADDRESS,
             inputTypes = InputTypes.STRING,
             required = true,
             value = TextFieldValue(),
@@ -198,6 +219,15 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
             inputLabel = "Repayment Mode*",
             fieldType = KycInputs.REPAYMENT,
             inputTypes = InputTypes.ENUM,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
+        val designation: Kyc = Kyc(
+            inputLabel = "Designation*",
+            fieldType = KycInputs.DESIGNATION,
+            inputTypes = InputTypes.STRING,
             required = true,
             value = TextFieldValue(),
             errorMessage = "",
