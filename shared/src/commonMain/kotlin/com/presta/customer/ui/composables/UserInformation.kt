@@ -194,7 +194,7 @@ fun UserInformation(
     signProfileState.prestaClientSettings?.let {
         it.response.details?.let { detailsMap ->
             detailsMap.map { det ->
-                if (det.key == "disbursement_mode" && det.value.type == "ENUM")  {
+                if (det.key == "disbursement_modes" && det.value.type == "ENUM")  {
                     disbursementModeListing = det.value.meta.keys.map { key ->
                         DisbursementModes(key, key, selected = true)
                     }
