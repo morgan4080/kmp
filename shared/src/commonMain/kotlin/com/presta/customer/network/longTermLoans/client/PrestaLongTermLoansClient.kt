@@ -81,9 +81,6 @@ data class DetailsData @OptIn(ExperimentalSerializationApi::class) constructor(
     val loan_type: String,
     val kra_pin: String,
     @EncodeDefault val witness_payroll_no: String = "",
-    @EncodeDefault val designation: String = "",
-    @EncodeDefault val postal_address: String = "",
-    @EncodeDefault val dob: String = "",
 )
 
 @Serializable

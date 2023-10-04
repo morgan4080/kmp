@@ -101,6 +101,8 @@ fun UserInformation(
     var disbursementMode by remember { mutableStateOf("") }
     var repaymentMode by remember { mutableStateOf("") }
     var employer by remember { mutableStateOf("") }
+    var employmentTerms by remember { mutableStateOf("") }
+    var department by remember { mutableStateOf("") }
     var grossSalary by remember { mutableStateOf("") }
     var netSalary by remember { mutableStateOf("") }
     var kraPin by remember { mutableStateOf("") }
@@ -125,7 +127,7 @@ fun UserInformation(
             onSignProfileEvent(SignHomeStore.Intent.ClearError)
         }
     }
-    LaunchedEffect(state.prestaLongTermLoanRequestData?.refId) {
+    LaunchedEffect(state.prestaLongTermLoanRequestData) {
         if (!state.prestaLongTermLoanRequestData?.refId.isNullOrEmpty()) {
             state.prestaLongTermLoanRequestData?.let {
                 sendLoanRequest = false
@@ -136,19 +138,17 @@ fun UserInformation(
                     memberRefId = component.memberRefId
                 )
             }
-
-        } else {
-            //launch pop up to show reason of loan failure
-            //Todo--if loan pending reason is not null
-            if (state.prestaLongTermLoanRequestData?.refId.isNullOrEmpty() && sendLoanRequest) {
-                launchHandleLoanRequestPopUp = true
-                sendLoanRequest = false
-            }
         }
     }
     signProfileState.prestaTenantByPhoneNumber?.details?.map {
         if (it.key.contains("employer")) {
             employer = it.value.value.toString()
+        }
+        if (it.key.contains("employmentTerms")) {
+            employmentTerms = it.value.value.toString()
+        }
+        if (it.key.contains("department")) {
+            department = it.value.value.toString()
         }
         if (it.key.contains("gross")) {
             grossSalary = it.value.value.toString()
@@ -170,17 +170,31 @@ fun UserInformation(
         }
     }
 
-    Column(modifier = Modifier.padding(top = 20.dp)) {
-        //popup Disbursement mode
-        //Aded the popUps on top of Parent Column to prevent them from freezing
-        if (launchDisbursementModePopUp) {
 
-            val disburementModeListing = listOf(
-                DisbursementModes("Cheques", "CHEQUE", selected = true),
-                DisbursementModes("My Account", "MY_ACCOUNT", selected = true),
-                DisbursementModes("EFT", "EFT", selected = true),
-                DisbursementModes("RTGS", "RTGS", selected = true)
-            )
+
+    var disbursementModeListing = listOf(
+        DisbursementModes("Cheques", "CHEQUE", selected = true),
+        DisbursementModes("My Account", "MY_ACCOUNT", selected = true),
+        DisbursementModes("EFT", "EFT", selected = true),
+        DisbursementModes("RTGS", "RTGS", selected = true)
+    )
+
+    signProfileState.prestaClientSettings?.let {
+        it.response.details?.let { detailsMap ->
+            detailsMap.map { det ->
+                if (det.key == "disbursement_mode" && det.value.type == "ENUM")  {
+                    disbursementModeListing = det.value.meta.keys.map { key ->
+                        DisbursementModes(key, key, selected = true)
+                    }
+                }
+            }
+        }
+    }
+
+    Column(modifier = Modifier.padding(top = 20.dp)) {
+        // popup Disbursement mode
+        // Added the popUps on top of Parent Column to prevent them from freezing
+        if (launchDisbursementModePopUp) {
             Popup {
                 Column(
                     modifier = Modifier
@@ -232,7 +246,7 @@ fun UserInformation(
                                             .wrapContentHeight()
                                     ) {
 
-                                        disburementModeListing.mapIndexed { indexed, disbursementModes ->
+                                        disbursementModeListing.mapIndexed { indexed, disbursementModes ->
                                             item {
                                                 Row(
                                                     modifier = Modifier
@@ -252,7 +266,7 @@ fun UserInformation(
                                                                 if (selectedDisburseMentIndex == index) -1 else index
                                                             if (selectedDisburseMentIndex > -1) {
                                                                 disbursementMode =
-                                                                    disburementModeListing[selectedDisburseMentIndex].name
+                                                                    disbursementModeListing[selectedDisburseMentIndex].name
                                                             }
                                                         },
                                                         label = disbursementModes.name
@@ -870,7 +884,8 @@ fun UserInformation(
                                                     disbursement_mode = disbursementMode,
                                                     repayment_mode = repaymentMode,
                                                     loan_type = component.loanType,
-                                                    kra_pin = kraPin
+                                                    kra_pin = kraPin,
+                                                    witness_payroll_no = component.witnessPayrollNo,
                                                 ),
                                                 loanProductName = component.loanType,
                                                 loanProductRefId = component.loanRefId,

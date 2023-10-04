@@ -4,7 +4,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import com.arkivanov.mvikotlin.core.store.Store
 import com.presta.customer.network.longTermLoans.model.ClientSettingsResponse
 import com.presta.customer.network.signHome.model.PrestaSignUserDetailsResponse
-import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.registration.store.InputFields
 import com.presta.customer.ui.composables.InputTypes
 
@@ -34,6 +33,9 @@ enum class KycInputs {
     EMPLOYER,
     EMPLOYMENTNUMBER,
     EMPLOYMENTTERMS,
+    WITNESSPAYROLLNO,
+    DISBURSEMENT,
+    REPAYMENT,
     DEPARTMENT,
     GROSSSALARY,
     NETSALARY,
@@ -76,7 +78,8 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
         data object ClearError : Intent()
         data class UpdateKycValues(
             val inputField: KycInputs,
-            val value: TextFieldValue
+            val value: TextFieldValue,
+            val enumOptions: MutableList<String> = mutableListOf()
         ) : Intent()
 
         data object ClearKYCErrors : Intent()
@@ -155,6 +158,15 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
             errorMessage = "",
             enabled = true
         ),
+        val witnessPayrollNo: Kyc = Kyc(
+            inputLabel = "Witness Payroll Number*",
+            fieldType = KycInputs.WITNESSPAYROLLNO,
+            inputTypes = InputTypes.STRING,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
         val employmentNumber: Kyc = Kyc(
             inputLabel = "Employment Number*",
             fieldType = KycInputs.EMPLOYMENTNUMBER,
@@ -167,6 +179,24 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
         val employmentTerms: Kyc = Kyc(
             inputLabel = "Employment Terms*",
             fieldType = KycInputs.EMPLOYMENTTERMS,
+            inputTypes = InputTypes.ENUM,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
+        val disbursementModes: Kyc = Kyc(
+            inputLabel = "Disbursement Mode*",
+            fieldType = KycInputs.DISBURSEMENT,
+            inputTypes = InputTypes.ENUM,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
+        val repaymentModes: Kyc = Kyc(
+            inputLabel = "Repayment Mode*",
+            fieldType = KycInputs.REPAYMENT,
             inputTypes = InputTypes.ENUM,
             required = true,
             value = TextFieldValue(),
