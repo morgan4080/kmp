@@ -22,7 +22,7 @@ fun MainViewController(
     bottomSafeArea: Float,
     connectivityStatus: SharedStatus?
 ): UIViewController {
-    initKoin(platform = Platform())
+    initKoin(enableNetworkLogs = true, platform = Platform())
     val root = DefaultRootComponent(
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
         storeFactory = DefaultStoreFactory(),

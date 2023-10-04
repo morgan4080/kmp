@@ -14,9 +14,11 @@ internal fun createHttpClient(enableLogging: Boolean): HttpClient {
             })
         }
 
-        install(Logging) {
-            logger = Logger.DEFAULT
-            level = LogLevel.ALL
+        if (enableLogging) {
+            install(Logging) {
+                logger = Logger.DEFAULT
+                level = LogLevel.ALL
+            }
         }
     }
 }
