@@ -1446,6 +1446,7 @@ class DefaultRootComponent(
             platform.networkError.collect {
                 if (it) {
                     redirectToSplash()
+                    platform.networkError.value = false
                 }
             }
         }
