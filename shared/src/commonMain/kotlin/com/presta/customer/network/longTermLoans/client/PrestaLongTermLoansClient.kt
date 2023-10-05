@@ -84,6 +84,14 @@ data class DetailsData @OptIn(ExperimentalSerializationApi::class) constructor(
     @EncodeDefault val designation: String = "",
     @EncodeDefault val postal_address: String = "",
     @EncodeDefault val dob: String = "",
+    @EncodeDefault val postal_code: String= "",
+    @EncodeDefault val  city: String="",
+    @EncodeDefault val po_box: String="",
+    @EncodeDefault val department: String="",
+    @EncodeDefault val telephone_number: String="",
+    @EncodeDefault val applicant_fosa_account: String="",
+    @EncodeDefault val guarantor1_fosa_account: String="",
+    @EncodeDefault val guarantor2_fosa_account: String="",
 )
 
 @Serializable

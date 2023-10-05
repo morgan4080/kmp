@@ -285,8 +285,8 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
             enabled = true
         ),
         val city: Kyc = Kyc(
-            inputLabel = "Business Location*",
-            fieldType = KycInputs.BUSINESSLOCATION,
+            inputLabel = "City *",
+            fieldType = KycInputs.CITY,
             inputTypes = InputTypes.STRING,
             required = true,
             value = TextFieldValue(),
@@ -294,8 +294,8 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
             enabled = true
         ),
         val po_box: Kyc = Kyc(
-            inputLabel = "Business Location*",
-            fieldType = KycInputs.BUSINESSLOCATION,
+            inputLabel = "P.O BOX *",
+            fieldType = KycInputs.POBOX,
             inputTypes = InputTypes.STRING,
             required = true,
             value = TextFieldValue(),
@@ -303,8 +303,8 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
             enabled = true
         ),
         val postal_code: Kyc = Kyc(
-            inputLabel = "Business Location*",
-            fieldType = KycInputs.BUSINESSLOCATION,
+            inputLabel = "Postal Code*",
+            fieldType = KycInputs.POSTALCODE,
             inputTypes = InputTypes.STRING,
             required = true,
             value = TextFieldValue(),
@@ -312,8 +312,8 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
             enabled = true
         ),
         val telephone_number: Kyc = Kyc(
-            inputLabel = "Business Location*",
-            fieldType = KycInputs.BUSINESSLOCATION,
+            inputLabel = "Telephone No.*",
+            fieldType = KycInputs.TELEPHONE,
             inputTypes = InputTypes.STRING,
             required = false,
             value = TextFieldValue(),

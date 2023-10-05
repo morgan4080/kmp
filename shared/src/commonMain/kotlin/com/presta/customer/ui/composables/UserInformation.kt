@@ -112,12 +112,21 @@ fun UserInformation(
     var employmentNumber by remember { mutableStateOf("") }
     var businessLocation by remember { mutableStateOf("") }
     var businessType by remember { mutableStateOf("") }
+    var guarantor1_fosa_account by remember { mutableStateOf("") }
+    var guarantor2_fosa_account by remember { mutableStateOf("") }
+    var postalCode by remember { mutableStateOf("") }
+    var poBox by remember { mutableStateOf("") }
+    var city by remember { mutableStateOf("") }
+    var telephoneNumber by remember { mutableStateOf("") }
+
     val guarantorList = arrayListOf<Guarantor>()
     for (item in component.guarantorList) {
         val refId = item.guarantorRefId
         val amount = item.amount
         val guarantorName = item.guarantorFirstName
         guarantorList.add(Guarantor(refId, amount, guarantorName))
+        guarantor1_fosa_account=item.guarantor1_fosa_account
+        guarantor2_fosa_account=item.guarantor2_fosa_account
     }
     val snackbarHostState = remember { SnackbarHostState() }
     val focusRequester = remember { FocusRequester() }
@@ -179,6 +188,18 @@ fun UserInformation(
         }
         if (it.key.contains("businessT")) {
             businessType = it.value.value.toString()
+        }
+        if (it.key.contains("postal_code")) {
+        postalCode = it.value.value.toString()
+        }
+        if (it.key.contains("po_box")) {
+            poBox = it.value.value.toString()
+        }
+        if (it.key.contains("city")) {
+            city = it.value.value.toString()
+        }
+        if (it.key.contains("telephone_number")) {
+            telephoneNumber = it.value.value.toString()
         }
     }
 
@@ -900,7 +921,15 @@ fun UserInformation(
                                                     witness_payroll_no = component.witnessPayrollNo,
                                                     designation = designation,
                                                     postal_address = postalAddress,
-                                                    dob = dob
+                                                    dob = dob,
+                                                    postal_code= postalCode,
+                                                    city=city,
+                                                    po_box=poBox,
+                                                    department=department,
+                                                    telephone_number=telephoneNumber,
+                                                    applicant_fosa_account="",
+                                                    guarantor1_fosa_account=guarantor1_fosa_account,
+                                                    guarantor2_fosa_account=guarantor2_fosa_account,
                                                 ),
                                                 loanProductName = component.loanType,
                                                 loanProductRefId = component.loanRefId,

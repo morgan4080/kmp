@@ -175,6 +175,38 @@ class SignHomeStoreFactory(
                     )
                     //update
                     response.details?.map {
+                        if (it.key.contains("po_box")) {
+                            dispatch(
+                                Msg.UpdateKycValue(
+                                    inputField = KycInputs.POBOX,
+                                    value = TextFieldValue(it.value.value.toString()),
+                                )
+                            )
+                        }
+                        if (it.key.contains("postal_code")) {
+                            dispatch(
+                                Msg.UpdateKycValue(
+                                    inputField = KycInputs.POSTALCODE,
+                                    value = TextFieldValue(it.value.value.toString()),
+                                )
+                            )
+                        }
+                        if (it.key.contains("telephone_number")) {
+                            dispatch(
+                                Msg.UpdateKycValue(
+                                    inputField = KycInputs.TELEPHONE,
+                                    value = TextFieldValue(it.value.value.toString()),
+                                )
+                            )
+                        }
+                        if (it.key.contains("city")) {
+                            dispatch(
+                                Msg.UpdateKycValue(
+                                    inputField = KycInputs.CITY,
+                                    value = TextFieldValue(it.value.value.toString()),
+                                )
+                            )
+                        }
                         if (it.key.contains("employmentTerms")) {
                             dispatch(
                                 Msg.UpdateKycValue(

@@ -411,7 +411,7 @@ fun EmployedDetails(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 40.dp)
+                        .padding(top = 40.dp, bottom = 100.dp)
                 ) {
                     ActionButton(
                         label = "Submit",
