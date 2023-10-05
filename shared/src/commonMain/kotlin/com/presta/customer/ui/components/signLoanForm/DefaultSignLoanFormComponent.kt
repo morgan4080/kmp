@@ -1,12 +1,12 @@
 package com.presta.customer.ui.components.signLoanForm
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.essenty.backhandler.BackCallback
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.presta.customer.Platform
-import com.presta.customer.network.longTermLoans.data.LongTermLoansRepository
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.organisation.OrganisationModel
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
@@ -15,7 +15,6 @@ import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.auth.store.AuthStoreFactory
 import com.presta.customer.ui.components.profile.CoroutineScope
 import com.presta.customer.ui.components.profile.coroutineScope
-import com.presta.customer.ui.components.signLoanForm.poller.ApplicantSigningStatusPoller
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -49,6 +48,11 @@ class DefaultSignLoanFormComponent(
     override val memberRefId: String,
 ) : SignLoanFormComponent, ComponentContext by componentContext, KoinComponent {
     override val platform by inject<Platform>()
+
+    private val backCallback = BackCallback {
+        onItemClicked()
+    }
+
     private val scope = coroutineScope(mainContext + SupervisorJob())
     override val authStore: AuthStore =
         instanceKeeper.getStore {
@@ -143,6 +147,7 @@ class DefaultSignLoanFormComponent(
         refreshToken()
         onAuthEvent(AuthStore.Intent.GetCachedMemberData)
         checkAuthenticatedUser()
+        backHandler.register(backCallback)
     }
 
 }
