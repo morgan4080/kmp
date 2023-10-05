@@ -27,6 +27,7 @@ data class PrestaLoanRequestByRequestRefId @OptIn(ExperimentalSerializationApi::
     @EncodeDefault val witnessSigned: Boolean? = null,
     @EncodeDefault val pdfThumbNail: String? = null,
     val guarantorList: List<GuarantorDataResponse>,
+    @EncodeDefault val pendingReasonClass: PendingReasons? = null,
 )
 
 

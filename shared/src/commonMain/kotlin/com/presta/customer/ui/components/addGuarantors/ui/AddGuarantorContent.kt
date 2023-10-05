@@ -94,9 +94,11 @@ import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.ui.components.addGuarantors.AddGuarantorsComponent
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.signAppHome.store.KycInputs
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.composables.ActionButton
 import com.presta.customer.ui.composables.EmployedDetails
+import com.presta.customer.ui.composables.InputTypes
 import com.presta.customer.ui.composables.NavigateBackTopBar
 import com.presta.customer.ui.composables.SelfEmployedDetails
 import com.presta.customer.ui.helpers.formatMoney
@@ -376,17 +378,7 @@ fun AddGuarantorContent(
         difff = check1 - check2
     }
 
-//    var showDialogue by remember { mutableStateOf(false) }
-//    if (guarantorDataListed.size == component.requiredGuarantors && difff != 0) {
-//        AlertCustom(
-//            showDialogue = true,
-//            label = "Before proceeding, please review and update the guarantor-ship amount as it is currently insufficient. Ensure that the required amount is entered to continue with the process.",
-//            close = {
-//                showDialogue = false
-//            }
-//        )
-//
-//    }
+    var hasError by remember { mutableStateOf(false) }
 
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
@@ -398,7 +390,7 @@ fun AddGuarantorContent(
                 state.prestaClientSettings?.let { sett ->
                     sett.response.let { res ->
                         res.details?.let { detail ->
-                            if (detail.containsKey("businessLocation") || detail.containsKey("businessType")) {
+                            if (detail.containsKey("businessLocation") || detail.containsKey("businessType") || detail.containsKey("business_location")) {
                                 tabs.add("Business/Self Employed")
                             }
                         }
@@ -407,13 +399,13 @@ fun AddGuarantorContent(
                 var tabIndex by remember { mutableStateOf(0) }
                 Column(
                     modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 10.dp)
-                        .fillMaxHeight()
+                        .padding(horizontal = 16.dp)
+                        .fillMaxHeight(0.95f)
                         .background(MaterialTheme.colorScheme.surface)
                 ) {
                     TabRow(
                         selectedTabIndex = tabIndex,
-                        modifier = Modifier,
+                        modifier = Modifier.padding(bottom = 10.dp),
                     ) {
                         tabs.forEachIndexed { index, title ->
                             Tab(
@@ -478,12 +470,13 @@ fun AddGuarantorContent(
                             }
                         )
                     }
+
+                    Spacer(modifier = Modifier.padding(vertical = 100.dp))
                 }
             } else if (launchAddAmountToGuarantee && difff != 0) {
                 Column(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.surface)
-                        .fillMaxHeight(0.8f)
                 ) {
                     Column(
                         modifier = Modifier
@@ -548,6 +541,166 @@ fun AddGuarantorContent(
                                 .fillMaxWidth()
                                 .padding(top = 20.dp)
                         ) {
+                            // BOSA / FOSA GUARANTOR SELECTOR
+
+                            listOf(
+                                signHomeState.guarantor1FosaAccount,
+                                signHomeState.guarantor2FosaAccount
+                            ).filter {formItem ->
+                                // check client settings + guarantorData count ()
+                                state.prestaClientSettings?.let { settings ->
+                                    settings.response.details?.let { detail ->
+                                        if (!detail.containsKey("guarantor1_fosa_account") && formItem.fieldType == KycInputs.GURANTOR1FOSA && guarantorDataListed.size == 1) {
+                                            return@filter false
+                                        }
+                                        if (!detail.containsKey("guarantor2_fosa_account") && formItem.fieldType == KycInputs.GURANTOR2FOSA && guarantorDataListed.size == 2) {
+                                            return@filter false
+                                        }
+                                    }
+                                }
+                                true
+                            }.map { inputMethod ->
+
+                                LaunchedEffect(inputMethod.errorMessage, inputMethod.value) {
+                                    hasError = inputMethod.errorMessage != "" || inputMethod.value.text == ""
+                                }
+
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 8.dp)
+                                        .shadow(0.5.dp, RoundedCornerShape(10.dp))
+                                        .background(
+                                            color = MaterialTheme.colorScheme.inverseOnSurface,
+                                            shape = RoundedCornerShape(10.dp)
+                                        ),
+                                ) {
+                                    BasicTextField(
+                                        modifier = Modifier
+                                            .focusRequester(focusRequester)
+                                            .height(65.dp)
+                                            .padding(
+                                                top = 20.dp,
+                                                bottom = 16.dp,
+                                                start = 16.dp,
+                                                end = 16.dp
+                                            )
+                                            .absoluteOffset(y = 2.dp),
+                                        keyboardOptions = KeyboardOptions(
+                                            keyboardType =
+                                            when (inputMethod.inputTypes) {
+                                                InputTypes.NUMBER -> KeyboardType.Number
+                                                InputTypes.STRING -> KeyboardType.Text
+                                                InputTypes.PHONE -> KeyboardType.Phone
+                                                InputTypes.URI -> KeyboardType.Uri
+                                                InputTypes.EMAIL -> KeyboardType.Email
+                                                InputTypes.PASSWORD -> KeyboardType.Password
+                                                InputTypes.NUMBER_PASSWORD -> KeyboardType.NumberPassword
+                                                InputTypes.DECIMAL -> KeyboardType.Decimal
+                                                else -> KeyboardType.Text
+                                            }
+                                        ),
+                                        value = inputMethod.value,
+                                        enabled = inputMethod.enabled,
+                                        onValueChange = {
+                                            if (inputMethod.enabled) {
+                                                onProfileEvent(
+                                                    SignHomeStore.Intent.UpdateKycValues(
+                                                        inputMethod.fieldType,
+                                                        it
+                                                    )
+                                                )
+                                            }
+
+                                        },
+                                        singleLine = true,
+                                        textStyle = TextStyle(
+                                            color = MaterialTheme.colorScheme.onBackground,
+                                            fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
+                                            fontSize = 13.sp,
+                                            fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
+                                            letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
+                                            lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                                            fontFamily = MaterialTheme.typography.bodySmall.fontFamily
+                                        ),
+                                        decorationBox = { innerTextField ->
+
+                                            if (inputMethod.value.text.isEmpty()
+                                            ) {
+                                                Text(
+                                                    modifier = Modifier.alpha(.3f),
+                                                    text = inputMethod.inputLabel,
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    color = MaterialTheme.colorScheme.outline
+                                                )
+                                            }
+
+                                            AnimatedVisibility(
+                                                visible = inputMethod.value.text.isNotEmpty(),
+                                                modifier = Modifier.absoluteOffset(y = -(16).dp),
+                                                enter = fadeIn() + expandVertically(),
+                                                exit = fadeOut() + shrinkVertically(),
+                                            ) {
+                                                Text(
+                                                    text = inputMethod.inputLabel,
+                                                    color = if (hasError) MaterialTheme.colorScheme.error else primaryColor,
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                    fontSize = 11.sp
+                                                )
+                                            }
+
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.SpaceBetween
+                                            ) {
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                ) {
+
+                                                    innerTextField()
+                                                }
+
+                                                AnimatedVisibility(
+                                                    visible = inputMethod.value.text.isNotEmpty(),
+                                                    enter = fadeIn() + expandVertically(),
+                                                    exit = fadeOut() + shrinkVertically(),
+                                                ) {
+
+                                                    IconButton(
+                                                        modifier = Modifier.size(18.dp),
+                                                        onClick = {
+                                                            if (inputMethod.enabled) {
+                                                                onProfileEvent(
+                                                                    SignHomeStore.Intent.UpdateKycValues(
+                                                                        inputMethod.fieldType,
+                                                                        TextFieldValue()
+                                                                    )
+                                                                )
+                                                            }
+                                                        },
+                                                        content = {
+                                                            Icon(
+                                                                modifier = Modifier.alpha(0.4f),
+                                                                imageVector = Icons.Filled.Cancel,
+                                                                contentDescription = null,
+                                                                tint = actionButtonColor
+                                                            )
+                                                        }
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 20.dp)
+                        ) {
+
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -651,6 +804,8 @@ fun AddGuarantorContent(
                                     }
                                 )
                             }
+
+
                         }
                         Row(
                             modifier = Modifier.fillMaxWidth()
@@ -671,6 +826,8 @@ fun AddGuarantorContent(
                                                     it.memberNumber,
                                                     amountToGuarantee.text,
                                                     it.refId,
+                                                    signHomeState.guarantor1FosaAccount.value.text,
+                                                    signHomeState.guarantor2FosaAccount.value.text,
                                                 )
                                             )
                                             val existingItems = guarantorDataListed.toSet()
@@ -711,6 +868,8 @@ fun AddGuarantorContent(
                                                         it.memberNumber,
                                                         amountToGuarantee.text,
                                                         it.refId,
+                                                        signHomeState.guarantor1FosaAccount.value.text,
+                                                        signHomeState.guarantor2FosaAccount.value.text,
                                                     )
 
                                                 )
@@ -751,9 +910,11 @@ fun AddGuarantorContent(
                                     amountToGuarantee = emptyTextContainer
 
                                 },
-                                enabled = amountToGuarantee.text != "" && diferences > 0 && amountToGuarantee.text.toInt() > 0 && amountToGuarantee.text.toInt() <= diferences
+                                enabled = (amountToGuarantee.text != "" && diferences > 0 && amountToGuarantee.text.toInt() > 0 && amountToGuarantee.text.toInt() <= diferences) && !hasError
                             )
                         }
+
+                        Spacer(modifier = Modifier.padding(vertical = 100.dp))
                     }
                 }
             }
@@ -1043,7 +1204,7 @@ fun AddGuarantorContent(
                                 fontSize = 12.sp
                             )
                         }
-                        //Todo---add the loading modifier
+
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -1051,9 +1212,7 @@ fun AddGuarantorContent(
                         ) {
                             item {
                                 Spacer(modifier = Modifier.padding(top = 30.dp))
-                            }
-                            if (guarantorDataListed.isEmpty()) {
-                                item {
+                                if (guarantorDataListed.isEmpty()) {
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth(),
@@ -1074,11 +1233,9 @@ fun AddGuarantorContent(
                                         )
                                     }
                                 }
-                            }
-                            if (launchGuarantorListing) {
-                                if (guarantorDataListed.isNotEmpty()) {
-                                    guarantorDataListed.forEach { item ->
-                                        item {
+                                if (launchGuarantorListing) {
+                                    if (guarantorDataListed.isNotEmpty()) {
+                                        guarantorDataListed.forEach { item ->
                                             Row(
                                                 modifier = Modifier
                                                     .fillMaxWidth()

@@ -110,6 +110,10 @@ fun EmployedDetails(
             item {
                 listOf(
                     signHomeState.employer,
+                    signHomeState.city,
+                    signHomeState.po_box,
+                    signHomeState.postal_code,
+                    signHomeState.telephone_number,
                     signHomeState.department,
                     signHomeState.postalAddress,
                     signHomeState.designation,
@@ -126,6 +130,18 @@ fun EmployedDetails(
                     state.prestaClientSettings?.let { settings ->
                         settings.response.details?.let { detail ->
                             if (!detail.containsKey("employment_terms") && formItem.fieldType == KycInputs.EMPLOYMENTTERMS) {
+                                return@filter false
+                            }
+                            if (!detail.containsKey("city") && formItem.fieldType == KycInputs.CITY) {
+                                return@filter false
+                            }
+                            if (!detail.containsKey("po_box") && formItem.fieldType == KycInputs.POBOX) {
+                                return@filter false
+                            }
+                            if (!detail.containsKey("postal_code") && formItem.fieldType == KycInputs.POSTALCODE) {
+                                return@filter false
+                            }
+                            if (!detail.containsKey("telephone_number") && formItem.fieldType == KycInputs.TELEPHONE) {
                                 return@filter false
                             }
                             if (!detail.containsKey("designation") && formItem.fieldType == KycInputs.DESIGNATION) {
@@ -309,7 +325,8 @@ fun EmployedDetails(
                                             Text(
                                                 modifier = Modifier.alpha(.3f),
                                                 text = inputMethod.inputLabel,
-                                                style = MaterialTheme.typography.bodySmall
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.outline
                                             )
                                         }
 
@@ -323,7 +340,7 @@ fun EmployedDetails(
                                                 text = inputMethod.inputLabel,
                                                 color = primaryColor,
                                                 style = MaterialTheme.typography.labelSmall,
-                                                fontSize = 11.sp
+                                                fontSize = 11.sp,
                                             )
                                         }
 
@@ -423,6 +440,14 @@ fun EmployedDetails(
                                 signHomeState.businessLocation.value.text
                             userDetailsMap["businessType"] =
                                 signHomeState.businessType.value.text
+                            userDetailsMap["city"] =
+                                signHomeState.city.value.text
+                            userDetailsMap["po_box"] =
+                                signHomeState.po_box.value.text
+                            userDetailsMap["telephone_number"] =
+                                signHomeState.telephone_number.value.text
+                            userDetailsMap["postal_code"] =
+                                signHomeState.postal_code.value.text
 
 
                             authState.cachedMemberData?.let {

@@ -583,6 +583,120 @@ class SignHomeStoreFactory(
                                 )
                             )
                         }
+                        KycInputs.GURANTOR1FOSA -> {
+                            // validate first name
+                            val pattern = Regex("^(\\s*[a-zA-Z0-9.\\s]*)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && guarantor1FosaAccount.required) {
+                                errorMsg = "Guarantor 2 fosa account is required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "enter valid value."
+                                }
+                            }
+                            copy(
+                                guarantor1FosaAccount = guarantor1FosaAccount.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                    enumOptions = msg.enumOptions
+                                )
+                            )
+                        }
+                        KycInputs.CITY -> {
+                            // validate first name
+                            val pattern = Regex("^(\\s*[a-zA-Z0-9.\\s]*)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && city.required) {
+                                errorMsg = "City is required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "enter valid value."
+                                }
+                            }
+                            copy(
+                                city = city.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                    enumOptions = msg.enumOptions
+                                )
+                            )
+                        }
+                        KycInputs.POBOX -> {
+                            // validate first name
+                            val pattern = Regex("^(\\s*[a-zA-Z0-9.\\s]*)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && po_box.required) {
+                                errorMsg = "PO BOX is required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "enter valid value."
+                                }
+                            }
+                            copy(
+                                po_box = po_box.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                    enumOptions = msg.enumOptions
+                                )
+                            )
+                        }
+                        KycInputs.POSTALCODE -> {
+                            // validate first name
+                            val pattern = Regex("^(\\s*[a-zA-Z0-9.\\s]*)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && postal_code.required) {
+                                errorMsg = "Postal code is required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "enter valid value."
+                                }
+                            }
+                            copy(
+                                postal_code = postal_code.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                    enumOptions = msg.enumOptions
+                                )
+                            )
+                        }
+                        KycInputs.TELEPHONE -> {
+                            // validate first name
+                            val pattern = Regex("^(\\s*[a-zA-Z0-9.\\s]*)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && telephone_number.required) {
+                                errorMsg = "Telephone is required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "enter valid value."
+                                }
+                            }
+                            copy(
+                                telephone_number = telephone_number.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                    enumOptions = msg.enumOptions
+                                )
+                            )
+                        }
+                        KycInputs.GURANTOR2FOSA -> {
+                            // validate first name
+                            val pattern = Regex("^(\\s*[a-zA-Z0-9.\\s]*)")
+                            var errorMsg = ""
+                            if (msg.value.text.isEmpty() && guarantor2FosaAccount.required) {
+                                errorMsg = "Guarantor 2 fosa account is required"
+                            } else {
+                                if (!msg.value.text.matches(pattern)) {
+                                    errorMsg = "enter valid value."
+                                }
+                            }
+                            copy(
+                                guarantor2FosaAccount = guarantor2FosaAccount.copy(
+                                    value = msg.value,
+                                    errorMessage = errorMsg,
+                                    enumOptions = msg.enumOptions
+                                )
+                            )
+                        }
 
                         KycInputs.EMPLOYMENTTERMS -> {
                             // validate first name

@@ -46,11 +46,16 @@ class DefaultSignLoanFormComponent(
     override val loanRequestRefId: String,
     override var sign: Boolean,
     override val memberRefId: String,
+    private val replaceGuarantors: (loanRequestRefId: String) -> Unit
 ) : SignLoanFormComponent, ComponentContext by componentContext, KoinComponent {
     override val platform by inject<Platform>()
 
     private val backCallback = BackCallback {
         onItemClicked()
+    }
+
+    override fun replaceGuarantor (loanRequestRefId: String) {
+        replaceGuarantors(loanRequestRefId)
     }
 
     private val scope = coroutineScope(mainContext + SupervisorJob())

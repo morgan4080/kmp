@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import com.presta.customer.MR
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
+import com.presta.customer.ui.components.signAppHome.store.KycInputs
 import com.presta.customer.ui.components.signAppHome.store.SignHomeStore
 import com.presta.customer.ui.theme.actionButtonColor
 import com.presta.customer.ui.theme.primaryColor
@@ -105,10 +106,61 @@ fun SelfEmployedDetails(
             }
         } else {
             listOf(
+                signHomeState.city,
+                signHomeState.po_box,
+                signHomeState.postal_code,
+                signHomeState.telephone_number,
                 signHomeState.businessLocation,
+                signHomeState.postalAddress,
                 signHomeState.businessType,
                 signHomeState.kraPin,
-            ).filter { kyc ->
+            ).filter { formItem ->
+                state.prestaClientSettings?.let { settings ->
+                    settings.response.details?.let { detail ->
+                        if (!detail.containsKey("employment_terms") && formItem.fieldType == KycInputs.EMPLOYMENTTERMS) {
+                            return@filter false
+                        }
+                        if (!detail.containsKey("city") && formItem.fieldType == KycInputs.CITY) {
+                            return@filter false
+                        }
+                        if (!detail.containsKey("po_box") && formItem.fieldType == KycInputs.POBOX) {
+                            return@filter false
+                        }
+                        if (!detail.containsKey("postal_code") && formItem.fieldType == KycInputs.POSTALCODE) {
+                            return@filter false
+                        }
+                        if (!detail.containsKey("telephone_number") && formItem.fieldType == KycInputs.TELEPHONE) {
+                            return@filter false
+                        }
+                        if (!detail.containsKey("designation") && formItem.fieldType == KycInputs.DESIGNATION) {
+                            return@filter false
+                        }
+                        if (!detail.containsKey("postal_address") && formItem.fieldType == KycInputs.POSTALADDRESS) {
+                            return@filter false
+                        }
+                        if (!detail.containsKey("dob") && formItem.fieldType == KycInputs.DOB) {
+                            return@filter false
+                        }
+                        if (!detail.containsKey("department") && formItem.fieldType == KycInputs.DEPARTMENT) {
+                            return@filter false
+                        }
+                        if (!detail.containsKey("employer_name") && formItem.fieldType == KycInputs.EMPLOYER) {
+                            return@filter false
+                        }
+                        if (!detail.containsKey("employment_number") && formItem.fieldType == KycInputs.EMPLOYMENTNUMBER) {
+                            return@filter false
+                        }
+                        if (!detail.containsKey("gross_salary") && formItem.fieldType == KycInputs.GROSSSALARY) {
+                            return@filter false
+                        }
+                        if (!detail.containsKey("net_salary") && formItem.fieldType == KycInputs.NETSALARY) {
+                            return@filter false
+                        }
+                        if (!detail.containsKey("kra_pin") && formItem.fieldType == KycInputs.KRAPIN) {
+                            return@filter false
+                        }
+                    }
+                }
                 true
             }.map { inputMethod ->
                 when(inputMethod.inputTypes) {
@@ -221,7 +273,8 @@ fun SelfEmployedDetails(
                                         Text(
                                             modifier = Modifier.alpha(.3f),
                                             text = inputMethod.inputLabel,
-                                            style = MaterialTheme.typography.bodySmall
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.outline
                                         )
                                     }
 
@@ -316,6 +369,14 @@ fun SelfEmployedDetails(
                                 signHomeState.employmentTerms.value.text
                             userDetailsMap["department"] =
                                 signHomeState.department.value.text
+                            userDetailsMap["city"] =
+                                signHomeState.city.value.text
+                            userDetailsMap["po_box"] =
+                                signHomeState.po_box.value.text
+                            userDetailsMap["telephone_number"] =
+                                signHomeState.telephone_number.value.text
+                            userDetailsMap["postal_code"] =
+                                signHomeState.postal_code.value.text
                             userDetailsMap["grossSalary"] = signHomeState.grossSalary.value.text
                             userDetailsMap["netSalary"] = signHomeState.netSalary.value.text
                             userDetailsMap["kraPin"] = signHomeState.kraPin.value.text

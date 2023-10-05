@@ -30,6 +30,10 @@ data class Kyc(
 )
 
 enum class KycInputs {
+    CITY,
+    POBOX,
+    POSTALCODE,
+    TELEPHONE,
     EMPLOYER,
     EMPLOYMENTNUMBER,
     EMPLOYMENTTERMS,
@@ -44,7 +48,9 @@ enum class KycInputs {
     KRAPIN,
     BUSINESSLOCATION,
     DOB,
-    BUSINESSTYPE
+    BUSINESSTYPE,
+    GURANTOR1FOSA,
+    GURANTOR2FOSA
 }
 
 
@@ -118,6 +124,24 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
         val idNumber: InputMethodConfirmation = InputMethodConfirmation(
             inputLabel = "ID Number*",
             fieldType = InputFields.ID_NUMBER,
+            inputTypes = InputTypes.NUMBER,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
+        val guarantor1FosaAccount: Kyc = Kyc(
+            inputLabel = "Guarantor FOSA Account*",
+            fieldType = KycInputs.GURANTOR1FOSA,
+            inputTypes = InputTypes.NUMBER,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
+        val guarantor2FosaAccount: Kyc = Kyc(
+            inputLabel = "Guarantor FOSA Account*",
+            fieldType = KycInputs.GURANTOR2FOSA,
             inputTypes = InputTypes.NUMBER,
             required = true,
             value = TextFieldValue(),
@@ -256,6 +280,42 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
             fieldType = KycInputs.KRAPIN,
             inputTypes = InputTypes.STRING,
             required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
+        val city: Kyc = Kyc(
+            inputLabel = "Business Location*",
+            fieldType = KycInputs.BUSINESSLOCATION,
+            inputTypes = InputTypes.STRING,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
+        val po_box: Kyc = Kyc(
+            inputLabel = "Business Location*",
+            fieldType = KycInputs.BUSINESSLOCATION,
+            inputTypes = InputTypes.STRING,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
+        val postal_code: Kyc = Kyc(
+            inputLabel = "Business Location*",
+            fieldType = KycInputs.BUSINESSLOCATION,
+            inputTypes = InputTypes.STRING,
+            required = true,
+            value = TextFieldValue(),
+            errorMessage = "",
+            enabled = true
+        ),
+        val telephone_number: Kyc = Kyc(
+            inputLabel = "Business Location*",
+            fieldType = KycInputs.BUSINESSLOCATION,
+            inputTypes = InputTypes.STRING,
+            required = false,
             value = TextFieldValue(),
             errorMessage = "",
             enabled = true

@@ -14,6 +14,7 @@ interface SignLoanFormComponent {
     val authState: StateFlow<AuthStore.State>
     var sign: Boolean
     fun onAuthEvent(event: AuthStore.Intent)
+    fun replaceGuarantor(loanRequestRefId: String)
     fun onEvent(event: ApplyLongTermLoansStore.Intent)
     val applyLongTermLoansStore: ApplyLongTermLoansStore
     val applyLongTermLoansState: StateFlow<ApplyLongTermLoansStore.State>

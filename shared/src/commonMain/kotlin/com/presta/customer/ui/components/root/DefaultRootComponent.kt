@@ -1187,7 +1187,16 @@ class DefaultRootComponent(
             },
             sign = false,
             memberRefId = config.memberRefId,
-            coroutinetineDispatcher = prestaDispatchers.main
+            coroutinetineDispatcher = prestaDispatchers.main,
+            replaceGuarantors = { loanRequestRefId ->
+
+                navigation.replaceAll(
+                    Config.SignApp(
+                        loanRefId = loanRequestRefId,
+                        replaceGuarantor = ""
+                    )
+                )
+            }
         )
 
     private fun replaceGuarantorComponent(

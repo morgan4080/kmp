@@ -50,6 +50,7 @@ import com.presta.customer.ImageConverter
 import com.presta.customer.MR
 import com.presta.customer.getPlatformName
 import com.presta.customer.network.longTermLoans.model.ActorType
+import com.presta.customer.network.longTermLoans.model.PendingReasons
 import com.presta.customer.ui.components.applyLongTermLoan.store.ApplyLongTermLoansStore
 import com.presta.customer.ui.components.auth.store.AuthStore
 import com.presta.customer.ui.components.signLoanForm.SignLoanFormComponent
@@ -130,71 +131,45 @@ fun SignLoanFormContent(
                 component.onBackNavClicked()
             })
         }, content = { innerPadding ->
-            if (state.prestaLoanByLoanRequestRefId?.pdfThumbNail == null) {
-                LazyColumn(modifier = Modifier.padding(innerPadding)) {
-                    items(1) {
+            if (state.prestaLoanByLoanRequestRefId?.pendingReasonClass != null) {
+                Column (
+                    Modifier.fillMaxHeight(),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Column (
+                        Modifier.fillMaxHeight(0.7f),
+                        verticalArrangement = Arrangement.Center
+                    ) {
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 10.dp, start = 16.dp, end = 16.dp)
-                                .background(color = MaterialTheme.colorScheme.background),
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
                         ) {
-                            ElevatedCard(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(color = MaterialTheme.colorScheme.background),
-                                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .defaultMinSize(40.dp, 40.dp)
-                                        .background(
-                                            ShimmerBrush(
-                                                targetValue = 1300f,
-                                                showShimmer = true
-                                            )
-                                        )
-                                        .fillMaxWidth()
-                                ) {
-                                }
-                            }
-                        }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top= 25.dp, bottom = 10.dp, start = 16.dp, end = 16.dp)
-                                .background(color = MaterialTheme.colorScheme.background),
-                        ) {
-                            ElevatedCard(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(color = MaterialTheme.colorScheme.background),
-                                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .defaultMinSize(100.dp, 100.dp)
-                                        .background(
-                                            ShimmerBrush(
-                                                targetValue = 1300f,
-                                                showShimmer = true
-                                            )
-                                        )
-                                        .fillMaxWidth()
-                                ) {
-                                }
-                            }
+                            Icon(
+                                modifier = Modifier.size(150.dp),
+                                imageVector = Icons.Filled.ChatBubble,
+                                contentDescription = null,
+                                tint = actionButtonColor
+                            )
                         }
 
                         Row(
                             modifier = Modifier.fillMaxWidth()
                                 .padding(top = 25.dp),
-                            horizontalArrangement = Arrangement.Center
+                            horizontalArrangement = Arrangement.Center,
                         ) {
-                            state.prestaLoanByLoanRequestRefId?.pendingReason?.let {
+                            state.prestaLoanByLoanRequestRefId.pendingReason?.let {
+
+                                var error: String
+
+                                state.prestaLoanByLoanRequestRefId.pendingReasonClass.let { reason ->
+                                    error = "${reason}: "
+                                }
+
+                                error = "$error$it. Please contact admin for assistance."
+
                                 Text(
                                     modifier = Modifier.width(200.dp),
-                                    text = "$it. Please contact admin for assistance.",
+                                    text = error,
                                     color = MaterialTheme.colorScheme.error,
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontFamily = fontFamilyResource(MR.fonts.Poppins.semiBold),
@@ -203,6 +178,89 @@ fun SignLoanFormContent(
                                 )
                             }
                         }
+                    }
+
+                    Row (
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(top = 25.dp, start = 20.dp, end = 20.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        state.prestaLoanByLoanRequestRefId.pendingReasonClass.let {
+                            when(it) {
+                                PendingReasons.GUARANTOR_ELIGIBILITY -> {
+                                    ActionButton(
+                                        label = "REPLACE GUARANTOR",
+                                        onClickContainer = {
+                                            component.replaceGuarantor(state.prestaLoanByLoanRequestRefId.refId)
+                                        },
+                                        enabled =  !state.isLoading
+                                    )
+                                }
+
+                                else -> {
+
+                                }
+                            }
+                        }
+                    }
+                }
+            } else if (state.prestaLoanByLoanRequestRefId?.pdfThumbNail == null) {
+                LazyColumn(modifier = Modifier.padding(innerPadding)) {
+                    items(1) {
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 10.dp, start = 16.dp, end = 16.dp)
+                                    .background(color = MaterialTheme.colorScheme.background),
+                            ) {
+                                ElevatedCard(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(color = MaterialTheme.colorScheme.background),
+                                    colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .defaultMinSize(40.dp, 40.dp)
+                                            .background(
+                                                ShimmerBrush(
+                                                    targetValue = 1300f,
+                                                    showShimmer = true
+                                                )
+                                            )
+                                            .fillMaxWidth()
+                                    ) {
+                                    }
+                                }
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top= 25.dp, bottom = 10.dp, start = 16.dp, end = 16.dp)
+                                    .background(color = MaterialTheme.colorScheme.background),
+                            ) {
+                                ElevatedCard(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(color = MaterialTheme.colorScheme.background),
+                                    colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .defaultMinSize(100.dp, 100.dp)
+                                            .background(
+                                                ShimmerBrush(
+                                                    targetValue = 1300f,
+                                                    showShimmer = true
+                                                )
+                                            )
+                                            .fillMaxWidth()
+                                    ) {
+                                    }
+                                }
+                            }
+
                     }
                 }
 

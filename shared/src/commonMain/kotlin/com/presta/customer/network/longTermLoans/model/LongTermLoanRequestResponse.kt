@@ -17,7 +17,22 @@ data class LongTermLoanRequestResponse @OptIn(ExperimentalSerializationApi::clas
     val memberNumber: String,
     val memberFirstName: String,
     val memberLastName: String,
-    @EncodeDefault val pendingReason: String?=null,
+    @EncodeDefault val pendingReason: String? = null,
+    @EncodeDefault val pendingReasonClass: PendingReasons? = null,
 )
+
+enum class PendingReasons {
+    MISSING_GUARANTOR_EMAIL,
+    MISSING_APPLICANT_EMAIL,
+    MISSING_WITNESS_EMAIL,
+    MISSING_DOCUMENT_REQUIRED_FIELD,
+    ZOHO_SIGN_ERROR,
+    INELIGIBLE_GUARANTOR,
+    GUARANTOR_REQUIRED,
+    GUARANTOR_COMMITTED_AMOUNT_ZERO,
+    GUARANTOR_ELIGIBILITY,
+    CORE_BANKING_POST_FAILED,
+    INTERNAL_ERROR,
+}
 
 
