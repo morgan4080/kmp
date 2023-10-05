@@ -7,9 +7,12 @@ enum class Durations {
     SHORT, LONG
 }
 
-expect class Platform {
+expect open class Platform {
 
     val otpCode: MutableStateFlow<String>
+
+    val networkError: MutableStateFlow<Boolean>
+
     val resultFromContact: MutableStateFlow<Map<String, String>>
     fun showToast(text: String, duration: Durations = Durations.LONG)
     fun startSmsRetriever()

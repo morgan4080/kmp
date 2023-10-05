@@ -1,6 +1,7 @@
 package com.presta.customer.network.di
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.presta.customer.Platform
 import com.presta.customer.network.onBoarding.client.PrestaOnBoardingClient
 import com.presta.customer.network.authDevice.client.PrestaAuthClient
 import com.presta.customer.network.createHttpClient
@@ -17,9 +18,9 @@ import com.presta.customer.ui.components.root.DefaultRootComponent
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-val networkModule: (enableLogging: Boolean, componentContext: ComponentContext, storeFactory: StoreFactory) -> Module get() = { enableLogging, componentContext, storeFactory ->
+val networkModule: (enableLogging: Boolean, componentContext: ComponentContext, storeFactory: StoreFactory, platform: Platform?) -> Module get() = { enableLogging, componentContext, storeFactory, platform ->
     module {
-        single { createHttpClient(enableLogging, componentContext, storeFactory) }
+        single { createHttpClient(enableLogging, componentContext, storeFactory, platform) }
         single { PrestaAuthClient(httpClient = get()) }
         single { PrestaOnBoardingClient(httpClient = get()) }
         single { PrestaOtpClient(httpClient = get()) }

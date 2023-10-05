@@ -16,6 +16,7 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.presta.customer.Platform
 import com.presta.customer.network.longTermLoans.model.GuarantorDataListing
 import com.presta.customer.network.onBoarding.model.PinStatus
 import com.presta.customer.network.payments.data.PaymentTypes
@@ -86,6 +87,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import kotlin.coroutines.CoroutineContext
 
 fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineScope {
@@ -100,13 +103,16 @@ fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope =
 class DefaultRootComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory
-) : RootComponent, ComponentContext by componentContext {
+) : RootComponent, ComponentContext by componentContext, KoinComponent {
     lateinit var loanRefid: String
     lateinit var passedLoanNumber: String
     lateinit var passedAmount: String
     lateinit var passedGuarantorRefId: String
     lateinit var passedMemberRefid: String
     private val navigation = StackNavigation<Config>()
+
+    val platform by inject<Platform>()
+
     private val _childStack =
         childStack(
             source = navigation,
@@ -1435,6 +1441,16 @@ class DefaultRootComponent(
     }
 
     init {
+
+        scope.launch {
+            platform.networkError.collect {
+                if (it) {
+                    redirectToSplash()
+                }
+            }
+        }
+
+
         lifecycle.subscribe(object : Lifecycle.Callbacks {
             override fun onResume() {
                 when (childStack.active.configuration) {

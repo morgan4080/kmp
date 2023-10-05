@@ -17,7 +17,7 @@ fun initKoin(componentContext: ComponentContext, storeFactory: StoreFactory, ena
     appDeclaration()
     modules(
         databaseModule,
-        networkModule(enableNetworkLogs, componentContext, storeFactory),
+        networkModule(enableNetworkLogs, componentContext, storeFactory, platform),
         dataModule,
         componentModule,
         module {

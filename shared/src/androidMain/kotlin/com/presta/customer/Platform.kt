@@ -64,7 +64,7 @@ data class LocalAuthenticationResult (
 )
 
 
-actual class Platform(
+actual open class Platform(
     private val context: Context
 ) {
     private val phoneUtil = PhoneNumberUtil.getInstance()
@@ -73,6 +73,7 @@ actual class Platform(
     private var contactRequestCodeValue: Int? = null
     private var alpha2CodeValue: String? = null
     actual val otpCode = MutableStateFlow("")
+    actual val networkError = MutableStateFlow(false)
     actual val resultFromContact: MutableStateFlow<Map<String, String>> = MutableStateFlow(emptyMap())
     actual fun showToast(text: String, duration: Durations) {
         Toast.makeText(

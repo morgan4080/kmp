@@ -2,9 +2,12 @@ package com.presta.customer
 
 import kotlinx.coroutines.flow.MutableStateFlow
 
-actual class Platform {
+actual open class Platform {
 
     actual val otpCode = MutableStateFlow("")
+
+    actual val networkError = MutableStateFlow(false)
+
     actual val resultFromContact: MutableStateFlow<Map<String, String>> = MutableStateFlow(emptyMap())
     actual fun showToast(text: String, duration: Durations) {
 
