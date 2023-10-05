@@ -510,6 +510,9 @@ fun AuthContent(
                                     enter = fadeIn() + expandVertically(),
                                     exit = fadeOut() + shrinkVertically()
                                 ) {
+                                    println("::ERRORSNOTSHOWED::")
+                                    println(state.error)
+                                    println(onBoardingState.error)
                                     Row(
                                         modifier = Modifier
                                             .padding(
