@@ -120,10 +120,6 @@ class DefaultAuthComponent(
         onEvent(AuthStore.Intent.GetCachedMemberData)
         scope.launch {
             state.collect {
-                if (it.error !== null) {
-                    platform.showToast(it.error)
-                    onEvent(AuthStore.Intent.UpdateError(null))
-                }
                 if (it.cachedMemberData?.tenantId !== null) {
                     onTenantEvent(
                         TenantStore.Intent.GetClientById(
