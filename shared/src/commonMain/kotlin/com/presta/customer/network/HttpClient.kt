@@ -45,7 +45,9 @@ internal fun createHttpClient(enableLogging: Boolean, componentContext: Componen
             val data: Message = originalCall.response.body()
             if (platform !== null) {
                 platform.logErrorsToFirebase(Exception("${data.timestamp} - STATUS: ${originalCall.response.status}: ${data.message}"))
-                platform.networkError.value = true
+                if (originalCall.response.status.value == 401) {
+                    platform.networkError.value = true
+                }
             }
             execute(request)
         } else {
