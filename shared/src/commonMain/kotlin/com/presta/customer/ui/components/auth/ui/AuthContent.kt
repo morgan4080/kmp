@@ -212,7 +212,7 @@ fun AuthContent(
                             label = state.label,
                             pinCreated = true,
                             pinConfirmed = state.pinConfirmed,
-                            error = null
+                            error = state.error
                         )
                     )
 
@@ -360,7 +360,7 @@ fun AuthContent(
                         label = "CREATE ACCOUNT PIN",
                         pinCreated = state.pinCreated,
                         pinConfirmed = false,
-                        error = null
+                        error = state.error
                     )
                 )
             }
@@ -371,7 +371,7 @@ fun AuthContent(
             clearPinCharacters()
 
             if (state.pinStatus == PinStatus.SET) {
-                platform.showToast("Please Contact Admin")
+                println(state.error)
             } else {
                 onEvent(
                     AuthStore.Intent.UpdateContext(
@@ -380,7 +380,7 @@ fun AuthContent(
                         label = "CREATE ACCOUNT PIN",
                         pinCreated = state.pinCreated,
                         pinConfirmed = false,
-                        error = null
+                        error = state.error
                     )
                 )
             }
@@ -687,6 +687,9 @@ fun AuthContent(
                                                 ),
                                                 onClick = {
                                                     if (pinInput.length <= maxChar && inputEnabled) {
+                                                        AuthStore.Intent.UpdateError(
+                                                            null
+                                                        )
                                                         builder.append(pinInput)
                                                             .append(ls.toString())
                                                         pinInput = builder.toString()
