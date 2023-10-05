@@ -187,7 +187,7 @@ fun SignLoanFormContent(
                         }
 
                         Row(
-                            modifier = Modifier.fillMaxWidth(0.8f)
+                            modifier = Modifier.fillMaxWidth()
                                 .padding(top = 25.dp),
                             horizontalArrangement = Arrangement.Center
                         ) {
