@@ -125,10 +125,10 @@ class DefaultRootBottomSignComponent(
             onWitnessRequestClicked = {
                 gotoWitnessRequests()
             },
-            onLoanRequestsListClicked = {
+            onLoanRequestsListClicked = { refId ->
                 navigationBottomStackNavigation.bringToFront(
                     ConfigBottom.Request(
-                        "",
+                        refId,
                         guarantorReplaced = ""
                     )
                 )

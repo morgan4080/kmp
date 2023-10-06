@@ -20,7 +20,7 @@ interface SignHomeComponent {
     fun onApplyLongTermLoanEvent(event: ApplyLongTermLoansStore.Intent)
     val applyLongTermLoansStore: ApplyLongTermLoansStore
     val applyLongTermLoansState: StateFlow<ApplyLongTermLoansStore.State>
-    fun goToLoanRequests()
+    fun goToLoanRequests(refId: String = "")
     val platform: Platform
     fun logout()
 

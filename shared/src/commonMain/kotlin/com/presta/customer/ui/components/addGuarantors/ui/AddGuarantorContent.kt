@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -530,45 +531,158 @@ fun AddGuarantorContent(
                             diferences = amountDesired - amountaken
                             Text(
                                 text = "Remaining Amount : ${formatMoney(diferences.toDouble())}",
-                                fontFamily = fontFamilyResource(MR.fonts.Poppins.light),
+                                fontFamily = fontFamilyResource(MR.fonts.Poppins.thinItalic),
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
                         }
                         //modified Text container  to support dark mode
+
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 20.dp)
+                                .padding(top = 10.dp)
                         ) {
-                            // BOSA / FOSA GUARANTOR SELECTOR
 
-                            listOf(
-                                signHomeState.guarantor1FosaAccount,
-                                signHomeState.guarantor2FosaAccount
-                            ).filter {formItem ->
-                                // check client settings + guarantorData count ()
-                                state.prestaClientSettings?.let { settings ->
-                                    settings.response.details?.let { detail ->
-                                        if (!detail.containsKey("guarantor1_fosa_account") && formItem.fieldType == KycInputs.GURANTOR1FOSA && guarantorDataListed.size == 1) {
-                                            return@filter false
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .shadow(0.5.dp, RoundedCornerShape(10.dp))
+                                    .background(
+                                        color = MaterialTheme.colorScheme.inverseOnSurface,
+                                        shape = RoundedCornerShape(10.dp)
+                                    ),
+                            ) {
+                                BasicTextField(
+                                    modifier = Modifier
+                                        .focusRequester(focusRequester)
+                                        .height(65.dp)
+                                        .padding(
+                                            top = 20.dp,
+                                            bottom = 16.dp,
+                                            start = 16.dp,
+                                            end = 16.dp
+                                        )
+                                        .absoluteOffset(y = 2.dp),
+                                    enabled = true,
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Number
+                                    ),
+                                    value = amountToGuarantee,
+                                    onValueChange = { textValue ->
+                                        if (textValue.text.isEmpty() || (textValue.text.matches(
+                                                pattern
+                                            ) &&
+                                                    (textValue.text.toInt() in (1..diferences)))
+                                        ) {
+                                            amountToGuarantee = textValue
                                         }
-                                        if (!detail.containsKey("guarantor2_fosa_account") && formItem.fieldType == KycInputs.GURANTOR2FOSA && guarantorDataListed.size == 2) {
-                                            return@filter false
+                                    },
+                                    singleLine = true,
+                                    textStyle = TextStyle(
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
+                                        fontSize = 13.sp,
+                                        fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
+                                        letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
+                                        lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
+                                        fontFamily = MaterialTheme.typography.bodySmall.fontFamily
+                                    ),
+                                    decorationBox = { innerTextField ->
+                                        if (amountToGuarantee.text.isEmpty()
+                                        ) {
+                                            Text(
+                                                modifier = Modifier.alpha(.3f),
+                                                text = "Amount to Guarantee",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.outline
+                                            )
+                                        }
+
+                                        AnimatedVisibility(
+                                            visible = amountToGuarantee.text.isNotEmpty(),
+                                            modifier = Modifier.absoluteOffset(y = -(16).dp),
+                                            enter = fadeIn() + expandVertically(),
+                                            exit = fadeOut() + shrinkVertically(),
+                                        ) {
+                                            Text(
+                                                text = "Amount to Guarantee",
+                                                color = primaryColor,
+                                                style = MaterialTheme.typography.labelSmall,
+                                                fontSize = 11.sp
+                                            )
+                                        }
+
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                            ) {
+
+                                                innerTextField()
+                                            }
+
+                                            AnimatedVisibility(
+                                                visible = amountToGuarantee.text.isNotEmpty(),
+                                                enter = fadeIn() + expandVertically(),
+                                                exit = fadeOut() + shrinkVertically(),
+                                            ) {
+                                                IconButton(
+                                                    modifier = Modifier.size(18.dp),
+                                                    onClick = { userInputs = emptyTextContainer },
+                                                    content = {
+                                                        Icon(
+                                                            modifier = Modifier.alpha(0.4f),
+                                                            imageVector = Icons.Filled.Cancel,
+                                                            contentDescription = null,
+                                                            tint = actionButtonColor
+                                                        )
+                                                    }
+                                                )
+                                            }
                                         }
                                     }
-                                }
-                                true
-                            }.map { inputMethod ->
+                                )
+                            }
+                        }
 
-                                LaunchedEffect(inputMethod.errorMessage, inputMethod.value) {
-                                    hasError = inputMethod.errorMessage != "" || inputMethod.value.text == ""
+                        listOf(
+                            signHomeState.guarantor1FosaAccount,
+                            signHomeState.guarantor2FosaAccount
+                        ).filter {formItem ->
+                            // check client settings + guarantorData count ()
+                            state.prestaClientSettings?.let { settings ->
+                                settings.response.details?.let { detail ->
+                                    println(":::guarantorDataListed.size::::")
+                                    println(guarantorDataListed.size)
+                                    if (detail.containsKey("guarantor1_fosa_account") && formItem.fieldType == KycInputs.GURANTOR1FOSA && guarantorDataListed.isEmpty()) {
+                                        println("guarantor1_fosa_account::TRUE")
+                                        return@filter true
+                                    }
+                                    if (detail.containsKey("guarantor2_fosa_account") && formItem.fieldType == KycInputs.GURANTOR2FOSA && guarantorDataListed.size == 1) {
+                                        println("guarantor2_fosa_account::TRUE")
+                                        return@filter true
+                                    }
                                 }
+                            }
+                            false
+                        }.map { inputMethod ->
 
+                            LaunchedEffect(inputMethod.errorMessage, inputMethod.value) {
+                                hasError = inputMethod.errorMessage != "" || inputMethod.value.text == ""
+                            }
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 10.dp)
+                            ) {
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(vertical = 8.dp)
                                         .shadow(0.5.dp, RoundedCornerShape(10.dp))
                                         .background(
                                             color = MaterialTheme.colorScheme.inverseOnSurface,
@@ -695,118 +809,7 @@ fun AddGuarantorContent(
                                 }
                             }
                         }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 20.dp)
-                        ) {
 
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .shadow(0.5.dp, RoundedCornerShape(10.dp))
-                                    .background(
-                                        color = MaterialTheme.colorScheme.inverseOnSurface,
-                                        shape = RoundedCornerShape(10.dp)
-                                    ),
-                            ) {
-                                BasicTextField(
-                                    modifier = Modifier
-                                        .focusRequester(focusRequester)
-                                        .height(65.dp)
-                                        .padding(
-                                            top = 20.dp,
-                                            bottom = 16.dp,
-                                            start = 16.dp,
-                                            end = 16.dp
-                                        )
-                                        .absoluteOffset(y = 2.dp),
-                                    enabled = true,
-                                    keyboardOptions = KeyboardOptions(
-                                        keyboardType = KeyboardType.Number
-                                    ),
-                                    value = amountToGuarantee,
-                                    onValueChange = { textValue ->
-                                        if (textValue.text.isEmpty() || (textValue.text.matches(
-                                                pattern
-                                            ) &&
-                                                    (textValue.text.toInt() in (1..diferences)))
-                                        ) {
-                                            amountToGuarantee = textValue
-                                        }
-                                    },
-                                    singleLine = true,
-                                    textStyle = TextStyle(
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        fontWeight = MaterialTheme.typography.bodySmall.fontWeight,
-                                        fontSize = 13.sp,
-                                        fontStyle = MaterialTheme.typography.bodySmall.fontStyle,
-                                        letterSpacing = MaterialTheme.typography.bodySmall.letterSpacing,
-                                        lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
-                                        fontFamily = MaterialTheme.typography.bodySmall.fontFamily
-                                    ),
-                                    decorationBox = { innerTextField ->
-                                        if (amountToGuarantee.text.isEmpty()
-                                        ) {
-                                            Text(
-                                                modifier = Modifier.alpha(.3f),
-                                                text = "Amount to Guarantee",
-                                                style = MaterialTheme.typography.bodySmall,
-                                                color = MaterialTheme.colorScheme.outline
-                                            )
-                                        }
-
-                                        AnimatedVisibility(
-                                            visible = amountToGuarantee.text.isNotEmpty(),
-                                            modifier = Modifier.absoluteOffset(y = -(16).dp),
-                                            enter = fadeIn() + expandVertically(),
-                                            exit = fadeOut() + shrinkVertically(),
-                                        ) {
-                                            Text(
-                                                text = "Amount to Guarantee",
-                                                color = primaryColor,
-                                                style = MaterialTheme.typography.labelSmall,
-                                                fontSize = 11.sp
-                                            )
-                                        }
-
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.SpaceBetween
-                                        ) {
-                                            Row(
-                                                verticalAlignment = Alignment.CenterVertically,
-                                            ) {
-
-                                                innerTextField()
-                                            }
-
-                                            AnimatedVisibility(
-                                                visible = amountToGuarantee.text.isNotEmpty(),
-                                                enter = fadeIn() + expandVertically(),
-                                                exit = fadeOut() + shrinkVertically(),
-                                            ) {
-                                                IconButton(
-                                                    modifier = Modifier.size(18.dp),
-                                                    onClick = { userInputs = emptyTextContainer },
-                                                    content = {
-                                                        Icon(
-                                                            modifier = Modifier.alpha(0.4f),
-                                                            imageVector = Icons.Filled.Cancel,
-                                                            contentDescription = null,
-                                                            tint = actionButtonColor
-                                                        )
-                                                    }
-                                                )
-                                            }
-                                        }
-                                    }
-                                )
-                            }
-
-
-                        }
                         Row(
                             modifier = Modifier.fillMaxWidth()
                                 .padding(top = 50.dp, bottom = 50.dp)
@@ -948,7 +951,6 @@ fun AddGuarantorContent(
             topBar = {
                 NavigateBackTopBar("Add Guarantors", onClickContainer = {
                     component.onBackNavClicked()
-
                 })
             }, content = { innerPadding ->
                 Box(Modifier.consumeWindowInsets(innerPadding).pullRefresh(refreshState)) {

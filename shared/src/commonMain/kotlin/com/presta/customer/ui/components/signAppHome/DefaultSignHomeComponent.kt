@@ -31,7 +31,7 @@ class DefaultSignHomeComponent(
     private val onGuarantorshipRequestsClicked: () -> Unit,
     private val onFavouriteGuarantorsClicked: () -> Unit,
     private val witnessRequestClicked: () -> Unit,
-    private val onGotoLoanRequestsClicked: () -> Unit,
+    private val onGotoLoanRequestsClicked: (refId: String) -> Unit,
     private val logoutToSplash: () -> Unit,
 ) : SignHomeComponent, ComponentContext by componentContext, KoinComponent {
     override val platform by inject<Platform>()
@@ -78,8 +78,8 @@ class DefaultSignHomeComponent(
         applyLongTermLoansStore.accept(event)
     }
 
-    override fun goToLoanRequests() {
-        onGotoLoanRequestsClicked()
+    override fun goToLoanRequests(refId: String) {
+        onGotoLoanRequestsClicked(refId)
     }
 
     override fun onAuthEvent(event: AuthStore.Intent) {

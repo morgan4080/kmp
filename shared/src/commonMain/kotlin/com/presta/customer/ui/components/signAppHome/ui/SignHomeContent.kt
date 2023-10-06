@@ -382,6 +382,9 @@ fun SignHomeContent(
                                                             filteredLoanRequests.loanAmount
                                                         ) + " KES",
                                                         loanProgress = filteredLoanRequests.loanRequestProgress.toFloat() / 100,
+                                                        callback = {
+                                                            component.goToLoanRequests(filteredLoanRequests.refId)
+                                                        }
                                                     )
                                                 }
                                             }
@@ -481,12 +484,15 @@ fun LoanRequestsListing(
     loanName: String,
     loanRequestDate: String,
     loanAmount: String,
-    loanProgress: Float
+    loanProgress: Float,
+    callback: () -> Unit = {}
 ) {
     val progress by remember { mutableStateOf(loanProgress) }
     Row(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth().clickable {
+                callback()
+            },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

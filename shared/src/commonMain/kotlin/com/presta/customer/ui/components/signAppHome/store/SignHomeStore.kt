@@ -131,7 +131,7 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
             enabled = true
         ),
         val guarantor1FosaAccount: Kyc = Kyc(
-            inputLabel = "Guarantor FOSA Account*",
+            inputLabel = "Guarantor 1 FOSA Account*",
             fieldType = KycInputs.GURANTOR1FOSA,
             inputTypes = InputTypes.NUMBER,
             required = true,
@@ -140,7 +140,7 @@ interface SignHomeStore : Store<SignHomeStore.Intent, SignHomeStore.State, Nothi
             enabled = true
         ),
         val guarantor2FosaAccount: Kyc = Kyc(
-            inputLabel = "Guarantor FOSA Account*",
+            inputLabel = "Guarantor 2 FOSA Account*",
             fieldType = KycInputs.GURANTOR2FOSA,
             inputTypes = InputTypes.NUMBER,
             required = true,

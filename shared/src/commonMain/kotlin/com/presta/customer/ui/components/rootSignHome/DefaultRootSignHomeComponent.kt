@@ -18,7 +18,7 @@ class DefaultRootSignHomeComponent(
     componentContext: ComponentContext,
     val storeFactory: StoreFactory,
     private val onApplyLoanClicked: () -> Unit = {},
-    private val onLoanRequestsListClicked: () -> Unit = {},
+    private val onLoanRequestsListClicked: (refId: String) -> Unit = {},
     private val onGuarantorshipRequestsClicked: () -> Unit = {},
     private val onFavouriteGuarantorsClicked: () -> Unit = {},
     private val onWitnessRequestClicked: () -> Unit = {},
@@ -73,7 +73,7 @@ class DefaultRootSignHomeComponent(
             storeFactory = storeFactory,
             mainContext = prestaDispatchers.main,
             onGotoLoanRequestsClicked = {
-                onLoanRequestsListClicked()
+                onLoanRequestsListClicked(it)
 
             },
             logoutToSplash = {
